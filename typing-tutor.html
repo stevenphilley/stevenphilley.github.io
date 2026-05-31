@@ -132,6 +132,11 @@
   .passage .ch.cur::before{content:""; position:absolute; left:-2px; top:.08em; bottom:.04em;
     width:2px; background:var(--accent); border-radius:2px; animation:blink 1.05s step-end infinite;}
   @keyframes blink{50%{opacity:0;}}
+  .passage .ch.miss{border-radius:3px; animation:missflash .42s ease;}
+  @keyframes missflash{
+    0%{background:color-mix(in srgb,var(--error) 48%, transparent);}
+    100%{background:transparent;}
+  }
 
   .hint{margin-top:18px; color:var(--ink-soft); font-size:14px; font-style:italic;
     display:flex; align-items:center; gap:8px; min-height:20px;}
@@ -175,6 +180,17 @@
     font-size:12.5px; color:var(--ink); background:var(--panel);
     border:1px solid var(--panel-line); border-radius:10px; padding:9px 12px; font-style:normal;}
   .sharebox input:focus{outline:none; border-color:var(--accent);}
+
+  /* ---- Difficulty ---- */
+  .diffbar{display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap;}
+  .diff-label{font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft);}
+  .seg{display:inline-flex; background:var(--panel); border:1px solid var(--panel-line);
+    border-radius:999px; padding:3px;}
+  .seg-btn{font-family:"Fraunces",serif; font-size:14px; color:var(--ink-soft);
+    background:transparent; border:none; cursor:pointer; padding:7px 17px; border-radius:999px;
+    transition:color .25s ease, background .3s ease;}
+  .seg-btn:hover{color:var(--ink);}
+  .seg-btn[aria-pressed="true"]{background:var(--accent); color:var(--base-2);}
 </style>
 </head>
 <body data-theme="dusk">
@@ -194,6 +210,15 @@
         <button class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"></button>
       </div>
     </header>
+
+    <div class="diffbar">
+      <span class="diff-label">difficulty</span>
+      <div class="seg" role="group" aria-label="difficulty">
+        <button class="seg-btn" data-diff="0" aria-pressed="false" title="Short, simple sentences">Gentle</button>
+        <button class="seg-btn" data-diff="1" aria-pressed="true"  title="Fuller sentences, normal punctuation">Steady</button>
+        <button class="seg-btn" data-diff="2" aria-pressed="false" title="Longer text with numbers &amp; punctuation — each letter must be right to advance">Brisk</button>
+      </div>
+    </div>
 
     <div class="stats">
       <div class="stat"><div class="v" id="s-wpm">0<small>wpm</small></div><div class="k">speed</div></div>
@@ -233,15 +258,33 @@
 (function(){
   "use strict";
 
-  const PASSAGES = [
-    "The morning fog settles over the quiet hills, soft and grey, holding the world in a gentle pause before the light arrives to warm the waking fields.",
-    "There is a kind of peace that comes only at dusk, when the sky lets go of its colors slowly and the first calm stars begin to gather overhead.",
-    "Rain falls easy on the old tin roof tonight, a steady rhythm that asks for nothing, only that you sit and listen and let the long hours drift.",
-    "A small wooden boat rocks gently at the dock while the tide breathes in and out, patient as ever, keeping its quiet appointment with the moon.",
-    "Somewhere a kettle begins to sing, and the steam curls upward through the lamplight, and for one warm moment everything feels exactly enough."
+  const LEVELS = [
+    { name:'Gentle', strict:false, passages:[
+      "Soft rain falls on the warm grass and the slow grey clouds drift over the hills.",
+      "A small cat sleeps in the sun while the kind old house grows still and calm.",
+      "The lake is calm at dawn and the cool air smells of pine and clean rain.",
+      "We sit by the fire and watch the snow fall soft and slow on the quiet yard.",
+      "The tea is warm and the book is good and the long day melts away at last."
+    ]},
+    { name:'Steady', strict:false, passages:[
+      "The morning fog settles over the quiet hills, soft and grey, holding the world in a gentle pause before the light arrives to warm the waking fields.",
+      "There is a kind of peace that comes only at dusk, when the sky lets go of its colors slowly and the first calm stars begin to gather overhead.",
+      "Rain falls easy on the old tin roof tonight, a steady rhythm that asks for nothing, only that you sit and listen and let the long hours drift.",
+      "A small wooden boat rocks gently at the dock while the tide breathes in and out, patient as ever, keeping its quiet appointment with the moon.",
+      "Somewhere a kettle begins to sing, and the steam curls upward through the lamplight, and for one warm moment everything feels exactly enough."
+    ]},
+    { name:'Brisk', strict:true, passages:[
+      "By 6:40 a.m., the harbor stirred: three boats slipped out past the breakwater, their lanterns swaying, while gulls wheeled overhead in the pale, salt-bitten light.",
+      "She counted forty-two stairs to the attic — dusty, narrow, half-forgotten — where a single window framed the whole valley, gold and green beneath a restless April sky.",
+      "Patience, he reminded himself, adjusting the old brass telescope; at 11:15 the comet would cross — faint but certain — a smudge of light some 38 million miles away.",
+      "The recipe called for 3 cups of flour, 1/2 teaspoon of salt, and a pinch of cardamom; we doubled it twice, laughing, as the kitchen filled with warm, fragrant steam.",
+      "Between the 4th and 9th of October the leaves turned all at once — crimson, amber, rust — and the wind, sharp and sudden, scattered them across the rain-dark streets."
+    ]}
   ];
 
   // ---- State ----
+  let difficulty = 1;          // index into LEVELS (default: Steady)
+  let strictMode = false;      // set from the active level
   let target = "";
   let pos = 0;                 // index of next char to type
   let keystrokes = [];         // {t: seconds, correct: bool}
@@ -263,6 +306,7 @@
   const shareBox  = document.getElementById('sharebox');
   const shareUrl  = document.getElementById('share-url');
   const shareStatus = document.getElementById('share-status');
+  const segBtns = Array.from(document.querySelectorAll('.seg-btn'));
 
   // ---- Setup a passage ----
   function loadPassage(text){
@@ -274,7 +318,9 @@
     shareBox.classList.remove('show');
     cleanURL();
     renderPassage();
-    setHint("Just start typing — the words are waiting.");
+    setHint(strictMode
+      ? "Brisk mode — every character must be right before you move on."
+      : "Just start typing — the words are waiting.");
     resetStats();
     hideChart();
     passageEl.focus();
@@ -285,11 +331,18 @@
   }
 
   function pickNew(){
+    const pool = LEVELS[difficulty].passages;
     let i;
-    do { i = Math.floor(Math.random()*PASSAGES.length); }
-    while (PASSAGES.length>1 && i===lastIdx);
+    do { i = Math.floor(Math.random()*pool.length); }
+    while (pool.length>1 && i===lastIdx);
     lastIdx = i;
-    loadPassage(PASSAGES[i]);
+    strictMode = LEVELS[difficulty].strict;
+    loadPassage(pool[i]);
+  }
+
+  function setDifficulty(d){
+    difficulty = d;
+    segBtns.forEach(b=> b.setAttribute('aria-pressed', +b.dataset.diff===d ? 'true':'false'));
   }
 
   function renderPassage(){
@@ -346,6 +399,14 @@
     const t = (performance.now() - startTime)/1000;
     const correct = (k === target[pos]);
     keystrokes.push({ t, correct, i: pos });
+
+    if (strictMode && !correct){
+      // record the slip but hold position — the letter must be typed correctly
+      flashCurrent();
+      updateStats();
+      return;
+    }
+
     typedWrong[pos] = !correct;
     pos++;
 
@@ -353,6 +414,14 @@
     updateStats();
 
     if (pos >= target.length) finish();
+  }
+
+  function flashCurrent(){
+    const el = passageEl.children[pos];
+    if (!el) return;
+    el.classList.remove('miss');
+    void el.offsetWidth;        // restart the animation
+    el.classList.add('miss');
   }
 
   // ---- Stats ----
@@ -427,6 +496,7 @@
     const acc = keystrokes.length ? Math.round(correctSoFar()/keystrokes.length*100) : 100;
     const q = new URLSearchParams();
     q.set('s','1');
+    q.set('d', String(difficulty));
     q.set('p', String(lastIdx));
     q.set('w', String(wpm));
     q.set('a', String(acc));
@@ -467,9 +537,14 @@
     const th = q.get('th');
     if (th && ['dusk','sage','tide','sand'].includes(th)) setTheme(th);
 
+    const di = parseInt(q.get('d'),10);
+    setDifficulty((di>=0 && di<LEVELS.length) ? di : 1);
+    strictMode = LEVELS[difficulty].strict;
+
+    const pool = LEVELS[difficulty].passages;
     const pi = parseInt(q.get('p'),10);
-    lastIdx = (pi>=0 && pi<PASSAGES.length) ? pi : 0;
-    target = PASSAGES[lastIdx];
+    lastIdx = (pi>=0 && pi<pool.length) ? pi : 0;
+    target = pool[lastIdx];
 
     const times = q.get('k').split('.').map(Number).filter(n=>!isNaN(n));
     const errSet = new Set((q.get('e')||'').split('.').filter(x=>x!=='').map(Number));
@@ -647,6 +722,12 @@
   document.getElementById('restart').addEventListener('click', ()=> loadPassage(target));
   document.getElementById('next').addEventListener('click', pickNew);
   shareBtn.addEventListener('click', doShare);
+
+  // ---- Difficulty ----
+  segBtns.forEach(b=> b.addEventListener('click', ()=>{
+    setDifficulty(+b.dataset.diff);
+    pickNew();
+  }));
 
   // ---- Input wiring ----
   window.addEventListener('keydown', onKey);
