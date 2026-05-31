@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pomodoro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#3a1d18;
+    --bg2:#5a2820;
+    --accent:#ff6b4a;
+    --ink:#fbe9df;
+    --ink-dim:#d7a896;
+    --card:rgba(255,255,255,.06);
+    --line:rgba(255,255,255,.14);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Fraunces",serif;
+    background:
+      radial-gradient(120% 90% at 50% -10%, var(--bg2), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:32px 20px;
+    transition:background-color .8s ease, --bg .8s ease;
+    overflow:hidden;
+  }
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+    opacity:.05;pointer-events:none;mix-blend-mode:overlay;
+  }
+  .wrap{width:100%;max-width:520px;text-align:center;position:relative;z-index:1}
+  .brand{
+    font-style:italic;font-weight:500;font-size:15px;letter-spacing:.04em;
+    color:var(--ink-dim);margin-bottom:26px;
+  }
+  .brand b{font-style:normal;font-weight:600;color:var(--ink)}
+
+  .tabs{
+    display:inline-flex;gap:4px;padding:5px;border-radius:999px;
+    background:var(--card);border:1px solid var(--line);margin-bottom:42px;
+    backdrop-filter:blur(6px);
+  }
+  .tab{
+    border:0;cursor:pointer;font-family:inherit;
+    font-size:14px;font-weight:600;letter-spacing:.01em;
+    padding:9px 18px;border-radius:999px;color:var(--ink-dim);
+    background:transparent;transition:.25s;
+  }
+  .tab:hover{color:var(--ink)}
+  .tab.active{background:var(--accent);color:#2a120e}
+
+  .dial{position:relative;width:300px;height:300px;margin:0 auto 36px}
+  .dial svg{transform:rotate(-90deg);width:100%;height:100%}
+  .track{fill:none;stroke:var(--line);stroke-width:6}
+  .prog{fill:none;stroke:var(--accent);stroke-width:6;stroke-linecap:round;
+    transition:stroke-dashoffset 1s linear, stroke .6s}
+  .time{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+  }
+  .time .num{
+    font-family:"Space Mono",monospace;font-size:68px;font-weight:700;
+    letter-spacing:-.02em;line-height:1;
+  }
+  .time .state{margin-top:10px;font-style:italic;color:var(--ink-dim);font-size:15px}
+
+  .controls{display:flex;gap:14px;justify-content:center;align-items:center}
+  .btn{
+    font-family:"Space Mono",monospace;cursor:pointer;border:0;
+    text-transform:uppercase;letter-spacing:.12em;font-size:14px;font-weight:700;
+    padding:16px 38px;border-radius:14px;transition:transform .15s, filter .2s;
+  }
+  .btn:active{transform:translateY(2px)}
+  .btn.primary{background:var(--accent);color:#2a120e;box-shadow:0 8px 0 rgba(0,0,0,.25)}
+  .btn.primary:active{box-shadow:0 4px 0 rgba(0,0,0,.25)}
+  .btn.ghost{background:transparent;color:var(--ink-dim);border:1px solid var(--line);padding:16px 22px}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--ink-dim)}
+
+  .count{margin-top:30px;color:var(--ink-dim);font-size:13px;letter-spacing:.05em}
+  .count b{color:var(--ink);font-family:"Space Mono",monospace}
+
+  /* settings */
+  .gear{
+    position:fixed;top:22px;right:22px;width:44px;height:44px;border-radius:12px;
+    background:var(--card);border:1px solid var(--line);color:var(--ink);
+    cursor:pointer;font-size:18px;z-index:5;transition:.25s;backdrop-filter:blur(6px);
+  }
+  .gear:hover{transform:rotate(40deg);border-color:var(--ink-dim)}
+  .overlay{
+    position:fixed;inset:0;background:rgba(20,8,6,.65);backdrop-filter:blur(4px);
+    display:none;align-items:center;justify-content:center;z-index:10;padding:20px;
+  }
+  .overlay.open{display:flex}
+  .panel{
+    width:100%;max-width:380px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:22px;padding:30px;text-align:left;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .panel h2{font-size:24px;font-weight:600;margin-bottom:4px}
+  .panel p{color:var(--ink-dim);font-size:13px;font-style:italic;margin-bottom:24px}
+  .field{display:flex;justify-content:space-between;align-items:center;
+    padding:16px 0;border-top:1px solid var(--line)}
+  .field label{font-size:16px}
+  .field small{display:block;color:var(--ink-dim);font-size:12px;font-style:italic;margin-top:2px}
+  .stepper{display:flex;align-items:center;gap:2px;background:var(--card);
+    border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .stepper button{width:38px;height:42px;border:0;background:transparent;color:var(--ink);
+    font-size:20px;cursor:pointer;font-family:"Space Mono",monospace;transition:.2s}
+  .stepper button:hover{background:var(--accent);color:#2a120e}
+  .stepper input{width:46px;height:42px;border:0;background:transparent;color:var(--ink);
+    text-align:center;font-family:"Space Mono",monospace;font-size:17px;font-weight:700}
+  .stepper input::-webkit-outer-spin-button,.stepper input::-webkit-inner-spin-button{-webkit-appearance:none}
+  .done{width:100%;margin-top:26px;background:var(--accent);color:#2a120e;border:0;
+    padding:15px;border-radius:12px;font-family:"Space Mono",monospace;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-size:13px}
+</style>
+</head>
+<body>
+  <button class="gear" id="gear" aria-label="Settings">&#9881;</button>
+
+  <div class="wrap">
+    <div class="brand"><b>POMODORO</b> &middot; <span id="brandsub">stay in the zone</span></div>
+
+    <div class="tabs">
+      <button class="tab active" data-mode="focus">Pomodoro</button>
+      <button class="tab" data-mode="short">Short Break</button>
+      <button class="tab" data-mode="long">Long Break</button>
+    </div>
+
+    <div class="dial">
+      <svg viewBox="0 0 100 100">
+        <circle class="track" cx="50" cy="50" r="45"></circle>
+        <circle class="prog" id="prog" cx="50" cy="50" r="45"
+          stroke-dasharray="282.74" stroke-dashoffset="0"></circle>
+      </svg>
+      <div class="time">
+        <div class="num" id="display">25:00</div>
+        <div class="state" id="state">Ready to focus</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn primary" id="toggle">Start</button>
+      <button class="btn ghost" id="reset" aria-label="Reset">&#8635;</button>
+    </div>
+
+    <div class="count">completed pomodoros &nbsp;<b id="count">0</b></div>
+  </div>
+
+  <!-- Settings -->
+  <div class="overlay" id="overlay">
+    <div class="panel">
+      <h2>Durations</h2>
+      <p>Set the length of each timer, in minutes.</p>
+
+      <div class="field">
+        <label>Pomodoro<small>focus session</small></label>
+        <div class="stepper">
+          <button data-step="focus" data-d="-1">&minus;</button>
+          <input type="number" id="in-focus" min="1" max="120" value="25">
+          <button data-step="focus" data-d="1">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Short Break<small>quick rest</small></label>
+        <div class="stepper">
+          <button data-step="short" data-d="-1">&minus;</button>
+          <input type="number" id="in-short" min="1" max="60" value="5">
+          <button data-step="short" data-d="1">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Long Break<small>extended rest</small></label>
+        <div class="stepper">
+          <button data-step="long" data-d="-1">&minus;</button>
+          <input type="number" id="in-long" min="1" max="90" value="15">
+          <button data-step="long" data-d="1">+</button>
+        </div>
+      </div>
+
+      <button class="done" id="closeSettings">Save &amp; Close</button>
+    </div>
+  </div>
+
+<script>
+const themes = {
+  focus: {bg:"#3a1d18", bg2:"#5a2820", accent:"#ff6b4a", dim:"#d7a896", sub:"stay in the zone", state:"Time to focus"},
+  short: {bg:"#16302b", bg2:"#1f463d", accent:"#5fd6a6", dim:"#9bc7b6", sub:"a short breather", state:"Take a short break"},
+  long:  {bg:"#1c2640", bg2:"#28365e", accent:"#7aa2ff", dim:"#a3b3d9", sub:"recharge fully", state:"Enjoy a long break"}
+};
+
+let durations = {focus:25, short:5, long:15};
+let mode = "focus";
+let remaining = durations[mode]*60;
+let running = false;
+let tick = null;
+let completed = 0;
+const CIRC = 2*Math.PI*45;
+
+const $ = id => document.getElementById(id);
+const display=$("display"), stateEl=$("state"), toggleBtn=$("toggle"),
+      prog=$("prog"), countEl=$("count"), brandsub=$("brandsub");
+
+function applyTheme(m){
+  const t=themes[m], r=document.documentElement.style;
+  r.setProperty("--bg",t.bg); r.setProperty("--bg2",t.bg2);
+  r.setProperty("--accent",t.accent); r.setProperty("--ink-dim",t.dim);
+  brandsub.textContent=t.sub;
+}
+function fmt(s){const m=Math.floor(s/60),x=s%60;return `${String(m).padStart(2,"0")}:${String(x).padStart(2,"0")}`;}
+function render(){
+  display.textContent=fmt(remaining);
+  const total=durations[mode]*60;
+  prog.style.strokeDashoffset = CIRC*(1 - remaining/total);
+  document.title = (running?"▶ ":"") + fmt(remaining) + " — Pomodoro";
+}
+function setMode(m){
+  mode=m; stop();
+  remaining=durations[mode]*60;
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===m));
+  applyTheme(m);
+  stateEl.textContent=running?themes[m].state:(m==="focus"?"Ready to focus":"Ready for a break");
+  render();
+}
+function chime(){
+  try{
+    const ac=new (window.AudioContext||window.webkitAudioContext)();
+    [880,660,990].forEach((f,i)=>{
+      const o=ac.createOscillator(), g=ac.createGain();
+      o.frequency.value=f; o.type="sine"; o.connect(g); g.connect(ac.destination);
+      const t=ac.currentTime+i*0.18;
+      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.3,t+.02);
+      g.gain.exponentialRampToValueAtTime(.001,t+.4);
+      o.start(t); o.stop(t+.4);
+    });
+  }catch(e){}
+}
+function start(){
+  if(running) return;
+  running=true; toggleBtn.textContent="Pause";
+  stateEl.textContent=themes[mode].state;
+  tick=setInterval(()=>{
+    remaining--;
+    if(remaining<=0){
+      remaining=0; render(); finish(); return;
+    }
+    render();
+  },1000);
+}
+function stop(){running=false; toggleBtn.textContent="Start"; clearInterval(tick);}
+function finish(){
+  stop(); chime();
+  if(mode==="focus"){completed++; countEl.textContent=completed;}
+  stateEl.textContent="Done! "+(mode==="focus"?"Take a break.":"Back to work.");
+}
+function reset(){stop(); remaining=durations[mode]*60;
+  stateEl.textContent=mode==="focus"?"Ready to focus":"Ready for a break"; render();}
+
+toggleBtn.onclick=()=> running?stop():start();
+$("reset").onclick=reset;
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
+
+// settings
+const overlay=$("overlay");
+$("gear").onclick=()=>{syncInputs();overlay.classList.add("open");};
+$("closeSettings").onclick=()=>{commitInputs();overlay.classList.remove("open");};
+overlay.onclick=e=>{if(e.target===overlay){commitInputs();overlay.classList.remove("open");}};
+
+function syncInputs(){
+  $("in-focus").value=durations.focus;
+  $("in-short").value=durations.short;
+  $("in-long").value=durations.long;
+}
+function clamp(v,mn,mx){v=parseInt(v)||mn;return Math.max(mn,Math.min(mx,v));}
+function commitInputs(){
+  durations.focus=clamp($("in-focus").value,1,120);
+  durations.short=clamp($("in-short").value,1,60);
+  durations.long =clamp($("in-long").value,1,90);
+  if(!running){remaining=durations[mode]*60; render();}
+}
+document.querySelectorAll(".stepper button").forEach(btn=>{
+  btn.onclick=()=>{
+    const inp=$("in-"+btn.dataset.step);
+    inp.value=(parseInt(inp.value)||0)+parseInt(btn.dataset.d);
+    const mn=+inp.min,mx=+inp.max;
+    inp.value=Math.max(mn,Math.min(mx,+inp.value));
+  };
+});
+
+applyTheme("focus");
+render();
+</script>
+</body>
+</html>
