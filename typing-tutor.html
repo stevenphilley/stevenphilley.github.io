@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stilltype · a quiet typing tutor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* default theme: Dusk */
+    --base: #251f2e;
+    --base-2: #1c1724;
+    --ink: #f3ebdd;
+    --ink-soft: #9a8ba0;
+    --ink-faint: #5c5066;
+    --accent: #e7b485;
+    --accent-2: #d98b97;
+    --error: #e2756f;
+    --panel: rgba(255,255,255,0.045);
+    --panel-line: rgba(255,255,255,0.09);
+    --blob-1: #5b3d6b;
+    --blob-2: #8a4f57;
+    --blob-3: #34506b;
+    --grid: rgba(255,255,255,0.06);
+  }
+
+  /* ---- Themes ---- */
+  body[data-theme="sage"]{
+    --base:#efe9da; --base-2:#e3dcc8; --ink:#2f3a2c; --ink-soft:#7d8470;
+    --ink-faint:#b3b29a; --accent:#7e9a6a; --accent-2:#b3925a; --error:#c2683f;
+    --panel:rgba(60,70,50,0.05); --panel-line:rgba(60,70,50,0.13);
+    --blob-1:#cdd6b4; --blob-2:#e6cf9f; --blob-3:#bcd0c4; --grid:rgba(60,70,50,0.08);
+  }
+  body[data-theme="tide"]{
+    --base:#18262b; --base-2:#11191d; --ink:#e7f0ee; --ink-soft:#86a09f;
+    --ink-faint:#465a5c; --accent:#8fd0c8; --accent-2:#7fb0d6; --error:#e88a7c;
+    --panel:rgba(255,255,255,0.04); --panel-line:rgba(255,255,255,0.08);
+    --blob-1:#28525a; --blob-2:#2f4a66; --blob-3:#1f5e54; --grid:rgba(255,255,255,0.055);
+  }
+  body[data-theme="sand"]{
+    --base:#f0e6d6; --base-2:#e6d8c2; --ink:#3a2c22; --ink-soft:#8a7762;
+    --ink-faint:#c2ac90; --accent:#c98a5a; --accent-2:#a98c5d; --error:#bb5c44;
+    --panel:rgba(70,50,35,0.045); --panel-line:rgba(70,50,35,0.12);
+    --blob-1:#e7c89e; --blob-2:#dcae8e; --blob-3:#cdbf9a; --grid:rgba(70,50,35,0.08);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:"Newsreader", Georgia, serif;
+    color:var(--ink);
+    background:var(--base);
+    overflow-x:hidden;
+    transition:background .8s ease, color .8s ease;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---- Mellow drifting background ---- */
+  .bg{position:fixed; inset:0; z-index:-2; overflow:hidden; background:
+      radial-gradient(120% 120% at 50% -10%, var(--base) 0%, var(--base-2) 100%);}
+  .blob{position:absolute; border-radius:50%; filter:blur(70px); opacity:.55;
+    mix-blend-mode:screen; transition:background .8s ease;}
+  body[data-theme="sage"] .blob,
+  body[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.6; filter:blur(80px);}
+  .b1{width:46vw; height:46vw; background:var(--blob-1); top:-8vw; left:-6vw;
+    animation:drift1 26s ease-in-out infinite alternate;}
+  .b2{width:40vw; height:40vw; background:var(--blob-2); bottom:-10vw; right:-4vw;
+    animation:drift2 32s ease-in-out infinite alternate;}
+  .b3{width:34vw; height:34vw; background:var(--blob-3); top:38%; left:42%;
+    animation:drift3 38s ease-in-out infinite alternate;}
+  @keyframes drift1{to{transform:translate(8vw,6vh) scale(1.12);}}
+  @keyframes drift2{to{transform:translate(-7vw,-5vh) scale(1.08);}}
+  @keyframes drift3{to{transform:translate(-6vw,7vh) scale(1.15);}}
+  /* faint grain */
+  .grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+    mix-blend-mode:overlay;}
+
+  /* ---- Layout ---- */
+  .wrap{max-width:860px; margin:0 auto; padding:34px 24px 70px;
+    animation:rise .9s cubic-bezier(.2,.7,.2,1) both;}
+  @keyframes rise{from{opacity:0; transform:translateY(14px);}}
+
+  header{display:flex; align-items:flex-end; justify-content:space-between;
+    gap:18px; flex-wrap:wrap; margin-bottom:26px;}
+  .brand h1{font-family:"Fraunces",serif; font-weight:500; font-size:clamp(28px,5vw,40px);
+    letter-spacing:-0.01em; margin:0; line-height:1;}
+  .brand p{margin:.5em 0 0; color:var(--ink-soft); font-size:15px; font-style:italic;}
+
+  .themes{display:flex; gap:9px;}
+  .swatch{width:26px; height:26px; border-radius:50%; cursor:pointer; padding:0;
+    border:2px solid transparent; transition:transform .25s, border-color .25s;
+    background:linear-gradient(135deg, var(--s1), var(--s2));}
+  .swatch:hover{transform:scale(1.12);}
+  .swatch[aria-pressed="true"]{border-color:var(--ink);}
+  .sw-dusk{--s1:#5b3d6b; --s2:#e7b485;}
+  .sw-sage{--s1:#7e9a6a; --s2:#e6cf9f;}
+  .sw-tide{--s1:#2f4a66; --s2:#8fd0c8;}
+  .sw-sand{--s1:#c98a5a; --s2:#e7c89e;}
+
+  /* ---- Stats row ---- */
+  .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--panel-line); border:1px solid var(--panel-line);
+    border-radius:16px; overflow:hidden; margin-bottom:22px;}
+  .stat{background:var(--base); padding:15px 16px; text-align:center;}
+  body[data-theme] .stat{background:transparent;}
+  .stat .v{font-family:"Spline Sans Mono",monospace; font-size:clamp(20px,4vw,26px);
+    font-weight:500; line-height:1; font-variant-numeric:tabular-nums;}
+  .stat .v small{font-size:.55em; color:var(--ink-soft); font-weight:400; margin-left:2px;}
+  .stat .k{margin-top:7px; font-size:11.5px; letter-spacing:.13em; text-transform:uppercase;
+    color:var(--ink-soft);}
+
+  /* ---- Typing panel ---- */
+  .panel{background:var(--panel); border:1px solid var(--panel-line);
+    border-radius:20px; padding:30px 32px; backdrop-filter:blur(6px);}
+  .passage{font-size:clamp(20px,3.3vw,25px); line-height:1.9; letter-spacing:.005em;
+    word-spacing:.06em; user-select:none; cursor:text; outline:none;}
+  .passage .ch{color:var(--ink-faint); transition:color .12s ease; position:relative;}
+  .passage .ch.done{color:var(--ink);}
+  .passage .ch.bad{color:var(--error);}
+  .passage .ch.bad.space{background:color-mix(in srgb,var(--error) 28%, transparent);
+    border-radius:3px;}
+  .passage .ch.cur{color:var(--ink-soft);}
+  .passage .ch.cur::before{content:""; position:absolute; left:-2px; top:.08em; bottom:.04em;
+    width:2px; background:var(--accent); border-radius:2px; animation:blink 1.05s step-end infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .hint{margin-top:18px; color:var(--ink-soft); font-size:14px; font-style:italic;
+    display:flex; align-items:center; gap:8px; min-height:20px;}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 0 0 var(--accent); animation:pulse 2s ease-out infinite;}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 60%,transparent);}
+    100%{box-shadow:0 0 0 9px transparent;}}
+
+  /* ---- Chart ---- */
+  .chartcard{margin-top:22px; background:var(--panel); border:1px solid var(--panel-line);
+    border-radius:20px; padding:22px 22px 16px; backdrop-filter:blur(6px);}
+  .chart-head{display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:6px; flex-wrap:wrap; gap:8px;}
+  .chart-head h2{font-family:"Fraunces",serif; font-weight:500; font-size:18px; margin:0;
+    letter-spacing:-0.01em;}
+  .legend{display:flex; gap:16px; font-size:12.5px; color:var(--ink-soft);}
+  .legend span{display:inline-flex; align-items:center; gap:6px;}
+  .lk{width:16px; height:3px; border-radius:2px; background:var(--accent);}
+  .lk.tick{width:2px; height:13px; background:var(--error); border-radius:1px;}
+  canvas{display:block; width:100%; height:230px;}
+
+  /* ---- Controls ---- */
+  .controls{display:flex; gap:12px; margin-top:22px; flex-wrap:wrap;}
+  button.btn{font-family:"Fraunces",serif; font-size:15px; cursor:pointer;
+    padding:11px 22px; border-radius:999px; border:1px solid var(--panel-line);
+    background:var(--panel); color:var(--ink); transition:transform .2s, background .3s, border-color .3s;}
+  button.btn:hover{transform:translateY(-2px); border-color:var(--accent);}
+  button.btn.primary{background:var(--accent); color:var(--base-2); border-color:var(--accent);}
+  button.btn.primary:hover{background:var(--accent-2); border-color:var(--accent-2);}
+
+  .done-flag{font-style:italic; color:var(--accent);}
+</style>
+</head>
+<body data-theme="dusk">
+  <div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="grain"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <h1>Stilltype</h1>
+        <p>a quiet place to find your rhythm</p>
+      </div>
+      <div class="themes" role="group" aria-label="background theme">
+        <button class="swatch sw-dusk" data-set="dusk" aria-pressed="true"  title="Dusk"></button>
+        <button class="swatch sw-sage" data-set="sage" aria-pressed="false" title="Sage"></button>
+        <button class="swatch sw-tide" data-set="tide" aria-pressed="false" title="Tide"></button>
+        <button class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"></button>
+      </div>
+    </header>
+
+    <div class="stats">
+      <div class="stat"><div class="v" id="s-wpm">0<small>wpm</small></div><div class="k">speed</div></div>
+      <div class="stat"><div class="v" id="s-acc">100<small>%</small></div><div class="k">accuracy</div></div>
+      <div class="stat"><div class="v" id="s-time">0.0<small>s</small></div><div class="k">time</div></div>
+      <div class="stat"><div class="v" id="s-miss">0</div><div class="k">mistakes</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="passage" id="passage" tabindex="0" aria-label="typing passage"></div>
+      <div class="hint" id="hint"><span class="dot"></span><span id="hint-text">Just start typing — the words are waiting.</span></div>
+    </div>
+
+    <div class="chartcard">
+      <div class="chart-head">
+        <h2>Your pace, moment to moment</h2>
+        <div class="legend">
+          <span><i class="lk"></i> speed</span>
+          <span><i class="lk tick"></i> mistake</span>
+        </div>
+      </div>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <div class="controls">
+      <button class="btn primary" id="restart">Restart this passage</button>
+      <button class="btn" id="next">New passage</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+
+  const PASSAGES = [
+    "The morning fog settles over the quiet hills, soft and grey, holding the world in a gentle pause before the light arrives to warm the waking fields.",
+    "There is a kind of peace that comes only at dusk, when the sky lets go of its colors slowly and the first calm stars begin to gather overhead.",
+    "Rain falls easy on the old tin roof tonight, a steady rhythm that asks for nothing, only that you sit and listen and let the long hours drift.",
+    "A small wooden boat rocks gently at the dock while the tide breathes in and out, patient as ever, keeping its quiet appointment with the moon.",
+    "Somewhere a kettle begins to sing, and the steam curls upward through the lamplight, and for one warm moment everything feels exactly enough."
+  ];
+
+  // ---- State ----
+  let target = "";
+  let pos = 0;                 // index of next char to type
+  let keystrokes = [];         // {t: seconds, correct: bool}
+  let startTime = null;
+  let finished = false;
+  let lastIdx = -1;            // for picking a different passage each time
+
+  const passageEl = document.getElementById('passage');
+  const hintText   = document.getElementById('hint-text');
+  const sWpm  = document.getElementById('s-wpm');
+  const sAcc  = document.getElementById('s-acc');
+  const sTime = document.getElementById('s-time');
+  const sMiss = document.getElementById('s-miss');
+  const canvas = document.getElementById('chart');
+  const ctx = canvas.getContext('2d');
+
+  // ---- Setup a passage ----
+  function loadPassage(text){
+    target = text;
+    pos = 0; keystrokes = []; startTime = null; finished = false; typedWrong = {};
+    renderPassage();
+    setHint("Just start typing — the words are waiting.");
+    resetStats();
+    drawChart();
+    passageEl.focus();
+  }
+
+  function pickNew(){
+    let i;
+    do { i = Math.floor(Math.random()*PASSAGES.length); }
+    while (PASSAGES.length>1 && i===lastIdx);
+    lastIdx = i;
+    loadPassage(PASSAGES[i]);
+  }
+
+  function renderPassage(){
+    let html = "";
+    for (let i=0;i<target.length;i++){
+      const c = target[i];
+      const display = c === " " ? "&nbsp;" : escapeHtml(c);
+      html += `<span class="ch" data-i="${i}">${display}</span>`;
+    }
+    passageEl.innerHTML = html;
+    paint();
+  }
+
+  function escapeHtml(s){return s.replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+  // ---- Painting char states ----
+  function paint(){
+    const spans = passageEl.children;
+    for (let i=0;i<spans.length;i++){
+      const el = spans[i];
+      el.className = "ch";
+      if (i < pos){
+        // already typed — was it correct? find from typedChars
+        if (typedWrong[i]) { el.classList.add("bad"); if(target[i]===" ") el.classList.add("space"); }
+        else el.classList.add("done");
+      } else if (i === pos && !finished){
+        el.classList.add("cur");
+      }
+    }
+  }
+
+  // track whether each position ended up wrong (last attempt)
+  let typedWrong = {};
+
+  // ---- Key handling ----
+  function onKey(e){
+    if (finished) return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+    const k = e.key;
+
+    if (k === "Backspace"){
+      e.preventDefault();
+      if (pos > 0){ pos--; delete typedWrong[pos]; paint(); updateStats(); drawChart(); }
+      return;
+    }
+    if (k === "Tab"){ e.preventDefault(); return; }
+    if (k.length !== 1) return;          // ignore Shift, arrows, etc.
+
+    e.preventDefault();
+    if (pos >= target.length) return;
+
+    if (startTime === null) startTime = performance.now();
+    const t = (performance.now() - startTime)/1000;
+    const correct = (k === target[pos]);
+    keystrokes.push({ t, correct, i: pos });
+    typedWrong[pos] = !correct;
+    pos++;
+
+    paint();
+    updateStats();
+    drawChart();
+
+    if (pos >= target.length) finish();
+  }
+
+  // ---- Stats ----
+  function resetStats(){
+    sWpm.innerHTML  = '0<small>wpm</small>';
+    sAcc.innerHTML  = '100<small>%</small>';
+    sTime.innerHTML = '0.0<small>s</small>';
+    sMiss.textContent = '0';
+  }
+
+  function elapsed(){
+    if (startTime === null) return 0;
+    const end = finished ? finishTime : performance.now();
+    return (end - startTime)/1000;
+  }
+  let finishTime = 0;
+
+  function correctSoFar(){
+    let n = 0;
+    for (let i=0;i<pos;i++) if (!typedWrong[i]) n++;
+    return n;
+  }
+
+  function mistakeCount(){
+    let n = 0; keystrokes.forEach(k=>{ if(!k.correct) n++; }); return n;
+  }
+
+  function updateStats(){
+    const el = elapsed();
+    const mins = el/60;
+    const netWpm = mins > 0 ? Math.max(0, Math.round((correctSoFar()/5)/mins)) : 0;
+    const acc = keystrokes.length ? Math.round(correctSoFar()/keystrokes.length*100) : 100;
+    sWpm.innerHTML  = netWpm + '<small>wpm</small>';
+    sAcc.innerHTML  = acc + '<small>%</small>';
+    sTime.innerHTML = el.toFixed(1) + '<small>s</small>';
+    sMiss.textContent = mistakeCount();
+  }
+
+  function setHint(t){ hintText.innerHTML = t; }
+
+  function finish(){
+    finished = true;
+    finishTime = performance.now();
+    paint();
+    updateStats();
+    const el = elapsed();
+    const mins = el/60;
+    const netWpm = Math.round((correctSoFar()/5)/mins);
+    const peak = Math.round(peakWpm());
+    const m = mistakeCount();
+    setHint(`<span class="done-flag">Done.</span> ${netWpm} wpm · peak ${peak} · ${m} mistake${m===1?'':'s'} · ${el.toFixed(1)}s — take a breath, then go again.`);
+    drawChart();
+  }
+
+  // ---- Rolling WPM series for the chart ----
+  const WINDOW = 2.5; // seconds
+  function series(){
+    const pts = [];
+    for (let n=0;n<keystrokes.length;n++){
+      const ti = keystrokes[n].t;
+      const span = Math.max(1.0, Math.min(WINDOW, ti)); // grow at the start, floor to avoid spikes
+      const from = ti - span;
+      let count = 0;
+      for (let j=0;j<=n;j++){ if (keystrokes[j].t > from) count++; }
+      const wpm = (count/5)*(60/span);
+      pts.push({ t: ti, wpm });
+    }
+    // light exponential smoothing
+    const a = 0.35; let prev = pts.length ? pts[0].wpm : 0;
+    for (const p of pts){ prev = a*p.wpm + (1-a)*prev; p.s = prev; }
+    return pts;
+  }
+  function peakWpm(){ const s = series(); let m=0; s.forEach(p=>{ if(p.s>m) m=p.s; }); return m; }
+
+  // ---- Chart drawing ----
+  function cssVar(name){ return getComputedStyle(document.body).getPropertyValue(name).trim(); }
+
+  function drawChart(){
+    const dpr = window.devicePixelRatio || 1;
+    const cssW = canvas.clientWidth || canvas.parentElement.clientWidth;
+    const cssH = 230;
+    canvas.width  = Math.round(cssW*dpr);
+    canvas.height = Math.round(cssH*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    const accent = cssVar('--accent');
+    const errorC = cssVar('--error');
+    const grid   = cssVar('--grid');
+    const inkSoft= cssVar('--ink-soft');
+
+    const padL = 42, padR = 14, padT = 14, padB = 30;
+    const W = cssW - padL - padR;
+    const H = cssH - padT - padB;
+    const x0 = padL, y0 = padT;
+
+    const pts = series();
+    const maxT = Math.max(2, finished ? elapsed() : (pts.length ? pts[pts.length-1].t : 2));
+    let maxW = 40; pts.forEach(p=>{ if(p.s>maxW) maxW=p.s; });
+    maxW = Math.ceil(maxW/20)*20; // round up to nice 20s
+
+    const X = t => x0 + (t/maxT)*W;
+    const Y = w => y0 + H - (w/maxW)*H;
+
+    // ---- gridlines + y labels ----
+    ctx.font = '11px "Spline Sans Mono", monospace';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'right';
+    const ySteps = maxW/20;
+    for (let s=0;s<=ySteps;s++){
+      const w = s*20; const yy = Y(w);
+      ctx.strokeStyle = grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x0+W, yy); ctx.stroke();
+      ctx.fillStyle = inkSoft;
+      ctx.fillText(w, x0-8, yy);
+    }
+    // x labels
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const xSteps = 4;
+    for (let s=0;s<=xSteps;s++){
+      const t = (maxT/xSteps)*s; const xx = X(t);
+      ctx.fillStyle = inkSoft;
+      ctx.fillText(t.toFixed(t<10?1:0)+'s', xx, y0+H+8);
+    }
+
+    // ---- area + line ----
+    if (pts.length >= 2){
+      // area fill
+      const grad = ctx.createLinearGradient(0,y0,0,y0+H);
+      grad.addColorStop(0, hexA(accent,0.34));
+      grad.addColorStop(1, hexA(accent,0.02));
+      ctx.beginPath();
+      ctx.moveTo(X(pts[0].t), y0+H);
+      pts.forEach(p=> ctx.lineTo(X(p.t), Y(p.s)));
+      ctx.lineTo(X(pts[pts.length-1].t), y0+H);
+      ctx.closePath();
+      ctx.fillStyle = grad; ctx.fill();
+
+      // line
+      ctx.beginPath();
+      pts.forEach((p,i)=>{ const xx=X(p.t), yy=Y(p.s); i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy); });
+      ctx.strokeStyle = accent; ctx.lineWidth = 2.4;
+      ctx.lineJoin='round'; ctx.lineCap='round';
+      ctx.shadowColor = hexA(accent,0.5); ctx.shadowBlur = 8;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // leading dot
+      const last = pts[pts.length-1];
+      ctx.beginPath(); ctx.arc(X(last.t), Y(last.s), 3.4, 0, Math.PI*2);
+      ctx.fillStyle = accent; ctx.fill();
+    } else if (!keystrokes.length){
+      ctx.fillStyle = inkSoft; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font = 'italic 14px "Newsreader", serif';
+      ctx.fillText('your speed will appear here as you type', x0+W/2, y0+H/2);
+    }
+
+    // ---- mistake ticks ----
+    ctx.strokeStyle = errorC; ctx.lineWidth = 2;
+    keystrokes.forEach(k=>{
+      if (!k.correct){
+        const xx = X(k.t);
+        ctx.beginPath();
+        ctx.moveTo(xx, y0+H);
+        ctx.lineTo(xx, y0+H-14);
+        ctx.stroke();
+        ctx.beginPath(); ctx.arc(xx, y0+H-16, 2.4, 0, Math.PI*2);
+        ctx.fillStyle = errorC; ctx.fill();
+      }
+    });
+  }
+
+  // hex (#rrggbb) -> rgba string; falls back if value is already rgb()
+  function hexA(c, a){
+    c = c.trim();
+    if (c[0] === '#'){
+      let h = c.slice(1);
+      if (h.length===3) h = h.split('').map(x=>x+x).join('');
+      const r=parseInt(h.slice(0,2),16), g=parseInt(h.slice(2,4),16), b=parseInt(h.slice(4,6),16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+    return c; // best effort
+  }
+
+  // ---- Themes ----
+  document.querySelectorAll('.swatch').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.body.setAttribute('data-theme', btn.dataset.set);
+      document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
+      drawChart();
+    });
+  });
+
+  // ---- Controls ----
+  document.getElementById('restart').addEventListener('click', ()=> loadPassage(target));
+  document.getElementById('next').addEventListener('click', pickNew);
+
+  // ---- Input wiring ----
+  window.addEventListener('keydown', onKey);
+  passageEl.addEventListener('click', ()=> passageEl.focus());
+  window.addEventListener('resize', drawChart);
+
+  // live timer tick so the time stat keeps moving while typing
+  setInterval(()=>{ if(startTime!==null && !finished) updateStats(); }, 100);
+
+  // ---- Go ----
+  pickNew();
+})();
+</script>
+</body>
+</html>
