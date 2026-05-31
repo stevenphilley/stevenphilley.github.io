@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Percent — A Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,400..600&family=DM+Mono:wght@400;500&family=Hanken+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f1ead9;
+    --paper-2:#e9e0cb;
+    --ink:#21201c;
+    --ink-soft:#5a564c;
+    --vermillion:#d83a1f;
+    --vermillion-deep:#b22d15;
+    --line:#cdc3aa;
+    --accent-2:#1f4a3f;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:"Hanken Grotesk",sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    padding:clamp(16px,4vw,48px);
+    background-image:
+      radial-gradient(circle at 0.5px 0.5px, rgba(33,32,28,.05) 0.5px, transparent 0);
+    background-size:4px 4px;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+  .sheet{
+    width:100%;
+    max-width:760px;
+    border:1.5px solid var(--ink);
+    background:var(--paper);
+    box-shadow:14px 14px 0 rgba(33,32,28,.9);
+    position:relative;
+    overflow:hidden;
+  }
+  /* header */
+  .head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    padding:clamp(22px,4vw,38px) clamp(22px,5vw,44px) 0;
+    position:relative;
+  }
+  .head h1{
+    font-family:"Fraunces",serif;
+    font-weight:600;
+    font-size:clamp(38px,9vw,76px);
+    line-height:.86;
+    letter-spacing:-.02em;
+  }
+  .head h1 em{
+    font-style:italic;
+    color:var(--vermillion);
+  }
+  .glyph{
+    font-family:"Fraunces",serif;
+    font-weight:900;
+    font-size:clamp(80px,20vw,168px);
+    line-height:.7;
+    color:var(--vermillion);
+    opacity:.14;
+    position:absolute;
+    right:clamp(-6px,1vw,8px);
+    top:clamp(-14px,-2vw,-8px);
+    pointer-events:none;
+    user-select:none;
+  }
+  .kicker{
+    font-size:11px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    font-weight:600;
+  }
+  /* tabs */
+  .tabs{
+    display:flex;
+    border-top:1.5px solid var(--ink);
+    border-bottom:1.5px solid var(--ink);
+    margin-top:clamp(22px,4vw,34px);
+  }
+  .tab{
+    flex:1;
+    border:0;
+    background:transparent;
+    border-right:1.5px solid var(--ink);
+    padding:14px 10px;
+    cursor:pointer;
+    font-family:"Hanken Grotesk",sans-serif;
+    font-weight:600;
+    font-size:clamp(11px,2.4vw,13px);
+    color:var(--ink-soft);
+    letter-spacing:.02em;
+    transition:background .18s ease,color .18s ease;
+    position:relative;
+  }
+  .tab:last-child{border-right:0}
+  .tab .num{
+    font-family:"DM Mono",monospace;
+    display:block;
+    font-size:10px;
+    opacity:.6;
+    margin-bottom:3px;
+  }
+  .tab:hover{background:var(--paper-2)}
+  .tab.active{
+    background:var(--ink);
+    color:var(--paper);
+  }
+  .tab.active .num{color:var(--vermillion);opacity:1}
+  /* body */
+  .body{padding:clamp(26px,5vw,44px)}
+  .panel{display:none;animation:rise .4s cubic-bezier(.2,.7,.3,1)}
+  .panel.active{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .equation{
+    font-family:"Fraunces",serif;
+    font-size:clamp(20px,4.4vw,30px);
+    font-weight:400;
+    line-height:1.7;
+    color:var(--ink);
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px 6px;
+  }
+  .equation .w{color:var(--ink-soft);font-style:italic}
+  input.f{
+    font-family:"DM Mono",monospace;
+    font-size:clamp(18px,4vw,26px);
+    font-weight:500;
+    width:clamp(82px,18vw,120px);
+    border:0;
+    border-bottom:2px solid var(--vermillion);
+    background:rgba(216,58,31,.06);
+    color:var(--ink);
+    padding:4px 10px;
+    text-align:center;
+    outline:none;
+    transition:background .15s ease;
+    border-radius:2px 2px 0 0;
+  }
+  input.f:focus{background:rgba(216,58,31,.14)}
+  input.f::placeholder{color:var(--ink-soft);opacity:.45}
+  /* hide number spinners */
+  input.f::-webkit-outer-spin-button,
+  input.f::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  input.f[type=number]{-moz-appearance:textfield}
+
+  .result{
+    margin-top:clamp(28px,5vw,40px);
+    border-top:1.5px dashed var(--line);
+    padding-top:clamp(20px,4vw,28px);
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .result .lab{
+    font-size:11px;
+    letter-spacing:.3em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  .result .val{
+    font-family:"Fraunces",serif;
+    font-weight:600;
+    font-size:clamp(40px,11vw,82px);
+    line-height:.9;
+    color:var(--vermillion);
+    letter-spacing:-.02em;
+    transition:color .2s;
+    word-break:break-word;
+  }
+  .result .val.neg{color:var(--accent-2)}
+  .result .val.idle{color:var(--line)}
+  .note{
+    font-family:"DM Mono",monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:10px;
+    flex-basis:100%;
+    min-height:18px;
+  }
+  /* footer strip */
+  .strip{
+    border-top:1.5px solid var(--ink);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px clamp(22px,5vw,44px);
+    font-family:"DM Mono",monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    letter-spacing:.04em;
+  }
+  .strip .dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--vermillion);
+    display:inline-block;margin-right:7px;
+    vertical-align:middle;
+  }
+</style>
+</head>
+<body>
+  <main class="sheet">
+    <div class="head">
+      <div>
+        <div class="kicker">The Arithmetic Desk</div>
+        <h1>Per<em>cent</em>.</h1>
+      </div>
+      <span class="glyph">%</span>
+    </div>
+
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="of"><span class="num">01</span>% of a number</button>
+      <button class="tab" data-tab="is"><span class="num">02</span>X is what %</button>
+      <button class="tab" data-tab="ch"><span class="num">03</span>% change</button>
+    </nav>
+
+    <div class="body">
+      <!-- 01 -->
+      <section class="panel active" data-panel="of">
+        <div class="equation">
+          <span>What is</span>
+          <input class="f" type="number" id="of_p" placeholder="20" inputmode="decimal">
+          <span class="w">percent of</span>
+          <input class="f" type="number" id="of_n" placeholder="150" inputmode="decimal">
+          <span class="w">?</span>
+        </div>
+        <div class="result">
+          <span class="lab">Answer</span>
+          <span class="val idle" id="of_r">—</span>
+          <span class="note" id="of_note"></span>
+        </div>
+      </section>
+
+      <!-- 02 -->
+      <section class="panel" data-panel="is">
+        <div class="equation">
+          <input class="f" type="number" id="is_a" placeholder="30" inputmode="decimal">
+          <span class="w">is what percent of</span>
+          <input class="f" type="number" id="is_b" placeholder="120" inputmode="decimal">
+          <span class="w">?</span>
+        </div>
+        <div class="result">
+          <span class="lab">Answer</span>
+          <span class="val idle" id="is_r">—</span>
+          <span class="note" id="is_note"></span>
+        </div>
+      </section>
+
+      <!-- 03 -->
+      <section class="panel" data-panel="ch">
+        <div class="equation">
+          <span>From</span>
+          <input class="f" type="number" id="ch_a" placeholder="80" inputmode="decimal">
+          <span class="w">to</span>
+          <input class="f" type="number" id="ch_b" placeholder="100" inputmode="decimal">
+          <span class="w">— what's the change?</span>
+        </div>
+        <div class="result">
+          <span class="lab">Answer</span>
+          <span class="val idle" id="ch_r">—</span>
+          <span class="note" id="ch_note"></span>
+        </div>
+      </section>
+    </div>
+
+    <div class="strip">
+      <span><span class="dot"></span>Live result</span>
+      <span id="clock">—</span>
+    </div>
+  </main>
+
+<script>
+  // tab switching
+  const tabs=document.querySelectorAll('.tab');
+  const panels=document.querySelectorAll('.panel');
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.classList.remove('active'));
+    panels.forEach(p=>p.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelector('.panel[data-panel="'+t.dataset.tab+'"]').classList.add('active');
+  }));
+
+  // helpers
+  const $=id=>document.getElementById(id);
+  const fmt=n=>{
+    if(!isFinite(n))return '—';
+    const r=Math.round(n*1e6)/1e6;
+    return r.toLocaleString('en-US',{maximumFractionDigits:6});
+  };
+  const setVal=(el,txt,state)=>{
+    el.textContent=txt;
+    el.classList.remove('idle','neg');
+    if(state)el.classList.add(state);
+  };
+  const num=el=>el.value.trim()===''?null:parseFloat(el.value);
+
+  // 01 — percent of
+  function calcOf(){
+    const p=num($('of_p')),n=num($('of_n'));
+    if(p===null||n===null||isNaN(p)||isNaN(n)){
+      setVal($('of_r'),'—','idle');$('of_note').textContent='';return;
+    }
+    const v=p/100*n;
+    setVal($('of_r'),fmt(v),v<0?'neg':null);
+    $('of_note').textContent=`${fmt(p)}% × ${fmt(n)} = ${fmt(v)}`;
+  }
+  ['of_p','of_n'].forEach(id=>$(id).addEventListener('input',calcOf));
+
+  // 02 — is what percent
+  function calcIs(){
+    const a=num($('is_a')),b=num($('is_b'));
+    if(a===null||b===null||isNaN(a)||isNaN(b)){
+      setVal($('is_r'),'—','idle');$('is_note').textContent='';return;
+    }
+    if(b===0){setVal($('is_r'),'∞','idle');$('is_note').textContent='Cannot divide by zero.';return;}
+    const v=a/b*100;
+    setVal($('is_r'),fmt(v)+'%',v<0?'neg':null);
+    $('is_note').textContent=`${fmt(a)} ÷ ${fmt(b)} × 100`;
+  }
+  ['is_a','is_b'].forEach(id=>$(id).addEventListener('input',calcIs));
+
+  // 03 — percent change
+  function calcCh(){
+    const a=num($('ch_a')),b=num($('ch_b'));
+    if(a===null||b===null||isNaN(a)||isNaN(b)){
+      setVal($('ch_r'),'—','idle');$('ch_note').textContent='';return;
+    }
+    if(a===0){setVal($('ch_r'),'∞','idle');$('ch_note').textContent='Starting value of zero is undefined.';return;}
+    const v=(b-a)/Math.abs(a)*100;
+    const dir=v>0?'increase':v<0?'decrease':'no change';
+    setVal($('ch_r'),(v>0?'+':'')+fmt(v)+'%',v<0?'neg':null);
+    $('ch_note').textContent=`A ${fmt(Math.abs(v))}% ${dir} (${fmt(b-a)} difference)`;
+  }
+  ['ch_a','ch_b'].forEach(id=>$(id).addEventListener('input',calcCh));
+
+  // tiny clock in footer for a bit of life
+  function tick(){
+    const d=new Date();
+    $('clock').textContent=d.toLocaleTimeString('en-US',{hour12:false});
+  }
+  tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
