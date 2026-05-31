@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MarketPulse — Finance Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060810;
+  --surface: #0c0f18;
+  --surface2: #111520;
+  --surface3: #161b28;
+  --border: #1a2035;
+  --border2: #232d44;
+  --text: #c5d5e8;
+  --text-muted: #4a6080;
+  --text-dim: #7a90b0;
+  --green: #05e89c;
+  --red: #ff3d5a;
+  --gold: #f0b429;
+  --blue: #4dabf7;
+  --accent: #00d9ff;
+  --purple: #9b72ff;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 22px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--accent);
+}
+
+.logo em { color: var(--gold); font-style: normal; }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--green);
+  letter-spacing: 1.5px;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: blink 1.8s ease-in-out infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+.clock {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  min-width: 70px;
+  text-align: right;
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  height: 34px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ticker-label {
+  background: var(--gold);
+  color: #000;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 0 12px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ticker-scroll { flex:1; overflow:hidden; position:relative; }
+
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: scroll 35s linear infinite;
+}
+
+@keyframes scroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+.tick {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 22px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  border-right: 1px solid var(--border);
+}
+
+.tick-sym { color: var(--text-dim); }
+.tick-price { color: var(--text); }
+.tick-chg.up { color: var(--green); }
+.tick-chg.down { color: var(--red); }
+
+/* ── BODY ── */
+.body-grid {
+  display: grid;
+  grid-template-columns: 1fr 310px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── LEFT ── */
+.left {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Indices bar */
+.indices-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--border);
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.idx-card {
+  background: var(--surface2);
+  padding: 9px 15px;
+}
+
+.idx-name {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.idx-val {
+  font-family: 'Space Mono', monospace;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.idx-chg {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  margin-top: 1px;
+}
+
+/* Crypto header */
+.panel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.panel-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.panel-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* Crypto grid */
+.crypto-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  background: var(--border);
+  gap: 1px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.crypto-grid::-webkit-scrollbar { width: 3px; }
+.crypto-grid::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.c-card {
+  background: var(--surface);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background .12s;
+  position: relative;
+  overflow: hidden;
+}
+
+.c-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+
+.c-card.up::before { background: var(--green); }
+.c-card.down::before { background: var(--red); }
+.c-card:hover { background: var(--surface3); }
+
+.c-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.c-sym {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.c-rank {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  background: var(--surface2);
+  padding: 2px 5px;
+  border-radius: 2px;
+}
+
+.c-name {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.c-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+.c-chg {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.c-chg.up { color: var(--green); }
+.c-chg.down { color: var(--red); }
+
+.c-mcap {
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.c-bar {
+  height: 2px;
+  background: var(--border2);
+  margin-top: 10px;
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.c-bar-fill {
+  height: 100%;
+  border-radius: 1px;
+  transition: width .5s ease;
+}
+
+.c-bar-fill.up { background: var(--green); }
+.c-bar-fill.down { background: var(--red); }
+
+/* Bottom status */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 18px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.status-live { display: flex; align-items: center; gap: 6px; }
+.status-dot { width: 5px; height: 5px; background: var(--green); border-radius: 50%; animation: blink 1.8s infinite; }
+
+/* ── RIGHT — NEWS ── */
+.right {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.news-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.news-tabs::-webkit-scrollbar { display: none; }
+
+.n-tab {
+  padding: 9px 12px;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  user-select: none;
+}
+
+.n-tab:hover { color: var(--text); }
+.n-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.news-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.news-body::-webkit-scrollbar { width: 3px; }
+.news-body::-webkit-scrollbar-thumb { background: var(--border2); }
+
+.news-item {
+  padding: 13px 15px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background .1s;
+}
+
+.news-item:hover { background: var(--surface2); }
+
+.n-src {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+
+.n-headline {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+.n-time {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+
+.n-empty {
+  padding: 32px 15px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 2;
+}
+
+/* Skeleton */
+@keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+.sk { background: var(--border2); border-radius: 2px; animation: pulse 1.6s ease-in-out infinite; }
+
+.up { color: var(--green); }
+.down { color: var(--red); }
+
+/* ── SCROLLBAR GLOBAL ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="logo">MARKET<em>PULSE</em></div>
+  <div class="header-right">
+    <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="ticker-label">CRYPTO</div>
+  <div class="ticker-scroll">
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="body-grid">
+
+  <!-- LEFT -->
+  <div class="left">
+
+    <!-- Market indices -->
+    <div class="indices-bar" id="indices-bar">
+      <div class="idx-card"><div class="idx-name">S&P 500</div><div class="idx-val sk" style="width:70px;height:16px;"></div></div>
+      <div class="idx-card"><div class="idx-name">NASDAQ</div><div class="idx-val sk" style="width:70px;height:16px;"></div></div>
+      <div class="idx-card"><div class="idx-name">GOLD / OZ</div><div class="idx-val sk" style="width:70px;height:16px;"></div></div>
+      <div class="idx-card"><div class="idx-name">OIL / WTI</div><div class="idx-val sk" style="width:70px;height:16px;"></div></div>
+    </div>
+
+    <!-- Crypto heading -->
+    <div class="panel-bar">
+      <span class="panel-title">Cryptocurrency Markets</span>
+      <span class="panel-badge" id="upd-badge">LOADING…</span>
+    </div>
+
+    <!-- Crypto cards -->
+    <div class="crypto-grid" id="crypto-grid">
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+      <div class="c-card"><div class="sk" style="width:50px;height:13px;margin-bottom:8px;"></div><div class="sk" style="width:100px;height:20px;margin-bottom:6px;"></div><div class="sk" style="width:65px;height:11px;"></div></div>
+    </div>
+
+    <!-- Status -->
+    <div class="status-bar">
+      <div class="status-live"><div class="status-dot"></div>COINGECKO API · AUTO-REFRESH 15m</div>
+      <div id="status-time">—</div>
+    </div>
+  </div>
+
+  <!-- RIGHT — NEWS -->
+  <div class="right">
+    <div class="news-tabs" id="news-tabs"></div>
+    <div class="news-body" id="news-body">
+      <div class="n-empty">INITIALIZING FEEDS…<br><br>█▒▒▒▒▒▒▒▒▒</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ──────────────────────── HELPERS ──────────────────────── */
+const $ = id => document.getElementById(id);
+
+function fmtPrice(n) {
+  if (n === null || n === undefined) return '—';
+  if (n >= 1000) return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  if (n >= 1)    return '$' + n.toFixed(4);
+  return '$' + n.toFixed(6);
+}
+
+function fmtPct(n) {
+  if (n === null || n === undefined) return '—';
+  const s = n >= 0 ? '+' : '';
+  return s + n.toFixed(2) + '%';
+}
+
+function fmtMcap(n) {
+  if (!n) return '';
+  if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+  if (n >= 1e9)  return '$' + (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6)  return '$' + (n / 1e6).toFixed(0) + 'M';
+  return '$' + n.toLocaleString();
+}
+
+function fmtAge(dateStr) {
+  if (!dateStr) return 'JUST NOW';
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr;
+  const diff = Math.floor((Date.now() - d) / 60000);
+  if (diff < 1) return 'JUST NOW';
+  if (diff < 60) return diff + 'M AGO';
+  if (diff < 1440) return Math.floor(diff / 60) + 'H AGO';
+  return Math.floor(diff / 1440) + 'D AGO';
+}
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ──────────────────────── CLOCK ──────────────────────── */
+function tick() {
+  $('clock').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+}
+setInterval(tick, 1000); tick();
+
+/* ──────────────────────── CRYPTO ──────────────────────── */
+const COINS = [
+  { id:'bitcoin',      sym:'BTC',  name:'Bitcoin',    rank:1  },
+  { id:'ethereum',     sym:'ETH',  name:'Ethereum',   rank:2  },
+  { id:'binancecoin',  sym:'BNB',  name:'BNB',        rank:3  },
+  { id:'solana',       sym:'SOL',  name:'Solana',     rank:5  },
+  { id:'ripple',       sym:'XRP',  name:'XRP',        rank:4  },
+  { id:'dogecoin',     sym:'DOGE', name:'Dogecoin',   rank:8  },
+  { id:'cardano',      sym:'ADA',  name:'Cardano',    rank:9  },
+  { id:'avalanche-2',  sym:'AVAX', name:'Avalanche',  rank:11 },
+];
+
+async function fetchCrypto() {
+  const ids = COINS.map(c => c.id).join(',');
+  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true&include_market_cap=true`;
+  const r = await fetch(url);
+  return r.json();
+}
+
+function renderCrypto(data) {
+  const grid = $('crypto-grid');
+  const tickerItems = [];
+  let html = '';
+
+  COINS.forEach(coin => {
+    const d = data[coin.id];
+    if (!d) return;
+    const price = d.usd;
+    const chg   = d.usd_24h_change ?? 0;
+    const mcap  = d.usd_market_cap;
+    const isUp  = chg >= 0;
+    const bar   = Math.min(Math.abs(chg) * 8, 100).toFixed(1);
+
+    html += `<div class="c-card ${isUp ? 'up' : 'down'}">
+      <div class="c-top">
+        <span class="c-sym">${coin.sym}</span>
+        <span class="c-rank">#${coin.rank}</span>
+      </div>
+      <div class="c-name">${coin.name}</div>
+      <div class="c-price">${fmtPrice(price)}</div>
+      <div class="c-chg ${isUp ? 'up' : 'down'}">${isUp ? '▲' : '▼'} ${fmtPct(chg)}</div>
+      ${mcap ? `<div class="c-mcap">MCap ${fmtMcap(mcap)}</div>` : ''}
+      <div class="c-bar"><div class="c-bar-fill ${isUp ? 'up' : 'down'}" style="width:${bar}%"></div></div>
+    </div>`;
+
+    tickerItems.push({ sym: coin.sym, price: fmtPrice(price), chg, isUp });
+  });
+
+  grid.innerHTML = html;
+  $('upd-badge').textContent = 'UPD ' + new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit', hour12: false });
+  $('status-time').textContent = new Date().toLocaleTimeString('en-US', { hour12: false });
+
+  // Build ticker (doubled for seamless loop)
+  const t = tickerItems.map(i =>
+    `<span class="tick">
+      <span class="tick-sym">${i.sym}</span>
+      <span class="tick-price">${i.price}</span>
+      <span class="tick-chg ${i.isUp ? 'up' : 'down'}">${fmtPct(i.chg)}</span>
+    </span>`
+  ).join('');
+  $('ticker').innerHTML = t + t;
+}
+
+/* ──────────────────────── INDICES ──────────────────────── */
+// Static reference data — free real-time index APIs require keys.
+// These reflect approximate recent values; label as DELAYED.
+const INDICES = [
+  { name:'S&P 500',  val:5308.13, chg: 0.48 },
+  { name:'NASDAQ',   val:16742.39, chg: 0.60 },
+  { name:'GOLD/OZ',  val:2418.50, chg:-0.22 },
+  { name:'OIL/WTI',  val:79.65, chg: 1.10 },
+];
+
+function renderIndices() {
+  $('indices-bar').innerHTML = INDICES.map(i => {
+    const isUp = i.chg >= 0;
+    return `<div class="idx-card">
+      <div class="idx-name">${i.name}</div>
+      <div class="idx-val">${i.val.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+      <div class="idx-chg ${isUp ? 'up' : 'down'}">${isUp ? '▲' : '▼'} ${Math.abs(i.chg).toFixed(2)}%</div>
+    </div>`;
+  }).join('');
+}
+
+/* ──────────────────────── NEWS ──────────────────────── */
+const FEEDS = [
+  { label:'REUTERS',     color:'#f0b429', url:'https://feeds.reuters.com/reuters/businessNews' },
+  { label:'CNBC',        color:'#4dabf7', url:'https://search.cnbc.com/rs/search/combinedcombined/search.aspx?q=markets&type=partnerstory&source=CNBC%20News%20RSS' },
+  { label:'MARKETWATCH', color:'#00d9ff', url:'https://feeds.marketwatch.com/marketwatch/topstories/' },
+  { label:'GUARDIAN',    color:'#05e89c', url:'https://www.theguardian.com/business/rss' },
+  { label:'YAHOO FIN',   color:'#9b72ff', url:'https://finance.yahoo.com/rss/topstories' },
+  { label:'WUNDERGROUND',color:'#ff9f43', url:'https://www.wunderground.com/rss.xml' },
+  { label:'FIRE AIRNOW', color:'#ff3d5a', url:'https://fire.airnow.gov/rss/' },
+];
+
+let activeTab = 0;
+const cache = {};
+
+function renderTabs() {
+  $('news-tabs').innerHTML = FEEDS.map((f, i) =>
+    `<div class="n-tab ${i===0?'active':''}" onclick="selectTab(${i})">${f.label}</div>`
+  ).join('');
+}
+
+function selectTab(i) {
+  activeTab = i;
+  document.querySelectorAll('.n-tab').forEach((t, idx) => {
+    t.classList.toggle('active', idx === i);
+  });
+  showNews();
+  if (!cache[i]) loadFeed(i);
+}
+
+function showNews() {
+  const items = cache[activeTab];
+  const feed = FEEDS[activeTab];
+  const body = $('news-body');
+
+  if (!items) {
+    body.innerHTML = `<div class="n-empty">FETCHING ${feed.label}…<br><br>▒▒▒▒▒▒▒▒▒▒</div>`;
+    return;
+  }
+  if (!items.length) {
+    body.innerHTML = `<div class="n-empty">NO ITEMS RETURNED<br>Feed may be unavailable.</div>`;
+    return;
+  }
+
+  body.innerHTML = items.map(item => `
+    <div class="news-item" onclick="window.open('${esc(item.link)}','_blank')">
+      <div class="n-src" style="color:${feed.color}">${feed.label}</div>
+      <div class="n-headline">${esc(item.title)}</div>
+      <div class="n-time">${fmtAge(item.pubDate)}</div>
+    </div>
+  `).join('');
+}
+
+async function loadFeed(i) {
+  const feed = FEEDS[i];
+  const api = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=25`;
+  try {
+    const r = await fetch(api);
+    const data = await r.json();
+    if (data.status === 'ok' && Array.isArray(data.items)) {
+      cache[i] = data.items.map(x => ({ title: x.title, link: x.link, pubDate: x.pubDate }));
+    } else {
+      cache[i] = [];
+    }
+  } catch (e) {
+    cache[i] = [];
+  }
+  if (activeTab === i) showNews();
+}
+
+/* ──────────────────────── BOOT ──────────────────────── */
+async function boot() {
+  renderIndices();
+  renderTabs();
+  loadFeed(0);
+
+  try {
+    const data = await fetchCrypto();
+    renderCrypto(data);
+  } catch (e) {
+    $('crypto-grid').innerHTML = `<div style="padding:24px;color:var(--text-muted);font-family:'Space Mono',monospace;font-size:10px;grid-column:1/-1;text-align:center">API RATE LIMIT — RETRY IN 60s<br><br>${e.message}</div>`;
+  }
+
+  setInterval(async () => {
+    try { renderCrypto(await fetchCrypto()); } catch (e) {}
+  }, 900000);
+}
+
+boot();
+</script>
+</body>
+</html>
