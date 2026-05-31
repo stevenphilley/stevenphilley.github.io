@@ -166,6 +166,15 @@
   button.btn.primary:hover{background:var(--accent-2); border-color:var(--accent-2);}
 
   .done-flag{font-style:italic; color:var(--accent);}
+
+  .sharebox{display:none; margin-top:14px; align-items:center; gap:12px; flex-wrap:wrap;
+    font-size:13.5px; color:var(--ink-soft); font-style:italic;
+    animation:rise .5s ease both;}
+  .sharebox.show{display:flex;}
+  .sharebox input{flex:1 1 280px; min-width:0; font-family:"Spline Sans Mono",monospace;
+    font-size:12.5px; color:var(--ink); background:var(--panel);
+    border:1px solid var(--panel-line); border-radius:10px; padding:9px 12px; font-style:normal;}
+  .sharebox input:focus{outline:none; border-color:var(--accent);}
 </style>
 </head>
 <body data-theme="dusk">
@@ -212,6 +221,11 @@
     <div class="controls">
       <button class="btn primary" id="restart">Restart this passage</button>
       <button class="btn" id="next">New passage</button>
+      <button class="btn" id="share" style="display:none">Share result</button>
+    </div>
+    <div class="sharebox" id="sharebox">
+      <span id="share-status">Copy this link to share your result:</span>
+      <input id="share-url" readonly onclick="this.select()">
     </div>
   </div>
 
@@ -234,6 +248,7 @@
   let startTime = null;
   let finished = false;
   let lastIdx = -1;            // for picking a different passage each time
+  let sharedTotal = null;      // when viewing a shared result, the recorded total time (s)
 
   const passageEl = document.getElementById('passage');
   const hintText   = document.getElementById('hint-text');
@@ -244,16 +259,29 @@
   const canvas = document.getElementById('chart');
   const ctx = canvas.getContext('2d');
   const chartCard = document.getElementById('chartcard');
+  const shareBtn  = document.getElementById('share');
+  const shareBox  = document.getElementById('sharebox');
+  const shareUrl  = document.getElementById('share-url');
+  const shareStatus = document.getElementById('share-status');
 
   // ---- Setup a passage ----
   function loadPassage(text){
     target = text;
     pos = 0; keystrokes = []; startTime = null; finished = false; typedWrong = {};
+    sharedTotal = null;
+    document.getElementById('restart').textContent = 'Restart this passage';
+    shareBtn.style.display = 'none';
+    shareBox.classList.remove('show');
+    cleanURL();
     renderPassage();
     setHint("Just start typing — the words are waiting.");
     resetStats();
     hideChart();
     passageEl.focus();
+  }
+
+  function cleanURL(){
+    try{ history.replaceState(null, '', location.origin + location.pathname); }catch(e){}
   }
 
   function pickNew(){
@@ -336,6 +364,7 @@
   }
 
   function elapsed(){
+    if (sharedTotal !== null) return sharedTotal;
     if (startTime === null) return 0;
     const end = finished ? finishTime : performance.now();
     return (end - startTime)/1000;
@@ -377,6 +406,92 @@
     const m = mistakeCount();
     setHint(`<span class="done-flag">Done.</span> ${netWpm} wpm · peak ${peak} · ${m} mistake${m===1?'':'s'} · ${el.toFixed(1)}s — take a breath, then go again.`);
     revealChart();
+    shareBtn.style.display = '';
+    shareBox.classList.remove('show');
+  }
+
+  // ---- Theme helper ----
+  function setTheme(name){
+    document.body.setAttribute('data-theme', name);
+    document.querySelectorAll('.swatch').forEach(b=>
+      b.setAttribute('aria-pressed', b.dataset.set===name ? 'true':'false'));
+  }
+
+  // ---- Sharing via query string ----
+  function buildShareURL(){
+    const times = keystrokes.map(k=>Math.round(k.t*100)).join('.');         // centiseconds
+    const errs  = keystrokes.map((k,i)=>k.correct?null:i).filter(v=>v!==null).join('.');
+    const el = elapsed();
+    const mins = el/60;
+    const wpm = mins>0 ? Math.round((correctSoFar()/5)/mins) : 0;
+    const acc = keystrokes.length ? Math.round(correctSoFar()/keystrokes.length*100) : 100;
+    const q = new URLSearchParams();
+    q.set('s','1');
+    q.set('p', String(lastIdx));
+    q.set('w', String(wpm));
+    q.set('a', String(acc));
+    q.set('t', el.toFixed(1));
+    q.set('m', String(mistakeCount()));
+    q.set('pk', String(Math.round(peakWpm())));
+    q.set('th', document.body.getAttribute('data-theme'));
+    q.set('k', times);
+    if (errs) q.set('e', errs);
+    let base;
+    try { base = location.origin + location.pathname; } catch(e){ base = ''; }
+    return base + '?' + q.toString();
+  }
+
+  function doShare(){
+    const url = buildShareURL();
+    shareUrl.value = url;
+    shareBox.classList.add('show');
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(()=>{
+        shareStatus.textContent = 'Link copied to your clipboard — paste it anywhere:';
+      }).catch(()=>{
+        shareStatus.textContent = 'Copy this link to share your result:';
+        shareUrl.focus(); shareUrl.select();
+      });
+    } else {
+      shareStatus.textContent = 'Copy this link to share your result:';
+      shareUrl.focus(); shareUrl.select();
+    }
+  }
+
+  // Returns true if the page was opened with a shared result.
+  function initFromQuery(){
+    let q;
+    try { q = new URLSearchParams(location.search); } catch(e){ return false; }
+    if (q.get('s') !== '1' || !q.get('k')) return false;
+
+    const th = q.get('th');
+    if (th && ['dusk','sage','tide','sand'].includes(th)) setTheme(th);
+
+    const pi = parseInt(q.get('p'),10);
+    lastIdx = (pi>=0 && pi<PASSAGES.length) ? pi : 0;
+    target = PASSAGES[lastIdx];
+
+    const times = q.get('k').split('.').map(Number).filter(n=>!isNaN(n));
+    const errSet = new Set((q.get('e')||'').split('.').filter(x=>x!=='').map(Number));
+    keystrokes = times.map((cs,i)=>({ t: cs/100, correct: !errSet.has(i), i }));
+
+    typedWrong = {};
+    pos = target.length;
+    finished = true;
+    sharedTotal = parseFloat(q.get('t')) || (times.length ? times[times.length-1]/100 : 0);
+
+    renderPassage();
+    Array.from(passageEl.children).forEach(el=>{ el.className = 'ch done'; });
+
+    sWpm.innerHTML  = (q.get('w')||0) + '<small>wpm</small>';
+    sAcc.innerHTML  = (q.get('a')||0) + '<small>%</small>';
+    sTime.innerHTML = (q.get('t')||'0') + '<small>s</small>';
+    sMiss.textContent = q.get('m')||0;
+
+    setHint(`<span class="done-flag">A shared result.</span> ${q.get('w')} wpm · peak ${q.get('pk')} · ${q.get('m')} mistake${q.get('m')==='1'?'':'s'}. Think you can beat it? Hit <em>Try this passage</em>.`);
+    document.getElementById('restart').textContent = 'Try this passage';
+    revealChart();
+    return true;
   }
 
   function hideChart(){
@@ -523,8 +638,7 @@
   // ---- Themes ----
   document.querySelectorAll('.swatch').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      document.body.setAttribute('data-theme', btn.dataset.set);
-      document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
+      setTheme(btn.dataset.set);
       if (finished) drawChart();
     });
   });
@@ -532,6 +646,7 @@
   // ---- Controls ----
   document.getElementById('restart').addEventListener('click', ()=> loadPassage(target));
   document.getElementById('next').addEventListener('click', pickNew);
+  shareBtn.addEventListener('click', doShare);
 
   // ---- Input wiring ----
   window.addEventListener('keydown', onKey);
@@ -542,7 +657,7 @@
   setInterval(()=>{ if(startTime!==null && !finished) updateStats(); }, 100);
 
   // ---- Go ----
-  pickNew();
+  if (!initFromQuery()) pickNew();
 })();
 </script>
 </body>
