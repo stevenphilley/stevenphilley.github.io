@@ -20,6 +20,7 @@
     --error: #e2756f;
     --panel: rgba(255,255,255,0.045);
     --panel-line: rgba(255,255,255,0.09);
+    --shade: rgba(0,0,0,0.20);
     --blob-1: #5b3d6b;
     --blob-2: #8a4f57;
     --blob-3: #34506b;
@@ -31,18 +32,21 @@
     --base:#efe9da; --base-2:#e3dcc8; --ink:#2f3a2c; --ink-soft:#7d8470;
     --ink-faint:#b3b29a; --accent:#7e9a6a; --accent-2:#b3925a; --error:#c2683f;
     --panel:rgba(60,70,50,0.05); --panel-line:rgba(60,70,50,0.13);
+    --shade:rgba(255,255,255,0.42);
     --blob-1:#cdd6b4; --blob-2:#e6cf9f; --blob-3:#bcd0c4; --grid:rgba(60,70,50,0.08);
   }
   body[data-theme="tide"]{
     --base:#18262b; --base-2:#11191d; --ink:#e7f0ee; --ink-soft:#86a09f;
     --ink-faint:#465a5c; --accent:#8fd0c8; --accent-2:#7fb0d6; --error:#e88a7c;
     --panel:rgba(255,255,255,0.04); --panel-line:rgba(255,255,255,0.08);
+    --shade:rgba(0,0,0,0.22);
     --blob-1:#28525a; --blob-2:#2f4a66; --blob-3:#1f5e54; --grid:rgba(255,255,255,0.055);
   }
   body[data-theme="sand"]{
     --base:#f0e6d6; --base-2:#e6d8c2; --ink:#3a2c22; --ink-soft:#8a7762;
     --ink-faint:#c2ac90; --accent:#c98a5a; --accent-2:#a98c5d; --error:#bb5c44;
     --panel:rgba(70,50,35,0.045); --panel-line:rgba(70,50,35,0.12);
+    --shade:rgba(255,255,255,0.40);
     --blob-1:#e7c89e; --blob-2:#dcae8e; --blob-3:#cdbf9a; --grid:rgba(70,50,35,0.08);
   }
 
@@ -114,7 +118,8 @@
     color:var(--ink-soft);}
 
   /* ---- Typing panel ---- */
-  .panel{background:var(--panel); border:1px solid var(--panel-line);
+  .panel{background:linear-gradient(var(--shade),var(--shade)), var(--panel);
+    border:1px solid var(--panel-line);
     border-radius:20px; padding:30px 32px; backdrop-filter:blur(6px);}
   .passage{font-size:clamp(20px,3.3vw,25px); line-height:1.9; letter-spacing:.005em;
     word-spacing:.06em; user-select:none; cursor:text; outline:none;}
@@ -137,7 +142,10 @@
 
   /* ---- Chart ---- */
   .chartcard{margin-top:22px; background:var(--panel); border:1px solid var(--panel-line);
-    border-radius:20px; padding:22px 22px 16px; backdrop-filter:blur(6px);}
+    border-radius:20px; padding:22px 22px 16px; backdrop-filter:blur(6px);
+    display:none; opacity:0; transform:translateY(14px);
+    transition:opacity 1.1s ease, transform 1.1s cubic-bezier(.2,.7,.2,1);}
+  .chartcard.show{opacity:1; transform:none;}
   .chart-head{display:flex; justify-content:space-between; align-items:baseline;
     margin-bottom:6px; flex-wrap:wrap; gap:8px;}
   .chart-head h2{font-family:"Fraunces",serif; font-weight:500; font-size:18px; margin:0;
@@ -190,7 +198,7 @@
       <div class="hint" id="hint"><span class="dot"></span><span id="hint-text">Just start typing — the words are waiting.</span></div>
     </div>
 
-    <div class="chartcard">
+    <div class="chartcard" id="chartcard">
       <div class="chart-head">
         <h2>Your pace, moment to moment</h2>
         <div class="legend">
@@ -235,6 +243,7 @@
   const sMiss = document.getElementById('s-miss');
   const canvas = document.getElementById('chart');
   const ctx = canvas.getContext('2d');
+  const chartCard = document.getElementById('chartcard');
 
   // ---- Setup a passage ----
   function loadPassage(text){
@@ -243,7 +252,7 @@
     renderPassage();
     setHint("Just start typing — the words are waiting.");
     resetStats();
-    drawChart();
+    hideChart();
     passageEl.focus();
   }
 
@@ -259,7 +268,7 @@
     let html = "";
     for (let i=0;i<target.length;i++){
       const c = target[i];
-      const display = c === " " ? "&nbsp;" : escapeHtml(c);
+      const display = c === " " ? "&#32;" : escapeHtml(c);
       html += `<span class="ch" data-i="${i}">${display}</span>`;
     }
     passageEl.innerHTML = html;
@@ -296,7 +305,7 @@
 
     if (k === "Backspace"){
       e.preventDefault();
-      if (pos > 0){ pos--; delete typedWrong[pos]; paint(); updateStats(); drawChart(); }
+      if (pos > 0){ pos--; delete typedWrong[pos]; paint(); updateStats(); }
       return;
     }
     if (k === "Tab"){ e.preventDefault(); return; }
@@ -314,7 +323,6 @@
 
     paint();
     updateStats();
-    drawChart();
 
     if (pos >= target.length) finish();
   }
@@ -368,7 +376,18 @@
     const peak = Math.round(peakWpm());
     const m = mistakeCount();
     setHint(`<span class="done-flag">Done.</span> ${netWpm} wpm · peak ${peak} · ${m} mistake${m===1?'':'s'} · ${el.toFixed(1)}s — take a breath, then go again.`);
-    drawChart();
+    revealChart();
+  }
+
+  function hideChart(){
+    chartCard.classList.remove('show');
+    chartCard.style.display = 'none';
+  }
+
+  function revealChart(){
+    chartCard.style.display = 'block';   // give the canvas a measurable width
+    drawChart();                          // draw before the fade so it's ready
+    requestAnimationFrame(()=> requestAnimationFrame(()=> chartCard.classList.add('show')));
   }
 
   // ---- Rolling WPM series for the chart ----
@@ -506,7 +525,7 @@
     btn.addEventListener('click', ()=>{
       document.body.setAttribute('data-theme', btn.dataset.set);
       document.querySelectorAll('.swatch').forEach(b=>b.setAttribute('aria-pressed', b===btn?'true':'false'));
-      drawChart();
+      if (finished) drawChart();
     });
   });
 
@@ -517,7 +536,7 @@
   // ---- Input wiring ----
   window.addEventListener('keydown', onKey);
   passageEl.addEventListener('click', ()=> passageEl.focus());
-  window.addEventListener('resize', drawChart);
+  window.addEventListener('resize', ()=>{ if (finished) drawChart(); });
 
   // live timer tick so the time stat keeps moving while typing
   setInterval(()=>{ if(startTime!==null && !finished) updateStats(); }, 100);
