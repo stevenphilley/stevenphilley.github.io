@@ -310,7 +310,7 @@
 
   // ---- Setup a passage ----
   function loadPassage(text){
-    target = text;
+    target = typeable(text);
     pos = 0; keystrokes = []; startTime = null; finished = false; typedWrong = {};
     sharedTotal = null;
     document.getElementById('restart').textContent = 'Restart this passage';
@@ -357,6 +357,16 @@
   }
 
   function escapeHtml(s){return s.replace(/[&<>]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[m]));}
+
+  // Convert typographic characters to ones a normal keyboard can produce.
+  function typeable(s){
+    return s
+      .replace(/[\u2014\u2013]/g, '-')   // em / en dash -> hyphen
+      .replace(/[\u201C\u201D]/g, '"')   // curly double quotes -> "
+      .replace(/[\u2018\u2019]/g, "'")   // curly single quotes / apostrophe -> '
+      .replace(/\u2026/g, '...')         // ellipsis -> ...
+      .replace(/\u00A0/g, ' ');          // non-breaking space -> space
+  }
 
   // ---- Painting char states ----
   function paint(){
@@ -544,7 +554,7 @@
     const pool = LEVELS[difficulty].passages;
     const pi = parseInt(q.get('p'),10);
     lastIdx = (pi>=0 && pi<pool.length) ? pi : 0;
-    target = pool[lastIdx];
+    target = typeable(pool[lastIdx]);
 
     const times = q.get('k').split('.').map(Number).filter(n=>!isNaN(n));
     const errSet = new Set((q.get('e')||'').split('.').filter(x=>x!=='').map(Number));
