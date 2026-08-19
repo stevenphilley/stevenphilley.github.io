@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Annual Dial — a calendar built like a clock</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,400;6..96,500&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#131A2A;
+    --dial:#1B2436;
+    --dial-2:#222D42;
+    --brass:#C8A45C;
+    --brass-lit:#F0D9A0;
+    --patina:#5FA894;
+    --parch:#DCE0E6;
+    --hair:rgba(200,164,92,.22);
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+    --sans:"IBM Plex Sans",system-ui,sans-serif;
+    --display:"Bodoni Moda",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:
+      radial-gradient(120% 90% at 50% 8%, #1C2740 0%, var(--ink) 55%, #0E131F 100%);
+    color:var(--parch);font-family:var(--sans);font-weight:300;
+    -webkit-font-smoothing:antialiased;
+  }
+  .shell{min-height:100%;display:flex;flex-direction:column}
+
+  header{
+    display:flex;align-items:baseline;gap:1.25rem;flex-wrap:wrap;
+    padding:1.4rem clamp(1rem,4vw,2.6rem) .9rem;
+    border-bottom:1px solid var(--hair);
+  }
+  .mark{font-family:var(--display);font-size:1.35rem;letter-spacing:.02em}
+  .mark em{font-style:italic;color:var(--brass)}
+  .rubric{font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;
+    text-transform:uppercase;color:rgba(220,224,230,.45)}
+  .spacer{flex:1}
+
+  .controls{display:flex;align-items:center;gap:.4rem}
+  button{
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--brass);background:transparent;border:1px solid var(--hair);
+    padding:.5rem .8rem;border-radius:999px;cursor:pointer;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  button:hover{background:rgba(200,164,92,.1);border-color:rgba(200,164,92,.5)}
+  button[aria-pressed="true"]{background:var(--brass);color:#151C2B;border-color:var(--brass)}
+  button:focus-visible{outline:2px solid var(--brass-lit);outline-offset:2px}
+  .step{width:2.1rem;padding:.5rem 0;text-align:center;font-size:.9rem}
+
+  main{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 21rem;gap:0}
+  .stage{position:relative;display:grid;place-items:center;padding:clamp(.5rem,2vw,1.6rem)}
+  svg{width:min(100%,78vh);height:auto;display:block;touch-action:manipulation}
+
+  .cell{cursor:pointer;transition:opacity .12s ease}
+  .cell:hover{opacity:.65}
+  .cell:focus-visible{outline:none}
+
+  /* right rail */
+  aside{
+    border-left:1px solid var(--hair);padding:1.6rem clamp(1rem,2vw,1.5rem);
+    display:flex;flex-direction:column;gap:1rem;background:rgba(19,26,42,.5);
+  }
+  .rail-date{font-family:var(--display);font-size:2.1rem;line-height:1;letter-spacing:.01em}
+  .rail-sub{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--brass);margin-top:.45rem}
+  .divider{height:1px;background:var(--hair)}
+  .entries{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem;
+    overflow:auto;flex:1;min-height:3rem}
+  .entries li{display:flex;gap:.6rem;align-items:flex-start;
+    font-size:.9rem;line-height:1.35;padding:.55rem .2rem .55rem 0;border-bottom:1px dotted rgba(220,224,230,.12)}
+  .entries li span{flex:1}
+  .tick{color:var(--patina);font-family:var(--mono);font-size:.7rem;padding-top:.15rem}
+  .drop{background:none;border:none;color:rgba(220,224,230,.35);cursor:pointer;
+    padding:0 .1rem;font-size:.95rem;letter-spacing:0}
+  .drop:hover{color:var(--brass-lit);background:none}
+  .empty{font-size:.85rem;color:rgba(220,224,230,.4);line-height:1.5;font-style:italic}
+  .compose{display:flex;gap:.5rem}
+  input[type=text]{
+    flex:1;background:rgba(255,255,255,.04);border:1px solid var(--hair);color:var(--parch);
+    font-family:var(--sans);font-size:.9rem;padding:.6rem .7rem;border-radius:3px;
+  }
+  input[type=text]:focus{outline:none;border-color:rgba(200,164,92,.6);background:rgba(255,255,255,.07)}
+  .legend{font-family:var(--mono);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;
+    color:rgba(220,224,230,.38);line-height:2}
+  .swatch{display:inline-block;width:.55rem;height:.55rem;border-radius:50%;margin-right:.5rem;
+    vertical-align:middle}
+
+  .tip{
+    position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-140%);
+    background:#0E1420;border:1px solid rgba(200,164,92,.4);color:var(--parch);
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;padding:.35rem .55rem;
+    border-radius:3px;white-space:nowrap;transition:opacity .12s ease;z-index:9;
+  }
+  .tip.on{opacity:1}
+
+  @media (max-width:860px){
+    main{grid-template-columns:1fr}
+    aside{border-left:none;border-top:1px solid var(--hair)}
+    .entries{max-height:9rem}
+    svg{width:min(100%,86vw)}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header>
+    <div>
+      <div class="mark">Annual <em>Dial</em></div>
+      <div class="rubric" id="rubric">the year, read as a clock</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="controls">
+      <button class="step" id="prev" title="Previous">‹</button>
+      <button id="scope" aria-pressed="false">Month dial</button>
+      <button id="today">Today</button>
+      <button class="step" id="next" title="Next">›</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="stage">
+      <svg id="dial" viewBox="0 0 1000 1000" role="img" aria-label="Circular calendar dial"></svg>
+    </div>
+
+    <aside>
+      <div>
+        <div class="rail-date" id="railDate">—</div>
+        <div class="rail-sub" id="railSub"></div>
+      </div>
+      <div class="divider"></div>
+      <ul class="entries" id="entries"></ul>
+      <div class="compose">
+        <input type="text" id="entryText" placeholder="Add something to this day" aria-label="New entry">
+        <button id="addEntry">Add</button>
+      </div>
+      <div class="divider"></div>
+      <div class="legend">
+        <div><span class="swatch" style="background:var(--brass-lit)"></span>today</div>
+        <div><span class="swatch" style="background:var(--patina)"></span>day with entries</div>
+        <div><span class="swatch" style="background:rgba(95,168,148,.3)"></span>weekend</div>
+        <div><span class="swatch" style="background:rgba(200,164,92,.25)"></span>weekday</div>
+      </div>
+    </aside>
+  </main>
+</div>
+<div class="tip" id="tip"></div>
+
+<script>
+(() => {
+  const SVG = "http://www.w3.org/2000/svg";
+  const dial = document.getElementById('dial');
+  const tip  = document.getElementById('tip');
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const WD = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  const now0 = new Date();
+  const state = {
+    view: 'year',
+    year: now0.getFullYear(),
+    month: now0.getMonth(),
+    selected: iso(now0),
+    events: {},
+    storageOK: true
+  };
+
+  /* ---------- helpers ---------- */
+  function iso(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function key(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+  function dim(y,m){ return new Date(y,m+1,0).getDate(); }
+  function pol(cx,cy,r,a){ const t=(a-90)*Math.PI/180; return [cx+r*Math.cos(t), cy+r*Math.sin(t)]; }
+  function arcSector(cx,cy,r0,r1,a0,a1){
+    const [x0,y0]=pol(cx,cy,r1,a0), [x1,y1]=pol(cx,cy,r1,a1);
+    const [x2,y2]=pol(cx,cy,r0,a1), [x3,y3]=pol(cx,cy,r0,a0);
+    const big = (a1-a0) > 180 ? 1 : 0;
+    return `M${x0} ${y0}A${r1} ${r1} 0 ${big} 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 ${big} 0 ${x3} ${y3}Z`;
+  }
+  function el(tag, attrs, parent){
+    const n = document.createElementNS(SVG, tag);
+    for(const k in attrs) n.setAttribute(k, attrs[k]);
+    if(parent) parent.appendChild(n);
+    return n;
+  }
+  const isToday = k => k === iso(new Date());
+  const hasEv = k => (state.events[k]||[]).length > 0;
+
+  /* ---------- storage ---------- */
+  const STORE_KEY = 'annual-dial-entries';
+  async function loadEvents(){
+    try{
+      const r = await window.storage.get(STORE_KEY);
+      state.events = r ? JSON.parse(r.value) : {};
+    }catch(e){ state.events = {}; }
+  }
+  async function saveEvents(){
+    try{ await window.storage.set(STORE_KEY, JSON.stringify(state.events)); }
+    catch(e){ state.storageOK = false; }
+  }
+
+  /* ---------- year dial ---------- */
+  const C = 500, HUB = 108;
+  function drawYear(){
+    dial.innerHTML = '';
+    defs();
+    const R0 = 150, R1 = 452, rows = 31, step = (R1-R0)/rows;
+
+    el('circle',{cx:C,cy:C,r:R1+34,fill:'url(#plate)',stroke:'rgba(200,164,92,.28)','stroke-width':1},dial);
+    el('circle',{cx:C,cy:C,r:R1+18,fill:'none',stroke:'rgba(200,164,92,.16)','stroke-width':1},dial);
+
+    const g = el('g',{},dial);
+    for(let m=0;m<12;m++){
+      const days = dim(state.year,m);
+      const a0 = m*30 + .55, a1 = (m+1)*30 - .55;
+      for(let d=1; d<=days; d++){
+        const r0 = R0 + (d-1)*step, r1 = r0 + step - 1.4;
+        const k = key(state.year,m,d);
+        const wd = new Date(state.year,m,d).getDay();
+        let fill = (wd===0||wd===6) ? 'rgba(95,168,148,.16)' : 'rgba(200,164,92,.12)';
+        let stroke = 'none', sw = 0;
+        if(hasEv(k)){ fill = 'rgba(95,168,148,.55)'; }
+        if(isToday(k)){ fill = 'var(--brass-lit)'; }
+        if(k===state.selected){ stroke = 'var(--brass-lit)'; sw = 1.6; }
+        const p = el('path',{
+          d: arcSector(C,C,r0,r1,a0,a1), fill, stroke, 'stroke-width':sw,
+          class:'cell', tabindex:'0', role:'button',
+          'data-k':k, 'aria-label': MONTHS[m]+' '+d
+        }, g);
+        p.addEventListener('click',()=>select(k));
+        p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();select(k);} });
+        p.addEventListener('pointerenter',e=>showTip(e, WD[wd].slice(0,3)+' · '+MONTHS[m]+' '+d));
+        p.addEventListener('pointerleave',hideTip);
+      }
+      // sector divider
+      const [dx0,dy0]=pol(C,C,HUB,m*30), [dx1,dy1]=pol(C,C,R1+18,m*30);
+      el('line',{x1:dx0,y1:dy0,x2:dx1,y2:dy1,stroke:'rgba(200,164,92,.22)','stroke-width':.8},dial);
+      // month name, engraved on the outer band
+      const mid = m*30+15;
+      const [lx,ly] = pol(C,C,R1+26,mid);
+      const flip = mid>90 && mid<270;
+      el('text',{x:lx,y:ly,fill:'var(--brass)','font-family':'var(--mono)','font-size':'15',
+        'letter-spacing':'2.4','text-anchor':'middle','dominant-baseline':'middle',
+        transform:`rotate(${flip?mid+180:mid} ${lx} ${ly})`},dial)
+        .textContent = MONTHS[m].slice(0,3).toUpperCase();
+    }
+
+    // day-of-month scale along the top seam
+    for(const d of [1,5,10,15,20,25,30]){
+      const r = R0 + (d-1)*step + step/2;
+      el('text',{x:C-7,y:C-r,fill:'rgba(220,224,230,.32)','font-family':'var(--mono)',
+        'font-size':'10','text-anchor':'end','dominant-baseline':'middle'},dial).textContent = d;
+    }
+
+    hub();
+    // date hand: points at today if this year is on the dial, else at the selected day
+    const t = new Date();
+    const useT = t.getFullYear()===state.year;
+    const [hy,hm,hd] = (useT ? [t.getFullYear(),t.getMonth(),t.getDate()]
+                             : state.selected.split('-').map((v,i)=> i===1? +v-1 : +v));
+    const ang = hm*30 + 15;
+    const len = R0 + (hd-1)*step + step/2;
+    hand(ang, len, 3.2, 'var(--brass-lit)');
+    centerText(state.year, useT ? MONTHS[hm]+' '+hd : 'viewing');
+  }
+
+  /* ---------- month dial ---------- */
+  function drawMonth(){
+    dial.innerHTML = '';
+    defs();
+    const R = 372, days = dim(state.year,state.month), node = Math.min(30, 900/days);
+
+    el('circle',{cx:C,cy:C,r:R+66,fill:'url(#plate)',stroke:'rgba(200,164,92,.28)','stroke-width':1},dial);
+    el('circle',{cx:C,cy:C,r:R,fill:'none',stroke:'rgba(200,164,92,.2)','stroke-width':1},dial);
+    el('circle',{cx:C,cy:C,r:R+40,fill:'none',stroke:'rgba(200,164,92,.12)','stroke-width':1},dial);
+
+    for(let d=1; d<=days; d++){
+      const a = (d-1)/days*360;
+      const [x,y] = pol(C,C,R,a);
+      const k = key(state.year,state.month,d);
+      const wd = new Date(state.year,state.month,d).getDay();
+      const weekend = wd===0||wd===6;
+
+      let fill = weekend ? 'rgba(95,168,148,.14)' : 'rgba(200,164,92,.10)';
+      let stroke = 'rgba(200,164,92,.28)', sw = 1, txt = 'var(--parch)';
+      if(hasEv(k)){ fill='rgba(95,168,148,.4)'; stroke='var(--patina)'; }
+      if(isToday(k)){ fill='var(--brass-lit)'; stroke='var(--brass-lit)'; txt='#151C2B'; }
+      if(k===state.selected){ sw=2.4; stroke='var(--brass-lit)'; }
+
+      const grp = el('g',{class:'cell',tabindex:'0',role:'button','data-k':k,
+        'aria-label':MONTHS[state.month]+' '+d},dial);
+      el('circle',{cx:x,cy:y,r:node,fill,stroke,'stroke-width':sw},grp);
+      el('text',{x,y:y+1,fill:txt,'font-family':'var(--mono)','font-size':node*0.82,
+        'text-anchor':'middle','dominant-baseline':'middle'},grp).textContent = d;
+      // weekday initial, set outside the ring
+      const [wx,wy] = pol(C,C,R+node+18,a);
+      el('text',{x:wx,y:wy,fill: weekend?'var(--patina)':'rgba(220,224,230,.35)',
+        'font-family':'var(--mono)','font-size':'11','text-anchor':'middle','dominant-baseline':'middle'},grp)
+        .textContent = WD[wd][0];
+      // entry pips, set inside the ring
+      const n = Math.min(3,(state.events[k]||[]).length);
+      for(let i=0;i<n;i++){
+        const [px,py] = pol(C,C,R-node-14, a + (i-(n-1)/2)*1.5);
+        el('circle',{cx:px,cy:py,r:2.6,fill:'var(--patina)'},grp);
+      }
+      grp.addEventListener('click',()=>select(k));
+      grp.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();select(k);} });
+      grp.addEventListener('pointerenter',e=>showTip(e, WD[wd]+' '+d + ((state.events[k]||[]).length? ' · '+state.events[k].length+' entries':'')));
+      grp.addEventListener('pointerleave',hideTip);
+    }
+
+    // elapsed arc — how much of the month has run
+    const t = new Date();
+    if(t.getFullYear()===state.year && t.getMonth()===state.month){
+      const frac = ((t.getDate()-1) + t.getHours()/24) / days;
+      const a1 = Math.max(frac*360, .01);
+      el('path',{d:arcSector(C,C,R+38,R+42,0,a1),fill:'rgba(200,164,92,.55)'},dial);
+      const ang = ((t.getDate()-1)/days)*360;
+      hand(ang, R-node-30, 3.2, 'var(--brass-lit)');
+    }
+
+    hub(true);
+    centerText(MONTHS[state.month], String(state.year));
+  }
+
+  /* ---------- shared furniture ---------- */
+  function defs(){
+    const d = el('defs',{},dial);
+    const rg = el('radialGradient',{id:'plate',cx:'50%',cy:'42%',r:'70%'},d);
+    el('stop',{offset:'0%','stop-color':'#222D42'},rg);
+    el('stop',{offset:'70%','stop-color':'#1B2436'},rg);
+    el('stop',{offset:'100%','stop-color':'#151D2E'},rg);
+  }
+
+  function hub(withClock){
+    el('circle',{cx:C,cy:C,r:HUB,fill:'#151D2E',stroke:'rgba(200,164,92,.35)','stroke-width':1},dial);
+    if(withClock){
+      for(let h=0;h<12;h++){
+        const [x0,y0]=pol(C,C,HUB-8,h*30), [x1,y1]=pol(C,C,HUB-(h%3?4:9),h*30);
+        el('line',{x1:x0,y1:y0,x2:x1,y2:y1,stroke:'rgba(200,164,92,.4)','stroke-width':h%3?.8:1.4},dial);
+      }
+      const cl = el('g',{id:'clock'},dial);
+      const t = new Date();
+      const hAng = (t.getHours()%12)*30 + t.getMinutes()*.5;
+      const mAng = t.getMinutes()*6 + t.getSeconds()*.1;
+      const sAng = t.getSeconds()*6;
+      mkHand(cl,'hh',hAng,HUB*0.42,2.6,'var(--brass)');
+      mkHand(cl,'mm',mAng,HUB*0.62,1.8,'var(--brass-lit)');
+      mkHand(cl,'ss',sAng,HUB*0.68,.8,'var(--patina)');
+    }
+    el('circle',{cx:C,cy:C,r:4.5,fill:'var(--brass)'},dial);
+  }
+  function mkHand(g,id,a,len,w,col){
+    const [x,y] = pol(C,C,len,a);
+    el('line',{id,x1:C,y1:C,x2:x,y2:y,stroke:col,'stroke-width':w,'stroke-linecap':'round'},g);
+  }
+  function hand(a,len,w,col){
+    const [x,y] = pol(C,C,len,a);
+    el('line',{x1:C,y1:C,x2:x,y2:y,stroke:col,'stroke-width':w,'stroke-linecap':'round',opacity:.85},dial);
+    el('circle',{cx:x,cy:y,r:5,fill:col},dial);
+  }
+  function centerText(big, small){
+    if(state.view==='year'){
+      el('text',{x:C,y:C-8,fill:'var(--parch)','font-family':'var(--display)','font-size':'46',
+        'text-anchor':'middle','dominant-baseline':'middle'},dial).textContent = big;
+      el('text',{x:C,y:C+30,fill:'var(--brass)','font-family':'var(--mono)','font-size':'13',
+        'letter-spacing':'3','text-anchor':'middle','dominant-baseline':'middle'},dial)
+        .textContent = String(small).toUpperCase();
+    }else{
+      el('text',{x:C,y:C+HUB+46,fill:'var(--parch)','font-family':'var(--display)','font-size':'40',
+        'text-anchor':'middle'},dial).textContent = big;
+      el('text',{x:C,y:C+HUB+76,fill:'var(--brass)','font-family':'var(--mono)','font-size':'13',
+        'letter-spacing':'4','text-anchor':'middle'},dial).textContent = small;
+    }
+  }
+
+  /* ---------- tooltip ---------- */
+  function showTip(e,text){
+    tip.textContent = text; tip.classList.add('on');
+    tip.style.left = e.clientX+'px'; tip.style.top = e.clientY+'px';
+  }
+  function hideTip(){ tip.classList.remove('on'); }
+  document.addEventListener('pointermove', e=>{
+    if(tip.classList.contains('on')){ tip.style.left=e.clientX+'px'; tip.style.top=e.clientY+'px'; }
+  });
+
+  /* ---------- rail ---------- */
+  function renderRail(){
+    const [y,m,d] = state.selected.split('-').map(Number);
+    const date = new Date(y,m-1,d);
+    document.getElementById('railDate').textContent = MONTHS[m-1]+' '+d;
+    document.getElementById('railSub').textContent =
+      WD[date.getDay()] + ' · ' + y + (isToday(state.selected) ? ' · today' : '');
+    const list = document.getElementById('entries');
+    list.innerHTML = '';
+    const items = state.events[state.selected] || [];
+    if(!items.length){
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'Nothing marked. Type below to put something on this day.';
+      list.appendChild(li);
+      return;
+    }
+    items.forEach((it,i)=>{
+      const li = document.createElement('li');
+      const num = document.createElement('span'); num.className='tick'; num.textContent = String(i+1).padStart(2,'0');
+      const tx = document.createElement('span'); tx.textContent = it;
+      const rm = document.createElement('button'); rm.className='drop'; rm.textContent='×';
+      rm.title = 'Remove'; rm.setAttribute('aria-label','Remove '+it);
+      rm.onclick = async ()=>{
+        state.events[state.selected].splice(i,1);
+        if(!state.events[state.selected].length) delete state.events[state.selected];
+        await saveEvents(); draw(); renderRail();
+      };
+      li.append(num,tx,rm); list.appendChild(li);
+    });
+  }
+
+  function select(k){
+    state.selected = k;
+    const [y,m] = k.split('-').map(Number);
+    state.year = y; state.month = m-1;
+    draw(); renderRail();
+  }
+
+  /* ---------- wiring ---------- */
+  function draw(){
+    state.view==='year' ? drawYear() : drawMonth();
+    document.getElementById('rubric').textContent =
+      state.view==='year' ? 'the year, read as a clock' : MONTHS[state.month].toLowerCase()+', hour by day';
+  }
+
+  document.getElementById('scope').addEventListener('click', e=>{
+    state.view = state.view==='year' ? 'month' : 'year';
+    e.target.textContent = state.view==='year' ? 'Month dial' : 'Year dial';
+    e.target.setAttribute('aria-pressed', state.view==='month');
+    draw();
+  });
+  document.getElementById('prev').addEventListener('click', ()=>{ shift(-1); });
+  document.getElementById('next').addEventListener('click', ()=>{ shift(1); });
+  function shift(n){
+    if(state.view==='year'){ state.year += n; }
+    else{
+      state.month += n;
+      if(state.month<0){ state.month=11; state.year--; }
+      if(state.month>11){ state.month=0; state.year++; }
+    }
+    draw();
+  }
+  document.getElementById('today').addEventListener('click', ()=>{
+    const t = new Date();
+    state.year=t.getFullYear(); state.month=t.getMonth();
+    select(iso(t));
+  });
+  const input = document.getElementById('entryText');
+  async function addEntry(){
+    const v = input.value.trim();
+    if(!v) return;
+    (state.events[state.selected] ||= []).push(v);
+    input.value='';
+    await saveEvents(); draw(); renderRail();
+  }
+  document.getElementById('addEntry').addEventListener('click', addEntry);
+  input.addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
+
+  document.addEventListener('keydown', e=>{
+    if(e.target.tagName==='INPUT') return;
+    if(e.key==='ArrowLeft') shift(-1);
+    if(e.key==='ArrowRight') shift(1);
+    if(e.key.toLowerCase()==='t') document.getElementById('today').click();
+    if(e.key.toLowerCase()==='v') document.getElementById('scope').click();
+  });
+
+  // live hands in the month dial
+  setInterval(()=>{
+    if(state.view!=='month') return;
+    const t = new Date();
+    const set = (id,a,len)=>{
+      const n = document.getElementById(id); if(!n) return;
+      const [x,y] = pol(C,C,len,a); n.setAttribute('x2',x); n.setAttribute('y2',y);
+    };
+    set('hh',(t.getHours()%12)*30+t.getMinutes()*.5,HUB*0.42);
+    set('mm',t.getMinutes()*6+t.getSeconds()*.1,HUB*0.62);
+    set('ss',t.getSeconds()*6,HUB*0.68);
+  },1000);
+
+  (async ()=>{ await loadEvents(); draw(); renderRail(); })();
+})();
+</script>
+</body>
+</html>
