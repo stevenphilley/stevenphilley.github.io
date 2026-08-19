@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contents — stevenphilley.com</title>
+<meta name="description" content="An index of everything on stevenphilley.com — the photography portfolio and the tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* default theme: Dusk */
+  --base:      #251f2e;
+  --base-2:    #1c1724;
+  --ink:       #f3ebdd;
+  --ink-soft:  #9a8ba0;
+  --ink-faint: #5c5066;
+  --accent:    #e7b485;
+  --accent-2:  #d98b97;
+  --panel:      rgba(255,255,255,0.045);
+  --panel-line: rgba(255,255,255,0.09);
+  --shade:      rgba(0,0,0,0.34);
+  --blob-1: #5b3d6b;
+  --blob-2: #8a4f57;
+  --blob-3: #34506b;
+}
+
+/* ---- Themes ---- */
+body[data-theme="sage"]{
+  --base:#efe9da; --base-2:#e3dcc8; --ink:#2f3a2c; --ink-soft:#7d8470;
+  --ink-faint:#b3b29a; --accent:#7e9a6a; --accent-2:#b3925a;
+  --panel:rgba(60,70,50,0.05); --panel-line:rgba(60,70,50,0.13);
+  --shade:rgba(255,255,255,0.42);
+  --blob-1:#cdd6b4; --blob-2:#e6cf9f; --blob-3:#bcd0c4;
+}
+body[data-theme="tide"]{
+  --base:#18262b; --base-2:#11191d; --ink:#e7f0ee; --ink-soft:#86a09f;
+  --ink-faint:#465a5c; --accent:#8fd0c8; --accent-2:#7fb0d6;
+  --panel:rgba(255,255,255,0.04); --panel-line:rgba(255,255,255,0.08);
+  --shade:rgba(0,0,0,0.22);
+  --blob-1:#28525a; --blob-2:#2f4a66; --blob-3:#1f5e54;
+}
+body[data-theme="sand"]{
+  --base:#f0e6d6; --base-2:#e6d8c2; --ink:#3a2c22; --ink-soft:#8a7762;
+  --ink-faint:#c2ac90; --accent:#c98a5a; --accent-2:#a98c5d;
+  --panel:rgba(70,50,35,0.045); --panel-line:rgba(70,50,35,0.12);
+  --shade:rgba(255,255,255,0.40);
+  --blob-1:#e7c89e; --blob-2:#dcae8e; --blob-3:#cdbf9a;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--base);
+  color:var(--ink);
+  font-family:"Newsreader", Georgia, serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  transition:background .8s ease, color .8s ease;
+}
+
+/* ---- Drifting background ---- */
+.bg{position:fixed; inset:0; z-index:-2; overflow:hidden;
+  background:radial-gradient(120% 120% at 50% -10%, var(--base) 0%, var(--base-2) 100%);}
+.blob{position:absolute; border-radius:50%; filter:blur(80px); opacity:.42;
+  mix-blend-mode:screen; transition:background .8s ease;}
+body[data-theme="sage"] .blob,
+body[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.5;}
+.b1{width:46vw; height:46vw; background:var(--blob-1); top:-10vw; left:-8vw;
+  animation:drift1 30s ease-in-out infinite alternate;}
+.b2{width:40vw; height:40vw; background:var(--blob-2); bottom:-12vw; right:-6vw;
+  animation:drift2 36s ease-in-out infinite alternate;}
+.b3{width:34vw; height:34vw; background:var(--blob-3); top:44%; left:44%;
+  animation:drift3 42s ease-in-out infinite alternate;}
+@keyframes drift1{to{transform:translate(7vw,5vh) scale(1.10);}}
+@keyframes drift2{to{transform:translate(-6vw,-4vh) scale(1.07);}}
+@keyframes drift3{to{transform:translate(-5vw,6vh) scale(1.12);}}
+
+.grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.4;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+  mix-blend-mode:overlay;}
+
+/* ---- Layout ---- */
+.wrap{max-width:900px; margin:0 auto; padding:36px 24px 72px;
+  animation:rise .9s cubic-bezier(.2,.7,.2,1) both;}
+@keyframes rise{from{opacity:0; transform:translateY(14px);}}
+
+.header-top{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; flex-wrap:wrap;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-soft);
+  padding-bottom:12px; border-bottom:1px solid var(--panel-line);
+}
+
+/* ---- Theme swatches ---- */
+.themes{display:flex; gap:9px}
+.swatch{width:24px; height:24px; border-radius:50%; cursor:pointer; padding:0;
+  border:2px solid transparent; transition:transform .25s, border-color .25s;
+  background:linear-gradient(135deg, var(--s1), var(--s2));}
+.swatch:hover{transform:scale(1.12)}
+.swatch[aria-pressed="true"]{border-color:var(--ink)}
+.swatch:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.sw-dusk{--s1:#5b3d6b; --s2:#e7b485;}
+.sw-sage{--s1:#7e9a6a; --s2:#e6cf9f;}
+.sw-tide{--s1:#2f4a66; --s2:#8fd0c8;}
+.sw-sand{--s1:#c98a5a; --s2:#e7c89e;}
+
+/* ---- Masthead ---- */
+.masthead{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:26px; flex-wrap:wrap; padding:22px 0 16px;
+}
+.site-title{
+  font-family:"Bebas Neue", Impact, sans-serif;
+  font-size:clamp(58px,12vw,124px);
+  line-height:.84; letter-spacing:.02em; text-transform:uppercase;
+  margin:0; font-weight:400;
+}
+.masthead-right{text-align:right; max-width:36ch}
+.masthead-right .count{
+  display:block; font-family:"Bebas Neue", Impact, sans-serif;
+  font-size:24px; letter-spacing:.08em; color:var(--accent); margin-bottom:5px;
+}
+.masthead-right p{margin:0; font-size:15px; line-height:1.65; color:var(--ink-soft); font-style:italic}
+
+.band{height:5px; background:var(--accent); border-radius:3px; transition:background .8s ease}
+
+.intro-line{
+  display:flex; gap:16px; align-items:baseline; flex-wrap:wrap;
+  padding:14px 0 0; font-size:14px; color:var(--ink-soft); font-style:italic;
+}
+.intro-line .seq{
+  font-family:"Spline Sans Mono", monospace; font-style:normal;
+  font-size:11px; letter-spacing:.16em; color:var(--ink-faint);
+}
+
+/* ---- Sections ---- */
+.section-head{display:flex; align-items:center; gap:16px; margin:46px 0 6px}
+.section-head h2{
+  font-family:"Bebas Neue", Impact, sans-serif; font-weight:400;
+  font-size:19px; letter-spacing:.26em; text-transform:uppercase; margin:0;
+}
+.section-head .bar{flex:1; height:1px; background:var(--panel-line)}
+.section-head .tally{
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+}
+
+/* ---- Entries ---- */
+.entry{
+  display:grid; grid-template-columns:56px 1fr; gap:0 18px;
+  text-decoration:none; color:inherit;
+  padding:20px 16px 20px 12px;
+  border-bottom:1px solid var(--panel-line);
+  border-radius:12px;
+  transition:background .25s ease, box-shadow .25s ease;
+}
+.entry:first-of-type{border-top:1px solid var(--panel-line); border-radius:12px}
+.entry:hover, .entry:focus-visible{
+  background:var(--panel);
+  box-shadow:inset 3px 0 0 var(--accent);
+  outline:none;
+}
+.entry:hover .title, .entry:focus-visible .title{color:var(--accent)}
+.entry:focus-visible{box-shadow:inset 3px 0 0 var(--accent), 0 0 0 2px var(--accent-2)}
+
+.num{
+  font-family:"Bebas Neue", Impact, sans-serif;
+  font-size:28px; line-height:1; letter-spacing:.05em;
+  color:var(--ink-faint); padding-top:4px;
+}
+.title-line{display:flex; align-items:baseline; gap:10px; width:100%}
+.title{
+  font-family:"Bebas Neue", Impact, sans-serif; font-weight:400;
+  font-size:clamp(26px,4.4vw,36px); line-height:1;
+  letter-spacing:.03em; text-transform:uppercase; white-space:nowrap;
+  transition:color .25s ease;
+}
+.leader{
+  flex:1 1 20px; min-width:20px;
+  border-bottom:1.5px dotted var(--ink-faint);
+  transform:translateY(-5px);
+}
+.path{
+  font-family:"Spline Sans Mono", monospace;
+  font-size:11.5px; letter-spacing:.05em; color:var(--ink-soft); white-space:nowrap;
+}
+.desc{margin:10px 0 0; font-size:15px; line-height:1.7; max-width:64ch; color:var(--ink-soft)}
+
+/* ---- Footer ---- */
+footer{margin-top:56px}
+.footer-rule{height:1px; background:var(--panel-line); margin-bottom:14px}
+.footer-inner{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+}
+.footer-inner a{color:var(--ink-soft); text-decoration:none}
+.footer-inner a:hover{color:var(--accent)}
+
+@media (max-width:620px){
+  .entry{grid-template-columns:38px 1fr; gap:0 12px; padding:16px 10px}
+  .num{font-size:21px}
+  .title{white-space:normal}
+  .title-line{flex-wrap:wrap; gap:4px 10px}
+  .leader{display:none}
+  .path{width:100%}
+  .masthead-right{text-align:left}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body data-theme="dusk">
+
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grain"></div>
+
+<div class="wrap">
+
+  <div class="header-top">
+    <span>Vol. II — The Index</span>
+    <div class="themes" role="group" aria-label="color theme">
+      <button class="swatch sw-dusk" data-set="dusk" aria-pressed="true"  title="Dusk"></button>
+      <button class="swatch sw-sage" data-set="sage" aria-pressed="false" title="Sage"></button>
+      <button class="swatch sw-tide" data-set="tide" aria-pressed="false" title="Tide"></button>
+      <button class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"></button>
+    </div>
+  </div>
+
+  <header>
+    <div class="masthead">
+      <h1 class="site-title">Contents</h1>
+      <div class="masthead-right">
+        <span class="count">Six pages</span>
+        <p>Everything published on this domain. One portfolio, five tools — each a single file, no dependencies.</p>
+      </div>
+    </div>
+    <div class="band"></div>
+    <div class="intro-line">
+      <span class="seq">01 — 06</span>
+      <span>Every page runs entirely in the browser. Nothing is stored on a server.</span>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="section-head">
+      <h2>Portfolio</h2>
+      <span class="bar"></span>
+      <span class="tally">One page</span>
+    </div>
+
+    <a class="entry" href="index.html">
+      <span class="num">01</span>
+      <div>
+        <div class="title-line">
+          <span class="title">Photography</span>
+          <span class="leader"></span>
+          <span class="path">index.html</span>
+        </div>
+        <p class="desc">Nine landscape photographs from the Northern California coast and countryside, sequenced warm to cool. Click any frame for the fullscreen viewer; hover to reveal the original color.</p>
+      </div>
+    </a>
+
+    <div class="section-head">
+      <h2>Tools</h2>
+      <span class="bar"></span>
+      <span class="tally">Five pages</span>
+    </div>
+
+    <a class="entry" href="circular-calendar.html">
+      <span class="num">02</span>
+      <div>
+        <div class="title-line">
+          <span class="title">Annual Dial</span>
+          <span class="leader"></span>
+          <span class="path">circular-calendar.html</span>
+        </div>
+        <p class="desc">A calendar built like a clock. Read the whole year as one engraved dial, or switch to a single month with live hands. Click any day to mark it.</p>
+      </div>
+    </a>
+
+    <a class="entry" href="marketpulse.html">
+      <span class="num">03</span>
+      <div>
+        <div class="title-line">
+          <span class="title">MarketPulse</span>
+          <span class="leader"></span>
+          <span class="path">marketpulse.html</span>
+        </div>
+        <p class="desc">A finance terminal. Live crypto prices from CoinGecko with a scrolling ticker, index snapshots, and business headlines pulled from seven feeds.</p>
+      </div>
+    </a>
+
+    <a class="entry" href="percent-calculator.html">
+      <span class="num">04</span>
+      <div>
+        <div class="title-line">
+          <span class="title">Percentages</span>
+          <span class="leader"></span>
+          <span class="path">percent-calculator.html</span>
+        </div>
+        <p class="desc">Three kinds of percentage math in one place — what a percent of a number is, what one number is as a percent of another, and the change between two figures. Results update as you type.</p>
+      </div>
+    </a>
+
+    <a class="entry" href="pomodoro.html">
+      <span class="num">05</span>
+      <div>
+        <div class="title-line">
+          <span class="title">Pomodoro</span>
+          <span class="leader"></span>
+          <span class="path">pomodoro.html</span>
+        </div>
+        <p class="desc">A focus timer with three sessions — pomodoro, short break, long break — each with its own color. Set your own durations, and a chime marks the end of every round.</p>
+      </div>
+    </a>
+
+    <a class="entry" href="typing-tutor.html">
+      <span class="num">06</span>
+      <div>
+        <div class="title-line">
+          <span class="title">Stilltype</span>
+          <span class="leader"></span>
+          <span class="path">typing-tutor.html</span>
+        </div>
+        <p class="desc">A quiet typing tutor. Three difficulty levels, a beginner mode that drills the keys you choose, and a pace chart with words per minute and accuracy at the end of every run.</p>
+      </div>
+    </a>
+
+  </main>
+
+  <footer>
+    <div class="footer-rule"></div>
+    <div class="footer-inner">
+      <span><a href="index.html">Steven Philley</a></span>
+      <span>Last revised <span id="rev"></span> — &copy; <span id="yr"></span></span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var THEMES = ['dusk','sage','tide','sand'];
+  var KEY = 'sp-theme';
+
+  function setTheme(name){
+    if (THEMES.indexOf(name) === -1) name = 'dusk';
+    document.body.setAttribute('data-theme', name);
+    document.querySelectorAll('.swatch').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.set === name ? 'true' : 'false');
+    });
+    try { localStorage.setItem(KEY, name); } catch(e){}
+  }
+
+  document.querySelectorAll('.swatch').forEach(function(btn){
+    btn.addEventListener('click', function(){ setTheme(btn.dataset.set); });
+  });
+
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch(e){}
+  if (saved) setTheme(saved);
+
+  var now = new Date();
+  document.getElementById('yr').textContent = now.getFullYear();
+  document.getElementById('rev').textContent =
+    now.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+})();
+</script>
+
+</body>
+</html>
