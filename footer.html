@@ -1,0 +1,40 @@
+<footer>
+  <div class="footer-rule"></div>
+  <div class="footer-inner">
+    <span class="footer-left">{{ site.title }} — {{ page.tagline | default: site.tagline }}</span>
+    <span class="footer-right">&copy; <span id="yr"></span> — All rights reserved</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  var yr = document.getElementById('yr');
+  if (yr) yr.textContent = new Date().getFullYear();
+
+  var THEMES = ['dusk', 'sage', 'tide', 'sand'];
+  var root = document.documentElement;
+  var swatches = Array.prototype.slice.call(document.querySelectorAll('.swatch'));
+
+  function setTheme(name, persist) {
+    if (THEMES.indexOf(name) === -1) return;
+    root.setAttribute('data-theme', name);
+    swatches.forEach(function (b) {
+      b.setAttribute('aria-pressed', b.dataset.set === name ? 'true' : 'false');
+    });
+    if (persist) {
+      try { localStorage.setItem('sp-theme', name); } catch (e) {}
+    }
+    // Pages with canvases or other colour-aware drawing can listen for this.
+    document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: name } }));
+  }
+
+  // The <head> script already applied the stored theme — sync the buttons to it.
+  setTheme(root.getAttribute('data-theme') || 'dusk', false);
+
+  swatches.forEach(function (btn) {
+    btn.addEventListener('click', function () { setTheme(btn.dataset.set, true); });
+  });
+})();
+</script>
