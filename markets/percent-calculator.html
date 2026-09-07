@@ -27,7 +27,7 @@
 (function(){
   try{
     var valid=['accounting','emerald-light','emerald-dark'];
-    var t=localStorage.getItem('sp-theme-percent');
+    var t=localStorage.getItem('sp-theme-markets')||localStorage.getItem('sp-theme-percent');
     if(valid.indexOf(t)===-1)t='accounting';
     document.documentElement.setAttribute('data-theme',t);
   }catch(e){
@@ -616,7 +616,7 @@
 
   /* ---------- theme switching ---------- */
   (function(){
-    const KEY='sp-theme-percent';
+    const KEY='sp-theme-markets';
     const valid=['accounting','emerald-light','emerald-dark'];
     const btns=document.querySelectorAll('.tsw');
     const meta=document.querySelector('meta[name="theme-color"]');
@@ -630,7 +630,7 @@
     }
     function apply(theme){
       paint(theme);
-      try{localStorage.setItem(KEY,theme);}catch(e){}
+      try{localStorage.setItem(KEY,theme);localStorage.removeItem('sp-theme-percent');}catch(e){}
     }
     let current=document.documentElement.getAttribute('data-theme');
     if(valid.indexOf(current)===-1)current='accounting';
