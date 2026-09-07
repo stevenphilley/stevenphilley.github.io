@@ -130,6 +130,7 @@ image_alt: Orchard at sunset, orange and pink sky
 <!-- Lightbox viewer -->
 <div id="lb" class="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
   <div class="lb-backdrop"></div>
+
   <div class="lb-frame">
     <div class="lb-corner lb-corner--tl"></div>
     <div class="lb-corner lb-corner--tr"></div>
@@ -139,16 +140,27 @@ image_alt: Orchard at sunset, orange and pink sky
     <div class="lb-edge lb-edge--b"></div>
     <div class="lb-edge lb-edge--l"></div>
     <div class="lb-edge lb-edge--r"></div>
+
     <div class="lb-inner">
       <img id="lb-img" src="" alt="" />
     </div>
+
     <div class="lb-meta">
       <span id="lb-num" class="lb-num"></span>
       <span id="lb-title" class="lb-title"></span>
       <span id="lb-note" class="lb-note"></span>
       <span class="lb-hint">hover to reveal color</span>
     </div>
+
+    <div class="lb-actions">
+      <button type="button" class="lb-action" id="lb-share">share</button>
+      <button type="button" class="lb-action" id="lb-fullscreen" aria-pressed="false">fullscreen</button>
+      <button type="button" class="lb-action" id="lb-download">download</button>
+    </div>
+
+    <span class="lb-toast" id="lb-toast" role="status" aria-live="polite"></span>
   </div>
+
   <button class="lb-nav lb-prev" id="lb-prev" aria-label="Previous image">&#8592;</button>
   <button class="lb-nav lb-next" id="lb-next" aria-label="Next image">&#8594;</button>
   <button class="lb-close" id="lb-close" aria-label="Close viewer">
@@ -251,4 +263,272 @@ lb.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
   touchX = null;
 });
+
+/* ============================================================
+   LIGHTBOX ENHANCEMENTS
+   Append this inside the existing <script> block in index.html,
+   after openLb / closeLb / showSlide are defined.
+
+   Deliberately additive: it reads the viewer's current state out
+   of the DOM (#lb-img, #lb-num, #lb-title) rather than reaching
+   into your slide index, so nothing above it needs editing.
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var lb = document.getElementById('lb');
+  if (!lb) return;
+
+  var img      = document.getElementById('lb-img');
+  var elNum    = document.getElementById('lb-num');
+  var elTitle  = document.getElementById('lb-title');
+  var elNote   = document.getElementById('lb-note');
+  var elToast  = document.getElementById('lb-toast');
+  var btnShare = document.getElementById('lb-share');
+  var btnFull  = document.getElementById('lb-fullscreen');
+  var btnDown  = document.getElementById('lb-download');
+
+  var toastTimer = null;
+
+  function text(el) {
+    return el && el.textContent ? el.textContent.trim() : '';
+  }
+
+  function toast(msg) {
+    if (!elToast) return;
+    elToast.textContent = msg;
+    elToast.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      elToast.classList.remove('is-visible');
+    }, 2600);
+  }
+
+  /* ---------- colour reveal -------------------------------- */
+  /* Any pointer or keyboard activity inside the viewer reveals
+     colour, and it stays revealed until the viewer closes.     */
+
+  var revealed = false;
+
+  function reveal() {
+    if (revealed) return;
+    revealed = true;
+    lb.classList.add('is-color');
+  }
+
+  function unreveal() {
+    revealed = false;
+    lb.classList.remove('is-color');
+  }
+
+  lb.addEventListener('pointermove', reveal);
+  lb.addEventListener('pointerdown', reveal);
+  lb.addEventListener('focusin', function (e) {
+    // Only count keyboard focus, not the focus openLb may set itself.
+    if (e.target !== lb) reveal();
+  });
+
+  /* Reset so the next open starts in grayscale again. Hooked to
+     the three ways the viewer closes. Timed to land after the
+     close transition so you don't see it desaturate on the way out. */
+  function scheduleUnreveal() { setTimeout(unreveal, 450); }
+
+  var btnClose = document.getElementById('lb-close');
+  if (btnClose) btnClose.addEventListener('click', scheduleUnreveal);
+
+  var backdrop = lb.querySelector('.lb-backdrop');
+  if (backdrop) backdrop.addEventListener('click', scheduleUnreveal);
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !fsElement()) scheduleUnreveal();
+  });
+
+  /* ---------- filename ------------------------------------- */
+
+  function slug(s) {
+    return String(s)
+      .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  function currentSrc() {
+    return (img && (img.currentSrc || img.src)) || '';
+  }
+
+  function fileName() {
+    var src = currentSrc().split('?')[0];
+    var m = src.match(/\.([a-z0-9]+)$/i);
+    var ext = m ? m[1].toLowerCase() : 'jpg';
+    var parts = [slug(text(elNum)), slug(text(elTitle))].filter(Boolean);
+    return (parts.join('-') || 'photograph') + '.' + ext;
+  }
+
+  /* ---------- deep link ------------------------------------ */
+  /* Share links carry #p=NN. The hash is kept in step with the
+     viewer by watching the plate number, so no edit to showSlide. */
+
+  function shareUrl() {
+    var num = slug(text(elNum));
+    var base = location.origin + location.pathname;
+    return num ? base + '#p=' + num : base;
+  }
+
+  if (elNum && 'MutationObserver' in window) {
+    new MutationObserver(function () {
+      var num = slug(text(elNum));
+      if (num) history.replaceState(null, '', '#p=' + num);
+    }).observe(elNum, { childList: true, characterData: true, subtree: true });
+  }
+
+  // Open the referenced plate on load.
+  var deep = location.hash.match(/^#p=([0-9]+)$/);
+  if (deep) {
+    var frames = document.querySelectorAll('.photo-frame');
+    var target = frames[parseInt(deep[1], 10) - 1];
+    if (target) setTimeout(function () { target.click(); }, 80);
+  }
+
+  /* ---------- share ---------------------------------------- */
+
+  function copyLink(url) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        function () { toast('Link copied'); },
+        function () { legacyCopy(url); }
+      );
+    } else {
+      legacyCopy(url);
+    }
+  }
+
+  function legacyCopy(url) {
+    var ta = document.createElement('textarea');
+    ta.value = url;
+    ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:-9999px;opacity:0;';
+    document.body.appendChild(ta);
+    ta.select();
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    toast(ok ? 'Link copied' : 'Copy the address bar to share');
+  }
+
+  if (btnShare) {
+    btnShare.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var url = shareUrl();
+      var title = text(elTitle);
+      var payload = {
+        title: title ? 'Steven Philley — ' + title : 'Steven Philley — Photography',
+        text: text(elNote) || undefined,
+        url: url
+      };
+
+      if (navigator.share) {
+        navigator.share(payload).catch(function (err) {
+          // A cancelled share sheet is not a failure.
+          if (err && err.name === 'AbortError') return;
+          copyLink(url);
+        });
+      } else {
+        copyLink(url);
+      }
+    });
+  }
+
+  /* ---------- fullscreen ----------------------------------- */
+
+  function fsElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function toggleFullscreen() {
+    if (fsElement()) {
+      var exit = document.exitFullscreen || document.webkitExitFullscreen;
+      if (exit) exit.call(document);
+      return;
+    }
+    var req = lb.requestFullscreen || lb.webkitRequestFullscreen;
+    if (!req) { toast('Fullscreen not supported here'); return; }
+    var r = req.call(lb);
+    if (r && r.catch) r.catch(function () { toast('Fullscreen not available'); });
+  }
+
+  function syncFullscreenLabel() {
+    if (!btnFull) return;
+    var on = !!fsElement();
+    btnFull.textContent = on ? 'exit fullscreen' : 'fullscreen';
+    btnFull.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+
+  if (btnFull) {
+    btnFull.addEventListener('click', function (e) {
+      e.stopPropagation();
+      toggleFullscreen();
+    });
+  }
+
+  document.addEventListener('fullscreenchange', syncFullscreenLabel);
+  document.addEventListener('webkitfullscreenchange', syncFullscreenLabel);
+
+  /* Escape exits fullscreen first. Without this the existing
+     keydown handler would close the whole viewer in the same
+     keystroke that leaves fullscreen. Capture phase runs before
+     the bubble-phase handler already on document. */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && fsElement()) e.stopImmediatePropagation();
+  }, true);
+
+  /* ---------- download ------------------------------------- */
+
+  function triggerAnchor(href, name) {
+    var a = document.createElement('a');
+    a.href = href;
+    a.download = name;
+    a.rel = 'noopener';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  if (btnDown) {
+    btnDown.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var url = currentSrc();
+      if (!url) return;
+      var name = fileName();
+
+      btnDown.disabled = true;
+      toast('Preparing ' + name);
+
+      fetch(url, { mode: 'cors', credentials: 'omit' })
+        .then(function (res) {
+          if (!res.ok) throw new Error(res.status);
+          return res.blob();
+        })
+        .then(function (blob) {
+          var obj = URL.createObjectURL(blob);
+          triggerAnchor(obj, name);
+          setTimeout(function () { URL.revokeObjectURL(obj); }, 10000);
+          toast('Saved ' + name);
+        })
+        .catch(function () {
+          // Same-origin images still download with a plain anchor;
+          // the filename holds because the request isn't cross-origin.
+          triggerAnchor(url, name);
+          toast('Saved ' + name);
+        })
+        .then(function () {
+          btnDown.disabled = false;
+        });
+    });
+  }
+
+  syncFullscreenLabel();
+})();
 </script>
