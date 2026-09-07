@@ -22,7 +22,7 @@
 
 <title>Nine Chakras — Steven Philley</title>
 
-<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();</script>
+<script>(function(){try{var SITE=['dusk','sage','tide','sand'];var c=localStorage.getItem('sp-theme-chakras');var t=localStorage.getItem('sp-theme');if(c==='glow')document.documentElement.setAttribute('data-theme','glow');else if(t&&SITE.indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1126,7 +1126,9 @@ footer a:hover{color:var(--ink)}
   'use strict';
 
   /* ---------- theme ---------- */
-  var KEY = 'sp-theme';
+  /* Site-wide: dusk/sage/tide/sand → sp-theme.
+     Glow is chakras-only → sp-theme-chakras (never pollute sp-theme). */
+  var SITE = ['dusk','sage','tide','sand'];
   var root = document.documentElement;
   var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-set-theme]'));
 
@@ -1138,8 +1140,16 @@ footer a:hover{color:var(--ink)}
   }
   buttons.forEach(function(b){
     b.addEventListener('click', function(){
-      root.setAttribute('data-theme', b.dataset.setTheme);
-      try{ localStorage.setItem(KEY, b.dataset.setTheme); }catch(e){}
+      var name = b.dataset.setTheme;
+      root.setAttribute('data-theme', name);
+      try{
+        if (name === 'glow') {
+          localStorage.setItem('sp-theme-chakras', 'glow');
+        } else if (SITE.indexOf(name) > -1) {
+          localStorage.setItem('sp-theme', name);
+          localStorage.removeItem('sp-theme-chakras');
+        }
+      }catch(e){}
       paintButtons();
     });
   });
