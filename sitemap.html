@@ -43,21 +43,21 @@
 }
 
 /* ---- Themes ---- */
-body[data-theme="sage"]{
+html[data-theme="sage"]{
   --base:#efe9da; --base-2:#e3dcc8; --ink:#2f3a2c; --ink-soft:#7d8470;
   --ink-faint:#b3b29a; --accent:#7e9a6a; --accent-2:#b3925a;
   --panel:rgba(60,70,50,0.05); --panel-line:rgba(60,70,50,0.13);
   --shade:rgba(255,255,255,0.42);
   --blob-1:#cdd6b4; --blob-2:#e6cf9f; --blob-3:#bcd0c4;
 }
-body[data-theme="tide"]{
+html[data-theme="tide"]{
   --base:#18262b; --base-2:#11191d; --ink:#e7f0ee; --ink-soft:#86a09f;
   --ink-faint:#465a5c; --accent:#8fd0c8; --accent-2:#7fb0d6;
   --panel:rgba(255,255,255,0.04); --panel-line:rgba(255,255,255,0.08);
   --shade:rgba(0,0,0,0.22);
   --blob-1:#28525a; --blob-2:#2f4a66; --blob-3:#1f5e54;
 }
-body[data-theme="sand"]{
+html[data-theme="sand"]{
   --base:#f0e6d6; --base-2:#e6d8c2; --ink:#3a2c22; --ink-soft:#8a7762;
   --ink-faint:#c2ac90; --accent:#c98a5a; --accent-2:#a98c5d;
   --panel:rgba(70,50,35,0.045); --panel-line:rgba(70,50,35,0.12);
@@ -82,8 +82,8 @@ body{
   background:radial-gradient(120% 120% at 50% -10%, var(--base) 0%, var(--base-2) 100%);}
 .blob{position:absolute; border-radius:50%; filter:blur(80px); opacity:.42;
   mix-blend-mode:screen; transition:background .8s ease;}
-body[data-theme="sage"] .blob,
-body[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.5;}
+html[data-theme="sage"] .blob,
+html[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.5;}
 .b1{width:46vw; height:46vw; background:var(--blob-1); top:-10vw; left:-8vw;
   animation:drift1 30s ease-in-out infinite alternate;}
 .b2{width:40vw; height:40vw; background:var(--blob-2); bottom:-12vw; right:-6vw;
@@ -232,8 +232,9 @@ footer{margin-top:56px}
   *{transition:none !important; animation:none !important}
 }
 </style>
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
-<body data-theme="dusk">
+<body>
 
 <div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 <div class="grain"></div>
@@ -384,7 +385,7 @@ footer{margin-top:56px}
 
   function setTheme(name){
     if (THEMES.indexOf(name) === -1) name = 'dusk';
-    document.body.setAttribute('data-theme', name);
+    document.documentElement.setAttribute('data-theme', name);
     document.querySelectorAll('.swatch').forEach(function(b){
       b.setAttribute('aria-pressed', b.dataset.set === name ? 'true' : 'false');
     });
