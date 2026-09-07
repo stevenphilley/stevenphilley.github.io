@@ -1,0 +1,71 @@
+{%- comment -%}
+  Social preview + SEO meta.
+  Include this once inside <head> in _layouts/default.html, using the
+  standard Liquid include tag pointing at meta.html.
+
+  Per-page overrides go in front matter:
+    title:        Stilltype — a quiet typing tutor
+    description:  One or two sentences. Shows as the card body on Mastodon.
+    image:        /images/og/og-typing-tutor.png
+    image_alt:    Description of the card image for screen readers.
+    image_width:  1200
+    image_height: 630
+    og_type:      website
+    kicker:       Vol. II — Tools        (optional, unused by meta, handy elsewhere)
+
+  Everything falls back to the site-wide defaults in _config.yml.
+{%- endcomment -%}
+
+{%- assign m_title  = page.title       | default: site.title -%}
+{%- assign m_desc   = page.description | default: site.description -%}
+{%- assign m_image  = page.image       | default: site.og_image -%}
+{%- assign m_alt    = page.image_alt   | default: site.og_image_alt -%}
+{%- assign m_w      = page.image_width  | default: site.og_image_width  | default: 1200 -%}
+{%- assign m_h      = page.image_height | default: site.og_image_height | default: 630 -%}
+{%- assign m_type   = page.og_type     | default: 'website' -%}
+{%- assign m_url    = page.url | replace: 'index.html', '' | absolute_url -%}
+{%- assign m_imgurl = m_image | absolute_url -%}
+{%- assign m_desc   = m_desc | strip_html | normalize_whitespace | strip -%}
+{%- if m_image contains '.png' -%}
+  {%- assign m_mime = 'image/png' -%}
+{%- else -%}
+  {%- assign m_mime = 'image/jpeg' -%}
+{%- endif -%}
+
+<meta name="description" content="{{ m_desc | escape }}">
+<link rel="canonical" href="{{ m_url }}">
+
+<!-- Open Graph — this is what Mastodon reads -->
+<meta property="og:type" content="{{ m_type }}">
+<meta property="og:site_name" content="{{ site.title }}">
+<meta property="og:title" content="{{ m_title | escape }}">
+<meta property="og:description" content="{{ m_desc | escape }}">
+<meta property="og:url" content="{{ m_url }}">
+<meta property="og:locale" content="en_US">
+{%- if m_image %}
+<meta property="og:image" content="{{ m_imgurl }}">
+<meta property="og:image:type" content="{{ m_mime }}">
+<meta property="og:image:width" content="{{ m_w }}">
+<meta property="og:image:height" content="{{ m_h }}">
+<meta property="og:image:alt" content="{{ m_alt | escape }}">
+{%- endif %}
+
+<!-- Twitter/X card tags. Several unfurlers (Slack, Discord, Signal) read these first. -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ m_title | escape }}">
+<meta name="twitter:description" content="{{ m_desc | escape }}">
+{%- if m_image %}
+<meta name="twitter:image" content="{{ m_imgurl }}">
+<meta name="twitter:image:alt" content="{{ m_alt | escape }}">
+{%- endif %}
+
+{%- if site.fediverse_creator %}
+<!-- Adds a "More from @you" byline under the card on Mastodon 4.3+.
+     Requires Preferences > Public Profile > Verification > Author attribution
+     to list stevenphilley.com. See notes: this can suppress the description. -->
+<meta name="fediverse:creator" content="{{ site.fediverse_creator }}">
+{%- endif %}
+
+{%- if site.theme_color %}
+<meta name="theme-color" content="{{ site.theme_color }}">
+{%- endif %}
