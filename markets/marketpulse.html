@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="accounting">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,11 +20,13 @@
 <meta name="twitter:description" content="Live crypto prices, index snapshots, and business headlines from seven feeds.">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-marketpulse.png">
 
+<script>(function(){try{var v=['accounting','emerald-light','emerald-dark'];var t=localStorage.getItem('sp-theme-markets')||localStorage.getItem('sp-theme-percent');if(v.indexOf(t)===-1)t='accounting';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <title>MarketPulse — Finance Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
+:root, html[data-theme="accounting"] {
+  /* Accounting — markets default (terminal finance) */
   --bg: #060810;
   --surface: #0c0f18;
   --surface2: #111520;
@@ -41,6 +43,52 @@
   --accent: #00d9ff;
   --purple: #9b72ff;
 }
+html[data-theme="emerald-light"] {
+  --bg: #eef6f1;
+  --surface: #ffffff;
+  --surface2: #e4efe8;
+  --surface3: #d7e8de;
+  --border: #b9d0c2;
+  --border2: #9bb8a8;
+  --text: #143028;
+  --text-muted: #5f7a6c;
+  --text-dim: #3f5a4c;
+  --green: #0f8f5a;
+  --red: #c62828;
+  --gold: #b8860b;
+  --blue: #1d6fa5;
+  --accent: #0d7a55;
+  --purple: #5b4a9b;
+}
+html[data-theme="emerald-dark"] {
+  --bg: #07140f;
+  --surface: #0c1c16;
+  --surface2: #10241c;
+  --surface3: #153028;
+  --border: #1c3a2e;
+  --border2: #275043;
+  --text: #d5ebe0;
+  --text-muted: #6a8f7c;
+  --text-dim: #93b8a6;
+  --green: #2dffb0;
+  --red: #ff5a72;
+  --gold: #f0c14d;
+  --blue: #5ec0ff;
+  --accent: #3dffc0;
+  --purple: #b08cff;
+}
+.theme-switch {
+  display:flex; gap:0; border:1px solid var(--border);
+  font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1px;
+}
+.theme-switch button {
+  appearance:none; background:transparent; border:0; border-right:1px solid var(--border);
+  color:var(--text-muted); padding:5px 8px; cursor:pointer; text-transform:uppercase;
+}
+.theme-switch button:last-child{border-right:0}
+.theme-switch button[aria-pressed="true"]{background:var(--accent); color:var(--bg)}
+.markets-nav a{color:var(--text-dim); text-decoration:none; font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1px}
+.markets-nav a:hover{color:var(--accent)}
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -460,11 +508,17 @@ body {
 <!-- HEADER -->
 <header class="header">
   <div class="logo">MARKET<em>PULSE</em></div>
-  <div class="header-right">
+    <div class="header-right">
+    <nav class="markets-nav"><a href="/markets/">MARKETS</a></nav>
+    <div class="theme-switch" role="group" aria-label="Markets theme">
+      <button type="button" data-m-theme="accounting" aria-pressed="true">Acct</button>
+      <button type="button" data-m-theme="emerald-light" aria-pressed="false">Em L</button>
+      <button type="button" data-m-theme="emerald-dark" aria-pressed="false">Em D</button>
+    </div>
+
     <div class="live-badge"><div class="live-dot"></div>LIVE</div>
     <div class="clock" id="clock">--:--:--</div>
-  </div>
-</header>
+    </div></header>
 
 <!-- TICKER TAPE -->
 <div class="ticker-wrap">
@@ -742,6 +796,29 @@ async function boot() {
 }
 
 boot();
+</script>
+
+<script>
+(function(){
+  var KEY='sp-theme-markets';
+  var valid=['accounting','emerald-light','emerald-dark'];
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-m-theme]'));
+  function paint(){
+    var t=root.getAttribute('data-theme')||'accounting';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed', String(b.dataset.mTheme===t));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){
+      var t=b.dataset.mTheme;
+      if(valid.indexOf(t)===-1)return;
+      root.setAttribute('data-theme', t);
+      try{localStorage.setItem(KEY,t);localStorage.removeItem('sp-theme-percent');}catch(e){}
+      paint();
+    });
+  });
+  paint();
+})();
 </script>
 </body>
 </html>
