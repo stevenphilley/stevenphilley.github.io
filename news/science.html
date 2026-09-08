@@ -145,16 +145,14 @@ a{color:inherit}
 
   function proxies(url){
     return [
-      'https://corsproxy.io/?' + encodeURIComponent(url),
       'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-      'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
       'https://api.allorigins.win/get?url=' + encodeURIComponent(url)
     ];
   }
 
   async function fetchText(url){
     var ctrl = new AbortController();
-    var timer = setTimeout(function(){ ctrl.abort(); }, 12000);
+    var timer = setTimeout(function(){ ctrl.abort(); }, 7000);
     try {
       var res = await fetch(url, { signal: ctrl.signal, cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -233,6 +231,21 @@ a{color:inherit}
     }).join('');
   }
 
+  var snapshot = null;
+
+  async function loadSnapshot(){
+    if (snapshot) return snapshot;
+    var res = await fetch('/news/science.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error('snapshot HTTP ' + res.status);
+    snapshot = await res.json();
+    return snapshot;
+  }
+
+  function snapshotItems(feed){
+    var pack = snapshot && snapshot.feeds && snapshot.feeds[feed.id];
+    return (pack && pack.items) || [];
+  }
+
   async function show(feed){
     active = feed;
     try { localStorage.setItem('news-science-feed', feed.id); } catch(e) {}
@@ -243,13 +256,28 @@ a{color:inherit}
     status.dataset.state = 'ok';
     status.textContent = 'Loading ' + feed.label + '…';
     skeleton();
+
+    var shown = false;
+    try {
+      await loadSnapshot();
+      var snap = snapshotItems(feed);
+      if (snap.length) {
+        status.dataset.state = 'stale';
+        status.textContent = snap.length + ' headlines · ' + feed.label;
+        render(snap, 'ok');
+        shown = true;
+      }
+    } catch (e) {}
+
     try {
       var xml = await loadXml(feed.url);
       var items = parseItems(xml);
       if (!items.length) throw new Error('feed returned no items');
       try { localStorage.setItem('news-science-cache:' + feed.id, JSON.stringify({ t: Date.now(), items: items })); } catch(e) {}
       render(items, 'ok');
+      shown = true;
     } catch (err) {
+      if (shown) return;
       var cached = null;
       try {
         var raw = localStorage.getItem('news-science-cache:' + feed.id);
