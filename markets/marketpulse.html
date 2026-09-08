@@ -388,7 +388,8 @@ body.is-offline #offline { display: block; }
 
 <header class="topbar">
   <div class="brand">Market<span>&middot;</span>Pulse</div>
-  <a class="back" href="/markets/">&larr; Markets</a>
+  <a class="back" href="/markets/">&larr; Markets sitemap</a>
+  <a class="back" href="/news/" style="margin-left:12px">News</a>
   <div class="themes" role="group" aria-label="Colour theme">
     <button class="theme-btn" type="button" data-set-theme="accounting">Acct</button>
     <button class="theme-btn" type="button" data-set-theme="emerald-light">Em L</button>
@@ -745,25 +746,42 @@ const FEEDS = [
   */
 ];
 
-async function viaRss2json(url) {
-  const d = await MP.request(
-    'https://api.rss2json.com/v1/api.json?count=15&rss_url=' + encodeURIComponent(url),
-    { tries: 2 }
-  );
-  if (!d || d.status !== 'ok' || !Array.isArray(d.items)) {
-    throw new Error('rss2json: ' + ((d && d.message) || 'bad response'));
+async function fetchRelayText(url) {
+  const relays = [
+    'https://corsproxy.io/?' + encodeURIComponent(url),
+    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
+    'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url),
+    'https://api.allorigins.win/get?url=' + encodeURIComponent(url)
+  ];
+  let lastErr;
+  for (const relay of relays) {
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 12000);
+      try {
+        const res = await fetch(relay, { signal: ctrl.signal, cache: 'no-store' });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const ct = (res.headers.get('content-type') || '').toLowerCase();
+        if (ct.includes('application/json') || relay.includes('/get?url=')) {
+          const j = await res.json();
+          if (j && typeof j.contents === 'string' && j.contents.includes('<')) return j.contents;
+          throw new Error('unexpected JSON');
+        }
+        const text = await res.text();
+        if (!text || text.indexOf('<') === -1) throw new Error('empty relay');
+        return text;
+      } finally {
+        clearTimeout(timer);
+      }
+    } catch (err) {
+      lastErr = err;
+    }
   }
-  return d.items.map(it => ({
-    title: it.title, link: it.link, date: it.pubDate,
-    source: (d.feed && d.feed.title) || ''
-  }));
+  throw lastErr || new Error('all relays failed');
 }
 
 async function viaXml(url) {
-  const xml = await MP.request(
-    'https://api.allorigins.win/raw?url=' + encodeURIComponent(url),
-    { tries: 2, text: true }
-  );
+  const xml = await fetchRelayText(url);
   const doc = new DOMParser().parseFromString(xml, 'text/xml');
   if (doc.querySelector('parsererror')) throw new Error('feed did not parse');
 
@@ -780,14 +798,12 @@ async function viaXml(url) {
       date: pick('pubDate') || pick('updated') || pick('published'),
       source: feedTitle
     };
-  });
+  }).filter(it => it.title);
 }
 
 function getFeed(feed) {
   return MP.resilient('feed:' + feed.id, async function () {
-    let items;
-    try { items = await viaRss2json(feed.url); }
-    catch (e) { items = await viaXml(feed.url); }
+    const items = await viaXml(feed.url);
     if (!items.length) throw new Error('feed returned no items');
     return items;
   }, []);
