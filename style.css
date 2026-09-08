@@ -178,6 +178,18 @@ header { padding-top: 2.5rem; }
   gap: 0.9rem;
 }
 
+.top-news {
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 1px;
+}
+.top-news:hover,
+.top-news:focus-visible {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+
 .issue-label {
   font-family: var(--font-mono);
   font-size: 0.6rem;
@@ -583,7 +595,15 @@ footer { margin-top: 2rem; }
   border: var(--border-w) solid var(--ink);
 }
 
-
+.lb-inner img {
+  width: 100%;
+  max-height: calc(90vh - 80px);
+  object-fit: contain;
+  display: block;
+  filter: grayscale(100%) contrast(1.05) brightness(0.97);
+  transition: filter 0.5s ease;
+}
+.lb-inner:hover img { filter: grayscale(0%) contrast(1.02) brightness(1.0); }
 
 .lb-meta {
   display: flex;
@@ -704,138 +724,4 @@ footer { margin-top: 2rem; }
   .lb-nav  { display: none; }
   .lb-hint { display: none; }
   .lb-frame { max-width: 96vw; }
-}
-
-/* ============================================================
-   LIGHTBOX — TONE
-   Replaces the existing `.lb-inner img` / `.lb-inner:hover img`
-   pair in style.css. Delete both of those rules first.
-
-   The bug: the reveal was bound to `.lb-inner:hover`, so the
-   colour dropped out whenever the cursor sat over the meta bar,
-   the frame edges, the nav arrows or any gap between them.
-   The reveal is now driven by an `is-color` class that the JS
-   adds as soon as the pointer is anywhere inside `#lb`, so the
-   image holds its colour for as long as you are in the viewer.
-   ============================================================ */
-
-.lb-inner img {
-  width: 100%;
-  max-height: calc(90vh - 80px);
-  object-fit: contain;
-  display: block;
-  filter: grayscale(100%) contrast(1.05) brightness(0.97);
-  transition: filter 0.5s ease;
-}
-
-.lb.is-color .lb-inner img {
-  filter: grayscale(0%) contrast(1.02) brightness(1);
-}
-
-/* Touch devices have no hover state to reveal with. Show colour
-   outright rather than stranding the photograph in grayscale. */
-@media (hover: none) {
-  .lb-inner img {
-    filter: grayscale(0%) contrast(1.02) brightness(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lb-inner img { transition: none; }
-}
-
-/* The hint has done its job once the colour is up. */
-.lb.is-color .lb-hint {
-  opacity: 0;
-  transition: opacity 0.4s ease;
-}
-
-
-/* ============================================================
-   LIGHTBOX — CONTROLS
-   New. Append after the existing `.lb-meta` rules so these
-   inherit rather than fight them.
-   ============================================================ */
-
-.lb-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: 0.85rem;
-}
-
-.lb-action {
-  appearance: none;
-  -webkit-appearance: none;
-  background: none;
-  border: 0;
-  border-bottom: 1px solid currentColor;
-  border-radius: 0;
-  padding: 0.2em 0 0.25em;
-  font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
-  font-size: 0.6875rem;
-  letter-spacing: 0.14em;
-  line-height: 1;
-  color: inherit;
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.3s ease;
-}
-
-.lb-action:hover,
-.lb-action:focus-visible {
-  opacity: 1;
-}
-
-.lb-action:focus-visible {
-  outline: 1px solid currentColor;
-  outline-offset: 4px;
-}
-
-.lb-action[disabled] {
-  opacity: 0.2;
-  cursor: default;
-}
-
-/* Status line for copy-link confirmations and download state.
-   Occupies no space until it has something to say. */
-.lb-toast {
-  display: block;
-  margin-top: 0.6rem;
-  min-height: 1em;
-  font-family: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
-  font-size: 0.6875rem;
-  letter-spacing: 0.1em;
-  color: inherit;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.lb-toast.is-visible {
-  opacity: 0.7;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lb-action,
-  .lb-toast { transition: none; }
-}
-
-
-/* ============================================================
-   LIGHTBOX — NATIVE FULLSCREEN
-   In fullscreen the UA paints the element's own background,
-   which is transparent here because the tone comes from
-   `.lb-backdrop`. Give it a floor so the frame doesn't sit on
-   white. Falls back to a near-black if --bg isn't defined.
-   ============================================================ */
-
-.lb:fullscreen,
-.lb:-webkit-full-screen {
-  background: var(--bg, #0d0d0d);
-}
-
-.lb:fullscreen .lb-inner img,
-.lb:-webkit-full-screen .lb-inner img {
-  max-height: calc(100vh - 140px);
 }
