@@ -483,7 +483,7 @@ lb.addEventListener('touchend', e => {
     if (e.key === 'Escape' && fsElement()) e.stopImmediatePropagation();
   }, true);
 
-  /* ---------- download ------------------------------------- */
+  /* ---------- download (with subtle watermark) ------------- */
 
   function triggerAnchor(href, name) {
     var a = document.createElement('a');
@@ -496,6 +496,66 @@ lb.addEventListener('touchend', e => {
     document.body.removeChild(a);
   }
 
+  function loadImage(url) {
+    return new Promise(function (resolve, reject) {
+      // Prefer the already-decoded lightbox image when it matches.
+      if (img && img.complete && img.naturalWidth && (img.currentSrc === url || img.src === url)) {
+        resolve(img);
+        return;
+      }
+      var im = new Image();
+      im.onload = function () { resolve(im); };
+      im.onerror = function () { reject(new Error('image load failed')); };
+      // Same-origin photos on this site; keeps the canvas clean for export.
+      im.crossOrigin = 'anonymous';
+      im.src = url;
+    });
+  }
+
+  function watermarkedBlob(source, file) {
+    var w = source.naturalWidth || source.width;
+    var h = source.naturalHeight || source.height;
+    if (!w || !h) return Promise.reject(new Error('empty image'));
+
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+    ctx.drawImage(source, 0, 0, w, h);
+
+    var mark = 'stevenphilley.com';
+    // Scale with the long edge so it stays readable but quiet on any size.
+    var base = Math.max(w, h);
+    var fontPx = Math.max(14, Math.round(base * 0.016));
+    var pad = Math.max(12, Math.round(base * 0.018));
+    ctx.font = '500 ' + fontPx + 'px "IBM Plex Mono", ui-monospace, monospace';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+
+    var x = w - pad;
+    var y = h - pad;
+    // Soft dark halo for contrast on light and dark photos, then light type.
+    ctx.lineWidth = Math.max(2, Math.round(fontPx * 0.22));
+    ctx.strokeStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillStyle = 'rgba(255,255,255,0.78)';
+    ctx.strokeText(mark, x, y);
+    ctx.fillText(mark, x, y);
+
+    var isPng = /\.png$/i.test(file);
+    var type = isPng ? 'image/png' : 'image/jpeg';
+    var quality = isPng ? undefined : 0.92;
+    // Keep extension honest if we re-encode to JPEG.
+    if (!isPng && !/\.jpe?g$/i.test(file)) {
+      file = file.replace(/\.[^.]+$/, '') + '.jpg';
+    }
+
+    return new Promise(function (resolve) {
+      canvas.toBlob(function (blob) {
+        resolve({ blob: blob, name: file });
+      }, type, quality);
+    });
+  }
+
   if (btnDown) {
     btnDown.addEventListener('click', function (e) {
       e.stopPropagation();
@@ -506,22 +566,17 @@ lb.addEventListener('touchend', e => {
       btnDown.disabled = true;
       toast('Preparing ' + name);
 
-      fetch(url, { mode: 'cors', credentials: 'omit' })
-        .then(function (res) {
-          if (!res.ok) throw new Error(res.status);
-          return res.blob();
-        })
-        .then(function (blob) {
-          var obj = URL.createObjectURL(blob);
-          triggerAnchor(obj, name);
+      loadImage(url)
+        .then(function (source) { return watermarkedBlob(source, name); })
+        .then(function (out) {
+          if (!out || !out.blob) throw new Error('export failed');
+          var obj = URL.createObjectURL(out.blob);
+          triggerAnchor(obj, out.name);
           setTimeout(function () { URL.revokeObjectURL(obj); }, 10000);
-          toast('Saved ' + name);
+          toast('Saved ' + out.name);
         })
         .catch(function () {
-          // Same-origin images still download with a plain anchor;
-          // the filename holds because the request isn't cross-origin.
-          triggerAnchor(url, name);
-          toast('Saved ' + name);
+          toast('Could not watermark — try again');
         })
         .then(function () {
           btnDown.disabled = false;
