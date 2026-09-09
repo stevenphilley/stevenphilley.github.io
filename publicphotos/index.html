@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Public photos — Steven Philley</title>
-<meta name="description" content="Shared library of freely reusable public-domain and Creative Commons photos for Steven Philley sites. Hosted copies plus legitimate hotlinks.">
+<meta name="description" content="Shared library of freely reusable public-domain and Creative Commons photos for Steven Philley sites. Hosted copies plus legitimate hotlinks. Includes Campbell/Silicon Valley places, pets, and DJ/guitar themes.">
 <link rel="canonical" href="https://stevenphilley.com/publicphotos/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Public photos — Steven Philley">
-<meta property="og:description" content="Shared library of freely reusable images for stevenphilley.com and related sites.">
+<meta property="og:description" content="Shared library of freely reusable images for stevenphilley.com and related sites — places, pets, music, and more.">
 <meta property="og:url" content="https://stevenphilley.com/publicphotos/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/blue-marble.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -33,9 +33,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .chip{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line,#2c303a);padding:6px 10px;color:var(--ink-soft,#9b9a96)}
 .chip a{color:inherit;text-decoration:none}
 .chip a:hover{color:var(--ink,#e8e6e1)}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.filters button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+.filters button:hover{color:var(--ink,#e8e6e1);border-color:var(--ink-soft,#9b9a96)}
+.filters button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
 @media (max-width:820px){.grid{grid-template-columns:1fr}}
 .card{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column}
+.card[hidden]{display:none}
 .card .thumb{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#0b0d12}
 .card .body{padding:14px 14px 16px;display:grid;gap:10px}
 .card h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.03em;margin:0;line-height:1}
@@ -79,11 +84,17 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 
   <p class="kicker">Shared media library</p>
   <h1>Public photos</h1>
-  <p class="lede">A reusable library of freely licensed images for Steven’s sites — stevenphilley.com, coloritcompany.com, and anything else that needs a stable hero or illustration. Prefer the <strong>hosted</strong> URL so embeds keep working if a source CDN moves. Use a <strong>hotlink</strong> only when the source explicitly allows it (NASA assets and Commons originals are marked below).</p>
+  <p class="lede">A reusable library of freely licensed images for Steven’s sites — stevenphilley.com, coloritcompany.com, and anything else that needs a stable hero or illustration. Includes a small <strong>historical archive</strong> of Campbell / Silicon Valley places, plus pets and DJ/guitar themes for the Local hub. Prefer the <strong>hosted</strong> URL so embeds keep working if a source CDN moves. Use a <strong>hotlink</strong> only when the source explicitly allows it (NASA assets and Commons originals are marked below).</p>
   <div class="meta-row">
     <span class="chip" id="countChip">Catalog loading…</span>
     <span class="chip"><a href="catalog.json">catalog.json</a></span>
     <span class="chip">Prefer PD / CC0</span>
+  </div>
+  <div class="filters" role="group" aria-label="Filter by collection" id="filters">
+    <button type="button" data-filter="all" aria-pressed="true">All</button>
+    <button type="button" data-filter="places" aria-pressed="false">Places</button>
+    <button type="button" data-filter="pets" aria-pressed="false">Pets</button>
+    <button type="button" data-filter="music" aria-pressed="false">Music</button>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -129,18 +140,46 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     return String(s||'').replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);});
   }
 
+  function collectionOf(p){
+    if(p.collection) return p.collection;
+    var tags=(p.tags||[]);
+    if(tags.indexOf('pets')>-1||tags.indexOf('dog')>-1||tags.indexOf('cat')>-1||tags.indexOf('aquarium')>-1) return 'pets';
+    if(tags.indexOf('dj')>-1||tags.indexOf('guitar')>-1||tags.indexOf('music')>-1||tags.indexOf('vinyl')>-1) return 'music';
+    if(tags.indexOf('historical-archive')>-1||tags.indexOf('campbell')>-1||tags.indexOf('local')>-1||tags.indexOf('places')>-1) return 'places';
+    return 'other';
+  }
+
+  var allPhotos=[];
+  var activeFilter='all';
+
+  function applyFilter(){
+    var cards=[].slice.call(document.querySelectorAll('#grid .card'));
+    var shown=0;
+    cards.forEach(function(card){
+      var col=card.getAttribute('data-collection')||'other';
+      var ok=activeFilter==='all'||col===activeFilter;
+      card.hidden=!ok;
+      if(ok) shown++;
+    });
+    document.getElementById('countChip').textContent=shown+(activeFilter==='all'?' images':' shown')+' / '+allPhotos.length;
+    [].slice.call(document.querySelectorAll('#filters [data-filter]')).forEach(function(b){
+      b.setAttribute('aria-pressed',String(b.dataset.filter===activeFilter));
+    });
+  }
+
   function render(catalog){
-    var photos=catalog.photos||[];
-    document.getElementById('countChip').textContent=photos.length+' images';
+    allPhotos=catalog.photos||[];
+    document.getElementById('countChip').textContent=allPhotos.length+' images';
     var grid=document.getElementById('grid');
-    grid.innerHTML=photos.map(function(p){
+    grid.innerHTML=allPhotos.map(function(p){
+      var col=collectionOf(p);
       var imgTag='&lt;img src="'+esc(p.hosted_url)+'" alt="'+esc(p.title)+'" width="'+p.width+'" height="'+p.height+'" loading="lazy"&gt;';
       var tags=(p.tags||[]).map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join('');
       var hot = p.hotlink_url
         ? '<div class="url-block"><label>Hotlink (source allows)</label><code>'+esc(p.hotlink_url)+'</code></div>'
         : '<div class="url-block"><label>Hotlink</label><code>not recommended / not allowed</code></div>';
       return (
-        '<article class="card" id="'+esc(p.id)+'">'+
+        '<article class="card" id="'+esc(p.id)+'" data-collection="'+esc(col)+'">'+
           '<img class="thumb" src="'+esc(p.hosted_path)+'" alt="'+esc(p.title)+'" loading="lazy" width="'+p.width+'" height="'+p.height+'">'+
           '<div class="body">'+
             '<div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap">'+
@@ -176,7 +215,15 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
         copyText(tag);
       }
     });
+    applyFilter();
   }
+
+  document.getElementById('filters').addEventListener('click',function(e){
+    var btn=e.target.closest('[data-filter]');
+    if(!btn) return;
+    activeFilter=btn.dataset.filter;
+    applyFilter();
+  });
 
   fetch('catalog.json',{credentials:'same-origin'})
     .then(function(r){ if(!r.ok) throw new Error('catalog '+r.status); return r.json(); })
