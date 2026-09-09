@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temperature — Fahrenheit ↔ Celsius — Steven Philley</title>
+<meta name="description" content="Bidirectional Fahrenheit ↔ Celsius converter. Type either side; results update as you type. Freezing, room, body, and boiling presets.">
+<link rel="canonical" href="https://stevenphilley.com/tools/temperature.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Temperature — Fahrenheit ↔ Celsius">
+<meta property="og:description" content="Bidirectional Fahrenheit ↔ Celsius converter. Live as you type.">
+<meta property="og:url" content="https://stevenphilley.com/tools/temperature.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Temperature — Fahrenheit ↔ Celsius">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52px,11vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:28px 0 8px}
+@media (max-width:760px){.bench{grid-template-columns:1fr}}
+.fields{display:grid;gap:18px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:28px;padding:10px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.side{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.side .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.side .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+.chips button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.chips button:hover,.chips button:focus-visible{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.chips button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.also{margin-top:8px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft,#9b9a96)}
+.also a{color:inherit}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/temperature.html" aria-current="page">Temperature</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools</p>
+    <h1>Temperature</h1>
+    <p class="lede">Fahrenheit ↔ Celsius, both ways. Type either field and the other updates live. One decimal is enough for everyday weather and cooking.</p>
+  </header>
+
+  <div class="bench">
+    <div class="fields">
+      <label for="f">Fahrenheit (°F)
+        <input id="f" name="fahrenheit" type="text" inputmode="decimal" autocomplete="off" aria-describedby="f-hint">
+      </label>
+      <label for="c">Celsius (°C)
+        <input id="c" name="celsius" type="text" inputmode="decimal" autocomplete="off" aria-describedby="c-hint">
+      </label>
+      <div class="chips" role="group" aria-label="Common temperatures">
+        <button type="button" data-f="32" data-c="0">Freezing 32°F / 0°C</button>
+        <button type="button" data-f="68" data-c="20">Room 68°F / 20°C</button>
+        <button type="button" data-f="98.6" data-c="37">Body 98.6°F / 37°C</button>
+        <button type="button" data-f="212" data-c="100">Boiling 212°F / 100°C</button>
+      </div>
+    </div>
+    <div class="side" id="out" aria-live="polite">
+      <div class="unit">Live result</div>
+      <div class="num" id="out-num">—</div>
+      <div class="unit" id="out-unit">enter °F or °C</div>
+      <p class="formula" id="out-formula">C = (F − 32) × 5/9 · F = C × 9/5 + 32</p>
+    </div>
+  </div>
+
+  <section class="also">
+    <h2>Formulas</h2>
+    <ul>
+      <li id="f-hint">Celsius from Fahrenheit — C = (F − 32) × 5/9</li>
+      <li id="c-hint">Fahrenheit from Celsius — F = C × 9/5 + 32</li>
+      <li><a href="/tools/">All tools</a> — everyday converters desk</li>
+      <li><a href="/electronics/">Electronics</a> — watts, amps, volts, and ohms</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/tools/">Tools</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'dusk';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var fEl=document.getElementById('f');
+  var cEl=document.getElementById('c');
+  var outNum=document.getElementById('out-num');
+  var outUnit=document.getElementById('out-unit');
+  var outFormula=document.getElementById('out-formula');
+  var chips=[].slice.call(document.querySelectorAll('.chips button'));
+  var lock=false;
+
+  function parse(v){
+    if(v==null) return NaN;
+    var s=String(v).trim().replace(/,/g,'');
+    if(!s) return NaN;
+    return parseFloat(s);
+  }
+  function fmt(n){
+    if(!isFinite(n)) return '';
+    var r=Math.round(n*10)/10;
+    return (Object.is(r,-0)?0:r).toFixed(1).replace(/\.0$/,'');
+  }
+  function clearChips(){
+    chips.forEach(function(b){b.setAttribute('aria-pressed','false');});
+  }
+  function markChip(f,c){
+    chips.forEach(function(b){
+      var match=parse(b.dataset.f)===f && parse(b.dataset.c)===c;
+      b.setAttribute('aria-pressed',String(match));
+    });
+  }
+  function show(primary, value, unit, formula){
+    outNum.textContent=isFinite(value)?fmt(value):'—';
+    outUnit.textContent=unit;
+    outFormula.textContent=formula;
+  }
+  function fromF(){
+    var F=parse(fEl.value);
+    if(!isFinite(F)){
+      if(!lock){cEl.value='';}
+      clearChips();
+      show(null,NaN,'enter °F or °C','C = (F − 32) × 5/9 · F = C × 9/5 + 32');
+      return;
+    }
+    var C=(F-32)*5/9;
+    lock=true; cEl.value=fmt(C); lock=false;
+    markChip(F,C);
+    show('F',C,'°C','C = ('+fmt(F)+' − 32) × 5/9');
+  }
+  function fromC(){
+    var C=parse(cEl.value);
+    if(!isFinite(C)){
+      if(!lock){fEl.value='';}
+      clearChips();
+      show(null,NaN,'enter °F or °C','C = (F − 32) × 5/9 · F = C × 9/5 + 32');
+      return;
+    }
+    var F=C*9/5+32;
+    lock=true; fEl.value=fmt(F); lock=false;
+    markChip(F,C);
+    show('C',F,'°F','F = '+fmt(C)+' × 9/5 + 32');
+  }
+
+  fEl.addEventListener('input',function(){ if(!lock) fromF(); });
+  cEl.addEventListener('input',function(){ if(!lock) fromC(); });
+
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      var F=parse(b.dataset.f), C=parse(b.dataset.c);
+      lock=true;
+      fEl.value=fmt(F);
+      cEl.value=fmt(C);
+      lock=false;
+      markChip(F,C);
+      show('chip',C,'°C · '+fmt(F)+' °F','Preset — '+b.textContent.trim());
+      fEl.focus();
+    });
+  });
+
+  // Sensible default: room temperature
+  fEl.value='68';
+  fromF();
+})();
+</script>
+</body>
+</html>
