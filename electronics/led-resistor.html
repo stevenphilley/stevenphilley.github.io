@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LED resistor — Electronics — Steven Philley</title>
+<meta name="description" content="Pick supply volts, LED forward voltage, and desired milliamps. Get the series resistor, nearest E24 value, and power in the resistor.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/led-resistor.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="LED resistor — Steven Philley">
+<meta property="og:description" content="Series resistor for an LED: R = (Vs − Vf) / I. Nearest E24 and power, in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/led-resistor.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LED resistor — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.stat a{color:var(--accent,#c8b48a);text-decoration:none}
+.stat a:hover{text-decoration:underline}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html" aria-current="page">LED R</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>LED resistor</h1>
+  <p class="lede">An LED wants current, not voltage. The series resistor drops what the LED does not use. Set the supply, the LED’s forward voltage, and how many milliamps you want. The ohms update as you type.</p>
+
+  <div class="stage">
+    <div class="fields">
+      <label>Supply volts<input id="vs" inputmode="decimal" step="any" value="5"></label>
+      <label>LED forward volts (Vf)<input id="vf" inputmode="decimal" step="any" value="2"></label>
+      <div class="presets" role="group" aria-label="Common LED forward voltages">
+        <button type="button" data-vf="1.8">Red 1.8 V</button>
+        <button type="button" data-vf="2.0" aria-pressed="true">Green 2.0 V</button>
+        <button type="button" data-vf="2.1">Yellow 2.1 V</button>
+        <button type="button" data-vf="3.2">Blue / white 3.2 V</button>
+      </div>
+      <label>Desired current (mA)<input id="ma" inputmode="decimal" step="any" value="10"></label>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>The battery voltage and the LED’s forward voltage differ by a leftover amount. That leftover sits across the resistor: R = (Vs − Vf) / I. Without the resistor the LED tries to take as much current as the supply will give, and it cooks.</p>
+    <p>Typical indicator LEDs run around 5–20 mA. The nearest E24 value is the common through-hole part you can buy; a slightly higher ohm value means a little less current, which is usually safer.</p>
+    <p>After you pick ohms, decode the bands on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, or practice the idea in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a> LED lesson.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'dusk';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var E24=[1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
+  var vsEl=document.getElementById('vs');
+  var vfEl=document.getElementById('vf');
+  var maEl=document.getElementById('ma');
+  var out=document.getElementById('out');
+  var chips=[].slice.call(document.querySelectorAll('.presets [data-vf]'));
+
+  function num(el){
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    if(n>=1e6) return fmt(n/1e6,3)+' M';
+    if(n>=1e3) return fmt(n/1e3,3)+' k';
+    return fmt(n, n>=100 ? 1 : 2);
+  }
+  function nearestE24(target){
+    if(!(target>0)) return NaN;
+    var best=NaN, bestErr=Infinity;
+    for(var exp=-2; exp<=7; exp++){
+      var scale=Math.pow(10,exp);
+      for(var i=0;i<E24.length;i++){
+        var v=E24[i]*scale;
+        var err=Math.abs(v-target)/target;
+        if(err<bestErr){bestErr=err; best=v;}
+      }
+    }
+    return best;
+  }
+  function syncChips(){
+    var vf=num(vfEl);
+    chips.forEach(function(b){
+      var v=parseFloat(b.dataset.vf);
+      b.setAttribute('aria-pressed', String(isFinite(vf) && Math.abs(vf-v)<0.05));
+    });
+  }
+  function render(){
+    var vs=num(vsEl), vf=num(vfEl), ma=num(maEl);
+    syncChips();
+    if(!(vs>0) || !(vf>0) || !(ma>0)){
+      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Enter supply volts, LED Vf, and a current above zero.</p>';
+      return;
+    }
+    if(vf>=vs){
+      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Vf must be less than the supply. Raise Vs or pick a lower-Vf LED.</p>';
+      return;
+    }
+    var I=ma/1000;
+    var R=(vs-vf)/I;
+    var e24=nearestE24(R);
+    // Prefer equal or higher ohms when close, for safer current
+    if(isFinite(e24) && e24<R){
+      var up=nearestE24(R*1.02);
+      if(isFinite(up) && up>=R) e24=up;
+    }
+    var Ireal=(vs-vf)/e24;
+    var P=(vs-vf)*(vs-vf)/e24;
+    var pLabel=P>=1 ? (fmt(P,3)+' W') : (fmt(P*1000,2)+' mW');
+    out.innerHTML=
+      '<div class="unit">Ideal series resistor</div>'+
+      '<div class="num">'+formatOhms(R)+'</div>'+
+      '<div class="unit">ohms</div>'+
+      '<p class="formula">R = (Vs − Vf) / I = ('+fmt(vs,3)+' − '+fmt(vf,3)+') / '+fmt(I,4)+' A</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">Nearest E24</span><span class="val">'+formatOhms(e24)+' Ω · <a href="/electronics/resistor-codes.html">decode bands</a></span></div>'+
+        '<div class="stat"><span class="lab">Current with E24</span><span class="val">'+fmt(Ireal*1000,2)+' mA</span></div>'+
+        '<div class="stat"><span class="lab">Power in resistor</span><span class="val">'+pLabel+'</span></div>'+
+      '</div>'+
+      '<p class="note">A quarter-watt (250 mW) resistor is fine for most indicator LEDs on 5 V or 3.3 V.</p>';
+  }
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      vfEl.value=b.dataset.vf;
+      render();
+    });
+  });
+  [vsEl,vfEl,maEl].forEach(function(el){
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
