@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electronics — Steven Philley</title>
+<meta name="description" content="Electronics tools on stevenphilley.com — watts to amps, amps to watts, and Ohm's law. Runs in the browser.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Electronics — Steven Philley">
+<meta property="og:description" content="Watts, amps, volts, and ohms. A small bench of electronics converters.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Electronics — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52px,11vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.bench{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding:28px 0 8px}
+@media (max-width:760px){.bench{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.also{margin-top:8px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft,#9b9a96)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/" aria-current="page">Electronics</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. IV — Electronics</p>
+    <h1>Electronics</h1>
+    <p class="lede">A small bench for the everyday conversions. Watts, amps, volts, and ohms, solved as you type. DC and resistive loads use a power factor of 1. For AC, set the power factor.</p>
+    <div class="modes" id="modes" role="tablist" aria-label="Converter">
+      <button type="button" data-mode="w2a" aria-selected="true">Watts to amps</button>
+      <button type="button" data-mode="a2w">Amps to watts</button>
+      <button type="button" data-mode="w2v">Watts to volts</button>
+      <button type="button" data-mode="ohm">Ohm's law</button>
+      <button type="button" data-mode="pr">Power and ohms</button>
+    </div>
+  </header>
+
+  <div class="bench">
+    <div class="fields" id="fields"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="also">
+    <h2>On the bench</h2>
+    <ul>
+      <li>Watts to amps — I = P / (V × PF)</li>
+      <li>Amps to watts — P = V × I × PF</li>
+      <li>Watts to volts — V = P / (I × PF)</li>
+      <li>Ohm's law — V = I × R, I = V / R, R = V / I</li>
+      <li>Power and ohms — P = I² × R, or P = V² / R</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'dusk';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var modes=document.getElementById('modes');
+  var fields=document.getElementById('fields');
+  var out=document.getElementById('out');
+  var mode='w2a';
+
+  function num(id){
+    var el=document.getElementById(id);
+    if(!el) return NaN;
+    var v=parseFloat(String(el.value).replace(/,/g,''));
+    return v;
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function field(id, label, value, step){
+    return '<label>'+label+'<input id="'+id+'" inputmode="decimal" step="'+(step||'any')+'" value="'+(value==null?'':value)+'"></label>';
+  }
+  function result(value, unit, formula, extra){
+    out.innerHTML = '<div class="unit">Result</div><div class="num">'+fmt(value)+'</div><div class="unit">'+unit+'</div><p class="formula">'+formula+'</p>'+(extra?'<p class="note">'+extra+'</p>':'');
+  }
+  function need(msg){
+    out.innerHTML = '<div class="unit">Result</div><div class="num">—</div><p class="note">'+msg+'</p>';
+  }
+
+  function draw(){
+    if(mode==='w2a'){
+      fields.innerHTML = field('watts','Watts','')+field('volts','Volts','')+field('pf','Power factor','1');
+    } else if(mode==='a2w'){
+      fields.innerHTML = field('amps','Amps','')+field('volts','Volts','')+field('pf','Power factor','1');
+    } else if(mode==='w2v'){
+      fields.innerHTML = field('watts','Watts','')+field('amps','Amps','')+field('pf','Power factor','1');
+    } else if(mode==='ohm'){
+      fields.innerHTML = field('volts','Volts','')+field('amps','Amps','')+field('ohms','Ohms','');
+    } else {
+      fields.innerHTML = field('volts','Volts','')+field('amps','Amps','')+field('ohms','Ohms','');
+    }
+    [].forEach.call(fields.querySelectorAll('input'), function(input){
+      input.addEventListener('input', solve);
+    });
+    solve();
+  }
+
+  function pf(){
+    var p=num('pf');
+    if(!isFinite(p) || p<=0) return 1;
+    return p;
+  }
+
+  function solve(){
+    if(mode==='w2a'){
+      var P=num('watts'), V=num('volts'), f=pf();
+      if(!(P>0) || !(V>0)) return need('Enter watts and volts.');
+      var I=P/(V*f);
+      return result(I, 'amps', 'I = P / (V × PF)', f===1 ? 'Power factor 1 — DC or a resistive load.' : 'Using power factor '+fmt(f,3)+'.');
+    }
+    if(mode==='a2w'){
+      var I=num('amps'), V=num('volts'), f=pf();
+      if(!(I>0) || !(V>0)) return need('Enter amps and volts.');
+      var P=V*I*f;
+      return result(P, 'watts', 'P = V × I × PF', f===1 ? 'Power factor 1 — DC or a resistive load.' : 'Using power factor '+fmt(f,3)+'.');
+    }
+    if(mode==='w2v'){
+      var P=num('watts'), I=num('amps'), f=pf();
+      if(!(P>0) || !(I>0)) return need('Enter watts and amps.');
+      var V=P/(I*f);
+      return result(V, 'volts', 'V = P / (I × PF)', f===1 ? 'Power factor 1 — DC or a resistive load.' : 'Using power factor '+fmt(f,3)+'.');
+    }
+    if(mode==='ohm'){
+      var V=num('volts'), I=num('amps'), R=num('ohms');
+      var haveV=isFinite(V)&&V!==0, haveI=isFinite(I)&&I!==0, haveR=isFinite(R)&&R!==0;
+      var n=(haveV?1:0)+(haveI?1:0)+(haveR?1:0);
+      if(n<2) return need('Enter any two of volts, amps, and ohms.');
+      if(!haveV){ V=I*R; return result(V,'volts','V = I × R','Also '+fmt(V*I)+' watts.'); }
+      if(!haveI){ I=V/R; return result(I,'amps','I = V / R','Also '+fmt(V*I)+' watts.'); }
+      if(!haveR){ R=V/I; return result(R,'ohms','R = V / I','Also '+fmt(V*I)+' watts.'); }
+      return result(V/I,'ohms','R = V / I','All three were filled. Ohms is volts divided by amps.');
+    }
+    var V=num('volts'), I=num('amps'), R=num('ohms');
+    var haveV=isFinite(V)&&V!==0, haveI=isFinite(I)&&I!==0, haveR=isFinite(R)&&R!==0;
+    if(haveI && haveR){
+      var P=I*I*R;
+      return result(P,'watts','P = I² × R', haveV ? 'Volts ignored — current and ohms are enough.' : '');
+    }
+    if(haveV && haveR){
+      var P2=(V*V)/R;
+      return result(P2,'watts','P = V² / R','');
+    }
+    if(haveV && haveI){
+      return result(V*I,'watts','P = V × I','Ohms not needed for this one.');
+    }
+    need('Enter ohms plus volts or amps.');
+  }
+
+  modes.addEventListener('click', function(e){
+    var b=e.target.closest('button');
+    if(!b) return;
+    mode=b.dataset.mode;
+    [].forEach.call(modes.querySelectorAll('button'), function(btn){
+      btn.setAttribute('aria-selected', String(btn===b));
+    });
+    draw();
+  });
+  draw();
+})();
+</script>
+</body>
+</html>
