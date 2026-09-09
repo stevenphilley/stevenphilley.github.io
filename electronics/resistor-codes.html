@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resistor codes — Electronics — Steven Philley</title>
+<meta name="description" content="Interactive resistor color code decoder. Click the bands to read ohms and tolerance, or type a value and get a nearest 4-band code.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/resistor-codes.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Resistor codes — Steven Philley">
+<meta property="og:description" content="Read a 4-band resistor by its colors, or look up a value. Runs in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/resistor-codes.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Resistor codes — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.stage{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.board{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);padding:28px 18px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.resistor{position:relative;width:min(100%,420px);height:86px}
+.resistor svg{width:100%;height:100%;display:block}
+.band{cursor:pointer}
+.hint{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);text-align:center}
+.panel{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.readout{margin:8px 0 16px}
+.readout .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,78px);line-height:.9;margin:6px 0}
+.readout .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.bands{display:grid;gap:10px;margin:0 0 18px}
+.band-row{display:grid;grid-template-columns:88px 1fr;gap:10px;align-items:center}
+.band-row .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatches{display:flex;flex-wrap:wrap;gap:6px}
+.swatch{width:28px;height:28px;border:1px solid var(--line,#2c303a);cursor:pointer;padding:0;appearance:none}
+.swatch[aria-pressed="true"]{outline:2px solid var(--ink,#e8e6e1);outline-offset:1px}
+.swatch.light{border-color:#888}
+.lookup{border-top:1px solid var(--line,#2c303a);padding-top:14px;margin-top:4px}
+.lookup label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.lookup input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+.lookup input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.note{margin:12px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html" aria-current="page">Codes</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>Resistor codes</h1>
+  <p class="lede">Four bands tell the story: two digits, a multiplier, then tolerance. Click a band or a swatch. Type an ohms value to snap to a nearby E24 code.</p>
+
+  <div class="stage">
+    <div class="board">
+      <div class="resistor" aria-hidden="true">
+        <svg viewBox="0 0 420 86" role="img">
+          <defs>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c4a882"/>
+              <stop offset="50%" stop-color="#a88860"/>
+              <stop offset="100%" stop-color="#8a6e4c"/>
+            </linearGradient>
+          </defs>
+          <line x1="8" y1="43" x2="412" y2="43" stroke="var(--ink,#e8e6e1)" stroke-width="3"/>
+          <rect x="70" y="18" width="280" height="50" rx="18" fill="url(#bodyGrad)" stroke="rgba(0,0,0,.25)" stroke-width="1"/>
+          <rect class="band" id="band0" x="104" y="18" width="18" height="50"/>
+          <rect class="band" id="band1" x="140" y="18" width="18" height="50"/>
+          <rect class="band" id="band2" x="176" y="18" width="18" height="50"/>
+          <rect class="band" id="band3" x="278" y="18" width="18" height="50"/>
+        </svg>
+      </div>
+      <div class="hint">Click a band to cycle its color</div>
+    </div>
+
+    <div class="panel">
+      <div class="readout" aria-live="polite">
+        <div class="num" id="valueOut">220</div>
+        <div class="unit" id="tolOut">Ω ±5%</div>
+      </div>
+      <div class="bands" id="bandControls"></div>
+      <div class="lookup">
+        <label>Look up ohms
+          <input id="lookup" type="number" min="0.01" step="any" value="220" inputmode="decimal">
+        </label>
+        <p class="note" id="lookupNote">Nearest E24 4-band match shown above.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="legend">
+    <h2>How to read it</h2>
+    <p>Band 1 and band 2 are digits. Band 3 multiplies them (black ×1, brown ×10, red ×100, and so on; gold ×0.1, silver ×0.01). Band 4 is tolerance — gold ±5% and silver ±10% are the ones you see most often on through-hole parts.</p>
+    <p>Example: red · red · brown · gold → 22 × 10 = 220 Ω ±5%. That is a common LED series resistor on a 5 V rail.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'dusk';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var DIGITS=[
+    {name:'black',hex:'#1a1a1a',v:0},
+    {name:'brown',hex:'#6b3a1f',v:1},
+    {name:'red',hex:'#c0392b',v:2},
+    {name:'orange',hex:'#e67e22',v:3},
+    {name:'yellow',hex:'#e4c84a',v:4},
+    {name:'green',hex:'#2f7a3a',v:5},
+    {name:'blue',hex:'#2a4f9b',v:6},
+    {name:'violet',hex:'#6b3d8f',v:7},
+    {name:'gray',hex:'#7a7a7a',v:8},
+    {name:'white',hex:'#ececec',v:9,light:true}
+  ];
+  var MULT=[
+    {name:'black',hex:'#1a1a1a',m:1},
+    {name:'brown',hex:'#6b3a1f',m:10},
+    {name:'red',hex:'#c0392b',m:100},
+    {name:'orange',hex:'#e67e22',m:1000},
+    {name:'yellow',hex:'#e4c84a',m:10000},
+    {name:'green',hex:'#2f7a3a',m:100000},
+    {name:'blue',hex:'#2a4f9b',m:1000000},
+    {name:'violet',hex:'#6b3d8f',m:10000000},
+    {name:'gray',hex:'#7a7a7a',m:100000000},
+    {name:'white',hex:'#ececec',m:1000000000,light:true},
+    {name:'gold',hex:'#d4af37',m:0.1},
+    {name:'silver',hex:'#c0c0c0',m:0.01,light:true}
+  ];
+  var TOL=[
+    {name:'brown',hex:'#6b3a1f',t:1},
+    {name:'red',hex:'#c0392b',t:2},
+    {name:'green',hex:'#2f7a3a',t:0.5},
+    {name:'blue',hex:'#2a4f9b',t:0.25},
+    {name:'violet',hex:'#6b3d8f',t:0.1},
+    {name:'gray',hex:'#7a7a7a',t:0.05},
+    {name:'gold',hex:'#d4af37',t:5},
+    {name:'silver',hex:'#c0c0c0',t:10,light:true}
+  ];
+  var E24=[1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
+  var state=[2,2,1,6]; // red red brown gold = 220 ±5%
+  var lists=[DIGITS,DIGITS,MULT,TOL];
+  var labels=['Digit 1','Digit 2','Multiplier','Tolerance'];
+  var bandEls=[document.getElementById('band0'),document.getElementById('band1'),document.getElementById('band2'),document.getElementById('band3')];
+  var controls=document.getElementById('bandControls');
+  var valueOut=document.getElementById('valueOut');
+  var tolOut=document.getElementById('tolOut');
+  var lookup=document.getElementById('lookup');
+  var lookupNote=document.getElementById('lookupNote');
+  var syncing=false;
+
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    if(abs>=1e9) return trim(n/1e9)+' G';
+    if(abs>=1e6) return trim(n/1e6)+' M';
+    if(abs>=1e3) return trim(n/1e3)+' k';
+    if(abs>=1) return trim(n)+'';
+    return trim(n)+'';
+  }
+  function trim(x){
+    var s=String(Math.round(x*1000)/1000);
+    return s;
+  }
+  function ohmsFromState(){
+    var a=DIGITS[state[0]].v;
+    var b=DIGITS[state[1]].v;
+    var m=MULT[state[2]].m;
+    return (10*a+b)*m;
+  }
+  function paint(){
+    for(var i=0;i<4;i++){
+      var c=lists[i][state[i]];
+      bandEls[i].setAttribute('fill',c.hex);
+    }
+    var ohms=ohmsFromState();
+    var tol=TOL[state[3]].t;
+    valueOut.textContent=formatOhms(ohms);
+    tolOut.textContent='Ω ±'+tol+'%';
+    if(!syncing){
+      syncing=true;
+      lookup.value=String(Math.round(ohms*1000)/1000);
+      syncing=false;
+    }
+    [].forEach.call(controls.querySelectorAll('[data-band]'),function(btn){
+      var bi=+btn.dataset.band;
+      var ci=+btn.dataset.idx;
+      btn.setAttribute('aria-pressed',String(state[bi]===ci));
+    });
+  }
+  function buildControls(){
+    controls.innerHTML='';
+    for(var i=0;i<4;i++){
+      var row=document.createElement('div');
+      row.className='band-row';
+      var lab=document.createElement('div');
+      lab.className='lab';
+      lab.textContent=labels[i];
+      var wrap=document.createElement('div');
+      wrap.className='swatches';
+      wrap.setAttribute('role','group');
+      wrap.setAttribute('aria-label',labels[i]);
+      lists[i].forEach(function(c,idx){
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='swatch'+(c.light?' light':'');
+        b.style.background=c.hex;
+        b.title=c.name;
+        b.setAttribute('aria-label',c.name);
+        b.dataset.band=String(i);
+        b.dataset.idx=String(idx);
+        b.addEventListener('click',function(){
+          state[i]=idx;
+          paint();
+          lookupNote.textContent='Bands set by color.';
+        });
+        wrap.appendChild(b);
+      });
+      row.appendChild(lab);
+      row.appendChild(wrap);
+      controls.appendChild(row);
+    }
+  }
+  function cycle(i){
+    state[i]=(state[i]+1)%lists[i].length;
+    paint();
+    lookupNote.textContent='Bands set by color.';
+  }
+  bandEls.forEach(function(el,i){
+    el.addEventListener('click',function(){cycle(i);});
+  });
+
+  function nearestE24(target){
+    if(!(target>0)) return null;
+    var best=null, bestErr=Infinity;
+    for(var exp=-2;exp<=9;exp++){
+      var scale=Math.pow(10,exp);
+      for(var i=0;i<E24.length;i++){
+        var v=E24[i]*scale;
+        var err=Math.abs(v-target)/target;
+        if(err<bestErr){bestErr=err;best=v;}
+      }
+    }
+    return best;
+  }
+  function encodeValue(ohms){
+    // Prefer exact two-digit * decade encoding for E24 values
+    var candidates=[];
+    for(var d1=0;d1<10;d1++){
+      for(var d2=0;d2<10;d2++){
+        var sig=10*d1+d2;
+        if(sig===0) continue;
+        for(var mi=0;mi<MULT.length;mi++){
+          var v=sig*MULT[mi].m;
+          var err=Math.abs(v-ohms);
+          candidates.push({err:err,rel:err/Math.max(ohms,1e-12),d1:d1,d2:d2,mi:mi,v:v});
+        }
+      }
+    }
+    candidates.sort(function(a,b){return a.rel-b.rel||a.err-b.err;});
+    return candidates[0];
+  }
+  lookup.addEventListener('input',function(){
+    if(syncing) return;
+    var n=parseFloat(lookup.value);
+    if(!(n>0)) { lookupNote.textContent='Enter a positive resistance.'; return; }
+    var near=nearestE24(n);
+    var enc=encodeValue(near);
+    state[0]=enc.d1;
+    state[1]=enc.d2;
+    state[2]=enc.mi;
+    // keep tolerance
+    syncing=true;
+    paint();
+    syncing=false;
+    var same=Math.abs(near-n)<1e-9*Math.max(1,n);
+    lookupNote.textContent=same
+      ? ('Exact E24 match: '+formatOhms(near)+' Ω.')
+      : ('Nearest E24: '+formatOhms(near)+' Ω (from '+formatOhms(n)+' Ω).');
+  });
+
+  buildControls();
+  paint();
+})();
+</script>
+</body>
+</html>
