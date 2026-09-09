@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Tetris — Steven Philley</title>
+<meta name="description" content="Classic Tetris in the browser — 10×20, 7-bag randomizer, soft/hard drop, levels, mobile controls.">
+<link rel="canonical" href="https://stevenphilley.com/games/tetris.html">
+<meta property="og:title" content="Tetris — Steven Philley">
+<meta property="og:url" content="https://stevenphilley.com/games/tetris.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1);margin:0;touch-action:manipulation}
+.m-wrap{max-width:720px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 64px}
+.m-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.m-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.m-top a:hover,.m-top a[aria-current="page"]{color:inherit}
+.m-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,9vw,72px);line-height:.9;margin:0 0 12px}
+.lede{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:58ch;margin:0 0 20px}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.layout{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+@media(max-width:560px){.layout{grid-template-columns:1fr;justify-items:center}}
+.side{font-family:"IBM Plex Mono",monospace;font-size:12px;min-width:120px}
+.side .box{border:1px solid var(--line,#2c303a);padding:12px;margin-bottom:10px}
+.side .label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.side .val{font-family:"Bebas Neue",Impact,sans-serif;font-size:28px;letter-spacing:.04em}
+.panel{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.panel button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:8px 12px;cursor:pointer}
+.panel button:hover{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.stage{border:1px solid var(--line,#2c303a);background:#0e1015;image-rendering:pixelated}
+.status{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent,#c8b48a);min-height:1.4em;margin:0 0 12px;text-align:center}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px;max-width:360px;margin-left:auto;margin-right:auto}
+.pad button{appearance:none;background:color-mix(in srgb,var(--ink,#e8e6e1) 6%, transparent);border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:13px;padding:14px 8px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.pad button:active{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.rules{margin-top:22px;padding-top:16px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.rules strong{color:var(--ink,#e8e6e1);font-weight:500}
+.m-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.m-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.next-canvas{display:block;margin:0 auto}
+</style>
+</head>
+<body>
+<div class="m-wrap">
+  <div class="m-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/games/">Games</a>
+      <a href="/games/tetris.html" aria-current="page">Tetris</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+  <p class="m-kicker">G3 · Games</p>
+  <h1>Tetris</h1>
+  <p class="lede">Classic 10×20 well with a 7-bag randomizer. Clear lines, climb levels, and keep the stack down.</p>
+  <div class="panel">
+    <button type="button" id="btnPause">Pause</button>
+    <button type="button" id="btnReset">Restart</button>
+  </div>
+  <p class="status" id="status" aria-live="polite">Playing</p>
+  <div class="layout">
+    <canvas class="stage" id="stage" width="300" height="600" aria-label="Tetris playfield"></canvas>
+    <div class="side">
+      <div class="box"><p class="label">Score</p><div class="val" id="score">0</div></div>
+      <div class="box"><p class="label">Level</p><div class="val" id="level">1</div></div>
+      <div class="box"><p class="label">Lines</p><div class="val" id="lines">0</div></div>
+      <div class="box"><p class="label">Next</p><canvas class="next-canvas" id="next" width="96" height="96"></canvas></div>
+    </div>
+  </div>
+  <div class="pad" aria-label="On-screen controls">
+    <button type="button" data-act="left">←</button>
+    <button type="button" data-act="rot">⟲ Rotate</button>
+    <button type="button" data-act="right">→</button>
+    <button type="button" data-act="hard">Hard ▼▼</button>
+    <button type="button" data-act="soft" style="grid-column:1/-1">Soft drop ▼</button>
+  </div>
+  <div class="rules">
+    <strong>Keyboard:</strong> ← → move · ↑ or X rotate · ↓ soft drop · Space hard drop · P pause · R restart.
+  </div>
+  <footer class="m-foot"><a href="/games/">All games</a><a href="/games/checkers.html">Checkers</a><a href="/games/chess.html">Chess</a></footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'dusk';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var COLS=10, ROWS=20, SIZE=30;
+  var COLORS={I:'#5ec8d8',O:'#d4c15a',T:'#b48ad4',S:'#6cba7a',Z:'#d46a6a',J:'#6a8ad4',L:'#d4925a'};
+  var SHAPES={
+    I:[[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]],
+    O:[[1,1],[1,1]],
+    T:[[0,1,0],[1,1,1],[0,0,0]],
+    S:[[0,1,1],[1,1,0],[0,0,0]],
+    Z:[[1,1,0],[0,1,1],[0,0,0]],
+    J:[[1,0,0],[1,1,1],[0,0,0]],
+    L:[[0,0,1],[1,1,1],[0,0,0]]
+  };
+  var canvas=document.getElementById('stage'), ctx=canvas.getContext('2d');
+  var nextC=document.getElementById('next'), nctx=nextC.getContext('2d');
+  var scoreEl=document.getElementById('score'), levelEl=document.getElementById('level'), linesEl=document.getElementById('lines'), statusEl=document.getElementById('status');
+
+  var grid, bag, nextType, cur, score, lines, level, paused, over, dropAcc, lastTs, raf;
+
+  function emptyGrid(){
+    var g=[]; for(var r=0;r<ROWS;r++){g[r]=[];for(var c=0;c<COLS;c++) g[r][c]=null;} return g;
+  }
+  function shuffle(a){
+    for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a;
+  }
+  function refillBag(){ bag=shuffle(['I','O','T','S','Z','J','L']); }
+  function take(){ if(!bag.length) refillBag(); return bag.pop(); }
+
+  function rotate(m){
+    var N=m.length, out=[];
+    for(var r=0;r<N;r++){out[r]=[];for(var c=0;c<N;c++) out[r][c]=m[N-1-c][r];}
+    return out;
+  }
+
+  function collides(piece,ox,oy,mat){
+    mat=mat||piece.m;
+    for(var r=0;r<mat.length;r++) for(var c=0;c<mat[r].length;c++){
+      if(!mat[r][c]) continue;
+      var rr=oy+r, cc=ox+c;
+      if(cc<0||cc>=COLS||rr>=ROWS) return true;
+      if(rr>=0&&grid[rr][cc]) return true;
+    }
+    return false;
+  }
+
+  function spawn(){
+    var t=nextType; nextType=take();
+    var m=SHAPES[t].map(function(row){return row.slice();});
+    cur={t:t,m:m,x:Math.floor((COLS-m[0].length)/2),y:-1};
+    drawNext();
+    if(collides(cur,cur.x,cur.y)){ over=true; statusEl.textContent='Game over — Restart to play again.'; cancelAnimationFrame(raf); }
+  }
+
+  function merge(){
+    for(var r=0;r<cur.m.length;r++) for(var c=0;c<cur.m[r].length;c++){
+      if(!cur.m[r][c]) continue;
+      var rr=cur.y+r, cc=cur.x+c;
+      if(rr>=0&&rr<ROWS&&cc>=0&&cc<COLS) grid[rr][cc]=cur.t;
+    }
+  }
+
+  function clearLines(){
+    var cleared=0;
+    for(var r=ROWS-1;r>=0;r--){
+      if(grid[r].every(function(cell){return cell;})){
+        grid.splice(r,1);
+        grid.unshift(Array(COLS).fill(null));
+        cleared++; r++;
+      }
+    }
+    if(cleared){
+      var pts=[0,100,300,500,800];
+      score+=pts[cleared]*level;
+      lines+=cleared;
+      level=Math.floor(lines/10)+1;
+      scoreEl.textContent=score; linesEl.textContent=lines; levelEl.textContent=level;
+    }
+  }
+
+  function softDrop(){
+    if(over||paused) return;
+    if(!collides(cur,cur.x,cur.y+1)){cur.y++; score+=1; scoreEl.textContent=score;}
+    else lock();
+  }
+  function hardDrop(){
+    if(over||paused) return;
+    while(!collides(cur,cur.x,cur.y+1)){cur.y++; score+=2;}
+    scoreEl.textContent=score; lock();
+  }
+  function lock(){
+    merge(); clearLines(); spawn();
+  }
+  function move(dx){
+    if(over||paused) return;
+    if(!collides(cur,cur.x+dx,cur.y)) cur.x+=dx;
+  }
+  function rot(){
+    if(over||paused) return;
+    var nm=rotate(cur.m);
+    var kicks=[0,-1,1,-2,2];
+    for(var i=0;i<kicks.length;i++){
+      if(!collides(cur,cur.x+kicks[i],cur.y,nm)){cur.m=nm;cur.x+=kicks[i];return;}
+    }
+  }
+
+  function drawCell(x,y,color,alpha){
+    ctx.globalAlpha=alpha==null?1:alpha;
+    ctx.fillStyle=color;
+    ctx.fillRect(x*SIZE+1,y*SIZE+1,SIZE-2,SIZE-2);
+    ctx.globalAlpha=1;
+  }
+
+  function draw(){
+    ctx.fillStyle='#0e1015';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    // grid lines subtle
+    ctx.strokeStyle='rgba(255,255,255,0.04)';
+    for(var x=0;x<=COLS;x++){ctx.beginPath();ctx.moveTo(x*SIZE,0);ctx.lineTo(x*SIZE,ROWS*SIZE);ctx.stroke();}
+    for(var y=0;y<=ROWS;y++){ctx.beginPath();ctx.moveTo(0,y*SIZE);ctx.lineTo(COLS*SIZE,y*SIZE);ctx.stroke();}
+    for(var r=0;r<ROWS;r++) for(var c=0;c<COLS;c++){
+      if(grid[r][c]) drawCell(c,r,COLORS[grid[r][c]]);
+    }
+    if(cur&&!over){
+      // ghost
+      var gy=cur.y; while(!collides(cur,cur.x,gy+1)) gy++;
+      for(r=0;r<cur.m.length;r++) for(c=0;c<cur.m[r].length;c++){
+        if(cur.m[r][c]&&gy+r>=0) drawCell(cur.x+c,gy+r,COLORS[cur.t],0.22);
+      }
+      for(r=0;r<cur.m.length;r++) for(c=0;c<cur.m[r].length;c++){
+        if(cur.m[r][c]&&cur.y+r>=0) drawCell(cur.x+c,cur.y+r,COLORS[cur.t]);
+      }
+    }
+    if(paused&&!over){
+      ctx.fillStyle='rgba(0,0,0,0.45)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#e8e6e1';
+      ctx.font='20px "IBM Plex Mono", monospace';
+      ctx.textAlign='center';
+      ctx.fillText('PAUSED', canvas.width/2, canvas.height/2);
+    }
+  }
+
+  function drawNext(){
+    nctx.fillStyle='#0e1015';
+    nctx.fillRect(0,0,96,96);
+    var m=SHAPES[nextType];
+    var s=18;
+    var ox=(96-m[0].length*s)/2, oy=(96-m.length*s)/2;
+    nctx.fillStyle=COLORS[nextType];
+    for(var r=0;r<m.length;r++) for(var c=0;c<m[r].length;c++){
+      if(m[r][c]) nctx.fillRect(ox+c*s+1,oy+r*s+1,s-2,s-2);
+    }
+  }
+
+  function speedMs(){ return Math.max(80, 800 - (level-1)*70); }
+
+  function loop(ts){
+    if(!lastTs) lastTs=ts;
+    var dt=ts-lastTs; lastTs=ts;
+    if(!paused&&!over){
+      dropAcc+=dt;
+      if(dropAcc>=speedMs()){
+        dropAcc=0;
+        if(!collides(cur,cur.x,cur.y+1)) cur.y++;
+        else lock();
+      }
+    }
+    draw();
+    if(!over) raf=requestAnimationFrame(loop);
+  }
+
+  function reset(){
+    cancelAnimationFrame(raf);
+    grid=emptyGrid(); bag=[]; refillBag(); nextType=take();
+    score=0; lines=0; level=1; paused=false; over=false; dropAcc=0; lastTs=0;
+    scoreEl.textContent='0'; linesEl.textContent='0'; levelEl.textContent='1';
+    statusEl.textContent='Playing';
+    document.getElementById('btnPause').textContent='Pause';
+    spawn();
+    raf=requestAnimationFrame(loop);
+  }
+
+  function togglePause(){
+    if(over) return;
+    paused=!paused;
+    statusEl.textContent=paused?'Paused':'Playing';
+    document.getElementById('btnPause').textContent=paused?'Resume':'Pause';
+  }
+
+  document.getElementById('btnPause').addEventListener('click',togglePause);
+  document.getElementById('btnReset').addEventListener('click',reset);
+
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowLeft'){e.preventDefault();move(-1);}
+    else if(k==='ArrowRight'){e.preventDefault();move(1);}
+    else if(k==='ArrowDown'){e.preventDefault();softDrop();}
+    else if(k==='ArrowUp'||k==='x'||k==='X'){e.preventDefault();rot();}
+    else if(k===' '||k==='Spacebar'){e.preventDefault();hardDrop();}
+    else if(k==='p'||k==='P'){e.preventDefault();togglePause();}
+    else if(k==='r'||k==='R'){e.preventDefault();reset();}
+  });
+
+  document.querySelector('.pad').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-act]'); if(!b) return;
+    var a=b.getAttribute('data-act');
+    if(a==='left') move(-1);
+    else if(a==='right') move(1);
+    else if(a==='rot') rot();
+    else if(a==='soft') softDrop();
+    else if(a==='hard') hardDrop();
+  });
+
+  // prevent scroll on pad hold
+  document.querySelector('.pad').addEventListener('touchstart',function(e){
+    if(e.target.closest('button')) e.preventDefault();
+  },{passive:false});
+
+  reset();
+})();
+</script>
+</body>
+</html>
