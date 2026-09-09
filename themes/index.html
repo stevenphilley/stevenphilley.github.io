@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Colour themes on stevenphilley.com — site-wide dusk, sage, tide, and sand, plus scoped families for Markets, Chakras, and the Annual Dial.">
+<link rel="canonical" href="https://stevenphilley.com/themes/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Themes — stevenphilley.com">
+<meta property="og:description" content="One hub for every colour family on the site. Site-wide switcher plus scoped Markets, Chakras, and Annual Dial themes.">
+<meta property="og:url" content="https://stevenphilley.com/themes/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Themes — stevenphilley.com">
+<meta name="twitter:description" content="Site-wide dusk, sage, tide, sand — plus Markets, Chakras, and Annual Dial families.">
+
+<title>Themes — stevenphilley.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --base:      #251f2e;
+  --base-2:    #1c1724;
+  --ink:       #f3ebdd;
+  --ink-soft:  #9a8ba0;
+  --ink-faint: #5c5066;
+  --accent:    #e7b485;
+  --accent-2:  #d98b97;
+  --panel:      rgba(255,255,255,0.045);
+  --panel-line: rgba(255,255,255,0.09);
+  --shade:      rgba(0,0,0,0.34);
+  --blob-1: #5b3d6b;
+  --blob-2: #8a4f57;
+  --blob-3: #34506b;
+}
+html[data-theme="sage"]{
+  --base:#efe9da; --base-2:#e3dcc8; --ink:#2f3a2c; --ink-soft:#7d8470;
+  --ink-faint:#b3b29a; --accent:#7e9a6a; --accent-2:#b3925a;
+  --panel:rgba(60,70,50,0.05); --panel-line:rgba(60,70,50,0.13);
+  --shade:rgba(255,255,255,0.42);
+  --blob-1:#cdd6b4; --blob-2:#e6cf9f; --blob-3:#bcd0c4;
+}
+html[data-theme="tide"]{
+  --base:#18262b; --base-2:#11191d; --ink:#e7f0ee; --ink-soft:#86a09f;
+  --ink-faint:#465a5c; --accent:#8fd0c8; --accent-2:#7fb0d6;
+  --panel:rgba(255,255,255,0.04); --panel-line:rgba(255,255,255,0.08);
+  --shade:rgba(0,0,0,0.22);
+  --blob-1:#28525a; --blob-2:#2f4a66; --blob-3:#1f5e54;
+}
+html[data-theme="sand"]{
+  --base:#f0e6d6; --base-2:#e6d8c2; --ink:#3a2c22; --ink-soft:#8a7762;
+  --ink-faint:#c2ac90; --accent:#c98a5a; --accent-2:#a98c5d;
+  --panel:rgba(70,50,35,0.045); --panel-line:rgba(70,50,35,0.12);
+  --shade:rgba(255,255,255,0.40);
+  --blob-1:#e7c89e; --blob-2:#dcae8e; --blob-3:#cdbf9a;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--base);
+  color:var(--ink);
+  font-family:"Newsreader", Georgia, serif;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  transition:background .8s ease, color .8s ease;
+}
+
+.bg{position:fixed; inset:0; z-index:-2; overflow:hidden;
+  background:radial-gradient(120% 120% at 50% -10%, var(--base) 0%, var(--base-2) 100%);}
+.blob{position:absolute; border-radius:50%; filter:blur(80px); opacity:.42;
+  mix-blend-mode:screen; transition:background .8s ease;}
+html[data-theme="sage"] .blob,
+html[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.5;}
+.b1{width:46vw; height:46vw; background:var(--blob-1); top:-10vw; left:-8vw;
+  animation:drift1 30s ease-in-out infinite alternate;}
+.b2{width:40vw; height:40vw; background:var(--blob-2); bottom:-12vw; right:-6vw;
+  animation:drift2 36s ease-in-out infinite alternate;}
+.b3{width:34vw; height:34vw; background:var(--blob-3); top:44%; left:44%;
+  animation:drift3 42s ease-in-out infinite alternate;}
+@keyframes drift1{to{transform:translate(7vw,5vh) scale(1.10);}}
+@keyframes drift2{to{transform:translate(-6vw,-4vh) scale(1.07);}}
+@keyframes drift3{to{transform:translate(-5vw,6vh) scale(1.12);}}
+
+.grain{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.4;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>");
+  mix-blend-mode:overlay;}
+
+.wrap{max-width:960px; margin:0 auto; padding:36px 24px 72px;
+  animation:rise .9s cubic-bezier(.2,.7,.2,1) both;}
+@keyframes rise{from{opacity:0; transform:translateY(14px);}}
+
+.header-top{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:16px; flex-wrap:wrap;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--ink-soft);
+  padding-bottom:12px; border-bottom:1px solid var(--panel-line);
+}
+.header-top a{color:var(--ink-soft); text-decoration:none}
+.header-top a:hover{color:var(--accent)}
+
+.themes{display:flex; gap:9px}
+.swatch{width:24px; height:24px; border-radius:50%; cursor:pointer; padding:0;
+  border:2px solid transparent; transition:transform .25s, border-color .25s;
+  background:linear-gradient(135deg, var(--s1), var(--s2));}
+.swatch:hover{transform:scale(1.12)}
+.swatch[aria-pressed="true"]{border-color:var(--ink)}
+.swatch:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.sw-dusk{--s1:#5b3d6b; --s2:#e7b485;}
+.sw-sage{--s1:#7e9a6a; --s2:#e6cf9f;}
+.sw-tide{--s1:#2f4a66; --s2:#8fd0c8;}
+.sw-sand{--s1:#c98a5a; --s2:#e7c89e;}
+
+.masthead{
+  display:flex; justify-content:space-between; align-items:flex-end;
+  gap:26px; flex-wrap:wrap; padding:22px 0 16px;
+}
+.site-title{
+  font-family:"Bebas Neue", Impact, sans-serif;
+  font-size:clamp(58px,12vw,124px);
+  line-height:.84; letter-spacing:.02em; text-transform:uppercase;
+  margin:0; font-weight:400;
+}
+.masthead-right{text-align:right; max-width:40ch}
+.masthead-right .count{
+  display:block; font-family:"Bebas Neue", Impact, sans-serif;
+  font-size:24px; letter-spacing:.08em; color:var(--accent); margin-bottom:5px;
+}
+.masthead-right p{margin:0; font-size:15px; line-height:1.65; color:var(--ink-soft); font-style:italic}
+.band{height:5px; background:var(--accent); border-radius:3px; transition:background .8s ease}
+.intro-line{
+  display:flex; gap:16px; align-items:baseline; flex-wrap:wrap;
+  padding:14px 0 0; font-size:14px; color:var(--ink-soft); font-style:italic;
+}
+.intro-line .seq{
+  font-family:"Spline Sans Mono", monospace; font-style:normal;
+  font-size:11px; letter-spacing:.16em; color:var(--ink-faint);
+}
+
+.section-head{display:flex; align-items:center; gap:16px; margin:46px 0 14px}
+.section-head h2{
+  font-family:"Bebas Neue", Impact, sans-serif; font-weight:400;
+  font-size:19px; letter-spacing:.26em; text-transform:uppercase; margin:0;
+}
+.section-head .bar{flex:1; height:1px; background:var(--panel-line)}
+.section-head .tally{
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+}
+
+.scope-badge{
+  display:inline-block;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px;
+  border:1px solid var(--panel-line);
+  color:var(--ink-soft); background:var(--panel);
+  margin:0 0 12px;
+}
+.scope-badge.global{border-color:var(--accent); color:var(--accent)}
+.family-lede{
+  margin:0 0 20px; font-size:15px; line-height:1.7; color:var(--ink-soft); max-width:68ch;
+}
+.family-lede code, .meta code{
+  font-family:"Spline Sans Mono", monospace;
+  font-size:12px; letter-spacing:.02em;
+  color:var(--accent); background:var(--panel);
+  padding:1px 6px; border-radius:4px;
+}
+
+/* ---- Site-wide live cards ---- */
+.site-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+  gap:14px;
+}
+.theme-card{
+  appearance:none; border:1px solid var(--panel-line);
+  background:var(--panel); color:inherit; text-align:left;
+  border-radius:16px; padding:18px 16px 16px; cursor:pointer;
+  transition:transform .2s ease, border-color .25s ease, box-shadow .25s ease;
+  font:inherit;
+}
+.theme-card:hover{transform:translateY(-2px); border-color:var(--accent)}
+.theme-card[aria-pressed="true"]{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.theme-card:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.preview{
+  height:72px; border-radius:12px; margin-bottom:14px;
+  background:linear-gradient(135deg, var(--p1), var(--p2) 55%, var(--p3));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.tc-dusk{--p1:#5b3d6b; --p2:#251f2e; --p3:#e7b485;}
+.tc-sage{--p1:#7e9a6a; --p2:#efe9da; --p3:#e6cf9f;}
+.tc-tide{--p1:#2f4a66; --p2:#18262b; --p3:#8fd0c8;}
+.tc-sand{--p1:#c98a5a; --p2:#f0e6d6; --p3:#e7c89e;}
+.theme-card h3{
+  font-family:"Bebas Neue", Impact, sans-serif; font-weight:400;
+  font-size:28px; letter-spacing:.04em; text-transform:uppercase; margin:0 0 6px;
+}
+.theme-card p{margin:0; font-size:14px; line-height:1.55; color:var(--ink-soft)}
+.theme-card .key{
+  display:block; margin-top:10px;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint);
+}
+
+/* ---- Scoped family cards ---- */
+.scoped-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:14px;
+}
+.family-card{
+  display:block; text-decoration:none; color:inherit;
+  border:1px solid var(--panel-line); background:var(--panel);
+  border-radius:16px; padding:20px 18px 18px;
+  transition:background .25s ease, border-color .25s ease, transform .2s ease;
+}
+.family-card:hover, .family-card:focus-visible{
+  background:rgba(255,255,255,.06);
+  border-color:var(--accent);
+  transform:translateY(-2px);
+  outline:none;
+}
+html[data-theme="sage"] .family-card:hover,
+html[data-theme="sand"] .family-card:hover{
+  background:rgba(60,50,40,.06);
+}
+.family-card h3{
+  font-family:"Bebas Neue", Impact, sans-serif; font-weight:400;
+  font-size:30px; letter-spacing:.04em; text-transform:uppercase; margin:0 0 8px;
+}
+.family-card p{margin:0 0 14px; font-size:14.5px; line-height:1.6; color:var(--ink-soft)}
+.chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px}
+.chip{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--ink-soft);
+  padding:5px 9px 5px 6px; border-radius:999px;
+  border:1px solid var(--panel-line); background:var(--base-2);
+}
+.dot{width:12px; height:12px; border-radius:50%;
+  background:linear-gradient(135deg, var(--c1), var(--c2));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.15);}
+.family-card .go{
+  font-family:"Spline Sans Mono", monospace;
+  font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent);
+}
+
+.meta{
+  margin-top:28px; padding:16px 18px; border-radius:14px;
+  border:1px dashed var(--panel-line); color:var(--ink-soft);
+  font-size:14px; line-height:1.65;
+}
+
+footer{margin-top:56px}
+.footer-rule{height:1px; background:var(--panel-line); margin-bottom:14px}
+.footer-inner{
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-family:"Spline Sans Mono", monospace;
+  font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-faint);
+}
+.footer-inner a{color:var(--ink-soft); text-decoration:none}
+.footer-inner a:hover{color:var(--accent)}
+
+@media (max-width:620px){
+  .masthead-right{text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+</head>
+<body>
+
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grain"></div>
+
+<div class="wrap">
+
+  <div class="header-top">
+    <span><a href="/">Steven Philley</a> · Themes</span>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <a href="/sitemap.html">Contents</a>
+      <div class="themes" role="group" aria-label="Site-wide colour theme">
+        <button type="button" class="swatch sw-dusk" data-set="dusk" aria-pressed="true" title="Dusk"><span class="vh" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Dusk</span></button>
+        <button type="button" class="swatch sw-sage" data-set="sage" aria-pressed="false" title="Sage"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Sage</span></button>
+        <button type="button" class="swatch sw-tide" data-set="tide" aria-pressed="false" title="Tide"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Tide</span></button>
+        <button type="button" class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"><span style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Sand</span></button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="masthead">
+      <h1 class="site-title">Themes</h1>
+      <div class="masthead-right">
+        <span class="count">Four families</span>
+        <p>One site-wide palette, three scoped families. Click dusk / sage / tide / sand here to set the whole site; Markets, Chakras, and the Dial keep their own keys.</p>
+      </div>
+    </div>
+    <div class="band"></div>
+    <div class="intro-line">
+      <span class="seq">sp-theme · scoped keys</span>
+      <span>Shared tokens live in <code style="font-family:'Spline Sans Mono',monospace;font-size:12px;color:var(--accent)">/style.css</code> for photography and hub pages. Tool-local themes stay on their pages.</span>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="section-head">
+      <h2>Site-wide</h2>
+      <span class="bar"></span>
+      <span class="tally">sp-theme</span>
+    </div>
+    <span class="scope-badge global">Global · photography, local, weather, tools, electronics, power, publicphotos, sitemap…</span>
+    <p class="family-lede">Dusk, Sage, Tide, and Sand share one <code>localStorage</code> key: <code>sp-theme</code>. Choosing a card or header swatch sets <code>html[data-theme]</code> and persists across pages that already listen for it.</p>
+
+    <div class="site-grid" role="group" aria-label="Site-wide themes">
+      <button type="button" class="theme-card tc-dusk" data-set="dusk" aria-pressed="true">
+        <div class="preview" aria-hidden="true"></div>
+        <h3>Dusk</h3>
+        <p>Violet evening ground, warm parchment ink, apricot accent. The default.</p>
+        <span class="key">data-theme="dusk"</span>
+      </button>
+      <button type="button" class="theme-card tc-sage" data-set="sage" aria-pressed="false">
+        <div class="preview" aria-hidden="true"></div>
+        <h3>Sage</h3>
+        <p>Paper daylight, olive softs, leaf-green accent. Multiply-blend blobs.</p>
+        <span class="key">data-theme="sage"</span>
+      </button>
+      <button type="button" class="theme-card tc-tide" data-set="tide" aria-pressed="false">
+        <div class="preview" aria-hidden="true"></div>
+        <h3>Tide</h3>
+        <p>Deep harbour teal, seafoam ink, cyan and sky accents.</p>
+        <span class="key">data-theme="tide"</span>
+      </button>
+      <button type="button" class="theme-card tc-sand" data-set="sand" aria-pressed="false">
+        <div class="preview" aria-hidden="true"></div>
+        <h3>Sand</h3>
+        <p>Warm dune paper, cocoa ink, clay and straw accents.</p>
+        <span class="key">data-theme="sand"</span>
+      </button>
+    </div>
+
+    <div class="section-head">
+      <h2>Scoped families</h2>
+      <span class="bar"></span>
+      <span class="tally">Do not merge</span>
+    </div>
+    <p class="family-lede">These palettes stay on their own routes. Opening them does not rewrite <code>sp-theme</code>, and this hub will not apply them site-wide.</p>
+
+    <div class="scoped-grid">
+
+      <a class="family-card" href="/markets/">
+        <span class="scope-badge">Markets-only · /markets/</span>
+        <h3>Accounting &amp; Emerald</h3>
+        <p>Ledger cream with coral ink, plus light and dark emerald terminals. Used by the percent calculator and MarketPulse. Storage key <code>sp-theme-markets</code> (legacy <code>sp-theme-percent</code> still read).</p>
+        <div class="chip-row" aria-hidden="true">
+          <span class="chip"><span class="dot" style="--c1:#f1ead9;--c2:#d83a1f"></span>Accounting</span>
+          <span class="chip"><span class="dot" style="--c1:#e8f0ea;--c2:#059669"></span>Emerald light</span>
+          <span class="chip"><span class="dot" style="--c1:#0c1613;--c2:#34d399"></span>Emerald dark</span>
+        </div>
+        <span class="go">Open markets →</span>
+      </a>
+
+      <a class="family-card" href="/chakras/">
+        <span class="scope-badge">Chakras-only · /chakras/</span>
+        <h3>Glow</h3>
+        <p>An extra bloom theme on the nine-chakras page. Choosing Glow writes <code>sp-theme-chakras</code> only — it never pollutes the site-wide key. Dusk / sage / tide / sand on that page still sync to <code>sp-theme</code>.</p>
+        <div class="chip-row" aria-hidden="true">
+          <span class="chip"><span class="dot" style="--c1:#17141f;--c2:#ffd08a"></span>Glow</span>
+        </div>
+        <span class="go">Open chakras →</span>
+      </a>
+
+      <a class="family-card" href="/circular-calendar.html">
+        <span class="scope-badge">Annual Dial · circular-calendar.html</span>
+        <h3>Dial skins</h3>
+        <p>Brass, LED, Vapor, Halloween, Christmas, and Neon dress the year wheel. Persisted with the dial’s own storage key <code>annual-dial-theme</code> — not <code>sp-theme</code>.</p>
+        <div class="chip-row" aria-hidden="true">
+          <span class="chip"><span class="dot" style="--c1:#151D2E;--c2:#C8A45C"></span>Brass</span>
+          <span class="chip"><span class="dot" style="--c1:#05080C;--c2:#FF4A2B"></span>LED</span>
+          <span class="chip"><span class="dot" style="--c1:#140626;--c2:#FF5CD6"></span>Vapor</span>
+          <span class="chip"><span class="dot" style="--c1:#150A05;--c2:#FF8C1A"></span>Hallow</span>
+          <span class="chip"><span class="dot" style="--c1:#0A1C13;--c2:#E2453A"></span>Xmas</span>
+          <span class="chip"><span class="dot" style="--c1:#0C021A;--c2:#00F0FF"></span>Neon</span>
+        </div>
+        <span class="go">Open Annual Dial →</span>
+      </a>
+
+    </div>
+
+    <p class="meta">
+      <strong style="color:var(--ink)">Tokens.</strong>
+      Site-wide CSS variables for dusk / sage / tide / sand already live in <code>/style.css</code> (and are duplicated inline on a few standalone hubs such as the sitemap). This page does not force a mass migration — scoped Markets, Chakras, and Dial tokens remain local to those files so their identities stay separate.
+    </p>
+
+  </main>
+
+  <footer>
+    <div class="footer-rule"></div>
+    <div class="footer-inner">
+      <span>
+        <a href="/">Photography</a>
+        · <a href="/sitemap.html">Contents</a>
+        · <a href="/tools/">Tools</a>
+      </span>
+      <span>Last revised <span id="rev"></span> — &copy; <span id="yr"></span></span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var THEMES = ['dusk','sage','tide','sand'];
+  var KEY = 'sp-theme';
+
+  function setTheme(name){
+    if (THEMES.indexOf(name) === -1) name = 'dusk';
+    document.documentElement.setAttribute('data-theme', name);
+    document.querySelectorAll('.swatch, .theme-card').forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.set === name ? 'true' : 'false');
+    });
+    try { localStorage.setItem(KEY, name); } catch(e){}
+  }
+
+  document.querySelectorAll('.swatch, .theme-card').forEach(function(btn){
+    btn.addEventListener('click', function(){ setTheme(btn.dataset.set); });
+  });
+
+  var saved = null;
+  try { saved = localStorage.getItem(KEY); } catch(e){}
+  if (saved) setTheme(saved);
+
+  var now = new Date();
+  document.getElementById('yr').textContent = now.getFullYear();
+  document.getElementById('rev').textContent =
+    now.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+})();
+</script>
+
+</body>
+</html>
