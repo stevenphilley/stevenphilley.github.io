@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LED resistor — Electronics — Steven Philley</title>
-<meta name="description" content="Pick supply volts, LED forward voltage, and desired milliamps. Get the series resistor, nearest E24 value, and power in the resistor.">
-<link rel="canonical" href="https://stevenphilley.com/electronics/led-resistor.html">
+<title>Series &amp; parallel — Electronics — Steven Philley</title>
+<meta name="description" content="Combine resistors in series or parallel. Set two to four ohms; get Req and the nearest E24 value.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/series-parallel.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="LED resistor — Steven Philley">
-<meta property="og:description" content="Series resistor for an LED: R = (Vs − Vf) / I. Nearest E24 and power, in the browser.">
-<meta property="og:url" content="https://stevenphilley.com/electronics/led-resistor.html">
+<meta property="og:title" content="Series &amp; parallel — Steven Philley">
+<meta property="og:description" content="Series adds ohms. Parallel lowers them. Live Req for two to four resistors, in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/series-parallel.html">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LED resistor — Steven Philley">
+<meta name="twitter:title" content="Series &amp; parallel — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -58,6 +58,14 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
 .themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
 .themes button:last-child{border-right:0}
 .themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.optional{display:none}
+.optional.show{display:grid}
+.add{appearance:none;background:transparent;border:1px dashed var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:10px 12px;cursor:pointer;text-align:left}
+.add:hover{border-color:var(--accent,#c8b48a);color:inherit}
 </style>
 </head>
 <body>
@@ -68,9 +76,9 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
       <a href="/electronics/">Converters</a>
       <a href="/electronics/circuits.html">Circuits</a>
       <a href="/electronics/resistor-codes.html">Codes</a>
-      <a href="/electronics/led-resistor.html" aria-current="page">LED R</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
       <a href="/electronics/voltage-divider.html">Divider</a>
-      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/series-parallel.html" aria-current="page">S&#8741;P</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="dusk">Dusk</button>
@@ -82,29 +90,37 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
   </div>
 
   <p class="e-kicker">Vol. IV — Electronics · Tool</p>
-  <h1>LED resistor</h1>
-  <p class="lede">An LED wants current, not voltage. The series resistor drops what the LED does not use. Set the supply, the LED’s forward voltage, and how many milliamps you want. The ohms update as you type.</p>
+  <h1>Series &amp; parallel</h1>
+  <p class="lede">Two resistors in series add. Two in parallel share the current and land lower than either alone. Type ohms for two to four parts — Req updates as you type.</p>
+
+  <div class="modes" role="tablist" aria-label="Combine mode">
+    <button type="button" data-mode="series" aria-selected="true">Series</button>
+    <button type="button" data-mode="parallel" aria-selected="false">Parallel</button>
+  </div>
 
   <div class="stage">
     <div class="fields">
-      <label>Supply volts<input id="vs" inputmode="decimal" step="any" value="5"></label>
-      <label>LED forward volts (Vf)<input id="vf" inputmode="decimal" step="any" value="2"></label>
-      <div class="presets" role="group" aria-label="Common LED forward voltages">
-        <button type="button" data-vf="1.8">Red 1.8 V</button>
-        <button type="button" data-vf="2.0" aria-pressed="true">Green 2.0 V</button>
-        <button type="button" data-vf="2.1">Yellow 2.1 V</button>
-        <button type="button" data-vf="3.2">Blue / white 3.2 V</button>
+      <label>R1 (ohms)<input id="r1" inputmode="decimal" step="any" value="10000"></label>
+      <label>R2 (ohms)<input id="r2" inputmode="decimal" step="any" value="10000"></label>
+      <label class="optional" id="row3">R3 (ohms)<input id="r3" inputmode="decimal" step="any" value="" placeholder="optional"></label>
+      <label class="optional" id="row4">R4 (ohms)<input id="r4" inputmode="decimal" step="any" value="" placeholder="optional"></label>
+      <button type="button" class="add" id="addR">Add resistor</button>
+      <div class="presets" role="group" aria-label="Common combinations">
+        <button type="button" data-mode="series" data-r1="10000" data-r2="10000" data-r3="" data-r4="" aria-pressed="true">10k + 10k</button>
+        <button type="button" data-mode="parallel" data-r1="10000" data-r2="10000" data-r3="" data-r4="">10k &#8741; 10k</button>
+        <button type="button" data-mode="series" data-r1="4700" data-r2="10000" data-r3="" data-r4="">4.7k + 10k</button>
+        <button type="button" data-mode="parallel" data-r1="1000" data-r2="1000" data-r3="" data-r4="">1k &#8741; 1k</button>
+        <button type="button" data-mode="parallel" data-r1="10000" data-r2="10000" data-r3="10000" data-r4="">Three 10k &#8741;</button>
       </div>
-      <label>Desired current (mA)<input id="ma" inputmode="decimal" step="any" value="10"></label>
     </div>
     <div class="out" id="out" aria-live="polite"></div>
   </div>
 
   <section class="legend">
     <h2>How it works</h2>
-    <p>The battery voltage and the LED’s forward voltage differ by a leftover amount. That leftover sits across the resistor: R = (Vs − Vf) / I. Without the resistor the LED tries to take as much current as the supply will give, and it cooks.</p>
-    <p>Typical indicator LEDs run around 5–20 mA. The nearest E24 value is the common through-hole part you can buy; a slightly higher ohm value means a little less current, which is usually safer.</p>
-    <p>After you pick ohms, decode the bands on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, or practice the idea in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a> LED lesson.</p>
+    <p>Series means one path: the same current walks through every resistor, so the ohms stack. Req = R1 + R2 + &#8230; Parallel means each resistor gets its own path from the same two nodes, so more paths lower the total: 1/Req = 1/R1 + 1/R2 + &#8230;</p>
+    <p>Equal resistors in parallel halve (two), divide by three (three), and so on. Unequal ones land closer to the smaller value. Leave R3 or R4 blank to ignore them.</p>
+    <p>Practice the idea in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a>, pick band colors on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, or split a supply with a <a href="/electronics/voltage-divider.html" style="color:var(--accent,#c8b48a)">Voltage divider</a>.</p>
   </section>
 
   <footer class="e-foot">
@@ -134,14 +150,20 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
   paintTheme();
 
   var E24=[1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
-  var vsEl=document.getElementById('vs');
-  var vfEl=document.getElementById('vf');
-  var maEl=document.getElementById('ma');
+  var mode='series';
+  var modeBtns=[].slice.call(document.querySelectorAll('.modes button'));
+  var rEls=[document.getElementById('r1'),document.getElementById('r2'),document.getElementById('r3'),document.getElementById('r4')];
+  var row3=document.getElementById('row3');
+  var row4=document.getElementById('row4');
+  var addBtn=document.getElementById('addR');
   var out=document.getElementById('out');
-  var chips=[].slice.call(document.querySelectorAll('.presets [data-vf]'));
+  var chips=[].slice.call(document.querySelectorAll('.presets button'));
+  var shown=2;
 
   function num(el){
-    return parseFloat(String(el.value).replace(/,/g,''));
+    var raw=String(el.value||'').trim();
+    if(!raw) return NaN;
+    return parseFloat(raw.replace(/,/g,''));
   }
   function fmt(n, digits){
     if(!isFinite(n)) return '—';
@@ -168,57 +190,100 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
     }
     return best;
   }
+  function paintRows(){
+    row3.classList.toggle('show', shown>=3);
+    row4.classList.toggle('show', shown>=4);
+    addBtn.style.display = shown>=4 ? 'none' : '';
+    addBtn.textContent = shown===2 ? 'Add R3' : 'Add R4';
+  }
+  function values(){
+    var list=[];
+    for(var i=0;i<shown;i++){
+      var v=num(rEls[i]);
+      if(isFinite(v) && v>0) list.push(v);
+    }
+    return list;
+  }
+  function syncMode(){
+    modeBtns.forEach(function(b){
+      b.setAttribute('aria-selected', String(b.dataset.mode===mode));
+    });
+  }
   function syncChips(){
-    var vf=num(vfEl);
+    var list=values();
     chips.forEach(function(b){
-      var v=parseFloat(b.dataset.vf);
-      b.setAttribute('aria-pressed', String(isFinite(vf) && Math.abs(vf-v)<0.05));
+      var want=[parseFloat(b.dataset.r1),parseFloat(b.dataset.r2)];
+      if(b.dataset.r3) want.push(parseFloat(b.dataset.r3));
+      if(b.dataset.r4) want.push(parseFloat(b.dataset.r4));
+      var match = b.dataset.mode===mode && list.length===want.length;
+      if(match){
+        for(var i=0;i<want.length;i++){
+          if(!(Math.abs(list[i]-want[i])/Math.max(want[i],1)<0.02)){ match=false; break; }
+        }
+      }
+      b.setAttribute('aria-pressed', String(!!match));
     });
   }
   function render(){
-    var vs=num(vsEl), vf=num(vfEl), ma=num(maEl);
+    syncMode();
     syncChips();
-    if(!(vs>0) || !(vf>0) || !(ma>0)){
-      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Enter supply volts, LED Vf, and a current above zero.</p>';
+    var list=values();
+    if(list.length<2){
+      out.innerHTML='<div class="unit">Req</div><div class="num">—</div><p class="note">Enter at least two resistors above zero.</p>';
       return;
     }
-    if(vf>=vs){
-      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Vf must be less than the supply. Raise Vs or pick a lower-Vf LED.</p>';
-      return;
+    var Req, formula;
+    if(mode==='series'){
+      Req=0;
+      for(var i=0;i<list.length;i++) Req+=list[i];
+      formula='Req = '+list.map(formatOhms).join(' + ');
+    } else {
+      var sum=0;
+      for(var j=0;j<list.length;j++) sum+=1/list[j];
+      Req=1/sum;
+      formula='1/Req = '+list.map(function(r){return '1/'+formatOhms(r);}).join(' + ');
     }
-    var I=ma/1000;
-    var R=(vs-vf)/I;
-    var e24=nearestE24(R);
-    // Prefer equal or higher ohms when close, for safer current
-    if(isFinite(e24) && e24<R){
-      var up=nearestE24(R*1.02);
-      if(isFinite(up) && up>=R) e24=up;
-    }
-    var Ireal=(vs-vf)/e24;
-    var P=(vs-vf)*(vs-vf)/e24;
-    var pLabel=P>=1 ? (fmt(P,3)+' W') : (fmt(P*1000,2)+' mW');
+    var e24=nearestE24(Req);
+    var eNote = (isFinite(e24) && Math.abs(e24-Req)/Req>0.01) ? formatOhms(e24)+' Ω' : 'exact / on E24';
     out.innerHTML=
-      '<div class="unit">Ideal series resistor</div>'+
-      '<div class="num">'+formatOhms(R)+'</div>'+
+      '<div class="unit">Req</div>'+
+      '<div class="num">'+formatOhms(Req)+'</div>'+
       '<div class="unit">ohms</div>'+
-      '<p class="formula">R = (Vs − Vf) / I = ('+fmt(vs,3)+' − '+fmt(vf,3)+') / '+fmt(I,4)+' A</p>'+
+      '<p class="formula">'+formula+' = '+formatOhms(Req)+' Ω</p>'+
       '<div class="stats">'+
-        '<div class="stat"><span class="lab">Nearest E24</span><span class="val">'+formatOhms(e24)+' Ω · <a href="/electronics/resistor-codes.html">decode bands</a></span></div>'+
-        '<div class="stat"><span class="lab">Current with E24</span><span class="val">'+fmt(Ireal*1000,2)+' mA</span></div>'+
-        '<div class="stat"><span class="lab">Power in resistor</span><span class="val">'+pLabel+'</span></div>'+
+        '<div class="stat"><span class="lab">Resistors used</span><span class="val">'+list.length+' · '+mode+'</span></div>'+
+        '<div class="stat"><span class="lab">Nearest E24</span><span class="val">'+eNote+' · <a href="/electronics/resistor-codes.html">decode bands</a></span></div>'+
       '</div>'+
-      '<p class="note">A quarter-watt (250 mW) resistor is fine for most indicator LEDs on 5 V or 3.3 V.</p>';
+      '<p class="note">'+(mode==='series'
+        ? 'Same current through each part. Useful when you need a value you do not stock alone.'
+        : 'Same voltage across each branch. Two equal resistors land at half; three at a third.')+'</p>';
   }
-  chips.forEach(function(b){
+  modeBtns.forEach(function(b){
     b.addEventListener('click',function(){
-      vfEl.value=b.dataset.vf;
+      mode=b.dataset.mode;
       render();
     });
   });
-  [vsEl,vfEl,maEl].forEach(function(el){
+  addBtn.addEventListener('click',function(){
+    if(shown<4){ shown++; paintRows(); render(); }
+  });
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      mode=b.dataset.mode;
+      var vals=[b.dataset.r1,b.dataset.r2,b.dataset.r3||'',b.dataset.r4||''];
+      shown=2;
+      if(vals[2]) shown=3;
+      if(vals[3]) shown=4;
+      for(var i=0;i<4;i++) rEls[i].value=vals[i];
+      paintRows();
+      render();
+    });
+  });
+  rEls.forEach(function(el){
     el.addEventListener('input',render);
     el.addEventListener('change',render);
   });
+  paintRows();
   render();
 })();
 </script>
