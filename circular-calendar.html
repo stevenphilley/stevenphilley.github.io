@@ -137,6 +137,33 @@
       radial-gradient(50% 34% at 50% 0%, rgba(242,193,78,.18), transparent 62%),
       radial-gradient(50% 34% at 82% 2%, rgba(79,191,122,.18), transparent 62%);
   }
+
+  html[data-theme="neon"]{
+    --page-1:#1A0633; --page-2:#0C021A; --page-3:#05010E;
+    --plate-0:#221040; --plate-1:#140828; --plate-2:#0A0418;
+    --rim:rgba(255,45,200,.52);
+    --hair:rgba(0,240,255,.30);
+    --sector:rgba(184,77,255,.22);
+    --cell-wd:rgba(255,45,200,.15);
+    --cell-we:rgba(0,240,255,.18);
+    --cell-ev:#39FF14;
+    --cell-now:#FFF5FF;
+    --accent:#FF2DC8; --accent-lit:#00F0FF; --second:#B84DFF;
+    --text:#F8ECFF; --text-dim:rgba(248,236,255,.40);
+    --hub:#0A0418; --on-accent:#160820;
+    --panel:rgba(14,4,32,.64); --field:rgba(0,240,255,.07);
+    --display:"Orbitron",system-ui,sans-serif;
+    --mono:"Share Tech Mono",ui-monospace,monospace;
+    --sans:"Share Tech Mono",ui-monospace,monospace;
+    --title-track:.12em; --ui-track:.18em; --grain:0;
+    --glow:0 0 12px rgba(255,45,200,.65), 0 0 26px rgba(0,240,255,.28);
+    --aura:
+      radial-gradient(58% 48% at 8% 12%, rgba(255,45,200,.26), transparent 62%),
+      radial-gradient(50% 44% at 92% 18%, rgba(0,240,255,.20), transparent 62%),
+      radial-gradient(46% 40% at 78% 88%, rgba(184,77,255,.22), transparent 62%),
+      radial-gradient(42% 36% at 18% 86%, rgba(255,200,40,.12), transparent 64%),
+      radial-gradient(38% 34% at 50% 50%, rgba(57,255,20,.08), transparent 70%);
+  }
   html[data-theme="brass"]{ --aura:none; }
 
   *{box-sizing:border-box}
@@ -283,6 +310,38 @@
     .entries{max-height:9rem}
     svg{width:min(100%,86vw)}
   }
+
+  /* Neon '80s: soft tie-dye chrome wash behind the dial (theme-only) */
+  html[data-theme="neon"] .stage{isolation:isolate}
+  html[data-theme="neon"] .stage::before{
+    content:"";position:absolute;inset:4%;border-radius:50%;pointer-events:none;z-index:0;
+    background:
+      conic-gradient(from 210deg,
+        rgba(255,45,200,.16), rgba(0,240,255,.14), rgba(184,77,255,.16),
+        rgba(255,210,50,.10), rgba(57,255,20,.10), rgba(255,80,160,.14),
+        rgba(255,45,200,.16));
+    filter:blur(36px) saturate(1.25);opacity:.85;mix-blend-mode:screen;
+    animation:neonTieSpin 54s linear infinite;
+  }
+  html[data-theme="neon"] .stage::after{
+    content:"";position:absolute;inset:11%;border-radius:50%;pointer-events:none;z-index:0;
+    background:
+      repeating-conic-gradient(from 0deg,
+        rgba(255,45,200,.07) 0 8deg, transparent 8deg 22deg,
+        rgba(0,240,255,.06) 22deg 30deg, transparent 30deg 44deg,
+        rgba(184,77,255,.07) 44deg 52deg, transparent 52deg 66deg);
+    filter:blur(10px);opacity:.55;mix-blend-mode:screen;
+    animation:neonTieSpin 90s linear infinite reverse;
+  }
+  html[data-theme="neon"] .stage > svg{position:relative;z-index:1}
+  @keyframes neonTieSpin{to{transform:rotate(360deg)}}
+  html[data-theme="neon"] button{border-radius:2px;text-shadow:var(--glow)}
+  html[data-theme="neon"] .note{border-radius:2px;border-color:rgba(0,240,255,.35)}
+  html[data-theme="neon"] .mark em{font-style:normal;color:var(--accent-lit);text-shadow:0 0 14px rgba(0,240,255,.7)}
+  html[data-theme="neon"] .now{animation:throb 2.2s ease-in-out infinite}
+  html[data-theme="neon"] header{
+    border-image:linear-gradient(90deg,rgba(255,45,200,.55),rgba(0,240,255,.45),rgba(184,77,255,.55)) 1;
+  }
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -305,6 +364,7 @@
         <button class="theme" data-theme-id="vapor" aria-pressed="false">Vapor</button>
         <button class="theme" data-theme-id="hallow" aria-pressed="false">Halloween</button>
         <button class="theme" data-theme-id="xmas" aria-pressed="false">Christmas</button>
+        <button class="theme" data-theme-id="neon" aria-pressed="false">Neon</button>
       </div>
       <div class="helpwrap">
         <button class="help" id="help" aria-expanded="false" aria-controls="note"
@@ -383,6 +443,9 @@
   // Halloween: five candy hues, stepped by month + day so the wheel reads as stripes.
   const HALLOW = [24, 84, 45, 330, 275]; // orange, poison green, gold, pink, violet
 
+  // Neon '80s: hot pink / cyan / violet / magenta — stripe cycle for readable glow bands.
+  const NEON = [328, 190, 275, 310]; // hot pink, electric cyan, violet, magenta
+
   // Vapor colors the year like the sun's arc: lavender at the cold ends,
   // pink through orange at midsummer. Dec and Jan meet on the same hue.
   function monthHue(m){
@@ -405,6 +468,10 @@
       const red = d % 2 === 1;
       return 'hsla('+(red?353:145)+','+(red?76:54)+'%,'+(weekend?58:46)+'%,'+(weekend?.55:.34)+')';
     }
+    if(th === 'neon'){
+      const h = NEON[(m + d) % 4];
+      return 'hsla('+h+',100%,'+(weekend?58:48)+'%,'+(weekend?.48:.30)+')';
+    }
     return weekend ? 'var(--cell-we)' : 'var(--cell-wd)';
   }
   function dayEdge(m,d,days){
@@ -412,12 +479,14 @@
     if(th === 'vapor') return 'hsla('+((monthHue(m)+(d/days)*14)%360).toFixed(1)+',96%,74%,.5)';
     if(th === 'hallow') return 'hsla('+HALLOW[(m+d)%5]+',92%,70%,.55)';
     if(th === 'xmas')   return 'hsla('+(d%2?353:145)+',70%,68%,.5)';
+    if(th === 'neon')   return 'hsla('+NEON[(m+d)%4]+',100%,72%,.55)';
     return 'var(--hair)';
   }
   function monthLabelColor(m){
     if(vapor())               return 'hsl('+monthHue(m).toFixed(1)+',96%,74%)';
     if(state.theme==='hallow')return 'hsl('+HALLOW[m%5]+',92%,66%)';
     if(state.theme==='xmas')  return m%2 ? 'var(--second)' : 'var(--accent-lit)';
+    if(state.theme==='neon')  return 'hsl('+NEON[m%4]+',100%,72%)';
     return 'var(--accent)';
   }
 
@@ -758,6 +827,17 @@
         '<span class="formula">d odd  → hsl(353, 76%, L)\nd even → hsl(145, 54%, L)\nL = weekend ? 58% : 46%</span>' +
         '<p>The string overhead is drawn as five quadratic swags. Each bulb is placed by evaluating the curve at fixed <em>t</em>, then rotated to the curve\'s normal so it sits square to the cord the way a real socket does.</p>' +
         '<p>Every bulb casts two blurred circles set to <code>mix-blend-mode: screen</code> — a tight one at the glass and a 104px pool below it. That\'s what actually lights the dial: the colors underneath are being added to, not covered up. Each bulb pulses on its own offset delay so the string never blinks in unison.</p>';
+    } else if(state.theme === 'neon'){
+      const chips = NEON.map(h=>'<i style="background:hsl('+h+',100%,58%)"></i>').join('');
+      const k = (state.month + 1) % 4;
+      note.innerHTML =
+        '<h4>Neon · 1980s glow</h4>' +
+        '<p>Hot pink, electric cyan, violet, and magenta stripe the dial the way arcade cabinets lit a dark room — four fixed neon hues, stepped by month and day.</p>' +
+        '<span class="formula">hue = NEON[(m + d) mod 4]\nNEON = [328, 190, 275, 310]</span>' +
+        '<div class="ramp">'+chips+'</div>' +
+        '<div class="ramp-key"><span>PINK</span><span>CYAN</span><span>VIOLET</span><span>MAGENTA</span></div>' +
+        '<p>Weekends brighten and take a little more alpha so the bands still read on a phone. Today is near-white and throbs; entry days go acid green at <strong>#39FF14</strong>.</p>' +
+        '<p>The soft rainbow wash behind the plate is tie-dye dressing only — two slow conic layers under the dial, screened and blurred so numbers stay crisp. '+MONTHS[state.month]+' labels sit on hue <strong>'+NEON[k]+'°</strong>.</p>';
     } else {
       note.innerHTML =
         '<h4>Brass · engraved constants</h4>' +
@@ -842,7 +922,7 @@
     if(k==='t') document.getElementById('today').click();
     if(k==='v') document.getElementById('scope').click();
     if(k==='l'){
-      const order = ['brass','led','vapor','hallow','xmas'];
+      const order = ['brass','led','vapor','hallow','xmas','neon'];
       applyTheme(order[(order.indexOf(state.theme)+1) % order.length], true);
     }
   });
