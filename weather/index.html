@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weather — Campbell / South Bay — Steven Philley</title>
-<meta name="description" content="Live Campbell, CA (95008) weather — current conditions and a short South Bay forecast. Open-Meteo, no API key.">
+<title>Weather — Steven Philley</title>
+<meta name="description" content="Live US weather by ZIP — current conditions and a short forecast. Defaults to Campbell, CA (95008). Open-Meteo, no API key.">
 <link rel="canonical" href="https://stevenphilley.com/weather/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="Weather — Campbell / South Bay">
-<meta property="og:description" content="Live Campbell-area conditions and a short forecast for the South Bay.">
+<meta property="og:title" content="Weather — Steven Philley">
+<meta property="og:description" content="Live US weather by ZIP code. Defaults to Campbell / South Bay.">
 <meta property="og:url" content="https://stevenphilley.com/weather/">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Weather — Campbell / South Bay">
+<meta name="twitter:title" content="Weather — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,6 +69,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 .themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
 .err{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96);margin:18px 0 0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+.zip-form{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:18px 0 0;max-width:420px}
+.zip-form label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.zip-form input[type="text"]{flex:1 1 140px;min-width:120px;appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;padding:10px 12px;outline:none}
+.zip-form input[type="text"]::placeholder{color:var(--muted,#63666e)}
+.zip-form input[type="text"]:focus{border-color:var(--accent,#c8b48a)}
+.zip-form button[type="submit"]{appearance:none;background:var(--ink,#e8e6e1);border:1px solid var(--ink,#e8e6e1);color:var(--base-2,#14161c);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;cursor:pointer}
+.zip-form button[type="submit"]:hover{opacity:.9}
+.zip-form button[type="submit"]:disabled{opacity:.5;cursor:wait}
+.zip-hint{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.5;color:var(--muted,#63666e);margin:8px 0 0}
+.zip-err{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--accent,#c8b48a);margin:8px 0 0}
+@media (max-width:560px){.zip-form{max-width:100%}.zip-form button[type="submit"]{flex:1 1 auto}}
 </style>
 </head>
 <body>
@@ -88,9 +100,17 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     </div>
   </div>
 
-  <p class="kicker">Campbell · 95008 · South Bay</p>
+  <p class="kicker" id="place-kicker">Campbell · 95008 · South Bay</p>
   <h1>Weather</h1>
-  <p class="lede">Live conditions and a short forecast for Campbell and the South Bay. Data from Open-Meteo in the browser — no API key, nothing stored on the page.</p>
+  <p class="lede">Live conditions and a short forecast for a US ZIP code. Defaults to Campbell (95008). Data from Open-Meteo in the browser — no API key; last ZIP stays in this browser only.</p>
+
+  <form class="zip-form" id="zip-form" action="#" method="get">
+    <label for="zip-input">US ZIP code</label>
+    <input type="text" id="zip-input" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="ZIP code" aria-describedby="zip-hint zip-msg" value="95008">
+    <button type="submit" id="zip-go">Go</button>
+  </form>
+  <p class="zip-hint" id="zip-hint">Enter a 5-digit US ZIP (ZIP+4 ok — first 5 used).</p>
+  <p class="zip-err" id="zip-msg" role="alert" hidden></p>
 
   <div class="toolbar">
     <p class="meta" id="status" aria-live="polite">Loading…</p>
@@ -154,6 +174,15 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 (function(){
   var KEY='sp-theme';
   var UNIT_KEY='sp-weather-unit';
+  var LOC_KEY='sp-weather-loc';
+  var DEFAULT={
+    zip:'95008',
+    lat:37.287,
+    lon:-121.950,
+    label:'Campbell',
+    admin1:'California',
+    timezone:'America/Los_Angeles'
+  };
   var root=document.documentElement;
   var themeButtons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
   function paintTheme(){
@@ -169,7 +198,24 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   });
   paintTheme();
 
-  var LAT=37.287, LON=-121.950;
+  var loc=Object.assign({}, DEFAULT);
+  try{
+    var raw=localStorage.getItem(LOC_KEY);
+    if(raw){
+      var saved=JSON.parse(raw);
+      if(saved && isFinite(saved.lat) && isFinite(saved.lon) && saved.zip){
+        loc={
+          zip:String(saved.zip).replace(/\D/g,'').slice(0,5) || DEFAULT.zip,
+          lat:+saved.lat,
+          lon:+saved.lon,
+          label:saved.label || DEFAULT.label,
+          admin1:saved.admin1 || '',
+          timezone:saved.timezone || DEFAULT.timezone
+        };
+      }
+    }
+  }catch(e){}
+
   var unit='F';
   try{
     var u=localStorage.getItem(UNIT_KEY);
@@ -181,6 +227,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   var statusEl=document.getElementById('status');
   var panel=document.getElementById('panel');
   var errorEl=document.getElementById('error');
+  var kicker=document.getElementById('place-kicker');
+  var zipForm=document.getElementById('zip-form');
+  var zipInput=document.getElementById('zip-input');
+  var zipGo=document.getElementById('zip-go');
+  var zipMsg=document.getElementById('zip-msg');
   var cache=null;
 
   var WX={
@@ -230,11 +281,97 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     if(!iso) return '';
     var d=new Date(iso);
     if(isNaN(d.getTime())){
-      // Open-Meteo current.time is local without Z
       d=new Date(iso.replace(' ','T'));
     }
     if(isNaN(d.getTime())) return iso;
     return d.toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+  }
+  function placeLine(){
+    var parts=[loc.label];
+    if(loc.admin1){
+      var st=loc.admin1;
+      if(st==='California') st='CA';
+      else if(st.length>2){ /* keep full for others */ }
+      parts.push(st);
+    }
+    parts.push(loc.zip);
+    return parts.filter(Boolean).join(' · ');
+  }
+  function shortState(admin1){
+    if(!admin1) return '';
+    var map={
+      'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA','Colorado':'CO',
+      'Connecticut':'CT','Delaware':'DE','Florida':'FL','Georgia':'GA','Hawaii':'HI','Idaho':'ID',
+      'Illinois':'IL','Indiana':'IN','Iowa':'IA','Kansas':'KS','Kentucky':'KY','Louisiana':'LA',
+      'Maine':'ME','Maryland':'MD','Massachusetts':'MA','Michigan':'MI','Minnesota':'MN','Mississippi':'MS',
+      'Missouri':'MO','Montana':'MT','Nebraska':'NE','Nevada':'NV','New Hampshire':'NH','New Jersey':'NJ',
+      'New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK',
+      'Oregon':'OR','Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',
+      'Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT','Virginia':'VA','Washington':'WA',
+      'West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY','District of Columbia':'DC'
+    };
+    return map[admin1]||admin1;
+  }
+  function updatePlaceUI(){
+    var st=shortState(loc.admin1);
+    var kick=loc.label+(st?' · '+st:'')+' · '+loc.zip;
+    if(loc.zip==='95008' && loc.label==='Campbell') kick='Campbell · 95008 · South Bay';
+    kicker.textContent=kick;
+    zipInput.value=loc.zip;
+  }
+  function persistLoc(){
+    try{
+      localStorage.setItem(LOC_KEY, JSON.stringify({
+        zip:loc.zip, lat:loc.lat, lon:loc.lon,
+        label:loc.label, admin1:loc.admin1, timezone:loc.timezone
+      }));
+    }catch(e){}
+  }
+  function showZipMsg(text){
+    if(!text){ zipMsg.hidden=true; zipMsg.textContent=''; return; }
+    zipMsg.hidden=false;
+    zipMsg.textContent=text;
+  }
+  function normalizeZip(raw){
+    var digits=String(raw||'').replace(/\D/g,'');
+    if(digits.length<5) return null;
+    return digits.slice(0,5);
+  }
+  function pickResult(results, zip){
+    if(!results || !results.length) return null;
+    var us=results.filter(function(r){ return r.country_code==='US'; });
+    var pool=us.length ? us : results;
+    // Prefer exact postcode match when present
+    for(var i=0;i<pool.length;i++){
+      var pcs=pool[i].postcodes||[];
+      for(var j=0;j<pcs.length;j++){
+        var p=String(pcs[j]).replace(/\D/g,'').slice(0,5);
+        if(p===zip) return pool[i];
+      }
+    }
+    return pool[0];
+  }
+  function geocodeZip(zip){
+    var q1='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json&countryCode=US';
+    var q2='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json&country=US';
+    var q3='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json';
+    function tryUrl(url){
+      return fetch(url,{cache:'no-store'}).then(function(r){
+        if(!r.ok) throw new Error('HTTP '+r.status);
+        return r.json();
+      }).then(function(j){
+        var hit=pickResult(j.results, zip);
+        if(hit) return hit;
+        return null;
+      });
+    }
+    return tryUrl(q1).then(function(hit){
+      if(hit) return hit;
+      return tryUrl(q2);
+    }).then(function(hit){
+      if(hit) return hit;
+      return tryUrl(q3);
+    });
   }
   function render(){
     if(!cache) return;
@@ -263,7 +400,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
       '</article>';
     }
     document.getElementById('days').innerHTML=html;
-    statusEl.textContent='Campbell · updated '+prettyChecked(cur.time)+' · Open-Meteo';
+    statusEl.textContent=placeLine()+' · updated '+prettyChecked(cur.time)+' · Open-Meteo';
     panel.hidden=false;
     errorEl.hidden=true;
   }
@@ -282,24 +419,73 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   });
   paintUnit();
 
-  var url='https://api.open-meteo.com/v1/forecast'+
-    '?latitude='+LAT+'&longitude='+LON+
-    '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation'+
-    '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'+
-    '&temperature_unit=fahrenheit&wind_speed_unit=mph'+
-    '&timezone=America%2FLos_Angeles&forecast_days=5';
+  function forecastUrl(){
+    var tz=encodeURIComponent(loc.timezone||'auto');
+    return 'https://api.open-meteo.com/v1/forecast'+
+      '?latitude='+loc.lat+'&longitude='+loc.lon+
+      '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation'+
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'+
+      '&temperature_unit=fahrenheit&wind_speed_unit=mph'+
+      '&timezone='+tz+'&forecast_days=5';
+  }
 
-  fetch(url,{cache:'no-store'}).then(function(r){
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    return r.json();
-  }).then(function(j){
-    cache=j;
-    render();
-  }).catch(function(){
-    statusEl.textContent='Could not load weather';
-    errorEl.hidden=false;
-    errorEl.textContent='Open-Meteo did not respond. Check the connection and refresh in a moment.';
+  function loadForecast(){
+    statusEl.textContent='Loading…';
+    errorEl.hidden=true;
+    return fetch(forecastUrl(),{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(function(j){
+      cache=j;
+      updatePlaceUI();
+      render();
+    }).catch(function(){
+      statusEl.textContent='Could not load weather';
+      errorEl.hidden=false;
+      errorEl.textContent='Open-Meteo did not respond. Check the connection and refresh in a moment.';
+    });
+  }
+
+  function setBusy(on){
+    zipGo.disabled=!!on;
+    zipInput.disabled=!!on;
+  }
+
+  zipForm.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    showZipMsg('');
+    var zip=normalizeZip(zipInput.value);
+    if(!zip){
+      showZipMsg('Enter a valid 5-digit US ZIP code.');
+      zipInput.focus();
+      return;
+    }
+    setBusy(true);
+    statusEl.textContent='Looking up ZIP…';
+    geocodeZip(zip).then(function(hit){
+      if(!hit){
+        showZipMsg('No US location found for ZIP '+zip+'. Try another code.');
+        statusEl.textContent=placeLine()+(cache?' · Open-Meteo':'');
+        return;
+      }
+      loc={
+        zip:zip,
+        lat:+hit.latitude,
+        lon:+hit.longitude,
+        label:hit.name || ('ZIP '+zip),
+        admin1:hit.admin1 || '',
+        timezone:hit.timezone || 'auto'
+      };
+      persistLoc();
+      showZipMsg('');
+      return loadForecast();
+    }).catch(function(){
+      showZipMsg('Geocoding failed. Check the connection and try again.');
+    }).then(function(){ setBusy(false); });
   });
+
+  updatePlaceUI();
+  loadForecast();
 })();
 </script>
 </body>
