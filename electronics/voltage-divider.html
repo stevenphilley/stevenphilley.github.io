@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LED resistor — Electronics — Steven Philley</title>
-<meta name="description" content="Pick supply volts, LED forward voltage, and desired milliamps. Get the series resistor, nearest E24 value, and power in the resistor.">
-<link rel="canonical" href="https://stevenphilley.com/electronics/led-resistor.html">
+<title>Voltage divider — Electronics — Steven Philley</title>
+<meta name="description" content="Two resistors split a supply. Set Vin, R1, and R2; get Vout, current, and power in each resistor.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/voltage-divider.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="LED resistor — Steven Philley">
-<meta property="og:description" content="Series resistor for an LED: R = (Vs − Vf) / I. Nearest E24 and power, in the browser.">
-<meta property="og:url" content="https://stevenphilley.com/electronics/led-resistor.html">
+<meta property="og:title" content="Voltage divider — Steven Philley">
+<meta property="og:description" content="Vout = Vin × R2 / (R1 + R2). Live voltage divider with current and power, in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/voltage-divider.html">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LED resistor — Steven Philley">
+<meta name="twitter:title" content="Voltage divider — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,8 +68,8 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
       <a href="/electronics/">Converters</a>
       <a href="/electronics/circuits.html">Circuits</a>
       <a href="/electronics/resistor-codes.html">Codes</a>
-      <a href="/electronics/led-resistor.html" aria-current="page">LED R</a>
-      <a href="/electronics/voltage-divider.html">Divider</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html" aria-current="page">Divider</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="dusk">Dusk</button>
@@ -81,29 +81,29 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
   </div>
 
   <p class="e-kicker">Vol. IV — Electronics · Tool</p>
-  <h1>LED resistor</h1>
-  <p class="lede">An LED wants current, not voltage. The series resistor drops what the LED does not use. Set the supply, the LED’s forward voltage, and how many milliamps you want. The ohms update as you type.</p>
+  <h1>Voltage divider</h1>
+  <p class="lede">Two resistors in series share the supply. The mid-point is a quieter voltage you can use for sensors, LEDs, and reference levels. Change Vin, R1, and R2 — Vout updates as you type.</p>
 
   <div class="stage">
     <div class="fields">
-      <label>Supply volts<input id="vs" inputmode="decimal" step="any" value="5"></label>
-      <label>LED forward volts (Vf)<input id="vf" inputmode="decimal" step="any" value="2"></label>
-      <div class="presets" role="group" aria-label="Common LED forward voltages">
-        <button type="button" data-vf="1.8">Red 1.8 V</button>
-        <button type="button" data-vf="2.0" aria-pressed="true">Green 2.0 V</button>
-        <button type="button" data-vf="2.1">Yellow 2.1 V</button>
-        <button type="button" data-vf="3.2">Blue / white 3.2 V</button>
+      <label>Supply volts (Vin)<input id="vin" inputmode="decimal" step="any" value="5"></label>
+      <label>Top resistor R1 (ohms)<input id="r1" inputmode="decimal" step="any" value="10000"></label>
+      <label>Bottom resistor R2 (ohms)<input id="r2" inputmode="decimal" step="any" value="10000"></label>
+      <div class="presets" role="group" aria-label="Common divider pairs">
+        <button type="button" data-r1="10000" data-r2="10000" data-vin="5" aria-pressed="true">Half · 5 V</button>
+        <button type="button" data-r1="2000" data-r2="3900" data-vin="5">≈3.3 from 5</button>
+        <button type="button" data-r1="10000" data-r2="20000" data-vin="9">⅓ · 9 V</button>
+        <button type="button" data-r1="4700" data-r2="4700" data-vin="3.3">Half · 3.3 V</button>
       </div>
-      <label>Desired current (mA)<input id="ma" inputmode="decimal" step="any" value="10"></label>
     </div>
     <div class="out" id="out" aria-live="polite"></div>
   </div>
 
   <section class="legend">
     <h2>How it works</h2>
-    <p>The battery voltage and the LED’s forward voltage differ by a leftover amount. That leftover sits across the resistor: R = (Vs − Vf) / I. Without the resistor the LED tries to take as much current as the supply will give, and it cooks.</p>
-    <p>Typical indicator LEDs run around 5–20 mA. The nearest E24 value is the common through-hole part you can buy; a slightly higher ohm value means a little less current, which is usually safer.</p>
-    <p>After you pick ohms, decode the bands on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, or practice the idea in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a> LED lesson.</p>
+    <p>R1 sits between Vin and the mid-point. R2 sits between the mid-point and ground. Same current flows through both, so the voltage drops in proportion to each resistance: Vout = Vin × R2 / (R1 + R2).</p>
+    <p>Equal resistors split the supply in half. A larger R2 raises Vout; a larger R1 lowers it. Keep the total resistance high enough that the divider does not waste power, and low enough that whatever you attach to Vout does not pull the mid-point around.</p>
+    <p>Pick parts on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, practice series drops in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a>, or size an LED series resistor on <a href="/electronics/led-resistor.html" style="color:var(--accent,#c8b48a)">LED resistor</a>.</p>
   </section>
 
   <footer class="e-foot">
@@ -133,11 +133,11 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
   paintTheme();
 
   var E24=[1.0,1.1,1.2,1.3,1.5,1.6,1.8,2.0,2.2,2.4,2.7,3.0,3.3,3.6,3.9,4.3,4.7,5.1,5.6,6.2,6.8,7.5,8.2,9.1];
-  var vsEl=document.getElementById('vs');
-  var vfEl=document.getElementById('vf');
-  var maEl=document.getElementById('ma');
+  var vinEl=document.getElementById('vin');
+  var r1El=document.getElementById('r1');
+  var r2El=document.getElementById('r2');
   var out=document.getElementById('out');
-  var chips=[].slice.call(document.querySelectorAll('.presets [data-vf]'));
+  var chips=[].slice.call(document.querySelectorAll('.presets button'));
 
   function num(el){
     return parseFloat(String(el.value).replace(/,/g,''));
@@ -154,6 +154,12 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
     if(n>=1e3) return fmt(n/1e3,3)+' k';
     return fmt(n, n>=100 ? 1 : 2);
   }
+  function formatPower(P){
+    if(!isFinite(P)) return '—';
+    if(P>=1) return fmt(P,3)+' W';
+    if(P>=0.001) return fmt(P*1000,2)+' mW';
+    return fmt(P*1e6,1)+' µW';
+  }
   function nearestE24(target){
     if(!(target>0)) return NaN;
     var best=NaN, bestErr=Infinity;
@@ -168,53 +174,53 @@ input:focus{border-bottom-color:var(--accent,#c8b48a)}
     return best;
   }
   function syncChips(){
-    var vf=num(vfEl);
+    var vin=num(vinEl), r1=num(r1El), r2=num(r2El);
     chips.forEach(function(b){
-      var v=parseFloat(b.dataset.vf);
-      b.setAttribute('aria-pressed', String(isFinite(vf) && Math.abs(vf-v)<0.05));
+      var match = isFinite(vin) && isFinite(r1) && isFinite(r2)
+        && Math.abs(vin-parseFloat(b.dataset.vin))<0.05
+        && Math.abs(r1-parseFloat(b.dataset.r1))/Math.max(r1,1)<0.02
+        && Math.abs(r2-parseFloat(b.dataset.r2))/Math.max(r2,1)<0.02;
+      b.setAttribute('aria-pressed', String(match));
     });
   }
   function render(){
-    var vs=num(vsEl), vf=num(vfEl), ma=num(maEl);
+    var vin=num(vinEl), r1=num(r1El), r2=num(r2El);
     syncChips();
-    if(!(vs>0) || !(vf>0) || !(ma>0)){
-      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Enter supply volts, LED Vf, and a current above zero.</p>';
+    if(!(vin>0) || !(r1>0) || !(r2>0)){
+      out.innerHTML='<div class="unit">Vout</div><div class="num">—</div><p class="note">Enter Vin, R1, and R2 above zero.</p>';
       return;
     }
-    if(vf>=vs){
-      out.innerHTML='<div class="unit">Series resistor</div><div class="num">—</div><p class="note">Vf must be less than the supply. Raise Vs or pick a lower-Vf LED.</p>';
-      return;
-    }
-    var I=ma/1000;
-    var R=(vs-vf)/I;
-    var e24=nearestE24(R);
-    // Prefer equal or higher ohms when close, for safer current
-    if(isFinite(e24) && e24<R){
-      var up=nearestE24(R*1.02);
-      if(isFinite(up) && up>=R) e24=up;
-    }
-    var Ireal=(vs-vf)/e24;
-    var P=(vs-vf)*(vs-vf)/e24;
-    var pLabel=P>=1 ? (fmt(P,3)+' W') : (fmt(P*1000,2)+' mW');
+    var total=r1+r2;
+    var vout=vin*r2/total;
+    var I=vin/total;
+    var p1=I*I*r1;
+    var p2=I*I*r2;
+    var e1=nearestE24(r1);
+    var e2=nearestE24(r2);
+    var e1note = (isFinite(e1) && Math.abs(e1-r1)/r1>0.01) ? formatOhms(e1)+' Ω' : 'exact';
+    var e2note = (isFinite(e2) && Math.abs(e2-r2)/r2>0.01) ? formatOhms(e2)+' Ω' : 'exact';
     out.innerHTML=
-      '<div class="unit">Ideal series resistor</div>'+
-      '<div class="num">'+formatOhms(R)+'</div>'+
-      '<div class="unit">ohms</div>'+
-      '<p class="formula">R = (Vs − Vf) / I = ('+fmt(vs,3)+' − '+fmt(vf,3)+') / '+fmt(I,4)+' A</p>'+
+      '<div class="unit">Vout</div>'+
+      '<div class="num">'+fmt(vout,3)+'</div>'+
+      '<div class="unit">volts</div>'+
+      '<p class="formula">Vout = Vin × R2 / (R1 + R2) = '+fmt(vin,3)+' × '+formatOhms(r2)+' / ('+formatOhms(r1)+' + '+formatOhms(r2)+')</p>'+
       '<div class="stats">'+
-        '<div class="stat"><span class="lab">Nearest E24</span><span class="val">'+formatOhms(e24)+' Ω · <a href="/electronics/resistor-codes.html">decode bands</a></span></div>'+
-        '<div class="stat"><span class="lab">Current with E24</span><span class="val">'+fmt(Ireal*1000,2)+' mA</span></div>'+
-        '<div class="stat"><span class="lab">Power in resistor</span><span class="val">'+pLabel+'</span></div>'+
+        '<div class="stat"><span class="lab">Current through divider</span><span class="val">'+fmt(I*1000,3)+' mA</span></div>'+
+        '<div class="stat"><span class="lab">Power in R1</span><span class="val">'+formatPower(p1)+'</span></div>'+
+        '<div class="stat"><span class="lab">Power in R2</span><span class="val">'+formatPower(p2)+'</span></div>'+
+        '<div class="stat"><span class="lab">Nearest E24 · R1 / R2</span><span class="val">'+e1note+' / '+e2note+' · <a href="/electronics/resistor-codes.html">decode bands</a></span></div>'+
       '</div>'+
-      '<p class="note">A quarter-watt (250 mW) resistor is fine for most indicator LEDs on 5 V or 3.3 V.</p>';
+      '<p class="note">Ratio R2 / (R1 + R2) = '+fmt(100*r2/total,2)+'%. Loading the mid-point with a low-impedance load will pull Vout down.</p>';
   }
   chips.forEach(function(b){
     b.addEventListener('click',function(){
-      vfEl.value=b.dataset.vf;
+      vinEl.value=b.dataset.vin;
+      r1El.value=b.dataset.r1;
+      r2El.value=b.dataset.r2;
       render();
     });
   });
-  [vsEl,vfEl,maEl].forEach(function(el){
+  [vinEl,r1El,r2El].forEach(function(el){
     el.addEventListener('input',render);
     el.addEventListener('change',render);
   });
