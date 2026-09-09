@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Public photos — Steven Philley</title>
-<meta name="description" content="Shared library of freely reusable public-domain and Creative Commons photos for Steven Philley sites, sorted into Places, Pets, Music, Earth/Space, and Electronics buckets.">
-<link rel="canonical" href="https://stevenphilley.com/publicphotos/">
+<title>Music — Public photos — Steven Philley</title>
+<meta name="description" content="DJ booth gear, vinyl bins, and guitar / amp photos for music and hobby pages.">
+<link rel="canonical" href="https://stevenphilley.com/publicphotos/music/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="Public photos — Steven Philley">
-<meta property="og:description" content="Reusable image library in buckets: Places, Pets, Music, Earth/Space, Electronics.">
-<meta property="og:url" content="https://stevenphilley.com/publicphotos/">
-<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/blue-marble.jpg">
+<meta property="og:title" content="Music — Public photos">
+<meta property="og:description" content="DJ booth gear, vinyl bins, and guitar / amp photos for music and hobby pages.">
+<meta property="og:url" content="https://stevenphilley.com/publicphotos/music/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/dj-booth-traktor.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Public photos — Steven Philley">
-<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/blue-marble.jpg">
+<meta name="twitter:title" content="Music — Public photos">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/dj-booth-traktor.jpg">
 <script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -85,7 +85,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   <div class="e-top">
     <a href="/">Steven Philley</a>
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-      <a href="/publicphotos/" aria-current="page">Public photos</a>
+      <a href="/publicphotos/">Public photos</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="dusk">Dusk</button>
@@ -96,24 +96,25 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     </div>
   </div>
 
-  <p class="kicker">Shared media library</p>
-  <h1>Public photos</h1>
-  <p class="lede">A reusable library of freely licensed images for Steven’s sites — stevenphilley.com, coloritcompany.com, and anything else that needs a stable hero or illustration. Browse by <strong>bucket</strong> so pages stay short; prefer the <strong>hosted</strong> URL so embeds keep working if a source CDN moves.</p>
+  <p class="kicker">DJ · guitar</p>
+  <h1>Music</h1>
+  <p class="lede">DJ booth gear, vinyl bins, and guitar / amp photos for music and hobby pages. Prefer the <strong>hosted</strong> URL for stable embeds.</p>
   <div class="meta-row">
-    <span class="chip" id="countChip">Catalog loading…</span>
-    <span class="chip"><a href="catalog.json">catalog.json</a></span>
-    <span class="chip">Prefer PD / CC0</span>
+    <span class="chip" id="countChip">Loading…</span>
+    <span class="chip"><a href="../catalog.json">catalog.json</a></span>
+    <span class="chip"><a href="../">All buckets</a></span>
   </div>
   <nav class="bucket-nav" aria-label="Photo buckets">
-      <a href="/publicphotos/" aria-current="page">Hub</a>
+      <a href="/publicphotos/">Hub</a>
       <a href="/publicphotos/places/">Places</a>
       <a href="/publicphotos/pets/">Pets</a>
-      <a href="/publicphotos/music/">Music</a>
+      <a href="/publicphotos/music/" aria-current="page">Music</a>
       <a href="/publicphotos/earth/">Earth / Space</a>
       <a href="/publicphotos/electronics/">Electronics</a>
   </nav>
 
-  <div class="bucket-grid" id="buckets"></div>
+  <div class="grid" id="grid"></div>
+  <div class="pager" id="pager" hidden></div>
 
   <footer class="e-foot">
     <a href="/">Photography</a>
@@ -238,35 +239,30 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 })();
 
 (function(){
-  var esc = window.__pp.esc;
-  fetch('catalog.json',{credentials:'same-origin'})
+  var COLLECTION = "music";
+  var PAGE_SIZE = 12;
+  var params = new URLSearchParams(location.search);
+  var page = parseInt(params.get('page')||'1', 10) || 1;
+  var catalogUrl = '../catalog.json';
+  var imgPrefix = '../';
+
+  fetch(catalogUrl,{credentials:'same-origin'})
     .then(function(r){ if(!r.ok) throw new Error('catalog '+r.status); return r.json(); })
     .then(function(catalog){
-      var photos = catalog.photos || [];
-      var cols = catalog.collections || [];
-      document.getElementById('countChip').textContent = photos.length + ' images · ' + cols.length + ' buckets';
-      var byId = {};
-      photos.forEach(function(p){ byId[p.id]=p; });
-      var grid = document.getElementById('buckets');
-      grid.innerHTML = cols.map(function(c){
-        var preview = byId[c.preview_id] || photos.find(function(p){ return p.collection===c.id; });
-        var thumb = preview ? (c.preview_path || preview.hosted_path) : '';
-        var count = c.count != null ? c.count : photos.filter(function(p){ return p.collection===c.id; }).length;
-        return (
-          '<a class="bucket-card" href="'+esc(c.slug)+'/">'+
-            (thumb ? '<img class="thumb" src="'+esc(thumb)+'" alt="" loading="lazy">' : '')+
-            '<div class="body">'+
-              '<h2>'+esc(c.title)+'</h2>'+
-              '<span class="count">'+count+' photo'+(count===1?'':'s')+'</span>'+
-              '<p class="desc">'+esc(c.description)+'</p>'+
-            '</div>'+
-          '</a>'
-        );
-      }).join('');
+      var all = (catalog.photos||[]).filter(function(p){ return p.collection===COLLECTION; });
+      var pageData = window.__pp.paginate(all, page, PAGE_SIZE);
+      document.getElementById('countChip').textContent = pageData.total + ' photo' + (pageData.total===1?'':'s') + (pageData.pages>1 ? (' · page '+pageData.page+' / '+pageData.pages) : '');
+      var grid = document.getElementById('grid');
+      grid.innerHTML = pageData.items.map(function(p){ return window.__pp.cardHtml(p, imgPrefix); }).join('');
+      window.__pp.bindCopy(grid);
+      window.__pp.renderPager(document.getElementById('pager'), pageData.page, pageData.pages, './');
+      if(!pageData.items.length){
+        grid.innerHTML = '<p class="lede">No photos in this bucket yet.</p>';
+      }
     })
     .catch(function(err){
       document.getElementById('countChip').textContent = 'Catalog unavailable';
-      document.getElementById('buckets').innerHTML = '<p class="lede">Could not load catalog.json.</p>';
+      document.getElementById('grid').innerHTML = '<p class="lede">Could not load catalog.json.</p>';
       console.error(err);
     });
 })();
