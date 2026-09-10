@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Linear Algebra — Matrices &amp; Vectors — Steven Philley</title>
+<meta name="description" content="Interactive 2×2 linear algebra: matrix multiply visual, determinant and inverse, 2D vector add/scale on a canvas, and eigenvalue stretch for 2×2 matrices.">
+<link rel="canonical" href="https://stevenphilley.com/maths/linear-algebra/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Linear Algebra — Matrices &amp; Vectors">
+<meta property="og:description" content="Multiply 2×2 matrices, see det/inverse, add and scale vectors, optional eigenvalues.">
+<meta property="og:url" content="https://stevenphilley.com/maths/linear-algebra/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Linear Algebra — Matrices &amp; Vectors">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:960px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 80px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,8vw,80px);line-height:.9;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1)}
+.section{margin-top:32px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.section h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:0 0 8px}
+.section p,.hint{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:66ch;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px}
+.panel h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.05em;margin:0 0 10px}
+label{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:8px 0 4px}
+input[type="number"],input[type="text"]{width:100%;max-width:100%;box-sizing:border-box;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:18px;padding:6px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.mat{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-width:220px}
+.mat input{font-size:16px;text-align:center}
+.out{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink,#e8e6e1);margin-top:10px;white-space:pre-wrap}
+.out .muted{color:var(--muted,#63666e)}
+canvas{display:block;width:100%;height:auto;background:var(--base,#1a1c24);border:1px solid var(--line,#2c303a);touch-action:none}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button:hover,.modes button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.slider-row{display:flex;align-items:center;gap:12px;margin:8px 0;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96)}
+.slider-row input[type="range"]{flex:1}
+.also a{display:block;border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink,#e8e6e1);text-decoration:none}
+.also a:hover{color:var(--accent,#c8b48a)}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:26px;margin:0 0 8px}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.disclaimer{margin-top:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+</style>
+</head>
+<body>
+<div class="l-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/maths/">Maths</a>
+      <a href="/maths/trig/">Trig</a>
+      <a href="/maths/linear-algebra/" aria-current="page">Linear algebra</a>
+      <a href="/maths/calculus/">Calculus</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Maths · Linear algebra · 2×2 &amp; 2D</p>
+  <h1>Matrices &amp; vectors</h1>
+  <p class="lede">Work in the plane: multiply 2×2 matrices, read determinant and inverse when it exists, add and scale vectors on a canvas, and optionally stretch by eigenvectors. Back to the <a href="/maths/">maths hub</a>.</p>
+
+  <section class="section" id="matrix" aria-labelledby="matrix-h">
+    <h2 id="matrix-h">2×2 matrix multiply</h2>
+    <p>For A = [[a,b],[c,d]] and B = [[e,f],[g,h]], the product AB has entries ae+bg, af+bh; ce+dg, cf+dh. Edit either matrix; the product and a geometric view of A acting on the unit square update live.</p>
+    <div class="grid2">
+      <div class="panel">
+        <h3>Matrix A</h3>
+        <div class="mat">
+          <input id="a00" type="number" step="any" value="2" aria-label="A row1 col1">
+          <input id="a01" type="number" step="any" value="1" aria-label="A row1 col2">
+          <input id="a10" type="number" step="any" value="0" aria-label="A row2 col1">
+          <input id="a11" type="number" step="any" value="1" aria-label="A row2 col2">
+        </div>
+        <h3 style="margin-top:16px">Matrix B</h3>
+        <div class="mat">
+          <input id="b00" type="number" step="any" value="1" aria-label="B row1 col1">
+          <input id="b01" type="number" step="any" value="0" aria-label="B row1 col2">
+          <input id="b10" type="number" step="any" value="1" aria-label="B row2 col1">
+          <input id="b11" type="number" step="any" value="2" aria-label="B row2 col2">
+        </div>
+        <div class="modes">
+          <button type="button" id="swapAB">Swap A ↔ B</button>
+          <button type="button" id="idA">A = I</button>
+          <button type="button" id="rot45">A = rot 45°</button>
+        </div>
+        <div class="out" id="matOut" aria-live="polite"></div>
+      </div>
+      <div class="panel">
+        <h3>A maps the unit square</h3>
+        <canvas id="matCanvas" width="480" height="480" aria-label="Unit square transformed by A"></canvas>
+        <p class="hint" style="margin-top:8px;margin-bottom:0">Gray = unit square. Accent = image under A. Area scale ≈ |det A|.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vectors" aria-labelledby="vec-h">
+    <h2 id="vec-h">2D vectors — add &amp; scale</h2>
+    <p>u + v is tip-to-tail. Drag the tips on the canvas, or edit components. Scale slider multiplies u.</p>
+    <div class="grid2">
+      <div class="panel">
+        <label>uₓ <input id="ux" type="number" step="any" value="2"></label>
+        <label>uᵧ <input id="uy" type="number" step="any" value="1"></label>
+        <label>vₓ <input id="vx" type="number" step="any" value="-0.5"></label>
+        <label>vᵧ <input id="vy" type="number" step="any" value="2"></label>
+        <div class="slider-row"><span>Scale k on u</span><input id="kscale" type="range" min="-2" max="3" step="0.05" value="1"><span id="kval">1.00</span></div>
+        <div class="out" id="vecOut"></div>
+      </div>
+      <div class="panel">
+        <canvas id="vecCanvas" width="480" height="480" aria-label="Vector plane — drag tips"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="eigen" aria-labelledby="eig-h">
+    <h2 id="eig-h">Eigenvalues of A (optional stretch)</h2>
+    <p>For 2×2 A, solve det(A − λI) = 0: λ² − (tr A)λ + det A = 0. Real eigenvalues give directions that A only stretches (not rotates). The canvas shows those axes when they are real.</p>
+    <div class="panel">
+      <div class="out" id="eigOut"></div>
+      <canvas id="eigCanvas" width="560" height="360" aria-label="Eigenvector directions"></canvas>
+    </div>
+  </section>
+
+  <section class="also" aria-label="Related" style="margin-top:36px">
+    <h2>Nearby</h2>
+    <a href="/maths/">Maths hub</a>
+    <a href="/maths/trig/">Trigonometry</a>
+    <a href="/maths/calculus/">Calculus</a>
+    <a href="/sitemap.html">Site contents</a>
+  </section>
+  <p class="disclaimer">Educational 2×2 / 2D linear algebra demo — original wording of standard definitions. Not a full course.</p>
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/maths/">Maths</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  themeBtns.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();redrawAll();});});
+  paintTheme();
+
+  function cssVar(n,f){return getComputedStyle(root).getPropertyValue(n).trim()||f;}
+  function num(id){var v=parseFloat(document.getElementById(id).value);return isFinite(v)?v:0;}
+  function fmt(n,d){d=d==null?3:d;if(!isFinite(n))return '—';var p=Math.pow(10,d);return (Math.round(n*p)/p).toFixed(d);}
+  function getA(){return [[num('a00'),num('a01')],[num('a10'),num('a11')]];}
+  function getB(){return [[num('b00'),num('b01')],[num('b10'),num('b11')]];}
+  function det(M){return M[0][0]*M[1][1]-M[0][1]*M[1][0];}
+  function mul(A,B){return [
+    [A[0][0]*B[0][0]+A[0][1]*B[1][0], A[0][0]*B[0][1]+A[0][1]*B[1][1]],
+    [A[1][0]*B[0][0]+A[1][1]*B[1][0], A[1][0]*B[0][1]+A[1][1]*B[1][1]]
+  ];}
+  function inv(M){
+    var d=det(M);if(Math.abs(d)<1e-12)return null;
+    return [[M[1][1]/d,-M[0][1]/d],[-M[1][0]/d,M[0][0]/d]];
+  }
+  function matStr(M){return '[['+fmt(M[0][0])+', '+fmt(M[0][1])+'],\n ['+fmt(M[1][0])+', '+fmt(M[1][1])+']]';}
+
+  function updateMat(){
+    var A=getA(),B=getB(),P=mul(A,B),d=det(A),Ai=inv(A),tr=A[0][0]+A[1][1];
+    var html='AB =\n'+matStr(P)+'\n\n';
+    html+='det(A) = '+fmt(d,4)+'\n';
+    html+='tr(A) = '+fmt(tr,4)+'\n';
+    if(Ai) html+='\nA⁻¹ =\n'+matStr(Ai);
+    else html+='\nA⁻¹ does not exist (det ≈ 0).';
+    document.getElementById('matOut').textContent=html;
+    drawMatCanvas(A,d);
+    updateEigen(A,d,tr);
+  }
+
+  function drawMatCanvas(A,d){
+    var c=document.getElementById('matCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height,cx=w/2,cy=h/2,S=Math.min(w,h)*0.28;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    function to(x,y){return [cx+x*S,cy-y*S];}
+    function poly(pts,stroke,fill){
+      ctx.beginPath();
+      pts.forEach(function(p,i){var q=to(p[0],p[1]);if(i===0)ctx.moveTo(q[0],q[1]);else ctx.lineTo(q[0],q[1]);});
+      ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill();}ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();
+    }
+    var sq=[[0,0],[1,0],[1,1],[0,1]];
+    poly(sq,soft,'rgba(155,154,150,0.12)');
+    var img=sq.map(function(p){return [A[0][0]*p[0]+A[0][1]*p[1], A[1][0]*p[0]+A[1][1]*p[1]];});
+    poly(img,accent,'rgba(200,180,138,0.18)');
+    ctx.fillStyle=soft;ctx.font='11px "IBM Plex Mono",monospace';
+    ctx.fillText('|det A| ≈ '+fmt(Math.abs(d),3),12,20);
+  }
+
+  document.getElementById('swapAB').addEventListener('click',function(){
+    ['00','01','10','11'].forEach(function(ij){
+      var a=document.getElementById('a'+ij),b=document.getElementById('b'+ij),t=a.value;a.value=b.value;b.value=t;
+    });
+    updateMat();
+  });
+  document.getElementById('idA').addEventListener('click',function(){
+    document.getElementById('a00').value=1;document.getElementById('a01').value=0;
+    document.getElementById('a10').value=0;document.getElementById('a11').value=1;updateMat();
+  });
+  document.getElementById('rot45').addEventListener('click',function(){
+    var r=Math.SQRT1_2;
+    document.getElementById('a00').value=fmt(r,4);document.getElementById('a01').value=fmt(-r,4);
+    document.getElementById('a10').value=fmt(r,4);document.getElementById('a11').value=fmt(r,4);updateMat();
+  });
+  ['a00','a01','a10','a11','b00','b01','b10','b11'].forEach(function(id){
+    document.getElementById(id).addEventListener('input',updateMat);
+  });
+
+  // Vectors
+  var drag=null;
+  function updateVec(){
+    var ux=num('ux'),uy=num('uy'),vx=num('vx'),vy=num('vy'),k=parseFloat(document.getElementById('kscale').value);
+    document.getElementById('kval').textContent=fmt(k,2);
+    var sx=k*ux,sy=k*uy;
+    document.getElementById('vecOut').textContent=
+      'u = ('+fmt(ux)+', '+fmt(uy)+')\n'+
+      'v = ('+fmt(vx)+', '+fmt(vy)+')\n'+
+      'k·u = ('+fmt(sx)+', '+fmt(sy)+')\n'+
+      'u+v = ('+fmt(ux+vx)+', '+fmt(uy+vy)+')\n'+
+      '|u| = '+fmt(Math.hypot(ux,uy))+',  |v| = '+fmt(Math.hypot(vx,vy));
+    drawVec(ux,uy,vx,vy,sx,sy);
+  }
+  function drawVec(ux,uy,vx,vy,sx,sy){
+    var c=document.getElementById('vecCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height,cx=w/2,cy=h/2,S=Math.min(w,h)*0.18;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    function arrow(x0,y0,x1,y1,col,lw){
+      var X0=cx+x0*S,Y0=cy-y0*S,X1=cx+x1*S,Y1=cy-y1*S;
+      ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw||2;
+      ctx.beginPath();ctx.moveTo(X0,Y0);ctx.lineTo(X1,Y1);ctx.stroke();
+      var ang=Math.atan2(Y0-Y1,X1-X0);
+      ctx.beginPath();ctx.moveTo(X1,Y1);
+      ctx.lineTo(X1-10*Math.cos(ang-0.4),Y1+10*Math.sin(ang-0.4));
+      ctx.lineTo(X1-10*Math.cos(ang+0.4),Y1+10*Math.sin(ang+0.4));
+      ctx.closePath();ctx.fill();
+    }
+    arrow(0,0,ux,uy,soft,1.5);
+    arrow(0,0,vx,vy,soft,1.5);
+    arrow(0,0,sx,sy,accent,2);
+    arrow(0,0,ux+vx,uy+vy,ink,2.5);
+    // tip-to-tail ghost
+    ctx.setLineDash([4,4]);arrow(ux,uy,ux+vx,uy+vy,line,1);ctx.setLineDash([]);
+    ctx.fillStyle=soft;ctx.font='11px "IBM Plex Mono",monospace';
+    ctx.fillText('u',cx+ux*S+6,cy-uy*S);ctx.fillText('v',cx+vx*S+6,cy-vy*S);
+    ctx.fillText('u+v',cx+(ux+vx)*S+6,cy-(uy+vy)*S);
+    ctx.fillText('k·u',cx+sx*S+6,cy-sy*S);
+  }
+  function hit(mx,my,x,y,S,cx,cy){
+    var px=cx+x*S,py=cy-y*S;return Math.hypot(mx-px,my-py)<18;
+  }
+  (function(){
+    var c=document.getElementById('vecCanvas');
+    c.addEventListener('pointerdown',function(e){
+      var r=c.getBoundingClientRect(),S=Math.min(c.width,c.height)*0.18;
+      var mx=(e.clientX-r.left)*(c.width/r.width),my=(e.clientY-r.top)*(c.height/r.height);
+      var cx=c.width/2,cy=c.height/2;
+      if(hit(mx,my,num('ux'),num('uy'),S,cx,cy))drag='u';
+      else if(hit(mx,my,num('vx'),num('vy'),S,cx,cy))drag='v';
+      else drag=null;
+      if(drag)c.setPointerCapture(e.pointerId);
+    });
+    c.addEventListener('pointermove',function(e){
+      if(!drag)return;
+      var r=c.getBoundingClientRect(),S=Math.min(c.width,c.height)*0.18;
+      var mx=(e.clientX-r.left)*(c.width/r.width),my=(e.clientY-r.top)*(c.height/r.height);
+      var x=(mx-c.width/2)/S,y=(c.height/2-my)/S;
+      if(drag==='u'){document.getElementById('ux').value=fmt(x,2);document.getElementById('uy').value=fmt(y,2);}
+      else{document.getElementById('vx').value=fmt(x,2);document.getElementById('vy').value=fmt(y,2);}
+      updateVec();
+    });
+    c.addEventListener('pointerup',function(){drag=null;});
+  })();
+  ['ux','uy','vx','vy','kscale'].forEach(function(id){document.getElementById(id).addEventListener('input',updateVec);});
+
+  function updateEigen(A,d,tr){
+    var disc=tr*tr-4*d;
+    var el=document.getElementById('eigOut');
+    var c=document.getElementById('eigCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height,cx=w/2,cy=h/2,S=Math.min(w,h)*0.22;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    if(disc<-1e-10){
+      el.textContent='Discriminant '+fmt(disc,4)+' < 0 → complex conjugate eigenvalues (rotation-like). No real eigendirections to draw.';
+      return;
+    }
+    var s=Math.sqrt(Math.max(0,disc));
+    var l1=(tr+s)/2,l2=(tr-s)/2;
+    function eigvec(lam){
+      // (A-λI)v=0
+      var m00=A[0][0]-lam,m01=A[0][1],m10=A[1][0],m11=A[1][1]-lam;
+      var v;
+      if(Math.abs(m01)>1e-10||Math.abs(m00)>1e-10){v=[-m01,m00];}
+      else if(Math.abs(m10)>1e-10||Math.abs(m11)>1e-10){v=[m11,-m10];}
+      else v=[1,0];
+      var n=Math.hypot(v[0],v[1])||1;return [v[0]/n,v[1]/n];
+    }
+    var e1=eigvec(l1),e2=eigvec(l2);
+    el.textContent='λ₁ = '+fmt(l1,4)+',  eigenvector ≈ ('+fmt(e1[0],3)+', '+fmt(e1[1],3)+')\n'+
+      'λ₂ = '+fmt(l2,4)+',  eigenvector ≈ ('+fmt(e2[0],3)+', '+fmt(e2[1],3)+')\n'+
+      'Characteristic equation: λ² − ('+fmt(tr)+')λ + ('+fmt(d)+') = 0';
+    function lineDir(e,col){
+      ctx.strokeStyle=col;ctx.lineWidth=2;ctx.beginPath();
+      ctx.moveTo(cx-e[0]*S*2.2,cy+e[1]*S*2.2);ctx.lineTo(cx+e[0]*S*2.2,cy-e[1]*S*2.2);ctx.stroke();
+      // image of unit vector
+      var Ax=A[0][0]*e[0]+A[0][1]*e[1],Ay=A[1][0]*e[0]+A[1][1]*e[1];
+      ctx.fillStyle=col;ctx.beginPath();ctx.arc(cx+Ax*S,cy-Ay*S,5,0,Math.PI*2);ctx.fill();
+    }
+    lineDir(e1,accent);lineDir(e2,ink);
+    ctx.fillStyle=soft;ctx.font='11px "IBM Plex Mono",monospace';
+    ctx.fillText('eigendirections (dots = A·unit eigenvector)',12,20);
+  }
+
+  function redrawAll(){updateMat();updateVec();}
+  redrawAll();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
