@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacitor codes — Electronics — Steven Philley</title>
+<meta name="description" content="Interactive EIA capacitor marking decoder. Read a 3-digit code to pF / nF / µF, or look up a value and snap to a nearby E12 code.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/capacitor-codes.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Capacitor codes — Steven Philley">
+<meta property="og:description" content="Decode 3-digit EIA capacitor markings, or look up a value. Runs in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/capacitor-codes.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Capacitor codes — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
+select{cursor:pointer}
+.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+.digits{display:flex;flex-wrap:wrap;gap:8px}
+.digits button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:14px;min-width:42px;padding:10px 8px;cursor:pointer}
+.digits button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.legend a{color:var(--accent,#c8b48a);text-decoration:none}
+.legend a:hover{text-decoration:underline}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html">LC</a>
+      <a href="/electronics/capacitor-codes.html" aria-current="page">Cap</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>Capacitor codes</h1>
+  <p class="lede">Ceramics often wear a three-digit EIA mark instead of a printed µF. Decode the digits to pF / nF / µF, or type a value and snap to a nearby E12 code.</p>
+
+  <div class="modes" id="modes" role="tablist" aria-label="Mode">
+    <button type="button" data-mode="decode" aria-selected="true">Decode marking</button>
+    <button type="button" data-mode="lookup" aria-selected="false">Look up value</button>
+  </div>
+
+  <div class="stage">
+    <div class="fields">
+      <div id="decodeFields">
+        <label>3-digit code<input id="code" inputmode="numeric" maxlength="4" value="104" autocomplete="off" spellcheck="false" aria-describedby="codeHint"></label>
+        <p class="note" id="codeHint">First two digits are the value; the third is the power-of-ten multiplier in pF. Optional letter = tolerance.</p>
+        <label>Tolerance letter (optional)
+          <select id="tol">
+            <option value="">— none —</option>
+            <option value="B">B · ±0.1 pF</option>
+            <option value="C">C · ±0.25 pF</option>
+            <option value="D">D · ±0.5 pF</option>
+            <option value="F">F · ±1%</option>
+            <option value="G">G · ±2%</option>
+            <option value="J">J · ±5%</option>
+            <option value="K" selected>K · ±10%</option>
+            <option value="M">M · ±20%</option>
+            <option value="Z">Z · +80% / −20%</option>
+          </select>
+        </label>
+        <div class="presets" role="group" aria-label="Common codes">
+          <button type="button" data-code="104" data-tol="K" aria-pressed="true">104</button>
+          <button type="button" data-code="103" data-tol="K">103</button>
+          <button type="button" data-code="224" data-tol="K">224</button>
+          <button type="button" data-code="471" data-tol="J">471</button>
+          <button type="button" data-code="102" data-tol="K">102</button>
+          <button type="button" data-code="220" data-tol="J">220</button>
+          <button type="button" data-code="475" data-tol="M">475</button>
+        </div>
+      </div>
+      <div id="lookupFields" class="hidden">
+        <div class="pair">
+          <label>Capacitance<input id="cap" inputmode="decimal" step="any" value="100"></label>
+          <label>Unit
+            <select id="capunit" aria-label="Capacitance unit">
+              <option value="1e-12">pF</option>
+              <option value="1e-9" selected>nF</option>
+              <option value="1e-6">µF</option>
+            </select>
+          </label>
+        </div>
+        <p class="note">Snaps to the nearest E12 decade value, then encodes a 3-digit EIA mark.</p>
+        <div class="presets" role="group" aria-label="Common values">
+          <button type="button" data-cap="100" data-capunit="1e-9">100 nF</button>
+          <button type="button" data-cap="10" data-capunit="1e-9">10 nF</button>
+          <button type="button" data-cap="0.1" data-capunit="1e-6">0.1 µF</button>
+          <button type="button" data-cap="470" data-capunit="1e-12">470 pF</button>
+          <button type="button" data-cap="1" data-capunit="1e-6">1 µF</button>
+        </div>
+      </div>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>A three-digit EIA code is picofarads written like a resistor: <strong style="font-weight:500;color:var(--ink)">104</strong> means 10 × 10⁴ pF = 100 000 pF = 100 nF = 0.1 µF. Codes that end in 0 keep the first two digits as the literal picofarad value (220 → 22 pF).</p>
+    <p>A trailing letter is tolerance: J ±5%, K ±10%, M ±20%, Z +80/−20%, and a few absolute-pF letters for tiny ceramics. Lookup snaps to the E12 series (10, 12, 15, 18, 22, 27, 33, 39, 47, 56, 68, 82) before encoding.</p>
+    <p>Pair this with <a href="/electronics/resistor-codes.html">Resistor codes</a> for the ohm twin, <a href="/electronics/rc-time.html">RC time</a> once you know C, or the <a href="/electronics/">converters bench</a> for everyday ohms and watts.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var TOL={
+    B:'±0.1 pF', C:'±0.25 pF', D:'±0.5 pF',
+    F:'±1%', G:'±2%', J:'±5%', K:'±10%', M:'±20%',
+    Z:'+80% / −20%'
+  };
+  var E12=[10,12,15,18,22,27,33,39,47,56,68,82];
+
+  var mode='decode';
+  var codeEl=document.getElementById('code');
+  var tolEl=document.getElementById('tol');
+  var capEl=document.getElementById('cap');
+  var capunitEl=document.getElementById('capunit');
+  var out=document.getElementById('out');
+  var decodeFields=document.getElementById('decodeFields');
+  var lookupFields=document.getElementById('lookupFields');
+  var modeBtns=[].slice.call(document.querySelectorAll('#modes [data-mode]'));
+  var decodePresets=[].slice.call(document.querySelectorAll('#decodeFields .presets button'));
+  var lookupPresets=[].slice.call(document.querySelectorAll('#lookupFields .presets button'));
+
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatFarads(C){
+    if(!isFinite(C) || C<=0) return '—';
+    var abs=C;
+    if(abs>=1e-3) return fmt(C*1e3,3)+' mF';
+    if(abs>=1e-6) return fmt(C*1e6, abs*1e6>=100 ? 2 : 3)+' µF';
+    if(abs>=1e-9) return fmt(C*1e9, abs*1e9>=100 ? 2 : 3)+' nF';
+    return fmt(C*1e12, abs*1e12>=100 ? 1 : 2)+' pF';
+  }
+  function primaryDisplay(pf){
+    if(!(pf>0)) return {num:'—', unit:'', farads:NaN};
+    var C=pf*1e-12;
+    if(pf>=1e6) return {num:fmt(pf/1e6, pf>=1e8 ? 2 : 3), unit:'µF', farads:C};
+    if(pf>=1e3) return {num:fmt(pf/1e3, pf>=1e5 ? 2 : 3), unit:'nF', farads:C};
+    return {num:fmt(pf, pf>=100 ? 1 : 2), unit:'pF', farads:C};
+  }
+  function parseCode(raw){
+    var s=String(raw||'').trim().toUpperCase().replace(/\s+/g,'');
+    var letter='';
+    var m=s.match(/^(\d{2,4})([A-Z])?$/);
+    if(!m) return null;
+    var digits=m[1];
+    letter=m[2]||'';
+    if(digits.length===4){
+      // uncommon 4-digit: treat first 3 as EIA, ignore 4th significant unless letter already taken
+      digits=digits.slice(0,3);
+    }
+    if(digits.length===2){
+      var pf2=parseInt(digits,10);
+      if(!(pf2>=0)) return null;
+      return {pf:pf2, code:digits, letter:letter, sig:pf2, mult:0};
+    }
+    if(digits.length!==3) return null;
+    var d1=parseInt(digits.charAt(0),10);
+    var d2=parseInt(digits.charAt(1),10);
+    var mult=parseInt(digits.charAt(2),10);
+    if(!isFinite(d1)||!isFinite(d2)||!isFinite(mult)) return null;
+    var sig=10*d1+d2;
+    var pf=sig*Math.pow(10,mult);
+    return {pf:pf, code:digits, letter:letter, sig:sig, mult:mult};
+  }
+  function nearestE12(pf){
+    if(!(pf>0)) return null;
+    var best=null;
+    for(var exp=-2; exp<=12; exp++){
+      for(var i=0;i<E12.length;i++){
+        var v=E12[i]*Math.pow(10,exp);
+        if(v<0.5) continue;
+        var err=Math.abs(v-pf);
+        var rel=err/pf;
+        if(!best || rel<best.rel-1e-15 || (Math.abs(rel-best.rel)<1e-15 && err<best.err)){
+          best={pf:v, rel:rel, err:err, sig:E12[i], exp:exp};
+        }
+      }
+    }
+    return best;
+  }
+  function encodePf(pf){
+    var near=nearestE12(pf);
+    if(!near) return null;
+    var sig=near.sig;
+    var value=near.pf;
+    // find mult such that sig * 10^mult == value (in pF)
+    var mult=Math.round(Math.log(value/sig)/Math.LN10);
+    if(mult<0){
+      // very small: fall back to two-digit literal when possible
+      if(value<100 && Math.abs(value-Math.round(value))<1e-9){
+        var lit=String(Math.round(value));
+        if(lit.length===1) lit='0'+lit;
+        return {code:lit, pf:value, sig:Math.round(value), mult:0, e12:true};
+      }
+      mult=0;
+    }
+    if(mult>9) mult=9;
+    var d1=Math.floor(sig/10);
+    var d2=sig%10;
+    var code=''+d1+d2+mult;
+    return {code:code, pf:sig*Math.pow(10,mult), sig:sig, mult:mult, e12:true};
+  }
+  function syncDecodePresets(){
+    var parsed=parseCode(codeEl.value);
+    var tol=tolEl.value;
+    decodePresets.forEach(function(b){
+      var match=parsed && parsed.code===b.dataset.code && (tol===b.dataset.tol || (!tol && !b.dataset.tol));
+      // looser: match code only if tol chip matches selected or both empty-ish
+      match=parsed && parsed.code===b.dataset.code && tol===b.dataset.tol;
+      b.setAttribute('aria-pressed', String(!!match));
+    });
+  }
+  function syncLookupPresets(){
+    var n=parseFloat(String(capEl.value).replace(/,/g,''));
+    var u=capunitEl.value;
+    lookupPresets.forEach(function(b){
+      var match=isFinite(n) && Math.abs(n-parseFloat(b.dataset.cap))/Math.max(n,1e-12)<0.02 && b.dataset.capunit===u;
+      b.setAttribute('aria-pressed', String(!!match));
+    });
+  }
+  function renderDecode(){
+    syncDecodePresets();
+    var raw=String(codeEl.value||'').trim().toUpperCase();
+    // allow typing letter into code field
+    var fromField=parseCode(raw);
+    var letter=tolEl.value;
+    if(fromField && fromField.letter){
+      letter=fromField.letter;
+      if(tolEl.value!==letter && TOL[letter]){
+        tolEl.value=letter;
+      }
+    }
+    if(!fromField || !(fromField.pf>=0)){
+      out.innerHTML='<div class="unit">Capacitance</div><div class="num">—</div><p class="note">Enter a 2- or 3-digit EIA code (example 104).</p>';
+      return;
+    }
+    var pf=fromField.pf;
+    var disp=primaryDisplay(pf);
+    var tolTxt=letter && TOL[letter] ? (letter+' · '+TOL[letter]) : '—';
+    var formula;
+    if(String(fromField.code).length===2){
+      formula='Literal '+fromField.code+' pF (two-digit mark).';
+    } else {
+      formula=fromField.sig+' × 10'+String(fromField.mult).sup()+' pF = '+fmt(pf, pf>=100?1:2)+' pF';
+    }
+    out.innerHTML=
+      '<div class="unit">Capacitance</div>'+
+      '<div class="num">'+disp.num+'</div>'+
+      '<div class="unit">'+disp.unit+'</div>'+
+      '<p class="formula">'+formula+'</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">Picofarads</span><span class="val">'+fmt(pf, pf>=100?1:2)+' pF</span></div>'+
+        '<div class="stat"><span class="lab">Nanofarads</span><span class="val">'+fmt(pf/1e3, 4)+' nF</span></div>'+
+        '<div class="stat"><span class="lab">Microfarads</span><span class="val">'+fmt(pf/1e6, 6)+' µF</span></div>'+
+        '<div class="stat"><span class="lab">Tolerance</span><span class="val">'+tolTxt+'</span></div>'+
+      '</div>'+
+      '<p class="note">Marking '+fromField.code+(letter||'')+' · EIA 3-digit style in picofarads.</p>';
+  }
+  function renderLookup(){
+    syncLookupPresets();
+    var n=parseFloat(String(capEl.value).replace(/,/g,''));
+    var scale=parseFloat(capunitEl.value);
+    if(!(n>0) || !(scale>0)){
+      out.innerHTML='<div class="unit">EIA code</div><div class="num">—</div><p class="note">Enter a capacitance above zero.</p>';
+      return;
+    }
+    var pf=(n*scale)/1e-12;
+    var enc=encodePf(pf);
+    if(!enc){
+      out.innerHTML='<div class="unit">EIA code</div><div class="num">—</div><p class="note">Could not encode that value.</p>';
+      return;
+    }
+    var same=Math.abs(enc.pf-pf)/pf < 0.02;
+    var disp=primaryDisplay(enc.pf);
+    out.innerHTML=
+      '<div class="unit">Nearest E12 code</div>'+
+      '<div class="num">'+enc.code+'</div>'+
+      '<div class="unit">EIA marking</div>'+
+      '<p class="formula">Target '+formatFarads(pf*1e-12)+' → E12 '+formatFarads(enc.pf*1e-12)+' → code '+enc.code+'</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">Encoded value</span><span class="val">'+disp.num+' '+disp.unit+'</span></div>'+
+        '<div class="stat"><span class="lab">Picofarads</span><span class="val">'+fmt(enc.pf, enc.pf>=100?1:2)+' pF</span></div>'+
+        '<div class="stat"><span class="lab">Nanofarads</span><span class="val">'+fmt(enc.pf/1e3, 4)+' nF</span></div>'+
+        '<div class="stat"><span class="lab">Microfarads</span><span class="val">'+fmt(enc.pf/1e6, 6)+' µF</span></div>'+
+      '</div>'+
+      '<p class="note">'+(same?'Within ~2% of an E12 step.':'Snapped to the nearest E12 decade value.')+'</p>';
+  }
+  function render(){
+    if(mode==='decode') renderDecode();
+    else renderLookup();
+  }
+  function setMode(next){
+    mode=next;
+    modeBtns.forEach(function(b){b.setAttribute('aria-selected', String(b.dataset.mode===mode));});
+    decodeFields.classList.toggle('hidden', mode!=='decode');
+    lookupFields.classList.toggle('hidden', mode!=='lookup');
+    render();
+  }
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){ setMode(b.dataset.mode); });
+  });
+  decodePresets.forEach(function(b){
+    b.addEventListener('click',function(){
+      codeEl.value=b.dataset.code;
+      if(b.dataset.tol) tolEl.value=b.dataset.tol;
+      setMode('decode');
+    });
+  });
+  lookupPresets.forEach(function(b){
+    b.addEventListener('click',function(){
+      capEl.value=b.dataset.cap;
+      capunitEl.value=b.dataset.capunit;
+      setMode('lookup');
+    });
+  });
+  codeEl.addEventListener('input',function(){
+    var s=String(codeEl.value).toUpperCase();
+    var m=s.match(/([A-Z])$/);
+    if(m && TOL[m[1]]){
+      tolEl.value=m[1];
+    }
+    render();
+  });
+  [tolEl,capEl,capunitEl].forEach(function(el){
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
