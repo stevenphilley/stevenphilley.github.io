@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dB / dBm — Electronics — Steven Philley</title>
+<meta name="description" content="Live dB and dBm converter: power ratio, voltage ratio, dBm ↔ mW, and dBW ↔ W.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/db.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="dB / dBm — Steven Philley">
+<meta property="og:description" content="Power and voltage ratios in dB, plus dBm ↔ milliwatts and dBW ↔ watts. Updates as you type.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/db.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="dB / dBm — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
+select{cursor:pointer}
+.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.legend a{color:var(--accent,#c8b48a);text-decoration:none}
+.legend a:hover{text-decoration:underline}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html">LC</a>
+      <a href="/electronics/capacitor-codes.html">Cap</a>
+      <a href="/electronics/inductor-codes.html">L</a>
+      <a href="/electronics/rc-filter.html">Filter</a>
+      <a href="/electronics/rl-filter.html">RL F</a>
+      <a href="/electronics/turns-ratio.html">Turns</a>
+      <a href="/electronics/impedance.html">Imped</a>
+      <a href="/electronics/q-factor.html">Q</a>
+      <a href="/electronics/db.html" aria-current="page">dB</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>dB / dBm</h1>
+  <p class="lede">Power and voltage ratios in decibels, plus absolute levels in dBm and dBW. Change the knobs — the other side updates as you type.</p>
+  <div class="modes" id="modes" role="tablist" aria-label="Conversion mode">
+    <button type="button" data-mode="power" aria-selected="true">Power ratio</button>
+    <button type="button" data-mode="voltage" aria-selected="false">Voltage ratio</button>
+    <button type="button" data-mode="dbm" aria-selected="false">dBm ↔ mW</button>
+    <button type="button" data-mode="dbw" aria-selected="false">dBW ↔ W</button>
+  </div>
+
+  <div class="stage">
+    <div class="fields" id="fields"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>Power ratios use 10·log₁₀(P₂/P₁). Voltage (or current) ratios at the same impedance use 20·log₁₀(V₂/V₁). Doubling power is about +3 dB; doubling voltage is about +6 dB.</p>
+    <p>0 dBm is 1 milliwatt into a reference load (often 50 Ω in RF). dBm = 10·log₁₀(P_mW). dBW is the same idea referenced to 1 watt: 0 dBW = 30 dBm.</p>
+    <p>Pair with <a href="/electronics/q-factor.html">Q-factor</a> for bandwidth in Hz, or <a href="/electronics/impedance.html">Impedance</a> for |Z| and phase. Back to the <a href="/electronics/">electronics bench</a>.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var mode='power';
+  var modeBtns=[].slice.call(document.querySelectorAll('#modes button'));
+  var fields=document.getElementById('fields');
+  var out=document.getElementById('out');
+  var lastEdited='a';
+
+  function num(el){
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function fmtDb(n){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = abs>=100 ? 1 : abs>=10 ? 2 : 3;
+    return (n>=0?'+':'')+n.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:0});
+  }
+  function formatPower(watts){
+    if(!isFinite(watts) || watts<=0) return '—';
+    if(watts>=1e6) return fmt(watts/1e6,3)+' MW';
+    if(watts>=1e3) return fmt(watts/1e3,3)+' kW';
+    if(watts>=1) return fmt(watts,3)+' W';
+    if(watts>=1e-3) return fmt(watts*1e3,3)+' mW';
+    if(watts>=1e-6) return fmt(watts*1e6,3)+' µW';
+    if(watts>=1e-9) return fmt(watts*1e9,3)+' nW';
+    return fmt(watts,4)+' W';
+  }
+  function setMode(m){
+    mode=m;
+    modeBtns.forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.mode===mode));});
+    lastEdited='a';
+    draw();
+  }
+  function field(id, label, value){
+    return '<label>'+label+'<input id="'+id+'" inputmode="decimal" step="any" value="'+(value==null?'':value)+'"></label>';
+  }
+  function presetRow(html){
+    return '<div class="presets" role="group" aria-label="Presets">'+html+'</div>';
+  }
+
+  function draw(){
+    if(mode==='power'){
+      fields.innerHTML =
+        field('p1','Power P1','1')+
+        field('p2','Power P2','2')+
+        field('db','dB','')+
+        presetRow(
+          '<button type="button" data-p1="1" data-p2="2">×2 · +3 dB</button>'+
+          '<button type="button" data-p1="1" data-p2="10">×10 · +10 dB</button>'+
+          '<button type="button" data-p1="1" data-p2="0.5">½ · −3 dB</button>'+
+          '<button type="button" data-p1="1" data-p2="0.1">÷10 · −10 dB</button>'
+        );
+    } else if(mode==='voltage'){
+      fields.innerHTML =
+        field('v1','Voltage V1','1')+
+        field('v2','Voltage V2','2')+
+        field('db','dB','')+
+        presetRow(
+          '<button type="button" data-v1="1" data-v2="2">×2 · +6 dB</button>'+
+          '<button type="button" data-v1="1" data-v2="10">×10 · +20 dB</button>'+
+          '<button type="button" data-v1="1" data-v2="0.5">½ · −6 dB</button>'+
+          '<button type="button" data-v1="1" data-v2="0.1">÷10 · −20 dB</button>'
+        );
+    } else if(mode==='dbm'){
+      fields.innerHTML =
+        field('dbm','dBm','0')+
+        field('mw','Milliwatts','1')+
+        presetRow(
+          '<button type="button" data-dbm="0">0 dBm</button>'+
+          '<button type="button" data-dbm="10">+10 dBm</button>'+
+          '<button type="button" data-dbm="-10">−10 dBm</button>'+
+          '<button type="button" data-dbm="30">+30 dBm · 1 W</button>'
+        );
+    } else {
+      fields.innerHTML =
+        field('dbw','dBW','0')+
+        field('w','Watts','1')+
+        presetRow(
+          '<button type="button" data-dbw="0">0 dBW</button>'+
+          '<button type="button" data-dbw="-30">−30 dBW · 1 mW</button>'+
+          '<button type="button" data-dbw="10">+10 dBW</button>'+
+          '<button type="button" data-dbw="-10">−10 dBW</button>'
+        );
+    }
+    [].forEach.call(fields.querySelectorAll('input'), function(input){
+      input.addEventListener('input', function(){
+        lastEdited=input.id;
+        render();
+      });
+    });
+    [].forEach.call(fields.querySelectorAll('.presets button'), function(b){
+      b.addEventListener('click', function(){
+        if(mode==='power'){
+          document.getElementById('p1').value=b.dataset.p1;
+          document.getElementById('p2').value=b.dataset.p2;
+          lastEdited='p2';
+        } else if(mode==='voltage'){
+          document.getElementById('v1').value=b.dataset.v1;
+          document.getElementById('v2').value=b.dataset.v2;
+          lastEdited='v2';
+        } else if(mode==='dbm'){
+          document.getElementById('dbm').value=b.dataset.dbm;
+          lastEdited='dbm';
+        } else {
+          document.getElementById('dbw').value=b.dataset.dbw;
+          lastEdited='dbw';
+        }
+        render();
+      });
+    });
+    render();
+  }
+
+  function render(){
+    if(mode==='power'){
+      var p1El=document.getElementById('p1');
+      var p2El=document.getElementById('p2');
+      var dbEl=document.getElementById('db');
+      var p1=num(p1El), p2=num(p2El), db=num(dbEl);
+      if(lastEdited==='db' && isFinite(db) && p1>0){
+        p2=p1*Math.pow(10, db/10);
+        p2El.value=String(Number(p2.toPrecision(6)));
+      } else if(p1>0 && p2>0){
+        db=10*Math.log10(p2/p1);
+        dbEl.value=String(Number(db.toPrecision(6)));
+      } else {
+        out.innerHTML='<div class="unit">dB</div><div class="num">—</div><p class="note">Enter P1 and P2 above zero, or set dB with P1.</p>';
+        return;
+      }
+      p1=num(p1El); p2=num(p2El); db=num(dbEl);
+      if(!(p1>0) || !(p2>0) || !isFinite(db)){
+        out.innerHTML='<div class="unit">dB</div><div class="num">—</div><p class="note">Enter positive powers.</p>';
+        return;
+      }
+      var ratio=p2/p1;
+      out.innerHTML=
+        '<div class="unit">Power · dB</div>'+
+        '<div class="num">'+fmtDb(db)+'</div>'+
+        '<div class="unit">decibels</div>'+
+        '<p class="formula">dB = 10 · log₁₀(P2 / P1)</p>'+
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">Ratio P2 / P1</span><span class="val">'+fmt(ratio,4)+'×</span></div>'+
+          '<div class="stat"><span class="lab">P2 from dB</span><span class="val">P1 × 10^(dB/10)</span></div>'+
+        '</div>'+
+        '<p class="note">Same units on P1 and P2. Doubling power ≈ +3.01 dB.</p>';
+      return;
+    }
+    if(mode==='voltage'){
+      var v1El=document.getElementById('v1');
+      var v2El=document.getElementById('v2');
+      var dbEl=document.getElementById('db');
+      var v1=num(v1El), v2=num(v2El), db=num(dbEl);
+      if(lastEdited==='db' && isFinite(db) && v1>0){
+        v2=v1*Math.pow(10, db/20);
+        v2El.value=String(Number(v2.toPrecision(6)));
+      } else if(v1>0 && v2>0){
+        db=20*Math.log10(v2/v1);
+        dbEl.value=String(Number(db.toPrecision(6)));
+      } else {
+        out.innerHTML='<div class="unit">dB</div><div class="num">—</div><p class="note">Enter V1 and V2 above zero, or set dB with V1.</p>';
+        return;
+      }
+      v1=num(v1El); v2=num(v2El); db=num(dbEl);
+      if(!(v1>0) || !(v2>0) || !isFinite(db)){
+        out.innerHTML='<div class="unit">dB</div><div class="num">—</div><p class="note">Enter positive voltages.</p>';
+        return;
+      }
+      var ratio=v2/v1;
+      out.innerHTML=
+        '<div class="unit">Voltage · dB</div>'+
+        '<div class="num">'+fmtDb(db)+'</div>'+
+        '<div class="unit">decibels</div>'+
+        '<p class="formula">dB = 20 · log₁₀(V2 / V1) · same Z</p>'+
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">Ratio V2 / V1</span><span class="val">'+fmt(ratio,4)+'×</span></div>'+
+          '<div class="stat"><span class="lab">Power ratio (same Z)</span><span class="val">'+fmt(ratio*ratio,4)+'×</span></div>'+
+        '</div>'+
+        '<p class="note">Assumes the same impedance on both sides. Doubling voltage ≈ +6.02 dB.</p>';
+      return;
+    }
+    if(mode==='dbm'){
+      var dbmEl=document.getElementById('dbm');
+      var mwEl=document.getElementById('mw');
+      var dbm=num(dbmEl), mw=num(mwEl);
+      if(lastEdited==='mw' && mw>0){
+        dbm=10*Math.log10(mw);
+        dbmEl.value=String(Number(dbm.toPrecision(6)));
+      } else if(isFinite(dbm)){
+        mw=Math.pow(10, dbm/10);
+        mwEl.value=String(Number(mw.toPrecision(6)));
+      } else {
+        out.innerHTML='<div class="unit">dBm</div><div class="num">—</div><p class="note">Enter dBm or milliwatts above zero.</p>';
+        return;
+      }
+      dbm=num(dbmEl); mw=num(mwEl);
+      if(!isFinite(dbm) || !(mw>0)){
+        out.innerHTML='<div class="unit">dBm</div><div class="num">—</div><p class="note">Enter dBm or positive milliwatts.</p>';
+        return;
+      }
+      var watts=mw/1000;
+      var dbw=dbm-30;
+      out.innerHTML=
+        '<div class="unit">Level · dBm</div>'+
+        '<div class="num">'+fmtDb(dbm)+'</div>'+
+        '<div class="unit">dBm · 0 dBm = 1 mW</div>'+
+        '<p class="formula">dBm = 10 · log₁₀(P_mW)</p>'+
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">Power</span><span class="val">'+formatPower(watts)+'</span></div>'+
+          '<div class="stat"><span class="lab">dBW</span><span class="val">'+fmtDb(dbw)+' dBW</span></div>'+
+          '<div class="stat"><span class="lab">Milliwatts</span><span class="val">'+fmt(mw,4)+' mW</span></div>'+
+        '</div>'+
+        '<p class="note">Absolute power referenced to 1 mW. +30 dBm = 1 W = 0 dBW.</p>';
+      return;
+    }
+    var dbwEl=document.getElementById('dbw');
+    var wEl=document.getElementById('w');
+    var dbw=num(dbwEl), w=num(wEl);
+    if(lastEdited==='w' && w>0){
+      dbw=10*Math.log10(w);
+      dbwEl.value=String(Number(dbw.toPrecision(6)));
+    } else if(isFinite(dbw)){
+      w=Math.pow(10, dbw/10);
+      wEl.value=String(Number(w.toPrecision(6)));
+    } else {
+      out.innerHTML='<div class="unit">dBW</div><div class="num">—</div><p class="note">Enter dBW or watts above zero.</p>';
+      return;
+    }
+    dbw=num(dbwEl); w=num(wEl);
+    if(!isFinite(dbw) || !(w>0)){
+      out.innerHTML='<div class="unit">dBW</div><div class="num">—</div><p class="note">Enter dBW or positive watts.</p>';
+      return;
+    }
+    var dbm=dbw+30;
+    out.innerHTML=
+      '<div class="unit">Level · dBW</div>'+
+      '<div class="num">'+fmtDb(dbw)+'</div>'+
+      '<div class="unit">dBW · 0 dBW = 1 W</div>'+
+      '<p class="formula">dBW = 10 · log₁₀(P_W)</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">Power</span><span class="val">'+formatPower(w)+'</span></div>'+
+        '<div class="stat"><span class="lab">dBm</span><span class="val">'+fmtDb(dbm)+' dBm</span></div>'+
+        '<div class="stat"><span class="lab">Milliwatts</span><span class="val">'+fmt(w*1000,4)+' mW</span></div>'+
+      '</div>'+
+      '<p class="note">Absolute power referenced to 1 watt. −30 dBW = 0 dBm = 1 mW.</p>';
+  }
+
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){ setMode(b.dataset.mode); });
+  });
+  draw();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
