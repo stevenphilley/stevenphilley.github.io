@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astronomy — Solar system map — Steven Philley</title>
+<meta name="description" content="Interactive educational solar system map — Sun through Neptune (and Pluto as a dwarf). Click a planet for distance, period, size, and plain-English facts. Schematic, not a precision ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Astronomy — Solar system map">
+<meta property="og:description" content="Interactive educational map of the solar system. Click planets for AU, orbital period, diameter, and plain-English facts.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Astronomy — Solar system map">
+<meta name="twitter:description" content="Interactive educational solar system map — schematic, not a precision ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,96px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:62ch}
+.map-shell{margin-top:28px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:stretch}
+.map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:420px;overflow:hidden}
+.map-stage canvas{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);position:absolute;left:0;right:0;bottom:0;z-index:2}
+.controls button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+.controls button:hover,.controls button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.controls button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.hint{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;min-height:420px}
+.panel .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,36px);letter-spacing:.04em;margin:0 0 6px;line-height:1}
+.panel .type{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96);margin:0 0 14px}
+.stats{margin:0 0 14px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none;flex:1}
+.facts li{position:relative;padding:9px 0 9px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.credit{margin-top:auto;padding-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e)}
+.credit a{color:inherit}
+.empty{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);margin:0}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit;transition:border-color .2s}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:860px){
+  .map-shell{grid-template-columns:1fr}
+  .map-stage{min-height:360px;aspect-ratio:1/1}
+  .panel{min-height:0}
+  .more{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .map-stage{min-height:300px}
+  .controls{gap:6px}
+  .controls button{padding:6px 9px;font-size:9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/" aria-current="page">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/news/science.html">Live desk</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Vol. Science · Astronomy · Interactive map</p>
+  <h1>Solar system<br>map</h1>
+  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. Part of the <a href="/science/">science desk</a>; day-to-day headlines live on the <a href="/news/science.html">science news desk</a>. Also see <a href="/science/atmosphere/">Earth’s atmosphere layers</a>.</p>
+  <p class="note-schematic">Educational schematic with compressed orbital scale and exaggerated planet sizes so everything fits and stays visible. Not a precision ephemeris — distances and periods are mean values from public NASA fact sheets.</p>
+
+  <div class="map-shell">
+    <div class="map-stage" id="stage">
+      <p class="hint" id="hint">Tap a planet · drag empty space to pan · scroll to zoom</p>
+      <canvas id="sys" width="800" height="800" role="img" aria-label="Interactive solar system map"></canvas>
+      <div class="controls" role="toolbar" aria-label="Map controls">
+        <button type="button" id="btn-play" aria-pressed="true">Pause</button>
+        <button type="button" id="btn-labels" aria-pressed="true">Labels</button>
+        <button type="button" id="btn-pluto" aria-pressed="true">Pluto</button>
+        <button type="button" id="btn-reset">Reset view</button>
+      </div>
+    </div>
+    <aside class="panel" id="info" aria-live="polite">
+      <p class="tier">Select a body</p>
+      <h2 id="info-name">Sun &amp; planets</h2>
+      <p class="type" id="info-type">Click or tap any body on the map.</p>
+      <ul class="stats" id="info-stats" hidden></ul>
+      <ul class="facts" id="info-facts">
+        <li class="empty">Orbits use a log-compressed radius so outer planets fit. Relative sizes are exaggerated for readability. Animation is slowed — real orbital periods span days to centuries.</li>
+      </ul>
+      <p class="credit" id="info-credit">Data adapted from NASA Solar System Exploration fact sheets · public educational use. Schematic art for this page · not NASA imagery.</p>
+    </aside>
+  </div>
+
+  <p class="band">More science</p>
+  <div class="more">
+    <a href="/science/">
+      <p class="n">Status desk</p>
+      <h3>Where we stand</h3>
+      <p>Nanomaterials, robotics, and space — public state of the art.</p>
+    </a>
+    <a href="/science/atmosphere/">
+      <p class="n">Earth systems</p>
+      <h3>Atmosphere</h3>
+      <p>Interactive layers, heights, and what life needs from the air.</p>
+    </a>
+    <a href="/news/science.html">
+      <p class="n">Live desk</p>
+      <h3>Science headlines</h3>
+      <p>Multi-source RSS for day-to-day coverage.</p>
+    </a>
+    <a href="/publicphotos/">
+      <p class="n">Visuals</p>
+      <h3>Public photos</h3>
+      <p>NASA / public-domain Earth and space stills used across the site.</p>
+    </a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/">Science</a>
+    <a href="/science/atmosphere/">Atmosphere</a>
+    <a href="/news/science.html">Science headlines</a>
+    <a href="/publicphotos/">Public photos</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* Theme buttons */
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  /* Planet catalog — mean values from NASA Solar System Exploration */
+  var BODIES=[
+    {id:'sun',name:'Sun',type:'Star (G2V)',au:0,period:'—',diameter:'1,392,700 km',color:'#ffcc66',glow:'#ffaa33',rPx:18,facts:[
+      'Holds about 99.8% of the solar system’s mass. Fusion in the core turns hydrogen into helium and lights everything else.',
+      'Surface (photosphere) is roughly 5,500 °C; the corona above it is millions of degrees hotter.',
+      'Light takes about 8 minutes to reach Earth — the “now” we see is already a short delay.'
+    ]},
+    {id:'mercury',name:'Mercury',type:'Terrestrial planet',au:0.387,period:'88 days',diameter:'4,879 km',color:'#b8b0a4',rPx:3.2,facts:[
+      'Closest planet to the Sun and the smallest of the eight. Days are long; a Mercury day lasts longer than its year.',
+      'Almost no atmosphere — surface swings from scorching day to deep-freeze night.',
+      'Heavily cratered, a bit like our Moon, with a large iron core relative to its size.'
+    ]},
+    {id:'venus',name:'Venus',type:'Terrestrial planet',au:0.723,period:'225 days',diameter:'12,104 km',color:'#e8c989',rPx:5.4,facts:[
+      'Nearly Earth’s twin in size, but a runaway greenhouse: thick CO₂ air and surface pressure ~90× Earth’s.',
+      'Rotates backwards (retrograde) and very slowly — a Venus day is longer than its year.',
+      'Brightest planet in our sky after the Moon; often the “evening” or “morning” star.'
+    ]},
+    {id:'earth',name:'Earth',type:'Terrestrial planet',au:1.000,period:'365.25 days',diameter:'12,756 km',color:'#6ec8ff',rPx:5.6,facts:[
+      'The only world we know with liquid water oceans and life. One Moon keeps nights interesting and tides honest.',
+      'Mean distance to the Sun is 1 astronomical unit (AU) — the yardstick for the rest of the map.',
+      'Magnetic field and atmosphere together block most solar wind and harsh UV.'
+    ]},
+    {id:'mars',name:'Mars',type:'Terrestrial planet',au:1.524,period:'687 days',diameter:'6,792 km',color:'#e07a4c',rPx:4.0,facts:[
+      'The red planet — iron oxide dust. Thin CO₂ air; water ice at the poles and underground.',
+      'Home to Olympus Mons (huge volcano) and Valles Marineris (a canyon system dwarfing the Grand Canyon).',
+      'Rovers and orbiters keep mapping ancient riverbeds and possible habitability windows.'
+    ]},
+    {id:'jupiter',name:'Jupiter',type:'Gas giant',au:5.203,period:'11.86 years',diameter:'142,984 km',color:'#d4a574',rPx:12,facts:[
+      'Largest planet — more mass than the rest of the planets combined. Fast spin, striped clouds, Great Red Spot storm.',
+      'Dozens of moons; Europa, Ganymede, and Callisto hide subsurface oceans that interest astrobiologists.',
+      'Strong magnetic field and radiation belts — a harsh neighborhood for spacecraft electronics.'
+    ]},
+    {id:'saturn',name:'Saturn',type:'Gas giant',au:9.537,period:'29.46 years',diameter:'120,536 km',color:'#e6d4a8',rPx:10.5,rings:true,facts:[
+      'Famous ring system of ice and rock — spectacular from Earth with a small telescope.',
+      'Density so low it would float in a (very large) bathtub of water. Dozens of moons; Titan has a thick nitrogen air and methane lakes.',
+      'Cassini spent years mapping the rings and moons before a deliberate plunge into the atmosphere in 2017.'
+    ]},
+    {id:'uranus',name:'Uranus',type:'Ice giant',au:19.191,period:'84.01 years',diameter:'51,118 km',color:'#9fd6e8',rPx:7.5,facts:[
+      'Ice giant tipped on its side — axial tilt ~98°, so seasons are extreme and decades long.',
+      'Methane in the atmosphere absorbs red light, giving the blue-green look.',
+      'Faint rings and dozens of moons; Voyager 2 is still the only spacecraft to have flown by.'
+    ]},
+    {id:'neptune',name:'Neptune',type:'Ice giant',au:30.069,period:'164.8 years',diameter:'49,528 km',color:'#4f7cff',rPx:7.2,facts:[
+      'Outermost of the eight planets. Supersonic winds and dark storms in a methane-tinted atmosphere.',
+      'Predicted from math before it was seen — Uranus’s orbit “wobbled,” and Neptune was where the equations said.',
+      'Triton, its largest moon, orbits backwards and may be a captured Kuiper Belt object.'
+    ]},
+    {id:'pluto',name:'Pluto',type:'Dwarf planet',au:39.482,period:'248 years',diameter:'2,377 km',color:'#c9b8a8',rPx:2.8,dwarf:true,facts:[
+      'Reclassified as a dwarf planet in 2006 — still a fascinating world in the Kuiper Belt.',
+      'New Horizons (2015) found mountains of water ice, a nitrogen glacier plain (Sputnik Planitia), and a thin atmosphere.',
+      'Binary with Charon: they orbit a shared center of mass outside Pluto itself.'
+    ]}
+  ];
+
+  var canvas=document.getElementById('sys');
+  var stage=document.getElementById('stage');
+  var ctx=canvas.getContext('2d');
+  var playing=true, showLabels=true, showPluto=true;
+  var selected=null;
+  var t0=performance.now();
+  var view={scale:1, ox:0, oy:0};
+  var drag=null;
+  var hitR=[];
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+
+  /* Log-compressed orbital radius so Neptune fits */
+  function orbitR(au, maxR){
+    if(au<=0) return 0;
+    var minAU=0.387, maxAU=showPluto?39.482:30.069;
+    var lo=Math.log(minAU), hi=Math.log(maxAU);
+    var u=(Math.log(au)-lo)/(hi-lo);
+    var inner=maxR*0.12;
+    return inner+u*(maxR-inner);
+  }
+
+  /* Slow visual period: Earth ~ 40s per rev; others scale by sqrt(a^3) feel but compressed */
+  function angleOf(body, now){
+    if(body.au<=0) return 0;
+    var earthSec=48;
+    var periodYears=body.au; /* rough Kepler: T^2 ~ a^3 → use a^1.5 */
+    var T=Math.pow(body.au,1.5);
+    var speed=(2*Math.PI)/(earthSec*T);
+    /* stable phase offset from id hash */
+    var phase=0;
+    for(var i=0;i<body.id.length;i++) phase+=body.id.charCodeAt(i);
+    phase=(phase%360)*Math.PI/180;
+    return phase+speed*((now-t0)/1000);
+  }
+
+  function resize(){
+    var rect=stage.getBoundingClientRect();
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=Math.max(280,rect.width);
+    var h=Math.max(280,rect.height - (stage.querySelector('.controls').offsetHeight||48));
+    canvas.style.width=w+'px';
+    canvas.style.height=h+'px';
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  function bodiesVisible(){
+    return BODIES.filter(function(b){ return !b.dwarf || showPluto; });
+  }
+
+  function draw(now){
+    var w=canvas.clientWidth, h=canvas.clientHeight;
+    var cx=w/2+view.ox, cy=h/2+view.oy;
+    var maxR=Math.min(w,h)*0.46*view.scale;
+    var line=cssVar('--line','#2c303a');
+    var ink=cssVar('--ink','#e8e6e1');
+    var muted=cssVar('--muted','#63666e');
+    var accent=cssVar('--accent','#c8b48a');
+    var base=cssVar('--base-2','#14161c');
+
+    ctx.clearRect(0,0,w,h);
+    /* starfield */
+    ctx.fillStyle=base;
+    ctx.fillRect(0,0,w,h);
+    ctx.fillStyle='rgba(255,255,255,0.35)';
+    var seed=42;
+    for(var s=0;s<80;s++){
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      var sx=(seed%1000)/1000*w;
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      var sy=(seed%1000)/1000*h;
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      var sr=0.4+(seed%10)/10;
+      ctx.beginPath(); ctx.arc(sx,sy,sr,0,Math.PI*2); ctx.fill();
+    }
+
+    hitR=[];
+    var list=bodiesVisible();
+
+    /* orbits */
+    list.forEach(function(b){
+      if(b.au<=0) return;
+      var r=orbitR(b.au,maxR);
+      ctx.beginPath();
+      ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle=b.dwarf?'rgba(200,180,140,0.18)':line;
+      ctx.lineWidth=1;
+      ctx.setLineDash(b.dwarf?[3,4]:[]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+
+    /* bodies */
+    list.forEach(function(b){
+      var r=orbitR(b.au,maxR);
+      var ang=b.au>0?angleOf(b, playing?now:t0):0;
+      if(!playing && b.au>0){
+        /* freeze at last angle using stored */
+        ang=b._ang!=null?b._ang:angleOf(b,now);
+      } else if(b.au>0){
+        b._ang=ang;
+      }
+      var x=cx+Math.cos(ang)*r;
+      var y=cy+Math.sin(ang)*r;
+      var pr=b.rPx*Math.max(0.75, Math.min(1.35, view.scale));
+
+      if(b.id==='sun'){
+        var g=ctx.createRadialGradient(x,y,0,x,y,pr*2.2);
+        g.addColorStop(0,b.color);
+        g.addColorStop(0.45,b.glow);
+        g.addColorStop(1,'rgba(255,170,50,0)');
+        ctx.fillStyle=g;
+        ctx.beginPath(); ctx.arc(x,y,pr*2.2,0,Math.PI*2); ctx.fill();
+      }
+
+      if(b.rings){
+        ctx.beginPath();
+        ctx.ellipse(x,y,pr*1.85,pr*0.55,ang*0.3,0,Math.PI*2);
+        ctx.strokeStyle='rgba(230,212,168,0.55)';
+        ctx.lineWidth=2;
+        ctx.stroke();
+      }
+
+      ctx.beginPath();
+      ctx.arc(x,y,pr,0,Math.PI*2);
+      ctx.fillStyle=b.color;
+      ctx.fill();
+      if(selected && selected.id===b.id){
+        ctx.strokeStyle=accent;
+        ctx.lineWidth=2;
+        ctx.stroke();
+      }
+
+      if(showLabels){
+        ctx.font='500 10px "IBM Plex Mono", monospace';
+        ctx.fillStyle=ink;
+        ctx.textAlign='left';
+        ctx.textBaseline='middle';
+        var label=b.name;
+        ctx.fillStyle=muted;
+        ctx.fillText(label, x+pr+5, y);
+      }
+
+      hitR.push({b:b,x:x,y:y,r:Math.max(pr+6,12)});
+    });
+  }
+
+  var raf;
+  function loop(now){
+    draw(now||performance.now());
+    raf=requestAnimationFrame(loop);
+  }
+
+  function showInfo(b){
+    selected=b;
+    document.getElementById('info-name').textContent=b.name;
+    document.getElementById('info-type').textContent=b.type;
+    var stats=document.getElementById('info-stats');
+    stats.hidden=false;
+    stats.innerHTML=
+      '<li><span class="k">Mean distance</span><span class="v">'+(b.au?b.au.toFixed(3)+' AU':'—')+'</span></li>'+
+      '<li><span class="k">Orbital period</span><span class="v">'+b.period+'</span></li>'+
+      '<li><span class="k">Diameter</span><span class="v">'+b.diameter+'</span></li>';
+    var facts=document.getElementById('info-facts');
+    facts.innerHTML=b.facts.map(function(f){return '<li>'+f+'</li>';}).join('');
+    document.getElementById('info-credit').innerHTML='Figures adapted from <a href="https://science.nasa.gov/solar-system/" rel="noopener" target="_blank">NASA Solar System Exploration</a> fact sheets · public educational use. Map is a schematic — not NASA imagery or a precision ephemeris.';
+  }
+
+  function pick(mx,my){
+    for(var i=hitR.length-1;i>=0;i--){
+      var h=hitR[i];
+      var dx=mx-h.x, dy=my-h.y;
+      if(dx*dx+dy*dy<=h.r*h.r) return h.b;
+    }
+    return null;
+  }
+
+  function canvasPos(e){
+    var rect=canvas.getBoundingClientRect();
+    var t=e.touches?e.touches[0]:e;
+    return {x:t.clientX-rect.left, y:t.clientY-rect.top};
+  }
+
+  canvas.addEventListener('click',function(e){
+    if(drag && drag.moved) return;
+    var p=canvasPos(e);
+    var b=pick(p.x,p.y);
+    if(b) showInfo(b);
+  });
+
+  canvas.addEventListener('pointerdown',function(e){
+    canvas.setPointerCapture(e.pointerId);
+    var p=canvasPos(e);
+    drag={x:p.x,y:p.y,ox:view.ox,oy:view.oy,moved:false};
+  });
+  canvas.addEventListener('pointermove',function(e){
+    if(!drag) return;
+    var p=canvasPos(e);
+    var dx=p.x-drag.x, dy=p.y-drag.y;
+    if(Math.abs(dx)+Math.abs(dy)>4) drag.moved=true;
+    view.ox=drag.ox+dx;
+    view.oy=drag.oy+dy;
+  });
+  canvas.addEventListener('pointerup',function(){ drag=null; });
+  canvas.addEventListener('pointercancel',function(){ drag=null; });
+
+  canvas.addEventListener('wheel',function(e){
+    e.preventDefault();
+    var f=e.deltaY>0?0.92:1.08;
+    view.scale=Math.max(0.55,Math.min(2.4,view.scale*f));
+  },{passive:false});
+
+  document.getElementById('btn-play').addEventListener('click',function(){
+    playing=!playing;
+    if(playing) t0=performance.now()-(BODIES[1]._ang?0:0);
+    this.textContent=playing?'Pause':'Play';
+    this.setAttribute('aria-pressed',String(playing));
+  });
+  document.getElementById('btn-labels').addEventListener('click',function(){
+    showLabels=!showLabels;
+    this.setAttribute('aria-pressed',String(showLabels));
+  });
+  document.getElementById('btn-pluto').addEventListener('click',function(){
+    showPluto=!showPluto;
+    this.setAttribute('aria-pressed',String(showPluto));
+  });
+  document.getElementById('btn-reset').addEventListener('click',function(){
+    view={scale:1,ox:0,oy:0};
+  });
+
+  window.addEventListener('resize',resize);
+  /* observe theme changes to redraw colors */
+  new MutationObserver(function(){/* colors read each frame */}).observe(root,{attributes:true,attributeFilter:['data-theme']});
+
+  resize();
+  showInfo(BODIES[0]);
+  raf=requestAnimationFrame(loop);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
