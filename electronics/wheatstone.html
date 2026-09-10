@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Op-amp gain — Electronics — Steven Philley</title>
-<meta name="description" content="Inverting, non-inverting, and ideal differential op-amp gain from Rf and Rin (or Rg). Live Av in V/V and dB, optional Vin → Vout.">
-<link rel="canonical" href="https://stevenphilley.com/electronics/op-amp.html">
+<title>Wheatstone bridge — Electronics — Steven Philley</title>
+<meta name="description" content="Four-resistor Wheatstone bridge. Set Vin and the arms; get Va, Vb, Vg, and balance. Solve R4 when balanced.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/wheatstone.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="Op-amp gain — Steven Philley">
-<meta property="og:description" content="Live inverting, non-inverting, and ideal differential op-amp gain. Av in V/V and dB; optional Vin → Vout.">
-<meta property="og:url" content="https://stevenphilley.com/electronics/op-amp.html">
+<meta property="og:title" content="Wheatstone bridge — Steven Philley">
+<meta property="og:description" content="Live Wheatstone bridge: Va, Vb, Vg, and balance from Vin and four resistors. Solve R4 at balance.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/wheatstone.html">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Op-amp gain — Steven Philley">
+<meta name="twitter:title" content="Wheatstone bridge — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,10 +36,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 @media (max-width:800px){.stage{grid-template-columns:1fr}}
 .fields{display:grid;gap:14px}
 label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
-input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
-input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
-select{cursor:pointer}
-.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
 .presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
 .presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
 .presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
@@ -89,9 +87,9 @@ select{cursor:pointer}
       <a href="/electronics/impedance.html">Imped</a>
       <a href="/electronics/q-factor.html">Q</a>
       <a href="/electronics/db.html">dB</a>
-      <a href="/electronics/op-amp.html" aria-current="page">Op-amp</a>
+      <a href="/electronics/op-amp.html">Op-amp</a>
       <a href="/electronics/555.html">555</a>
-      <a href="/electronics/wheatstone.html">Bridge</a>
+      <a href="/electronics/wheatstone.html" aria-current="page">Bridge</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="neon">Neon</button>
@@ -105,12 +103,11 @@ select{cursor:pointer}
   </div>
 
   <p class="e-kicker">Vol. IV — Electronics · Tool</p>
-  <h1>Op-amp gain</h1>
-  <p class="lede">Inverting, non-inverting, and ideal differential. Change the resistors — closed-loop Av in V/V and dB updates as you type. Optional Vin → Vout.</p>
-  <div class="modes" id="modes" role="tablist" aria-label="Op-amp topology">
-    <button type="button" data-mode="inverting" aria-selected="true">Inverting</button>
-    <button type="button" data-mode="noninverting" aria-selected="false">Non-inverting</button>
-    <button type="button" data-mode="differential" aria-selected="false">Differential</button>
+  <h1>Wheatstone bridge</h1>
+  <p class="lede">Two voltage dividers face each other across the same supply. The mid-point difference is Vg. Change Vin and the four arms — Va, Vb, and Vg update as you type. At balance, solve for the unknown R4.</p>
+  <div class="modes" id="modes" role="tablist" aria-label="Bridge mode">
+    <button type="button" data-mode="bridge" aria-selected="true">Bridge</button>
+    <button type="button" data-mode="solve" aria-selected="false">Solve R4</button>
   </div>
 
   <div class="stage">
@@ -120,9 +117,9 @@ select{cursor:pointer}
 
   <section class="legend">
     <h2>How it works</h2>
-    <p>Ideal op-amp, infinite open-loop gain, resistors only. Inverting: Av = −Rf / Rin (signal into Rin, feedback Rf). Non-inverting: Av = 1 + Rf / Rg (gain set from the grounded leg Rg). Differential (balanced): Av = Rf / Rin when the two input legs and two feedback legs match.</p>
-    <p>Gain in decibels uses the voltage ratio: Av_dB = 20·log₁₀(|Av|). Optional Vin multiplies by Av for a quick Vout check (ideal, no rails or slew).</p>
-    <p>Pair with <a href="/electronics/voltage-divider.html">Voltage divider</a> for passive attenuators, <a href="/electronics/db.html">dB / dBm</a> for ratio math, or <a href="/electronics/series-parallel.html">Series &amp; parallel</a> to pick Rf / Rin. Back to the <a href="/electronics/">electronics bench</a>.</p>
+    <p>Left leg: R1 on top, R2 on the bottom. Mid-point A is Va = Vin × R2 / (R1 + R2). Right leg: R3 on top, R4 on the bottom. Mid-point B is Vb = Vin × R4 / (R3 + R4). The bridge output is Vg = Va − Vb.</p>
+    <p>Balance means no voltage between the mid-points: R1 / R2 = R3 / R4, or R1 · R4 = R2 · R3. When you know three arms and the bridge is balanced, the fourth is R4 = R3 × R2 / R1. That is how a strain gauge or an unknown resistor is measured against a known ratio.</p>
+    <p>Pair with the <a href="/electronics/voltage-divider.html">voltage divider</a> for a single leg, <a href="/electronics/resistor-codes.html">resistor codes</a> to pick parts, and the <a href="/electronics/">electronics bench</a>.</p>
   </section>
 
   <footer class="e-foot">
@@ -151,11 +148,11 @@ select{cursor:pointer}
   });
   paintTheme();
 
-  var mode='inverting';
+  var mode='bridge';
   var modeBtns=[].slice.call(document.querySelectorAll('#modes button'));
   var fields=document.getElementById('fields');
   var out=document.getElementById('out');
-  var state={rin:'10', rf:'100', rg:'10', vin:''};
+  var state={vin:'5', r1:'10000', r2:'10000', r3:'10000', r4:'10000'};
 
   function num(el){
     if(!el) return NaN;
@@ -172,63 +169,56 @@ select{cursor:pointer}
     var abs=Math.abs(n);
     if(abs>=1e6) return fmt(n/1e6,3)+' MΩ';
     if(abs>=1e3) return fmt(n/1e3,3)+' kΩ';
-    if(abs<1 && abs>0) return fmt(n*1e3,3)+' mΩ';
     return fmt(n, abs>=100 ? 1 : 2)+' Ω';
   }
-  function formatVolts(n){
-    if(!isFinite(n)) return '—';
-    var abs=Math.abs(n);
-    if(abs>=1000) return fmt(n/1000,3)+' kV';
-    if(abs<0.001 && abs>0) return fmt(n*1e3,3)+' mV';
-    if(abs<1 && abs>0) return fmt(n*1e3, abs>=10?1:2)+' mV';
-    return fmt(n, abs>=100 ? 2 : 3)+' V';
+  function formatVolts(v){
+    if(!isFinite(v)) return '—';
+    var abs=Math.abs(v);
+    if(abs>=1) return fmt(v, abs>=100?1:3)+' V';
+    if(abs>=1e-3) return fmt(v*1e3,3)+' mV';
+    return fmt(v*1e6,3)+' µV';
   }
-  function fieldHtml(id, label, value){
-    return '<label>'+label+'<input id="'+id+'" inputmode="decimal" step="any" value="'+(value==null?'':value)+'"></label>';
+  function close(a,b0){
+    return isFinite(a) && Math.abs(a-b0)/Math.max(Math.abs(a),1e-12)<0.02;
   }
   function drawFields(){
     var html='';
-    if(mode==='inverting'){
-      html += fieldHtml('rin','Input Rin (Ω)',state.rin);
-      html += fieldHtml('rf','Feedback Rf (Ω)',state.rf);
-    } else if(mode==='noninverting'){
-      html += fieldHtml('rg','Ground Rg (Ω)',state.rg);
-      html += fieldHtml('rf','Feedback Rf (Ω)',state.rf);
+    html += '<label>Excitation Vin (volts)<input id="vin" inputmode="decimal" step="any" value="'+state.vin+'"></label>';
+    html += '<label>R1 top left (ohms)<input id="r1" inputmode="decimal" step="any" value="'+state.r1+'"></label>';
+    html += '<label>R2 bottom left (ohms)<input id="r2" inputmode="decimal" step="any" value="'+state.r2+'"></label>';
+    html += '<label>R3 top right (ohms)<input id="r3" inputmode="decimal" step="any" value="'+state.r3+'"></label>';
+    if(mode==='bridge'){
+      html += '<label>R4 bottom right (ohms)<input id="r4" inputmode="decimal" step="any" value="'+state.r4+'"></label>';
+      html += '<div class="presets" role="group" aria-label="Common bridge presets">';
+      html += '<button type="button" data-vin="5" data-r1="10000" data-r2="10000" data-r3="10000" data-r4="10000" aria-pressed="false">Balanced · 10k</button>';
+      html += '<button type="button" data-vin="5" data-r1="10000" data-r2="10000" data-r3="10000" data-r4="10100" aria-pressed="false">+1% R4</button>';
+      html += '<button type="button" data-vin="5" data-r1="2000" data-r2="3000" data-r3="4000" data-r4="6000" aria-pressed="false">2:3 ratio</button>';
+      html += '</div>';
     } else {
-      html += fieldHtml('rin','Rin (balanced) (Ω)',state.rin);
-      html += fieldHtml('rf','Rf (balanced) (Ω)',state.rf);
+      html += '<div class="presets" role="group" aria-label="Solve R4 presets">';
+      html += '<button type="button" data-vin="5" data-r1="10000" data-r2="10000" data-r3="10000" aria-pressed="false">Equal arms</button>';
+      html += '<button type="button" data-vin="5" data-r1="1000" data-r2="2000" data-r3="4700" aria-pressed="false">1k · 2k · 4.7k</button>';
+      html += '<button type="button" data-vin="10" data-r1="10000" data-r2="4700" data-r3="10000" aria-pressed="false">10 V · 10k · 4.7k</button>';
+      html += '</div>';
     }
-    html += fieldHtml('vin','Vin optional (V)',state.vin);
-    html += '<div class="presets" role="group" aria-label="Common gain presets">';
-    if(mode==='inverting'){
-      html += '<button type="button" data-preset="inv10" data-rin="10" data-rf="100" aria-pressed="false">−10 V/V</button>';
-      html += '<button type="button" data-preset="inv1" data-rin="10" data-rf="10" aria-pressed="false">−1 V/V</button>';
-      html += '<button type="button" data-preset="inv100" data-rin="1" data-rf="100" aria-pressed="false">−100 V/V</button>';
-    } else if(mode==='noninverting'){
-      html += '<button type="button" data-preset="ni2" data-rg="10" data-rf="10" aria-pressed="false">+2 V/V</button>';
-      html += '<button type="button" data-preset="ni11" data-rg="10" data-rf="100" aria-pressed="false">+11 V/V</button>';
-      html += '<button type="button" data-preset="ni101" data-rg="1" data-rf="100" aria-pressed="false">+101 V/V</button>';
-    } else {
-      html += '<button type="button" data-preset="diff1" data-rin="10" data-rf="10" aria-pressed="false">1 V/V</button>';
-      html += '<button type="button" data-preset="diff10" data-rin="10" data-rf="100" aria-pressed="false">10 V/V</button>';
-      html += '<button type="button" data-preset="diff100" data-rin="1" data-rf="100" aria-pressed="false">100 V/V</button>';
-    }
-    html += '</div>';
     fields.innerHTML=html;
     [].forEach.call(fields.querySelectorAll('input'), function(el){
       el.addEventListener('input',function(){
-        if(el.id==='rin') state.rin=el.value;
-        if(el.id==='rf') state.rf=el.value;
-        if(el.id==='rg') state.rg=el.value;
         if(el.id==='vin') state.vin=el.value;
+        if(el.id==='r1') state.r1=el.value;
+        if(el.id==='r2') state.r2=el.value;
+        if(el.id==='r3') state.r3=el.value;
+        if(el.id==='r4') state.r4=el.value;
         render();
       });
     });
     [].forEach.call(fields.querySelectorAll('.presets button'), function(b){
       b.addEventListener('click',function(){
-        if(b.dataset.rin!=null){ state.rin=b.dataset.rin; }
-        if(b.dataset.rf!=null){ state.rf=b.dataset.rf; }
-        if(b.dataset.rg!=null){ state.rg=b.dataset.rg; }
+        state.vin=b.dataset.vin;
+        state.r1=b.dataset.r1;
+        state.r2=b.dataset.r2;
+        state.r3=b.dataset.r3;
+        if(b.dataset.r4!=null) state.r4=b.dataset.r4;
         drawFields();
         render();
       });
@@ -236,20 +226,13 @@ select{cursor:pointer}
   }
   function syncChips(){
     var chips=[].slice.call(fields.querySelectorAll('.presets button'));
-    var rinEl=document.getElementById('rin');
-    var rfEl=document.getElementById('rf');
-    var rgEl=document.getElementById('rg');
-    var rin=num(rinEl), rf=num(rfEl), rg=num(rgEl);
     chips.forEach(function(b){
-      var match=true;
-      if(b.dataset.rin!=null){
-        match = match && isFinite(rin) && Math.abs(rin-parseFloat(b.dataset.rin))/Math.max(Math.abs(rin),1e-12)<0.02;
-      }
-      if(b.dataset.rf!=null){
-        match = match && isFinite(rf) && Math.abs(rf-parseFloat(b.dataset.rf))/Math.max(Math.abs(rf),1e-12)<0.02;
-      }
-      if(b.dataset.rg!=null){
-        match = match && isFinite(rg) && Math.abs(rg-parseFloat(b.dataset.rg))/Math.max(Math.abs(rg),1e-12)<0.02;
+      var match = close(num(document.getElementById('vin')), parseFloat(b.dataset.vin))
+        && close(num(document.getElementById('r1')), parseFloat(b.dataset.r1))
+        && close(num(document.getElementById('r2')), parseFloat(b.dataset.r2))
+        && close(num(document.getElementById('r3')), parseFloat(b.dataset.r3));
+      if(b.dataset.r4!=null){
+        match = match && close(num(document.getElementById('r4')), parseFloat(b.dataset.r4));
       }
       b.setAttribute('aria-pressed', String(!!match));
     });
@@ -262,81 +245,58 @@ select{cursor:pointer}
   }
   function render(){
     syncChips();
-    var rfEl=document.getElementById('rf');
-    var rinEl=document.getElementById('rin');
-    var rgEl=document.getElementById('rg');
-    var vinEl=document.getElementById('vin');
-    var rf=num(rfEl);
-    var vin=num(vinEl);
-    var Av, formula, topology, note;
-    if(mode==='inverting'){
-      var rin=num(rinEl);
-      if(!(rin>0) || !(rf>0)){
-        out.innerHTML='<div class="unit">Av</div><div class="num">—</div><p class="note">Enter Rin and Rf above zero.</p>';
-        return;
-      }
-      Av= -(rf/rin);
-      formula='Inverting · Av = −Rf / Rin';
-      topology='inverting';
-      note='Ideal inverting amp. Sign is negative (180° phase).';
-    } else if(mode==='noninverting'){
-      var rg=num(rgEl);
-      if(!(rg>0) || !(rf>=0)){
-        out.innerHTML='<div class="unit">Av</div><div class="num">—</div><p class="note">Enter Rg above zero and Rf ≥ 0.</p>';
-        return;
-      }
-      Av= 1 + (rf/rg);
-      formula='Non-inverting · Av = 1 + Rf / Rg';
-      topology='non-inverting';
-      note='Ideal non-inverting amp. Buffer when Rf = 0 (Av = 1).';
-    } else {
-      var rin2=num(rinEl);
-      if(!(rin2>0) || !(rf>0)){
-        out.innerHTML='<div class="unit">Av</div><div class="num">—</div><p class="note">Enter Rin and Rf above zero (balanced legs).</p>';
-        return;
-      }
-      Av= rf/rin2;
-      formula='Differential · Av = Rf / Rin (balanced)';
-      topology='differential · balanced';
-      note='Ideal diff amp with matched Rin pair and Rf pair. Unbalanced ratios need a full bridge calc.';
-    }
-    if(!isFinite(Av)){
-      out.innerHTML='<div class="unit">Av</div><div class="num">—</div><p class="note">Gain is undefined for these values.</p>';
+    var Vin=num(document.getElementById('vin'));
+    var R1=num(document.getElementById('r1'));
+    var R2=num(document.getElementById('r2'));
+    var R3=num(document.getElementById('r3'));
+    if(!(Vin>0) || !(R1>0) || !(R2>0) || !(R3>0)){
+      out.innerHTML='<div class="unit">Vg</div><div class="num">—</div><p class="note">Enter Vin and R1–R3 above zero.</p>';
       return;
     }
-    var mag=Math.abs(Av);
-    var db= 20*Math.log10(mag);
-    var avDigits = mag>=1000 ? 1 : mag>=100 ? 2 : 3;
-    var dbDigits = Math.abs(db)>=100 ? 1 : 2;
-    var voutHtml='';
-    if(isFinite(vin)){
-      var vout=Av*vin;
-      voutHtml=
-        '<div class="stat"><span class="lab">Vin</span><span class="val">'+formatVolts(vin)+'</span></div>'+
-        '<div class="stat"><span class="lab">Vout · Av × Vin</span><span class="val">'+formatVolts(vout)+'</span></div>';
+    if(mode==='solve'){
+      var R4s=R3*R2/R1;
+      var Vas=Vin*R2/(R1+R2);
+      var Vbs=Vin*R4s/(R3+R4s);
+      out.innerHTML=
+        '<div class="unit">R4 · at balance</div>'+
+        '<div class="num">'+formatOhms(R4s).replace(/ [A-Za-zΩµ]+$/,'')+'</div>'+
+        '<div class="unit">'+formatOhms(R4s).split(' ').pop()+'</div>'+
+        '<p class="formula">R4 = R3 × R2 / R1</p>'+
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">Va · left mid</span><span class="val">'+formatVolts(Vas)+'</span></div>'+
+          '<div class="stat"><span class="lab">Vb · right mid</span><span class="val">'+formatVolts(Vbs)+'</span></div>'+
+          '<div class="stat"><span class="lab">Vg · Va − Vb</span><span class="val">'+formatVolts(Vas-Vbs)+'</span></div>'+
+          '<div class="stat"><span class="lab">Ratio R1/R2</span><span class="val">'+fmt(R1/R2,4)+'</span></div>'+
+          '<div class="stat"><span class="lab">Ratio R3/R4</span><span class="val">'+fmt(R3/R4s,4)+'</span></div>'+
+        '</div>'+
+        '<p class="note">Unknown bottom-right arm for a balanced bridge.</p>';
+      return;
     }
-    var rStats='';
-    if(mode==='noninverting'){
-      rStats=
-        '<div class="stat"><span class="lab">Rg</span><span class="val">'+formatOhms(num(rgEl))+'</span></div>'+
-        '<div class="stat"><span class="lab">Rf</span><span class="val">'+formatOhms(rf)+'</span></div>';
-    } else {
-      rStats=
-        '<div class="stat"><span class="lab">Rin</span><span class="val">'+formatOhms(num(rinEl))+'</span></div>'+
-        '<div class="stat"><span class="lab">Rf</span><span class="val">'+formatOhms(rf)+'</span></div>';
+    var R4=num(document.getElementById('r4'));
+    if(!(R4>0)){
+      out.innerHTML='<div class="unit">Vg</div><div class="num">—</div><p class="note">Enter R4 above zero.</p>';
+      return;
     }
+    var Va=Vin*R2/(R1+R2);
+    var Vb=Vin*R4/(R3+R4);
+    var Vg=Va-Vb;
+    var bal=Math.abs(R1*R4 - R2*R3) <= 1e-9*Math.max(Math.abs(R1*R4), Math.abs(R2*R3), 1);
+    var prodLeft=R1*R4;
+    var prodRight=R2*R3;
     out.innerHTML=
-      '<div class="unit">Av · '+topology+'</div>'+
-      '<div class="num">'+(Av<0?'−':'')+fmt(mag, avDigits)+'</div>'+
-      '<div class="unit">V/V · '+fmt(db, dbDigits)+' dB</div>'+
-      '<p class="formula">'+formula+'</p>'+
+      '<div class="unit">Vg · bridge</div>'+
+      '<div class="num">'+formatVolts(Vg).replace(/ [A-Za-zµ]+$/,'')+'</div>'+
+      '<div class="unit">'+formatVolts(Vg).split(' ').pop()+'</div>'+
+      '<p class="formula">Vg = Va − Vb · Va = Vin·R2/(R1+R2) · Vb = Vin·R4/(R3+R4)</p>'+
       '<div class="stats">'+
-        '<div class="stat"><span class="lab">|Av|</span><span class="val">'+fmt(mag, avDigits)+' V/V</span></div>'+
-        '<div class="stat"><span class="lab">Av (dB) · 20·log₁₀(|Av|)</span><span class="val">'+fmt(db, dbDigits)+' dB</span></div>'+
-        rStats+
-        voutHtml+
+        '<div class="stat"><span class="lab">Va · left mid</span><span class="val">'+formatVolts(Va)+'</span></div>'+
+        '<div class="stat"><span class="lab">Vb · right mid</span><span class="val">'+formatVolts(Vb)+'</span></div>'+
+        '<div class="stat"><span class="lab">Balance · R1·R4 = R2·R3</span><span class="val">'+(bal?'Yes':'No')+'</span></div>'+
+        '<div class="stat"><span class="lab">R1 · R4</span><span class="val">'+fmt(prodLeft,4)+'</span></div>'+
+        '<div class="stat"><span class="lab">R2 · R3</span><span class="val">'+fmt(prodRight,4)+'</span></div>'+
+        '<div class="stat"><span class="lab">R4 for balance</span><span class="val">'+formatOhms(R3*R2/R1)+'</span></div>'+
       '</div>'+
-      '<p class="note">'+note+' Ideal closed-loop; no rails, slew, or finite Aol.</p>';
+      '<p class="note">Open-circuit mid-points (no galvanometer load).</p>';
   }
   modeBtns.forEach(function(b){
     b.addEventListener('click',function(){ setMode(b.dataset.mode); });
