@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local sky — Campbell / Bay Area — Steven Philley</title>
+<meta name="description" content="Approximate sky orientation for Campbell, CA (Bay Area): seasonal constellations and major landmarks with month and local-time controls. Client-side sidereal math — no paid APIs.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/local-sky/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Local sky — Campbell / Bay Area">
+<meta property="og:description" content="Tonight-ish sky orientation for lat ~37.29°N, lon ~121.95°W — seasonal constellations with month and time controls.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/local-sky/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Local sky — Campbell / Bay Area">
+<meta name="twitter:description" content="Approximate Bay Area sky chart with month and time controls.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:64ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:64ch}
+.shell{margin-top:28px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:stretch}
+.stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.32);position:relative;min-height:440px;overflow:hidden}
+.stage canvas{display:block;width:100%;height:100%;touch-action:manipulation}
+.hint{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
+.controls{display:flex;flex-direction:column;gap:10px;padding:12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);position:absolute;left:0;right:0;bottom:0;z-index:2}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.controls label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.controls select,.controls input[type="range"]{accent-color:var(--accent,#c8b48a)}
+.controls select{appearance:none;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 10px}
+.controls button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+.controls button:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.time-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink,#e8e6e1);min-width:4.5ch}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;min-height:440px}
+.panel .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,36px);letter-spacing:.04em;margin:0 0 6px;line-height:1}
+.panel .type{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96);margin:0 0 14px}
+.stats{margin:0 0 14px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none;flex:1}
+.facts li{position:relative;padding:9px 0 9px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.credit{margin-top:auto;padding-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit;transition:border-color .2s}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .stage{min-height:400px;aspect-ratio:1/1}
+  .panel{min-height:0}
+  .more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/local-sky/" aria-current="page">Local sky</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Bay Area sky</p>
+  <h1>Local sky</h1>
+  <p class="lede">Orientation chart for <strong>Campbell, CA / South Bay</strong> (≈37.29°N, 121.95°W). Pick a month and local time; the wheel shows which major landmarks sit above the horizon. Educational — approximate sidereal rotation, not a precision planetarium.</p>
+  <p class="note-schematic">Method: local sidereal time ≈ Greenwich mean sidereal (Meeus-style approximation) + longitude. Horizon altitude from equitorial (RA/Dec) → alt/az. Bright-star catalog is a small public educational subset (Hipparcos/Yale Bright Star magnitudes, rounded). No paid APIs.</p>
+
+  <div class="shell">
+    <div class="stage" id="stage">
+      <p class="hint" id="hint">N at top · zenith at center · horizon rim</p>
+      <canvas id="sky" width="800" height="800" role="img" aria-label="Approximate all-sky chart for Campbell California"></canvas>
+      <div class="controls">
+        <div class="row">
+          <label for="month">Month</label>
+          <select id="month" aria-label="Month">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8" selected>September</option>
+            <option value="9">October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+          <label for="hour">Local time</label>
+          <input type="range" id="hour" min="0" max="23.75" step="0.25" value="21" aria-valuetext="9:00 PM">
+          <span class="time-val" id="hour-lab">21:00</span>
+          <button type="button" id="btn-now">Now</button>
+        </div>
+      </div>
+    </div>
+    <aside class="panel" id="info" aria-live="polite">
+      <p class="tier">Viewpoint</p>
+      <h2 id="info-name">Campbell · Bay Area</h2>
+      <p class="type" id="info-type">Facing zenith · north up</p>
+      <ul class="stats">
+        <li><span class="k">Latitude</span><span class="v">37.29° N</span></li>
+        <li><span class="k">Longitude</span><span class="v">121.95° W</span></li>
+        <li><span class="k">LST</span><span class="v" id="lst-val">—</span></li>
+        <li><span class="k">Season cue</span><span class="v" id="season-val">—</span></li>
+      </ul>
+      <ul class="facts" id="info-facts">
+        <li>Big landmarks for Bay Area nights: summer triangle (Vega, Deneb, Altair), Orion in winter, Big Dipper / Polaris as the northern hinge.</li>
+        <li>Light pollution washes the Milky Way in town — darker hills (e.g. toward the Coast Range) help for faint structure.</li>
+        <li>Tap a labeled star or constellation on the chart for a short note.</li>
+      </ul>
+      <p class="credit">Approximate educational chart · sidereal + alt/az client-side · star positions are mean J2000-ish, not refracted or precessed for precision observing.</p>
+    </aside>
+  </div>
+
+  <p class="band">Astronomy desk</p>
+  <div class="more">
+    <a href="/science/astronomy/">
+      <p class="n">Solar system</p>
+      <h3>Solar map</h3>
+      <p>Interactive schematic — Sun through Neptune.</p>
+    </a>
+    <a href="/science/astronomy/nearest-stars/">
+      <p class="n">Neighborhood</p>
+      <h3>Nearest stars</h3>
+      <p>Proxima, Alpha Cen, Barnard’s and friends.</p>
+    </a>
+    <a href="/science/astronomy/galaxy/">
+      <p class="n">Milky Way</p>
+      <h3>Galaxy start</h3>
+      <p>Spiral arms and Sol’s seat in the Orion Arm.</p>
+    </a>
+    <a href="/science/atmosphere/">
+      <p class="n">Earth systems</p>
+      <h3>Atmosphere</h3>
+      <p>Layers above the same Bay Area sky.</p>
+    </a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var LAT=37.29, LON=-121.95;
+  /* Bright landmarks: ra hours, dec deg, mag, name, note, optional constellation group */
+  var STARS=[
+    {ra:2.530,dec:89.264,mag:2.0,name:'Polaris',note:'North Star — nearly fixed; Bay Area altitude ≈ latitude (~37°).'},
+    {ra:5.920,dec:7.407,mag:0.45,name:'Betelgeuse',note:'Orion’s shoulder — red giant; winter landmark in the south-east early evening.'},
+    {ra:5.242,dec:-8.202,mag:0.13,name:'Rigel',note:'Orion’s foot — blue-white; winter south sky with the Belt.'},
+    {ra:5.603,dec:-1.202,mag:1.7,name:'Alnilam',note:'Middle Belt star — Orion’s line points to Sirius and Aldebaran.'},
+    {ra:6.752,dec:-16.716,mag:-1.46,name:'Sirius',note:'Brightest night star — Canis Major; winter south after Orion rises.'},
+    {ra:4.598,dec:16.509,mag:0.87,name:'Aldebaran',note:'Taurus eye — follows the Pleiades; winter eastern sky.'},
+    {ra:3.790,dec:24.105,mag:2.9,name:'Pleiades',note:'Seven Sisters cluster — small dipper-like mist in Taurus.'},
+    {ra:7.655,dec:5.225,mag:0.34,name:'Procyon',note:'Little Dog — winter triangle with Sirius and Betelgeuse.'},
+    {ra:5.278,dec:45.998,mag:0.08,name:'Capella',note:'Auriga — bright northern winter star, high for Bay Area.'},
+    {ra:14.261,dec:19.182,mag:-0.05,name:'Arcturus',note:'Boötes — spring orange beacon; follow Big Dipper’s handle “arc.”'},
+    {ra:13.419,dec:-11.161,mag:0.98,name:'Spica',note:'Virgo — spring south; spike from Dipper handle.'},
+    {ra:18.616,dec:38.783,mag:0.03,name:'Vega',note:'Lyra — summer triangle corner; nearly overhead midsummer evenings.'},
+    {ra:20.690,dec:45.280,mag:1.25,name:'Deneb',note:'Cygnus tail — summer triangle; along the Milky Way band.'},
+    {ra:19.846,dec:8.868,mag:0.76,name:'Altair',note:'Aquila — summer triangle’s southern tip.'},
+    {ra:17.561,dec:-26.432,mag:1.06,name:'Antares',note:'Scorpius heart — summer low south; reddish rival of Mars.'},
+    {ra:14.661,dec:74.155,mag:1.9,name:'Dubhe',note:'Big Dipper pointer — with Merak, aims at Polaris.'},
+    {ra:11.062,dec:61.751,mag:2.4,name:'Merak',note:'Big Dipper pointer pair with Dubhe.'},
+    {ra:12.900,dec:55.960,mag:1.9,name:'Alioth',note:'Dipper handle — useful for arc-to-Arcturus.'},
+    {ra:0.140,dec:29.091,mag:2.1,name:'Alpheratz',note:'Andromeda / Great Square corner — autumn northeast.'},
+    {ra:2.119,dec:42.330,mag:3.4,name:'M31',note:'Andromeda Galaxy direction (naked-eye fuzzy under dark skies).'},
+    {ra:22.711,dec:-46.885,mag:1.2,name:'Fomalhaut',note:'Autumn south — lonely bright star near the horizon from Campbell.'},
+    {ra:1.628,dec:-57.237,mag:0.5,name:'Achernar',note:'Usually below Bay Area horizon — included to show southern limit.'},
+    {ra:16.490,dec:-26.432,mag:2.3,name:'Shaula',note:'Scorpius stinger — summer south with Antares.'},
+    {ra:12.443,dec:-63.099,mag:0.6,name:'Acrux',note:'Crux — never rises at Campbell latitude.'}
+  ];
+
+  var LINES=[
+    {name:'Orion',pts:['Betelgeuse','Alnilam','Rigel'],season:'Winter'},
+    {name:'Summer Triangle',pts:['Vega','Deneb','Altair'],season:'Summer'},
+    {name:'Winter Triangle',pts:['Betelgeuse','Sirius','Procyon'],season:'Winter'},
+    {name:'Dipper pointers',pts:['Dubhe','Merak','Polaris'],season:'Year-round N'}
+  ];
+
+  var SEASON={
+    0:'Winter: Orion & Sirius dominate south after dusk.',
+    1:'Late winter: Orion still strong; Leo rising east.',
+    2:'Spring: Arcturus & Spica; Dipper high.',
+    3:'Spring: Big Dipper overhead-ish; Virgo south.',
+    4:'Late spring: Summer Triangle climbing NE.',
+    5:'Summer: Vega near zenith evenings; Milky Way band.',
+    6:'Summer: Scorpius / Antares low south; Triangle high.',
+    7:'Late summer: Triangle + Cygnus; autumn square rising.',
+    8:'Early autumn: Summer Triangle still up; Pegasus east.',
+    9:'Autumn: Great Square; Andromeda direction NE.',
+    10:'Late autumn: Pleiades rising; Orion later.',
+    11:'Early winter: Orion returns after evening.'
+  };
+
+  var canvas=document.getElementById('sky');
+  var ctx=canvas.getContext('2d');
+  var monthEl=document.getElementById('month');
+  var hourEl=document.getElementById('hour');
+  var hourLab=document.getElementById('hour-lab');
+  var lstVal=document.getElementById('lst-val');
+  var seasonVal=document.getElementById('season-val');
+  var hitStars=[];
+
+  function pad2(n){return (n<10?'0':'')+n;}
+  function fmtHour(h){
+    var hh=Math.floor(h), m=Math.round((h-hh)*60);
+    if(m===60){hh=(hh+1)%24;m=0;}
+    return pad2(hh)+':'+pad2(m);
+  }
+  function deg2rad(d){return d*Math.PI/180;}
+  function rad2deg(r){return r*180/Math.PI;}
+  function norm360(d){d=d%360;if(d<0)d+=360;return d;}
+  function norm24(h){h=h%24;if(h<0)h+=24;return h;}
+
+  /* Approximate GMST hours from calendar date + UT hours (Meeus-ish, educational) */
+  function gmstHours(y,mo,day,utHours){
+    var jd=julianDate(y,mo,day,utHours);
+    var T=(jd-2451545.0)/36525.0;
+    var gmst=280.46061837+360.98564736629*(jd-2451545.0)+0.000387933*T*T;
+    return norm24(gmst/15);
+  }
+  function julianDate(y,m,d,ut){
+    var a=Math.floor((14-m)/12);
+    var yy=y+4800-a;
+    var mm=m+12*a-3;
+    var jdn=d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;
+    return jdn+(ut-12)/24;
+  }
+  function lstHours(y,mo,day,localHours){
+    /* Pacific: treat control as local civil; approximate UT = local + 7 (PDT) or +8 (PST). Use +7 for Sep daylight. */
+    var offset=isPdtMonth(mo)?7:8;
+    var ut=localHours+offset;
+    var dayAdj=day;
+    if(ut>=24){ut-=24;dayAdj+=1;}
+    if(ut<0){ut+=24;dayAdj-=1;}
+    var gmst=gmstHours(y,mo+1,dayAdj,ut);
+    return norm24(gmst+LON/15);
+  }
+  function isPdtMonth(mo){return mo>=2&&mo<=9;} /* rough Mar–Oct */
+
+  function eqToAltAz(raH,decD,lstH,latD){
+    var ha=deg2rad((lstH-raH)*15);
+    var dec=deg2rad(decD);
+    var lat=deg2rad(latD);
+    var sinAlt=Math.sin(dec)*Math.sin(lat)+Math.cos(dec)*Math.cos(lat)*Math.cos(ha);
+    var alt=Math.asin(Math.max(-1,Math.min(1,sinAlt)));
+    var cosAz=(Math.sin(dec)-Math.sin(alt)*Math.sin(lat))/(Math.cos(alt)*Math.cos(lat));
+    cosAz=Math.max(-1,Math.min(1,cosAz));
+    var az=Math.acos(cosAz);
+    if(Math.sin(ha)>0)az=2*Math.PI-az;
+    return {alt:rad2deg(alt),az:rad2deg(az)};
+  }
+
+  function project(alt,az,cx,cy,r){
+    if(alt<0)return null;
+    var rho=r*(1-alt/90);
+    var th=deg2rad(az);
+    /* az 0 = N, clockwise; canvas: N up → x = sin(az), y = -cos(az) */
+    return {x:cx+rho*Math.sin(th),y:cy-rho*Math.cos(th)};
+  }
+
+  function cssVar(name,fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+
+  function draw(){
+    var month=+monthEl.value;
+    var localH=+hourEl.value;
+    hourLab.textContent=fmtHour(localH);
+    hourEl.setAttribute('aria-valuetext',fmtHour(localH));
+
+    var y=2026, day=15;
+    var lst=lstHours(y,month,day,localH);
+    lstVal.textContent=fmtHour(lst)+' h';
+    seasonVal.textContent=(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month]);
+    document.getElementById('info-type').textContent=fmtHour(localH)+' local · mid-month · LST '+fmtHour(lst)+' h';
+    var facts=document.getElementById('info-facts');
+    if(!facts.dataset.locked){
+      facts.innerHTML='<li>'+SEASON[month]+'</li><li>Big landmarks for Bay Area nights: summer triangle (Vega, Deneb, Altair), Orion in winter, Big Dipper / Polaris as the northern hinge.</li><li>Light pollution washes the Milky Way in town — darker hills help for faint structure.</li>';
+    }
+
+    var dpr=window.devicePixelRatio||1;
+    var rect=canvas.parentElement.getBoundingClientRect();
+    var w=Math.max(320,Math.floor(rect.width));
+    var h=Math.max(320,Math.floor(rect.height-100));
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    canvas.style.width=w+'px';
+    canvas.style.height=h+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    var cx=w/2, cy=h/2, R=Math.min(w,h)*0.42;
+    var base=cssVar('--base-2','#14161c');
+    var ink=cssVar('--ink','#e8e6e1');
+    var soft=cssVar('--ink-soft','#9b9a96');
+    var muted=cssVar('--muted','#63666e');
+    var accent=cssVar('--accent','#c8b48a');
+    var line=cssVar('--line','#2c303a');
+
+    ctx.fillStyle=base;
+    ctx.fillRect(0,0,w,h);
+    /* night disc */
+    var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R*1.15);
+    g.addColorStop(0,'#0a1020');
+    g.addColorStop(0.7,'#070b14');
+    g.addColorStop(1,'#05060a');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+    ctx.strokeStyle=line;ctx.lineWidth=1;ctx.stroke();
+
+    /* altitude rings */
+    ctx.strokeStyle=muted;ctx.globalAlpha=0.35;
+    [30,60].forEach(function(a){
+      var rho=R*(1-a/90);
+      ctx.beginPath();ctx.arc(cx,cy,rho,0,Math.PI*2);ctx.stroke();
+    });
+    ctx.globalAlpha=1;
+    /* cardinals */
+    ctx.fillStyle=soft;ctx.font='11px "IBM Plex Mono",monospace';ctx.textAlign='center';
+    [['N',0],['E',90],['S',180],['W',270]].forEach(function(c){
+      var p=project(0,c[1],cx,cy,R+14);
+      if(p)ctx.fillText(c[0],p.x,p.y+4);
+    });
+    ctx.fillStyle=muted;ctx.font='10px "IBM Plex Mono",monospace';
+    ctx.fillText('ZENITH',cx,cy-8);
+
+    /* constellation lines */
+    var byName={};
+    STARS.forEach(function(s){byName[s.name]=s;});
+    hitStars=[];
+    ctx.strokeStyle=accent;ctx.globalAlpha=0.35;ctx.lineWidth=1;
+    LINES.forEach(function(L){
+      var pts=[];
+      L.pts.forEach(function(n){
+        var s=byName[n];if(!s)return;
+        var aa=eqToAltAz(s.ra,s.dec,lst,LAT);
+        var p=project(aa.alt,aa.az,cx,cy,R);
+        if(p)pts.push(p);
+      });
+      if(pts.length>=2){
+        ctx.beginPath();
+        pts.forEach(function(p,i){if(i===0)ctx.moveTo(p.x,p.y);else ctx.lineTo(p.x,p.y);});
+        if(L.name.indexOf('Triangle')>=0&&pts.length===3)ctx.closePath();
+        ctx.stroke();
+      }
+    });
+    ctx.globalAlpha=1;
+
+    /* stars */
+    STARS.forEach(function(s){
+      var aa=eqToAltAz(s.ra,s.dec,lst,LAT);
+      if(aa.alt<-1)return;
+      var p=project(aa.alt,aa.az,cx,cy,R);
+      if(!p)return;
+      var size=Math.max(1.2,3.8-s.mag*0.55);
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,size,0,Math.PI*2);
+      ctx.fillStyle=ink;
+      ctx.fill();
+      if(s.mag<1.5||s.name==='Polaris'||s.name==='M31'){
+        ctx.fillStyle=soft;
+        ctx.font='10px "IBM Plex Mono",monospace';
+        ctx.textAlign='left';
+        ctx.fillText(s.name,p.x+6,p.y-4);
+      }
+      hitStars.push({x:p.x,y:p.y,r:10,star:s,alt:aa.alt});
+    });
+  }
+
+  function selectStar(s,alt){
+    document.getElementById('info-name').textContent=s.name;
+    document.getElementById('info-type').textContent='mag ≈ '+s.mag+(alt!=null?' · alt '+alt.toFixed(0)+'°':'');
+    var facts=document.getElementById('info-facts');
+    facts.dataset.locked='1';
+    facts.innerHTML='<li>'+s.note+'</li><li>RA ≈ '+s.ra.toFixed(2)+' h · Dec ≈ '+s.dec.toFixed(1)+'° (educational J2000-ish).</li><li>Chart is approximate — use a planetarium app for telescope pointing.</li>';
+  }
+
+  canvas.addEventListener('click',function(ev){
+    var rect=canvas.getBoundingClientRect();
+    var x=ev.clientX-rect.left, y=ev.clientY-rect.top;
+    var best=null,bd=1e9;
+    hitStars.forEach(function(h){
+      var d=(h.x-x)*(h.x-x)+(h.y-y)*(h.y-y);
+      if(d<bd&&d<h.r*h.r*4){bd=d;best=h;}
+    });
+    if(best)selectStar(best.star,best.alt);
+  });
+
+  function setNow(){
+    var d=new Date();
+    monthEl.value=String(d.getMonth());
+    var h=d.getHours()+d.getMinutes()/60;
+    hourEl.value=String(Math.round(h*4)/4);
+    var f=document.getElementById('info-facts');
+    delete f.dataset.locked;
+    document.getElementById('info-name').textContent='Campbell · Bay Area';
+    draw();
+  }
+
+  monthEl.addEventListener('change',function(){delete document.getElementById('info-facts').dataset.locked;document.getElementById('info-name').textContent='Campbell · Bay Area';draw();});
+  hourEl.addEventListener('input',draw);
+  document.getElementById('btn-now').addEventListener('click',setNow);
+  window.addEventListener('resize',draw);
+  setNow();
+})();
+</script>
+</body>
+</html>
