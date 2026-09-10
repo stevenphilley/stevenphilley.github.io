@@ -20,131 +20,445 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
 <style>
-/* Long-form dissertation reader — matches site theme tokens */
-body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
-.d-wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 96px}
-.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+/* Long-form dissertation reader — editorial polish, theme-aware */
+html { color-scheme: dark light; }
+body{
+  background:var(--base-2,#0C021A);
+  color:var(--ink,#F8ECFF);
+  margin:0;
+  padding-left:0 !important;
+  padding-right:0 !important;
+  font-family:"IBM Plex Mono",monospace;
+  font-weight:300;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+
+/* Subtle paper / plate tooth (CSS-only; no image deps) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+  opacity:.045;
+  mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/></svg>");
+}
+html[data-theme="sage"] body::before,
+html[data-theme="sand"] body::before{ opacity:.07; mix-blend-mode:multiply; }
+
+.d-wrap{
+  position:relative;
+  z-index:1;
+  max-width:1180px;
+  margin:0 auto;
+  padding:0 clamp(16px,4vw,44px) 112px;
+}
+
+.e-top{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+  padding:18px 0 16px;
+  border-bottom:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+}
 .e-top a{color:var(--ink-soft,#B89BC8);text-decoration:none}
-.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
-.themes{display:flex;border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent)}
-.themes button{appearance:none;background:transparent;border:0;border-right:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);color:var(--ink-faint,#6E5088);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.e-top a:hover,.e-top a[aria-current="page"]{color:var(--ink,#F8ECFF)}
+.themes{display:flex;border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);border-radius:1px}
+.themes button{
+  appearance:none;background:transparent;border:0;
+  border-right:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+  color:var(--ink-faint,#6E5088);font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.1em;padding:6px 10px;cursor:pointer;text-transform:uppercase;
+  transition:background .2s ease,color .2s ease;
+}
 .themes button:last-child{border-right:0}
+.themes button:hover{color:var(--ink,#F8ECFF)}
 .themes button[aria-pressed="true"]{color:var(--base-2,#0C021A);background:var(--ink,#F8ECFF)}
 
-.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:8px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;margin-top:10px}
 @media (min-width:960px){
-  .layout{grid-template-columns:240px minmax(0,1fr);gap:36px;align-items:start}
+  .layout{grid-template-columns:252px minmax(0,1fr);gap:40px;align-items:start}
 }
 
+/* ---- Sticky TOC ---- */
 .toc-pane{font-family:"IBM Plex Mono",monospace}
 @media (min-width:960px){
-  .toc-pane{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto;padding:12px 0 24px}
+  .toc-pane{
+    position:sticky;top:14px;max-height:calc(100vh - 28px);
+    overflow:auto;padding:10px 8px 28px 0;
+    scrollbar-width:thin;
+    scrollbar-color:color-mix(in srgb,var(--ink,#F8ECFF) 22%,transparent) transparent;
+  }
 }
-.toc-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#FF2DC8);margin:18px 0 10px}
-.toc-pane ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-.toc-pane a{color:var(--ink-soft,#B89BC8);text-decoration:none;font-size:11px;line-height:1.45;display:block}
-.toc-pane a:hover,.toc-pane a:focus{color:var(--ink,#F8ECFF)}
+.toc-label{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--accent,#FF2DC8);margin:0 0 12px;
+}
+.toc-details{border:0}
+.toc-details > summary{
+  list-style:none;cursor:pointer;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent,#FF2DC8);
+  padding:10px 0;border-bottom:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.toc-details > summary::-webkit-details-marker{display:none}
+.toc-details > summary::after{content:"▾";font-size:12px;color:var(--ink-faint,#6E5088)}
+.toc-details[open] > summary::after{content:"▴"}
+@media (min-width:960px){
+  .toc-details > summary{display:none}
+  .toc-details{display:contents}
+}
+.toc-pane ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.toc-pane a{
+  color:var(--ink-soft,#B89BC8);text-decoration:none;font-size:11px;line-height:1.45;
+  display:block;padding:3px 8px 3px 10px;border-left:2px solid transparent;
+  border-radius:0 2px 2px 0;transition:color .15s ease,background .15s ease,border-color .15s ease;
+}
+.toc-pane a:hover,.toc-pane a:focus{color:var(--ink,#F8ECFF);background:color-mix(in srgb,var(--ink,#F8ECFF) 5%,transparent)}
 .toc-pane .toc-h1 a{color:var(--ink,#F8ECFF);font-weight:500}
-.toc-pane .toc-h2 a{padding-left:10px;border-left:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent)}
-.toc-dl{margin-top:16px;font-size:11px}
-.toc-dl a{color:var(--accent,#FF2DC8)}
+.toc-pane .toc-h2 a{padding-left:18px;font-size:10.5px}
+.toc-pane a[aria-current="true"],
+.toc-pane a.is-active{
+  color:var(--ink,#F8ECFF);
+  border-left-color:var(--accent,#FF2DC8);
+  background:color-mix(in srgb,var(--accent,#FF2DC8) 10%,transparent);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#FF2DC8) 18%,transparent);
+}
+html[data-theme="neon"] .toc-pane a.is-active{
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent,#FF2DC8) 28%,transparent),
+             0 0 18px color-mix(in srgb,var(--accent,#FF2DC8) 12%,transparent);
+}
+.toc-dl{margin-top:18px;font-size:11px;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent)}
+.toc-dl a{color:var(--accent,#FF2DC8);padding-left:0;border-left:0;box-shadow:none;background:transparent}
 
-.mast{padding:28px 0 8px}
-.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#FF2DC8);margin:0 0 10px}
-.mast h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(42px,9vw,84px);line-height:.9;letter-spacing:.02em;margin:0;max-width:18ch}
-.byline{margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#B89BC8);max-width:60ch}
+/* ---- Masthead / display title ---- */
+.mast{padding:36px 0 10px}
+.kicker{
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent,#FF2DC8);margin:0 0 14px;
+}
+.mast h1{
+  font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;
+  font-size:clamp(48px,10.5vw,96px);line-height:.88;letter-spacing:.02em;
+  margin:0;max-width:14ch;
+  text-wrap:balance;
+}
+html[data-theme="neon"] .mast h1{
+  text-shadow:0 0 40px color-mix(in srgb,var(--accent,#FF2DC8) 28%,transparent);
+}
+.byline{
+  margin:22px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;
+  color:var(--ink-soft,#B89BC8);max-width:62ch;
+}
 .byline strong{color:var(--ink,#F8ECFF);font-weight:500}
 
-.disclaimer{margin:28px 0 8px;padding:18px 18px 16px;border:1px solid color-mix(in srgb,var(--accent,#FF2DC8) 45%,transparent);background:color-mix(in srgb,var(--accent,#FF2DC8) 8%,transparent);border-radius:2px}
-.disclaimer-kicker{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent,#FF2DC8);margin:0 0 8px}
-.disclaimer p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.65;color:var(--ink,#F8ECFF);max-width:62ch}
-.disclaimer p + p{margin-top:8px}
+/* ---- Critical disclaimer (prominent callout) ---- */
+.disclaimer{
+  margin:32px 0 14px;padding:20px 20px 18px;
+  border:1px solid color-mix(in srgb,var(--accent,#FF2DC8) 55%,transparent);
+  background:
+    linear-gradient(135deg,
+      color-mix(in srgb,var(--accent,#FF2DC8) 14%,transparent),
+      color-mix(in srgb,var(--accent-2,#00F0FF) 6%,transparent) 55%,
+      color-mix(in srgb,var(--ink,#F8ECFF) 3%,transparent));
+  border-radius:2px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--accent,#FF2DC8) 12%,transparent),
+    0 12px 40px color-mix(in srgb,var(--accent,#FF2DC8) 10%,transparent);
+}
+html[data-theme="neon"] .disclaimer{
+  box-shadow:
+    0 0 0 1px color-mix(in srgb,var(--accent,#FF2DC8) 22%,transparent),
+    0 0 48px color-mix(in srgb,var(--accent,#FF2DC8) 16%,transparent),
+    0 12px 36px color-mix(in srgb,var(--base-2,#0C021A) 40%,transparent);
+}
+.disclaimer-kicker{
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--accent,#FF2DC8);margin:0 0 10px;
+}
+.disclaimer p{
+  margin:0;font-family:"IBM Plex Mono",monospace;font-size:14px;line-height:1.7;
+  color:var(--ink,#F8ECFF);max-width:64ch;
+}
+.disclaimer p + p{margin-top:10px}
 .disclaimer-sub{color:var(--ink-soft,#B89BC8)!important;font-size:12px!important}
 
+/* Compact sticky reminder after scrolling past main disclaimer */
+.disclaimer-ribbon{
+  position:sticky;top:0;z-index:40;
+  display:none;
+  margin:0 -4px 8px;
+  padding:8px 12px;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.45;
+  letter-spacing:.04em;
+  color:var(--ink,#F8ECFF);
+  background:color-mix(in srgb,var(--base-2,#0C021A) 88%, var(--accent,#FF2DC8));
+  border:1px solid color-mix(in srgb,var(--accent,#FF2DC8) 40%,transparent);
+  border-radius:1px;
+  backdrop-filter:blur(8px);
+}
+.disclaimer-ribbon.is-visible{display:block}
+.disclaimer-ribbon strong{color:var(--accent,#FF2DC8);font-weight:500}
+
+/* ---- Article plate / measure ---- */
 .article{
   font-family:"Newsreader",Georgia,"Times New Roman",serif;
-  font-size:clamp(17px,1.15vw,19px);
-  line-height:1.7;
-  max-width:42rem; /* ~66–70ch measure */
+  font-optical-sizing:auto;
+  font-size:clamp(17.5px,1.2vw,19.5px);
+  line-height:1.72;
+  max-width:40.5rem;
   color:var(--ink,#F8ECFF);
+  padding:clamp(12px,2vw,22px) clamp(4px,1.2vw,8px) 8px;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb,var(--ink,#F8ECFF) 3.5%,transparent),
+      color-mix(in srgb,var(--ink,#F8ECFF) 1.2%,transparent) 120px,
+      transparent 280px);
+  border-radius:2px;
 }
 .article > *:first-child{margin-top:0}
+
+/* Headings */
 .article h1,.article h2,.article h3,.article h4{
   font-family:"Bebas Neue",Impact,sans-serif;
   font-weight:400;
   letter-spacing:.03em;
   line-height:1.05;
-  scroll-margin-top:20px;
+  scroll-margin-top:72px;
   color:var(--ink,#F8ECFF);
+  text-wrap:balance;
 }
-.article h1{font-size:clamp(32px,5vw,48px);margin:2.2em 0 .5em}
-.article h2{font-size:clamp(26px,3.6vw,34px);margin:2em 0 .45em;padding-top:.4em;border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent)}
-.article h3{font-size:clamp(20px,2.6vw,26px);margin:1.6em 0 .4em;font-family:"IBM Plex Mono",monospace;letter-spacing:.04em;text-transform:none}
-.article h4{font-size:1.05em;margin:1.4em 0 .35em;font-family:"IBM Plex Mono",monospace;letter-spacing:.02em;color:var(--accent,#FF2DC8)}
-.article p{margin:0 0 1.05em}
-.article a{color:var(--accent-2,#00F0FF);text-underline-offset:3px}
+.article h1{
+  font-size:clamp(34px,5.2vw,52px);
+  margin:2.6em 0 .55em;
+  padding-top:1.15em;
+  position:relative;
+}
+.article h1::before{
+  content:"";
+  display:block;
+  width:3.25rem;
+  height:1px;
+  background:var(--accent,#FF2DC8);
+  margin:0 0 1.05em;
+  box-shadow:0 0 14px color-mix(in srgb,var(--accent,#FF2DC8) 45%,transparent);
+}
+.article h1.chapter-head{ margin-top:3.1em; }
+.article h1.chapter-head .ch-num{
+  display:block;
+  font-family:"IBM Plex Mono",monospace;
+  font-size:11px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  color:var(--accent,#FF2DC8);
+  margin:0 0 .55em;
+  font-weight:400;
+}
+.article h2{
+  font-size:clamp(26px,3.6vw,34px);
+  margin:2.1em 0 .5em;
+  padding-top:.85em;
+  border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+}
+.article h3{
+  font-size:clamp(18px,2.3vw,22px);
+  margin:1.75em 0 .45em;
+  font-family:"IBM Plex Mono",monospace;
+  letter-spacing:.03em;
+  text-transform:none;
+  line-height:1.35;
+}
+.article h4{
+  font-size:1.02em;
+  margin:1.45em 0 .35em;
+  font-family:"IBM Plex Mono",monospace;
+  letter-spacing:.02em;
+  color:var(--accent,#FF2DC8);
+  line-height:1.4;
+}
+
+/* Drop caps on chapter openers */
+.article h1.chapter-head + p::first-letter{
+  float:left;
+  font-family:"Bebas Neue",Impact,sans-serif;
+  font-size:3.35em;
+  line-height:.78;
+  padding:.08em .12em .02em 0;
+  color:var(--accent,#FF2DC8);
+  font-weight:400;
+}
+html[data-theme="neon"] .article h1.chapter-head + p::first-letter{
+  text-shadow:0 0 22px color-mix(in srgb,var(--accent,#FF2DC8) 35%,transparent);
+}
+
+.article p{margin:0 0 1.1em;hyphens:auto}
+.article a{color:var(--accent-2,#00F0FF);text-underline-offset:3px;text-decoration-thickness:from-font}
 .article a:hover{color:var(--accent,#FF2DC8)}
 .article em{font-style:italic}
 .article strong{font-weight:600}
+
+/* Default blockquotes */
 .article blockquote{
-  margin:1.3em 0;
-  padding:.2em 0 .2em 1.1em;
-  border-left:3px solid var(--accent,#FF2DC8);
+  margin:1.45em 0;
+  padding:.35em 0 .35em 1.15em;
+  border-left:2px solid color-mix(in srgb,var(--accent,#FF2DC8) 70%,transparent);
   color:var(--ink-soft,#B89BC8);
   font-style:italic;
 }
-.article blockquote p{margin-bottom:.6em}
-.article ul,.article ol{margin:0 0 1.1em 1.2em;padding:0}
-.article li{margin:.25em 0}
-.article li > ul,.article li > ol{margin:.25em 0 .25em 1.1em}
-.article hr{border:0;border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);margin:2em 0}
+.article blockquote p{margin-bottom:.65em}
+.article blockquote p:last-child{margin-bottom:0}
+
+/* Practitioner / pull-quote callouts */
+.article blockquote.callout,
+.article .callout{
+  margin:1.6em 0;
+  padding:1em 1.15em .95em;
+  border-left:none;
+  border:1px solid color-mix(in srgb,var(--accent-2,#00F0FF) 35%,transparent);
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb,var(--accent-2,#00F0FF) 9%,transparent),
+      color-mix(in srgb,var(--ink,#F8ECFF) 3%,transparent));
+  border-radius:2px;
+  color:var(--ink,#F8ECFF);
+  font-style:normal;
+  box-shadow:inset 3px 0 0 var(--accent-2,#00F0FF);
+}
+.article blockquote.callout-practitioner{
+  border-color:color-mix(in srgb,var(--accent,#FF2DC8) 40%,transparent);
+  background:
+    linear-gradient(160deg,
+      color-mix(in srgb,var(--accent,#FF2DC8) 10%,transparent),
+      color-mix(in srgb,var(--ink,#F8ECFF) 2.5%,transparent));
+  box-shadow:inset 3px 0 0 var(--accent,#FF2DC8);
+}
+.article blockquote.callout p{margin-bottom:.55em}
+.article blockquote.callout strong{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.78em;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:500;
+  color:var(--accent,#FF2DC8);
+}
+
+.article ul,.article ol{margin:0 0 1.15em 1.25em;padding:0}
+.article li{margin:.3em 0}
+.article li > ul,.article li > ol{margin:.3em 0 .3em 1.1em}
+.article hr{
+  border:0;
+  border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+  margin:2.4em 0;
+}
+
+/* Tables */
 .article table{
   width:100%;
   border-collapse:collapse;
   font-family:"IBM Plex Mono",monospace;
-  font-size:12.5px;
+  font-size:12.25px;
   line-height:1.5;
-  margin:1.2em 0 1.6em;
+  margin:1.35em 0 1.75em;
   display:block;
   overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+  background:color-mix(in srgb,var(--ink,#F8ECFF) 2.5%,transparent);
 }
 .article th,.article td{
-  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 16%,transparent);
-  padding:8px 10px;
+  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent);
+  padding:9px 11px;
   text-align:left;
   vertical-align:top;
 }
-.article th{color:var(--accent,#FF2DC8);font-weight:500;background:color-mix(in srgb,var(--ink,#F8ECFF) 4%,transparent)}
+.article th{
+  color:var(--accent,#FF2DC8);
+  font-weight:500;
+  background:color-mix(in srgb,var(--ink,#F8ECFF) 5%,transparent);
+  letter-spacing:.02em;
+}
+.article tr:nth-child(even) td{
+  background:color-mix(in srgb,var(--ink,#F8ECFF) 2%,transparent);
+}
+
+/* Code */
 .article code{
   font-family:"IBM Plex Mono",monospace;
-  font-size:.86em;
-  background:color-mix(in srgb,var(--ink,#F8ECFF) 7%,transparent);
-  padding:.1em .35em;
+  font-size:.84em;
+  background:color-mix(in srgb,var(--ink,#F8ECFF) 8%,transparent);
+  padding:.12em .38em;
   border-radius:2px;
+  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 8%,transparent);
 }
-.article pre{
+.article pre,
+.article .codehilite{
   font-family:"IBM Plex Mono",monospace;
   font-size:12.5px;
   line-height:1.55;
-  background:color-mix(in srgb,var(--ink,#F8ECFF) 5%,transparent);
-  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent);
+  background:color-mix(in srgb,var(--base,#140828) 55%, var(--ink,#F8ECFF) 4%);
+  border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
   padding:14px 16px;
   overflow-x:auto;
-  margin:1.2em 0 1.5em;
+  margin:1.3em 0 1.6em;
+  border-radius:2px;
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--ink,#F8ECFF) 6%,transparent);
 }
-.article pre code{background:transparent;padding:0;font-size:inherit}
-.article .footnote{font-size:.92em}
-.article .footnote hr{margin:2.5em 0 1em}
-.article sup a{font-family:"IBM Plex Mono",monospace;font-size:.75em;text-decoration:none}
+.article pre code,
+.article .codehilite code{
+  background:transparent;padding:0;border:0;font-size:inherit;border-radius:0;
+}
+.article .codehilite pre{margin:0;padding:0;border:0;background:transparent;box-shadow:none}
+
+.article .footnote{font-size:.92em;color:var(--ink-soft,#B89BC8)}
+.article .footnote hr{margin:2.6em 0 1.1em}
+.article sup a{font-family:"IBM Plex Mono",monospace;font-size:.72em;text-decoration:none}
 .article img{max-width:100%;height:auto}
 
-.e-foot{margin-top:48px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
-.e-foot a{color:var(--ink-soft,#B89BC8);text-decoration:none}
-.e-foot a:hover{color:inherit}
-
-@media (max-width:959px){
-  .toc-pane{border-bottom:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent);padding-bottom:18px;max-height:220px;overflow:auto}
+.e-foot{
+  margin-top:56px;padding-top:20px;
+  border-top:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 14%,transparent);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;
+  display:flex;gap:16px;flex-wrap:wrap;
 }
+.e-foot a{color:var(--ink-soft,#B89BC8);text-decoration:none}
+.e-foot a:hover{color:var(--ink,#F8ECFF)}
+
+/* Mobile TOC / reading */
+@media (max-width:959px){
+  .toc-pane{
+    border:1px solid color-mix(in srgb,var(--ink,#F8ECFF) 12%,transparent);
+    border-radius:2px;
+    padding:0 12px 4px;
+    background:color-mix(in srgb,var(--ink,#F8ECFF) 3%,transparent);
+    max-height:none;overflow:visible;
+  }
+  .toc-pane .toc-label{display:none}
+  .toc-details[open] ol{
+    max-height:min(42vh,320px);
+    overflow:auto;
+    padding:8px 0 12px;
+    margin-bottom:4px;
+  }
+  .article{max-width:none;padding-left:0;padding-right:0;background:transparent}
+  .article h1.chapter-head + p::first-letter{font-size:2.85em}
+  .disclaimer{padding:16px}
+  .mast h1{font-size:clamp(44px,12vw,72px)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .themes button,.toc-pane a{transition:none}
+}
+
 </style>
 </head>
 <body>
@@ -179,9 +493,15 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </aside>
 
 
+<div class="disclaimer-ribbon" role="note" aria-label="Framing reminder">
+  <strong>Reminder:</strong> Self-directed practice-based dissertation — <strong>not</strong> a conferred / institutional PhD.
+</div>
+
   <div class="layout">
     <nav class="toc-pane" aria-label="Table of contents">
       <p class="toc-label">Contents</p>
+            <details class="toc-details">
+        <summary>Contents</summary>
       <ol>
 <li class="toc-h1"><a href="#owned-pipelines-practice-based-knowledge-from-thirty-years-of-hands-on-computing">Owned Pipelines: Practice-Based Knowledge from Thirty Years of Hands-…</a></li>
 <li class="toc-h1"><a href="#preface-self-taught-doctoral-framing-and-the-ethics-of-claiming-practice-knowledge">Preface: Self-Taught Doctoral Framing and the Ethics of Claiming Prac…</a></li>
@@ -231,8 +551,9 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li class="toc-h1"><a href="#afterword-for-future-empirical-appendices">Afterword for Future Empirical Appendices</a></li>
 <li class="toc-h1"><a href="#colophon">Colophon</a></li>
       </ol>
+            </details>
       <p class="toc-dl"><a href="Owned_Pipelines_Draft_1.2.md">Download Markdown (Draft 1.2)</a></p>
-    </nav>
+        </nav>
     <article class="article" id="dissertation-body">
 <h1 id="owned-pipelines-practice-based-knowledge-from-thirty-years-of-hands-on-computing">Owned Pipelines: Practice-Based Knowledge from Thirty Years of Hands-On Computing</h1>
 <p><strong>A Practice-Based Doctoral Dissertation (Self-Directed)</strong></p>
@@ -433,7 +754,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tbody>
 </table>
 <hr>
-<h1 id="preface-self-taught-doctoral-framing-and-the-ethics-of-claiming-practice-knowledge">Preface: Self-Taught Doctoral Framing and the Ethics of Claiming Practice Knowledge</h1>
+<h1 id="preface-self-taught-doctoral-framing-and-the-ethics-of-claiming-practice-knowledge" class="chapter-head">Preface: Self-Taught Doctoral Framing and the Ethics of Claiming Practice Knowledge</h1>
 <p>Doctoral form usually travels with institutional sponsorship: coursework, candidacy exams, committee signatures, archival deposit. That machinery is real and valuable. It is also not the only way human beings have ever organized deep knowledge. Craft traditions, studio apprenticeships, sysop culture, and independent engineering lineages have long produced transferable knowing without a registrar’s stamp.</p>
 <p>This dissertation chooses doctoral <em>form</em>—abstract, method, chapters, claims, references, glossary—because that form forces discipline: What is the question? What counts as evidence? What is transferable? What is merely personal preference? It refuses doctoral <em>credential theater</em>. The front matter says so twice so no skim-reader can miss it.</p>
 <h3 id="why-practice-based-rather-than-autoethnography-alone">Why “practice-based” rather than “autoethnography alone”</h3>
@@ -441,7 +762,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>Steven Philley’s public body of work is unusually suited to that frame. The Ra Engine documentation is not marketing fluff; it is a working operator’s manual that records pitfall tables, UBO field order, RADV quirks, and Lua contracts.<sup id="fnref:2-ra-docs"><a class="footnote-ref" href="#fn:2-ra-docs">1</a></sup> Steam Early Access text for app 4732830 discloses roadmap items, pricing philosophy, and production use on Laser Tag and Launch Up.<sup id="fnref:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup> Ablockalypse’s public feature list exposes competitive input affordances.<sup id="fnref:2-cic-home"><a class="footnote-ref" href="#fn:2-cic-home">4</a></sup> The BBS directory page credits upstream lists and distinguishes connection checks from login tests.<sup id="fnref:2-cic-bbs"><a class="footnote-ref" href="#fn:2-cic-bbs">7</a></sup> These are <em>artifacts that already argue</em>.</p>
 <h3 id="ethics-of-claiming-thirty-years">Ethics of claiming “thirty years”</h3>
 <p>Public materials establish a long arc of hands-on computing and a professional trail through Mobile Physician Technologies (C/Qt), Adobe Premiere Pro (SDE 4, C++), and founding Color It Company (C, SDL, Vulkan, AI-assisted programming).<sup id="fnref:2-linkedin"><a class="footnote-ref" href="#fn:2-linkedin">10</a></sup> A mid-1990s public BBS listing associates Steven Philley with Digital Aquarium in the 408 area.<sup id="fnref:2-textfiles-408"><a class="footnote-ref" href="#fn:2-textfiles-408">13</a></sup> That is enough to justify a <em>career-length practice</em> framing. It is <strong>not</strong> enough to invent a year-by-year bildungsroman.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Insert first-person chronology of the pre-Adobe decades—machines owned, languages learned, BBS sysop practice, failed engines, teachers/peers—without inventing what is not remembered or documented. Prefer dated artifacts over memory.</p>
 </blockquote>
 <h3 id="public-self-stated-origins-blog-evidence-only">Public self-stated origins (blog evidence only)</h3>
@@ -456,7 +777,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>The same 2024 “beginning” post states that in eighth grade Philley traded roughly seven games for the original <strong>Final Fantasy</strong>, and that playing it inspired a desire to make an RPG—with monsters, hit points, and the rest of the systemic craft.<sup id="fnref3:2-blog-beginning"><a class="footnote-ref" href="#fn:2-blog-beginning">28</a></sup> This is a vocation statement, not a shipped RPG claim. It situates later tetromino and RT platformer shipping as one long interest in <strong>authored systems under the fingers</strong>, not as a sudden career pivot invented for Steam marketing.</p>
 <h4 id="backend-engineer-to-games-path-public-framing">Backend-engineer-to-games path (public framing)</h4>
 <p>Public LinkedIn-facing statements describe a primarily <strong>backend-engineer</strong> path exploring games, culminating in a custom <strong>C++/SDL2</strong> Steam Early Access tetromino title.<sup id="fnref:2-linkedin-gdc"><a class="footnote-ref" href="#fn:2-linkedin-gdc">11</a></sup> Combined with studio founding under Color It Company and later Vulkan RT work on Ra Engine, the public trail supports a <em>practice arc</em> from systems engineering into owned game pipelines. Exact employment chronologies remain hooks for author voice; this draft does not invent dates beyond what inventory and public posts already carry.<sup id="fnref:2-inventory"><a class="footnote-ref" href="#fn:2-inventory">15</a></sup></p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Between Color BASIC and Color It Company, what machines, boards, jobs, and failed engines actually happened? Prefer dated artifacts. Keep the blog vignettes as published self-statements; thicken with private chronology only where you consent to publish it.</p>
 </blockquote>
 <h3 id="voice">Voice</h3>
@@ -473,7 +794,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>Then return for feel, markets, BBS, and media chapters as needed.</p>
 <hr>
-<h1 id="chapter-1-introduction-the-problem-of-fragmented-pipelines">Chapter 1. Introduction: The Problem of Fragmented Pipelines</h1>
+<h1 id="chapter-1-introduction-the-problem-of-fragmented-pipelines" class="chapter-head"><span class="ch-num">Chapter · 01</span>Chapter 1. Introduction: The Problem of Fragmented Pipelines</h1>
 <h2 id="11-the-problem">1.1 The problem</h2>
 <p>Contemporary interactive software is typically assembled across fragmented pipelines. Rendering is leased from Unity or Unreal; feel is tuned inside someone else’s fixed-update loop; distribution is a Steam checkbox; community infrastructure is Discord rented monthly; lighting theory is a YouTube tutorial half-remembered. Each fragment works. Together they produce a peculiar epistemic blindness: almost nobody owns the full stack long enough to feel how a UBO layout error, a coyote-time constant, a seat price, and a Workshop promise co-determine one another.</p>
 <p>For solo and small-studio makers, fragmentation has a second cost. Dependency surface area becomes identity. When the engine updates break your lighting, or the storefront algorithm changes discoverability, the studio’s knowledge evaporates because it never lived in the studio’s hands.</p>
@@ -514,7 +835,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h2 id="18-on-length-and-density">1.8 On length and density</h2>
 <p>Monograph length is not padding. Graphics and feel systems hide their lessons in detail. Where this draft is long, it is usually slow-reading a primary source that already existed (Ra docs, Steam EA FAQ, CIC pages, sdl2-blocks, bbslist.json). Draft 1.1 fills formerly short numerical feel gaps only where public headers expose defaults (180/45). Where it remains short—pre-Adobe private chronology, Laser Tag AppID, hipck—it is short on purpose because invention would be unethical.</p>
 <hr>
-<h1 id="chapter-2-method-practice-based-research-and-artifact-as-evidence">Chapter 2. Method: Practice-Based Research and Artifact-as-Evidence</h1>
+<h1 id="chapter-2-method-practice-based-research-and-artifact-as-evidence" class="chapter-head"><span class="ch-num">Chapter · 02</span>Chapter 2. Method: Practice-Based Research and Artifact-as-Evidence</h1>
 <h2 id="21-practice-based-research-stance">2.1 Practice-based research stance</h2>
 <p>Linda Candy and Ernest Edmonds distinguish research <em>into</em>, <em>through</em>, and <em>for</em> practice, and argue for relating theory, practice, and evaluation without collapsing practitioner knowledge into lab science.<sup id="fnref2:2-candy-edmonds"><a class="footnote-ref" href="#fn:2-candy-edmonds">18</a></sup> Schön’s reflective conversation with the situation supplies the cognitive model: materials talk back; the practitioner reframes.<sup id="fnref2:2-schon-1983"><a class="footnote-ref" href="#fn:2-schon-1983">17</a></sup></p>
 <p>This dissertation is primarily research <em>through</em> practice, reconstructed from public traces of practice. It is not a controlled experiment. It is also not mere portfolio narration. Claims must (a) name an artifact, (b) show a public handle on that artifact, and (c) extract a transferable pattern.</p>
@@ -535,7 +856,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Mark biography gaps explicitly.</li>
 <li>Do not infer private AI-assisted workflow details beyond the public skill tag “AI-assisted programming.”</li>
 </ul>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Describe the actual reflective loop used day-to-day (how bugs are journaled, how feel tests are run, how docs are updated when a pitfall is discovered). Public docs show <em>that</em> pitfalls are recorded; they do not show the human ritual that produces the table.</p>
 </blockquote>
 <h2 id="24-literature-use">2.4 Literature use</h2>
@@ -589,7 +910,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h2 id="210-self-directed-doctoral-form-and-artistic-research-debates">2.10 Self-directed doctoral form and artistic-research debates</h2>
 <p>Henk Borgdorff’s <em>Conflict of the Faculties</em> maps tensions between artistic research and academic legitimacy—useful caution for any self-directed “doctoral” monograph.<sup id="fnref2:2-borgdorff"><a class="footnote-ref" href="#fn:2-borgdorff">48</a></sup> Robin Nelson’s practice-as-research protocols emphasize documentation, critical reflection, and situated knowledge claims.<sup id="fnref2:2-nelson"><a class="footnote-ref" href="#fn:2-nelson">49</a></sup> Smith and Dean’s practice-led / research-led web describes iterative cycles rather than linear “results.”<sup id="fnref2:2-smith-dean"><a class="footnote-ref" href="#fn:2-smith-dean">47</a></sup></p>
 <p>This draft borrows those epistemic tools while refusing to smuggle a registrar’s signature. The ethical test is simple: would a careful reader, after the disclaimers, still think a university conferred a PhD? If yes, the document failed. Draft 1.1 keeps failing that failure mode on purpose—by repetition.</p>
-<h1 id="documentation-drift-as-epistemic-object">Documentation Drift as Epistemic Object</h1>
+<h1 id="documentation-drift-as-epistemic-object" class="chapter-head">Documentation Drift as Epistemic Object</h1>
 <blockquote>
 <p><strong>Draft 1.2 major section.</strong> Mismatches between Steam pages, digiflux operator docs, game manuals, repository headers, and dated JSON snapshots are treated here as <em>evidence about living systems</em>, not as errata to hide. This section elevates what Interlude A.6 began and what Chapters 4–7 already flag as <strong>COPY DRIFT</strong>.</p>
 </blockquote>
@@ -697,13 +1018,13 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h2 id="d6-section-claim">D.6 Section claim</h2>
 <p><strong>Claim CD:</strong> In a living owned pipeline, mismatches among Steam, docs, manuals, headers, and JSON snapshots are epistemic objects. Practice-based research should inventory them (Table T13), refuse silent reconciliation, and let author voice—not the drafting agent—perform any final product-definition repair.</p>
 <hr>
-<h1 id="chapter-3-historical-and-conceptual-context-from-bbs-culture-to-hardware-rt">Chapter 3. Historical and Conceptual Context: From BBS Culture to Hardware RT</h1>
+<h1 id="chapter-3-historical-and-conceptual-context-from-bbs-culture-to-hardware-rt" class="chapter-head"><span class="ch-num">Chapter · 03</span>Chapter 3. Historical and Conceptual Context: From BBS Culture to Hardware RT</h1>
 <h2 id="31-networked-culture-before-the-feed">3.1 Networked culture before the feed</h2>
 <p>Before the social feed, networked computing culture was often <em>placeful</em>: dial a number, land in a board, read messages, download a file, talk to a sysop. Bulletin Board Systems were social machines with scarcity (phone lines, baud rates) and strong local identity. Archival projects such as Jason Scott’s textfiles.com preserve lists, files, and cultural residue of that world.<sup id="fnref:2-textfiles"><a class="footnote-ref" href="#fn:2-textfiles">14</a></sup> A public 408-area listing records Digital Aquarium (1996) with Steven Philley’s name—evidence of participation in that culture, not a novelistic retelling.<sup id="fnref3:2-textfiles-408"><a class="footnote-ref" href="#fn:2-textfiles-408">13</a></sup></p>
 <p>Color It Company’s contemporary worldwide active BBS directory is not nostalgia cosplay; it is a systems project that aggregates live public lists (Telnet BBS Guide and companions, Synchronet, regional directories), attributes sources, and runs connection checks while explicitly refusing to invent unpublished private boards.<sup id="fnref2:2-cic-bbs"><a class="footnote-ref" href="#fn:2-cic-bbs">7</a></sup> Chapter 7 returns to this as preservation practice.</p>
 <h2 id="32-professional-tools-as-training-in-pipelines">3.2 Professional tools as training in pipelines</h2>
 <p>Public career framing places Philley in C/Qt work at Mobile Physician Technologies and as Software Development Engineer 4 on Adobe Premiere Pro (C++).<sup id="fnref2:2-linkedin"><a class="footnote-ref" href="#fn:2-linkedin">10</a></sup> Premiere is a canonical “owned by the org, leased by the individual” pipeline: deep C++ craft inside a vast commercial cathedral. The practice lesson is double-edged. Large products teach discipline—threading, media pipelines, performance paranoia—while also teaching how little of the total stack a single engineer owns.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> What Premiere (and prior professional work) taught about shipping discipline, code review, and the difference between owning a subsystem and owning a product. Keep concrete; avoid mythic origin stories.</p>
 </blockquote>
 <h2 id="33-indie-engines-and-the-return-of-ownership">3.3 Indie engines and the return of ownership</h2>
@@ -757,7 +1078,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>Borgdorff’s caution about artistic research and academic legitimacy remains the ethical brake: borrowing Candy’s epistemic tools must not smuggle a registrar’s signature.<sup id="fnref3:2-borgdorff"><a class="footnote-ref" href="#fn:2-borgdorff">48</a></sup></p>
 <hr>
-<h1 id="chapter-4-owned-rendering-pipelines-ra-engine-architecture-lighting-and-ui-philosophy">Chapter 4. Owned Rendering Pipelines: Ra Engine Architecture, Lighting, and UI Philosophy</h1>
+<h1 id="chapter-4-owned-rendering-pipelines-ra-engine-architecture-lighting-and-ui-philosophy" class="chapter-head"><span class="ch-num">Chapter · 04</span>Chapter 4. Owned Rendering Pipelines: Ra Engine Architecture, Lighting, and UI Philosophy</h1>
 <p>Ra Engine is the densest public artifact in this dissertation’s inventory: a Vulkan 1.4 hardware ray-tracing scene editor and game engine built at Flux Studios under Color It Company LLC, documented at digiflux.one/docs/, and listed on Steam as app 4732830.<sup id="fnref6:2-ra-docs"><a class="footnote-ref" href="#fn:2-ra-docs">1</a></sup><sup id="fnref3:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup> It is not presented here as “the best engine.” It is presented as an <em>owned</em> engine—one whose constraints, pitfalls, and philosophies are authored by the same practice that ships games on top of it.</p>
 <h2 id="41-design-stance-rt-as-the-renderer">4.1 Design stance: RT as the renderer</h2>
 <p>The documentation’s opening claim is unambiguous: Ra uses a full hardware ray-tracing pipeline; every pixel is ray traced; there is no rasterization fallback.<sup id="fnref7:2-ra-docs"><a class="footnote-ref" href="#fn:2-ra-docs">1</a></sup> Steam copy reinforces the same identity: “not baked, not approximated — in real time as you build.”<sup id="fnref4:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup></p>
@@ -1150,7 +1471,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>Schön’s “situation’s back-talk” is literally tabulated here.<sup id="fnref4:2-schon-1983"><a class="footnote-ref" href="#fn:2-schon-1983">17</a></sup> The practitioner did not merely solve bugs; they promoted them into communal memory.</p>
 <h2 id="411-chapter-claim">4.11 Chapter claim</h2>
 <p><strong>Claim C4:</strong> Ra Engine demonstrates that a solo/micro-studio can own a hardware RT pipeline deeply enough to publish operator-grade knowledge (AS strategy, UBO treaties, vendor quirks, terminal-first HCI, Lua hot-reload state policy) while shipping real games on that pipeline. The knowledge product is not only the binary; it is the disciplined public documentation of constraints.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Recount one concrete lighting or AS debugging night that changed a docs pitfall row—what the image looked like wrong, what the wrong mental model was, what corrected it. Keep it technical and dated if possible.</p>
 </blockquote>
 <hr>
@@ -1352,7 +1673,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </table>
 <p>Cross-vendor RT is often a slide. Here it is a <strong>buffer strategy and a launcher flag</strong>. That densifies Claim C4.</p>
 <hr>
-<h1 id="chapter-5-feel-systems-shipping-ablockalypse-and-the-craft-of-competitive-input">Chapter 5. Feel Systems &amp; Shipping: Ablockalypse and the Craft of Competitive Input</h1>
+<h1 id="chapter-5-feel-systems-shipping-ablockalypse-and-the-craft-of-competitive-input" class="chapter-head"><span class="ch-num">Chapter · 05</span>Chapter 5. Feel Systems &amp; Shipping: Ablockalypse and the Craft of Competitive Input</h1>
 <p>If Ra Engine is ownership of light and structure, Ablockalypse is ownership of <em>touch</em>. Public materials describe a competitive tetromino game with a custom SDL engine, shipped on Steam and itch.io (Windows/Linux), emphasizing fluid competitive play.<sup id="fnref3:2-cic-home"><a class="footnote-ref" href="#fn:2-cic-home">4</a></sup><sup id="fnref:2-itch-ablock"><a class="footnote-ref" href="#fn:2-itch-ablock">6</a></sup><sup id="fnref2:2-linkedin-gdc"><a class="footnote-ref" href="#fn:2-linkedin-gdc">11</a></sup></p>
 <h2 id="51-why-a-custom-sdl-engine-for-tetrominoes">5.1 Why a custom SDL engine for tetrominoes?</h2>
 <p>Genre familiarity can trick makers into underestimating systems depth. Competitive piece-drop games are input instruments. Timing, repeat rates, wall kicks, board geometry, and gamepad equivalence dominate player judgment. A custom SDL engine makes those parameters first-class rather than fighting a general engine’s UI-first update loop.</p>
@@ -1370,7 +1691,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h2 id="52-feel-as-a-designed-object">5.2 Feel as a designed object</h2>
 <p>Swink’s <em>Game Feel</em> treats sensation as something that can be authored, tuned, and broken.<sup id="fnref3:2-swink"><a class="footnote-ref" href="#fn:2-swink">25</a></sup> Ablockalypse’s public commitment to configurable delay/repeat (DAS/ARR-like) is exactly that authorship. Competitive communities historically care about Delayed Auto Shift and Auto Repeat Rate families of parameters; exposing delay/repeat configuration signals respect for that literacy even when marketing copy uses plain language.</p>
 <p>Wall kicks are likewise not a checkbox—they are a legality grammar for rotations near collision. Shipping a wall kick system means choosing a rules family and living with its edge cases.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Document the exact delay/repeat model, default values, wall-kick table lineage (which classic rules inspired it), and how playtests changed them. Cite your own notes or commits if available; do not invent numbers here.</p>
 </blockquote>
 <h2 id="53-dynamic-boards-and-the-block-editor">5.3 Dynamic boards and the block editor</h2>
@@ -1806,7 +2127,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h3 id="hard-drop-cooldown-as-accidental-input-hygiene">Hard-drop cooldown as accidental-input hygiene</h3>
 <p><code>PlayState.cpp:106–111</code> gates hard drop with <code>mLastHardDrop</code> timing; releasenotes 0.7.0.6 add “quick drop cool down which prevents accidental drop.”<sup id="fnref11:2-sdl2-blocks"><a class="footnote-ref" href="#fn:2-sdl2-blocks">33</a></sup><sup id="fnref10:2-ablock-releasenotes"><a class="footnote-ref" href="#fn:2-ablock-releasenotes">38</a></sup><sup id="fnref10:2-draft12-pack"><a class="footnote-ref" href="#fn:2-draft12-pack">45</a></sup> Feel research reading: mercy is not only coyote-time in 3D—competitive 2D instruments also need <strong>anti-misfire</strong> timing. Same studio that publishes Launch Up jump buffer publishes Ablockalypse drop cooldown—paired mercy grammars across genres.</p>
 <hr>
-<h1 id="chapter-6-platforms-markets-one-seat-editing-and-early-access-as-design">Chapter 6. Platforms &amp; Markets: One-Seat Editing and Early Access as Design</h1>
+<h1 id="chapter-6-platforms-markets-one-seat-editing-and-early-access-as-design" class="chapter-head"><span class="ch-num">Chapter · 06</span>Chapter 6. Platforms &amp; Markets: One-Seat Editing and Early Access as Design</h1>
 <p>Engines are not only renderers; they are contracts. Digiflux.one / Ra Engine’s public commercial design is unusually explicit, which makes it analyzable as practice knowledge rather than mere storefront noise.</p>
 <h2 id="61-the-one-seat-catalog-bet">6.1 The one-seat catalog bet</h2>
 <p>Steam and Digiflux messaging converge: <strong>one seat unlocks level editing across the Digiflux.one catalog</strong>—Laser Tag arenas, Launch Up levels, and future titles—forever relative to that seat’s promise.<sup id="fnref12:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup><sup id="fnref44:2-ra-docs"><a class="footnote-ref" href="#fn:2-ra-docs">1</a></sup></p>
@@ -1844,7 +2165,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>Public positioning: Laser Tag free; editing requires Ra.<sup id="fnref17:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup> This is a classic freemium-adjacent funnel, but oriented toward <strong>authorship</strong> rather than cosmetics. The moral quality of that funnel will depend on Workshop moderation and communication honesty during EA—future evaluative work for the public record.</p>
 <h2 id="68-chapter-claim">6.8 Chapter claim</h2>
 <p><strong>Claim C6:</strong> Digiflux’s one-seat editing model, permanent $49.99 pricing, and time-bounded Early Access disclosures are not peripheral business details; they are design parameters of the same owned pipeline as BLAS builds and coyote time. Platform economics can be practiced as craft.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Why $49.99 specifically? What alternatives were rejected (subscription, per-title editors, free engine + paid games only)? What Workshop governance principles do you intend when integration lands?</p>
 </blockquote>
 <hr>
@@ -2100,7 +2421,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p><strong>Platform process craft:</strong> monthly roadmap + polls + playtests are Digiflux <em>platform</em> verbs applied to a single title—EA as designed conversation (Schön), not only feature drip.<sup id="fnref9:2-schon-1983"><a class="footnote-ref" href="#fn:2-schon-1983">17</a></sup></p>
 <p>API categories noted: Camera Comfort; Playable without Timed Input; Single-player; Family Sharing. Platforms API Linux-true / Windows-false beside possible dual-OS requirement copy remains soft drift.<sup id="fnref16:2-draft12-pack"><a class="footnote-ref" href="#fn:2-draft12-pack">45</a></sup></p>
 <hr>
-<h1 id="chapter-7-living-networks-the-bbs-directory-as-preservation-and-systems-practice">Chapter 7. Living Networks: The BBS Directory as Preservation and Systems Practice</h1>
+<h1 id="chapter-7-living-networks-the-bbs-directory-as-preservation-and-systems-practice" class="chapter-head"><span class="ch-num">Chapter · 07</span>Chapter 7. Living Networks: The BBS Directory as Preservation and Systems Practice</h1>
 <h2 id="71-the-problem-of-dead-culture-narratives">7.1 The problem of “dead culture” narratives</h2>
 <p>Popular histories sometimes freeze Bulletin Board Systems in amber: a 1980s–1990s prologue that ends when the Web arrives. Archival reality is messier. Boards persist; protocols mutate (dial-up to Telnet/SSH/web gateways); languages and regions continue; sysops keep the lights on. The cultural mistake is to treat living networks as finished folklore.</p>
 <p>Color It Company’s worldwide active BBS directory at coloritcompany.com/bbs positions itself against that mistake.<sup id="fnref3:2-cic-bbs"><a class="footnote-ref" href="#fn:2-cic-bbs">7</a></sup></p>
@@ -2126,7 +2447,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>That pipeline rhymes with Ra’s documentation discipline. In both cases, the craft is making messy reality queryable without lying about uncertainty.</p>
 <h2 id="74-continuity-with-personal-networked-history">7.4 Continuity with personal networked history</h2>
 <p>A public mid-1990s listing on textfiles.com’s 408 BBS list associates Steven Philley with Digital Aquarium in Saratoga, CA.<sup id="fnref4:2-textfiles-408"><a class="footnote-ref" href="#fn:2-textfiles-408">13</a></sup> This dissertation treats that as a verifiable breadcrumb of participation in BBS culture—not as license to invent sysop war stories.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> If you wish, narrate Digital Aquarium (years active, software stack, what you learned about users, moderation, telephony scarcity). Stick to what you remember and any retained files; mark uncertainties.</p>
 </blockquote>
 <h2 id="75-preservation-vs-platform-enclosure">7.5 Preservation vs. platform enclosure</h2>
@@ -2410,13 +2731,13 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Equating directory operation with sysop identity for listed boards.</li>
 </ul>
 <hr>
-<h1 id="chapter-8-media-adjacency-photography-and-cultural-systems-as-attention-craft">Chapter 8. Media Adjacency: Photography and Cultural Systems as Attention Craft</h1>
+<h1 id="chapter-8-media-adjacency-photography-and-cultural-systems-as-attention-craft" class="chapter-head"><span class="ch-num">Chapter · 08</span>Chapter 8. Media Adjacency: Photography and Cultural Systems as Attention Craft</h1>
 <h2 id="81-why-adjacency-belongs-in-a-computing-dissertation">8.1 Why adjacency belongs in a computing dissertation</h2>
 <p>A narrow software monograph might ignore stevenphilley.com and panatau.com. This practice-based dissertation includes them because attention is the shared substrate of lighting, feel, and cultural explanation. The same maker who calibrates inverse-square intensities also sequences California light from warm to cool and builds cultural learning structure for Romanian history, crafts, dialect, and maps.<sup id="fnref:2-photo"><a class="footnote-ref" href="#fn:2-photo">8</a></sup><sup id="fnref:2-panatau"><a class="footnote-ref" href="#fn:2-panatau">9</a></sup><sup id="fnref5:2-inventory"><a class="footnote-ref" href="#fn:2-inventory">15</a></sup></p>
 <h2 id="82-photography-as-lighting-practice-outside-the-gpu">8.2 Photography as lighting practice outside the GPU</h2>
 <p>stevenphilley.com presents photography arranged warm to cool—“from golden hour through open Pacific”—with pieces such as Orchard Last Light, Storm Clearing, Bare Canopy, Filtered Fire, Motion at Dark, and coastal studies (Sky Study, Rock Spire, Limestone Shore, Pacific Terminus).<sup id="fnref2:2-photo"><a class="footnote-ref" href="#fn:2-photo">8</a></sup> Caption voice emphasizes hour, weather, and place: warmth at the edge of day; the coast’s indifference to the viewer.</p>
 <p>McCandless asked stage lighting to model form and compose visibility.<sup id="fnref4:2-mccandless"><a class="footnote-ref" href="#fn:2-mccandless">24</a></sup> Photography asks related questions with photons that will not recompile. For a ray-tracing practitioner, the adjacency is obvious: exposure, color temperature, fog, and reflection are not only shader flags; they are habits of noticing.</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Which photographic sessions most directly changed how you place lights in Ra? Name locations and lighting problems (e.g., dusk orchard bounce vs Pacific cliff rim light) and map them to engine controls (ACES off vibrancy, fog density, emissive GI samples).</p>
 </blockquote>
 <h2 id="83-panataucom-as-cultural-systems-design">8.3 panatau.com as cultural systems design</h2>
@@ -2466,7 +2787,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>The site’s own disclaimer-like pedagogy—“Imagined art” beside lessons; pictures “not evidence” but a way to stay with the place—mirrors BBS/engine exactness: <strong>do not pretend images are proof beyond what they are</strong>.<sup id="fnref5:2-panatau"><a class="footnote-ref" href="#fn:2-panatau">9</a></sup> Themes (Voroneț / Dusk / Folk / Wood) are orientation systems, akin to ACES/Gamma theatrical modes in Ra: same content, different atmospheric contract.</p>
 <p>Guitar blog adjacency remains optional and low-weight.<sup id="fnref2:2-blog-guitar"><a class="footnote-ref" href="#fn:2-blog-guitar">32</a></sup></p>
-<h1 id="chapter-9-synthesis-the-owned-pipelines-thesis">Chapter 9. Synthesis: The Owned Pipelines Thesis</h1>
+<h1 id="chapter-9-synthesis-the-owned-pipelines-thesis" class="chapter-head"><span class="ch-num">Chapter · 09</span>Chapter 9. Synthesis: The Owned Pipelines Thesis</h1>
 <h2 id="91-statement-of-the-thesis">9.1 Statement of the thesis</h2>
 <p><strong>Owned Pipelines thesis.</strong> Practitioner knowledge in interactive computing becomes uniquely dense, transferable, and ethically accountable when the same practice retains vertical responsibility across consecutive layers of a pipeline—hardware-adjacent rendering and input, authoring tools, shipped product feel, distribution contracts, and living community infrastructure—long enough for those layers to generate reciprocal constraints (back-talk) that the practitioner must document and design with.</p>
 <p>Ownership, in this sense, is not a purity spiral against using libraries (Ra uses tinygltf, GLFW, Lua, Vulkan). Ownership means <strong>not outsourcing the identity-bearing layer</strong> and not orphaning the feedback that identity-bearing layers produce.</p>
@@ -2615,7 +2936,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>The stack metaphor (metal → shaders/AS → editor → Lua/feel → storefront → living network) now has sharper failure modes at the storefront↔docs and probe↔login joints. Reciprocity still holds when those joints are <em>named</em>.</p>
 <p>Additional Draft 1.2 densifiers folded from <code>02-draft12-sources.md</code>: file:line <code>check_timers</code> / <code>rotateWithKick</code> / <code>PlayState</code> cites; Launch Up manual Ch01–08 pedagogy; Steam wall-run + monthly roadmap/polls; BBS Snapshot B <strong>1322/1099</strong> + anonymized EN/DE/ZH patterns; digiflux <code>/products</code> <strong>404</strong> as commercial-surface geography; fair Ra vs Unity/Unreal ownership table; Appendix H cite card. Word count grows by <em>handles</em>, not adjectives.</p>
 <hr>
-<h1 id="chapter-10-conclusion-and-future-work">Chapter 10. Conclusion and Future Work</h1>
+<h1 id="chapter-10-conclusion-and-future-work" class="chapter-head"><span class="ch-num">Chapter · 10</span>Chapter 10. Conclusion and Future Work</h1>
 <h2 id="101-recapitulation">10.1 Recapitulation</h2>
 <p>This self-directed practice-based doctoral dissertation asked what knowledge appears when pipelines are owned. Using only verified public artifacts and real literature, it read Ra Engine as an RT-owned renderer with terminal-first HCI and Lua membrane; Ablockalypse as feel ownership; Digiflux as market-design craft; the BBS directory as living-network systems ethics; and photography/cultural sites as attention adjacency. It advanced the Owned Pipelines thesis and refused institutional degree theater.</p>
 <h2 id="102-future-work-public-roadmap-only">10.2 Future work (public roadmap only)</h2>
@@ -2647,7 +2968,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>If the author later deposits a revised edition with first-person chronology and measured appendices, the public-artifact spine of Draft 1.0 should remain intact: still verifiable, still disclaimer-first, still allergic to fake precision.</p>
 <hr>
 <hr>
-<h1 id="interlude-a-deep-dive-worked-examples-from-public-docs">Interlude A. Deep Dive Worked Examples from Public Docs</h1>
+<h1 id="interlude-a-deep-dive-worked-examples-from-public-docs" class="chapter-head">Interlude A. Deep Dive Worked Examples from Public Docs</h1>
 <p>This interlude densifies Chapters 4–6 with worked readings of public examples. No private metrics are invented; code and constants are those already published on digiflux.one.</p>
 <h2 id="a1-launch-up-as-an-owned-feelrender-handshake">A.1 Launch Up as an owned feel–render handshake</h2>
 <p>Launch Up is the clearest public proof that Ra’s RT pipeline and Lua membrane are not parallel hobbies. Docs describe a vertical FPS platformer with height-based scoring at <strong>100 points per metre</strong>, <strong>coyote time 0.15s</strong>, and engine gravity <strong>−18.0</strong>. The tutorial scene <code>scenes/launch_up_tutorial1.gltf</code> contains rising platforms and a goal pad at <strong>Y = 26.5m</strong>.</p>
@@ -2735,7 +3056,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Localization layer supplies strings for options labels players actually see.</li>
 </ol>
 <p>That skeleton is enough for another engineer to recognize the instrument without this monograph inventing DAS folklore charts.</p>
-<h1 id="interlude-b-extended-literature-conversation-without-fake-citations">Interlude B. Extended Literature Conversation (Without Fake Citations)</h1>
+<h1 id="interlude-b-extended-literature-conversation-without-fake-citations" class="chapter-head">Interlude B. Extended Literature Conversation (Without Fake Citations)</h1>
 <h2 id="b1-schons-back-talk-and-the-pitfall-table">B.1 Schön’s back-talk and the pitfall table</h2>
 <p>Schön describes practitioners who reframe when materials talk back. Most engineering blogs perform this as story. Ra’s pitfall table performs it as <strong>tabular institutional memory</strong>. Each row pairs symptom and fix—convertible into onboarding, into future-you protection, into dissertation evidence.</p>
 <p>The silent failures (UBO mismatch, RADV primitiveOffset ignored) are especially Schönian: the situation’s back-talk is muted, so the practitioner must amplify it in docs or be gaslit by their own GPU.</p>
@@ -2819,7 +3140,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tbody>
 </table>
 <p>These works thicken method and context; they are not pretended co-authorship of Ra or Ablockalypse.</p>
-<h1 id="interlude-c-methodological-audit-trail">Interlude C. Methodological Audit Trail</h1>
+<h1 id="interlude-c-methodological-audit-trail" class="chapter-head">Interlude C. Methodological Audit Trail</h1>
 <p>To help future revisers (including Steven) audit this draft:</p>
 <ol>
 <li><strong>Primary technical assertions about Ra</strong> were cross-checked against digiflux.one/docs/ and lua-api pages during drafting (September 2026 window).</li>
@@ -2834,7 +3155,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>If a URL changes, replace handles in References and Appendix A; do not silently “update” factual claims without re-reading sources.</p>
 <hr>
-<h1 id="chapter-4-supplement-architecture-patterns-worth-stealing-ethically">Chapter 4 Supplement — Architecture Patterns Worth Stealing (Ethically)</h1>
+<h1 id="chapter-4-supplement-architecture-patterns-worth-stealing-ethically" class="chapter-head"><span class="ch-num">Chapter · 04</span>Chapter 4 Supplement — Architecture Patterns Worth Stealing (Ethically)</h1>
 <p>These patterns are transferable <em>ideas</em>, not an invitation to copy proprietary code:</p>
 <ol>
 <li><strong>World-bake + identity instances</strong> when you want simpler closest-hit math and can afford rebuilds on moves.</li>
@@ -2847,7 +3168,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li><strong>Games as continuous integration</strong> for the editor that edits them.</li>
 </ol>
 <hr>
-<h1 id="chapter-5-supplement-competitive-craft-checklist-for-author-completion">Chapter 5 Supplement — Competitive Craft Checklist (for author completion)</h1>
+<h1 id="chapter-5-supplement-competitive-craft-checklist-for-author-completion" class="chapter-head"><span class="ch-num">Chapter · 05</span>Chapter 5 Supplement — Competitive Craft Checklist (for author completion)</h1>
 <p>When expanding Ablockalypse materials, fill these without inventing:</p>
 <ul>
 <li>[x] Default DAS-like delay (ms) — <strong>180</strong> from <code>inc/Input.h</code> (Draft 1.1)</li>
@@ -2861,7 +3182,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ul>
 <p>Draft 1.2 fills algorithm/range evidence from public source; lineage naming, determinism, and exploit lists still await author voice.</p>
 <hr>
-<h1 id="chapter-9-supplement-falsifiability-draft-12-expansion">Chapter 9 Supplement — Falsifiability (Draft 1.2 expansion)</h1>
+<h1 id="chapter-9-supplement-falsifiability-draft-12-expansion" class="chapter-head"><span class="ch-num">Chapter · 09</span>Chapter 9 Supplement — Falsifiability (Draft 1.2 expansion)</h1>
 <p>The Owned Pipelines thesis is a practice claim, not a law of nature. Draft 1.2 expands disconfirmation conditions so the thesis cannot hide behind vibe.</p>
 <h2 id="falsifiers-would-weaken-or-break-the-thesis">Falsifiers (would weaken or break the thesis)</h2>
 <ol>
@@ -2892,7 +3213,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ul>
 <p>Falsifiability keeps a practice-based dissertation from becoming unfalsifiable mystique.</p>
 <hr>
-<h1 id="extended-chapter-commentary-reading-the-public-record-as-a-monograph">Extended Chapter Commentary: Reading the Public Record as a Monograph</h1>
+<h1 id="extended-chapter-commentary-reading-the-public-record-as-a-monograph" class="chapter-head">Extended Chapter Commentary: Reading the Public Record as a Monograph</h1>
 <p>The sections below intentionally lengthen the dissertation toward monograph scale by slow reading—staying with public materials until transferable claims stabilize. They do not introduce new unverified biography.</p>
 <h2 id="e1-why-doctoral-form-without-a-registrar">E.1 Why “doctoral form” without a registrar</h2>
 <p>Universities bundle three things that are often conflated: (1) supervised training, (2) credential signaling, and (3) archival genres for knowledge. This document borrows (3), declines to fake (2), and leaves (1) as the author’s lifelong self-supervision plus whatever mentors they later name in expansion hooks.</p>
@@ -2948,7 +3269,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <p>That curriculum needs no fake degree program; it needs discipline.</p>
 <h2 id="e12-on-ai-assisted-programming-bounded">E.12 On AI-assisted programming (bounded)</h2>
 <p>Public career tags include AI-assisted programming. This draft does <strong>not</strong> invent a workflow. It notes only that assistance tools, like engines, can become rented pipelines that erode ownership if accepted uncritically. The Owned Pipelines thesis implies a stance: assistants may accelerate typing; they must not become the unexamined author of identity-bearing layers (AS strategy, feel constants, pricing ethics, preservation disclaimers).</p>
-<blockquote>
+<blockquote class="callout callout-practitioner">
 <p><strong>Practitioner note / open for author expansion:</strong> Describe your actual AI-assisted boundaries in CIC work—review rituals, rejection patterns, what you never outsource.</p>
 </blockquote>
 <h2 id="e13-word-on-transfer-to-other-domains">E.13 Word on transfer to other domains</h2>
@@ -2972,7 +3293,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <h2 id="e15-acknowledgements-posture">E.15 Acknowledgements posture</h2>
 <p>A self-directed draft still depends on upstream publics: Khronos; GLTF ecosystem; Telnet BBS Guide and other list maintainers; Steam as distribution infrastructure; readers who enforce the degree disclaimer. Author expansion should thank humans by name where appropriate—without inventing mentors who were not there.</p>
 <hr>
-<h1 id="annotated-field-commentary-cameraubo-as-treatise">Annotated Field Commentary: CameraUBO as Treatise</h1>
+<h1 id="annotated-field-commentary-cameraubo-as-treatise" class="chapter-head">Annotated Field Commentary: CameraUBO as Treatise</h1>
 <p>The following commentary walks the publicly documented CameraUBO fields as a miniature treatise on what an owned RT editor must continuously tell the GPU.<sup id="fnref53:2-ra-docs"><a class="footnote-ref" href="#fn:2-ra-docs">1</a></sup> Field names are from docs; commentary is interpretive practice knowledge.</p>
 <ol>
 <li><strong>viewInverse / projInverse</strong> — Camera basis for primary ray generation. Ownership implication: fly-mode roll must truly update the basis (<code>cameraUp</code>), or later fields become lies painted on a wrong ray.</li>
@@ -2991,7 +3312,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>A rented pipeline often splits these concerns across five subsystems with five GUIs. Ra’s treaty says: one struct, one order, one chance to silently corrupt everything. That severity is pedagogical.</p>
 <hr>
-<h1 id="annotated-walkthrough-a-public-lua-session-skeleton">Annotated Walkthrough: A Public Lua Session Skeleton</h1>
+<h1 id="annotated-walkthrough-a-public-lua-session-skeleton" class="chapter-head">Annotated Walkthrough: A Public Lua Session Skeleton</h1>
 <p>Using only patterns published in the Lua API docs, a canonical Launch-Up-like session looks like this conceptually:<sup id="fnref14:2-lua-api"><a class="footnote-ref" href="#fn:2-lua-api">2</a></sup></p>
 <ol>
 <li>Engine loads scene GLTF; builds per-object BLASes; binds Lua.</li>
@@ -3004,7 +3325,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>The session is a research instrument: it forces stable naming, durable state policy, and RT-side emissive feedback into everyday level craft.</p>
 <hr>
-<h1 id="risk-register-for-the-owned-pipelines-practice">Risk Register for the Owned Pipelines Practice</h1>
+<h1 id="risk-register-for-the-owned-pipelines-practice" class="chapter-head">Risk Register for the Owned Pipelines Practice</h1>
 <table>
 <thead>
 <tr>
@@ -3072,7 +3393,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tbody>
 </table>
 <hr>
-<h1 id="style-notes-for-stevens-voice-pass">Style Notes for Steven’s Voice Pass</h1>
+<h1 id="style-notes-for-stevens-voice-pass" class="chapter-head">Style Notes for Steven’s Voice Pass</h1>
 <p>When replacing hooks, prefer:</p>
 <ul>
 <li>Concrete nouns (BLAS, coyote, Telnet, orchard dusk)</li>
@@ -3088,7 +3409,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Mythic lone-genius framing that erases upstream lists, Khronos, and players</li>
 </ul>
 <hr>
-<h1 id="appendix-b-suggested-figure-captions-for-a-future-illustrated-edition">Appendix B. Suggested Figure Captions for a Future Illustrated Edition</h1>
+<h1 id="appendix-b-suggested-figure-captions-for-a-future-illustrated-edition" class="chapter-head">Appendix B. Suggested Figure Captions for a Future Illustrated Edition</h1>
 <p>If Steven later exports diagrams, these captions are ready:</p>
 <p><strong>Figure F1.</strong> Owned Pipelines stack diagram from Vulkan/AS through Lua feel into seat pricing and BBS aggregation.<br>
 <strong>Figure F2.</strong> Primary ray branching with reflection, refraction (<code>fromRefraction</code>), and GI (<code>fromGI</code>) flags.<br>
@@ -3099,7 +3420,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <strong>Figure F7.</strong> Ablockalypse loop: input delay/repeat → rotation with wall kicks → board reconfiguration.<br>
 <strong>Figure F8.</strong> BBS card UI: upstream credit line + connection light + explicit non-login disclaimer.</p>
 <hr>
-<h1 id="appendix-c-quotation-bank-from-public-sources-for-author-approved-pull-quotes">Appendix C. Quotation Bank from Public Sources (for author-approved pull-quotes)</h1>
+<h1 id="appendix-c-quotation-bank-from-public-sources-for-author-approved-pull-quotes" class="chapter-head">Appendix C. Quotation Bank from Public Sources (for author-approved pull-quotes)</h1>
 <p>Pull-quotes below are paraphrased tightly from public pages; verify wording against live URLs before poster use.</p>
 <ol>
 <li>Ra docs: every pixel ray traced; no rasterization fallback.  </li>
@@ -3130,7 +3451,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Launch Up manual/docs: coyote 0.15s; gravity −18; 100 pts/metre; jump buffer 0.12s (manual pack).</li>
 </ol>
 <hr>
-<h1 id="appendix-c-supplement-draft-12-pull-quotes-author-approved-candidates">Appendix C Supplement — Draft 1.2 Pull-Quotes (author-approved candidates)</h1>
+<h1 id="appendix-c-supplement-draft-12-pull-quotes-author-approved-candidates" class="chapter-head">Appendix C Supplement — Draft 1.2 Pull-Quotes (author-approved candidates)</h1>
 <p>Short public strings suitable for pull-quotes after Steven’s approval (do not invent):<sup id="fnref4:2-blog-input"><a class="footnote-ref" href="#fn:2-blog-input">30</a></sup><sup id="fnref4:2-blog-localization"><a class="footnote-ref" href="#fn:2-blog-localization">31</a></sup><sup id="fnref17:2-launchup-manual"><a class="footnote-ref" href="#fn:2-launchup-manual">42</a></sup><sup id="fnref28:2-steam-ra"><a class="footnote-ref" href="#fn:2-steam-ra">3</a></sup><sup id="fnref3:2-steam-launch"><a class="footnote-ref" href="#fn:2-steam-launch">41</a></sup><sup id="fnref12:2-cic-bbs"><a class="footnote-ref" href="#fn:2-cic-bbs">7</a></sup><sup id="fnref20:2-draft12-pack"><a class="footnote-ref" href="#fn:2-draft12-pack">45</a></sup></p>
 <p><strong>Input / feel (blog + manual):</strong></p>
 <ul>
@@ -3160,14 +3481,14 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ul>
 <p><strong>Docs drift caution for quoters:</strong> never quote $250 as Steam price; never quote hub “30” as the Lua inventory of record without the 48 footnote.</p>
 <hr>
-<h1 id="appendix-d-how-to-cite-this-document">Appendix D. How to Cite This Document</h1>
+<h1 id="appendix-d-how-to-cite-this-document" class="chapter-head">Appendix D. How to Cite This Document</h1>
 <p>Because this is <strong>not</strong> an institutional dissertation, citations should not imply university deposit. Suggested citation form:</p>
 <blockquote>
 <p>Philley, Steven. <em>Owned Pipelines: Practice-Based Knowledge from Thirty Years of Hands-On Computing.</em> Practice-based doctoral dissertation (self-directed). Color It Company LLC / Flux Studios, Campbell, CA. Draft 1.2, September 2026. Markdown monograph.</p>
 </blockquote>
 <p>Do <strong>not</strong> cite as “PhD dissertation, [University].”</p>
 <hr>
-<h1 id="appendix-e-change-log">Appendix E. Change Log</h1>
+<h1 id="appendix-e-change-log" class="chapter-head">Appendix E. Change Log</h1>
 <table>
 <thead>
 <tr>
@@ -3210,7 +3531,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Confirm or omit panatau authorship and hipck entirely.</li>
 </ol>
 <p>Hardware-RT craft literature such as <em>Ray Tracing Gems</em> remains recommended literacy for readers extending Ch4 claims into their own engines.<sup id="fnref3:2-rt-gems"><a class="footnote-ref" href="#fn:2-rt-gems">53</a></sup></p>
-<h1 id="comparative-engine-ownership-table-ra-vs-typical-rented-pipelines">Comparative Engine Ownership Table (Ra vs Typical Rented Pipelines)</h1>
+<h1 id="comparative-engine-ownership-table-ra-vs-typical-rented-pipelines" class="chapter-head">Comparative Engine Ownership Table (Ra vs Typical Rented Pipelines)</h1>
 <p>This table is a <strong>conceptual contrast</strong>, not a bench mark and not a moral ranking of Unity/Unreal users. Fairness rule: rented engines provide extraordinary leverage; ownership epistemology asks what identity-bearing knowledge remains in the studio’s hands.</p>
 <table>
 <thead>
@@ -3322,7 +3643,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tbody>
 </table>
 <p><strong>Fairness rule:</strong> rented engines provide extraordinary leverage and literacy; Owned Pipelines asks which identity-bearing layers remain in the <em>studio’s</em> hands long enough to talk back. A Unreal team that owns its gameplay framework deeply is not “wrong”—it practices a different default dependency weather. Ra’s public bet is that AS strategy, UBO treaties, feel constants, seat price, and Workshop promises can co-reside in one practice’s reflective field.</p>
-<h1 id="failure-modes-register-expanded">Failure Modes Register (Expanded)</h1>
+<h1 id="failure-modes-register-expanded" class="chapter-head">Failure Modes Register (Expanded)</h1>
 <table>
 <thead>
 <tr>
@@ -3462,7 +3783,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tr>
 </tbody>
 </table>
-<h1 id="annotated-public-quotations-appendix-growth-draft-11-commentary">Annotated Public Quotations Appendix Growth (Draft 1.1 Commentary)</h1>
+<h1 id="annotated-public-quotations-appendix-growth-draft-11-commentary" class="chapter-head">Annotated Public Quotations Appendix Growth (Draft 1.1 Commentary)</h1>
 <p>The quotation bank in Appendix C is not decorative. Each pull-quote is a <strong>handle</strong> another researcher can re-fetch. Draft 1.1 grows the bank because Owned Pipelines knowledge is unusually concentrated in short public sentences that already carry operator force.</p>
 <h2 id="q1-on-childhood-self-statements-as-evidence-grade-de-hybrid">Q.1 On childhood self-statements as evidence grade D/E hybrid</h2>
 <p>TRS-80 / Color BASIC / IBM 5150 / Final Fantasy lines are SELF-STATED.<sup id="fnref4:2-blog-beginning"><a class="footnote-ref" href="#fn:2-blog-beginning">28</a></sup><sup id="fnref2:2-blog-start"><a class="footnote-ref" href="#fn:2-blog-start">29</a></sup> They authorize Preface vocation framing; they do not authorize invented employment years. The correct scholarly use is: <em>show the public mythos the practitioner has already published</em>, then leave chronological meshwork to the author. Back-dating caveats on the 1987-feed post prevent cargo-cult archival citation.</p>
@@ -3542,7 +3863,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </ol>
 <p>Compare enclosed platforms that present a single search box with opaque ranking: the BBS directory’s uglier honesty is the feature.</p>
 <hr>
-<h1 id="preface-addendum-what-backend-engineer-exploring-games-licenses">Preface Addendum: What “backend engineer exploring games” licenses</h1>
+<h1 id="preface-addendum-what-backend-engineer-exploring-games-licenses" class="chapter-head">Preface Addendum: What “backend engineer exploring games” licenses</h1>
 <p>The public GDC-adjacent self-description—primarily backend engineer exploring games, custom C++/SDL2 EA tetromino—licenses a reading of Ablockalypse as <strong>systems craft entering genre space</strong>, not as a pure design-school artifact.<sup id="fnref4:2-linkedin-gdc"><a class="footnote-ref" href="#fn:2-linkedin-gdc">11</a></sup> It also explains kinship with Ra’s operator-doc culture: both smell like engineers who document handshakes. It does <strong>not</strong> license inventing Adobe-era war stories; those remain practitioner hooks.<sup id="fnref9:2-inventory"><a class="footnote-ref" href="#fn:2-inventory">15</a></sup></p>
 <p>Combined with Color BASIC plurality shock and Final Fantasy systems desire, the public origin set is sufficient to motivate the thesis title’s “hands-on computing” phrase while still awaiting a non-fabricated thirty-year mesh.</p>
 <hr>
@@ -3559,7 +3880,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Author revision checklist (remaining GAPs)</li>
 </ol>
 <hr>
-<h1 id="colophon-word-count-note-draft-11">Colophon Word-Count Note (Draft 1.1)</h1>
+<h1 id="colophon-word-count-note-draft-11" class="chapter-head">Colophon Word-Count Note (Draft 1.1)</h1>
 <p>Baseline Draft 1.0: <strong>14942</strong> words (<code>wc -w</code>). Draft 1.1: <strong>24652</strong>. Draft 1.2 expands in place from public sources only (drift chapter, technical appendices, chapter thickenings). If honest density cannot reach the aspirational ~35k–45k band without fluff, the monograph stops at true density and reports the actual count—fabrication of anecdotes or metrics is forbidden even to hit a number.</p>
 <h2 id="106-closing-accountability-list-public-only">10.6 Closing accountability list (public only)</h2>
 <p>Hold Draft 1.2 to these checkable public commitments—no private metrics required:</p>
@@ -3572,7 +3893,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <li>Childhood blog posts stay SELF-STATED with the 1987 back-date caveat.<sup id="fnref5:2-blog-beginning"><a class="footnote-ref" href="#fn:2-blog-beginning">28</a></sup><sup id="fnref3:2-blog-start"><a class="footnote-ref" href="#fn:2-blog-start">29</a></sup>  </li>
 <li>This file remains a <strong>self-directed</strong> practice-based dissertation—not an institutional PhD award.</li>
 </ol>
-<h1 id="glossary">Glossary</h1>
+<h1 id="glossary" class="chapter-head">Glossary</h1>
 <p><strong>ACES</strong> — Academy Color Encoding System style filmic tonemapping option in Ra.<br>
 <strong>ARR / DAS-like controls</strong> — Auto-repeat / delayed auto-shift style input timing parameters; Ablockalypse publicly exposes configurable delay/repeat.<br>
 <strong>BLAS / TLAS</strong> — Bottom- and Top-Level Acceleration Structures in Vulkan RT.<br>
@@ -3594,11 +3915,11 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 <strong>check_timers</strong> — Ablockalypse end-of-<code>pollEvents</code> lambda (<code>Input.cpp:132–172,283</code>) implementing DAS/ARR-like repeat after dual-timer expiry.<br>
 <strong>rotateWithKick</strong> — Public center-relative wall-kick routine (<code>GameModel.cpp:153–207</code>); not claimed as SRS.  </p>
 <hr>
-<h1 id="references">References</h1>
+<h1 id="references" class="chapter-head">References</h1>
 <h2 id="primary-public-artifacts">Primary public artifacts</h2>
 <h2 id="secondary-literature-real-works">Secondary literature (real works)</h2>
 <hr>
-<h1 id="appendix-a-inventory-of-artifacts-with-urls">Appendix A. Inventory of Artifacts with URLs</h1>
+<h1 id="appendix-a-inventory-of-artifacts-with-urls" class="chapter-head">Appendix A. Inventory of Artifacts with URLs</h1>
 <table>
 <thead>
 <tr>
@@ -3803,7 +4124,7 @@ body{background:var(--base-2,#0C021A);color:var(--ink,#F8ECFF);margin:0}
 </tbody>
 </table>
 <hr>
-<h1 id="appendix-f-lua-api-catalog-and-minimal-script-lifecycle">Appendix F. Lua API Catalog and Minimal Script Lifecycle</h1>
+<h1 id="appendix-f-lua-api-catalog-and-minimal-script-lifecycle" class="chapter-head">Appendix F. Lua API Catalog and Minimal Script Lifecycle</h1>
 <blockquote>
 <p><strong>Draft 1.2 technical appendix.</strong> Catalogued from public digiflux Lua API documentation (quick-reference total: <strong>48</strong> functions). Hub pages that still say “all 30” are COPY DRIFT—prefer this catalog’s source page.<sup id="fnref23:2-lua-api"><a class="footnote-ref" href="#fn:2-lua-api">2</a></sup><sup id="fnref23:2-expansion-pack"><a class="footnote-ref" href="#fn:2-expansion-pack">44</a></sup></p>
 </blockquote>
@@ -4112,7 +4433,7 @@ end
 <p><strong>Known limitation (docs):</strong> “Physics collision is currently unaffected by visibility — hidden objects still block the player.” Publishing the limitation is research-grade honesty.</p>
 <p>Hot-reload quote (docs): Lua variables do not survive hot-reload; only <code>engine.set_var()</code> values (C++-side) survive—experiment vs commitment state again.</p>
 <hr>
-<h1 id="appendix-g-competitive-feel-instrument-paired-case-studies">Appendix G. Competitive Feel Instrument — Paired Case Studies</h1>
+<h1 id="appendix-g-competitive-feel-instrument-paired-case-studies" class="chapter-head">Appendix G. Competitive Feel Instrument — Paired Case Studies</h1>
 <blockquote>
 <p><strong>Draft 1.2 technical appendix.</strong> Pairs Launch Up public manual/engine constants with Ablockalypse public input/wall-kick systems as two instruments from one studio.<sup id="fnref22:2-launchup-manual"><a class="footnote-ref" href="#fn:2-launchup-manual">42</a></sup><sup id="fnref7:2-input-h"><a class="footnote-ref" href="#fn:2-input-h">37</a></sup><sup id="fnref14:2-sdl2-blocks"><a class="footnote-ref" href="#fn:2-sdl2-blocks">33</a></sup></p>
 </blockquote>
@@ -4299,7 +4620,7 @@ end
 <li>Author resolution of Launch Up store↔manual product definition.</li>
 </ul>
 <hr>
-<h1 id="appendix-h-annotated-input-delayrepeat-and-wall-kick-walk-fileline">Appendix H. Annotated Input Delay/Repeat and Wall-Kick Walk (file:line)</h1>
+<h1 id="appendix-h-annotated-input-delayrepeat-and-wall-kick-walk-fileline" class="chapter-head">Appendix H. Annotated Input Delay/Repeat and Wall-Kick Walk (file:line)</h1>
 <blockquote>
 <p><strong>Draft 1.2.</strong> Condenses §5.21 / §5.21b into a cite-ready appendix. Paths relative to <code>/workspace/dissertation/vendor/sdl2-blocks</code>.<sup id="fnref15:2-sdl2-blocks"><a class="footnote-ref" href="#fn:2-sdl2-blocks">33</a></sup><sup id="fnref24:2-draft12-pack"><a class="footnote-ref" href="#fn:2-draft12-pack">45</a></sup></p>
 </blockquote>
@@ -4359,7 +4680,7 @@ releasenotes 0.6.7.0 introduce; 0.7.1 CCW-only fix
 </table>
 <p>Same <em>family</em> of motor-control concern across pipeline layers—Owned Pipelines rhyme.</p>
 <hr>
-<h1 id="author-revision-checklist">Author Revision Checklist</h1>
+<h1 id="author-revision-checklist" class="chapter-head">Author Revision Checklist</h1>
 <p>Use this list to inject first-person thirty-year knowledge without breaking the no-fabrication rule. Each item is a place the draft already reserved for your voice.</p>
 <p><strong>Legend:</strong> ✅ filled from public sources in Drafts 1.1–1.2 · 🔶 partial · ❌ still needs Steven’s private/author voice</p>
 <ol>
@@ -4390,7 +4711,7 @@ releasenotes 0.6.7.0 introduce; 0.7.1 CCW-only fix
 <p><em>End of Draft 1.2 — Practice-based doctoral dissertation (self-directed). Not an institutional degree award.</em></p>
 <hr>
 <hr>
-<h1 id="afterword-for-future-empirical-appendices">Afterword for Future Empirical Appendices</h1>
+<h1 id="afterword-for-future-empirical-appendices" class="chapter-head">Afterword for Future Empirical Appendices</h1>
 <p>Draft 1.0 deliberately withheld numbers the public record did not provide; Draft 1.1–1.2 add only numbers now citable from public headers, storefronts, manuals, and JSON snapshots (e.g., Input.h 180/45; Launch Up 8.5/0.15/0.12/−18/100; BBS 1304/1092 and 1322/1099). Future empirical appendices—if Steven measures and publishes them—might include:</p>
 <ol>
 <li><strong>Frame-time tables</strong> for <code>material_showcase_v2.gltf</code> and Launch Up tutorial on RTX 3060, RX 6600, and Arc A380 at named resolutions and GI sample settings.</li>
@@ -4402,7 +4723,7 @@ releasenotes 0.6.7.0 introduce; 0.7.1 CCW-only fix
 </ol>
 <p>Until those exist, readers should treat architectural claims as qualitative practice knowledge with high documentary support, and commercial/performance outcomes as open.</p>
 <p>This afterword exists so the monograph’s silence on metrics cannot be mistaken for ignorance of evaluation—only for refusal to counterfeit it.</p>
-<h1 id="colophon">Colophon</h1>
+<h1 id="colophon" class="chapter-head">Colophon</h1>
 <p>Typeset as Markdown for revision velocity. Primary evidence window: September 2026 public web sources listed in References and Appendix A, deepened via <code>/workspace/dissertation/01-expansion-sources.md</code> and <code>/workspace/dissertation/02-draft12-sources.md</code>, live digiflux/Steam/GitHub/BBS/blog/manual fetches, and local shallow clone of <code>electrosy/sdl2-blocks</code> under <code>/workspace/dissertation/vendor/sdl2-blocks</code>. Author: Steven Philley. Studio: Color It Company LLC / Flux Studios, Campbell, California. This file is <strong>Draft 1.2</strong> of a practice-based doctoral dissertation (self-directed). It is not a university thesis deposit and not a conferred PhD credential.</p>
 <p><strong>Draft 1.2 word count:</strong> see Appendix E changelog row (computed with <code>wc -w</code>). Target band ~35k–45k <em>if and only if</em> content stayed substantive; fabrication forbidden to hit the number. Prefer stopping short over padding.</p>
 <div class="footnote">
@@ -4596,10 +4917,60 @@ releasenotes 0.6.7.0 introduce; 0.7.1 CCW-only fix
   var KEY='sp-theme';
   var root=document.documentElement;
   var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
-  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
-  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  function paint(){
+    var c=root.getAttribute('data-theme')||'neon';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paint();
+    });
+  });
   paint();
+
+  var disc=document.querySelector('.disclaimer');
+  var ribbon=document.querySelector('.disclaimer-ribbon');
+  if(disc && ribbon && 'IntersectionObserver' in window){
+    var dio=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        ribbon.classList.toggle('is-visible', !en.isIntersecting && en.boundingClientRect.top < 0);
+      });
+    },{threshold:0, rootMargin:'-8px 0px 0px 0px'});
+    dio.observe(disc);
+  }
+
+  var tocLinks=[].slice.call(document.querySelectorAll('.toc-pane a[href^="#"]'));
+  if(!tocLinks.length || !('IntersectionObserver' in window)) return;
+  var map={};
+  tocLinks.forEach(function(a){
+    var id=decodeURIComponent(a.getAttribute('href').slice(1));
+    if(id) map[id]=a;
+  });
+  var headings=[].slice.call(document.querySelectorAll('.article h1[id], .article h2[id]'))
+    .filter(function(h){return map[h.id];});
+  if(!headings.length) return;
+  var current=null;
+  function setActive(id){
+    if(current===id) return;
+    current=id;
+    tocLinks.forEach(function(a){
+      var on=a===map[id];
+      a.classList.toggle('is-active', on);
+      if(on) a.setAttribute('aria-current','true');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  var io=new IntersectionObserver(function(entries){
+    var visible=entries
+      .filter(function(e){return e.isIntersecting;})
+      .sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top;});
+    if(visible.length) setActive(visible[0].target.id);
+  },{rootMargin:'-12% 0px -68% 0px', threshold:[0,0.25,0.6]});
+  headings.forEach(function(h){io.observe(h);});
 })();
+
 </script>
 </body>
 </html>
