@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nearest stars — Sol’s neighborhood — Steven Philley</title>
+<meta name="description" content="Interactive list and distance-scale of the nearest stars to Sol: Proxima Centauri, Alpha Centauri, Barnard’s Star, Wolf 359, and more — distances in light-years and spectral types.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/nearest-stars/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Nearest stars — Sol’s neighborhood">
+<meta property="og:description" content="Clickable cards and a distance-scale map of nearby stars within ~12 light-years of Sol.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/nearest-stars/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Nearest stars — Sol’s neighborhood">
+<meta name="twitter:description" content="Proxima, Alpha Cen, Barnard’s, Wolf 359 — distances and spectral types.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:64ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:64ch}
+.shell{margin-top:28px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:start}
+.scale-wrap{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:16px 16px 12px;min-height:280px}
+.scale-wrap .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 12px}
+.scale{position:relative;height:220px;margin:8px 8px 28px}
+.scale-track{position:absolute;left:0;right:0;top:50%;height:2px;background:var(--line,#2c303a);transform:translateY(-50%)}
+.scale-tick{position:absolute;top:50%;width:1px;height:12px;background:var(--muted,#63666e);transform:translate(-50%,-50%)}
+.scale-tick span{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.06em;color:var(--muted,#63666e);white-space:nowrap}
+.star-dot{position:absolute;top:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 50%,var(--line,#2c303a));background:color-mix(in srgb,var(--accent,#c8b48a) 25%,transparent);cursor:pointer;padding:0}
+.star-dot:hover,.star-dot[aria-pressed="true"]{background:var(--accent,#c8b48a);border-color:var(--ink,#e8e6e1);width:16px;height:16px}
+.star-dot.sol{background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1);width:18px;height:18px;cursor:default}
+.star-dot .tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.06em;color:var(--ink,#e8e6e1);white-space:nowrap;background:rgba(0,0,0,.85);border:1px solid var(--line,#2c303a);padding:4px 8px;pointer-events:none}
+.star-dot:hover .tip,.star-dot[aria-pressed="true"] .tip{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px}
+.card{appearance:none;text-align:left;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 14px 12px;cursor:pointer;color:inherit;font:inherit}
+.card:hover,.card[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a))}
+.card[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
+.card .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 4px}
+.card h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em;margin:0;line-height:1}
+.card .meta{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;position:sticky;top:12px}
+.panel .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,36px);letter-spacing:.04em;margin:0 0 6px;line-height:1}
+.panel .type{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96);margin:0 0 14px}
+.stats{margin:0 0 14px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none;flex:1}
+.facts li{position:relative;padding:9px 0 9px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.credit{margin-top:auto;padding-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr}
+  .panel{position:static}
+  .more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/nearest-stars/" aria-current="page">Nearest stars</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Stellar neighborhood</p>
+  <h1>Nearest<br>stars</h1>
+  <p class="lede">The stars within about a dozen light-years of <strong>Sol</strong> — our Sun. Distances are approximate (parallax / RECONS-style public values, rounded). Most neighbors are faint red dwarfs; Alpha Centauri is the famous bright exception.</p>
+  <p class="note-schematic">Distance scale is linear in light-years (0–12 ly). Not a 3D map — just a readable yardstick. Spectral types use the standard OBAFGKM sequence.</p>
+
+  <div class="shell">
+    <div>
+      <div class="scale-wrap">
+        <p class="hint">Distance from Sol · click a marker or card</p>
+        <div class="scale" id="scale" role="img" aria-label="Linear distance scale from 0 to 12 light years"></div>
+      </div>
+      <div class="cards" id="cards" role="list"></div>
+    </div>
+    <aside class="panel" id="info" aria-live="polite">
+      <p class="tier">Select a star</p>
+      <h2 id="info-name">Sol’s neighborhood</h2>
+      <p class="type" id="info-type">Tap a card or scale marker.</p>
+      <ul class="stats" id="info-stats" hidden></ul>
+      <ul class="facts" id="info-facts">
+        <li>One light-year ≈ 9.46 trillion km — light’s travel in a Julian year.</li>
+        <li>Proxima Centauri is the closest known star; Alpha Cen A/B are a bright binary a hair farther.</li>
+        <li>Interstellar travel remains fiction at human timescales — Voyager 1 would need tens of thousands of years to reach even Proxima at current speed.</li>
+      </ul>
+      <p class="credit">Educational distances rounded from public catalogs (RECONS / Gaia-era literature summaries). Not a survey dump.</p>
+    </aside>
+  </div>
+
+  <p class="band">Astronomy desk</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Solar system</p><h3>Solar map</h3><p>Planets in our own AU-scale yard.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Bay Area</p><h3>Local sky</h3><p>What Campbell sees tonight-ish.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Milky Way</p><h3>Galaxy start</h3><p>Where Sol sits among the arms.</p></a>
+    <a href="/science/"><p class="n">Status desk</p><h3>Science</h3><p>Where the fields stand.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var MAX_LY=12;
+  var STARS=[
+    {id:'sol',name:'Sol (Sun)',ly:0,spec:'G2V',comp:'1',note:'Our G-type dwarf. Holds the solar system; everything else here is interstellar.',facts:['Baseline for the AU and the light-year.','Spectral type G2V — yellow dwarf on the main sequence.']},
+    {id:'proxima',name:'Proxima Centauri',ly:4.24,spec:'M5.5Ve',comp:'α Cen C',note:'Closest known star to Sol — a flare-active red dwarf with confirmed planets (incl. Proxima b in the optimistic habitable zone).',facts:['Gravitationally tied to Alpha Centauri A/B.','Far too dim for naked-eye viewing from Earth.']},
+    {id:'acen',name:'Alpha Centauri A & B',ly:4.37,spec:'G2V + K1V',comp:'Binary',note:'Brightest “star” in Centaurus from the southern sky — actually a close Sun-like + orange-dwarf pair.',facts:['Together with Proxima, the α Cen system.','Not visible from Campbell (too far south).']},
+    {id:'barnard',name:"Barnard's Star",ly:5.96,spec:'M4.0V',comp:'1',note:'High proper-motion red dwarf in Ophiuchus — famous for racing across the sky on human timescales.',facts:['Long history of planet claims; modern data is cautious.','Among the nearest single stars.']},
+    {id:'wolf359',name:'Wolf 359',ly:7.86,spec:'M6.0V',comp:'1',note:'Very faint, very cool red dwarf in Leo — a classic nearby M dwarf.',facts:['Invisible without a telescope.','Often cited in sci-fi as a “next stop.”']},
+    {id:'lalande',name:'Lalande 21185',ly:8.31,spec:'M2.0V',comp:'1',note:'Bright (for an M dwarf) neighbor in Ursa Major — one of the nearest naked-eye-marginal red dwarfs.',facts:['Has candidate planets in recent surveys.','Useful calibration target for M-dwarf studies.']},
+    {id:'sirius',name:'Sirius A & B',ly:8.60,spec:'A1V + DA2',comp:'Binary',note:'Brightest star in Earth’s night sky (Canis Major). Companion B is a white dwarf — a burned-out core.',facts:['Winter landmark from Campbell (see Local sky).','White dwarf B shows where Sun-like stars end up.']},
+    {id:'luyten',name:'Luyten 726-8',ly:8.73,spec:'M5.5V + M6V',comp:'Binary (UV Ceti)',note:'Flare-star binary — UV Ceti prototypes violent M-dwarf flares.',facts:['Shows why close-in planets around M dwarfs face radiation stress.','Also called BL Ceti / UV Ceti.']},
+    {id:'ross154',name:'Ross 154',ly:9.69,spec:'M3.5Ve',comp:'1',note:'Southern red dwarf (Sagittarius) — another flare-prone neighbor.',facts:['Below Bay Area horizon most of the time.','Typical of the local M-dwarf majority.']},
+    {id:'ross248',name:'Ross 248',ly:10.32,spec:'M5.5V',comp:'1',note:'Faint M dwarf in Andromeda’s direction on the sky — not the galaxy itself.',facts:['Will eventually be among Earth’s nearer neighbors as motions rearrange.','Educational reminder: “near” is relative.']},
+    {id:'epsilon',name:'Epsilon Eridani',ly:10.48,spec:'K2V',comp:'1',note:'Sun-like-ish orange dwarf with a debris disk — a classic SETI / planet-search target.',facts:['Visible from Campbell in the autumn/winter south.','Has a long-studied planetary / dust architecture.']},
+    {id:'lacaille',name:'Lacaille 9352',ly:10.72,spec:'M1.5V',comp:'1',note:'Southern M dwarf with high proper motion — among the nearest “bright” red dwarfs.',facts:['Hosts known planets in modern catalogs.','Invisible from Campbell latitude.']},
+    {id:'ross128',name:'Ross 128',ly:11.01,spec:'M4.0V',comp:'1',note:'Quietish red dwarf with a temperate-zone planet (Ross 128 b) — a hopeful nearby case.',facts:['Lower flare activity than Proxima.','Still too faint for unaided eyes.']},
+    {id:'ez',name:'EZ Aquarii',ly:11.11,spec:'M5V trio',comp:'Triple',note:'Tight triple M-dwarf system — crowded neighborhood dynamics.',facts:['Shows multiples are common among red dwarfs.','Educational complexity beyond single-star cartoons.']},
+    {id:'procyon',name:'Procyon A & B',ly:11.46,spec:'F5IV-V + DQZ',comp:'Binary',note:'Bright winter star (Canis Minor) with a white-dwarf companion — part of the Winter Triangle.',facts:['Easy from Campbell (see Local sky).','A: slightly evolved; B: degenerate remnant.']}
+  ];
+
+  var scale=document.getElementById('scale');
+  var cards=document.getElementById('cards');
+
+  /* ticks */
+  [0,2,4,6,8,10,12].forEach(function(ly){
+    var t=document.createElement('div');
+    t.className='scale-tick';
+    t.style.left=(ly/MAX_LY*100)+'%';
+    t.innerHTML='<span>'+ly+' ly</span>';
+    scale.appendChild(t);
+  });
+  var track=document.createElement('div');
+  track.className='scale-track';
+  scale.appendChild(track);
+
+  function select(id){
+    var s=STARS.filter(function(x){return x.id===id;})[0];
+    if(!s)return;
+    document.querySelectorAll('.star-dot[aria-pressed],.card[aria-pressed]').forEach(function(el){el.setAttribute('aria-pressed','false');});
+    var dot=document.querySelector('.star-dot[data-id="'+id+'"]');
+    var card=document.querySelector('.card[data-id="'+id+'"]');
+    if(dot)dot.setAttribute('aria-pressed','true');
+    if(card)card.setAttribute('aria-pressed','true');
+    document.getElementById('info-name').textContent=s.name;
+    document.getElementById('info-type').textContent=s.spec+(s.comp?' · '+s.comp:'');
+    var stats=document.getElementById('info-stats');
+    stats.hidden=false;
+    stats.innerHTML='<li><span class="k">Distance</span><span class="v">'+s.ly+' ly</span></li>'+
+      '<li><span class="k">Spectral</span><span class="v">'+s.spec+'</span></li>'+
+      '<li><span class="k">System</span><span class="v">'+s.comp+'</span></li>';
+    var facts=document.getElementById('info-facts');
+    facts.innerHTML='<li>'+s.note+'</li>'+s.facts.map(function(f){return '<li>'+f+'</li>';}).join('');
+  }
+
+  STARS.forEach(function(s){
+    var pct=Math.min(100,(s.ly/MAX_LY)*100);
+    var btn=document.createElement('button');
+    btn.type='button';
+    btn.className='star-dot'+(s.id==='sol'?' sol':'');
+    btn.dataset.id=s.id;
+    btn.style.left=pct+'%';
+    btn.setAttribute('aria-label',s.name+', '+s.ly+' light years');
+    btn.innerHTML='<span class="tip">'+s.name+' · '+s.ly+' ly</span>';
+    if(s.id!=='sol')btn.addEventListener('click',function(){select(s.id);});
+    else btn.addEventListener('click',function(){select(s.id);});
+    scale.appendChild(btn);
+
+    if(s.id==='sol')return;
+    var c=document.createElement('button');
+    c.type='button';
+    c.className='card';
+    c.dataset.id=s.id;
+    c.setAttribute('role','listitem');
+    c.innerHTML='<p class="n">'+s.ly+' ly · '+s.spec+'</p><h3>'+s.name+'</h3><p class="meta">'+s.comp+'</p>';
+    c.addEventListener('click',function(){select(s.id);});
+    cards.appendChild(c);
+  });
+
+  select('proxima');
+})();
+</script>
+</body>
+</html>
