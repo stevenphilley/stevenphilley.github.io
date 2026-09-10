@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installation — Sysop Manual — Steven Philley</title>
+<meta name="description" content="Synchronet Windows and Unix/Linux installation, first launch, and non-root security howtos.">
+<link rel="canonical" href="https://stevenphilley.com/bbs/sysopmanual/install/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Installation — Sysop Manual">
+<meta property="og:description" content="Synchronet Windows and Unix/Linux installation, first launch, and non-root security howtos.">
+<meta property="og:url" content="https://stevenphilley.com/bbs/sysopmanual/install/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Installation — Sysop Manual">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,10vw,96px);line-height:.88;margin:0}
+.e-hero .lede{max-width:62ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.manual{padding:8px 0 0}
+.manual h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4.5vw,38px);letter-spacing:.06em;margin:36px 0 12px;border-top:1px solid var(--line,#2c303a);padding-top:28px}
+.manual > h2:first-child{border-top:0;padding-top:18px;margin-top:18px}
+.manual h3{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+.manual h4{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink,#e8e6e1);margin:22px 0 8px}
+.manual p,.manual li{font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:68ch}
+.manual p{margin:0 0 14px}
+.manual a{color:var(--ink,#e8e6e1)}
+.manual a:hover{color:var(--accent,#c8b48a)}
+.manual ul,.manual ol{margin:0 0 16px;padding-left:1.35rem;max-width:68ch}
+.manual li{margin:0 0 6px}
+.manual li > ul,.manual li > ol{margin-top:6px;margin-bottom:0}
+.manual strong{color:var(--ink,#e8e6e1);font-weight:500}
+.manual em{font-style:italic}
+.manual hr{border:0;border-top:1px solid var(--line,#2c303a);margin:28px 0}
+.manual code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink,#e8e6e1);background:rgba(255,255,255,.04);padding:1px 5px;border-radius:3px}
+.manual pre{margin:0 0 18px;padding:14px 16px;overflow-x:auto;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);max-width:100%}
+.manual pre code{background:transparent;padding:0;font-size:12px;line-height:1.55;color:var(--ink,#e8e6e1)}
+.manual table{width:100%;border-collapse:collapse;margin:0 0 18px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55}
+.manual th,.manual td{border-top:1px solid var(--line,#2c303a);padding:10px 12px 10px 0;text-align:left;vertical-align:top;color:var(--ink-soft,#9b9a96)}
+.manual th{color:var(--accent,#c8b48a);letter-spacing:.08em;text-transform:uppercase;font-weight:500;font-size:11px}
+.manual blockquote{margin:0 0 16px;padding:0 0 0 14px;border-left:2px solid var(--accent,#c8b48a)}
+.manual blockquote p{margin:0}
+.wiki-src{margin:-6px 0 20px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+.wiki-src a{color:var(--ink-soft,#9b9a96)}
+.toc{list-style:none;margin:0 0 18px;padding:0}
+.toc li{border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:var(--ink-soft,#9b9a96);max-width:none}
+.toc li a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.toc li a:hover{color:var(--ink,#e8e6e1);border-bottom-color:var(--accent,#c8b48a)}
+.chapters{list-style:none;margin:8px 0 0;padding:0}
+.chapters li{border-top:1px solid var(--line,#2c303a);padding:14px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.chapters a{color:inherit}
+.chapters .num{color:var(--accent,#c8b48a);margin-right:10px;letter-spacing:.08em}
+.pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:36px 0 0;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pager a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.pager a:hover{color:var(--ink,#e8e6e1)}
+.source{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--muted,#63666e)}
+.source a{color:var(--ink-soft,#9b9a96)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:640px){
+  .manual table{display:block;overflow-x:auto}
+  .e-top{font-size:10px;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/bbs/">BBS</a>
+      <a href="/bbs/sysopmanual/">Sysop manual</a>
+      <a href="/bbs/sysopmanual/install/" aria-current="page">Install</a>
+      <a href="/sitemap.html">Site contents</a>
+
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Sysop Manual — 01</p>
+    <h1>Installation</h1>
+    <p class="lede">1.0 Windows install; 19.0–19.2 Unix/Linux install and security howtos.</p>
+  </header>
+
+  <article class="manual">
+<h2>1.0 Installation Instructions (Windows)</h2>
+<p>Synchronet for Windows ships as a downloadable archive containing an installer executable (for current releases, something like <code>install_SBBS_v3.21e.exe</code> plus <code>install.rtf</code> and <code>FILE_ID.DIZ</code>). Install from the official distribution, not from random mirrors, so you get matching runtimes and Control Panel bits.</p>
+<h3>Prerequisites</h3>
+<p>Before the installer will run cleanly you need the <strong>x86</strong> (32-bit) Visual C++ redistributables — even on a 64-bit Windows host — because Synchronet’s Win32 build and many DOS/FOSSIL door helpers are 32-bit:</p>
+<ul>
+<li>Microsoft Visual C++ 2010 SP1 Redistributable Package (<strong>x86</strong> / <code>vcredist_x86.exe</code>)</li>
+<li>Microsoft Visual C++ Redistributable Runtime v14 (<strong>x86</strong>)</li>
+</ul>
+<p>If those are missing, native executables under <code>exec\</code> may fail to start with cryptic DLL errors.</p>
+<h3>Install from official releases</h3>
+<ol>
+<li>Download the Synchronet distribution ZIP (e.g. from synchro.net).</li>
+<li>Extract it to a temporary folder. You should see the installer EXE, <code>install.rtf</code>, and <code>FILE_ID.DIZ</code>.</li>
+<li>Stop any already-running Synchronet instance (Control Panel / <code>sbbs</code>). The installer will refuse to continue if Synchronet is still running.</li>
+<li>Run the <code>install_SBBS_…</code> executable.</li>
+<li>Read through the welcome screen and the embedded <code>install.rtf</code> notes.</li>
+<li>Choose an installation directory. The default is recommended. <strong>Do not</strong> put Synchronet on a path with long names or spaces if you still run 16-bit DOS utilities (doors, archivers, protocol drivers) — those need DOS-compatible 8.3 paths. A common choice is <code>C:\SBBS</code>.</li>
+<li>Select additional tasks (desktop icon, Startup-folder shortcut, etc.).</li>
+<li>Click Install, wait for files to copy, then Finish. Optionally launch the Synchronet Control Panel immediately.</li>
+</ol>
+<p>After install you may see a Desktop and/or Startup shortcut. Delete the Startup shortcut if you do not want Synchronet auto-starting at boot.</p>
+<h3>First launch checklist (Windows)</h3>
+<ul>
+<li>Open <strong>Synchronet Control Panel</strong> (<code>sbbsctrl</code>) and confirm the Terminal, Mail, FTP, Web, and Services threads show as you expect.</li>
+<li>Run <strong>SCFG</strong> (BBS → Configure, or <code>exec\scfg.exe</code>) and set system name, QWK-ID, sysop alias, and new-user defaults before opening ports to the Internet.</li>
+<li>Confirm Windows Firewall (and any router NAT) allows the ports you actually enable (Telnet/SSH/RLogin, FTP, HTTP/HTTPS, SMTP/POP3/IMAP, etc.).</li>
+<li>If you upgrade over an existing tree, stop the BBS first; never overwrite a live <code>data\</code> or <code>ctrl\</code> while <code>sbbs</code> is writing.</li>
+</ul>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/install:win" rel="noopener">https://wiki.synchro.net/install:win</a></p>
+<hr />
+<h2>19.0 Unix/Linux</h2>
+<p>Unix/Linux installs are <strong>source builds</strong>. You pick a run-as user, create the install tree, build from Git or a tarball, configure <code>SBBSCTRL</code> / <code>sbbs.ini</code>, then run in console or daemon mode. Running the whole stack as root is discouraged.</p>
+<h3>19.1 Installation Instructions (Unix/Linux)</h3>
+<h4>Run-as user</h4>
+<p>Install and run Synchronet as the same non-root account (commonly <code>sbbs</code>):</p>
+<pre><code class="language-bash">adduser sbbs
+# optional on Linux: grant sudo for admin tasks
+sudo adduser sbbs sudo
+su - sbbs
+</code></pre>
+<p>If you must bind privileged ports (&lt;1024) as root at start, set the <code>[Unix]</code> <strong>User</strong> value in <code>ctrl/sbbs.ini</code> so <code>sbbs</code> drops privileges after binding.</p>
+<h4>Create the Synchronet directory</h4>
+<p>Common locations: <code>/sbbs</code> or <code>~/sbbs</code> under the run-as user’s home. Executables look for <code>ctrl</code> under <code>/sbbs/ctrl</code> by default; if you install elsewhere, either symlink (<code>ln -s /home/sbbs/sbbs /sbbs</code>) or export <code>SBBSCTRL</code> to your real <code>ctrl</code> path.</p>
+<pre><code class="language-bash">sudo mkdir /sbbs &amp;&amp; sudo chown sbbs:sbbs /sbbs
+cd /sbbs
+# or: mkdir ~/sbbs &amp;&amp; cd ~/sbbs
+</code></pre>
+<h4>Getting / building</h4>
+<p>Install OS prerequisites first (compilers, ncurses, SDL/X11 bits as required by your platform — see the live wiki for the current package list). Then either:</p>
+<ul>
+<li><strong>Git build method</strong> — clone/build from the Synchronet Git repositories (preferred for staying current).</li>
+<li><strong>Tarball build method</strong> — unpack a release/source tarball and build.</li>
+</ul>
+<p>Build from a *nix shell (<code>sh</code>/<code>bash</code>). After a successful build, binaries land under your <code>exec</code> directory. On errors, re-check prerequisites and the wiki’s troubleshooting notes rather than forcing a partial install.</p>
+<h4>Configuring</h4>
+<ul>
+<li>Point <code>SBBSCTRL</code> at <code>…/ctrl</code> if not using <code>/sbbs/ctrl</code>.</li>
+<li>Run <code>scfg</code> for BBS content configuration; edit <code>ctrl/sbbs.ini</code> for server/listener and Unix identity settings.</li>
+<li>On FreeBSD 5.x and higher there are platform-specific notes on the install page — follow those for jail/rc integration.</li>
+</ul>
+<h4>Running</h4>
+<ul>
+<li><strong>Console mode</strong> — run <code>sbbs</code> in a terminal for interactive logs (useful while learning).</li>
+<li><strong>Daemon mode</strong> — run detached for production; combine with your OS service manager (<code>systemd</code>, <code>rc</code>, etc.).</li>
+<li>Sysop paging / local console behavior differs slightly from Windows Control Panel — read the “SysOp paging” notes on the Unix install page.</li>
+</ul>
+<h4>Updating</h4>
+<p>Prefer a clean rebuild when major versions change. Keep backups of <code>ctrl/</code>, <code>data/</code>, <code>text/</code>, and <code>mods/</code> before replacing binaries. Re-run any init wizards only when the release notes say configuration format changed.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/install:nix" rel="noopener">https://wiki.synchro.net/install:nix</a></p>
+<h3>19.2 Security (Unix/Linux)</h3>
+<p>Hardening on <em>nix focuses on </em><em>not running as root</em>*, binding low ports safely, and blocking brute-force noise at the OS edge.</p>
+<h4>19.2.1 Linux non-root</h4>
+<p>Run Synchronet as a dedicated user. Prefer:</p>
+<ul>
+<li>Binding high ports (&gt;1024) and reverse-proxying, <strong>or</strong></li>
+<li>Starting briefly as root / using capabilities so <code>sbbs</code> can bind 23/80/443/25 then drop to the run-as user via <code>[Unix]</code> User in <code>sbbs.ini</code>.</li>
+</ul>
+<p>Ensure <code>ctrl</code>, <code>data</code>, and node directories are owned by the run-as user so logs, message bases, and sem files remain writable without world-writable permissions.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/howto:linux_non-root" rel="noopener">https://wiki.synchro.net/howto:linux_non-root</a></p>
+<h4>19.2.2 FreeBSD non-root</h4>
+<p>Same idea as Linux: dedicated user, correct ownership, privilege drop after bind. FreeBSD-specific paths and rc scripts differ — use the FreeBSD howto rather than copying Linux unit files verbatim.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/howto:freebsd_non-root" rel="noopener">https://wiki.synchro.net/howto:freebsd_non-root</a></p>
+<h4>19.2.3 Block botnets with Fail2Ban</h4>
+<p>Fail2Ban can watch Synchronet log output (or syslog) for repeated failed logins / hack attempts and insert temporary firewall bans. Typical pieces:</p>
+<ul>
+<li>A <strong>filter</strong> matching Synchronet “failed login” / hack-log lines.</li>
+<li>A <strong>jail</strong> pointing at your <code>sbbs</code> log path with a sensible <code>maxretry</code> and <code>bantime</code>.</li>
+<li>Coordination with Synchronet’s own login-attempt throttle / temp-ban settings in <code>sbbs.ini</code> so you do not double-punish legitimate users behind shared NATs.</li>
+</ul>
+<p>Also see Internet Security (<code>howto:block-hackers</code>) for Synchronet-native filters and temporary bans.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/howto:fail2ban" rel="noopener">https://wiki.synchro.net/howto:fail2ban</a> · <a href="https://wiki.synchro.net/howto:block-hackers" rel="noopener">https://wiki.synchro.net/howto:block-hackers</a></p>
+<hr />
+<h2>Install quick reference</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Primary path</th>
+<th>Config entry points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Windows</td>
+<td>Installer → <code>C:\SBBS</code> (typical)</td>
+<td>Control Panel, <code>scfg.exe</code>, <code>ctrl\sbbs.ini</code></td>
+</tr>
+<tr>
+<td>Linux/Unix</td>
+<td>Build into <code>/sbbs</code> or <code>~/sbbs</code></td>
+<td><code>scfg</code>, <code>SBBSCTRL</code>, <code>ctrl/sbbs.ini</code>, <code>[Unix]</code> User</td>
+</tr>
+<tr>
+<td>Both</td>
+<td>Keep DOS 8.3-safe paths if using 16-bit doors</td>
+<td>Node dirs, <code>exec</code>, external program CWDs</td>
+</tr>
+</tbody>
+</table>
+<p>Wiki (hub): https://wiki.synchro.net/install:win · https://wiki.synchro.net/install:nix</p>
+<h3>After install: minimum viable open</h3>
+<p>Whether on Windows or Unix, do not expose services until these are true:</p>
+<ol>
+<li>Sysop account password is set and not the distribution default.</li>
+<li>New-user password / closed-to-new-users policy matches your intent (SCFG → System).</li>
+<li>Host filters and login-attempt thresholds in <code>sbbs.ini</code> are understood (even if left at defaults).</li>
+<li>You can log in locally (Windows Control Panel / local node, or Unix console) and run <code>;UEDIT</code> / SCFG.</li>
+<li>Backups of <code>ctrl/</code> and <code>data/</code> exist before you join DOVE-Net or FidoNet.</li>
+</ol>
+<p>Development / bleeding-edge builds are a separate track — see https://wiki.synchro.net/install:dev and section 10 of this manual.</p>
+  </article>
+
+<nav class="pager" aria-label="Section"><a href="/bbs/sysopmanual/">← Hub</a><a href="/bbs/sysopmanual/configuration/">Configuration →</a></nav>
+
+  <p class="source">Source of truth: <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">wiki.synchro.net/talk:wiki:user:electrosys</a>. Docs live on the <a href="https://wiki.synchro.net/">Synchronet Wiki</a>. Active boards: <a href="https://coloritcompany.com/bbs/">coloritcompany.com/bbs</a>.</p>
+
+  <footer class="e-foot">
+    <a href="/bbs/">BBS desk</a>
+    <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">Wiki talk page</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
