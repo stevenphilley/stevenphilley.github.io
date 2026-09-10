@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Local — Steven Philley</title>
-<meta name="description" content="Campbell-area local desk — traffic, safety, live weather, and the past, present, and future starters.">
+<meta name="description" content="Campbell-area local desk — traffic, safety, live weather, air quality, and the past, present, and future starters.">
 <link rel="canonical" href="https://stevenphilley.com/local/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Local — Steven Philley">
-<meta property="og:description" content="Campbell-area local desk for traffic, safety, weather, and neighborhood notes.">
+<meta property="og:description" content="Campbell-area local desk for traffic, safety, weather, air quality, and neighborhood notes.">
 <meta property="og:url" content="https://stevenphilley.com/local/">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -74,6 +74,30 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 .wx-meta a{color:var(--accent,#c8b48a);text-decoration:none}
 .wx-meta a:hover{text-decoration:underline}
 .wx-err{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96);margin:0}
+
+/* Air quality card on Local */
+.aq-section{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px;scroll-margin-top:24px}
+.aq-section h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:0 0 14px}
+.aq-card{border:1px solid var(--line,#2c303a);padding:18px 20px;border-left:4px solid var(--aq-accent,var(--line,#2c303a))}
+.aq-card[data-aq="good"]{--aq-accent:#5a9e6f}
+.aq-card[data-aq="moderate"]{--aq-accent:#c4a035}
+.aq-card[data-aq="usg"]{--aq-accent:#c47a35}
+.aq-card[data-aq="unhealthy"]{--aq-accent:#c45a5a}
+.aq-card[data-aq="very-unhealthy"]{--aq-accent:#9a5ab8}
+.aq-card[data-aq="hazardous"]{--aq-accent:#8b3a4a}
+.aq-place{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.aq-now{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.aq-num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,10vw,72px);line-height:.85;margin:0}
+.aq-cat{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.5;color:var(--ink,#e8e6e1);margin:0}
+.aq-badge{display:inline-block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--aq-accent,var(--line,#2c303a));color:var(--aq-accent,var(--ink-soft,#9b9a96));margin-left:2px;vertical-align:middle}
+.aq-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line,#2c303a)}
+@media (max-width:480px){.aq-stats{grid-template-columns:1fr}}
+.aq-stat .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.aq-stat .v{font-family:"Bebas Neue",Impact,sans-serif;font-size:22px;letter-spacing:.04em;margin:0;line-height:1}
+.aq-meta{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:14px 0 0}
+.aq-meta a{color:var(--accent,#c8b48a);text-decoration:none}
+.aq-meta a:hover{text-decoration:underline}
+.aq-err{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96);margin:0}
 
 .hot-nuts{
   margin:22px 0 0;
@@ -145,6 +169,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
       <a href="/local/" aria-current="page">Local</a>
       <a href="/weather/">Weather</a>
+      <a href="#air">Air</a>
       <a href="/local/news/">Archive</a>
       <a href="/local/nuts/">Nuts</a>
       <a href="/family/">Family</a>
@@ -161,7 +186,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   </div>
   <p class="kicker">Campbell · 95008</p>
   <h1>Local</h1>
-  <p class="lede">Traffic, safety, live weather, and neighborhood notes for the Campbell area. Past, present, and future starters sit under the desk.</p>
+  <p class="lede">Traffic, safety, live weather, air quality, and neighborhood notes for the Campbell area. Past, present, and future starters sit under the desk.</p>
 
   <a class="hot-nuts" href="/local/nuts/" aria-label="Hot — Campbell Nuts ridiculousness desk">
     <span class="hot-pill" aria-hidden="true">HOT!</span>
@@ -205,6 +230,33 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
       <p class="wx-meta" id="wx-meta"><a href="/weather/">Full weather →</a></p>
     </div>
     <p class="wx-err" id="wx-error" hidden></p>
+  </section>
+
+  <section class="aq-section" id="air" aria-labelledby="aq-title">
+    <h2 id="aq-title">Air quality</h2>
+    <div class="aq-card" id="aq-panel" data-aq="">
+      <p class="aq-place" id="aq-place">Campbell · 95008</p>
+      <div class="aq-now">
+        <p class="aq-num" id="aq-num">—</p>
+        <p class="aq-cat" id="aq-cat">Loading… <span class="aq-badge" id="aq-badge" hidden></span></p>
+      </div>
+      <div class="aq-stats" aria-label="Pollutants">
+        <div class="aq-stat">
+          <p class="k">PM2.5</p>
+          <p class="v" id="aq-pm25">—</p>
+        </div>
+        <div class="aq-stat">
+          <p class="k">PM10</p>
+          <p class="v" id="aq-pm10">—</p>
+        </div>
+        <div class="aq-stat">
+          <p class="k">Ozone</p>
+          <p class="v" id="aq-o3">—</p>
+        </div>
+      </div>
+      <p class="aq-meta" id="aq-meta"><a href="/science/atmosphere/">Layers →</a></p>
+    </div>
+    <p class="aq-err" id="aq-error" hidden></p>
   </section>
 
   <section class="desk" aria-label="Local news">
@@ -454,6 +506,138 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     document.getElementById('wx-desc').textContent='Could not load';
     errorEl.hidden=false;
     errorEl.textContent='Open-Meteo did not respond. Try the full weather desk or refresh in a moment.';
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var LOC_KEY='sp-weather-loc';
+  var DEFAULT={
+    zip:'95008',
+    lat:37.287,
+    lon:-121.950,
+    label:'Campbell',
+    admin1:'California',
+    timezone:'America/Los_Angeles'
+  };
+  var loc=Object.assign({}, DEFAULT);
+  try{
+    var raw=localStorage.getItem(LOC_KEY);
+    if(raw){
+      var saved=JSON.parse(raw);
+      if(saved && isFinite(saved.lat) && isFinite(saved.lon) && saved.zip){
+        loc={
+          zip:String(saved.zip).replace(/\D/g,'').slice(0,5) || DEFAULT.zip,
+          lat:+saved.lat,
+          lon:+saved.lon,
+          label:saved.label || DEFAULT.label,
+          admin1:saved.admin1 || '',
+          timezone:saved.timezone || DEFAULT.timezone
+        };
+      }
+    }
+  }catch(e){}
+
+  var panel=document.getElementById('aq-panel');
+  var errorEl=document.getElementById('aq-error');
+
+  function round1(n){
+    if(!isFinite(n)) return '—';
+    var r=Math.round(n*10)/10;
+    if(Object.is(r,-0)) r=0;
+    return (Math.abs(r-Math.round(r))<1e-9)?String(Math.round(r)):r.toFixed(1);
+  }
+  function prettyChecked(iso){
+    if(!iso) return '';
+    var d=new Date(iso);
+    if(isNaN(d.getTime())) d=new Date(iso.replace(' ','T'));
+    if(isNaN(d.getTime())) return iso;
+    return d.toLocaleString([], {weekday:'short', month:'short', day:'numeric', hour:'numeric', minute:'2-digit'});
+  }
+  function shortState(admin1){
+    if(!admin1) return '';
+    var map={
+      'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA','Colorado':'CO',
+      'Connecticut':'CT','Delaware':'DE','Florida':'FL','Georgia':'GA','Hawaii':'HI','Idaho':'ID',
+      'Illinois':'IL','Indiana':'IN','Iowa':'IA','Kansas':'KS','Kentucky':'KY','Louisiana':'LA',
+      'Maine':'ME','Maryland':'MD','Massachusetts':'MA','Michigan':'MI','Minnesota':'MN','Mississippi':'MS',
+      'Missouri':'MO','Montana':'MT','Nebraska':'NE','Nevada':'NV','New Hampshire':'NH','New Jersey':'NJ',
+      'New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK',
+      'Oregon':'OR','Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',
+      'Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT','Virginia':'VA','Washington':'WA',
+      'West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY','District of Columbia':'DC'
+    };
+    return map[admin1]||admin1;
+  }
+  function placeLine(){
+    var st=shortState(loc.admin1);
+    if(loc.zip==='95008' && loc.label==='Campbell') return 'Campbell · 95008';
+    return [loc.label, st, loc.zip].filter(Boolean).join(' · ');
+  }
+  function aqiCategory(aqi){
+    if(!isFinite(aqi)) return null;
+    if(aqi<=50) return {key:'good', label:'Good'};
+    if(aqi<=100) return {key:'moderate', label:'Moderate'};
+    if(aqi<=150) return {key:'usg', label:'Unhealthy for Sensitive Groups'};
+    if(aqi<=200) return {key:'unhealthy', label:'Unhealthy'};
+    if(aqi<=300) return {key:'very-unhealthy', label:'Very Unhealthy'};
+    return {key:'hazardous', label:'Hazardous'};
+  }
+  function ug(n){
+    if(!isFinite(n)) return '—';
+    return round1(n)+' µg/m³';
+  }
+
+  document.getElementById('aq-place').textContent=placeLine();
+
+  var url='https://air-quality-api.open-meteo.com/v1/air-quality'+
+    '?latitude='+loc.lat+'&longitude='+loc.lon+
+    '&current=us_aqi,pm2_5,pm10,ozone'+
+    '&timezone='+encodeURIComponent(loc.timezone||'America/Los_Angeles');
+
+  fetch(url,{cache:'no-store'}).then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(function(j){
+    var cur=j.current||{};
+    var aqi=cur.us_aqi;
+    var cat=aqiCategory(aqi);
+    document.getElementById('aq-place').textContent=placeLine();
+    document.getElementById('aq-num').textContent=isFinite(aqi)?String(Math.round(aqi)):'—';
+    var catEl=document.getElementById('aq-cat');
+    var badge=document.getElementById('aq-badge');
+    if(cat){
+      panel.setAttribute('data-aq', cat.key);
+      catEl.textContent='';
+      catEl.appendChild(document.createTextNode(cat.label+' '));
+      badge.hidden=false;
+      badge.textContent='US AQI';
+      catEl.appendChild(badge);
+    }else{
+      panel.setAttribute('data-aq','');
+      catEl.textContent='No reading';
+      badge.hidden=true;
+    }
+    document.getElementById('aq-pm25').textContent=ug(cur.pm2_5);
+    document.getElementById('aq-pm10').textContent=ug(cur.pm10);
+    document.getElementById('aq-o3').textContent=ug(cur.ozone);
+    document.getElementById('aq-meta').innerHTML=
+      'Updated '+prettyChecked(cur.time)+' · Open-Meteo · <a href="/science/atmosphere/">Layers</a> · <a href="https://www.airnow.gov/" target="_blank" rel="noopener">AirNow</a>';
+    panel.hidden=false;
+    errorEl.hidden=true;
+  }).catch(function(){
+    var catEl=document.getElementById('aq-cat');
+    var badge=document.getElementById('aq-badge');
+    catEl.textContent='';
+    catEl.appendChild(document.createTextNode('Could not load'));
+    if(badge){
+      badge.hidden=true;
+      catEl.appendChild(badge);
+    }
+    panel.setAttribute('data-aq','');
+    errorEl.hidden=false;
+    errorEl.textContent='Open-Meteo air quality did not respond. Try AirNow or refresh in a moment.';
   });
 })();
 </script>
