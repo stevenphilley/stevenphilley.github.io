@@ -52,6 +52,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     <a href="/">Steven Philley</a>
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
       <a href="/local/" aria-current="page">Local</a>
+      <a href="/local/news/">Archive</a>
       <a href="/family/">Family</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
@@ -74,10 +75,12 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     <div id="items"></div>
     <p class="quake" id="quake"></p>
     <p class="streets" id="streets"></p>
+    <p class="streets" id="archive-link" style="margin-top:18px"><a href="/local/news/" style="color:var(--accent,#c8b48a)">Archive / all local news →</a></p>
   </section>
 
   <section class="starters">
     <h2>Past, present, future</h2>
+    <a href="/local/news/">Archive / all local news</a>
     <a href="/weather/">Weather — Campbell / South Bay</a>
     <a href="/local/dolphin-pet-village.html">Dolphin Pet Village</a>
     <a href="/local/dj.html">DJ hobby</a>
@@ -112,7 +115,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     document.getElementById('desk-meta').textContent = (j.source||'Local') + (j.checked ? ' · checked ' + pretty(j.checked) : '');
     var items=j.items||[];
     document.getElementById('items').innerHTML = items.map(function(it){
-      return '<article class="item"><p class="when">'+esc(pretty(it.time))+'</p><h3 class="label">'+esc(it.label)+'</h3><p>'+esc(it.text)+'</p></article>';
+      var labelHtml = esc(it.label);
+      if(it.url){
+        labelHtml = '<a href="'+esc(it.url)+'" style="color:inherit;text-decoration:none">'+labelHtml+'</a>';
+      } else if(it.id){
+        labelHtml = '<a href="/local/news/'+esc(it.id)+'.html" style="color:inherit;text-decoration:none">'+labelHtml+'</a>';
+      }
+      var more = it.url ? ' <a href="'+esc(it.url)+'" style="color:var(--accent,#c8b48a)">Full note →</a>' : (it.id ? ' <a href="/local/news/'+esc(it.id)+'.html" style="color:var(--accent,#c8b48a)">Full note →</a>' : '');
+      return '<article class="item"><p class="when">'+esc(pretty(it.time))+'</p><h3 class="label">'+labelHtml+'</h3><p>'+esc(it.text)+more+'</p></article>';
     }).join('') || '<p class="streets">No traffic notes on this pass.</p>';
     var q=j.quakes||{};
     var latest=q.latest||null;
