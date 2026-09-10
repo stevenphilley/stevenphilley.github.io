@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dusk">
+<html lang="en" data-theme="neon">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,7 @@
 
 <title>Nine Chakras — Steven Philley</title>
 
-<script>(function(){try{var SITE=['dusk','sage','tide','sand','neon'];var c=localStorage.getItem('sp-theme-chakras');var t=localStorage.getItem('sp-theme');if(c==='glow')document.documentElement.setAttribute('data-theme','glow');else if(t&&SITE.indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var SITE=['neon','emerald','dusk','sage','tide','sand'];var c=localStorage.getItem('sp-theme-chakras');var t=localStorage.getItem('sp-theme')||'neon';if(c==='glow')document.documentElement.setAttribute('data-theme','glow');else if(SITE.indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +79,15 @@
   --ink-faint:#6E5088;
   --rule:#3A1A58;
   --accent:#FF2DC8;
+}
+[data-theme="emerald"]{
+  --bg:#0c1613;
+  --surface:#10201a;
+  --ink:#e8f2ec;
+  --ink-dim:#8fa89b;
+  --ink-faint:#3f6b58;
+  --rule:#294a3c;
+  --accent:#34d399;
 }
 [data-theme="glow"]{
   --bg:#17141f;
@@ -673,11 +682,12 @@ footer a:hover{color:var(--ink)}
 <header class="masthead">
   <a class="home" href="/">Steven Philley</a>
   <div class="themes" role="group" aria-label="Color theme">
+    <button type="button" data-set-theme="neon">Neon</button>
+    <button type="button" data-set-theme="emerald">Emerald</button>
     <button type="button" data-set-theme="dusk">Dusk</button>
     <button type="button" data-set-theme="sage">Sage</button>
     <button type="button" data-set-theme="tide">Tide</button>
     <button type="button" data-set-theme="sand">Sand</button>
-    <button type="button" data-set-theme="neon">Neon</button>
     <button type="button" data-set-theme="glow">Glow</button>
   </div>
 </header>
@@ -1136,14 +1146,14 @@ footer a:hover{color:var(--ink)}
   'use strict';
 
   /* ---------- theme ---------- */
-  /* Site-wide: dusk/sage/tide/sand/neon → sp-theme.
+  /* Site-wide: neon/emerald/dusk/sage/tide/sand → sp-theme.
      Glow is chakras-only → sp-theme-chakras (never pollute sp-theme). */
-  var SITE = ['dusk','sage','tide','sand','neon'];
+  var SITE = ['neon','emerald','dusk','sage','tide','sand'];
   var root = document.documentElement;
   var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-set-theme]'));
 
   function paintButtons(){
-    var current = root.getAttribute('data-theme') || 'dusk';
+    var current = root.getAttribute('data-theme') || 'neon';
     buttons.forEach(function(b){
       b.setAttribute('aria-pressed', String(b.dataset.setTheme === current));
     });

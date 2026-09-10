@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="neon">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71,6 +71,13 @@ html[data-theme="neon"]{
   --shade:rgba(0,0,0,0.28);
   --blob-1:#5A1878; --blob-2:#B84DFF; --blob-3:#1A5A70;
 }
+html[data-theme="emerald"]{
+  --base:#0c1613; --base-2:#06100c; --ink:#e8f2ec; --ink-soft:#8fa89b;
+  --ink-faint:#3f6b58; --accent:#34d399; --accent-2:#10b981;
+  --panel:rgba(52,211,153,0.06); --panel-line:rgba(52,211,153,0.18);
+  --shade:rgba(0,0,0,0.28);
+  --blob-1:#1b3a2c; --blob-2:#047857; --blob-3:#294a3c;
+}
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -127,11 +134,12 @@ html[data-theme="sand"] .blob{mix-blend-mode:multiply; opacity:.5;}
 .swatch:hover{transform:scale(1.12)}
 .swatch[aria-pressed="true"]{border-color:var(--ink)}
 .swatch:focus-visible{outline:2px solid var(--accent); outline-offset:3px}
+.sw-neon{--s1:#FF2DC8; --s2:#00F0FF;}
+.sw-emerald{--s1:#047857; --s2:#34d399;}
 .sw-dusk{--s1:#5b3d6b; --s2:#e7b485;}
 .sw-sage{--s1:#7e9a6a; --s2:#e6cf9f;}
 .sw-tide{--s1:#2f4a66; --s2:#8fd0c8;}
 .sw-sand{--s1:#c98a5a; --s2:#e7c89e;}
-.sw-neon{--s1:#FF2DC8; --s2:#00F0FF;}
 
 /* ---- Masthead ---- */
 .masthead{
@@ -240,7 +248,7 @@ footer{margin-top:56px}
   *{transition:none !important; animation:none !important}
 }
 </style>
-<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand','neon'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 </head>
 <body>
 
@@ -252,11 +260,12 @@ footer{margin-top:56px}
   <div class="header-top">
     <span>Vol. II — The Index</span>
     <div class="themes" role="group" aria-label="color theme">
-      <button class="swatch sw-dusk" data-set="dusk" aria-pressed="true"  title="Dusk"></button>
+      <button class="swatch sw-neon" data-set="neon" aria-pressed="true" title="Neon"></button>
+      <button class="swatch sw-emerald" data-set="emerald" aria-pressed="false" title="Emerald"></button>
+      <button class="swatch sw-dusk" data-set="dusk" aria-pressed="false" title="Dusk"></button>
       <button class="swatch sw-sage" data-set="sage" aria-pressed="false" title="Sage"></button>
       <button class="swatch sw-tide" data-set="tide" aria-pressed="false" title="Tide"></button>
       <button class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"></button>
-      <button class="swatch sw-neon" data-set="neon" aria-pressed="false" title="Neon"></button>
     </div>
   </div>
 
@@ -611,7 +620,7 @@ footer{margin-top:56px}
           <span class="leader"></span>
           <span class="path">themes/</span>
         </div>
-        <p class="desc">Colour families hub — live dusk / sage / tide / sand / neon switcher (site-wide <code style="font-family:inherit">sp-theme</code>), plus links to Markets, Chakras, and Annual Dial scoped themes.</p>
+        <p class="desc">Colour families hub — live neon / emerald / dusk / sage / tide / sand switcher (site-wide <code style="font-family:inherit">sp-theme</code>), plus links to Markets, Chakras, and Annual Dial scoped themes.</p>
       </div>
     </a>
     <a class="entry" href="https://linktr.ee/steven.philley" rel="me noopener" target="_blank">
@@ -869,11 +878,11 @@ footer{margin-top:56px}
 <script>
 (function(){
   "use strict";
-  var THEMES = ['dusk','sage','tide','sand','neon'];
+  var THEMES = ['neon','emerald','dusk','sage','tide','sand'];
   var KEY = 'sp-theme';
 
   function setTheme(name){
-    if (THEMES.indexOf(name) === -1) name = 'dusk';
+    if (THEMES.indexOf(name) === -1) name = 'neon';
     document.documentElement.setAttribute('data-theme', name);
     document.querySelectorAll('.swatch').forEach(function(b){
       b.setAttribute('aria-pressed', b.dataset.set === name ? 'true' : 'false');
