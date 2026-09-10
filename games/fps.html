@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>FPS — Steven Philley</title>
+<meta name="description" content="Lightweight Wolfenstein-style raycast FPS in the browser — WASD, mouse look, shoot targets, health and score.">
+<link rel="canonical" href="https://stevenphilley.com/games/fps.html">
+<meta property="og:title" content="FPS — Steven Philley">
+<meta property="og:url" content="https://stevenphilley.com/games/fps.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1);margin:0;touch-action:manipulation}
+.m-wrap{max-width:760px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 64px}
+.m-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.m-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.m-top a:hover,.m-top a[aria-current="page"]{color:inherit}
+.m-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,9vw,72px);line-height:.9;margin:0 0 12px}
+.lede{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:58ch;margin:0 0 20px}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.panel{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.panel button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:8px 12px;cursor:pointer}
+.panel button:hover{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.layout{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+@media(max-width:640px){.layout{grid-template-columns:1fr;justify-items:center}}
+.side{font-family:"IBM Plex Mono",monospace;font-size:12px;min-width:110px}
+.side .box{border:1px solid var(--line,#2c303a);padding:12px;margin-bottom:10px}
+.side .label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.side .val{font-family:"Bebas Neue",Impact,sans-serif;font-size:28px;letter-spacing:.04em}
+.stage-wrap{position:relative;border:1px solid var(--line,#2c303a);background:#0e1015;max-width:100%}
+.stage{display:block;width:100%;height:auto;image-rendering:pixelated;cursor:crosshair;touch-action:none}
+.status{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent,#c8b48a);min-height:1.4em;margin:0 0 12px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;max-width:280px;margin-left:auto;margin-right:auto}
+.pad button{appearance:none;background:color-mix(in srgb,var(--ink,#e8e6e1) 6%, transparent);border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:13px;padding:14px 8px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.pad button:active{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.pad .blank{visibility:hidden}
+.rules{margin-top:22px;padding-top:16px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.rules strong{color:var(--ink,#e8e6e1);font-weight:500}
+.m-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.m-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.note{font-size:11px;color:var(--muted,#63666e);margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="m-wrap">
+  <div class="m-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/games/">Games</a>
+      <a href="/games/fps.html" aria-current="page">FPS</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+  <p class="m-kicker">G4 · Games</p>
+  <h1>FPS</h1>
+  <p class="lede">Wolfenstein-style raycaster. Clear the map of hostiles, keep your health up, and chase a high score. Lightweight canvas — no engine download.</p>
+  <div class="panel">
+    <button type="button" id="btnLook">Click to look</button>
+    <button type="button" id="btnPause">Pause</button>
+    <button type="button" id="btnReset">Restart</button>
+  </div>
+  <p class="status" id="status" aria-live="polite">Click the view or Click to look, then WASD + mouse.</p>
+  <div class="layout">
+    <div class="stage-wrap">
+      <canvas class="stage" id="stage" width="640" height="400" aria-label="First-person view"></canvas>
+    </div>
+    <div class="side">
+      <div class="box"><p class="label">Score</p><div class="val" id="score">0</div></div>
+      <div class="box"><p class="label">Health</p><div class="val" id="health">100</div></div>
+      <div class="box"><p class="label">Kills</p><div class="val" id="kills">0</div></div>
+      <div class="box"><p class="label">Ammo</p><div class="val" id="ammo">∞</div></div>
+    </div>
+  </div>
+  <p class="note">Best on desktop with mouse. On phone: on-screen pad + Shoot; look with drag on the view.</p>
+  <div class="pad" aria-label="On-screen controls">
+    <button type="button" class="blank" tabindex="-1" aria-hidden="true"></button>
+    <button type="button" data-act="fwd">↑</button>
+    <button type="button" class="blank" tabindex="-1" aria-hidden="true"></button>
+    <button type="button" data-act="left">←</button>
+    <button type="button" data-act="back">↓</button>
+    <button type="button" data-act="right">→</button>
+    <button type="button" data-act="turnL">⟲</button>
+    <button type="button" data-act="fire">Shoot</button>
+    <button type="button" data-act="turnR">⟳</button>
+  </div>
+  <div class="rules">
+    <strong>Keyboard:</strong> W A S D or arrows move · mouse look (pointer lock) · click or Space shoot · ← → also turn · P pause · R restart.<br>
+    <strong>Goal:</strong> Eliminate all hostiles. Touching one hurts you. Clearing the map awards a bonus and spawns a tougher wave.
+  </div>
+  <footer class="m-foot"><a href="/games/">All games</a><a href="/games/maze.html">Maze</a><a href="/games/tetris.html">Tetris</a></footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var MAP = [
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,0,0,1,1,0,0,0,0,0,1,1,0,0,0,1],
+    [1,0,0,1,0,0,0,0,0,0,0,1,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,1,1,0,0,1,1,0,0,1,1,0,0,1],
+    [1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,0,0,1,0,0,0,0,0,0,0,0,1,0,0,1],
+    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+  ];
+  var W=MAP[0].length, H=MAP.length;
+  var canvas=document.getElementById('stage'), ctx=canvas.getContext('2d');
+  var scoreEl=document.getElementById('score'), healthEl=document.getElementById('health');
+  var killsEl=document.getElementById('kills'), statusEl=document.getElementById('status');
+
+  var px, py, pa, fov=Math.PI/3;
+  var keys={}, touchMove={fwd:0,back:0,left:0,right:0,turnL:0,turnR:0};
+  var enemies=[], score, health, kills, wave, paused, over, lastTs, raf;
+  var muzzle=0, shake=0, pointerLocked=false;
+  var touchDrag=null;
+
+  function wall(x,y){
+    var ix=Math.floor(x), iy=Math.floor(y);
+    if(ix<0||iy<0||ix>=W||iy>=H) return 1;
+    return MAP[iy][ix];
+  }
+
+  function spawnWave(){
+    var spots=[[2.5,2.5],[13.5,2.5],[2.5,13.5],[13.5,13.5],[8.5,9.5],[4.5,11.5],[11.5,5.5],[8.5,3.5]];
+    var n=Math.min(3+wave, spots.length);
+    enemies=[];
+    var used={};
+    for(var i=0;i<n;i++){
+      var s;
+      do { s=spots[Math.floor(Math.random()*spots.length)]; } while(used[s.join()]);
+      used[s.join()]=1;
+      enemies.push({x:s[0],y:s[1],hp:1+Math.floor(wave/2),alive:true,hit:0,speed:1.2+wave*0.08});
+    }
+  }
+
+  function reset(){
+    cancelAnimationFrame(raf);
+    px=2.5; py=2.5; pa=0;
+    score=0; health=100; kills=0; wave=1; paused=false; over=false; muzzle=0; shake=0;
+    scoreEl.textContent='0'; healthEl.textContent='100'; killsEl.textContent='0';
+    statusEl.textContent='Wave 1 — clear the hostiles.';
+    document.getElementById('btnPause').textContent='Pause';
+    spawnWave();
+    lastTs=0;
+    raf=requestAnimationFrame(loop);
+  }
+
+  function cast(rayAng){
+    var sin=Math.sin(rayAng), cos=Math.cos(rayAng);
+    var dist=0, step=0.02, hit=0, side=0;
+    var x=px, y=py;
+    var prevX=x, prevY=y;
+    while(dist<22){
+      prevX=x; prevY=y;
+      x+=cos*step; y+=sin*step; dist+=step;
+      if(wall(x,y)){
+        hit=1;
+        side=(Math.floor(prevX)!==Math.floor(x))?0:1;
+        break;
+      }
+    }
+    var fish=dist*Math.cos(rayAng-pa);
+    return {dist:fish, raw:dist, side:side, hit:hit};
+  }
+
+  function tryMove(nx,ny){
+    var r=0.18;
+    if(!wall(nx,py)&&!wall(nx-r,py)&&!wall(nx+r,py)&&!wall(nx,py-r)&&!wall(nx,py+r)) px=nx;
+    if(!wall(px,ny)&&!wall(px-r,ny)&&!wall(px+r,ny)&&!wall(px,ny-r)&&!wall(px,ny+r)) py=ny;
+  }
+
+  function shoot(){
+    if(paused||over) return;
+    muzzle=0.12; shake=4;
+    var best=null, bestD=1e9;
+    for(var i=0;i<enemies.length;i++){
+      var e=enemies[i]; if(!e.alive) continue;
+      var dx=e.x-px, dy=e.y-py;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>12) continue;
+      var ang=Math.atan2(dy,dx);
+      var da=((ang-pa+Math.PI*3)%(Math.PI*2))-Math.PI;
+      if(Math.abs(da)>0.12) continue;
+      // wall check
+      var blocked=false;
+      var steps=Math.ceil(dist/0.1);
+      for(var s=1;s<steps;s++){
+        if(wall(px+Math.cos(ang)*s*0.1, py+Math.sin(ang)*s*0.1)){blocked=true;break;}
+      }
+      if(blocked) continue;
+      if(dist<bestD){bestD=dist;best=e;}
+    }
+    if(best){
+      best.hp--; best.hit=0.25;
+      if(best.hp<=0){
+        best.alive=false;
+        kills++; score+=100+wave*25;
+        killsEl.textContent=kills; scoreEl.textContent=score;
+        var left=enemies.filter(function(e){return e.alive;}).length;
+        if(left===0){
+          score+=200*wave; scoreEl.textContent=score;
+          wave++;
+          statusEl.textContent='Wave cleared! Wave '+wave+' incoming…';
+          setTimeout(function(){ if(!over){ spawnWave(); statusEl.textContent='Wave '+wave+' — clear the hostiles.'; } }, 900);
+        }
+      }
+    }
+  }
+
+  function update(dt){
+    if(paused||over) return;
+    var spd=2.6*dt, turn=2.4*dt;
+    var forward=(keys['w']||keys['ArrowUp']||touchMove.fwd)?1:0;
+    var back=(keys['s']||keys['ArrowDown']||touchMove.back)?1:0;
+    var strafeL=(keys['a']||touchMove.left)?1:0;
+    var strafeR=(keys['d']||touchMove.right)?1:0;
+    if(keys['ArrowLeft']||touchMove.turnL) pa-=turn;
+    if(keys['ArrowRight']||touchMove.turnR) pa+=turn;
+    var mx=Math.cos(pa)*(forward-back)*spd + Math.cos(pa+Math.PI/2)*(strafeR-strafeL)*spd;
+    var my=Math.sin(pa)*(forward-back)*spd + Math.sin(pa+Math.PI/2)*(strafeR-strafeL)*spd;
+    tryMove(px+mx, py+my);
+    if(muzzle>0) muzzle-=dt;
+    if(shake>0) shake*=Math.max(0,1-8*dt);
+
+    for(var i=0;i<enemies.length;i++){
+      var e=enemies[i]; if(!e.alive) continue;
+      if(e.hit>0) e.hit-=dt;
+      var dx=px-e.x, dy=py-e.y;
+      var d=Math.sqrt(dx*dx+dy*dy)||1;
+      if(d>0.45){
+        var nx=e.x+(dx/d)*e.speed*dt, ny=e.y+(dy/d)*e.speed*dt;
+        if(!wall(nx,e.y)) e.x=nx;
+        if(!wall(e.x,ny)) e.y=ny;
+      } else {
+        health-=18*dt;
+        if(health<=0){
+          health=0; over=true;
+          statusEl.textContent='Down — Restart to try again. Score '+score+'.';
+        }
+        healthEl.textContent=String(Math.max(0,Math.ceil(health)));
+      }
+    }
+  }
+
+  function draw(){
+    var w=canvas.width, h=canvas.height;
+    var ox=(Math.random()-0.5)*shake, oy=(Math.random()-0.5)*shake;
+    ctx.save();
+    ctx.translate(ox,oy);
+    // ceiling / floor
+    ctx.fillStyle='#1a1d26';
+    ctx.fillRect(0,0,w,h/2);
+    ctx.fillStyle='#0a0c10';
+    ctx.fillRect(0,h/2,w,h/2);
+    // subtle floor gradient stripes
+    for(var i=0;i<20;i++){
+      ctx.fillStyle='rgba(255,255,255,'+(0.01+i*0.002)+')';
+      ctx.fillRect(0,h/2+i*(h/40),w,2);
+    }
+
+    var cols=w;
+    var zbuf=new Float32Array(cols);
+    for(var x=0;x<cols;x++){
+      var rayAng=pa - fov/2 + (x/cols)*fov;
+      var hit=cast(rayAng);
+      zbuf[x]=hit.dist;
+      var wallH=Math.min(h*2.2, (h*0.9)/Math.max(0.08,hit.dist));
+      var shade=hit.side?0.55:0.75;
+      shade*=Math.max(0.15, 1-hit.dist/14);
+      var r=Math.floor(160*shade), g=Math.floor(140*shade), b=Math.floor(100*shade);
+      ctx.fillStyle='rgb('+r+','+g+','+b+')';
+      ctx.fillRect(x, (h-wallH)/2, 1, wallH);
+    }
+
+    // sprites (enemies)
+    var sprites=enemies.filter(function(e){return e.alive;}).map(function(e){
+      var dx=e.x-px, dy=e.y-py;
+      var dist=Math.sqrt(dx*dx+dy*dy);
+      var ang=Math.atan2(dy,dx)-pa;
+      while(ang>Math.PI) ang-=Math.PI*2;
+      while(ang<-Math.PI) ang+=Math.PI*2;
+      return {e:e,dist:dist,ang:ang};
+    }).sort(function(a,b){return b.dist-a.dist;});
+
+    for(var s=0;s<sprites.length;s++){
+      var sp=sprites[s];
+      if(Math.abs(sp.ang)>fov) continue;
+      var sx= (0.5 + sp.ang/fov) * w;
+      var sh=Math.min(h*1.5, (h*0.7)/Math.max(0.1,sp.dist));
+      var sw=sh*0.55;
+      var screenX=Math.floor(sx);
+      if(screenX>=0&&screenX<cols&&sp.dist<zbuf[screenX]+0.2){
+        var flash=sp.e.hit>0;
+        ctx.fillStyle=flash?'#e8c878':'#c45c5c';
+        ctx.fillRect(sx-sw/2, (h-sh)/2 + sh*0.15, sw, sh*0.7);
+        ctx.fillStyle=flash?'#fff3c0':'#2a1212';
+        ctx.fillRect(sx-sw*0.2, (h-sh)/2, sw*0.4, sh*0.22);
+        // eyes
+        ctx.fillStyle='#f0e8d8';
+        ctx.fillRect(sx-sw*0.18, (h-sh)/2+sh*0.08, sw*0.1, sh*0.08);
+        ctx.fillRect(sx+sw*0.08, (h-sh)/2+sh*0.08, sw*0.1, sh*0.08);
+      }
+    }
+
+    // weapon / muzzle
+    ctx.fillStyle='#2a2e38';
+    ctx.fillRect(w*0.42, h*0.72, w*0.16, h*0.28);
+    ctx.fillStyle='#3a4050';
+    ctx.fillRect(w*0.46, h*0.62, w*0.08, h*0.12);
+    if(muzzle>0){
+      ctx.fillStyle='rgba(255,220,120,'+(muzzle*4)+')';
+      ctx.beginPath();
+      ctx.arc(w*0.5, h*0.60, 18+muzzle*40, 0, Math.PI*2);
+      ctx.fill();
+    }
+    // crosshair
+    ctx.strokeStyle='rgba(232,230,225,0.85)';
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(w/2-10,h/2); ctx.lineTo(w/2-3,h/2);
+    ctx.moveTo(w/2+3,h/2); ctx.lineTo(w/2+10,h/2);
+    ctx.moveTo(w/2,h/2-10); ctx.lineTo(w/2,h/2-3);
+    ctx.moveTo(w/2,h/2+3); ctx.lineTo(w/2,h/2+10);
+    ctx.stroke();
+
+    if(paused&&!over){
+      ctx.fillStyle='rgba(0,0,0,0.5)';
+      ctx.fillRect(0,0,w,h);
+      ctx.fillStyle='#e8e6e1';
+      ctx.font='20px "IBM Plex Mono", monospace';
+      ctx.textAlign='center';
+      ctx.fillText('PAUSED', w/2, h/2);
+    }
+    if(over){
+      ctx.fillStyle='rgba(20,0,0,0.45)';
+      ctx.fillRect(0,0,w,h);
+    }
+    ctx.restore();
+  }
+
+  function loop(ts){
+    if(!lastTs) lastTs=ts;
+    var dt=Math.min(0.05,(ts-lastTs)/1000); lastTs=ts;
+    update(dt);
+    draw();
+    if(!over) raf=requestAnimationFrame(loop);
+    else draw();
+  }
+
+  function togglePause(){
+    if(over) return;
+    paused=!paused;
+    statusEl.textContent=paused?'Paused':'Wave '+wave+' — clear the hostiles.';
+    document.getElementById('btnPause').textContent=paused?'Resume':'Pause';
+  }
+
+  function requestLook(){
+    canvas.requestPointerLock && canvas.requestPointerLock();
+  }
+
+  document.getElementById('btnLook').addEventListener('click',requestLook);
+  document.getElementById('btnPause').addEventListener('click',togglePause);
+  document.getElementById('btnReset').addEventListener('click',reset);
+
+  canvas.addEventListener('click',function(){
+    if(!pointerLocked) requestLook();
+    else shoot();
+  });
+
+  document.addEventListener('pointerlockchange',function(){
+    pointerLocked=document.pointerLockElement===canvas;
+    document.getElementById('btnLook').textContent=pointerLocked?'Looking…':'Click to look';
+    if(pointerLocked) statusEl.textContent='Wave '+wave+' — clear the hostiles.';
+  });
+  document.addEventListener('mousemove',function(e){
+    if(!pointerLocked||paused||over) return;
+    pa+=e.movementX*0.0025;
+  });
+
+  // touch look / drag on canvas
+  canvas.addEventListener('touchstart',function(e){
+    if(e.touches.length===1){
+      touchDrag={x:e.touches[0].clientX,y:e.touches[0].clientY};
+    }
+  },{passive:true});
+  canvas.addEventListener('touchmove',function(e){
+    if(!touchDrag||paused||over) return;
+    var t=e.touches[0];
+    pa+=(t.clientX-touchDrag.x)*0.006;
+    touchDrag={x:t.clientX,y:t.clientY};
+    e.preventDefault();
+  },{passive:false});
+  canvas.addEventListener('touchend',function(){ touchDrag=null; });
+
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].indexOf(k)>=0) e.preventDefault();
+    keys[k.length===1?k.toLowerCase():k]=true;
+    if(k===' '||k==='Spacebar') shoot();
+    else if(k==='p'||k==='P') togglePause();
+    else if(k==='r'||k==='R') reset();
+  });
+  document.addEventListener('keyup',function(e){
+    var k=e.key;
+    keys[k.length===1?k.toLowerCase():k]=false;
+  });
+
+  function bindPad(){
+    var pad=document.querySelector('.pad');
+    function set(act,v){
+      if(act==='fwd') touchMove.fwd=v;
+      else if(act==='back') touchMove.back=v;
+      else if(act==='left') touchMove.left=v;
+      else if(act==='right') touchMove.right=v;
+      else if(act==='turnL') touchMove.turnL=v;
+      else if(act==='turnR') touchMove.turnR=v;
+    }
+    pad.addEventListener('pointerdown',function(e){
+      var b=e.target.closest('button[data-act]'); if(!b) return;
+      e.preventDefault();
+      var a=b.getAttribute('data-act');
+      if(a==='fire'){ shoot(); return; }
+      set(a,1); b.setPointerCapture && b.setPointerCapture(e.pointerId);
+    });
+    function up(e){
+      var b=e.target.closest('button[data-act]'); if(!b) return;
+      var a=b.getAttribute('data-act');
+      if(a!=='fire') set(a,0);
+    }
+    pad.addEventListener('pointerup',up);
+    pad.addEventListener('pointercancel',up);
+    pad.addEventListener('pointerleave',up);
+  }
+  bindPad();
+
+  reset();
+})();
+</script>
+</body>
+</html>
