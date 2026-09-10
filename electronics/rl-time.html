@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dusk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RL time — Electronics — Steven Philley</title>
+<meta name="description" content="RL time constant from R and L. τ = L / R, plus 1τ / 3τ / 5τ current marks and a rough corner scale.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/rl-time.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="RL time — Steven Philley">
+<meta property="og:description" content="τ = L / R. Live RL time constant with 63%, 95%, and 99% current marks, in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/rl-time.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="RL time — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme');if(t&&['dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
+select{cursor:pointer}
+.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.stat a{color:var(--accent,#c8b48a);text-decoration:none}
+.stat a:hover{text-decoration:underline}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html" aria-current="page">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>RL time</h1>
+  <p class="lede">A resistor and an inductor set how fast current rises or falls. Change R and L — τ updates as you type, with the familiar 63%, 95%, and 99% marks.</p>
+
+  <div class="stage">
+    <div class="fields">
+      <label>Resistance R (ohms)<input id="r" inputmode="decimal" step="any" value="10"></label>
+      <div class="pair">
+        <label>Inductance L<input id="l" inputmode="decimal" step="any" value="100"></label>
+        <label>Unit
+          <select id="lunit" aria-label="Inductance unit">
+            <option value="1e-6">µH</option>
+            <option value="1e-3" selected>mH</option>
+            <option value="1">H</option>
+          </select>
+        </label>
+      </div>
+      <div class="presets" role="group" aria-label="Common RL pairs">
+        <button type="button" data-r="10" data-l="100" data-lunit="1e-3" aria-pressed="true">10 Ω · 100 mH</button>
+        <button type="button" data-r="100" data-l="10" data-lunit="1e-3">100 Ω · 10 mH</button>
+        <button type="button" data-r="1" data-l="1" data-lunit="1">1 Ω · 1 H</button>
+        <button type="button" data-r="47" data-l="470" data-lunit="1e-6">47 Ω · 470 µH</button>
+      </div>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>τ (tau) for an RL circuit is inductance over resistance: τ = L / R. After one time constant, current reaches about 63% of its final value; after three, about 95%; after five, about 99%. When you open the path, current falls by the same marks toward zero.</p>
+    <p>Bigger L stretches the curve; bigger R shortens it. Relay coils, motor windings, and series chokes all settle on this ratio. The secondary figure R / (2πL) is a rough corner-frequency scale for a simple RL high-pass — useful context, not a full filter design.</p>
+    <p>Pair this with <a href="/electronics/rc-time.html" style="color:var(--accent,#c8b48a)">RC time</a> for the capacitor twin, check AC with <a href="/electronics/reactance.html" style="color:var(--accent,#c8b48a)">Reactance</a>, or pick resistors on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'dusk';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var rEl=document.getElementById('r');
+  var lEl=document.getElementById('l');
+  var lunitEl=document.getElementById('lunit');
+  var out=document.getElementById('out');
+  var chips=[].slice.call(document.querySelectorAll('.presets button'));
+
+  function num(el){
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    if(n>=1e6) return fmt(n/1e6,3)+' MΩ';
+    if(n>=1e3) return fmt(n/1e3,3)+' kΩ';
+    return fmt(n, n>=100 ? 1 : 2)+' Ω';
+  }
+  function formatHenries(L){
+    if(!isFinite(L)) return '—';
+    var abs=Math.abs(L);
+    if(abs>=1) return fmt(L,3)+' H';
+    if(abs>=1e-3) return fmt(L*1e3,3)+' mH';
+    return fmt(L*1e6,2)+' µH';
+  }
+  function formatTime(t){
+    if(!isFinite(t) || t<=0) return '—';
+    if(t>=1) return fmt(t,3)+' s';
+    if(t>=1e-3) return fmt(t*1e3,3)+' ms';
+    if(t>=1e-6) return fmt(t*1e6,3)+' µs';
+    return fmt(t*1e9,2)+' ns';
+  }
+  function formatHz(f){
+    if(!isFinite(f) || f<=0) return '—';
+    if(f>=1e6) return fmt(f/1e6,3)+' MHz';
+    if(f>=1e3) return fmt(f/1e3,3)+' kHz';
+    return fmt(f,3)+' Hz';
+  }
+  function syncChips(){
+    var r=num(rEl), l=num(lEl), u=lunitEl.value;
+    chips.forEach(function(b){
+      var match = isFinite(r) && isFinite(l)
+        && Math.abs(r-parseFloat(b.dataset.r))/Math.max(r,1)<0.02
+        && Math.abs(l-parseFloat(b.dataset.l))/Math.max(l,1e-12)<0.02
+        && b.dataset.lunit===u;
+      b.setAttribute('aria-pressed', String(match));
+    });
+  }
+  function render(){
+    var r=num(rEl), lVal=num(lEl), scale=parseFloat(lunitEl.value);
+    syncChips();
+    if(!(r>0) || !(lVal>0) || !(scale>0)){
+      out.innerHTML='<div class="unit">τ</div><div class="num">—</div><p class="note">Enter R and L above zero.</p>';
+      return;
+    }
+    var L=lVal*scale;
+    var tau=L/r;
+    var f=r/(2*Math.PI*L);
+    out.innerHTML=
+      '<div class="unit">τ · time constant</div>'+
+      '<div class="num">'+formatTime(tau).replace(/ (s|ms|µs|ns)$/,'')+'</div>'+
+      '<div class="unit">'+formatTime(tau).split(' ').pop()+'</div>'+
+      '<p class="formula">τ = L / R = '+formatHenries(L)+' / '+formatOhms(r)+'</p>'+
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">1τ · ~63% current rise / fall</span><span class="val">'+formatTime(tau)+'</span></div>'+
+        '<div class="stat"><span class="lab">3τ · ~95%</span><span class="val">'+formatTime(3*tau)+'</span></div>'+
+        '<div class="stat"><span class="lab">5τ · ~99%</span><span class="val">'+formatTime(5*tau)+'</span></div>'+
+        '<div class="stat"><span class="lab">Corner scale · R / (2πL)</span><span class="val">'+formatHz(f)+'</span></div>'+
+      '</div>'+
+      '<p class="note">After 5τ the current is within about 1% of settled. Same marks apply when the field collapses.</p>';
+  }
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      rEl.value=b.dataset.r;
+      lEl.value=b.dataset.l;
+      lunitEl.value=b.dataset.lunit;
+      render();
+    });
+  });
+  [rEl,lEl,lunitEl].forEach(function(el){
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
