@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Suggest — Steven Philley</title>
+<meta name="description" content="Public suggestion box for stevenphilley.com — send an idea; each one gets a yes/no in the site chat.">
+<link rel="canonical" href="https://stevenphilley.com/suggest/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Suggest — Steven Philley">
+<meta property="og:description" content="Public suggestion box — emails Steven; each idea gets a yes/no in the site chat.">
+<meta property="og:url" content="https://stevenphilley.com/suggest/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Suggest — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52px,11vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.thanks{margin:28px 0 0;padding:16px 18px;border:1px solid var(--accent,#c8b48a);font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink,#e8e6e1);background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.thanks strong{color:var(--accent,#c8b48a);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:11px;display:block;margin-bottom:6px}
+.suggest-form{margin:28px 0 0;display:grid;gap:22px;max-width:640px}
+.suggest-form label{display:grid;gap:8px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.suggest-form .hint{font-size:11px;letter-spacing:.06em;text-transform:none;color:var(--muted,#63666e);opacity:.85}
+.suggest-form input[type="text"],
+.suggest-form input[type="email"],
+.suggest-form textarea{
+  width:100%;box-sizing:border-box;background:transparent;border:1px solid var(--line,#2c303a);
+  color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:14px;line-height:1.55;
+  padding:12px 14px;outline:none;border-radius:1px;resize:vertical
+}
+.suggest-form textarea{min-height:140px}
+.suggest-form input:focus,.suggest-form textarea:focus{border-color:var(--accent,#c8b48a)}
+.suggest-form input::placeholder,.suggest-form textarea::placeholder{color:var(--muted,#63666e);opacity:.7}
+.suggest-form .row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:640px){.suggest-form .row{grid-template-columns:1fr}}
+.suggest-form .actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:4px}
+.suggest-form button[type="submit"]{
+  appearance:none;background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border:1px solid var(--ink,#e8e6e1);
+  font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  padding:12px 22px;cursor:pointer
+}
+.suggest-form button[type="submit"]:hover{background:var(--accent,#c8b48a);border-color:var(--accent,#c8b48a);color:var(--base-2,#14161c)}
+.suggest-form .note{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.6;color:var(--muted,#63666e);max-width:42ch}
+.e-foot{margin-top:48px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/sitemap.html">Sitemap</a>
+      <a href="/suggest/" aria-current="page">Suggest</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Site — Suggestion box</p>
+    <h1>Suggest</h1>
+    <p class="lede">Send an idea for stevenphilley.com. It emails Steven; each suggestion gets a yes/no in the site chat. Name and email are optional.</p>
+  </header>
+
+  <div id="thanks" class="thanks" hidden>
+    <strong>Thanks</strong>
+    Suggestion sent. You can send another below anytime.
+  </div>
+
+  <form class="suggest-form" action="https://formsubmit.co/steven@coloritcompany.com" method="POST">
+    <input type="hidden" name="_subject" value="[Site suggestion]">
+    <input type="hidden" name="_cc" value="heysteve5@gmail.com">
+    <input type="hidden" name="_captcha" value="false">
+    <input type="hidden" name="_next" value="https://stevenphilley.com/suggest/?sent=1">
+    <input type="hidden" name="_template" value="table">
+    <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+
+    <label for="suggestion">Suggestion
+      <textarea id="suggestion" name="suggestion" required placeholder="What should the site have, change, or fix?"></textarea>
+    </label>
+
+    <div class="row">
+      <label for="name">Name <span class="hint">(optional)</span>
+        <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name">
+      </label>
+      <label for="email">Email <span class="hint">(optional)</span>
+        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@example.com">
+      </label>
+    </div>
+
+    <label for="page">Page <span class="hint">(optional — which URL this is about)</span>
+      <input id="page" name="page" type="text" placeholder="/tools/temperature.html" autocomplete="off">
+    </label>
+
+    <div class="actions">
+      <button type="submit">Send suggestion</button>
+      <p class="note">Goes to Steven. CC for inbox sorting. No account required.</p>
+    </div>
+  </form>
+
+  <footer class="e-foot">
+    <a href="/">Home</a>
+    <a href="/sitemap.html">Sitemap</a>
+    <a href="/themes/">Themes</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var params=new URLSearchParams(location.search);
+  if(params.get('sent')==='1'){
+    var thanks=document.getElementById('thanks');
+    if(thanks) thanks.hidden=false;
+  }
+
+  var pageEl=document.getElementById('page');
+  if(pageEl && !pageEl.value){
+    var fromQ=params.get('page');
+    if(fromQ){
+      pageEl.value=fromQ;
+    }else if(location.pathname && location.pathname!=='/suggest/' && location.pathname!=='/suggest'){
+      pageEl.value=location.pathname+(location.search||'');
+    }
+  }
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
