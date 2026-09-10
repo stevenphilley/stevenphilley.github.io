@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calculus — Derivative, Integral, Limit — Steven Philley</title>
+<meta name="description" content="Interactive calculus: tangent line for polynomials, sin, and eˣ; Riemann-sum slider for a definite integral; limit intuition as x approaches a point.">
+<link rel="canonical" href="https://stevenphilley.com/maths/calculus/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Calculus — Derivative, Integral, Limit">
+<meta property="og:description" content="Watch a tangent chase a curve, slide Riemann sums, and see limits approach a value.">
+<meta property="og:url" content="https://stevenphilley.com/maths/calculus/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Calculus — Derivative, Integral, Limit">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:960px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 80px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,8vw,80px);line-height:.9;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1)}
+.section{margin-top:32px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.section h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:0 0 8px}
+.section p,.hint{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:66ch;margin:0 0 12px}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px;margin-bottom:12px}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"],.modes button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+canvas{display:block;width:100%;height:auto;background:var(--base,#1a1c24);border:1px solid var(--line,#2c303a);touch-action:none}
+.slider-row{display:flex;align-items:center;gap:12px;margin:10px 0;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96)}
+.slider-row input[type="range"]{flex:1;min-width:0}
+.out{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink,#e8e6e1);margin-top:8px}
+.out .muted{color:var(--muted,#63666e)}
+.also a{display:block;border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink,#e8e6e1);text-decoration:none}
+.also a:hover{color:var(--accent,#c8b48a)}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:26px;margin:0 0 8px}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.disclaimer{margin-top:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:14px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="l-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/maths/">Maths</a>
+      <a href="/maths/trig/">Trig</a>
+      <a href="/maths/linear-algebra/">Linear algebra</a>
+      <a href="/maths/calculus/" aria-current="page">Calculus</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Maths · Calculus · Derivative · Integral · Limit</p>
+  <h1>Rates &amp; areas</h1>
+  <p class="lede">Three classic pictures: a tangent line as the derivative, rectangles stacking toward an integral, and values closing in on a limit. Return to the <a href="/maths/">maths hub</a>.</p>
+
+  <section class="section" id="deriv" aria-labelledby="deriv-h">
+    <h2 id="deriv-h">Derivative — tangent line</h2>
+    <p>The derivative f′(a) is the slope of the tangent at x = a. Drag a along the curve (or use the slider). Choose a simple function.</p>
+    <div class="modes" role="tablist" aria-label="Function">
+      <button type="button" data-fn="poly" aria-selected="true">x³/3 − x</button>
+      <button type="button" data-fn="quad" aria-selected="false">x²</button>
+      <button type="button" data-fn="sin" aria-selected="false">sin x</button>
+      <button type="button" data-fn="exp" aria-selected="false">eˣ</button>
+    </div>
+    <div class="grid2">
+      <div class="panel" style="margin:0">
+        <canvas id="derivCanvas" width="640" height="400" aria-label="Function with tangent line"></canvas>
+        <div class="slider-row"><span>x = a</span><input id="aSlider" type="range" min="-2.5" max="2.5" step="0.01" value="0.8"><span id="aVal">0.80</span></div>
+      </div>
+      <div class="panel" style="margin:0">
+        <div class="out" id="derivOut" aria-live="polite"></div>
+        <p class="hint" style="margin-top:12px">Definition intuition: f′(a) ≈ [f(a+h) − f(a)] / h for small h. The line shown uses the exact derivative for these functions.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="riemann" aria-labelledby="riemann-h">
+    <h2 id="riemann-h">Riemann sum — definite integral</h2>
+    <p>Approximate ∫ from a to b of f(x) dx with n rectangles (right endpoints here). Slide n up and watch the sum approach the true area under y = 1 + 0.3x² on [0, 2].</p>
+    <div class="panel">
+      <canvas id="riemannCanvas" width="720" height="360" aria-label="Riemann sum rectangles"></canvas>
+      <div class="slider-row"><span>n rectangles</span><input id="nSlider" type="range" min="2" max="80" step="1" value="8"><span id="nVal">8</span></div>
+      <div class="modes">
+        <button type="button" data-rule="right" aria-pressed="true">Right</button>
+        <button type="button" data-rule="left" aria-pressed="false">Left</button>
+        <button type="button" data-rule="mid" aria-pressed="false">Midpoint</button>
+      </div>
+      <div class="out" id="riemannOut"></div>
+    </div>
+  </section>
+
+  <section class="section" id="limit" aria-labelledby="limit-h">
+    <h2 id="limit-h">Limit intuition</h2>
+    <p>For g(x) = (x² − 1)/(x − 1) when x ≠ 1 (and undefined at x = 1), values approach 2 as x → 1. Slide ε-closeness: only show sample points within δ of 1.</p>
+    <div class="panel">
+      <canvas id="limitCanvas" width="720" height="320" aria-label="Limit approach demo"></canvas>
+      <div class="slider-row"><span>δ neighborhood</span><input id="deltaSlider" type="range" min="0.05" max="1.5" step="0.01" value="0.6"><span id="deltaVal">0.60</span></div>
+      <div class="out" id="limitOut"></div>
+    </div>
+  </section>
+
+  <section class="also" aria-label="Related" style="margin-top:36px">
+    <h2>Nearby</h2>
+    <a href="/maths/">Maths hub</a>
+    <a href="/maths/trig/">Trigonometry</a>
+    <a href="/maths/linear-algebra/">Linear algebra</a>
+    <a href="/sitemap.html">Site contents</a>
+  </section>
+  <p class="disclaimer">Educational calculus sketches — original explanations of standard ideas. Not a substitute for a full calculus course.</p>
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/maths/">Maths</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  themeBtns.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();drawAll();});});
+  paintTheme();
+  function cssVar(n,f){return getComputedStyle(root).getPropertyValue(n).trim()||f;}
+  function fmt(n,d){d=d==null?3:d;if(!isFinite(n))return '—';var p=Math.pow(10,d);return (Math.round(n*p)/p).toFixed(d);}
+
+  var fnId='poly';
+  var fns={
+    poly:{label:'f(x)=x³/3 − x', f:function(x){return x*x*x/3-x;}, fp:function(x){return x*x-1;}, xmin:-2.6,xmax:2.6,ymin:-2.2,ymax:2.2},
+    quad:{label:'f(x)=x²', f:function(x){return x*x;}, fp:function(x){return 2*x;}, xmin:-2.5,xmax:2.5,ymin:-0.5,ymax:6},
+    sin:{label:'f(x)=sin x', f:function(x){return Math.sin(x);}, fp:function(x){return Math.cos(x);}, xmin:-Math.PI,xmax:Math.PI,ymin:-1.4,ymax:1.4},
+    exp:{label:'f(x)=eˣ', f:function(x){return Math.exp(x);}, fp:function(x){return Math.exp(x);}, xmin:-2,xmax:2,ymin:-0.5,ymax:8}
+  };
+
+  [].slice.call(document.querySelectorAll('[data-fn]')).forEach(function(b){
+    b.addEventListener('click',function(){
+      fnId=b.dataset.fn;
+      [].slice.call(document.querySelectorAll('[data-fn]')).forEach(function(x){x.setAttribute('aria-selected',String(x===b));});
+      drawDeriv();
+    });
+  });
+
+  function drawDeriv(){
+    var F=fns[fnId],a=parseFloat(document.getElementById('aSlider').value);
+    document.getElementById('aVal').textContent=fmt(a,2);
+    var c=document.getElementById('derivCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    function X(x){return (x-F.xmin)/(F.xmax-F.xmin)*w;}
+    function Y(y){return h-(y-F.ymin)/(F.ymax-F.ymin)*h;}
+    // axes
+    ctx.strokeStyle=line;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,Y(0));ctx.lineTo(w,Y(0));ctx.moveTo(X(0),0);ctx.lineTo(X(0),h);ctx.stroke();
+    // curve
+    ctx.beginPath();
+    for(var i=0;i<=w;i++){
+      var x=F.xmin+(F.xmax-F.xmin)*i/w,y=F.f(x);
+      if(i===0)ctx.moveTo(X(x),Y(y));else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.strokeStyle=ink;ctx.lineWidth=2;ctx.stroke();
+    // tangent
+    var fa=F.f(a),m=F.fp(a);
+    var x1=F.xmin,y1=fa+m*(x1-a),x2=F.xmax,y2=fa+m*(x2-a);
+    ctx.beginPath();ctx.moveTo(X(x1),Y(y1));ctx.lineTo(X(x2),Y(y2));
+    ctx.strokeStyle=accent;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(X(a),Y(fa),6,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();
+    document.getElementById('derivOut').innerHTML=
+      '<strong style="font-weight:500">'+F.label+'</strong><br><br>'+
+      'a = '+fmt(a,3)+'<br>'+
+      'f(a) = '+fmt(fa,4)+'<br>'+
+      'f′(a) = '+fmt(m,4)+'<br><br>'+
+      '<span class="muted">Tangent: y − f(a) = f′(a)(x − a)</span><br>'+
+      'y = '+fmt(m,3)+'(x − '+fmt(a,2)+') + '+fmt(fa,3);
+  }
+  document.getElementById('aSlider').addEventListener('input',drawDeriv);
+  (function(){
+    var c=document.getElementById('derivCanvas'),dragging=false;
+    function setA(e){
+      var F=fns[fnId],r=c.getBoundingClientRect();
+      var t=(e.clientX-r.left)/r.width;
+      var a=F.xmin+t*(F.xmax-F.xmin);
+      a=Math.max(F.xmin,Math.min(F.xmax,a));
+      document.getElementById('aSlider').value=a;
+      drawDeriv();
+    }
+    c.addEventListener('pointerdown',function(e){dragging=true;c.setPointerCapture(e.pointerId);setA(e);});
+    c.addEventListener('pointermove',function(e){if(dragging)setA(e);});
+    c.addEventListener('pointerup',function(){dragging=false;});
+  })();
+
+  // Riemann
+  var rule='right';
+  function fR(x){return 1+0.3*x*x;}
+  function trueIntegral(){ // ∫_0^2 (1+0.3x²) dx = [x + 0.1 x³]_0^2 = 2 + 0.8 = 2.8
+    return 2.8;
+  }
+  [].slice.call(document.querySelectorAll('[data-rule]')).forEach(function(b){
+    b.addEventListener('click',function(){
+      rule=b.dataset.rule;
+      [].slice.call(document.querySelectorAll('[data-rule]')).forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+      drawRiemann();
+    });
+  });
+  function drawRiemann(){
+    var n=parseInt(document.getElementById('nSlider').value,10);
+    document.getElementById('nVal').textContent=String(n);
+    var a=0,b=2,dx=(b-a)/n;
+    var c=document.getElementById('riemannCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height,pad=28;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    var xmin=-0.2,xmax=2.3,ymin=-0.2,ymax=3.2;
+    function X(x){return pad+(x-xmin)/(xmax-xmin)*(w-2*pad);}
+    function Y(y){return h-pad-(y-ymin)/(ymax-ymin)*(h-2*pad);}
+    ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(X(xmin),Y(0));ctx.lineTo(X(xmax),Y(0));ctx.moveTo(X(0),Y(ymin));ctx.lineTo(X(0),Y(ymax));ctx.stroke();
+    var sum=0;
+    for(var i=0;i<n;i++){
+      var xl=a+i*dx,xr=xl+dx,xs;
+      if(rule==='left')xs=xl;else if(rule==='mid')xs=xl+dx/2;else xs=xr;
+      var ht=fR(xs);sum+=ht*dx;
+      ctx.fillStyle='rgba(200,180,138,0.28)';
+      ctx.fillRect(X(xl),Y(ht),X(xr)-X(xl),Y(0)-Y(ht));
+      ctx.strokeStyle=accent;ctx.strokeRect(X(xl),Y(ht),X(xr)-X(xl),Y(0)-Y(ht));
+    }
+    ctx.beginPath();
+    for(var i=0;i<=200;i++){
+      var x=a+(b-a)*i/200,y=fR(x);
+      if(i===0)ctx.moveTo(X(x),Y(y));else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.strokeStyle=ink;ctx.lineWidth=2;ctx.stroke();
+    var exact=trueIntegral();
+    document.getElementById('riemannOut').textContent=
+      'f(x)=1+0.3x² on [0,2] · '+rule+' Riemann · n='+n+'\n'+
+      'Sum ≈ '+fmt(sum,5)+'   Exact ∫ = '+fmt(exact,5)+'   Error ≈ '+fmt(sum-exact,5);
+  }
+  document.getElementById('nSlider').addEventListener('input',drawRiemann);
+
+  // Limit
+  function g(x){return (x*x-1)/(x-1);} // = x+1 for x≠1
+  function drawLimit(){
+    var delta=parseFloat(document.getElementById('deltaSlider').value);
+    document.getElementById('deltaVal').textContent=fmt(delta,2);
+    var c=document.getElementById('limitCanvas'),ctx=c.getContext('2d');
+    var w=c.width,h=c.height,pad=24;
+    var ink=cssVar('--ink','#e8e6e1'),soft=cssVar('--ink-soft','#9b9a96'),line=cssVar('--line','#2c303a'),accent=cssVar('--accent','#c8b48a'),base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    var xmin=-0.5,xmax=2.5,ymin=-0.5,ymax=4;
+    function X(x){return pad+(x-xmin)/(xmax-xmin)*(w-2*pad);}
+    function Y(y){return h-pad-(y-ymin)/(ymax-ymin)*(h-2*pad);}
+    ctx.strokeStyle=line;ctx.beginPath();ctx.moveTo(X(xmin),Y(0));ctx.lineTo(X(xmax),Y(0));ctx.moveTo(X(0),Y(ymin));ctx.lineTo(X(0),Y(ymax));ctx.stroke();
+    // hole at 1
+    ctx.beginPath();
+    for(var i=0;i<=200;i++){
+      var x=xmin+(xmax-xmin)*i/200;
+      if(Math.abs(x-1)<0.02)continue;
+      var y=x+1; // continuous extension
+      if(i===0)ctx.moveTo(X(x),Y(y));else ctx.lineTo(X(x),Y(y));
+    }
+    ctx.strokeStyle=soft;ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(X(1),Y(2),7,0,Math.PI*2);ctx.fillStyle=base;ctx.fill();
+    ctx.strokeStyle=ink;ctx.lineWidth=2;ctx.stroke();
+    // samples in (1-δ,1+δ)
+    var samples=[],maxDev=0;
+    for(var k=0;k<24;k++){
+      var t=Math.random()*2-1;if(Math.abs(t)<0.05)t=t>=0?0.05:-0.05;
+      var x=1+t*delta;if(x===1)continue;
+      var y=g(x);samples.push([x,y]);maxDev=Math.max(maxDev,Math.abs(y-2));
+      ctx.beginPath();ctx.arc(X(x),Y(y),3.5,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();
+    }
+    // δ band
+    ctx.fillStyle='rgba(200,180,138,0.08)';
+    ctx.fillRect(X(1-delta),pad,X(1+delta)-X(1-delta),h-2*pad);
+    document.getElementById('limitOut').textContent=
+      'g(x)=(x²−1)/(x−1) for x≠1 · hole at x=1 · lim x→1 g(x) = 2\n'+
+      'δ = '+fmt(delta,2)+' · sample |g(x)−2| up to ≈ '+fmt(maxDev,4)+' in this draw\n'+
+      'As δ → 0, samples crowd toward the open circle at (1, 2).';
+  }
+  document.getElementById('deltaSlider').addEventListener('input',drawLimit);
+
+  function drawAll(){drawDeriv();drawRiemann();drawLimit();}
+  drawAll();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
