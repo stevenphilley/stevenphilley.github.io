@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC resonance — Electronics — Steven Philley</title>
+<meta name="description" content="LC resonance from L and C. f0 = 1/(2π√(LC)), ω0, characteristic Z0, plus series Q and bandwidth when R is set.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/resonance.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="LC resonance — Steven Philley">
+<meta property="og:description" content="f0 = 1/(2π√(LC)). Live LC resonant frequency, ω0, and Z0 — with series Q and bandwidth when R &gt; 0.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/resonance.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LC resonance — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
+select{cursor:pointer}
+.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.stat a{color:var(--accent,#c8b48a);text-decoration:none}
+.stat a:hover{text-decoration:underline}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html" aria-current="page">LC</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>LC resonance</h1>
+  <p class="lede">An inductor and a capacitor exchange energy at one natural frequency. Change L and C — f₀, ω₀, and Z₀ update as you type. Optional series R adds Q and bandwidth.</p>
+
+  <div class="stage">
+    <div class="fields">
+      <div class="pair">
+        <label>Inductance L<input id="l" inputmode="decimal" step="any" value="100"></label>
+        <label>Unit
+          <select id="lunit" aria-label="Inductance unit">
+            <option value="1e-6" selected>µH</option>
+            <option value="1e-3">mH</option>
+            <option value="1">H</option>
+          </select>
+        </label>
+      </div>
+      <div class="pair">
+        <label>Capacitance C<input id="c" inputmode="decimal" step="any" value="100"></label>
+        <label>Unit
+          <select id="cunit" aria-label="Capacitance unit">
+            <option value="1e-12">pF</option>
+            <option value="1e-9" selected>nF</option>
+            <option value="1e-6">µF</option>
+            <option value="1">F</option>
+          </select>
+        </label>
+      </div>
+      <label>Series R (ohms, optional)<input id="r" inputmode="decimal" step="any" value="" placeholder="0"></label>
+      <div class="presets" role="group" aria-label="Common LC pairs">
+        <button type="button" data-l="100" data-lunit="1e-6" data-c="100" data-cunit="1e-9" data-r="" aria-pressed="true">100 µH · 100 nF</button>
+        <button type="button" data-l="1" data-lunit="1e-3" data-c="1" data-cunit="1e-6" data-r="">1 mH · 1 µF</button>
+        <button type="button" data-l="220" data-lunit="1e-6" data-c="365" data-cunit="1e-12" data-r="">AM-ish · 220 µH · 365 pF</button>
+        <button type="button" data-l="10" data-lunit="1e-6" data-c="100" data-cunit="1e-12" data-r="5">10 µH · 100 pF · 5 Ω</button>
+        <button type="button" data-l="33" data-lunit="1e-3" data-c="10" data-cunit="1e-9" data-r="10">33 mH · 10 nF · 10 Ω</button>
+      </div>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>Resonant frequency for an LC tank is f₀ = 1 / (2π√(LC)). At that point the inductive and capacitive reactances cancel in magnitude, and the tank rings at ω₀ = 2πf₀. The characteristic impedance Z₀ = √(L/C) sets the scale of those reactances at resonance.</p>
+    <p>With series resistance R &gt; 0, quality factor Q = Z₀ / R and the −3 dB bandwidth is about f₀ / Q. Higher Q means a sharper peak; more R damps the ring. Ideal L and C (R blank or zero) still give f₀, ω₀, and Z₀ — Q and bandwidth stay blank until you set R.</p>
+    <p>Pair this with <a href="/electronics/reactance.html" style="color:var(--accent,#c8b48a)">Reactance</a> for X<sub>L</sub> / X<sub>C</sub> at a chosen frequency, <a href="/electronics/rl-time.html" style="color:var(--accent,#c8b48a)">RL time</a> and <a href="/electronics/rc-time.html" style="color:var(--accent,#c8b48a)">RC time</a> for the transient twins, or the <a href="/electronics/" style="color:var(--accent,#c8b48a)">converters bench</a> for everyday ohms and watts.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var lEl=document.getElementById('l');
+  var lunitEl=document.getElementById('lunit');
+  var cEl=document.getElementById('c');
+  var cunitEl=document.getElementById('cunit');
+  var rEl=document.getElementById('r');
+  var out=document.getElementById('out');
+  var chips=[].slice.call(document.querySelectorAll('.presets button'));
+
+  function num(el){
+    var s=String(el.value).replace(/,/g,'').trim();
+    if(s==='') return NaN;
+    return parseFloat(s);
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    if(n>=1e6) return fmt(n/1e6,3)+' MΩ';
+    if(n>=1e3) return fmt(n/1e3,3)+' kΩ';
+    return fmt(n, n>=100 ? 1 : 2)+' Ω';
+  }
+  function formatHenries(L){
+    if(!isFinite(L)) return '—';
+    var abs=Math.abs(L);
+    if(abs>=1) return fmt(L,3)+' H';
+    if(abs>=1e-3) return fmt(L*1e3,3)+' mH';
+    return fmt(L*1e6,2)+' µH';
+  }
+  function formatFarads(C){
+    if(!isFinite(C)) return '—';
+    var abs=Math.abs(C);
+    if(abs>=1) return fmt(C,3)+' F';
+    if(abs>=1e-6) return fmt(C*1e6,3)+' µF';
+    if(abs>=1e-9) return fmt(C*1e9,3)+' nF';
+    return fmt(C*1e12,2)+' pF';
+  }
+  function formatHz(f){
+    if(!isFinite(f) || f<=0) return '—';
+    if(f>=1e6) return fmt(f/1e6,3)+' MHz';
+    if(f>=1e3) return fmt(f/1e3,3)+' kHz';
+    return fmt(f,3)+' Hz';
+  }
+  function formatRad(w){
+    if(!isFinite(w) || w<=0) return '—';
+    if(w>=1e6) return fmt(w/1e6,3)+' Mrad/s';
+    if(w>=1e3) return fmt(w/1e3,3)+' krad/s';
+    return fmt(w,3)+' rad/s';
+  }
+  function syncChips(){
+    var l=num(lEl), c=num(cEl), lu=lunitEl.value, cu=cunitEl.value;
+    var rStr=String(rEl.value).replace(/,/g,'').trim();
+    var r=rStr==='' ? NaN : parseFloat(rStr);
+    chips.forEach(function(b){
+      var br=b.dataset.r;
+      var rMatch;
+      if(br==='' || br==null){
+        rMatch = rStr==='' || !(parseFloat(rStr)>0);
+      } else {
+        rMatch = isFinite(r) && Math.abs(r-parseFloat(br))/Math.max(r,1)<0.02;
+      }
+      var match = isFinite(l) && isFinite(c)
+        && Math.abs(l-parseFloat(b.dataset.l))/Math.max(l,1e-12)<0.02
+        && Math.abs(c-parseFloat(b.dataset.c))/Math.max(c,1e-12)<0.02
+        && b.dataset.lunit===lu
+        && b.dataset.cunit===cu
+        && rMatch;
+      b.setAttribute('aria-pressed', String(match));
+    });
+  }
+  function render(){
+    var lVal=num(lEl), cVal=num(cEl);
+    var lScale=parseFloat(lunitEl.value), cScale=parseFloat(cunitEl.value);
+    var rStr=String(rEl.value).replace(/,/g,'').trim();
+    var r = rStr==='' ? 0 : parseFloat(rStr);
+    syncChips();
+    if(!(lVal>0) || !(cVal>0) || !(lScale>0) || !(cScale>0)){
+      out.innerHTML='<div class="unit">f₀</div><div class="num">—</div><p class="note">Enter L and C above zero.</p>';
+      return;
+    }
+    var L=lVal*lScale;
+    var C=cVal*cScale;
+    var LC=L*C;
+    if(!(LC>0)){
+      out.innerHTML='<div class="unit">f₀</div><div class="num">—</div><p class="note">L × C must be greater than zero.</p>';
+      return;
+    }
+    var f0=1/(2*Math.PI*Math.sqrt(LC));
+    var w0=2*Math.PI*f0;
+    var Z0=Math.sqrt(L/C);
+    var fParts=formatHz(f0).split(' ');
+    var fNum=fParts.slice(0,-1).join(' ');
+    var fUnit=fParts[fParts.length-1];
+    var stats=
+      '<div class="stat"><span class="lab">ω₀ · angular</span><span class="val">'+formatRad(w0)+'</span></div>'+
+      '<div class="stat"><span class="lab">Z₀ · √(L/C)</span><span class="val">'+formatOhms(Z0)+'</span></div>';
+    var note='Ideal tank — set series R to see Q and bandwidth.';
+    if(isFinite(r) && r>0){
+      var Q=Z0/r;
+      var bw=f0/Q;
+      stats+=
+        '<div class="stat"><span class="lab">Q · series (Z₀ / R)</span><span class="val">'+fmt(Q, Q>=100 ? 1 : 3)+'</span></div>'+
+        '<div class="stat"><span class="lab">Bandwidth · f₀ / Q</span><span class="val">'+formatHz(bw)+'</span></div>'+
+        '<div class="stat"><span class="lab">Series R</span><span class="val">'+formatOhms(r)+'</span></div>';
+      note='Series RLC: Q = Z₀ / R. Bandwidth is the −3 dB width ≈ f₀ / Q.';
+    } else if(rStr!=='' && !(r>=0)){
+      note='Series R should be zero or a positive number of ohms.';
+    }
+    out.innerHTML=
+      '<div class="unit">f₀ · resonant frequency</div>'+
+      '<div class="num">'+fNum+'</div>'+
+      '<div class="unit">'+fUnit+'</div>'+
+      '<p class="formula">f₀ = 1 / (2π√(LC)) · L = '+formatHenries(L)+' · C = '+formatFarads(C)+'</p>'+
+      '<div class="stats">'+stats+'</div>'+
+      '<p class="note">'+note+'</p>';
+  }
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      lEl.value=b.dataset.l;
+      lunitEl.value=b.dataset.lunit;
+      cEl.value=b.dataset.c;
+      cunitEl.value=b.dataset.cunit;
+      rEl.value=b.dataset.r || '';
+      render();
+    });
+  });
+  [lEl,lunitEl,cEl,cunitEl,rEl].forEach(function(el){
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+})();
+</script>
+</body>
+</html>
