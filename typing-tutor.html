@@ -66,6 +66,13 @@
     --shade:rgba(255,255,255,0.40);
     --blob-1:#e7c89e; --blob-2:#dcae8e; --blob-3:#cdbf9a; --grid:rgba(70,50,35,0.08);
   }
+  body[data-theme="neon"]{
+    --base:#140828; --base-2:#0C021A; --ink:#F8ECFF; --ink-soft:#B89BC8;
+    --ink-faint:#6E5088; --accent:#FF2DC8; --accent-2:#00F0FF; --error:#FF6B9A;
+    --panel:rgba(0,240,255,0.05); --panel-line:rgba(255,45,200,0.22);
+    --shade:rgba(0,0,0,0.28);
+    --blob-1:#5A1878; --blob-2:#B84DFF; --blob-3:#1A5A70; --grid:rgba(0,240,255,0.08);
+  }
 
   *{box-sizing:border-box;}
   html,body{height:100%;}
@@ -121,6 +128,7 @@
   .sw-sage{--s1:#7e9a6a; --s2:#e6cf9f;}
   .sw-tide{--s1:#2f4a66; --s2:#8fd0c8;}
   .sw-sand{--s1:#c98a5a; --s2:#e7c89e;}
+.sw-neon{--s1:#FF2DC8; --s2:#00F0FF;}
 
   /* ---- Stats row ---- */
   .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
@@ -225,6 +233,7 @@
         <button class="swatch sw-sage" data-set="sage" aria-pressed="false" title="Sage"></button>
         <button class="swatch sw-tide" data-set="tide" aria-pressed="false" title="Tide"></button>
         <button class="swatch sw-sand" data-set="sand" aria-pressed="false" title="Sand"></button>
+        <button class="swatch sw-neon" data-set="neon" aria-pressed="false" title="Neon"></button>
       </div>
     </header>
 
@@ -507,10 +516,14 @@
   }
 
   // ---- Theme helper ----
-  function setTheme(name){
+  function setTheme(name, persist){
+    if (!['dusk','sage','tide','sand','neon'].includes(name)) name = 'dusk';
     document.body.setAttribute('data-theme', name);
     document.querySelectorAll('.swatch').forEach(b=>
       b.setAttribute('aria-pressed', b.dataset.set===name ? 'true':'false'));
+    if (persist) {
+      try { localStorage.setItem('sp-theme', name); } catch(e){}
+    }
   }
 
   // ---- Sharing via query string ----
@@ -562,7 +575,7 @@
     if (q.get('s') !== '1' || !q.get('k')) return false;
 
     const th = q.get('th');
-    if (th && ['dusk','sage','tide','sand'].includes(th)) setTheme(th);
+    if (th && ['dusk','sage','tide','sand','neon'].includes(th)) setTheme(th);
 
     const di = parseInt(q.get('d'),10);
     setDifficulty((di>=0 && di<LEVELS.length) ? di : 1);
@@ -740,10 +753,14 @@
   // ---- Themes ----
   document.querySelectorAll('.swatch').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      setTheme(btn.dataset.set);
+      setTheme(btn.dataset.set, true);
       if (finished) drawChart();
     });
   });
+  try {
+    var savedTh = localStorage.getItem('sp-theme');
+    if (savedTh) setTheme(savedTh, false);
+  } catch(e){}
 
   // ---- Controls ----
   document.getElementById('restart').addEventListener('click', ()=> loadPassage(target));
