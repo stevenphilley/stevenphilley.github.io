@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="accounting">
+<html lang="en" data-theme="accounting" data-sp-share="markets">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,13 +22,21 @@
 
 <title>Percent — A Calculator</title>
 <meta name="theme-color" content="#f1ead9">
-<!-- no-flash theme: set data-theme before first paint -->
+<!-- no-flash theme: ?theme= then localStorage (markets-only skins) -->
 <script>
 (function(){
   try{
     var valid=['accounting','emerald-light','emerald-dark'];
-    var t=localStorage.getItem('sp-theme-markets')||localStorage.getItem('sp-theme-percent');
-    if(valid.indexOf(t)===-1)t='accounting';
+    var params=new URLSearchParams(location.search);
+    var q=(params.get('theme')||params.get('sp_theme')||'').toLowerCase();
+    var t;
+    if(valid.indexOf(q)>-1){
+      t=q;
+      try{localStorage.setItem('sp-theme-markets',t);localStorage.removeItem('sp-theme-percent');}catch(e){}
+    } else {
+      t=localStorage.getItem('sp-theme-markets')||localStorage.getItem('sp-theme-percent');
+      if(valid.indexOf(t)===-1)t='accounting';
+    }
     document.documentElement.setAttribute('data-theme',t);
   }catch(e){
     document.documentElement.setAttribute('data-theme','accounting');
@@ -838,5 +846,6 @@
   }
   tick();setInterval(tick,1000);
 </script>
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>

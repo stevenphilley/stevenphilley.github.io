@@ -372,8 +372,21 @@ lb.addEventListener('touchend', e => {
 
   function shareUrl() {
     var num = slug(text(elNum));
-    var base = location.origin + location.pathname;
-    return num ? base + '#p=' + num : base;
+    var base;
+    if (window.spShare && typeof window.spShare.url === 'function') {
+      base = window.spShare.url(location.origin + location.pathname);
+    } else {
+      try {
+        var u = new URL(location.origin + location.pathname);
+        var theme = document.documentElement.getAttribute('data-theme') || 'neon';
+        u.searchParams.set('theme', theme);
+        base = u.toString();
+      } catch (e) {
+        base = location.origin + location.pathname;
+      }
+    }
+    // Keep plate deep-link hash after the themed query.
+    return num ? base.replace(/#.*$/, '') + '#p=' + num : base.replace(/#.*$/, '');
   }
 
   if (elNum && 'MutationObserver' in window) {

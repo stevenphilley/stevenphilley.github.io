@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="brass">
+<html lang="en" data-theme="brass" data-sp-share="dial">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -316,6 +316,12 @@
   function normalizeTheme(id){
     return THEME_ORDER.includes(id) ? id : 'brass';
   }
+  /* Site-wide share/theme contract:
+   *  Most pages use ?theme=<neon|emerald|dusk|sage|tide|sand> for sp-theme.
+   *  This dial page keeps ?theme= for dial skins (brass|led|vapor|hallow|xmas|neon)
+   *  under annual-dial-theme. Neon collides with the site theme name, so we do NOT
+   *  load /js/sp-theme-boot.js here. Page Share uses dial ?theme= via sp-share.js.
+   */
   function themeFromQuery(){
     try{
       const q = new URLSearchParams(location.search).get('theme');
@@ -785,5 +791,6 @@
   })();
 })();
 </script>
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>

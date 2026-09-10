@@ -22,7 +22,30 @@
 
 <title>Nine Chakras — Steven Philley</title>
 
-<script>(function(){try{var SITE=['neon','emerald','dusk','sage','tide','sand'];var c=localStorage.getItem('sp-theme-chakras');var t=localStorage.getItem('sp-theme')||'neon';if(c==='glow')document.documentElement.setAttribute('data-theme','glow');else if(SITE.indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<script>
+/* Chakras: site themes via ?theme=; Glow via ?theme=glow (sp-theme-chakras only). */
+(function(){
+  try{
+    var SITE=['neon','emerald','dusk','sage','tide','sand'];
+    var params=new URLSearchParams(location.search);
+    var q=(params.get('theme')||params.get('sp_theme')||'').toLowerCase();
+    if(q==='glow'){
+      document.documentElement.setAttribute('data-theme','glow');
+      try{localStorage.setItem('sp-theme-chakras','glow');}catch(e){}
+      return;
+    }
+    if(SITE.indexOf(q)>-1){
+      document.documentElement.setAttribute('data-theme',q);
+      try{localStorage.setItem('sp-theme',q);localStorage.removeItem('sp-theme-chakras');}catch(e){}
+      return;
+    }
+    var c=localStorage.getItem('sp-theme-chakras');
+    var t=localStorage.getItem('sp-theme')||'neon';
+    if(c==='glow')document.documentElement.setAttribute('data-theme','glow');
+    else if(SITE.indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);
+  }catch(e){}
+})();
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1273,5 +1296,6 @@ footer a:hover{color:var(--ink)}
 })();
 </script>
 
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>

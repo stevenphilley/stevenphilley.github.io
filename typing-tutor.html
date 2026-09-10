@@ -1,6 +1,28 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>
+/* Stilltype: themes live on body[data-theme]; also mirror on <html> for share helpers.
+   Accepts ?theme= (preferred) and legacy ?th=. */
+(function(){
+  var S=['neon','emerald','dusk','sage','tide','sand'];
+  function apply(name, persist){
+    if(S.indexOf(name)===-1) return;
+    document.documentElement.setAttribute('data-theme', name);
+    function paint(){ if(document.body) document.body.setAttribute('data-theme', name);
+    document.documentElement.setAttribute('data-theme', name); }
+    if(document.body) paint(); else document.addEventListener('DOMContentLoaded', paint);
+    if(persist){ try{ localStorage.setItem('sp-theme', name); }catch(e){} }
+  }
+  try{
+    var params=new URLSearchParams(location.search);
+    var q=(params.get('theme')||params.get('sp_theme')||params.get('th')||'').toLowerCase();
+    if(S.indexOf(q)>-1){ apply(q, true); return; }
+    apply(localStorage.getItem('sp-theme')||'neon', false);
+  }catch(e){ apply('neon', false); }
+})();
+</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="A quiet typing tutor with a home-row-first lesson plan for beginners, Gentle/Steady/Brisk free practice, a live keyboard guide, and a pace chart with WPM and accuracy.">
@@ -1094,7 +1116,7 @@
     q.set('t', el.toFixed(1));
     q.set('m', String(mistakeCount()));
     q.set('pk', String(Math.round(peakWpm())));
-    q.set('th', document.body.getAttribute('data-theme'));
+    q.set('theme', document.body.getAttribute('data-theme') || document.documentElement.getAttribute('data-theme') || 'neon');
     q.set('k', times);
     if (errs) q.set('e', errs);
     let base;
@@ -1124,8 +1146,8 @@
     try { q = new URLSearchParams(location.search); } catch(e){ return false; }
     if (q.get('s') !== '1' || !q.get('k')) return false;
 
-    const th = q.get('th');
-    if (th && ['neon','emerald','dusk','sage','tide','sand'].includes(th)) setTheme(th);
+    const th = q.get('theme') || q.get('th');
+    if (th && ['neon','emerald','dusk','sage','tide','sand'].includes(th)) setTheme(th, true);
 
     mode = 'free';
     modeLessonsBtn.setAttribute('aria-pressed','false');
@@ -1356,5 +1378,6 @@
   }
 })();
 </script>
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>

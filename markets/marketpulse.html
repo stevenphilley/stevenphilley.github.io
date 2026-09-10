@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="emerald-dark">
+<html lang="en" data-theme="emerald-dark" data-sp-share="markets">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,10 +11,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@600;800&display=swap" rel="stylesheet">
 
 <script>
-/* No-flash theme restore. Must run before first paint. */
+/* No-flash: ?theme= markets skin, else localStorage. Site sp-theme uses other pages. */
 (function () {
   try {
-    var t = localStorage.getItem('sp-theme-markets');
+    var valid = ['accounting', 'emerald-light', 'emerald-dark'];
+    var params = new URLSearchParams(location.search);
+    var q = (params.get('theme') || params.get('sp_theme') || '').toLowerCase();
+    var t;
+    if (valid.indexOf(q) > -1) {
+      t = q;
+      try { localStorage.setItem('sp-theme-markets', t); } catch (e) {}
+    } else {
+      t = localStorage.getItem('sp-theme-markets');
+    }
     if (t === 'accounting' || t === 'emerald-light' || t === 'emerald-dark') {
       document.documentElement.setAttribute('data-theme', t);
     }
@@ -1011,5 +1020,6 @@ cxBtn.addEventListener('click', async () => {
   setTimeout(() => { cxBtn.disabled = false; cxBtn.textContent = 'Refresh'; }, 60000);
 });
 </script>
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>
