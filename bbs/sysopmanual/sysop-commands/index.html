@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sysop Commands — Sysop Manual — Steven Philley</title>
+<meta name="description" content="Sysop definition, multiple sysops, SCFG, and online sysop commands.">
+<link rel="canonical" href="https://stevenphilley.com/bbs/sysopmanual/sysop-commands/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Sysop Commands — Sysop Manual">
+<meta property="og:description" content="Sysop definition, multiple sysops, SCFG, and online sysop commands.">
+<meta property="og:url" content="https://stevenphilley.com/bbs/sysopmanual/sysop-commands/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sysop Commands — Sysop Manual">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,10vw,96px);line-height:.88;margin:0}
+.e-hero .lede{max-width:62ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.manual{padding:8px 0 0}
+.manual h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4.5vw,38px);letter-spacing:.06em;margin:36px 0 12px;border-top:1px solid var(--line,#2c303a);padding-top:28px}
+.manual > h2:first-child{border-top:0;padding-top:18px;margin-top:18px}
+.manual h3{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+.manual h4{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink,#e8e6e1);margin:22px 0 8px}
+.manual p,.manual li{font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:68ch}
+.manual p{margin:0 0 14px}
+.manual a{color:var(--ink,#e8e6e1)}
+.manual a:hover{color:var(--accent,#c8b48a)}
+.manual ul,.manual ol{margin:0 0 16px;padding-left:1.35rem;max-width:68ch}
+.manual li{margin:0 0 6px}
+.manual li > ul,.manual li > ol{margin-top:6px;margin-bottom:0}
+.manual strong{color:var(--ink,#e8e6e1);font-weight:500}
+.manual em{font-style:italic}
+.manual hr{border:0;border-top:1px solid var(--line,#2c303a);margin:28px 0}
+.manual code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink,#e8e6e1);background:rgba(255,255,255,.04);padding:1px 5px;border-radius:3px}
+.manual pre{margin:0 0 18px;padding:14px 16px;overflow-x:auto;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);max-width:100%}
+.manual pre code{background:transparent;padding:0;font-size:12px;line-height:1.55;color:var(--ink,#e8e6e1)}
+.manual table{width:100%;border-collapse:collapse;margin:0 0 18px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55}
+.manual th,.manual td{border-top:1px solid var(--line,#2c303a);padding:10px 12px 10px 0;text-align:left;vertical-align:top;color:var(--ink-soft,#9b9a96)}
+.manual th{color:var(--accent,#c8b48a);letter-spacing:.08em;text-transform:uppercase;font-weight:500;font-size:11px}
+.manual blockquote{margin:0 0 16px;padding:0 0 0 14px;border-left:2px solid var(--accent,#c8b48a)}
+.manual blockquote p{margin:0}
+.wiki-src{margin:-6px 0 20px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+.wiki-src a{color:var(--ink-soft,#9b9a96)}
+.toc{list-style:none;margin:0 0 18px;padding:0}
+.toc li{border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:var(--ink-soft,#9b9a96);max-width:none}
+.toc li a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.toc li a:hover{color:var(--ink,#e8e6e1);border-bottom-color:var(--accent,#c8b48a)}
+.chapters{list-style:none;margin:8px 0 0;padding:0}
+.chapters li{border-top:1px solid var(--line,#2c303a);padding:14px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.chapters a{color:inherit}
+.chapters .num{color:var(--accent,#c8b48a);margin-right:10px;letter-spacing:.08em}
+.pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:36px 0 0;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pager a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.pager a:hover{color:var(--ink,#e8e6e1)}
+.source{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--muted,#63666e)}
+.source a{color:var(--ink-soft,#9b9a96)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:640px){
+  .manual table{display:block;overflow-x:auto}
+  .e-top{font-size:10px;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/bbs/">BBS</a>
+      <a href="/bbs/sysopmanual/">Sysop manual</a>
+      <a href="/bbs/sysopmanual/sysop-commands/" aria-current="page">Sysop commands</a>
+      <a href="/sitemap.html">Site contents</a>
+
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Sysop Manual — 03</p>
+    <h1>Sysop Commands</h1>
+    <p class="lede">5.0–5.4 Sysop definition, multiple sysops, SCFG, online string commands.</p>
+  </header>
+
+  <article class="manual">
+<h2>5.0 Sysop Commands (Remote / Local)</h2>
+<p>Sysop work happens in two places:</p>
+<ul>
+<li><strong>Local</strong> — on the BBS host via SCFG, Control Panel, and <code>exec/</code> utilities (<code>uedit</code>, <code>allusers</code>, <code>node</code>, EchoCfg, etc.).</li>
+<li><strong>Remote / online</strong> — while logged into the Terminal Server as a sysop-level user, using <code>;</code> string commands and the <code>!</code> sysop menu in the Classic shell.</li>
+</ul>
+<p>Both paths honor the same security model: level, flags, exemptions, and restrictions on the user record.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/access:index" rel="noopener">https://wiki.synchro.net/access:index</a> · <a href="https://wiki.synchro.net/module:str_cmds" rel="noopener">https://wiki.synchro.net/module:str_cmds</a> · <a href="https://wiki.synchro.net/util:SCFG" rel="noopener">https://wiki.synchro.net/util:SCFG</a></p>
+<hr />
+<h2>5.1 Sysop Definition (security level 90 and above)</h2>
+<p>In Synchronet, <strong>security levels 90–99</strong> are reserved for operators of the system (sysops / co-sysops). That level band is what most documentation means by “sysop,” though fine-grained power also depends on:</p>
+<ul>
+<li><strong>Flags</strong> (four sets A–Z) you invent for area access</li>
+<li><strong>Exemptions</strong> (A–Z) that lift specific limits (time, anonymous, etc. — predefined meanings)</li>
+<li><strong>Restrictions</strong> (A–Z) that deny specific features</li>
+<li><strong>ARS</strong> strings on menus, subs, directories, and doors</li>
+</ul>
+<p>A user at level 90+ typically can:</p>
+<ul>
+<li>Open the online sysop menus (<code>!</code> in Classic shell)</li>
+<li>Run <code>;UEDIT</code> and other sysop string commands (subject to remote-sysop limits)</li>
+<li>Meet default “Operator Requirements” style ARS checks when those require sysop level</li>
+</ul>
+<p>Exact command availability still filters through exemptions and the string-command module logic — higher level alone is not a blanket root shell.</p>
+<h3>Remote sysop ceilings</h3>
+<p>When editing users online, a remote sysop:</p>
+<ul>
+<li>Cannot raise another user’s level <strong>above their own</strong></li>
+<li>Cannot grant flags or exemptions they do not themselves have</li>
+<li>Cannot edit a user with a <strong>higher</strong> security level (sensitive fields stay hidden)</li>
+</ul>
+<p>That prevents a co-sysop from promoting themselves past the primary sysop via the BBS UI.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/access:index" rel="noopener">https://wiki.synchro.net/access:index</a> · <a href="https://wiki.synchro.net/access:user_editor" rel="noopener">https://wiki.synchro.net/access:user_editor</a></p>
+<hr />
+<h2>5.2 Multiple Sysops</h2>
+<p>Multiple operator accounts are normal:</p>
+<ol>
+<li>Create additional user records (or promote trusted users).</li>
+<li>Set level into the 90–99 band as appropriate for their role.</li>
+<li>Grant only the flags/exemptions they need (least privilege).</li>
+<li>Use ARS on dangerous external programs (SCFG, shell doors) so only specific ops can launch them.</li>
+<li>Prefer local <code>scfg</code> / OS access for the primary sysop; give co-sysops online tools for daily moderation.</li>
+</ol>
+<p>Document who owns network links (QWK/Fido passwords), DNS, and the OS account — those are outside the BBS user file but part of “being a sysop.”</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/access:index" rel="noopener">https://wiki.synchro.net/access:index</a></p>
+<hr />
+<h2>5.3 Local configuration (SCFG)</h2>
+<p><strong>SCFG</strong> (Synchronet Configuration Utility) edits the primary configuration INI files under <code>ctrl/</code>. It is the main local (or operator-door) UI for system structure.</p>
+<h3>How to invoke</h3>
+<ul>
+<li>Windows Control Panel: <strong>BBS → Configure</strong></li>
+<li>Command line: <code>scfg</code> from <code>exec</code> (or full path if <code>exec</code> is not on <code>PATH</code>)</li>
+<li>In-BBS: Operator External Programs → “Synchronet Configuration (ANSI)” or “(dumb)”</li>
+</ul>
+<p>Native binary: <code>exec/scfg.exe</code> (Windows) or <code>exec/scfg</code> (Unix).</p>
+<h3>Useful command-line options</h3>
+<p>From <code>scfg -?</code> / <code>scfg --help</code> (summary — check live help for your build):</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-w</code></td>
+<td>Run initial setup wizard</td>
+</tr>
+<tr>
+<td><code>-f</code></td>
+<td>Force save of configuration files</td>
+</tr>
+<tr>
+<td><code>-a</code> / <code>-h</code></td>
+<td>Update / skip message base status headers</td>
+</tr>
+<tr>
+<td><code>-u#</code></td>
+<td>File creation permission mask (octal, Unix)</td>
+</tr>
+<tr>
+<td><code>-k</code></td>
+<td>Keyboard mode only (no mouse)</td>
+</tr>
+<tr>
+<td><code>-c</code> / <code>-m</code></td>
+<td>Force color / monochrome</td>
+</tr>
+<tr>
+<td><code>-import=…</code></td>
+<td>Import a message area list</td>
+</tr>
+<tr>
+<td><code>-faddr=…</code></td>
+<td>FTN address for imported subs</td>
+</tr>
+<tr>
+<td><code>-host=…</code></td>
+<td>Alternate hostname / <code>sbbs.ini</code> selection</td>
+</tr>
+</tbody>
+</table>
+<h3>What you configure in SCFG (map)</h3>
+<ul>
+<li>System information and toggle options</li>
+<li>New user values and passwords</li>
+<li>Nodes</li>
+<li>Message groups and sub-boards</li>
+<li>File libraries and directories</li>
+<li>External program sections and editors</li>
+<li>Network configuration (Internet e-mail policy, QWK hubs, FidoNet, MQTT)</li>
+<li>Text-file sections</li>
+<li>Chat features</li>
+<li>Server-related menus (where exposed)</li>
+</ul>
+<p>After sensitive changes, recycle affected <code>sbbs</code> threads or restart so listeners and caches pick up new data.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/util:SCFG" rel="noopener">https://wiki.synchro.net/util:SCFG</a></p>
+<hr />
+<h2>5.4 Online Sysop Commands (<code>str_cmds</code>)</h2>
+<p>Stock string commands live in the JavaScript module <code>str_cmds.js</code> under <code>exec/</code> (override via <code>mods/</code> if needed). The Classic command shell loads them; other shells may expose different subsets.</p>
+<h3>Usage conventions</h3>
+<ul>
+<li>Commands are preceded by <strong><code>;</code></strong> and end with Enter</li>
+<li><code>&lt;&gt;</code> required parameter, <code>[]</code> optional, <code>()</code> required exemption in the docs</li>
+<li>Inline help: <strong><code>;HELP</code></strong></li>
+<li>Sysop menu: <strong><code>!</code></strong> from main/transfer in Classic shell; <strong><code>?</code></strong> often shows additional ops commands in context</li>
+</ul>
+<h3>Commands available to (many) users</h3>
+<p>Examples from the module documentation:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HELP</code></td>
+<td>List available string commands</td>
+</tr>
+<tr>
+<td><code>FIND [word]</code></td>
+<td>Find message or file areas (context-dependent)</td>
+</tr>
+<tr>
+<td><code>MSGS</code></td>
+<td>Redisplay instant messages / telegrams</td>
+</tr>
+<tr>
+<td><code>PLAN</code></td>
+<td>Edit <code>.plan</code> (finger)</td>
+</tr>
+<tr>
+<td><code>POFF</code></td>
+<td>Toggle pager off for multinode chat</td>
+</tr>
+</tbody>
+</table>
+<h3>Sysop-oriented groups</h3>
+<p>The wiki tables split sysop commands into areas such as:</p>
+<ul>
+<li><strong>User &amp; mail management</strong> — e.g. <code>;UEDIT</code>, mail-related ops</li>
+<li><strong>Message base / moderation</strong> — delete, edit, close, etc. (see also Sysop Bible / moderation howto)</li>
+<li><strong>File area maintenance</strong></li>
+<li><strong>Node / chat / system control</strong></li>
+<li><strong>External / miscellaneous</strong></li>
+</ul>
+<p>Exact letters and parameters change with Synchronet revisions — treat <code>;HELP</code> and the wiki command tables as authoritative for your version, not memory from another BBS package.</p>
+<h3>Safety habits</h3>
+<ul>
+<li>Prefer local backups before bulk online deletes.</li>
+<li>Remember remote-sysop ceilings when using <code>;UEDIT</code>.</li>
+<li>Do not grant the exemptions that unlock destructive commands to casual co-sysops.</li>
+<li>For bulk security changes, use <code>allusers</code> offline instead of dozens of manual <code>;UEDIT</code> sessions.</li>
+</ul>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/module:str_cmds" rel="noopener">https://wiki.synchro.net/module:str_cmds</a></p>
+<hr />
+<h2>Quick comparison</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Prefer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Restructure areas, nodes, doors</td>
+<td>Local <strong>SCFG</strong></td>
+</tr>
+<tr>
+<td>Edit one user while reading mail</td>
+<td>Online <strong><code>;UEDIT</code></strong></td>
+</tr>
+<tr>
+<td>Change level/flags for hundreds of users</td>
+<td><strong><code>allusers</code></strong> utility</td>
+</tr>
+<tr>
+<td>See who is online / clear node</td>
+<td><strong><code>node</code></strong> util or Control Panel</td>
+</tr>
+<tr>
+<td>Daily moderation</td>
+<td>Online str_cmds + moderation howto</td>
+</tr>
+</tbody>
+</table>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/access:index" rel="noopener">https://wiki.synchro.net/access:index</a> · <a href="https://wiki.synchro.net/util:SCFG" rel="noopener">https://wiki.synchro.net/util:SCFG</a> · <a href="https://wiki.synchro.net/module:str_cmds" rel="noopener">https://wiki.synchro.net/module:str_cmds</a> · <a href="https://wiki.synchro.net/access:user_editor" rel="noopener">https://wiki.synchro.net/access:user_editor</a></p>
+  </article>
+
+<nav class="pager" aria-label="Section"><a href="/bbs/sysopmanual/configuration/">← Configuration</a><a href="/bbs/sysopmanual/users-and-access/">Users &amp; access →</a></nav>
+
+  <p class="source">Source of truth: <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">wiki.synchro.net/talk:wiki:user:electrosys</a>. Docs live on the <a href="https://wiki.synchro.net/">Synchronet Wiki</a>. Active boards: <a href="https://coloritcompany.com/bbs/">coloritcompany.com/bbs</a>.</p>
+
+  <footer class="e-foot">
+    <a href="/bbs/">BBS desk</a>
+    <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">Wiki talk page</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
