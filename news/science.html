@@ -77,9 +77,14 @@
   .tabs button {
     appearance:none; background:transparent; color:var(--muted);
     border:1px solid var(--line); font:inherit; font-size:11px; letter-spacing:.14em;
-    padding:7px 10px; cursor:pointer;
+    padding:7px 10px; cursor:pointer; opacity:.45; transition:opacity .15s, border-color .15s, color .15s, background .15s;
   }
-  .tabs button[aria-selected="true"] { color:var(--ink); border-color:#fff; }
+  .tabs button[aria-pressed="true"] {
+    color:var(--ink); border-color:#fff; opacity:1;
+    background:rgba(255,255,255,.06);
+  }
+  .tabs button:hover { opacity:.85; }
+  .tabs button[aria-pressed="true"]:hover { opacity:1; }
   .months { display:flex; gap:8px; flex-wrap:wrap; margin:4px 0 10px; }
   .months button {
     appearance:none; background:transparent; color:var(--muted);
@@ -158,7 +163,7 @@
           <div class="copy" id="lede">
             <p>Eleven desks, newest first, with AI and nanomaterials beside the month row.</p>
           </div>
-          <div class="tabs" id="tabs" role="tablist"></div>
+          <div class="tabs" id="tabs" role="group" aria-label="Sources"></div>
           <div class="months" id="months" role="tablist" aria-label="Month"></div>
           <ul class="stories" id="stories"></ul>
         </div>
@@ -188,17 +193,43 @@
     { id:'ai', label:'AI' },
     { id:'nano', label:'NANOMATERIALS' }
   ];
+  var SOURCE_KEY = 'sp-science-sources';
   var MONTHS = ['2026-09','2026-08','2026-07','2026-06','2026-05','2026-04','2026-03'];
   var MONTH_LABEL = { '2026-09':'SEP','2026-08':'AUG','2026-07':'JUL','2026-06':'JUN','2026-05':'MAY','2026-04':'APR','2026-03':'MAR' };
   var tabs = document.getElementById('tabs');
   var months = document.getElementById('months');
   var stories = document.getElementById('stories');
   var lede = document.getElementById('lede');
-  var active = 'bbc';
   var month = '2026-09';
   var shown = 12;
   var data = null;
 
+  function allOn(){
+    var o = {};
+    FEEDS.forEach(function(f){ o[f.id] = true; });
+    return o;
+  }
+  function loadEnabled(){
+    try {
+      var raw = localStorage.getItem(SOURCE_KEY);
+      if (!raw) return allOn();
+      var parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return allOn();
+      var o = allOn();
+      FEEDS.forEach(function(f){
+        if (Object.prototype.hasOwnProperty.call(parsed, f.id)) {
+          o[f.id] = !!parsed[f.id];
+        }
+      });
+      return o;
+    } catch (e) {
+      return allOn();
+    }
+  }
+  function saveEnabled(){
+    try { localStorage.setItem(SOURCE_KEY, JSON.stringify(enabled)); } catch (e) {}
+  }
+  var enabled = loadEnabled();
 
   function prettyDay(d){
     if (!d) return '';
@@ -245,28 +276,57 @@
     if (isNaN(dt.getTime())) return d.slice(0, 10);
     return dt.toLocaleDateString([], { month:'short', day:'numeric' });
   }
+  function collectItems(){
+    var out = [];
+    if (!data || !data.feeds) return out;
+    FEEDS.forEach(function(f){
+      if (!enabled[f.id]) return;
+      var pack = data.feeds[f.id];
+      var label = (pack && pack.label) || f.label;
+      var items = (pack && pack.items) || [];
+      items.forEach(function(it){
+        if (monthOf(it) !== month) return;
+        out.push({ title: it.title, link: it.link, date: it.date, label: label });
+      });
+    });
+    out.sort(function(a, b){
+      var da = a.date || '';
+      var db = b.date || '';
+      if (da === db) return 0;
+      return da < db ? 1 : -1;
+    });
+    return out;
+  }
+  function onCount(){
+    return FEEDS.filter(function(f){ return enabled[f.id]; }).length;
+  }
   function paint(){
-    var pack = data && data.feeds && data.feeds[active];
-    var items = ((pack && pack.items) || []).filter(function(it){ return monthOf(it) === month; });
-    var label = (pack && pack.label) || active;
-    var lead = items[0] ? items[0].title : 'No headlines filed for ' + (MONTH_LABEL[month] || month) + '.';
-    lede.innerHTML = '<p>' + esc(lead) + '</p><p>' + esc(label) + ' · ' + esc(MONTH_LABEL[month] || month) + ' · ' + items.length + ' stories this month.</p>';
+    var items = collectItems();
+    var nOn = onCount();
+    var lead = items[0] ? items[0].title : (nOn ? 'No headlines filed for ' + (MONTH_LABEL[month] || month) + '.' : 'Turn on a source to see headlines.');
+    var deskBit = nOn === FEEDS.length ? 'All desks' : (nOn === 1 ? '1 desk' : nOn + ' desks');
+    lede.innerHTML = '<p>' + esc(lead) + '</p><p>' + esc(deskBit) + ' · ' + esc(MONTH_LABEL[month] || month) + ' · ' + items.length + ' stories this month. Click a source to show or hide it.</p>';
     var slice = items.slice(0, shown);
     var html = slice.map(function(it){
-      return '<li><a href="' + esc(it.link) + '" target="_blank" rel="noopener"><span class="src">' + esc(label) + '<span class="when">' + esc(pretty(it.date)) + '</span></span>' + esc(it.title) + '</a></li>';
+      return '<li><a href="' + esc(it.link) + '" target="_blank" rel="noopener"><span class="src">' + esc(it.label) + '<span class="when">' + esc(pretty(it.date)) + '</span></span>' + esc(it.title) + '</a></li>';
     }).join('');
-    if (!html) html = '<li>Nothing from this source in ' + esc(MONTH_LABEL[month] || month) + ' yet.</li>';
-    else if (items.length > shown) html += '<li><button type="button" id="more" style="appearance:none;background:transparent;color:inherit;border:0;font:inherit;letter-spacing:.12em;cursor:pointer;padding:10px 0">MORE</button></li>';
+    if (!html) {
+      html = nOn
+        ? '<li>Nothing from the selected sources in ' + esc(MONTH_LABEL[month] || month) + ' yet.</li>'
+        : '<li>All sources are off. Click a source box to turn one on.</li>';
+    } else if (items.length > shown) {
+      html += '<li><button type="button" id="more" style="appearance:none;background:transparent;color:inherit;border:0;font:inherit;letter-spacing:.12em;cursor:pointer;padding:10px 0">MORE</button></li>';
+    }
     stories.innerHTML = html;
     [].forEach.call(tabs.querySelectorAll('button'), function(b){
-      b.setAttribute('aria-selected', String(b.dataset.id === active));
+      b.setAttribute('aria-pressed', String(!!enabled[b.dataset.id]));
     });
     [].forEach.call(months.querySelectorAll('button'), function(b){
       b.setAttribute('aria-selected', String(b.dataset.month === month));
     });
   }
   tabs.innerHTML = FEEDS.map(function(f){
-    return '<button type="button" data-id="' + f.id + '" aria-selected="' + (f.id===active) + '">' + f.label + '</button>';
+    return '<button type="button" data-id="' + f.id + '" aria-pressed="' + (!!enabled[f.id]) + '">' + f.label + '</button>';
   }).join('');
   months.innerHTML = MONTHS.map(function(m){
     return '<button type="button" data-month="' + m + '" aria-selected="' + (m===month) + '">' + MONTH_LABEL[m] + '</button>';
@@ -274,7 +334,9 @@
   tabs.addEventListener('click', function(e){
     var b = e.target.closest('button');
     if (!b) return;
-    active = b.dataset.id;
+    var id = b.dataset.id;
+    enabled[id] = !enabled[id];
+    saveEnabled();
     shown = 12;
     paint();
   });
