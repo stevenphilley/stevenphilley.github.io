@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Maze — Steven Philley</title>
+<meta name="description" content="Procedural maze in the browser — find the exit, timer and minimap, keyboard and on-screen controls.">
+<link rel="canonical" href="https://stevenphilley.com/games/maze.html">
+<meta property="og:title" content="Maze — Steven Philley">
+<meta property="og:url" content="https://stevenphilley.com/games/maze.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1);margin:0;touch-action:manipulation}
+.m-wrap{max-width:720px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 64px}
+.m-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.m-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.m-top a:hover,.m-top a[aria-current="page"]{color:inherit}
+.m-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,9vw,72px);line-height:.9;margin:0 0 12px}
+.lede{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:58ch;margin:0 0 20px}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.panel{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 14px}
+.panel button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:8px 12px;cursor:pointer}
+.panel button:hover{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.layout{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+@media(max-width:560px){.layout{grid-template-columns:1fr;justify-items:center}}
+.side{font-family:"IBM Plex Mono",monospace;font-size:12px;min-width:120px}
+.side .box{border:1px solid var(--line,#2c303a);padding:12px;margin-bottom:10px}
+.side .label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.side .val{font-family:"Bebas Neue",Impact,sans-serif;font-size:28px;letter-spacing:.04em}
+.stage{border:1px solid var(--line,#2c303a);background:#0e1015;image-rendering:pixelated;display:block;max-width:100%;height:auto}
+.minimap{display:block;margin:0 auto;border:1px solid var(--line,#2c303a);background:#0e1015;image-rendering:pixelated}
+.status{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--accent,#c8b48a);min-height:1.4em;margin:0 0 12px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;max-width:240px;margin-left:auto;margin-right:auto}
+.pad button{appearance:none;background:color-mix(in srgb,var(--ink,#e8e6e1) 6%, transparent);border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:16px;padding:16px 8px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.pad button:active{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.pad .blank{visibility:hidden}
+.rules{margin-top:22px;padding-top:16px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.rules strong{color:var(--ink,#e8e6e1);font-weight:500}
+.m-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.m-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="m-wrap">
+  <div class="m-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/games/">Games</a>
+      <a href="/games/maze.html" aria-current="page">Maze</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+  <p class="m-kicker">G5 · Games</p>
+  <h1>Maze</h1>
+  <p class="lede">A fresh labyrinth each run. Start at the green square, reach the gold exit. Timer runs until you escape.</p>
+  <div class="panel">
+    <button type="button" id="btnPause">Pause</button>
+    <button type="button" id="btnReset">New maze</button>
+    <button type="button" id="btnSize">Size: med</button>
+  </div>
+  <p class="status" id="status" aria-live="polite">Find the exit.</p>
+  <div class="layout">
+    <canvas class="stage" id="stage" width="480" height="480" aria-label="Maze playfield"></canvas>
+    <div class="side">
+      <div class="box"><p class="label">Time</p><div class="val" id="time">0.0</div></div>
+      <div class="box"><p class="label">Best</p><div class="val" id="best">—</div></div>
+      <div class="box"><p class="label">Moves</p><div class="val" id="moves">0</div></div>
+      <div class="box"><p class="label">Minimap</p><canvas class="minimap" id="mini" width="96" height="96" aria-label="Minimap"></canvas></div>
+    </div>
+  </div>
+  <div class="pad" aria-label="On-screen controls">
+    <button type="button" class="blank" tabindex="-1" aria-hidden="true"></button>
+    <button type="button" data-act="up">↑</button>
+    <button type="button" class="blank" tabindex="-1" aria-hidden="true"></button>
+    <button type="button" data-act="left">←</button>
+    <button type="button" data-act="down">↓</button>
+    <button type="button" data-act="right">→</button>
+  </div>
+  <div class="rules">
+    <strong>Keyboard:</strong> ← → ↑ ↓ or W A S D move · P pause · R new maze · M cycle size.<br>
+    <strong>Touch:</strong> on-screen D-pad. Green = start · gold = exit · you are the accent marker.
+  </div>
+  <footer class="m-foot"><a href="/games/">All games</a><a href="/games/fps.html">FPS</a><a href="/games/tetris.html">Tetris</a></footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var SIZES=[{name:'sm',cells:11},{name:'med',cells:17},{name:'lg',cells:23}];
+  var sizeIdx=1;
+  var canvas=document.getElementById('stage'), ctx=canvas.getContext('2d');
+  var mini=document.getElementById('mini'), mctx=mini.getContext('2d');
+  var timeEl=document.getElementById('time'), bestEl=document.getElementById('best');
+  var movesEl=document.getElementById('moves'), statusEl=document.getElementById('status');
+
+  var grid, cols, rows, px, py, ex, ey, cell;
+  var paused, won, moves, startTs, elapsed, raf, lastTs;
+  var trail={};
+  var bestKey='sp-maze-best-'+SIZES[sizeIdx].name;
+
+  function loadBest(){
+    bestKey='sp-maze-best-'+SIZES[sizeIdx].name;
+    try{
+      var v=localStorage.getItem(bestKey);
+      bestEl.textContent=v?Number(v).toFixed(1):'—';
+    }catch(e){ bestEl.textContent='—'; }
+  }
+
+  function genMaze(n){
+    // n odd
+    cols=n; rows=n;
+    grid=[];
+    for(var y=0;y<rows;y++){
+      grid[y]=[];
+      for(var x=0;x<cols;x++) grid[y][x]=1;
+    }
+    function carve(x,y){
+      grid[y][x]=0;
+      var dirs=[[2,0],[-2,0],[0,2],[0,-2]];
+      for(var i=dirs.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=dirs[i];dirs[i]=dirs[j];dirs[j]=t;}
+      for(var d=0;d<dirs.length;d++){
+        var nx=x+dirs[d][0], ny=y+dirs[d][1];
+        if(nx>0&&ny>0&&nx<cols-1&&ny<rows-1&&grid[ny][nx]===1){
+          grid[y+dirs[d][1]/2][x+dirs[d][0]/2]=0;
+          carve(nx,ny);
+        }
+      }
+    }
+    carve(1,1);
+    // start / exit
+    px=1; py=1;
+    ex=cols-2; ey=rows-2;
+    grid[py][px]=0; grid[ey][ex]=0;
+    // open a couple extra loops for interest
+    var opens=Math.floor(n*0.6);
+    for(var k=0;k<opens;k++){
+      var x=1+Math.floor(Math.random()*(cols-2));
+      var y=1+Math.floor(Math.random()*(rows-2));
+      if(grid[y][x]===1){
+        var nopen=0;
+        if(grid[y][x-1]===0) nopen++;
+        if(grid[y][x+1]===0) nopen++;
+        if(grid[y-1][x]===0) nopen++;
+        if(grid[y+1][x]===0) nopen++;
+        if(nopen>=2) grid[y][x]=0;
+      }
+    }
+  }
+
+  function resizeCanvas(){
+    cell=Math.floor(480/cols);
+    var s=cell*cols;
+    canvas.width=s; canvas.height=s;
+  }
+
+  function tryStep(dx,dy){
+    if(paused||won) return;
+    var nx=px+dx, ny=py+dy;
+    if(nx<0||ny<0||nx>=cols||ny>=rows) return;
+    if(grid[ny][nx]===1) return;
+    px=nx; py=ny;
+    moves++;
+    movesEl.textContent=moves;
+    trail[px+','+py]=1;
+    if(px===ex&&py===ey){
+      won=true;
+      elapsed=(performance.now()-startTs)/1000;
+      timeEl.textContent=elapsed.toFixed(1);
+      statusEl.textContent='Escaped in '+elapsed.toFixed(1)+'s · '+moves+' moves. New maze for another run.';
+      try{
+        var prev=localStorage.getItem(bestKey);
+        if(!prev||elapsed<Number(prev)){ localStorage.setItem(bestKey,String(elapsed)); bestEl.textContent=elapsed.toFixed(1); }
+      }catch(e){}
+    }
+  }
+
+  function draw(){
+    var s=canvas.width;
+    ctx.fillStyle='#0e1015';
+    ctx.fillRect(0,0,s,s);
+    for(var y=0;y<rows;y++) for(var x=0;x<cols;x++){
+      if(grid[y][x]===1){
+        ctx.fillStyle='#1c212b';
+        ctx.fillRect(x*cell,y*cell,cell,cell);
+        ctx.fillStyle='#252a36';
+        ctx.fillRect(x*cell+1,y*cell+1,cell-2,cell-2);
+      } else if(trail[x+','+y]){
+        ctx.fillStyle='rgba(200,180,138,0.12)';
+        ctx.fillRect(x*cell,y*cell,cell,cell);
+      }
+    }
+    // start
+    ctx.fillStyle='#5a9a6a';
+    ctx.fillRect(1*cell+cell*0.2,1*cell+cell*0.2,cell*0.6,cell*0.6);
+    // exit
+    ctx.fillStyle='#d4b85a';
+    ctx.fillRect(ex*cell+cell*0.15,ey*cell+cell*0.15,cell*0.7,cell*0.7);
+    // player
+    var accent=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c8b48a';
+    ctx.fillStyle=accent;
+    ctx.beginPath();
+    ctx.arc(px*cell+cell/2, py*cell+cell/2, cell*0.32, 0, Math.PI*2);
+    ctx.fill();
+
+    if(paused&&!won){
+      ctx.fillStyle='rgba(0,0,0,0.45)';
+      ctx.fillRect(0,0,s,s);
+      ctx.fillStyle='#e8e6e1';
+      ctx.font='20px "IBM Plex Mono", monospace';
+      ctx.textAlign='center';
+      ctx.fillText('PAUSED', s/2, s/2);
+    }
+
+    // minimap
+    var ms=96, sc=ms/cols;
+    mctx.fillStyle='#0e1015';
+    mctx.fillRect(0,0,ms,ms);
+    for(y=0;y<rows;y++) for(x=0;x<cols;x++){
+      if(grid[y][x]===1){
+        mctx.fillStyle='#2a303c';
+        mctx.fillRect(x*sc,y*sc,sc+0.5,sc+0.5);
+      }
+    }
+    mctx.fillStyle='#5a9a6a';
+    mctx.fillRect(1*sc,1*sc,sc,sc);
+    mctx.fillStyle='#d4b85a';
+    mctx.fillRect(ex*sc,ey*sc,sc,sc);
+    mctx.fillStyle=accent;
+    mctx.fillRect(px*sc,py*sc,sc,sc);
+  }
+
+  function loop(ts){
+    if(!lastTs) lastTs=ts;
+    if(!paused&&!won&&startTs){
+      elapsed=(ts-startTs)/1000;
+      timeEl.textContent=elapsed.toFixed(1);
+    }
+    draw();
+    raf=requestAnimationFrame(loop);
+  }
+
+  function reset(){
+    cancelAnimationFrame(raf);
+    genMaze(SIZES[sizeIdx].cells);
+    resizeCanvas();
+    trail={}; trail[px+','+py]=1;
+    paused=false; won=false; moves=0; elapsed=0;
+    startTs=performance.now(); lastTs=0;
+    movesEl.textContent='0'; timeEl.textContent='0.0';
+    statusEl.textContent='Find the exit.';
+    document.getElementById('btnPause').textContent='Pause';
+    document.getElementById('btnSize').textContent='Size: '+SIZES[sizeIdx].name;
+    loadBest();
+    raf=requestAnimationFrame(loop);
+  }
+
+  function togglePause(){
+    if(won) return;
+    paused=!paused;
+    if(paused){
+      statusEl.textContent='Paused';
+      document.getElementById('btnPause').textContent='Resume';
+    } else {
+      // adjust start so timer resumes cleanly
+      startTs=performance.now()-elapsed*1000;
+      statusEl.textContent='Find the exit.';
+      document.getElementById('btnPause').textContent='Pause';
+    }
+  }
+
+  function cycleSize(){
+    sizeIdx=(sizeIdx+1)%SIZES.length;
+    reset();
+  }
+
+  document.getElementById('btnPause').addEventListener('click',togglePause);
+  document.getElementById('btnReset').addEventListener('click',reset);
+  document.getElementById('btnSize').addEventListener('click',cycleSize);
+
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].indexOf(k)>=0) e.preventDefault();
+    if(k==='ArrowUp'||k==='w'||k==='W') tryStep(0,-1);
+    else if(k==='ArrowDown'||k==='s'||k==='S') tryStep(0,1);
+    else if(k==='ArrowLeft'||k==='a'||k==='A') tryStep(-1,0);
+    else if(k==='ArrowRight'||k==='d'||k==='D') tryStep(1,0);
+    else if(k==='p'||k==='P') togglePause();
+    else if(k==='r'||k==='R') reset();
+    else if(k==='m'||k==='M') cycleSize();
+  });
+
+  document.querySelector('.pad').addEventListener('click',function(e){
+    var b=e.target.closest('button[data-act]'); if(!b) return;
+    var a=b.getAttribute('data-act');
+    if(a==='up') tryStep(0,-1);
+    else if(a==='down') tryStep(0,1);
+    else if(a==='left') tryStep(-1,0);
+    else if(a==='right') tryStep(1,0);
+  });
+  document.querySelector('.pad').addEventListener('touchstart',function(e){
+    if(e.target.closest('button')) e.preventDefault();
+  },{passive:false});
+
+  // hold-to-repeat for pad
+  (function(){
+    var hold=null, timer=null;
+    var pad=document.querySelector('.pad');
+    function stepAct(a){
+      if(a==='up') tryStep(0,-1);
+      else if(a==='down') tryStep(0,1);
+      else if(a==='left') tryStep(-1,0);
+      else if(a==='right') tryStep(1,0);
+    }
+    pad.addEventListener('pointerdown',function(e){
+      var b=e.target.closest('button[data-act]'); if(!b) return;
+      hold=b.getAttribute('data-act');
+      stepAct(hold);
+      clearInterval(timer);
+      timer=setInterval(function(){ if(hold) stepAct(hold); }, 140);
+    });
+    function clear(){ hold=null; clearInterval(timer); }
+    pad.addEventListener('pointerup',clear);
+    pad.addEventListener('pointercancel',clear);
+    pad.addEventListener('pointerleave',clear);
+  })();
+
+  reset();
+})();
+</script>
+</body>
+</html>
