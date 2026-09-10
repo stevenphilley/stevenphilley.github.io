@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messages and Networking — Sysop Manual — Steven Philley</title>
+<meta name="description" content="Message bases, QWK packet networking, and FidoNet with SBBSecho.">
+<link rel="canonical" href="https://stevenphilley.com/bbs/sysopmanual/messages-and-networking/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Messages and Networking — Sysop Manual">
+<meta property="og:description" content="Message bases, QWK packet networking, and FidoNet with SBBSecho.">
+<meta property="og:url" content="https://stevenphilley.com/bbs/sysopmanual/messages-and-networking/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Messages and Networking — Sysop Manual">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,10vw,96px);line-height:.88;margin:0}
+.e-hero .lede{max-width:62ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.manual{padding:8px 0 0}
+.manual h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4.5vw,38px);letter-spacing:.06em;margin:36px 0 12px;border-top:1px solid var(--line,#2c303a);padding-top:28px}
+.manual > h2:first-child{border-top:0;padding-top:18px;margin-top:18px}
+.manual h3{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+.manual h4{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink,#e8e6e1);margin:22px 0 8px}
+.manual p,.manual li{font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:68ch}
+.manual p{margin:0 0 14px}
+.manual a{color:var(--ink,#e8e6e1)}
+.manual a:hover{color:var(--accent,#c8b48a)}
+.manual ul,.manual ol{margin:0 0 16px;padding-left:1.35rem;max-width:68ch}
+.manual li{margin:0 0 6px}
+.manual li > ul,.manual li > ol{margin-top:6px;margin-bottom:0}
+.manual strong{color:var(--ink,#e8e6e1);font-weight:500}
+.manual em{font-style:italic}
+.manual hr{border:0;border-top:1px solid var(--line,#2c303a);margin:28px 0}
+.manual code{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink,#e8e6e1);background:rgba(255,255,255,.04);padding:1px 5px;border-radius:3px}
+.manual pre{margin:0 0 18px;padding:14px 16px;overflow-x:auto;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);max-width:100%}
+.manual pre code{background:transparent;padding:0;font-size:12px;line-height:1.55;color:var(--ink,#e8e6e1)}
+.manual table{width:100%;border-collapse:collapse;margin:0 0 18px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55}
+.manual th,.manual td{border-top:1px solid var(--line,#2c303a);padding:10px 12px 10px 0;text-align:left;vertical-align:top;color:var(--ink-soft,#9b9a96)}
+.manual th{color:var(--accent,#c8b48a);letter-spacing:.08em;text-transform:uppercase;font-weight:500;font-size:11px}
+.manual blockquote{margin:0 0 16px;padding:0 0 0 14px;border-left:2px solid var(--accent,#c8b48a)}
+.manual blockquote p{margin:0}
+.wiki-src{margin:-6px 0 20px;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+.wiki-src a{color:var(--ink-soft,#9b9a96)}
+.toc{list-style:none;margin:0 0 18px;padding:0}
+.toc li{border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:var(--ink-soft,#9b9a96);max-width:none}
+.toc li a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+.toc li a:hover{color:var(--ink,#e8e6e1);border-bottom-color:var(--accent,#c8b48a)}
+.chapters{list-style:none;margin:8px 0 0;padding:0}
+.chapters li{border-top:1px solid var(--line,#2c303a);padding:14px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.chapters a{color:inherit}
+.chapters .num{color:var(--accent,#c8b48a);margin-right:10px;letter-spacing:.08em}
+.pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:36px 0 0;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.pager a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.pager a:hover{color:var(--ink,#e8e6e1)}
+.source{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--muted,#63666e)}
+.source a{color:var(--ink-soft,#9b9a96)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:640px){
+  .manual table{display:block;overflow-x:auto}
+  .e-top{font-size:10px;gap:10px}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/bbs/">BBS</a>
+      <a href="/bbs/sysopmanual/">Sysop manual</a>
+      <a href="/bbs/sysopmanual/messages-and-networking/" aria-current="page">Messages &amp; net</a>
+      <a href="/sitemap.html">Site contents</a>
+
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Sysop Manual — 05</p>
+    <h1>Messages and Networking</h1>
+    <p class="lede">8.0 Message Bases; 9.0–9.4 QWK packet networking and FidoNet.</p>
+  </header>
+
+  <article class="manual">
+<h2>8.0 Message Bases</h2>
+<p>Synchronet stores public and private posts in <strong>message bases</strong> organized as <strong>groups</strong> containing <strong>sub-boards</strong> (subs). Configuration is primarily SCFG → Message Areas.</p>
+<h3>Hierarchy</h3>
+<ul>
+<li><strong>Group</strong> — named collection (e.g. Local, DOVE-Net, FidoNet echoes) with optional internal code prefix</li>
+<li><strong>Sub-board</strong> — one conference/echo with its own internal code, access ARS, posting ARS, moderated-posting ARS, network settings, and storage options</li>
+</ul>
+<p>SCFG menus let you insert/delete groups and subs, set long/short names, and tune per-sub options (anonymous posting, voting, attachment policy, etc. — see the full option list on the wiki).</p>
+<h3>Sysop practices</h3>
+<ul>
+<li>Keep <strong>local-only</strong> groups separate from networked echoes so accidental export is harder.</li>
+<li>Set <strong>Operator / Sub-op</strong> requirements so trusted users can moderate without full sysop level.</li>
+<li>Use <strong>Moderated Posting User</strong> ARS (default deny when blank) when a sub needs review before validation — see Sysop Bible / moderation.</li>
+<li>Internal codes matter for QWK conference mapping and FTN area tags; choose stable codes before linking networks.</li>
+<li>After structural changes, recycle as needed and verify with a test post from a non-sysop account.</li>
+</ul>
+<p>Message storage lives under <code>data/</code> (SMB message bases). Do not casually delete those files while <code>sbbs</code> is running.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/config:message_areas" rel="noopener">https://wiki.synchro.net/config:message_areas</a> · <a href="https://wiki.synchro.net/howto:moderation" rel="noopener">https://wiki.synchro.net/howto:moderation</a></p>
+<hr />
+<h2>9.0 Networking (Messages)</h2>
+<p>SCFG → <strong>Networks</strong> covers user-facing and link policy for:</p>
+<ul>
+<li>Internet e-mail (outbound policy from the terminal mail menu)</li>
+<li>QWK packet networks (hubs + default tagline)</li>
+<li>FidoNet EchoMail / NetMail (addresses, semaphores, directories, posting policy)</li>
+<li>MQTT (status/log publish — monitoring, not classic message networking)</li>
+</ul>
+<p>Actual SMTP listening and SendMail are under the Mail Server; FTN packet exchange uses a mailer (e.g. BinkIT) plus <strong>SBBSecho</strong>.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/config:networks" rel="noopener">https://wiki.synchro.net/config:networks</a></p>
+<hr />
+<h2>9.1 QWK Packet Networking</h2>
+<p>QWK is a packet format for offline readers and for <strong>QWK networking</strong> between BBSes (rep message exchange). Synchronet can be a QWK network <strong>node</strong> calling one or more <strong>hubs</strong>.</p>
+<h3>9.1.1 QWK Network Hubs</h3>
+<p>In SCFG → Networks → QWK Packet Networks you configure:</p>
+<ul>
+<li>Hubs this BBS calls (and related credentials / paths as documented)</li>
+<li><strong>Default outgoing tagline</strong> (also set under QWK options)</li>
+</ul>
+<p>Hub list and per-hub options define where REP packets go and how conferences map. Align hub conference numbers with your local subs carefully — mismatches orphan mail.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/config:networks" rel="noopener">https://wiki.synchro.net/config:networks</a></p>
+<h3>9.1.2 Connect to DOVE-Net</h3>
+<p>DOVE-Net is the Synchronet community QWK network. High-level steps from the howto:</p>
+<ol>
+<li><strong>Choose a QWK-ID</strong> — SCFG → Message Options → BBS ID for QWK Packets. Max 8 characters, DOS filename-safe, must start with a letter, unique on DOVE-Net (check <code>nodes.dat</code> in dove-net.zip).</li>
+<li>Set your <strong>QWKnet tagline</strong> (SCFG → Networks → QWK → Default Tagline).</li>
+<li><strong>Create a QWKnet account</strong> on your hub (commonly Vertrauen — telnet to vert.synchro.net as New). Use the QWK-ID as the username and answer <strong>Yes</strong> to the QWK Networking (DOVE-Net) question. Remember the password.</li>
+<li>At the hub’s <code>QWK:</code> prompt, set packet options to match Synchronet expectations (Ctrl-A leave in, ZIP archive, unread e-mail only, include attachments, etc. — follow the current howto table).</li>
+<li>Configure the hub entry locally in SCFG and enable the conferences you want.</li>
+<li>To change the QWKnet password later on Vertrauen, login with <code>*</code> prepended to the QWK-ID so you get a full session instead of only the <code>QWK:</code> prompt.</li>
+</ol>
+<p>Do <strong>not</strong> use the web server signup path for the QWKnet account when the howto says to use Telnet.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/howto:dove-net" rel="noopener">https://wiki.synchro.net/howto:dove-net</a></p>
+<h3>9.1.3 QWK Packet Format</h3>
+<p>The reference page documents the on-disk / in-packet structure used by offline readers and QWKnet (control files, message records, conference lists, etc.). Sysops rarely hand-edit packets; the reference matters when debugging corrupt packets, writing tools, or confirming reader compatibility.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/ref:qwk" rel="noopener">https://wiki.synchro.net/ref:qwk</a></p>
+<h3>9.1.4 QWK Network Extensions</h3>
+<p>Synchronet and DOVE-Net use extensions beyond classic QWK (additional control/meta information). Read this when implementing tooling or diagnosing hub/node mismatches that “plain QWK” docs do not cover.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/ref:qwknet" rel="noopener">https://wiki.synchro.net/ref:qwknet</a></p>
+<h3>9.1.5 <code>qwknodes</code></h3>
+<p>Utility support for QWK networking node maintenance (listing/managing QWKnet-related node data — see the utility page for switches). Run from <code>exec</code> against your BBS installation when the howto or hub instructions call for it.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/util:qwknodes" rel="noopener">https://wiki.synchro.net/util:qwknodes</a></p>
+<hr />
+<h2>9.4 FidoNet</h2>
+<p>Fido Technology Networks (FTNs) share packet/mailer concepts; this outline section is about joining <strong>FidoNet</strong> itself. Synchronet bundles the pieces most sysops need (init script, SBBSecho, EchoCfg, BinkIT mailer).</p>
+<h3>Initial setup options</h3>
+<p>Pick one:</p>
+<ol>
+<li>In-BBS Operator → <strong>Initial FidoNet Setup</strong></li>
+<li><code>jsexec init-fidonet.js</code> from a system shell</li>
+<li>Windows Control Panel → File → Run → Initial FidoNet Setup</li>
+</ol>
+<p>The script asks for zone (1–4 for classic FidoNet geography; other listed zones are othernets), hub address, and your node address (<code>*/9999</code> temporary is normal until a permanent address is assigned). Have hub hostname/IP, session password, and optional packet/AreaFix passwords ready.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/howto:fidonet" rel="noopener">https://wiki.synchro.net/howto:fidonet</a></p>
+<h3>9.4.1 SBBSecho</h3>
+<p><strong>SBBSecho</strong> is Synchronet’s FTN <strong>tosser/scanner</strong> — not a mailer. A mailer (e.g. BinkIT) moves packets; SBBSecho imports/exports EchoMail (and, in modern versions, NetMail to/from the Synchronet mail base).</p>
+<p>Before configuring, collect:</p>
+<ul>
+<li>Hub FTN address and Internet hostname/IP</li>
+<li>Your FTN address</li>
+<li>BinkP session password; optional packet and AreaFix passwords</li>
+<li>An EchoList file (e.g. <code>BACKBONE.NA</code>)</li>
+</ul>
+<p>SBBSecho v3 overhauled older behavior; prefer current wiki sections labeled for v3. AreaFix, packing, scanning, and import/export paths are all documented at length on the SBBSecho page — use it as the operational manual when packets do not appear in subs.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/util:sbbsecho" rel="noopener">https://wiki.synchro.net/util:sbbsecho</a></p>
+<h3>9.4.2 EchoCfg</h3>
+<p><strong>EchoCfg</strong> is the configuration UI companion for SBBSecho (shipped in <code>exec</code>). Use it to maintain linked areas, passwords, and tosser options without hand-editing every INI key. Changes need to match what your hub expects (area names, passwords, packet types).</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/util:echocfg" rel="noopener">https://wiki.synchro.net/util:echocfg</a></p>
+<h3>9.4.3 <code>sbbsecho.ini</code></h3>
+<p>The INI file holds SBBSecho’s durable settings (paths, defaults, behaviors). EchoCfg writes here; advanced sysops edit carefully with a backup. Cross-check keys against the wiki’s <code>sbbsecho.ini</code> reference when upgrading major SBBSecho versions.</p>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/config:sbbsecho.ini" rel="noopener">https://wiki.synchro.net/config:sbbsecho.ini</a></p>
+<hr />
+<h2>Networking go-live checklist</h2>
+<ul>
+<li>[ ] Local message groups work offline before linking</li>
+<li>[ ] QWK-ID unique; DOVE-Net account flagged as QWKnet</li>
+<li>[ ] Fido zone/hub/address and mailer session tested</li>
+<li>[ ] EchoList imported; AreaFix passwords stored safely</li>
+<li>[ ] Test post in a quiet echo; confirm round-trip</li>
+<li>[ ] Moderation ARS understood for networked subs</li>
+</ul>
+<p class="wiki-src"><strong>Wiki:</strong> <a href="https://wiki.synchro.net/config:message_areas" rel="noopener">https://wiki.synchro.net/config:message_areas</a> · <a href="https://wiki.synchro.net/config:networks" rel="noopener">https://wiki.synchro.net/config:networks</a> · <a href="https://wiki.synchro.net/howto:dove-net" rel="noopener">https://wiki.synchro.net/howto:dove-net</a> · <a href="https://wiki.synchro.net/howto:fidonet" rel="noopener">https://wiki.synchro.net/howto:fidonet</a> · <a href="https://wiki.synchro.net/util:sbbsecho" rel="noopener">https://wiki.synchro.net/util:sbbsecho</a></p>
+<h3>Related user-facing docs</h3>
+<p>Callers use the QWK menu and message-base commands described in the User Manual hub (https://wiki.synchro.net/user:index) — your sysop networking setup determines which conferences they actually receive.</p>
+  </article>
+
+<nav class="pager" aria-label="Section"><a href="/bbs/sysopmanual/users-and-access/">← Users &amp; access</a><a href="/bbs/sysopmanual/files-chat-externals/">Files / chat / xtrn →</a></nav>
+
+  <p class="source">Source of truth: <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">wiki.synchro.net/talk:wiki:user:electrosys</a>. Docs live on the <a href="https://wiki.synchro.net/">Synchronet Wiki</a>. Active boards: <a href="https://coloritcompany.com/bbs/">coloritcompany.com/bbs</a>.</p>
+
+  <footer class="e-foot">
+    <a href="/bbs/">BBS desk</a>
+    <a href="https://wiki.synchro.net/talk:wiki:user:electrosys">Wiki talk page</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
