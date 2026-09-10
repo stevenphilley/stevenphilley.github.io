@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LC resonance — Electronics — Steven Philley</title>
-<meta name="description" content="LC resonance from L and C. f0 = 1/(2π√(LC)), ω0, characteristic Z0, plus series Q and bandwidth when R is set.">
-<link rel="canonical" href="https://stevenphilley.com/electronics/resonance.html">
+<title>RL filter — Electronics — Steven Philley</title>
+<meta name="description" content="First-order RL low-pass and high-pass filter calculator. fc = R/(2πL), plus gain and phase at a chosen frequency.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/rl-filter.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="LC resonance — Steven Philley">
-<meta property="og:description" content="f0 = 1/(2π√(LC)). Live LC resonant frequency, ω0, and Z0 — with series Q and bandwidth when R &gt; 0.">
-<meta property="og:url" content="https://stevenphilley.com/electronics/resonance.html">
+<meta property="og:title" content="RL filter — Steven Philley">
+<meta property="og:description" content="Low-pass or high-pass. Cutoff fc = R/(2πL), with live gain and phase at the frequency you type.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/rl-filter.html">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LC resonance — Steven Philley">
+<meta name="twitter:title" content="RL filter — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +29,9 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
 h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
 .lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
 .stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
 @media (max-width:800px){.stage{grid-template-columns:1fr}}
 .fields{display:grid;gap:14px}
@@ -77,11 +80,11 @@ select{cursor:pointer}
       <a href="/electronics/rc-time.html">RC</a>
       <a href="/electronics/rl-time.html">RL</a>
       <a href="/electronics/reactance.html">X</a>
-      <a href="/electronics/resonance.html" aria-current="page">LC</a>
+      <a href="/electronics/resonance.html">LC</a>
       <a href="/electronics/capacitor-codes.html">Cap</a>
       <a href="/electronics/inductor-codes.html">L</a>
       <a href="/electronics/rc-filter.html">Filter</a>
-      <a href="/electronics/rl-filter.html">RL F</a>
+      <a href="/electronics/rl-filter.html" aria-current="page">RL F</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="neon">Neon</button>
@@ -95,39 +98,42 @@ select{cursor:pointer}
   </div>
 
   <p class="e-kicker">Vol. IV — Electronics · Tool</p>
-  <h1>LC resonance</h1>
-  <p class="lede">An inductor and a capacitor exchange energy at one natural frequency. Change L and C — f₀, ω₀, and Z₀ update as you type. Optional series R adds Q and bandwidth.</p>
+  <h1>RL filter</h1>
+  <p class="lede">One resistor and one inductor set a corner. Low-pass keeps the slow stuff; high-pass keeps the fast. Change R and L — fc, gain, and phase update as you type.</p>
+
+  <div class="modes" role="group" aria-label="Filter type">
+    <button type="button" data-mode="lpf" aria-pressed="true">Low-pass</button>
+    <button type="button" data-mode="hpf" aria-pressed="false">High-pass</button>
+  </div>
 
   <div class="stage">
     <div class="fields">
+      <label>Resistance R (ohms)<input id="r" inputmode="decimal" step="any" value="1000"></label>
       <div class="pair">
-        <label>Inductance L<input id="l" inputmode="decimal" step="any" value="100"></label>
+        <label>Inductance L<input id="l" inputmode="decimal" step="any" value="10"></label>
         <label>Unit
           <select id="lunit" aria-label="Inductance unit">
-            <option value="1e-6" selected>µH</option>
-            <option value="1e-3">mH</option>
+            <option value="1e-6">µH</option>
+            <option value="1e-3" selected>mH</option>
             <option value="1">H</option>
           </select>
         </label>
       </div>
       <div class="pair">
-        <label>Capacitance C<input id="c" inputmode="decimal" step="any" value="100"></label>
+        <label>Signal f<input id="f" inputmode="decimal" step="any" value="15.9"></label>
         <label>Unit
-          <select id="cunit" aria-label="Capacitance unit">
-            <option value="1e-12">pF</option>
-            <option value="1e-9" selected>nF</option>
-            <option value="1e-6">µF</option>
-            <option value="1">F</option>
+          <select id="funit" aria-label="Frequency unit">
+            <option value="1">Hz</option>
+            <option value="1e3" selected>kHz</option>
+            <option value="1e6">MHz</option>
           </select>
         </label>
       </div>
-      <label>Series R (ohms, optional)<input id="r" inputmode="decimal" step="any" value="" placeholder="0"></label>
-      <div class="presets" role="group" aria-label="Common LC pairs">
-        <button type="button" data-l="100" data-lunit="1e-6" data-c="100" data-cunit="1e-9" data-r="" aria-pressed="true">100 µH · 100 nF</button>
-        <button type="button" data-l="1" data-lunit="1e-3" data-c="1" data-cunit="1e-6" data-r="">1 mH · 1 µF</button>
-        <button type="button" data-l="220" data-lunit="1e-6" data-c="365" data-cunit="1e-12" data-r="">AM-ish · 220 µH · 365 pF</button>
-        <button type="button" data-l="10" data-lunit="1e-6" data-c="100" data-cunit="1e-12" data-r="5">10 µH · 100 pF · 5 Ω</button>
-        <button type="button" data-l="33" data-lunit="1e-3" data-c="10" data-cunit="1e-9" data-r="10">33 mH · 10 nF · 10 Ω</button>
+      <div class="presets" role="group" aria-label="Common RL pairs">
+        <button type="button" data-r="1000" data-l="10" data-lunit="1e-3" data-f="15.9" data-funit="1e3" aria-pressed="true">1k · 10 mH</button>
+        <button type="button" data-r="100" data-l="1" data-lunit="1e-3" data-f="15.9" data-funit="1e3">100 · 1 mH</button>
+        <button type="button" data-r="47" data-l="100" data-lunit="1e-6" data-f="75" data-funit="1e3">47 · 100 µH</button>
+        <button type="button" data-r="10" data-l="1" data-lunit="1" data-f="1.59" data-funit="1">10 · 1 H</button>
       </div>
     </div>
     <div class="out" id="out" aria-live="polite"></div>
@@ -135,9 +141,9 @@ select{cursor:pointer}
 
   <section class="legend">
     <h2>How it works</h2>
-    <p>Resonant frequency for an LC tank is f₀ = 1 / (2π√(LC)). At that point the inductive and capacitive reactances cancel in magnitude, and the tank rings at ω₀ = 2πf₀. The characteristic impedance Z₀ = √(L/C) sets the scale of those reactances at resonance.</p>
-    <p>With series resistance R &gt; 0, quality factor Q = Z₀ / R and the −3 dB bandwidth is about f₀ / Q. Higher Q means a sharper peak; more R damps the ring. Ideal L and C (R blank or zero) still give f₀, ω₀, and Z₀ — Q and bandwidth stay blank until you set R.</p>
-    <p>Pair this with <a href="/electronics/reactance.html" style="color:var(--accent,#c8b48a)">Reactance</a> for X<sub>L</sub> / X<sub>C</sub> at a chosen frequency, <a href="/electronics/rl-time.html" style="color:var(--accent,#c8b48a)">RL time</a> and <a href="/electronics/rc-time.html" style="color:var(--accent,#c8b48a)">RC time</a> for the transient twins, or the <a href="/electronics/" style="color:var(--accent,#c8b48a)">converters bench</a> for everyday ohms and watts.</p>
+    <p>The cutoff (corner) is fc = R / (2πL). At fc the magnitude is −3 dB (about 0.707 of the midband gain). A first-order RL rolls off at 20 dB per decade away from the passband.</p>
+    <p>Low-pass: series L, resistor to ground — slow signals pass, fast ones shrink. High-pass: series R, inductor to ground — fast signals pass, DC and slow stuff fall away. Phase at fc is −45° (LPF) or +45° (HPF).</p>
+    <p>τ = L / R is the same quotient on <a href="/electronics/rl-time.html" style="color:var(--accent,#c8b48a)">RL time</a>. Reactance of L at a chosen f lives on <a href="/electronics/reactance.html" style="color:var(--accent,#c8b48a)">Reactance</a>. The capacitor twin is <a href="/electronics/rc-filter.html" style="color:var(--accent,#c8b48a)">RC filter</a>. Loops in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a>.</p>
   </section>
 
   <footer class="e-foot">
@@ -166,18 +172,18 @@ select{cursor:pointer}
   });
   paintTheme();
 
+  var mode='lpf';
+  var modeBtns=[].slice.call(document.querySelectorAll('.modes button'));
+  var rEl=document.getElementById('r');
   var lEl=document.getElementById('l');
   var lunitEl=document.getElementById('lunit');
-  var cEl=document.getElementById('c');
-  var cunitEl=document.getElementById('cunit');
-  var rEl=document.getElementById('r');
+  var fEl=document.getElementById('f');
+  var funitEl=document.getElementById('funit');
   var out=document.getElementById('out');
   var chips=[].slice.call(document.querySelectorAll('.presets button'));
 
   function num(el){
-    var s=String(el.value).replace(/,/g,'').trim();
-    if(s==='') return NaN;
-    return parseFloat(s);
+    return parseFloat(String(el.value).replace(/,/g,''));
   }
   function fmt(n, digits){
     if(!isFinite(n)) return '—';
@@ -198,108 +204,108 @@ select{cursor:pointer}
     if(abs>=1e-3) return fmt(L*1e3,3)+' mH';
     return fmt(L*1e6,2)+' µH';
   }
-  function formatFarads(C){
-    if(!isFinite(C)) return '—';
-    var abs=Math.abs(C);
-    if(abs>=1) return fmt(C,3)+' F';
-    if(abs>=1e-6) return fmt(C*1e6,3)+' µF';
-    if(abs>=1e-9) return fmt(C*1e9,3)+' nF';
-    return fmt(C*1e12,2)+' pF';
-  }
   function formatHz(f){
     if(!isFinite(f) || f<=0) return '—';
     if(f>=1e6) return fmt(f/1e6,3)+' MHz';
     if(f>=1e3) return fmt(f/1e3,3)+' kHz';
     return fmt(f,3)+' Hz';
   }
-  function formatRad(w){
-    if(!isFinite(w) || w<=0) return '—';
-    if(w>=1e6) return fmt(w/1e6,3)+' Mrad/s';
-    if(w>=1e3) return fmt(w/1e3,3)+' krad/s';
-    return fmt(w,3)+' rad/s';
+  function formatTau(tau){
+    if(!isFinite(tau) || tau<=0) return '—';
+    if(tau>=1) return fmt(tau,3)+' s';
+    if(tau>=1e-3) return fmt(tau*1e3,3)+' ms';
+    return fmt(tau*1e6,3)+' µs';
+  }
+  function formatDb(db){
+    if(!isFinite(db)) return '—';
+    var s = db>0?'+':'';
+    return s+fmt(db,2)+' dB';
   }
   function syncChips(){
-    var l=num(lEl), c=num(cEl), lu=lunitEl.value, cu=cunitEl.value;
-    var rStr=String(rEl.value).replace(/,/g,'').trim();
-    var r=rStr==='' ? NaN : parseFloat(rStr);
+    var r=num(rEl), l=num(lEl), u=lunitEl.value;
     chips.forEach(function(b){
-      var br=b.dataset.r;
-      var rMatch;
-      if(br==='' || br==null){
-        rMatch = rStr==='' || !(parseFloat(rStr)>0);
-      } else {
-        rMatch = isFinite(r) && Math.abs(r-parseFloat(br))/Math.max(r,1)<0.02;
-      }
-      var match = isFinite(l) && isFinite(c)
+      var match = isFinite(r) && isFinite(l)
+        && Math.abs(r-parseFloat(b.dataset.r))/Math.max(r,1)<0.02
         && Math.abs(l-parseFloat(b.dataset.l))/Math.max(l,1e-12)<0.02
-        && Math.abs(c-parseFloat(b.dataset.c))/Math.max(c,1e-12)<0.02
-        && b.dataset.lunit===lu
-        && b.dataset.cunit===cu
-        && rMatch;
+        && b.dataset.lunit===u;
       b.setAttribute('aria-pressed', String(match));
     });
   }
-  function render(){
-    var lVal=num(lEl), cVal=num(cEl);
-    var lScale=parseFloat(lunitEl.value), cScale=parseFloat(cunitEl.value);
-    var rStr=String(rEl.value).replace(/,/g,'').trim();
-    var r = rStr==='' ? 0 : parseFloat(rStr);
-    syncChips();
-    if(!(lVal>0) || !(cVal>0) || !(lScale>0) || !(cScale>0)){
-      out.innerHTML='<div class="unit">f₀</div><div class="num">—</div><p class="note">Enter L and C above zero.</p>';
-      return;
-    }
-    var L=lVal*lScale;
-    var C=cVal*cScale;
-    var LC=L*C;
-    if(!(LC>0)){
-      out.innerHTML='<div class="unit">f₀</div><div class="num">—</div><p class="note">L × C must be greater than zero.</p>';
-      return;
-    }
-    var f0=1/(2*Math.PI*Math.sqrt(LC));
-    var w0=2*Math.PI*f0;
-    var Z0=Math.sqrt(L/C);
-    var fParts=formatHz(f0).split(' ');
-    var fNum=fParts.slice(0,-1).join(' ');
-    var fUnit=fParts[fParts.length-1];
-    var stats=
-      '<div class="stat"><span class="lab">ω₀ · angular</span><span class="val">'+formatRad(w0)+'</span></div>'+
-      '<div class="stat"><span class="lab">Z₀ · √(L/C)</span><span class="val">'+formatOhms(Z0)+'</span></div>';
-    var note='Ideal tank — set series R to see Q and bandwidth.';
-    if(isFinite(r) && r>0){
-      var Q=Z0/r;
-      var bw=f0/Q;
-      stats+=
-        '<div class="stat"><span class="lab">Q · series (Z₀ / R)</span><span class="val">'+fmt(Q, Q>=100 ? 1 : 3)+'</span></div>'+
-        '<div class="stat"><span class="lab">Bandwidth · f₀ / Q</span><span class="val">'+formatHz(bw)+'</span></div>'+
-        '<div class="stat"><span class="lab">Series R</span><span class="val">'+formatOhms(r)+'</span></div>';
-      note='Series RLC: Q = Z₀ / R. Bandwidth is the −3 dB width ≈ f₀ / Q.';
-    } else if(rStr!=='' && !(r>=0)){
-      note='Series R should be zero or a positive number of ohms.';
-    }
-    out.innerHTML=
-      '<div class="unit">f₀ · resonant frequency</div>'+
-      '<div class="num">'+fNum+'</div>'+
-      '<div class="unit">'+fUnit+'</div>'+
-      '<p class="formula">f₀ = 1 / (2π√(LC)) · L = '+formatHenries(L)+' · C = '+formatFarads(C)+'</p>'+
-      '<div class="stats">'+stats+'</div>'+
-      '<p class="note">'+note+'</p>';
+  function paintModes(){
+    modeBtns.forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.mode===mode));
+    });
   }
-  chips.forEach(function(b){
+  function render(){
+    var r=num(rEl), lVal=num(lEl), scale=parseFloat(lunitEl.value);
+    var fVal=num(fEl), fScale=parseFloat(funitEl.value);
+    syncChips();
+    paintModes();
+    if(!(r>0) || !(lVal>0) || !(scale>0)){
+      out.innerHTML='<div class="unit">fc</div><div class="num">—</div><p class="note">Enter R and L above zero.</p>';
+      return;
+    }
+    var L=lVal*scale;
+    var fc=r/(2*Math.PI*L);
+    var kind=mode==='lpf'?'Low-pass':'High-pass';
+    var html=
+      '<div class="unit">fc · '+kind+' cutoff</div>'+
+      '<div class="num">'+formatHz(fc).replace(/ (Hz|kHz|MHz)$/,'')+'</div>'+
+      '<div class="unit">'+formatHz(fc).split(' ').pop()+'</div>'+
+      '<p class="formula">fc = R / (2πL) = '+formatOhms(r)+' / (2π × '+formatHenries(L)+')</p>';
+
+    var f=fVal*fScale;
+    if(isFinite(f) && f>0){
+      var ratio=f/fc;
+      var mag, phaseDeg;
+      if(mode==='lpf'){
+        mag=1/Math.sqrt(1+ratio*ratio);
+        phaseDeg=-Math.atan(ratio)*180/Math.PI;
+      } else {
+        mag=ratio/Math.sqrt(1+ratio*ratio);
+        phaseDeg=Math.atan(1/ratio)*180/Math.PI;
+      }
+      var db=20*Math.log(mag)/Math.LN10;
+      html+=
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">At '+formatHz(f)+' · |Vout/Vin|</span><span class="val">'+fmt(mag,4)+' ('+formatDb(db)+')</span></div>'+
+          '<div class="stat"><span class="lab">Phase</span><span class="val">'+fmt(phaseDeg,1)+'°</span></div>'+
+          '<div class="stat"><span class="lab">f / fc</span><span class="val">'+fmt(ratio,3)+'</span></div>'+
+          '<div class="stat"><span class="lab">τ = L / R</span><span class="val"><a href="/electronics/rl-time.html">'+formatTau(L/r)+'</a></span></div>'+
+        '</div>'+
+        '<p class="note">At fc the magnitude is −3 dB. First-order slope is 20 dB/decade.</p>';
+    } else {
+      html+=
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">τ = L / R</span><span class="val"><a href="/electronics/rl-time.html">'+formatTau(L/r)+'</a></span></div>'+
+          '<div class="stat"><span class="lab">−3 dB at</span><span class="val">'+formatHz(fc)+'</span></div>'+
+        '</div>'+
+        '<p class="note">Enter a signal frequency to see gain and phase at that point.</p>';
+    }
+    out.innerHTML=html;
+  }
+  modeBtns.forEach(function(b){
     b.addEventListener('click',function(){
-      lEl.value=b.dataset.l;
-      lunitEl.value=b.dataset.lunit;
-      cEl.value=b.dataset.c;
-      cunitEl.value=b.dataset.cunit;
-      rEl.value=b.dataset.r || '';
+      mode=b.dataset.mode;
       render();
     });
   });
-  [lEl,lunitEl,cEl,cunitEl,rEl].forEach(function(el){
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      rEl.value=b.dataset.r;
+      lEl.value=b.dataset.l;
+      lunitEl.value=b.dataset.lunit;
+      if(b.dataset.f){ fEl.value=b.dataset.f; }
+      if(b.dataset.funit){ funitEl.value=b.dataset.funit; }
+      render();
+    });
+  });
+  [rEl,lEl,lunitEl,fEl,funitEl].forEach(function(el){
     el.addEventListener('input',render);
     el.addEventListener('change',render);
   });
   render();
+
 })();
 </script>
 <script src="/js/sp-share.js" defer></script>
