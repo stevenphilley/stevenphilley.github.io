@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Open a switch, change voltage and resistance, and watch current follow Ohm's law.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, and voltage dividers.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, and why an LED needs a resistor.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, and voltage dividers.">
 <script>(function(){try{var t=localStorage.getItem('sp-theme')||'neon';if(['neon','emerald','dusk','sage','tide','sand'].indexOf(t)>-1)document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,6 +37,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:36px;margin:6px 0 8px}
 .panel p{font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.65;color:var(--ink-soft,#9b9a96);margin:0 0 12px}
 .readout{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 14px}
+.readout.four{grid-template-columns:repeat(4,1fr)}
 .readout div{border-top:1px solid var(--line,#2c303a);padding-top:8px}
 .readout .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
 .readout .n{font-family:"Bebas Neue",Impact,sans-serif;font-size:32px;line-height:1}
@@ -49,12 +50,15 @@ button.chip[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-
 button.go{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border:0;padding:10px 14px}
 button.go:disabled{opacity:.4;cursor:default}
 .note{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--muted,#63666e)}
+.note a{color:var(--accent,#c8b48a);text-decoration:none}
+.note a:hover{text-decoration:underline}
 .e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
 .themes{display:flex;border:1px solid var(--line,#2c303a)}
 .themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
 .themes button:last-child{border-right:0}
 .themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.hid{display:none !important}
 </style>
 </head>
 <body>
@@ -62,8 +66,6 @@ button.go:disabled{opacity:.4;cursor:default}
   <div class="e-top">
     <a href="/">Steven Philley</a>
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-      <a href="/electronics/">Converters</a>
-      
       <a href="/electronics/">Converters</a>
       <a href="/electronics/circuits.html" aria-current="page">Circuits</a>
       <a href="/electronics/resistor-codes.html">Codes</a>
@@ -89,31 +91,41 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, then Ohm's law, then series and parallel. Change the knobs. The numbers and the current on the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors and RC time. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
     <div class="panel">
-      <div class="step" id="stepLabel">Lesson 1 of 7</div>
+      <div class="step" id="stepLabel">Lesson 1 of 10</div>
       <h2 id="lessonTitle">Close the loop</h2>
       <p id="lessonBody">Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.</p>
-      <div class="readout">
-        <div><div class="k">Volts</div><div class="n" id="vOut">9</div></div>
-        <div><div class="k">Ohms</div><div class="n" id="rOut">220</div></div>
-        <div><div class="k">Amps</div><div class="n" id="iOut">0</div></div>
+      <div class="readout" id="readout">
+        <div><div class="k" id="k1">Volts</div><div class="n" id="vOut">9</div></div>
+        <div><div class="k" id="k2">Ohms</div><div class="n" id="rOut">220</div></div>
+        <div><div class="k" id="k3">Amps</div><div class="n" id="iOut">0</div></div>
+        <div id="slot4" class="hid"><div class="k" id="k4">Charge</div><div class="n" id="qOut">0%</div></div>
       </div>
-      <label>Battery voltage <span id="vLab">9 V</span>
+      <label id="vLabel">Battery voltage <span id="vLab">9 V</span>
         <input id="volts" type="range" min="3" max="12" step="1" value="9">
       </label>
-      <label>Resistor <span id="rLab">220 Ω</span>
+      <label id="rLabel">Resistor <span id="rLab">220 Ω</span>
         <input id="ohms" type="range" min="100" max="1000" step="10" value="220">
       </label>
-      <div class="row">
+      <label id="r2Label" class="hid">Bottom resistor R2 <span id="r2Lab">220 Ω</span>
+        <input id="ohms2" type="range" min="100" max="1000" step="10" value="220">
+      </label>
+      <label id="cLabel" class="hid">Capacitor <span id="cLab">100 µF</span>
+        <input id="caps" type="range" min="10" max="470" step="10" value="100">
+      </label>
+      <div class="row" id="topoRow">
         <button type="button" class="chip" id="sw" aria-pressed="false">Switch open</button>
         <button type="button" class="chip" data-top="single" aria-pressed="true">One resistor</button>
         <button type="button" class="chip" data-top="series" aria-pressed="false">Series</button>
         <button type="button" class="chip" data-top="parallel" aria-pressed="false">Parallel</button>
         <button type="button" class="chip" data-top="led" aria-pressed="false">LED</button>
+        <button type="button" class="chip" data-top="cap" aria-pressed="false">Capacitor</button>
+        <button type="button" class="chip" data-top="rc" aria-pressed="false">RC</button>
+        <button type="button" class="chip" data-top="divider" aria-pressed="false">Divider</button>
       </div>
       <p class="note" id="formula">I = 0 while the switch is open.</p>
       <div class="row">
@@ -147,12 +159,18 @@ button.go:disabled{opacity:.4;cursor:default}
 
   var volts=document.getElementById('volts');
   var ohms=document.getElementById('ohms');
+  var ohms2=document.getElementById('ohms2');
+  var caps=document.getElementById('caps');
   var sw=document.getElementById('sw');
   var next=document.getElementById('next');
   var closed=false;
   var topo='single';
   var lesson=0;
-  var toggled=false, movedV=false, movedR=false;
+  var toggled=false, movedV=false, movedR=false, movedC=false, movedR2=false;
+  var charge=0; // 0..1
+  var lastTs=0;
+  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false;
+  var raf=0;
 
   var lessons=[
     {title:'Close the loop', body:'Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.', goal:function(){return toggled && closed;}},
@@ -161,7 +179,10 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:"Ohm's law", body:'The three numbers are one rule. Amps equal volts divided by ohms. The formula under the knobs should match the readout.', goal:function(){return closed;}},
     {title:'Series', body:'Two resistors in a row add. Pick Series. The current has to squeeze through both, so it drops.', goal:function(){return topo==='series' && closed;}},
     {title:'Parallel', body:'Side by side, each resistor gets the full voltage. Pick Parallel. The current splits, and the total current rises.', goal:function(){return topo==='parallel' && closed;}},
-    {title:'An LED needs a resistor', body:'An LED lights, but it cannot limit its own current. Pick LED. The resistor is what keeps the current small enough not to cook it.', goal:function(){return topo==='led' && closed;}}
+    {title:'An LED needs a resistor', body:'An LED lights, but it cannot limit its own current. Pick LED. The resistor is what keeps the current small enough not to cook it. Bench tool: LED R.', goal:function(){return topo==='led' && closed;}},
+    {title:'Capacitors store charge', body:'Pick Capacitor. Close the switch to fill the plates, then open it — the charge stays. Close again after you empty it by waiting, or flip the switch twice so you see fill and empty. Cap codes decode markings on the bench.', goal:function(){return topo==='cap' && sawCharge && sawDischarge;}},
+    {title:'RC time / charging curve', body:'Pick RC. Current rushes in fast, then slows as the capacitor voltage rises. τ = R × C. Change R or C and watch τ move. Aim for about 63% charge (1τ). Full bench: RC time.', goal:function(){return topo==='rc' && sawTau && saw63;}},
+    {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}}
   ];
 
   function fmt(n,d){
@@ -169,22 +190,109 @@ button.go:disabled{opacity:.4;cursor:default}
     return n.toLocaleString(undefined,{maximumFractionDigits:d==null?3:d});
   }
 
+  function fmtTime(s){
+    if(s<1e-3) return fmt(s*1e6,1)+' µs';
+    if(s<1) return fmt(s*1e3,2)+' ms';
+    if(s<60) return fmt(s,3)+' s';
+    return fmt(s/60,2)+' min';
+  }
+
+  function Cfarads(){
+    return (+caps.value)*1e-6;
+  }
+
+  function tau(){
+    return (+ohms.value)*Cfarads();
+  }
+
+  function setTopo(t){
+    topo=t;
+    [].forEach.call(document.querySelectorAll('[data-top]'), function(x){
+      x.setAttribute('aria-pressed', String(x.dataset.top===t));
+    });
+  }
+
+  function syncControls(){
+    var needC=topo==='cap'||topo==='rc';
+    var needR2=topo==='divider';
+    document.getElementById('cLabel').classList.toggle('hid', !needC);
+    document.getElementById('r2Label').classList.toggle('hid', !needR2);
+    document.getElementById('rLabel').classList.toggle('hid', topo==='cap');
+    var four=needC||needR2||topo==='rc';
+    document.getElementById('readout').classList.toggle('four', four);
+    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'));
+    if(topo==='divider'){
+      document.getElementById('k1').textContent='Vin';
+      document.getElementById('k2').textContent='R1';
+      document.getElementById('k3').textContent='Vout';
+      document.getElementById('k4').textContent='R2';
+    } else if(needC||topo==='rc'){
+      document.getElementById('k1').textContent='Volts';
+      document.getElementById('k2').textContent=topo==='cap'?'µF':'Ohms';
+      document.getElementById('k3').textContent=topo==='cap'?'Vc':'τ';
+      document.getElementById('k4').textContent='Charge';
+    } else {
+      document.getElementById('k1').textContent='Volts';
+      document.getElementById('k2').textContent='Ohms';
+      document.getElementById('k3').textContent='Amps';
+    }
+  }
+
   function state(){
     var V=+volts.value;
     var R1=+ohms.value;
-    var R2=470;
-    var R=R1, I=0, note='';
+    var R2=+ohms2.value;
+    var Cf=+caps.value;
+    var R=R1, I=0, note='', Vc=0, tauS=0, Vout=0;
+
+    if(topo==='cap'){
+      Vc=charge*V;
+      I=0;
+      if(closed){
+        note='Charging toward '+V+' V. The plates hold charge; open the switch and it stays. Cap codes help read markings.';
+      } else if(charge>0.02){
+        note='Switch open — charge held at about '+fmt(charge*100,0)+'%. Open the path and the capacitor keeps what it has (ideal model).';
+      } else {
+        note='Empty capacitor. Close the switch to shove charge onto the plates.';
+      }
+      return {V:V,R:Cf,I:I,note:note,Vc:Vc,charge:charge,tauS:0,Vout:0,R2:R2};
+    }
+
+    if(topo==='rc'){
+      tauS=tau();
+      Vc=charge*V;
+      var target=closed?1:0;
+      // Instantaneous current ~ C dV/dt ≈ (Vtarget - Vc)/R for series RC
+      I=closed?((V-Vc)/Math.max(R1,1)):(Vc/Math.max(R1,1));
+      if(Math.abs(I)<1e-6) I=0;
+      note='τ = R × C = '+R1+' Ω × '+Cf+' µF ≈ '+fmtTime(tauS)+'. At 1τ the cap is ~63% charged. Bench: <a href="/electronics/rc-time.html">RC time</a>.';
+      if(charge>=0.6 && charge<=0.7) saw63=true;
+      if(movedC||movedR) sawTau=true;
+      return {V:V,R:R1,I:I,note:note,Vc:Vc,charge:charge,tauS:tauS,Vout:0,R2:R2};
+    }
+
+    if(topo==='divider'){
+      if(!closed){
+        return {V:V,R:R1,I:0,note:'I = 0 while the switch is open. Close it to split the voltage.',Vc:0,charge:0,tauS:0,Vout:0,R2:R2};
+      }
+      R=R1+R2;
+      I=V/R;
+      Vout=V*(R2/R);
+      note='Vout = Vin × R2/(R1+R2) = '+V+' × '+R2+'/'+R+' ≈ '+fmt(Vout,2)+' V. Bench: <a href="/electronics/voltage-divider.html">voltage divider</a>.';
+      return {V:V,R:R1,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:R2};
+    }
+
     if(!closed){
-      return {V:V,R:R,I:0,note:'I = 0 while the switch is open.'};
+      return {V:V,R:R,I:0,note:'I = 0 while the switch is open.',Vc:0,charge:0,tauS:0,Vout:0,R2:R2};
     }
     if(topo==='series'){
       R=R1+R2;
       I=V/R;
-      note='Series: R = '+R1+' + '+R2+' = '+R+' Ω. I = V / R.';
+      note='Series: R = '+R1+' + 470 = '+R+' Ω. I = V / R. Deeper bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
     } else if(topo==='parallel'){
-      R=1/(1/R1+1/R2);
+      R=1/(1/R1+1/470);
       I=V/R;
-      note='Parallel: each branch sees '+V+' V. Total current is the sum of the branches.';
+      note='Parallel: each branch sees '+V+' V. Total current is the sum of the branches. Bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
     } else if(topo==='led'){
       var drop=2;
       if(V<=drop){
@@ -193,22 +301,73 @@ button.go:disabled{opacity:.4;cursor:default}
       } else {
         R=R1;
         I=(V-drop)/R1;
-        note='LED drop about 2 V, then I = (V − 2) / R. Without R the current would run away.';
+        note='LED drop about 2 V, then I = (V − 2) / R. Without R the current would run away. Bench: <a href="/electronics/led-resistor.html">LED resistor</a>.';
       }
     } else {
       R=R1;
       I=V/R;
       note='I = V / R = '+V+' / '+R1+'.';
     }
-    return {V:V,R:R,I:I,note:note};
+    return {V:V,R:R,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:0,R2:R2};
+  }
+
+  function tick(ts){
+    if(!lastTs) lastTs=ts;
+    var dt=Math.min(0.05,(ts-lastTs)/1000);
+    lastTs=ts;
+    if(topo==='cap'||topo==='rc'){
+      var R1=+ohms.value;
+      var t=topo==='cap'?(R1*Cfarads()*0.15):tau(); // cap lesson uses a gentle fill rate
+      if(topo==='cap') t=Math.max(0.35, (+caps.value)/120); // seconds-ish visual fill
+      var alpha=1-Math.exp(-dt/Math.max(t,1e-4));
+      var target=closed?1:0;
+      // For pure cap lesson: hold charge when open (no discharge path). Discharge only when user picks a path — we discharge slowly when open after they charged, via a bleed for teaching "empty it".
+      if(topo==='cap'){
+        if(closed){
+          charge=charge+(1-charge)*alpha;
+          if(charge>0.85) sawCharge=true;
+        } else {
+          // gentle bleed so they can empty and refill for the goal
+          charge=charge*(1-dt*0.35);
+          if(charge<0.08 && sawCharge) sawDischarge=true;
+        }
+      } else {
+        // RC: charge toward V when closed, discharge through R when open
+        charge=charge+(target-charge)*alpha;
+        if(charge>0.85) sawCharge=true;
+        if(charge<0.15 && sawCharge) sawDischarge=true;
+        if(charge>=0.6 && charge<=0.72) saw63=true;
+      }
+      paint(false);
+    }
+    raf=requestAnimationFrame(tick);
   }
 
   function draw(s){
-    var on=s.I>0;
+    var on=s.I>0 || ((topo==='cap'||topo==='rc') && closed && s.charge<0.98);
     var flow=on?'flow':'flow off';
     var swX=closed?118:96;
     var led=topo==='led';
     var second=topo==='series'||topo==='parallel';
+    var isCap=topo==='cap'||topo==='rc';
+    var isDiv=topo==='divider';
+    var fillH=Math.max(2, Math.round(s.charge*48));
+    var curve='';
+    if(topo==='rc'){
+      // mini charging curve
+      var pts=[];
+      for(var i=0;i<=40;i++){
+        var x=40+i*4;
+        var y=320- Math.pow(1-Math.exp(-i/12),1)*70;
+        pts.push(x+','+y);
+      }
+      var cx=40+Math.min(40,s.charge*40)*4;
+      var cy=320-Math.pow(s.charge,1)*70;
+      curve='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--accent,#c8b48a)" stroke-width="2" opacity=".7"/>'
+        +'<circle cx="'+cx+'" cy="'+(320-s.charge*70)+'" r="4" fill="var(--accent,#c8b48a)"/>'
+        +'<text x="40" y="236" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">charge vs time</text>';
+    }
+    var midY=isDiv?180:150;
     var html=''
       +'<svg viewBox="0 0 640 360" role="img" aria-label="Simple circuit">'
       +'<path class="wire" d="M120 70 H520 V290 H120 Z"/>'
@@ -222,14 +381,53 @@ button.go:disabled{opacity:.4;cursor:default}
       +'<line x1="200" y1="70" x2="'+swX+'" y2="70" stroke="currentColor" stroke-width="3"/>'
       +'<circle cx="'+(closed?168:148)+'" cy="70" r="6" fill="currentColor"/>'
       +'<text x="210" y="58" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+(closed?'closed':'open')+'</text>'
-      +'</g>'
-      +'<g transform="translate(500,150)">'
-      +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
-      +'<text x="-8" y="40" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">'+ohms.value+'Ω</text>'
-      +'</g>'
-      +(second?'<g transform="translate(300,270)"><polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/><text x="8" y="28" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">470Ω '+(topo==='series'?'series':'parallel')+'</text></g>':'')
-      +(led?'<g transform="translate(300,70)"><polygon points="0,16 28,0 28,32" fill="none" stroke="currentColor" stroke-width="3"/><line x1="28" y1="4" x2="28" y2="28" stroke="currentColor" stroke-width="3"/><text x="36" y="22" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+(on?'lit':'LED')+'</text></g>':'')
-      +'<text x="250" y="180" fill="currentColor" font-size="16" font-family="IBM Plex Mono,monospace">'+(on?fmt(s.I*1000,1)+' mA':'no current')+'</text>'
+      +'</g>';
+
+    if(isCap){
+      html+=''
+        +'<g transform="translate(470,130)">'
+        +'<rect x="18" y="'+(50-fillH)+'" width="28" height="'+fillH+'" fill="var(--accent,#c8b48a)" opacity=".45"/>'
+        +'<line x1="10" y1="0" x2="54" y2="0" stroke="currentColor" stroke-width="4"/>'
+        +'<line x1="10" y1="50" x2="54" y2="50" stroke="currentColor" stroke-width="4"/>'
+        +'<text x="-4" y="78" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">'+caps.value+'µF</text>'
+        +'<text x="64" y="28" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+fmt(s.charge*100,0)+'%</text>'
+        +'</g>'
+        +(topo==='rc'?'<g transform="translate(300,150)"><polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/><text x="8" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+ohms.value+'Ω</text></g>':'');
+    } else if(isDiv){
+      html+=''
+        +'<g transform="translate(500,100)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-8" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">R1 '+ohms.value+'Ω</text>'
+        +'</g>'
+        +'<g transform="translate(500,210)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-8" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">R2 '+ohms2.value+'Ω</text>'
+        +'</g>'
+        +'<circle cx="540" cy="180" r="5" fill="var(--accent,#c8b48a)"/>'
+        +'<text x="556" y="184" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vout '+(closed?fmt(s.Vout,2)+'V':'—')+'</text>';
+    } else {
+      html+=''
+        +'<g transform="translate(500,150)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-8" y="40" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">'+ohms.value+'Ω</text>'
+        +'</g>'
+        +(second?'<g transform="translate(300,270)"><polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/><text x="8" y="28" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">470Ω '+(topo==='series'?'series':'parallel')+'</text></g>':'')
+        +(led?'<g transform="translate(300,70)"><polygon points="0,16 28,0 28,32" fill="none" stroke="currentColor" stroke-width="3"/><line x1="28" y1="4" x2="28" y2="28" stroke="currentColor" stroke-width="3"/><text x="36" y="22" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+(s.I>0?'lit':'LED')+'</text></g>':'');
+    }
+
+    var centerTxt;
+    if(isCap){
+      centerTxt=fmt(s.Vc,2)+' V on C · '+fmt(s.charge*100,0)+'%';
+    } else if(isDiv){
+      centerTxt=closed?(fmt(s.Vout,2)+' V out · '+fmt(s.I*1000,1)+' mA'):'no current';
+    } else if(topo==='rc'){
+      centerTxt=fmtTime(s.tauS)+' τ · '+fmt(s.charge*100,0)+'%';
+    } else {
+      centerTxt=on?fmt(s.I*1000,1)+' mA':'no current';
+    }
+
+    html+=curve
+      +'<text x="250" y="180" fill="currentColor" font-size="16" font-family="IBM Plex Mono,monospace">'+centerTxt+'</text>'
       +'</svg>';
     document.getElementById('board').innerHTML=html;
     document.getElementById('switchHit').addEventListener('click', toggle);
@@ -245,14 +443,34 @@ button.go:disabled{opacity:.4;cursor:default}
     next.textContent=lesson===lessons.length-1?'Start over':'Next lesson';
   }
 
-  function paint(){
+  function paint(doSync){
+    if(doSync!==false) syncControls();
     var s=state();
-    document.getElementById('vOut').textContent=s.V;
-    document.getElementById('rOut').textContent=Math.round(s.R);
-    document.getElementById('iOut').textContent=s.I?fmt(s.I,3):'0';
+    if(topo==='divider'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=Math.round(+ohms.value);
+      document.getElementById('iOut').textContent=closed?fmt(s.Vout,2):'0';
+      document.getElementById('qOut').textContent=Math.round(+ohms2.value);
+    } else if(topo==='cap'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=caps.value;
+      document.getElementById('iOut').textContent=fmt(s.Vc,2);
+      document.getElementById('qOut').textContent=fmt(s.charge*100,0)+'%';
+    } else if(topo==='rc'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=ohms.value;
+      document.getElementById('iOut').textContent=fmtTime(s.tauS).replace(' ','');
+      document.getElementById('qOut').textContent=fmt(s.charge*100,0)+'%';
+    } else {
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=Math.round(s.R);
+      document.getElementById('iOut').textContent=s.I?fmt(s.I,3):'0';
+    }
     document.getElementById('vLab').textContent=s.V+' V';
     document.getElementById('rLab').textContent=ohms.value+' Ω';
-    document.getElementById('formula').textContent=s.note;
+    document.getElementById('r2Lab').textContent=ohms2.value+' Ω';
+    document.getElementById('cLab').textContent=caps.value+' µF';
+    document.getElementById('formula').innerHTML=s.note;
     sw.textContent=closed?'Switch closed':'Switch open';
     sw.setAttribute('aria-pressed', String(closed));
     draw(s);
@@ -266,28 +484,28 @@ button.go:disabled{opacity:.4;cursor:default}
   }
   sw.addEventListener('click', toggle);
   volts.addEventListener('input', function(){ movedV=true; paint(); });
-  ohms.addEventListener('input', function(){ movedR=true; paint(); });
+  ohms.addEventListener('input', function(){ movedR=true; if(topo==='rc') sawTau=true; paint(); });
+  ohms2.addEventListener('input', function(){ movedR2=true; paint(); });
+  caps.addEventListener('input', function(){ movedC=true; if(topo==='rc') sawTau=true; paint(); });
   [].forEach.call(document.querySelectorAll('[data-top]'), function(b){
     b.addEventListener('click', function(){
-      topo=b.dataset.top;
-      [].forEach.call(document.querySelectorAll('[data-top]'), function(x){
-        x.setAttribute('aria-pressed', String(x===b));
-      });
+      setTopo(b.dataset.top);
+      if(topo==='cap'||topo==='rc'){ charge=0; lastTs=0; }
       paint();
     });
   });
   next.addEventListener('click', function(){
     if(next.disabled) return;
     if(lesson===lessons.length-1){
-      lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false;
-      volts.value=9; ohms.value=220;
-      [].forEach.call(document.querySelectorAll('[data-top]'), function(x){
-        x.setAttribute('aria-pressed', String(x.dataset.top==='single'));
-      });
+      lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false; movedC=false; movedR2=false;
+      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; charge=0;
+      volts.value=9; ohms.value=220; ohms2.value=220; caps.value=100;
+      setTopo('single');
     } else lesson+=1;
     paint();
   });
   paint();
+  raf=requestAnimationFrame(tick);
 })();
 </script>
 </body>
