@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trigonometry — Unit Circle — Steven Philley</title>
+<meta name="description" content="Interactive unit circle: drag the angle, read sin/cos/tan, switch degrees and radians, use common-angle presets, and check SOHCAHTOA or identities.">
+<link rel="canonical" href="https://stevenphilley.com/maths/trig/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Trigonometry — Unit Circle">
+<meta property="og:description" content="Drag the angle on the unit circle. Live sin, cos, tan, presets, and a SOHCAHTOA / identity check.">
+<meta property="og:url" content="https://stevenphilley.com/maths/trig/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trigonometry — Unit Circle">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:960px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 80px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(42px,9vw,84px);line-height:.9;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1)}
+.bench{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin:28px 0 8px}
+@media(max-width:780px){.bench{grid-template-columns:1fr}}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px}
+.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.06em;margin:0 0 10px}
+#uc{display:block;width:100%;height:auto;touch-action:none;cursor:crosshair;background:var(--base,#1a1c24);border:1px solid var(--line,#2c303a)}
+.readout{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.readout .row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line,#2c303a);padding:8px 0}
+.readout .row:first-child{border-top:0;padding-top:0}
+.readout .k{color:var(--muted,#63666e);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.readout .v{color:var(--ink,#e8e6e1);font-variant-numeric:tabular-nums}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.modes button,.presets button,.quiz button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"],.presets button:hover,.quiz button:hover{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.hint{margin:10px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.section{margin-top:32px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.section h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:0 0 10px}
+.section p,.quiz p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:66ch;margin:0 0 10px}
+.quiz .q{margin:12px 0 8px;color:var(--ink,#e8e6e1);font-weight:500}
+.quiz .feedback{min-height:1.4em;margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--accent,#c8b48a)}
+.also{margin-top:36px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:26px;letter-spacing:.06em;margin:0 0 8px}
+.also a{display:block;border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink,#e8e6e1);text-decoration:none}
+.also a:hover{color:var(--accent,#c8b48a)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.disclaimer{margin-top:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+</style>
+</head>
+<body>
+<div class="l-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/maths/">Maths</a>
+      <a href="/maths/trig/" aria-current="page">Trig</a>
+      <a href="/maths/linear-algebra/">Linear algebra</a>
+      <a href="/maths/calculus/">Calculus</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Maths · Trigonometry · Unit circle</p>
+  <h1>Unit circle</h1>
+  <p class="lede">On the unit circle (radius 1), a point at angle θ from the positive x-axis is (cos θ, sin θ). Drag the handle — or use presets — and watch sine, cosine, and tangent update. Pair with the <a href="/maths/">maths hub</a>.</p>
+
+  <div class="bench">
+    <div class="panel">
+      <h2>Interactive circle</h2>
+      <canvas id="uc" width="560" height="560" aria-label="Unit circle — drag to set angle"></canvas>
+      <p class="hint">Drag on the canvas, or use arrow keys after focusing the canvas (← → nudge 1°, Shift for 15°).</p>
+    </div>
+    <div>
+      <div class="panel">
+        <h2>Readout</h2>
+        <div class="modes" role="tablist" aria-label="Angle unit">
+          <button type="button" data-unit="deg" aria-selected="true">Degrees</button>
+          <button type="button" data-unit="rad" aria-selected="false">Radians</button>
+        </div>
+        <div class="readout" id="readout" aria-live="polite"></div>
+        <p class="hint" style="margin-top:12px">Common angles</p>
+        <div class="presets" id="presets"></div>
+      </div>
+      <div class="panel" style="margin-top:12px">
+        <h2>Remember</h2>
+        <p class="hint" style="margin:0">SOH · CAH · TOA — opposite/hypotenuse, adjacent/hypotenuse, opposite/adjacent in a right triangle. On the unit circle, hypotenuse is 1, so sin = y and cos = x.</p>
+      </div>
+    </div>
+  </div>
+
+  <section class="section quiz" id="check" aria-labelledby="check-h">
+    <h2 id="check-h">Check yourself</h2>
+    <p>A short SOHCAHTOA / identity check. Answers use exact common values where possible.</p>
+    <p class="q" id="qtext"></p>
+    <div class="modes" id="qopts"></div>
+    <p class="feedback" id="qfb" aria-live="polite"></p>
+    <button type="button" id="qnext" style="margin-top:8px">Next question</button>
+  </section>
+
+  <section class="section" aria-labelledby="ids-h">
+    <h2 id="ids-h">Useful identities</h2>
+    <p><strong style="color:var(--ink);font-weight:500">Pythagorean:</strong> sin²θ + cos²θ = 1 (always true on the unit circle — watch the live check in the readout).</p>
+    <p><strong style="color:var(--ink);font-weight:500">Tangent:</strong> tan θ = sin θ / cos θ when cos θ ≠ 0.</p>
+    <p><strong style="color:var(--ink);font-weight:500">Cofunction:</strong> sin(90° − θ) = cos θ, and cos(90° − θ) = sin θ (in degrees).</p>
+  </section>
+
+  <section class="also" aria-label="Related">
+    <h2>Nearby</h2>
+    <a href="/maths/">Maths hub</a>
+    <a href="/maths/linear-algebra/">Linear algebra</a>
+    <a href="/maths/calculus/">Calculus</a>
+    <a href="/sitemap.html">Site contents</a>
+  </section>
+  <p class="disclaimer">Educational interactive — original explanations of standard trig facts. Not a substitute for a course or exam board syllabus.</p>
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/maths/">Maths</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
+  paintTheme();
+
+  var canvas=document.getElementById('uc');
+  var ctx=canvas.getContext('2d');
+  var angle=Math.PI/6; // radians
+  var unit='deg';
+  var dragging=false;
+  var readout=document.getElementById('readout');
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+  function fmt(n,d){if(!isFinite(n))return '—';return (Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toFixed(d);}
+  function wrapPi(a){a=a%(Math.PI*2);if(a<0)a+=Math.PI*2;return a;}
+
+  function draw(){
+    var w=canvas.width,h=canvas.height;
+    var cx=w/2,cy=h/2,R=Math.min(w,h)*0.38;
+    var ink=cssVar('--ink','#e8e6e1');
+    var soft=cssVar('--ink-soft','#9b9a96');
+    var line=cssVar('--line','#2c303a');
+    var accent=cssVar('--accent','#c8b48a');
+    var base=cssVar('--base','#1a1c24');
+    ctx.fillStyle=base;ctx.fillRect(0,0,w,h);
+    // grid axes
+    ctx.strokeStyle=line;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(w,cy);ctx.moveTo(cx,0);ctx.lineTo(cx,h);ctx.stroke();
+    // circle
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.strokeStyle=soft;ctx.lineWidth=1.5;ctx.stroke();
+    // common ticks
+    [0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330].forEach(function(d){
+      var a=d*Math.PI/180;var c=Math.cos(a),s=Math.sin(a);
+      ctx.beginPath();
+      ctx.moveTo(cx+c*R*0.96,cy-s*R*0.96);
+      ctx.lineTo(cx+c*R,cy-s*R);
+      ctx.strokeStyle=line;ctx.stroke();
+    });
+    var c=Math.cos(angle),s=Math.sin(angle);
+    var px=cx+c*R,py=cy-s*R;
+    // projections
+    ctx.setLineDash([4,4]);
+    ctx.strokeStyle=accent;ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px,cy);ctx.stroke(); // sin drop
+    ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(cx,py);ctx.stroke(); // cos run
+    ctx.setLineDash([]);
+    // radius
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.strokeStyle=ink;ctx.lineWidth=2;ctx.stroke();
+    // angle arc
+    ctx.beginPath();ctx.arc(cx,cy,R*0.18,0,-angle,angle>0);ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.stroke();
+    // point
+    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fillStyle=accent;ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.strokeStyle=ink;ctx.lineWidth=1;ctx.stroke();
+    // labels
+    ctx.fillStyle=soft;ctx.font='12px "IBM Plex Mono",monospace';
+    ctx.fillText('1',cx+R+8,cy-6);
+    ctx.fillText('cos',px+(c>=0?8:-28),cy+14);
+    ctx.fillText('sin',cx+8,py+(s>=0?-8:16));
+
+    var deg=angle*180/Math.PI;
+    var tan=Math.abs(c)<1e-10?Infinity:s/c;
+    var pyth=c*c+s*s;
+    readout.innerHTML=
+      '<div class="row"><span class="k">Angle</span><span class="v">'+(unit==='deg'?fmt(deg,2)+'°':fmt(angle,4)+' rad')+'</span></div>'+
+      '<div class="row"><span class="k">cos θ</span><span class="v">'+fmt(c,4)+'</span></div>'+
+      '<div class="row"><span class="k">sin θ</span><span class="v">'+fmt(s,4)+'</span></div>'+
+      '<div class="row"><span class="k">tan θ</span><span class="v">'+(isFinite(tan)?fmt(tan,4):'undefined')+'</span></div>'+
+      '<div class="row"><span class="k">Point</span><span class="v">('+fmt(c,3)+', '+fmt(s,3)+')</span></div>'+
+      '<div class="row"><span class="k">sin²+cos²</span><span class="v">'+fmt(pyth,6)+'</span></div>';
+  }
+
+  function setFromEvent(e){
+    var rect=canvas.getBoundingClientRect();
+    var scaleX=canvas.width/rect.width, scaleY=canvas.height/rect.height;
+    var clientX=(e.touches?e.touches[0].clientX:e.clientX);
+    var clientY=(e.touches?e.touches[0].clientY:e.clientY);
+    var x=(clientX-rect.left)*scaleX - canvas.width/2;
+    var y=canvas.height/2 - (clientY-rect.top)*scaleY;
+    angle=wrapPi(Math.atan2(y,x));
+    draw();
+  }
+  canvas.addEventListener('pointerdown',function(e){dragging=true;canvas.setPointerCapture(e.pointerId);setFromEvent(e);});
+  canvas.addEventListener('pointermove',function(e){if(dragging)setFromEvent(e);});
+  canvas.addEventListener('pointerup',function(){dragging=false;});
+  canvas.addEventListener('pointercancel',function(){dragging=false;});
+  canvas.tabIndex=0;
+  canvas.addEventListener('keydown',function(e){
+    var step=(e.shiftKey?15:1)*Math.PI/180;
+    if(e.key==='ArrowLeft'){angle=wrapPi(angle+step);draw();e.preventDefault();}
+    if(e.key==='ArrowRight'){angle=wrapPi(angle-step);draw();e.preventDefault();}
+  });
+
+  [].slice.call(document.querySelectorAll('[data-unit]')).forEach(function(b){
+    b.addEventListener('click',function(){
+      unit=b.dataset.unit;
+      [].slice.call(document.querySelectorAll('[data-unit]')).forEach(function(x){x.setAttribute('aria-selected',String(x===b));});
+      draw();
+    });
+  });
+
+  var presets=[
+    {label:'0°',rad:0},{label:'30°',rad:Math.PI/6},{label:'45°',rad:Math.PI/4},
+    {label:'60°',rad:Math.PI/3},{label:'90°',rad:Math.PI/2},{label:'120°',rad:2*Math.PI/3},
+    {label:'135°',rad:3*Math.PI/4},{label:'150°',rad:5*Math.PI/6},{label:'180°',rad:Math.PI},
+    {label:'270°',rad:3*Math.PI/2},{label:'360°',rad:0}
+  ];
+  var box=document.getElementById('presets');
+  presets.forEach(function(p){
+    var b=document.createElement('button');b.type='button';b.textContent=p.label;
+    b.addEventListener('click',function(){angle=p.rad;draw();});
+    box.appendChild(b);
+  });
+
+  // Quiz
+  var questions=[
+    {q:'In a right triangle, SOH means sin θ equals…',opts:['opposite / hypotenuse','adjacent / hypotenuse','opposite / adjacent','hypotenuse / opposite'],a:0},
+    {q:'On the unit circle, cos θ is the…',opts:['x-coordinate of the point','y-coordinate of the point','slope of the radius','arc length'],a:0},
+    {q:'sin²θ + cos²θ equals…',opts:['0','1','tan θ','θ'],a:1},
+    {q:'tan θ is undefined when…',opts:['sin θ = 0','cos θ = 0','θ = 45°','θ = 0°'],a:1},
+    {q:'sin(90°) equals…',opts:['0','1','√2/2','1/2'],a:1},
+    {q:'cos(60°) equals…',opts:['√3/2','1/2','0','1'],a:1},
+    {q:'CAH means cos θ equals…',opts:['adjacent / hypotenuse','opposite / hypotenuse','opposite / adjacent','hypotenuse / adjacent'],a:0}
+  ];
+  var qi=0;
+  function showQ(){
+    var Q=questions[qi%questions.length];
+    document.getElementById('qtext').textContent=Q.q;
+    document.getElementById('qfb').textContent='';
+    var opts=document.getElementById('qopts');opts.innerHTML='';
+    Q.opts.forEach(function(t,i){
+      var b=document.createElement('button');b.type='button';b.textContent=t;
+      b.addEventListener('click',function(){
+        document.getElementById('qfb').textContent=i===Q.a?'Correct.':'Not quite — try again or next.';
+      });
+      opts.appendChild(b);
+    });
+  }
+  document.getElementById('qnext').addEventListener('click',function(){qi++;showQ();});
+  showQ();
+
+  draw();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+  // redraw when theme buttons change
+  buttons.forEach(function(b){b.addEventListener('click',function(){setTimeout(draw,0);});});
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
