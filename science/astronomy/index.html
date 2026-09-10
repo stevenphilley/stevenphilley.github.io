@@ -236,6 +236,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   var playing=true, showLabels=true, showPluto=true;
   var selected=null;
   var t0=performance.now();
+  var pausedAt=0;
   var view={scale:1, ox:0, oy:0};
   var drag=null;
   var hitR=[];
@@ -330,13 +331,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     /* bodies */
     list.forEach(function(b){
       var r=orbitR(b.au,maxR);
-      var ang=b.au>0?angleOf(b, playing?now:t0):0;
-      if(!playing && b.au>0){
-        /* freeze at last angle using stored */
-        ang=b._ang!=null?b._ang:angleOf(b,now);
-      } else if(b.au>0){
-        b._ang=ang;
-      }
+      var simNow=playing?now:pausedAt;
+      var ang=b.au>0?angleOf(b, simNow):0;
       var x=cx+Math.cos(ang)*r;
       var y=cy+Math.sin(ang)*r;
       var pr=b.rPx*Math.max(0.75, Math.min(1.35, view.scale));
@@ -448,8 +444,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   },{passive:false});
 
   document.getElementById('btn-play').addEventListener('click',function(){
-    playing=!playing;
-    if(playing) t0=performance.now()-(BODIES[1]._ang?0:0);
+    var now=performance.now();
+    if(playing){
+      pausedAt=now;
+      playing=false;
+    } else {
+      t0 += (now - pausedAt);
+      playing=true;
+    }
     this.textContent=playing?'Pause':'Play';
     this.setAttribute('aria-pressed',String(playing));
   });
