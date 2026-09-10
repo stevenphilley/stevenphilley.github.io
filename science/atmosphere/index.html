@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atmosphere — layers &amp; heights — Steven Philley</title>
+<meta name="description" content="Interactive cross-section of Earth’s atmosphere: troposphere through exosphere — approximate heights, temperature trends, and what each layer needs environmentally.">
+<link rel="canonical" href="https://stevenphilley.com/science/atmosphere/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Atmosphere — layers &amp; heights">
+<meta property="og:description" content="Click each atmospheric layer for heights (km / mi), temperature trends, and environmental stakes — clean air, ozone, space weather.">
+<meta property="og:url" content="https://stevenphilley.com/science/atmosphere/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/blue-marble.jpg">
+<meta property="og:image:alt" content="The Blue Marble — full-disk Earth from Apollo 17">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Atmosphere — layers &amp; heights">
+<meta name="twitter:description" content="Interactive Earth atmosphere layers with heights and environmental needs.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/blue-marble.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:960px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,96px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.needs{margin-top:24px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:start}
+.needs .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);padding-top:2px}
+.needs p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:70ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(260px,1.05fr) minmax(240px,.95fr);gap:14px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);padding:12px 10px 10px;position:relative;min-height:520px}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px;padding:0 4px}
+.diagram svg{display:block;width:100%;height:auto;max-height:min(72vh,640px)}
+.layer-band{cursor:pointer;transition:opacity .15s,filter .15s}
+.layer-band:hover,.layer-band:focus{filter:brightness(1.12);outline:none}
+.layer-band[aria-pressed="true"]{filter:brightness(1.18);stroke:var(--ink,#e8e6e1);stroke-width:1.5}
+.scale-note{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.06em;color:var(--muted,#63666e);margin:8px 4px 0;line-height:1.5}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-height:520px}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(32px,5vw,44px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 16px}
+.meta-grid{display:grid;gap:12px;margin:0 0 16px}
+.meta-grid .cell{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.meta-grid .k{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.meta-grid .v{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96);margin:0}
+.stakes{margin-top:auto;border:1px dashed color-mix(in srgb,var(--accent,#c8b48a) 30%,var(--line,#2c303a));padding:14px 14px 12px;background:rgba(0,0,0,.08)}
+.stakes h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.stakes p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.layer-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.layer-list button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.layer-list button:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.layer-list button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.refs{margin-top:28px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs strong{color:var(--ink,#e8e6e1);font-weight:500}
+.note{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:68ch}
+.note a{color:var(--ink,#e8e6e1)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:820px){
+  .stage{grid-template-columns:1fr}
+  .diagram,.detail{min-height:0}
+  .diagram svg{max-height:480px}
+  .needs{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/atmosphere/" aria-current="page">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Vol. Science · Earth systems · schematic</p>
+  <h1>Atmosphere</h1>
+  <p class="lede">A clickable cross-section of Earth’s air — five named layers, approximate heights, and what each region does for weather, life, and orbit. Pair with the <a href="/science/">science status desk</a>, live <a href="/weather/">weather</a>, and the clean-air / natural-life themes on <a href="/power/">Power</a>.</p>
+
+  <aside class="needs" aria-label="What the environment needs">
+    <span class="tag">What the environment needs</span>
+    <p>Most of the mass of the atmosphere sits in the troposphere — the air we breathe and the climate we live in. Stable climate, clean air (low pollution, managed CO<sub>2</sub> and particulates), and a recovering ozone shield in the stratosphere are the practical stakes. Higher layers matter for meteors, aurora, satellites, and space weather, but the living world depends on the lower stack staying healthy.</p>
+  </aside>
+
+  <p class="band">Interactive · Layers</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint">Tap a band · compressed height scale</p>
+      <svg id="atm-svg" viewBox="0 0 360 560" role="img" aria-labelledby="atm-title atm-desc">
+        <title id="atm-title">Earth atmosphere layers cross-section</title>
+        <desc id="atm-desc">Vertical schematic from surface to space. Click a colored band for layer details. Heights are approximate averages; scale is compressed so upper layers fit.</desc>
+        <defs>
+          <linearGradient id="g-exo" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 22%, #0a0c12)"/>
+            <stop offset="100%" stop-color="#05060a" stop-opacity="0.35"/>
+          </linearGradient>
+          <linearGradient id="g-therm" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 28%, #12161f)"/>
+            <stop offset="100%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 12%, #0a0c12)"/>
+          </linearGradient>
+          <linearGradient id="g-meso" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 18%, #1a2030)"/>
+            <stop offset="100%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 28%, #12161f)"/>
+          </linearGradient>
+          <linearGradient id="g-strat" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 32%, #243048)"/>
+            <stop offset="55%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 45%, #2a4060)"/>
+            <stop offset="100%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 18%, #1a2030)"/>
+          </linearGradient>
+          <linearGradient id="g-trop" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 55%, #3a5068)"/>
+            <stop offset="100%" stop-color="color-mix(in srgb, var(--accent, #c8b48a) 32%, #243048)"/>
+          </linearGradient>
+          <linearGradient id="g-earth" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#2a4a3a"/>
+            <stop offset="100%" stop-color="#1a3028"/>
+          </linearGradient>
+        </defs>
+
+        <!-- Ground strip -->
+        <rect x="48" y="508" width="248" height="36" fill="url(#g-earth)" stroke="var(--line,#2c303a)" stroke-width="1"/>
+        <text x="172" y="530" text-anchor="middle" fill="var(--ink-soft,#9b9a96)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.2">Earth surface</text>
+
+        <!-- Layers: y from compressed map (bottom of layer to top). viewBox bottom usable ~508 -->
+        <!-- Exosphere ~600+ : y 24–100 -->
+        <rect class="layer-band" data-layer="exosphere" id="band-exosphere" x="48" y="24" width="248" height="76" fill="url(#g-exo)" tabindex="0" role="button" aria-pressed="false" aria-label="Exosphere"/>
+        <!-- Thermosphere 85–600 : y 100–220 -->
+        <rect class="layer-band" data-layer="thermosphere" id="band-thermosphere" x="48" y="100" width="248" height="120" fill="url(#g-therm)" tabindex="0" role="button" aria-pressed="false" aria-label="Thermosphere"/>
+        <!-- Mesosphere 50–85 : y 220–290 -->
+        <rect class="layer-band" data-layer="mesosphere" id="band-mesosphere" x="48" y="220" width="248" height="70" fill="url(#g-meso)" tabindex="0" role="button" aria-pressed="false" aria-label="Mesosphere"/>
+        <!-- Stratosphere 12–50 : y 290–400 -->
+        <rect class="layer-band" data-layer="stratosphere" id="band-stratosphere" x="48" y="290" width="248" height="110" fill="url(#g-strat)" tabindex="0" role="button" aria-pressed="false" aria-label="Stratosphere"/>
+        <!-- Troposphere 0–12 : y 400–508 -->
+        <rect class="layer-band" data-layer="troposphere" id="band-troposphere" x="48" y="400" width="248" height="108" fill="url(#g-trop)" tabindex="0" role="button" aria-pressed="true" aria-label="Troposphere"/>
+
+        <!-- Ozone tint mark in stratosphere -->
+        <rect x="48" y="318" width="248" height="28" fill="color-mix(in srgb, var(--accent, #c8b48a) 18%, transparent)" pointer-events="none"/>
+        <text x="172" y="336" text-anchor="middle" fill="var(--ink,#e8e6e1)" font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="1.5" opacity="0.75" pointer-events="none">OZONE REGION</text>
+
+        <!-- Layer name labels (left of stack) -->
+        <g fill="var(--ink-soft,#9b9a96)" font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="0.8" pointer-events="none">
+          <text x="40" y="66" text-anchor="end">EXO</text>
+          <text x="40" y="164" text-anchor="end">THERM</text>
+          <text x="40" y="258" text-anchor="end">MESO</text>
+          <text x="40" y="348" text-anchor="end">STRAT</text>
+          <text x="40" y="458" text-anchor="end">TROP</text>
+        </g>
+
+        <!-- Height ticks on right -->
+        <g fill="var(--muted,#63666e)" font-family="IBM Plex Mono, monospace" font-size="8" letter-spacing="0.5" pointer-events="none">
+          <line x1="296" y1="24" x2="304" y2="24" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="27">~1000+ km</text>
+          <line x1="296" y1="100" x2="304" y2="100" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="103">~600 km</text>
+          <line x1="296" y1="220" x2="304" y2="220" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="223">~85 km</text>
+          <line x1="296" y1="290" x2="304" y2="290" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="293">~50 km</text>
+          <line x1="296" y1="400" x2="304" y2="400" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="403">~12 km</text>
+          <line x1="296" y1="508" x2="304" y2="508" stroke="var(--line,#2c303a)"/>
+          <text x="310" y="511">0 km</text>
+        </g>
+
+        <!-- Reference markers -->
+        <g pointer-events="none">
+          <!-- sea level already at bottom -->
+          <!-- commercial flight ~10 km → inside trop, near top: map 10/12 of 108 ≈ 90 from bottom of trop → y = 508-90 = 418 -->
+          <line x1="52" y1="418" x2="292" y2="418" stroke="var(--ink,#e8e6e1)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.45"/>
+          <text x="172" y="414" text-anchor="middle" fill="var(--ink,#e8e6e1)" font-family="IBM Plex Mono, monospace" font-size="7.5" letter-spacing="1" opacity="0.7">COMMERCIAL FLIGHT ~10 km</text>
+          <!-- ISS ~400 km → in thermosphere: 85–600, 400 is (400-85)/(600-85) from bottom of therm = 315/515 ≈ 0.61 from bottom → height 120, from y=220 up 0.61*120 ≈ 73 → y = 220-73? Wait therm is y 100 to 220, bottom is 220.
+               from bottom: fraction (400-85)/(600-85)=0.612 → y = 220 - 0.612*120 = 220-73.4 = 146.6 -->
+          <line x1="52" y1="147" x2="292" y2="147" stroke="var(--accent,#c8b48a)" stroke-width="0.75" stroke-dasharray="3 3" opacity="0.55"/>
+          <text x="172" y="143" text-anchor="middle" fill="var(--accent,#c8b48a)" font-family="IBM Plex Mono, monospace" font-size="7.5" letter-spacing="1" opacity="0.85">ISS ~400 km</text>
+        </g>
+
+        <!-- Outer frame -->
+        <rect x="48" y="24" width="248" height="484" fill="none" stroke="var(--line,#2c303a)" stroke-width="1" pointer-events="none"/>
+      </svg>
+      <p class="scale-note">Heights are approximate average values. Tropopause height varies with latitude (~8–18&nbsp;km). Vertical scale is compressed (not linear) so the thin upper layers remain visible.</p>
+    </div>
+
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Layer 01</p>
+      <h2 id="d-name">Troposphere</h2>
+      <p class="range" id="d-range">~0–12 km · ~0–7.5 mi <span style="opacity:.7">(tropopause ~8–18 km by latitude)</span></p>
+      <div class="meta-grid">
+        <div class="cell">
+          <p class="k">Temperature trend</p>
+          <p class="v" id="d-temp">Cools with altitude — roughly −6.5 °C per km in the standard atmosphere, until the tropopause.</p>
+        </div>
+        <div class="cell">
+          <p class="k">What happens here</p>
+          <p class="v" id="d-what">Weather, clouds, most of Earth’s air mass (~75–80%), the water cycle, and nearly all human activity.</p>
+        </div>
+      </div>
+      <div class="stakes">
+        <h3>Environmental needs / stakes</h3>
+        <p id="d-stakes">Clean air, a stable climate, and a working water cycle. Pollution, excess CO<sub>2</sub>, and particulates hit this layer first — and everything that breathes.</p>
+      </div>
+    </aside>
+  </div>
+
+  <div class="layer-list" role="group" aria-label="Select atmosphere layer">
+    <button type="button" data-layer="troposphere" aria-pressed="true">Troposphere</button>
+    <button type="button" data-layer="stratosphere" aria-pressed="false">Stratosphere</button>
+    <button type="button" data-layer="mesosphere" aria-pressed="false">Mesosphere</button>
+    <button type="button" data-layer="thermosphere" aria-pressed="false">Thermosphere</button>
+    <button type="button" data-layer="exosphere" aria-pressed="false">Exosphere</button>
+  </div>
+
+  <div class="refs">
+    <h3>Useful reference altitudes</h3>
+    <ul>
+      <li><strong>Sea level</strong> — 0 km · baseline for pressure and standard atmosphere tables.</li>
+      <li><strong>Typical commercial flight</strong> — ~10–12 km (~33,000–39,000 ft), still inside the troposphere / near the tropopause.</li>
+      <li><strong>Ozone layer (peak density)</strong> — roughly 15–35 km in the lower–middle stratosphere (varies).</li>
+      <li><strong>International Space Station</strong> — ~400 km average, in the thermosphere.</li>
+      <li><strong>Kármán line (convention)</strong> — 100 km, often cited as the edge of space (still within the thermosphere in this scheme).</li>
+    </ul>
+  </div>
+
+  <p class="note">Educational schematic from public-knowledge altitudes (standard atmosphere / textbook averages). Boundaries are gradual, not walls. Not a forecast model — for live surface weather see <a href="/weather/">/weather/</a>. Credit: public domain science literacy; no proprietary data.</p>
+
+  <footer class="foot">
+    <a href="/science/">Science desk</a>
+    <a href="/weather/">Weather</a>
+    <a href="/power/">Power</a>
+    <a href="/news/science.html">Science headlines</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  paint();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var LAYERS = {
+    troposphere: {
+      tier: "Layer 01",
+      name: "Troposphere",
+      range: "~0–12 km · ~0–7.5 mi (tropopause ~8–18 km by latitude)",
+      temp: "Cools with altitude — roughly −6.5 °C per km in the standard atmosphere, until the tropopause.",
+      what: "Weather, clouds, most of Earth’s air mass (~75–80%), the water cycle, and nearly all human activity.",
+      stakes: "Clean air, a stable climate, and a working water cycle. Pollution, excess CO₂, and particulates hit this layer first — and everything that breathes."
+    },
+    stratosphere: {
+      tier: "Layer 02",
+      name: "Stratosphere",
+      range: "~12–50 km · ~7.5–31 mi",
+      temp: "Warms with altitude as ozone absorbs ultraviolet sunlight; colder near the tropopause, warmer toward the stratopause.",
+      what: "Home of the ozone layer, jet streams near the tropopause, and very little vertical mixing compared with the troposphere. Few weather clouds.",
+      stakes: "Ozone shield against harmful UV. Recovery from past ozone-depleting substances (ODS) continues — no new ODS, keep monitoring the shield."
+    },
+    mesosphere: {
+      tier: "Layer 03",
+      name: "Mesosphere",
+      range: "~50–85 km · ~31–53 mi",
+      temp: "Cools with altitude again; the mesopause is among the coldest regions in Earth’s atmosphere.",
+      what: "Sparse air where most meteors burn up as shooting stars. Too thin for aircraft; too low for long-lived satellites.",
+      stakes: "Harder to sample in situ — a reminder that “empty” sky still interacts with incoming rock and solar-driven chemistry."
+    },
+    thermosphere: {
+      tier: "Layer 04",
+      name: "Thermosphere",
+      range: "~85–600 km · ~53–370 mi",
+      temp: "Temperatures rise sharply with altitude (kinetic temperature of sparse gas); values swing with solar activity.",
+      what: "Aurora, the ionosphere’s upper reaches, and low-Earth orbit — including the ISS (~400 km). Air is extremely thin but still drags on satellites.",
+      stakes: "Space weather: solar storms can heat and expand this layer, raise drag, and disrupt radio / GNSS. Satellite traffic depends on predicting it."
+    },
+    exosphere: {
+      tier: "Layer 05",
+      name: "Exosphere",
+      range: "~600+ km · ~370+ mi (fades into space)",
+      temp: "Not a dense fluid — particles follow ballistic / orbital paths; “temperature” is a loose concept for a near-collisionless gas.",
+      what: "Transition to interplanetary space. Some satellites and atoms (H, He) escape or linger on long trajectories.",
+      stakes: "The edge of the system we live under — beyond it, habitat needs shift from air quality to vacuum, radiation, and life support."
+    }
+  };
+
+  var detail = {
+    tier: document.getElementById("d-tier"),
+    name: document.getElementById("d-name"),
+    range: document.getElementById("d-range"),
+    temp: document.getElementById("d-temp"),
+    what: document.getElementById("d-what"),
+    stakes: document.getElementById("d-stakes")
+  };
+
+  function select(id){
+    var data = LAYERS[id];
+    if (!data) return;
+    detail.tier.textContent = data.tier;
+    detail.name.textContent = data.name;
+    detail.range.textContent = data.range;
+    detail.temp.textContent = data.temp;
+    detail.what.textContent = data.what;
+    detail.stakes.textContent = data.stakes;
+    document.querySelectorAll(".layer-band").forEach(function(el){
+      el.setAttribute("aria-pressed", String(el.getAttribute("data-layer") === id));
+    });
+    document.querySelectorAll(".layer-list button").forEach(function(el){
+      el.setAttribute("aria-pressed", String(el.getAttribute("data-layer") === id));
+    });
+  }
+
+  document.querySelectorAll(".layer-band").forEach(function(el){
+    el.addEventListener("click", function(){ select(el.getAttribute("data-layer")); });
+    el.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(el.getAttribute("data-layer")); }
+    });
+  });
+  document.querySelectorAll(".layer-list button").forEach(function(el){
+    el.addEventListener("click", function(){ select(el.getAttribute("data-layer")); });
+  });
+
+  select("troposphere");
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
