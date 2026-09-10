@@ -90,7 +90,21 @@
       "text-transform:uppercase;opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;" +
       "border-radius:2px;backdrop-filter:blur(8px)" +
       "}" +
-      ".sp-share-toast.is-on{opacity:1;transform:translateX(-50%) translateY(0)}";
+      ".sp-share-toast.is-on{opacity:1;transform:translateX(-50%) translateY(0)}" +
+      
+      ".sp-suggest-btn{" +
+      "appearance:none;background:transparent;border:1px solid var(--line,var(--hair,rgba(255,255,255,.18)));" +
+      "color:var(--muted,var(--ink-soft,#9b9a96));font-family:\"IBM Plex Mono\",ui-monospace,monospace;" +
+      "font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;cursor:pointer;" +
+      "line-height:1;border-radius:1px;opacity:.75;transition:color .15s ease,border-color .15s ease,opacity .15s ease;" +
+      "text-decoration:none;display:inline-flex;align-items:center" +
+      "}" +
+      ".sp-suggest-btn:hover,.sp-suggest-btn:focus-visible{color:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1);opacity:1;outline:none}" +
+      ".header-top-right .sp-suggest-btn,.themes + .sp-share-btn + .sp-suggest-btn,.sp-share-btn + .sp-suggest-btn{margin-left:.35rem}" +
+      ".sp-share-fab + .sp-suggest-btn,.sp-suggest-fab{" +
+      "position:fixed;right:14px;bottom:52px;z-index:40;box-shadow:0 8px 24px rgba(0,0,0,.28);" +
+      "background:color-mix(in srgb,var(--base,#14161c) 88%,transparent);backdrop-filter:blur(8px)" +
+      "}";
     document.head.appendChild(css);
   }
 
@@ -192,10 +206,38 @@
     return btn;
   }
 
+  function suggestHref() {
+    var page = location.pathname + (location.search || "");
+    return "/suggest/?page=" + encodeURIComponent(page);
+  }
+
+  function makeSuggestLink(extraClass) {
+    var a = document.createElement("a");
+    a.href = suggestHref();
+    a.className = "sp-suggest-btn" + (extraClass ? " " + extraClass : "");
+    a.setAttribute("data-sp-suggest", "");
+    a.setAttribute("aria-label", "Suggest an idea about this page");
+    a.title = "Suggest an idea about this page";
+    a.textContent = "Suggest";
+    return a;
+  }
+
+  function placeSuggestBeside(shareEl, fab) {
+    if (document.querySelector("[data-sp-suggest]")) return;
+    var link = makeSuggestLink(fab ? "sp-suggest-fab" : "");
+    if (shareEl && shareEl.parentNode) {
+      if (shareEl.nextSibling) shareEl.parentNode.insertBefore(link, shareEl.nextSibling);
+      else shareEl.parentNode.appendChild(link);
+    } else {
+      document.body.appendChild(link);
+    }
+  }
+
   function placeButton() {
     var existing = document.querySelectorAll("[data-sp-share], .sp-share-btn");
     if (existing.length) {
       Array.prototype.forEach.call(existing, wire);
+      placeSuggestBeside(existing[0], false);
       return;
     }
 
@@ -209,6 +251,7 @@
       if (anchor.nextSibling) anchor.parentNode.insertBefore(btn, anchor.nextSibling);
       else anchor.parentNode.appendChild(btn);
       wire(btn);
+      placeSuggestBeside(btn, false);
       return;
     }
 
@@ -216,6 +259,7 @@
     var fab = makeButton("sp-share-fab");
     document.body.appendChild(fab);
     wire(fab);
+    placeSuggestBeside(fab, true);
   }
 
   // Public helpers for pages with custom share (lightbox, typing results).
