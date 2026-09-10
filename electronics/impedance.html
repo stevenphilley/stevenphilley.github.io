@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impedance — Electronics — Steven Philley</title>
+<meta name="description" content="Series or parallel RLC impedance: |Z| and phase from f, R, L, and C. Xl = 2πfL, Xc = 1/(2πfC).">
+<link rel="canonical" href="https://stevenphilley.com/electronics/impedance.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Impedance — Steven Philley">
+<meta property="og:description" content="Live series or parallel R+L+C impedance. |Z| and phase from frequency, resistance, inductance, and capacitance.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/impedance.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Impedance — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input,select{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus,select:focus{border-bottom-color:var(--accent,#c8b48a)}
+select{cursor:pointer}
+.pair{display:grid;grid-template-columns:1.4fr 0.8fr;gap:12px}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.legend a{color:var(--accent,#c8b48a);text-decoration:none}
+.legend a:hover{text-decoration:underline}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html">LC</a>
+      <a href="/electronics/capacitor-codes.html">Cap</a>
+      <a href="/electronics/inductor-codes.html">L</a>
+      <a href="/electronics/rc-filter.html">Filter</a>
+      <a href="/electronics/rl-filter.html">RL F</a>
+      <a href="/electronics/turns-ratio.html">Turns</a>
+      <a href="/electronics/impedance.html" aria-current="page">Imped</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>Impedance</h1>
+  <p class="lede">Series or parallel R + L + C. Change f, R, L, and C — |Z| and phase update as you type. Xl = 2πfL, Xc = 1/(2πfC).</p>
+  <div class="modes" id="modes" role="tablist" aria-label="Circuit topology">
+    <button type="button" data-mode="series" aria-selected="true">Series RLC</button>
+    <button type="button" data-mode="parallel" aria-selected="false">Parallel RLC</button>
+  </div>
+
+  <div class="stage">
+    <div class="fields">
+      <div class="pair">
+        <label>Frequency f<input id="f" inputmode="decimal" step="any" value="1"></label>
+        <label>Unit
+          <select id="funit" aria-label="Frequency unit">
+            <option value="1">Hz</option>
+            <option value="1e3" selected>kHz</option>
+            <option value="1e6">MHz</option>
+          </select>
+        </label>
+      </div>
+      <label>Resistance R (Ω)<input id="r" inputmode="decimal" step="any" value="100"></label>
+      <div class="pair">
+        <label>Inductance L<input id="l" inputmode="decimal" step="any" value="10"></label>
+        <label>Unit
+          <select id="lunit" aria-label="Inductance unit">
+            <option value="1e-6">µH</option>
+            <option value="1e-3" selected>mH</option>
+            <option value="1">H</option>
+          </select>
+        </label>
+      </div>
+      <div class="pair">
+        <label>Capacitance C<input id="c" inputmode="decimal" step="any" value="0.1"></label>
+        <label>Unit
+          <select id="cunit" aria-label="Capacitance unit">
+            <option value="1e-12">pF</option>
+            <option value="1e-9">nF</option>
+            <option value="1e-6" selected>µF</option>
+          </select>
+        </label>
+      </div>
+      <div class="presets" role="group" aria-label="Common impedance presets">
+        <button type="button" data-mode="series" data-f="60" data-funit="1" data-r="100" data-l="10" data-lunit="1e-3" data-c="10" data-cunit="1e-6">60 Hz · series</button>
+        <button type="button" data-mode="series" data-f="1" data-funit="1e3" data-r="100" data-l="10" data-lunit="1e-3" data-c="0.1" data-cunit="1e-6" aria-pressed="true">1 kHz · series</button>
+        <button type="button" data-mode="parallel" data-f="1" data-funit="1e3" data-r="1000" data-l="10" data-lunit="1e-3" data-c="0.1" data-cunit="1e-6">1 kHz · parallel</button>
+        <button type="button" data-mode="series" data-f="1" data-funit="1e6" data-r="50" data-l="10" data-lunit="1e-6" data-c="100" data-cunit="1e-12">1 MHz · series</button>
+      </div>
+    </div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>Inductive reactance Xl = 2πfL rises with frequency; capacitive reactance Xc = 1/(2πfC) falls. Net reactance for series is X = Xl − Xc.</p>
+    <p>Series: Z = R + jX, so |Z| = √(R² + X²) and phase φ = atan2(X, R). Parallel: work in admittance Y = 1/R + j(1/Xc − 1/Xl), then Z = 1/Y. Leave R, L, or C at zero to drop that branch (open for series L/C with L=0 or C=0 is skipped; parallel R=0 is a short).</p>
+    <p>Pair with <a href="/electronics/reactance.html">Reactance</a> for single-part X, or <a href="/electronics/resonance.html">LC resonance</a> for f₀. Back to the <a href="/electronics/">electronics bench</a>.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var mode='series';
+  var modeBtns=[].slice.call(document.querySelectorAll('#modes button'));
+  var fEl=document.getElementById('f');
+  var funitEl=document.getElementById('funit');
+  var rEl=document.getElementById('r');
+  var lEl=document.getElementById('l');
+  var lunitEl=document.getElementById('lunit');
+  var cEl=document.getElementById('c');
+  var cunitEl=document.getElementById('cunit');
+  var out=document.getElementById('out');
+  var chips=[].slice.call(document.querySelectorAll('.presets button'));
+
+  function num(el){
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    if(abs>=1e6) return fmt(n/1e6,3)+' MΩ';
+    if(abs>=1e3) return fmt(n/1e3,3)+' kΩ';
+    if(abs<1e-3 && abs>0) return fmt(n*1e3,3)+' mΩ';
+    return fmt(n, abs>=100 ? 1 : 2)+' Ω';
+  }
+  function formatHz(f){
+    if(!isFinite(f) || f<=0) return '—';
+    if(f>=1e6) return fmt(f/1e6,3)+' MHz';
+    if(f>=1e3) return fmt(f/1e3,3)+' kHz';
+    return fmt(f,3)+' Hz';
+  }
+  function setMode(m){
+    mode=m;
+    modeBtns.forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.mode===mode));});
+    render();
+  }
+  function syncChips(){
+    var f=num(fEl), fu=funitEl.value, r=num(rEl), l=num(lEl), c=num(cEl);
+    chips.forEach(function(b){
+      var match=b.dataset.mode===mode
+        && isFinite(f) && Math.abs(f-parseFloat(b.dataset.f))/Math.max(f,1e-12)<0.02
+        && b.dataset.funit===fu
+        && isFinite(r) && Math.abs(r-parseFloat(b.dataset.r))/Math.max(Math.abs(r),1e-12)<0.02
+        && isFinite(l) && Math.abs(l-parseFloat(b.dataset.l))/Math.max(l,1e-12)<0.02
+        && b.dataset.lunit===lunitEl.value
+        && isFinite(c) && Math.abs(c-parseFloat(b.dataset.c))/Math.max(c,1e-12)<0.02
+        && b.dataset.cunit===cunitEl.value;
+      b.setAttribute('aria-pressed', String(!!match));
+    });
+  }
+  function render(){
+    syncChips();
+    var fVal=num(fEl), fScale=parseFloat(funitEl.value);
+    if(!(fVal>0) || !(fScale>0)){
+      out.innerHTML='<div class="unit">|Z|</div><div class="num">—</div><p class="note">Enter frequency above zero.</p>';
+      return;
+    }
+    var f=fVal*fScale;
+    var rRaw=num(rEl);
+    var r=(isFinite(rRaw) && rRaw>=0) ? rRaw : NaN;
+    var lVal=num(lEl), lScale=parseFloat(lunitEl.value);
+    var cVal=num(cEl), cScale=parseFloat(cunitEl.value);
+    var hasL=isFinite(lVal) && lVal>0 && lScale>0;
+    var hasC=isFinite(cVal) && cVal>0 && cScale>0;
+    var hasR=isFinite(r) && r>0;
+    var L=hasL ? lVal*lScale : 0;
+    var C=hasC ? cVal*cScale : 0;
+    var Xl=hasL ? 2*Math.PI*f*L : 0;
+    var Xc=hasC ? 1/(2*Math.PI*f*C) : 0;
+
+    var Zmag, phiDeg, formula, note, Zr, Zi;
+
+    if(mode==='series'){
+      if(!hasR && !hasL && !hasC){
+        out.innerHTML='<div class="unit">|Z|</div><div class="num">—</div><p class="note">Enter R, L, and/or C (series needs at least one).</p>';
+        return;
+      }
+      // Series: open branch if L=0 or C=0 means that part is absent (Z contrib 0), not short.
+      // R=0 is fine (pure reactive).
+      var X = Xl - Xc;
+      var Rser = hasR ? r : 0;
+      Zmag = Math.sqrt(Rser*Rser + X*X);
+      phiDeg = Math.atan2(X, Rser) * 180 / Math.PI;
+      Zr = Rser; Zi = X;
+      formula = 'Z = R + j(Xl − Xc); |Z| = √(R² + X²); φ = atan2(X, R)';
+      note = 'Series · X = Xl − Xc = '+formatOhms(X)+'. Ideal parts — real ESR adds a little R.';
+    } else {
+      // Parallel R || L || C via admittance
+      // Y = G + jB; G = 1/R (if R>0); B = 1/Xc − 1/Xl (if C/L present)
+      // R=0 → short → Z=0
+      // L=0 → skip inductive branch (infinite Xl)
+      // C=0 → skip capacitive branch
+      if(isFinite(r) && r===0){
+        Zmag = 0;
+        phiDeg = 0;
+        Zr = 0; Zi = 0;
+        formula = 'Parallel · R = 0 Ω → short · Z = 0';
+        note = 'A zero-ohm resistor shorts the parallel network.';
+      } else if(!hasR && !hasL && !hasC){
+        out.innerHTML='<div class="unit">|Z|</div><div class="num">—</div><p class="note">Enter R, L, and/or C (parallel needs at least one branch).</p>';
+        return;
+      } else {
+        var G = hasR ? 1/r : 0;
+        var B = 0;
+        if(hasC) B += 1/Xc;
+        if(hasL) B -= 1/Xl;
+        var Ymag = Math.sqrt(G*G + B*B);
+        if(!(Ymag>0)){
+          out.innerHTML='<div class="unit">|Z|</div><div class="num">—</div><p class="note">Admittance is zero — open network.</p>';
+          return;
+        }
+        Zr = G / (Ymag*Ymag);
+        Zi = -B / (Ymag*Ymag);
+        Zmag = 1 / Ymag;
+        phiDeg = Math.atan2(Zi, Zr) * 180 / Math.PI;
+        formula = 'Y = 1/R + j(1/Xc − 1/Xl); Z = 1/Y';
+        note = 'Parallel · G = '+fmt(G,4)+' S, B = '+fmt(B,4)+' S. Ideal parts only.';
+      }
+    }
+
+    var ohmParts=formatOhms(Zmag).split(' ');
+    var ohmUnit=ohmParts.pop();
+    var ohmNum=ohmParts.join(' ');
+    var stats=
+      '<div class="stats">'+
+        '<div class="stat"><span class="lab">Frequency</span><span class="val">'+formatHz(f)+'</span></div>'+
+        '<div class="stat"><span class="lab">Phase φ</span><span class="val">'+fmt(phiDeg,2)+'°</span></div>'+
+        '<div class="stat"><span class="lab">Xl · 2πfL</span><span class="val">'+(hasL?formatOhms(Xl):'— · no L')+'</span></div>'+
+        '<div class="stat"><span class="lab">Xc · 1/(2πfC)</span><span class="val">'+(hasC?formatOhms(Xc):'— · no C')+'</span></div>';
+    if(mode==='series'){
+      stats+='<div class="stat"><span class="lab">X · Xl − Xc</span><span class="val">'+formatOhms(Xl-Xc)+'</span></div>';
+    } else {
+      stats+='<div class="stat"><span class="lab">Re(Z) · Im(Z)</span><span class="val">'+formatOhms(Zr)+' · '+formatOhms(Zi)+'</span></div>';
+    }
+    stats+='</div>';
+    out.innerHTML=
+      '<div class="unit">|Z| · '+(mode==='series'?'series':'parallel')+'</div>'+
+      '<div class="num">'+ohmNum+'</div>'+
+      '<div class="unit">'+ohmUnit+'</div>'+
+      '<p class="formula">'+formula+'</p>'+
+      stats+
+      '<p class="note">'+note+'</p>';
+  }
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){ setMode(b.dataset.mode); });
+  });
+  chips.forEach(function(b){
+    b.addEventListener('click',function(){
+      mode=b.dataset.mode;
+      modeBtns.forEach(function(m){m.setAttribute('aria-selected',String(m.dataset.mode===mode));});
+      fEl.value=b.dataset.f;
+      funitEl.value=b.dataset.funit;
+      rEl.value=b.dataset.r;
+      lEl.value=b.dataset.l;
+      lunitEl.value=b.dataset.lunit;
+      cEl.value=b.dataset.c;
+      cunitEl.value=b.dataset.cunit;
+      render();
+    });
+  });
+  [fEl,funitEl,rEl,lEl,lunitEl,cEl,cunitEl].forEach(function(el){
+    el.addEventListener('input',render);
+    el.addEventListener('change',render);
+  });
+  render();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
