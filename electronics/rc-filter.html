@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RC time — Electronics — Steven Philley</title>
-<meta name="description" content="RC time constant from R and C. τ = R × C, plus 1τ / 3τ / 5τ charge and discharge times.">
-<link rel="canonical" href="https://stevenphilley.com/electronics/rc-time.html">
+<title>RC filter — Electronics — Steven Philley</title>
+<meta name="description" content="First-order RC low-pass and high-pass filter calculator. fc = 1/(2πRC), plus gain and phase at a chosen frequency.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/rc-filter.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="RC time — Steven Philley">
-<meta property="og:description" content="τ = R × C. Live RC time constant with 63%, 95%, and 99% charge times, in the browser.">
-<meta property="og:url" content="https://stevenphilley.com/electronics/rc-time.html">
+<meta property="og:title" content="RC filter — Steven Philley">
+<meta property="og:description" content="Low-pass or high-pass. Cutoff fc = 1/(2πRC), with live gain and phase at the frequency you type.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/rc-filter.html">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="RC time — Steven Philley">
+<meta name="twitter:title" content="RC filter — Steven Philley">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +29,9 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
 h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
 .lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
 .stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
 @media (max-width:800px){.stage{grid-template-columns:1fr}}
 .fields{display:grid;gap:14px}
@@ -74,12 +77,12 @@ select{cursor:pointer}
       <a href="/electronics/voltage-divider.html">V div</a>
       <a href="/electronics/current-divider.html">I div</a>
       <a href="/electronics/series-parallel.html">S&#8741;P</a>
-      <a href="/electronics/rc-time.html" aria-current="page">RC</a>
+      <a href="/electronics/rc-time.html">RC</a>
       <a href="/electronics/rl-time.html">RL</a>
       <a href="/electronics/reactance.html">X</a>
       <a href="/electronics/resonance.html">LC</a>
       <a href="/electronics/capacitor-codes.html">Cap</a>
-      <a href="/electronics/rc-filter.html">Filter</a>
+      <a href="/electronics/rc-filter.html" aria-current="page">Filter</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
         <button type="button" data-set-theme="neon">Neon</button>
@@ -93,8 +96,13 @@ select{cursor:pointer}
   </div>
 
   <p class="e-kicker">Vol. IV — Electronics · Tool</p>
-  <h1>RC time</h1>
-  <p class="lede">A resistor and a capacitor set how fast a voltage rises or falls. Change R and C — τ updates as you type, with the familiar 63%, 95%, and 99% marks.</p>
+  <h1>RC filter</h1>
+  <p class="lede">One resistor and one capacitor set a corner. Low-pass keeps the slow stuff; high-pass keeps the fast. Change R and C — fc, gain, and phase update as you type.</p>
+
+  <div class="modes" role="group" aria-label="Filter type">
+    <button type="button" data-mode="lpf" aria-pressed="true">Low-pass</button>
+    <button type="button" data-mode="hpf" aria-pressed="false">High-pass</button>
+  </div>
 
   <div class="stage">
     <div class="fields">
@@ -110,11 +118,21 @@ select{cursor:pointer}
           </select>
         </label>
       </div>
+      <div class="pair">
+        <label>Signal f<input id="f" inputmode="decimal" step="any" value="159"></label>
+        <label>Unit
+          <select id="funit" aria-label="Frequency unit">
+            <option value="1" selected>Hz</option>
+            <option value="1e3">kHz</option>
+            <option value="1e6">MHz</option>
+          </select>
+        </label>
+      </div>
       <div class="presets" role="group" aria-label="Common RC pairs">
-        <button type="button" data-r="10000" data-c="0.1" data-cunit="1e-6" aria-pressed="true">10k · 0.1 µF</button>
-        <button type="button" data-r="1000" data-c="100" data-cunit="1e-6">1k · 100 µF</button>
-        <button type="button" data-r="100000" data-c="10" data-cunit="1e-9">100k · 10 nF</button>
-        <button type="button" data-r="4700" data-c="1" data-cunit="1e-6">4.7k · 1 µF</button>
+        <button type="button" data-r="10000" data-c="0.1" data-cunit="1e-6" data-f="159" data-funit="1" aria-pressed="true">10k · 0.1 µF</button>
+        <button type="button" data-r="1000" data-c="100" data-cunit="1e-9" data-f="159" data-funit="1e3">1k · 100 nF</button>
+        <button type="button" data-r="4700" data-c="1" data-cunit="1e-6" data-f="34" data-funit="1">4.7k · 1 µF</button>
+        <button type="button" data-r="100000" data-c="10" data-cunit="1e-9" data-f="159" data-funit="1">100k · 10 nF</button>
       </div>
     </div>
     <div class="out" id="out" aria-live="polite"></div>
@@ -122,9 +140,9 @@ select{cursor:pointer}
 
   <section class="legend">
     <h2>How it works</h2>
-    <p>τ (tau) is the product of resistance and capacitance: τ = R × C. After one time constant, a charging capacitor reaches about 63% of the final voltage; after three, about 95%; after five, about 99%. Discharge follows the same marks toward zero.</p>
-    <p>Bigger R or C stretches the curve. Timing circuits, soft-start filters, and debounce networks all start from this product. The secondary figure 1 / (2πRC) is the cutoff of a simple RC filter — open the full <a href="/electronics/rc-filter.html" style="color:var(--accent,#c8b48a)">RC filter</a> tool for low-pass / high-pass gain and phase.</p>
-    <p>Pick parts on <a href="/electronics/resistor-codes.html" style="color:var(--accent,#c8b48a)">Resistor codes</a>, combine resistances on <a href="/electronics/series-parallel.html" style="color:var(--accent,#c8b48a)">Series &amp; parallel</a>, or revisit loops in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a>.</p>
+    <p>The cutoff (corner) is fc = 1 / (2πRC). At fc the magnitude is −3 dB (about 0.707 of the midband gain). A first-order RC rolls off at 20 dB per decade away from the passband.</p>
+    <p>Low-pass: series R, capacitor to ground — slow signals pass, fast ones shrink. High-pass: series C, resistor to ground — fast signals pass, DC and slow stuff fall away. Phase at fc is −45° (LPF) or +45° (HPF).</p>
+    <p>τ = R × C is the same product on <a href="/electronics/rc-time.html" style="color:var(--accent,#c8b48a)">RC time</a>. Reactance of C at a chosen f lives on <a href="/electronics/reactance.html" style="color:var(--accent,#c8b48a)">Reactance</a>. Loops and charging curves in the <a href="/electronics/circuits.html" style="color:var(--accent,#c8b48a)">Circuit explorer</a>.</p>
   </section>
 
   <footer class="e-foot">
@@ -153,9 +171,13 @@ select{cursor:pointer}
   });
   paintTheme();
 
+  var mode='lpf';
+  var modeBtns=[].slice.call(document.querySelectorAll('.modes button'));
   var rEl=document.getElementById('r');
   var cEl=document.getElementById('c');
   var cunitEl=document.getElementById('cunit');
+  var fEl=document.getElementById('f');
+  var funitEl=document.getElementById('funit');
   var out=document.getElementById('out');
   var chips=[].slice.call(document.querySelectorAll('.presets button'));
 
@@ -182,18 +204,16 @@ select{cursor:pointer}
     if(abs>=1e-9) return fmt(F*1e9,3)+' nF';
     return fmt(F*1e12,2)+' pF';
   }
-  function formatTime(t){
-    if(!isFinite(t) || t<=0) return '—';
-    if(t>=1) return fmt(t,3)+' s';
-    if(t>=1e-3) return fmt(t*1e3,3)+' ms';
-    if(t>=1e-6) return fmt(t*1e6,3)+' µs';
-    return fmt(t*1e9,2)+' ns';
-  }
   function formatHz(f){
     if(!isFinite(f) || f<=0) return '—';
     if(f>=1e6) return fmt(f/1e6,3)+' MHz';
     if(f>=1e3) return fmt(f/1e3,3)+' kHz';
     return fmt(f,3)+' Hz';
+  }
+  function formatDb(db){
+    if(!isFinite(db)) return '—';
+    var s = db>0?'+':'';
+    return s+fmt(db,2)+' dB';
   }
   function syncChips(){
     var r=num(rEl), c=num(cEl), u=cunitEl.value;
@@ -205,38 +225,76 @@ select{cursor:pointer}
       b.setAttribute('aria-pressed', String(match));
     });
   }
+  function paintModes(){
+    modeBtns.forEach(function(b){
+      b.setAttribute('aria-pressed', String(b.dataset.mode===mode));
+    });
+  }
   function render(){
     var r=num(rEl), cVal=num(cEl), scale=parseFloat(cunitEl.value);
+    var fVal=num(fEl), fScale=parseFloat(funitEl.value);
     syncChips();
+    paintModes();
     if(!(r>0) || !(cVal>0) || !(scale>0)){
-      out.innerHTML='<div class="unit">τ</div><div class="num">—</div><p class="note">Enter R and C above zero.</p>';
+      out.innerHTML='<div class="unit">fc</div><div class="num">—</div><p class="note">Enter R and C above zero.</p>';
       return;
     }
     var C=cVal*scale;
-    var tau=r*C;
-    var f=1/(2*Math.PI*r*C);
-    out.innerHTML=
-      '<div class="unit">τ · time constant</div>'+
-      '<div class="num">'+formatTime(tau).replace(/ (s|ms|µs|ns)$/,'')+'</div>'+
-      '<div class="unit">'+formatTime(tau).split(' ').pop()+'</div>'+
-      '<p class="formula">τ = R × C = '+formatOhms(r)+' × '+formatFarads(C)+'</p>'+
-      '<div class="stats">'+
-        '<div class="stat"><span class="lab">1τ · ~63% charge / discharge</span><span class="val">'+formatTime(tau)+'</span></div>'+
-        '<div class="stat"><span class="lab">3τ · ~95%</span><span class="val">'+formatTime(3*tau)+'</span></div>'+
-        '<div class="stat"><span class="lab">5τ · ~99%</span><span class="val">'+formatTime(5*tau)+'</span></div>'+
-        '<div class="stat"><span class="lab">Corner scale · 1 / (2πRC)</span><span class="val">'+formatHz(f)+'</span></div>'+
-      '</div>'+
-      '<p class="note">After 5τ the voltage is within about 1% of settled. Same marks apply on the way down.</p>';
+    var fc=1/(2*Math.PI*r*C);
+    var kind=mode==='lpf'?'Low-pass':'High-pass';
+    var html=
+      '<div class="unit">fc · '+kind+' cutoff</div>'+
+      '<div class="num">'+formatHz(fc).replace(/ (Hz|kHz|MHz)$/,'')+'</div>'+
+      '<div class="unit">'+formatHz(fc).split(' ').pop()+'</div>'+
+      '<p class="formula">fc = 1 / (2πRC) = 1 / (2π × '+formatOhms(r)+' × '+formatFarads(C)+')</p>';
+
+    var f=fVal*fScale;
+    if(isFinite(f) && f>0){
+      var ratio=f/fc;
+      var mag, phaseDeg;
+      if(mode==='lpf'){
+        mag=1/Math.sqrt(1+ratio*ratio);
+        phaseDeg=-Math.atan(ratio)*180/Math.PI;
+      } else {
+        mag=ratio/Math.sqrt(1+ratio*ratio);
+        phaseDeg=Math.atan(1/ratio)*180/Math.PI;
+      }
+      var db=20*Math.log(mag)/Math.LN10;
+      html+=
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">At '+formatHz(f)+' · |Vout/Vin|</span><span class="val">'+fmt(mag,4)+' ('+formatDb(db)+')</span></div>'+
+          '<div class="stat"><span class="lab">Phase</span><span class="val">'+fmt(phaseDeg,1)+'°</span></div>'+
+          '<div class="stat"><span class="lab">f / fc</span><span class="val">'+fmt(ratio,3)+'</span></div>'+
+          '<div class="stat"><span class="lab">τ = R × C</span><span class="val"><a href="/electronics/rc-time.html">'+(r*C>=1?fmt(r*C,3)+' s':(r*C>=1e-3?fmt(r*C*1e3,3)+' ms':fmt(r*C*1e6,3)+' µs'))+'</a></span></div>'+
+        '</div>'+
+        '<p class="note">At fc the magnitude is −3 dB. First-order slope is 20 dB/decade.</p>';
+    } else {
+      html+=
+        '<div class="stats">'+
+          '<div class="stat"><span class="lab">τ = R × C</span><span class="val"><a href="/electronics/rc-time.html">'+(r*C>=1?fmt(r*C,3)+' s':(r*C>=1e-3?fmt(r*C*1e3,3)+' ms':fmt(r*C*1e6,3)+' µs'))+'</a></span></div>'+
+          '<div class="stat"><span class="lab">−3 dB at</span><span class="val">'+formatHz(fc)+'</span></div>'+
+        '</div>'+
+        '<p class="note">Enter a signal frequency to see gain and phase at that point.</p>';
+    }
+    out.innerHTML=html;
   }
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      mode=b.dataset.mode;
+      render();
+    });
+  });
   chips.forEach(function(b){
     b.addEventListener('click',function(){
       rEl.value=b.dataset.r;
       cEl.value=b.dataset.c;
       cunitEl.value=b.dataset.cunit;
+      if(b.dataset.f){ fEl.value=b.dataset.f; }
+      if(b.dataset.funit){ funitEl.value=b.dataset.funit; }
       render();
     });
   });
-  [rEl,cEl,cunitEl].forEach(function(el){
+  [rEl,cEl,cunitEl,fEl,funitEl].forEach(function(el){
     el.addEventListener('input',render);
     el.addEventListener('change',render);
   });
