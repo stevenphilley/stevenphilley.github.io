@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, and Thévenin.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, and Norton.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, and Thévenin.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, and Norton.">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,12 +95,12 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, and Thévenin. Change the knobs. The numbers and the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, Thévenin, and Norton. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
     <div class="panel">
-      <div class="step" id="stepLabel">Lesson 1 of 12</div>
+      <div class="step" id="stepLabel">Lesson 1 of 13</div>
       <h2 id="lessonTitle">Close the loop</h2>
       <p id="lessonBody">Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.</p>
       <div class="readout" id="readout">
@@ -131,6 +131,7 @@ button.go:disabled{opacity:.4;cursor:default}
         <button type="button" class="chip" data-top="rc" aria-pressed="false">RC</button>
         <button type="button" class="chip" data-top="divider" aria-pressed="false">Divider</button>
         <button type="button" class="chip" data-top="thevenin" aria-pressed="false">Thévenin</button>
+        <button type="button" class="chip" data-top="norton" aria-pressed="false">Norton</button>
       </div>
       <p class="note" id="formula">I = 0 while the switch is open.</p>
       <div class="row">
@@ -189,7 +190,8 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:'RC time / charging curve', body:'Pick RC. Current rushes in fast, then slows as the capacitor voltage rises. τ = R × C. Change R or C and watch τ move. Aim for about 63% charge (1τ). Full bench: RC time.', goal:function(){return topo==='rc' && sawTau && saw63;}},
     {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}},
     {title:"Kirchhoff — loops & nodes", body:'Two bookkeeping rules. Series: around the loop the battery equals the resistor drops (KVL). Parallel: at a node the source current equals the branch currents (KCL). Try Series closed, then Parallel closed.', goal:function(){return sawKvl && sawKcl;}},
-    {title:"Thévenin — Voc & Rth", body:'A linear source looks like Voc in series with Rth. Pick Thévenin. Close the switch: the load gets Voc × RL / (Rth + RL). Move Rth or RL and watch the split. Bench cousin: V div.', goal:function(){return topo==='thevenin' && closed && (movedR || movedR2);}}
+    {title:"Thévenin — Voc & Rth", body:'A linear source looks like Voc in series with Rth. Pick Thévenin. Close the switch: the load gets Voc × RL / (Rth + RL). Move Rth or RL and watch the split. Bench cousin: V div.', goal:function(){return topo==='thevenin' && closed && (movedR || movedR2);}},
+    {title:"Norton — Isc & Rn", body:'A linear source also looks like Isc in parallel with Rn. Pick Norton. Close the switch: the load gets Isc × Rn/(Rn+RL) of the source current (Vload = Isc×(Rn∥RL)). Move Rn or RL and watch the split. Dual of Thévenin.', goal:function(){return topo==='norton' && closed && (movedR || movedR2);}}
   ];
 
   function fmt(n,d){
@@ -221,13 +223,13 @@ button.go:disabled{opacity:.4;cursor:default}
 
   function syncControls(){
     var needC=topo==='cap'||topo==='rc';
-    var needR2=topo==='divider'||topo==='thevenin';
+    var needR2=topo==='divider'||topo==='thevenin'||topo==='norton';
     document.getElementById('cLabel').classList.toggle('hid', !needC);
     document.getElementById('r2Label').classList.toggle('hid', !needR2);
     document.getElementById('rLabel').classList.toggle('hid', topo==='cap');
     var four=needC||needR2||topo==='rc';
     document.getElementById('readout').classList.toggle('four', four);
-    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'));
+    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'||topo==='norton'));
     if(topo==='divider'){
       document.getElementById('k1').textContent='Vin';
       document.getElementById('k2').textContent='R1';
@@ -236,6 +238,11 @@ button.go:disabled{opacity:.4;cursor:default}
     } else if(topo==='thevenin'){
       document.getElementById('k1').textContent='Voc';
       document.getElementById('k2').textContent='Rth';
+      document.getElementById('k3').textContent='Vload';
+      document.getElementById('k4').textContent='RL';
+    } else if(topo==='norton'){
+      document.getElementById('k1').textContent='Isc';
+      document.getElementById('k2').textContent='Rn';
       document.getElementById('k3').textContent='Vload';
       document.getElementById('k4').textContent='RL';
     } else if(needC||topo==='rc'){
@@ -248,15 +255,22 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('k2').textContent='Ohms';
       document.getElementById('k3').textContent='Amps';
     }
-    // Keep knob captions honest for divider / Thévenin / default
+    // Keep knob captions honest for divider / Thévenin / Norton / default
     try {
       if(topo==='thevenin'){
+        document.getElementById('vLabel').childNodes[0].nodeValue='Open-circuit Voc ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Series Rth ';
         document.getElementById('r2Label').childNodes[0].nodeValue='Load RL ';
+      } else if(topo==='norton'){
+        document.getElementById('vLabel').childNodes[0].nodeValue='Norton Isc ';
+        document.getElementById('rLabel').childNodes[0].nodeValue='Parallel Rn ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Load RL ';
       } else if(topo==='divider'){
+        document.getElementById('vLabel').childNodes[0].nodeValue='Battery voltage ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Top resistor R1 ';
         document.getElementById('r2Label').childNodes[0].nodeValue='Bottom resistor R2 ';
       } else {
+        document.getElementById('vLabel').childNodes[0].nodeValue='Battery voltage ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Resistor ';
         document.getElementById('r2Label').childNodes[0].nodeValue='Bottom resistor R2 ';
       }
@@ -321,6 +335,20 @@ button.go:disabled{opacity:.4;cursor:default}
       if(closed && (movedR || movedR2)) sawThev=true;
       note='Vload = Voc × RL/(Rth+RL) = '+Voc+' × '+RL+'/'+R+' ≈ '+fmt(Vout,2)+' V · I ≈ '+fmt(I*1000,1)+' mA. Ideal Thévenin: Voc + Rth. Cousin: <a href="/electronics/voltage-divider.html">voltage divider</a>.';
       return {V:Voc,R:Rth,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:RL};
+    }
+
+    if(topo==='norton'){
+      var Isc_mA=V, Isc=V/1000, Rn=R1, RL=R2;
+      if(!closed){
+        var Vopen=Isc*Rn;
+        note='Switch open — load off. Isc circulates through Rn; Vopen = Isc×Rn = '+Isc_mA+' mA × '+Rn+' Ω ≈ '+fmt(Vopen,2)+' V. Close to attach RL. Dual of Thévenin.';
+        return {V:Isc_mA,R:Rn,I:0,note:note,Vc:0,charge:0,tauS:0,Vout:Vopen,R2:RL};
+      }
+      var Rpar=Rn*RL/(Rn+RL);
+      Vout=Isc*Rpar;
+      I=Isc*Rn/(Rn+RL);
+      note='Vload = Isc × (Rn∥RL) = '+Isc_mA+' mA × '+fmt(Rpar,1)+' Ω ≈ '+fmt(Vout,2)+' V · Iload = Isc × Rn/(Rn+RL) ≈ '+fmt(I*1000,1)+' mA. Ideal Norton: Isc ∥ Rn. Dual of Thévenin.';
+      return {V:Isc_mA,R:Rn,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:RL};
     }
 
     if(!closed){
@@ -407,6 +435,7 @@ button.go:disabled{opacity:.4;cursor:default}
     var isCap=topo==='cap'||topo==='rc';
     var isDiv=topo==='divider';
     var isThev=topo==='thevenin';
+    var isNorton=topo==='norton';
     var fillH=Math.max(2, Math.round(s.charge*48));
     var curve='';
     if(topo==='rc'){
@@ -428,11 +457,18 @@ button.go:disabled{opacity:.4;cursor:default}
       +'<svg viewBox="0 0 640 360" role="img" aria-label="Simple circuit">'
       +'<path class="wire" d="M120 70 H520 V290 H120 Z"/>'
       +(on?'<path class="'+flow+'" d="M120 70 H520 V290 H120 Z"/>':'')
-      +'<g class="part" id="bat" transform="translate(92,150)">'
-      +'<line x1="0" y1="10" x2="0" y2="50" stroke="currentColor" stroke-width="4"/>'
-      +'<line x1="16" y1="18" x2="16" y2="42" stroke="currentColor" stroke-width="2"/>'
-      +'<text x="24" y="36" fill="currentColor" font-size="14" font-family="IBM Plex Mono,monospace">'+s.V+'V</text>'
-      +'</g>'
+      +(isNorton
+        ?('<g class="part" id="bat" transform="translate(100,160)">'
+          +'<circle cx="20" cy="30" r="28" fill="none" stroke="currentColor" stroke-width="3"/>'
+          +'<line x1="20" y1="48" x2="20" y2="14" stroke="currentColor" stroke-width="3"/>'
+          +'<polyline points="14,22 20,14 26,22" fill="none" stroke="currentColor" stroke-width="3"/>'
+          +'<text x="56" y="36" fill="currentColor" font-size="14" font-family="IBM Plex Mono,monospace">Isc '+s.V+'mA</text>'
+          +'</g>')
+        :('<g class="part" id="bat" transform="translate(92,150)">'
+          +'<line x1="0" y1="10" x2="0" y2="50" stroke="currentColor" stroke-width="4"/>'
+          +'<line x1="16" y1="18" x2="16" y2="42" stroke="currentColor" stroke-width="2"/>'
+          +'<text x="24" y="36" fill="currentColor" font-size="14" font-family="IBM Plex Mono,monospace">'+s.V+'V</text>'
+          +'</g>'))
       +'<g class="part" id="switchHit">'
       +'<line x1="200" y1="70" x2="'+swX+'" y2="70" stroke="currentColor" stroke-width="3"/>'
       +'<circle cx="'+(closed?168:148)+'" cy="70" r="6" fill="currentColor"/>'
@@ -472,6 +508,18 @@ button.go:disabled{opacity:.4;cursor:default}
         +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">RL '+ohms2.value+'Ω</text>'
         +'</g>'
         +'<text x="470" y="120" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vload '+(closed?fmt(s.Vout,2)+'V':'—')+'</text>';
+    } else if(isNorton){
+      html+=''
+        +'<g transform="translate(300,100)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Rn '+ohms.value+'Ω</text>'
+        +'</g>'
+        +'<g transform="translate(500,150)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">RL '+ohms2.value+'Ω</text>'
+        +'</g>'
+        +'<text x="470" y="120" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vload '+(closed?fmt(s.Vout,2)+'V':fmt(s.Vout,2)+'V open')+'</text>'
+        +'<text x="300" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Isc ∥ Rn · dual of Thévenin</text>';
     } else {
       html+=''
         +'<g transform="translate(500,150)">'
@@ -489,6 +537,8 @@ button.go:disabled{opacity:.4;cursor:default}
       centerTxt=closed?(fmt(s.Vout,2)+' V out · '+fmt(s.I*1000,1)+' mA'):'no current';
     } else if(isThev){
       centerTxt=closed?(fmt(s.Vout,2)+' V load · '+fmt(s.I*1000,1)+' mA'):('Voc '+s.V+' V · open');
+    } else if(isNorton){
+      centerTxt=closed?(fmt(s.Vout,2)+' V load · Iload '+fmt(s.I*1000,1)+' mA'):('Vopen '+fmt(s.Vout,2)+' V · Isc '+s.V+' mA');
     } else if(topo==='rc'){
       centerTxt=fmtTime(s.tauS)+' τ · '+fmt(s.charge*100,0)+'%';
     } else {
@@ -525,6 +575,11 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('rOut').textContent=Math.round(+ohms.value);
       document.getElementById('iOut').textContent=closed?fmt(s.Vout,2):'0';
       document.getElementById('qOut').textContent=Math.round(+ohms2.value);
+    } else if(topo==='norton'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=Math.round(+ohms.value);
+      document.getElementById('iOut').textContent=fmt(s.Vout,2);
+      document.getElementById('qOut').textContent=Math.round(+ohms2.value);
     } else if(topo==='cap'){
       document.getElementById('vOut').textContent=s.V;
       document.getElementById('rOut').textContent=caps.value;
@@ -540,7 +595,7 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('rOut').textContent=Math.round(s.R);
       document.getElementById('iOut').textContent=s.I?fmt(s.I,3):'0';
     }
-    document.getElementById('vLab').textContent=s.V+' V';
+    document.getElementById('vLab').textContent=topo==='norton'?(s.V+' mA'):(s.V+' V');
     document.getElementById('rLab').textContent=ohms.value+' Ω';
     document.getElementById('r2Lab').textContent=ohms2.value+' Ω';
     document.getElementById('cLab').textContent=caps.value+' µF';
