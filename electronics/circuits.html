@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, and Kirchhoff's laws.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, and Thévenin.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, and Kirchhoff's laws.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, and Thévenin.">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,12 +95,12 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, and Kirchhoff. Change the knobs. The numbers and the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, and Thévenin. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
     <div class="panel">
-      <div class="step" id="stepLabel">Lesson 1 of 11</div>
+      <div class="step" id="stepLabel">Lesson 1 of 12</div>
       <h2 id="lessonTitle">Close the loop</h2>
       <p id="lessonBody">Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.</p>
       <div class="readout" id="readout">
@@ -130,6 +130,7 @@ button.go:disabled{opacity:.4;cursor:default}
         <button type="button" class="chip" data-top="cap" aria-pressed="false">Capacitor</button>
         <button type="button" class="chip" data-top="rc" aria-pressed="false">RC</button>
         <button type="button" class="chip" data-top="divider" aria-pressed="false">Divider</button>
+        <button type="button" class="chip" data-top="thevenin" aria-pressed="false">Thévenin</button>
       </div>
       <p class="note" id="formula">I = 0 while the switch is open.</p>
       <div class="row">
@@ -173,7 +174,7 @@ button.go:disabled{opacity:.4;cursor:default}
   var toggled=false, movedV=false, movedR=false, movedC=false, movedR2=false;
   var charge=0; // 0..1
   var lastTs=0;
-  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false, sawKvl=false, sawKcl=false;
+  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false, sawKvl=false, sawKcl=false, sawThev=false;
   var raf=0;
 
   var lessons=[
@@ -187,7 +188,8 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:'Capacitors store charge', body:'Pick Capacitor. Close the switch to fill the plates, then open it — the charge stays. Close again after you empty it by waiting, or flip the switch twice so you see fill and empty. Cap codes decode markings on the bench.', goal:function(){return topo==='cap' && sawCharge && sawDischarge;}},
     {title:'RC time / charging curve', body:'Pick RC. Current rushes in fast, then slows as the capacitor voltage rises. τ = R × C. Change R or C and watch τ move. Aim for about 63% charge (1τ). Full bench: RC time.', goal:function(){return topo==='rc' && sawTau && saw63;}},
     {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}},
-    {title:"Kirchhoff — loops & nodes", body:'Two bookkeeping rules. Series: around the loop the battery equals the resistor drops (KVL). Parallel: at a node the source current equals the branch currents (KCL). Try Series closed, then Parallel closed.', goal:function(){return sawKvl && sawKcl;}}
+    {title:"Kirchhoff — loops & nodes", body:'Two bookkeeping rules. Series: around the loop the battery equals the resistor drops (KVL). Parallel: at a node the source current equals the branch currents (KCL). Try Series closed, then Parallel closed.', goal:function(){return sawKvl && sawKcl;}},
+    {title:"Thévenin — Voc & Rth", body:'A linear source looks like Voc in series with Rth. Pick Thévenin. Close the switch: the load gets Voc × RL / (Rth + RL). Move Rth or RL and watch the split. Bench cousin: V div.', goal:function(){return topo==='thevenin' && closed && (movedR || movedR2);}}
   ];
 
   function fmt(n,d){
@@ -219,18 +221,23 @@ button.go:disabled{opacity:.4;cursor:default}
 
   function syncControls(){
     var needC=topo==='cap'||topo==='rc';
-    var needR2=topo==='divider';
+    var needR2=topo==='divider'||topo==='thevenin';
     document.getElementById('cLabel').classList.toggle('hid', !needC);
     document.getElementById('r2Label').classList.toggle('hid', !needR2);
     document.getElementById('rLabel').classList.toggle('hid', topo==='cap');
     var four=needC||needR2||topo==='rc';
     document.getElementById('readout').classList.toggle('four', four);
-    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'));
+    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'));
     if(topo==='divider'){
       document.getElementById('k1').textContent='Vin';
       document.getElementById('k2').textContent='R1';
       document.getElementById('k3').textContent='Vout';
       document.getElementById('k4').textContent='R2';
+    } else if(topo==='thevenin'){
+      document.getElementById('k1').textContent='Voc';
+      document.getElementById('k2').textContent='Rth';
+      document.getElementById('k3').textContent='Vload';
+      document.getElementById('k4').textContent='RL';
     } else if(needC||topo==='rc'){
       document.getElementById('k1').textContent='Volts';
       document.getElementById('k2').textContent=topo==='cap'?'µF':'Ohms';
@@ -241,6 +248,19 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('k2').textContent='Ohms';
       document.getElementById('k3').textContent='Amps';
     }
+    // Keep knob captions honest for divider / Thévenin / default
+    try {
+      if(topo==='thevenin'){
+        document.getElementById('rLabel').childNodes[0].nodeValue='Series Rth ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Load RL ';
+      } else if(topo==='divider'){
+        document.getElementById('rLabel').childNodes[0].nodeValue='Top resistor R1 ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Bottom resistor R2 ';
+      } else {
+        document.getElementById('rLabel').childNodes[0].nodeValue='Resistor ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Bottom resistor R2 ';
+      }
+    } catch(e) {}
   }
 
   function state(){
@@ -285,6 +305,22 @@ button.go:disabled{opacity:.4;cursor:default}
       Vout=V*(R2/R);
       note='Vout = Vin × R2/(R1+R2) = '+V+' × '+R2+'/'+R+' ≈ '+fmt(Vout,2)+' V. Bench: <a href="/electronics/voltage-divider.html">voltage divider</a>.';
       return {V:V,R:R1,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:R2};
+    }
+
+    if(topo==='thevenin'){
+      var Voc=V, Rth=R1, RL=R2;
+      if(!closed){
+        var Isc = Voc/Math.max(Rth,1e-9);
+        note='Switch open — Voc = '+Voc+' V across the source. Rth ≈ Voc/Isc = '+Voc+'/'+fmt(Isc,3)+' ≈ '+fmt(Rth,0)+' Ω (same as the series resistor here). Close to drive a load.';
+        return {V:Voc,R:Rth,I:0,note:note,Vc:0,charge:0,tauS:0,Vout:0,R2:RL};
+      }
+      R=Rth+RL;
+      I=Voc/R;
+      Vout=I*RL;
+      if(movedR || movedR2) sawThev=true;
+      if(closed && (movedR || movedR2)) sawThev=true;
+      note='Vload = Voc × RL/(Rth+RL) = '+Voc+' × '+RL+'/'+R+' ≈ '+fmt(Vout,2)+' V · I ≈ '+fmt(I*1000,1)+' mA. Ideal Thévenin: Voc + Rth. Cousin: <a href="/electronics/voltage-divider.html">voltage divider</a>.';
+      return {V:Voc,R:Rth,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:RL};
     }
 
     if(!closed){
@@ -370,6 +406,7 @@ button.go:disabled{opacity:.4;cursor:default}
     var second=topo==='series'||topo==='parallel';
     var isCap=topo==='cap'||topo==='rc';
     var isDiv=topo==='divider';
+    var isThev=topo==='thevenin';
     var fillH=Math.max(2, Math.round(s.charge*48));
     var curve='';
     if(topo==='rc'){
@@ -424,6 +461,17 @@ button.go:disabled{opacity:.4;cursor:default}
         +'</g>'
         +'<circle cx="540" cy="180" r="5" fill="var(--accent,#c8b48a)"/>'
         +'<text x="556" y="184" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vout '+(closed?fmt(s.Vout,2)+'V':'—')+'</text>';
+    } else if(isThev){
+      html+=''
+        +'<g transform="translate(300,150)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Rth '+ohms.value+'Ω</text>'
+        +'</g>'
+        +'<g transform="translate(500,150)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">RL '+ohms2.value+'Ω</text>'
+        +'</g>'
+        +'<text x="470" y="120" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vload '+(closed?fmt(s.Vout,2)+'V':'—')+'</text>';
     } else {
       html+=''
         +'<g transform="translate(500,150)">'
@@ -439,6 +487,8 @@ button.go:disabled{opacity:.4;cursor:default}
       centerTxt=fmt(s.Vc,2)+' V on C · '+fmt(s.charge*100,0)+'%';
     } else if(isDiv){
       centerTxt=closed?(fmt(s.Vout,2)+' V out · '+fmt(s.I*1000,1)+' mA'):'no current';
+    } else if(isThev){
+      centerTxt=closed?(fmt(s.Vout,2)+' V load · '+fmt(s.I*1000,1)+' mA'):('Voc '+s.V+' V · open');
     } else if(topo==='rc'){
       centerTxt=fmtTime(s.tauS)+' τ · '+fmt(s.charge*100,0)+'%';
     } else {
@@ -466,6 +516,11 @@ button.go:disabled{opacity:.4;cursor:default}
     if(doSync!==false) syncControls();
     var s=state();
     if(topo==='divider'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=Math.round(+ohms.value);
+      document.getElementById('iOut').textContent=closed?fmt(s.Vout,2):'0';
+      document.getElementById('qOut').textContent=Math.round(+ohms2.value);
+    } else if(topo==='thevenin'){
       document.getElementById('vOut').textContent=s.V;
       document.getElementById('rOut').textContent=Math.round(+ohms.value);
       document.getElementById('iOut').textContent=closed?fmt(s.Vout,2):'0';
@@ -517,7 +572,7 @@ button.go:disabled{opacity:.4;cursor:default}
     if(next.disabled) return;
     if(lesson===lessons.length-1){
       lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false; movedC=false; movedR2=false;
-      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; charge=0;
+      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; sawThev=false; charge=0;
       volts.value=9; ohms.value=220; ohms2.value=220; caps.value=100;
       setTopo('single');
     } else lesson+=1;
