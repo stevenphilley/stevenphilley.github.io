@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, and voltage dividers.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, and Kirchhoff's laws.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, and voltage dividers.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, and Kirchhoff's laws.">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,12 +95,12 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors and RC time. Change the knobs. The numbers and the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, and Kirchhoff. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
     <div class="panel">
-      <div class="step" id="stepLabel">Lesson 1 of 10</div>
+      <div class="step" id="stepLabel">Lesson 1 of 11</div>
       <h2 id="lessonTitle">Close the loop</h2>
       <p id="lessonBody">Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.</p>
       <div class="readout" id="readout">
@@ -173,7 +173,7 @@ button.go:disabled{opacity:.4;cursor:default}
   var toggled=false, movedV=false, movedR=false, movedC=false, movedR2=false;
   var charge=0; // 0..1
   var lastTs=0;
-  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false;
+  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false, sawKvl=false, sawKcl=false;
   var raf=0;
 
   var lessons=[
@@ -186,7 +186,8 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:'An LED needs a resistor', body:'An LED lights, but it cannot limit its own current. Pick LED. The resistor is what keeps the current small enough not to cook it. Bench tool: LED R.', goal:function(){return topo==='led' && closed;}},
     {title:'Capacitors store charge', body:'Pick Capacitor. Close the switch to fill the plates, then open it — the charge stays. Close again after you empty it by waiting, or flip the switch twice so you see fill and empty. Cap codes decode markings on the bench.', goal:function(){return topo==='cap' && sawCharge && sawDischarge;}},
     {title:'RC time / charging curve', body:'Pick RC. Current rushes in fast, then slows as the capacitor voltage rises. τ = R × C. Change R or C and watch τ move. Aim for about 63% charge (1τ). Full bench: RC time.', goal:function(){return topo==='rc' && sawTau && saw63;}},
-    {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}}
+    {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}},
+    {title:"Kirchhoff — loops & nodes", body:'Two bookkeeping rules. Series: around the loop the battery equals the resistor drops (KVL). Parallel: at a node the source current equals the branch currents (KCL). Try Series closed, then Parallel closed.', goal:function(){return sawKvl && sawKcl;}}
   ];
 
   function fmt(n,d){
@@ -290,13 +291,27 @@ button.go:disabled{opacity:.4;cursor:default}
       return {V:V,R:R,I:0,note:'I = 0 while the switch is open.',Vc:0,charge:0,tauS:0,Vout:0,R2:R2};
     }
     if(topo==='series'){
-      R=R1+R2;
+      var Rfixed=470;
+      R=R1+Rfixed;
       I=V/R;
-      note='Series: R = '+R1+' + 470 = '+R+' Ω. I = V / R. Deeper bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      var vr1=I*R1, vr2=I*Rfixed;
+      if(closed && lessons[lesson] && lessons[lesson].title.indexOf('Kirchhoff')===0) sawKvl=true;
+      if(lessons[lesson] && lessons[lesson].title.indexOf('Kirchhoff')===0){
+        note='KVL: around the loop, rises = drops. '+V+' V ≈ '+fmt(vr1,2)+' + '+fmt(vr2,2)+' V (R1 drop + 470 Ω drop). Bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      } else {
+        note='Series: R = '+R1+' + 470 = '+R+' Ω. I = V / R. Deeper bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      }
     } else if(topo==='parallel'){
-      R=1/(1/R1+1/470);
+      var Rpar=470;
+      R=1/(1/R1+1/Rpar);
       I=V/R;
-      note='Parallel: each branch sees '+V+' V. Total current is the sum of the branches. Bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      var i1=V/R1, i2=V/Rpar;
+      if(closed && lessons[lesson] && lessons[lesson].title.indexOf('Kirchhoff')===0) sawKcl=true;
+      if(lessons[lesson] && lessons[lesson].title.indexOf('Kirchhoff')===0){
+        note='KCL: at the top node, current in = current out. '+fmt(I*1000,2)+' mA ≈ '+fmt(i1*1000,2)+' + '+fmt(i2*1000,2)+' mA. Bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      } else {
+        note='Parallel: each branch sees '+V+' V. Total current is the sum of the branches. Bench: <a href="/electronics/series-parallel.html">series∥parallel</a>.';
+      }
     } else if(topo==='led'){
       var drop=2;
       if(V<=drop){
@@ -502,7 +517,7 @@ button.go:disabled{opacity:.4;cursor:default}
     if(next.disabled) return;
     if(lesson===lessons.length-1){
       lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false; movedC=false; movedR2=false;
-      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; charge=0;
+      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; charge=0;
       volts.value=9; ohms.value=220; ohms2.value=220; caps.value=100;
       setTopo('single');
     } else lesson+=1;
