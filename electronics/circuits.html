@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, and Norton.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, and Superposition.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, and Norton.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, and Superposition.">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,12 +95,12 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, Thévenin, and Norton. Change the knobs. The numbers and the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, Thévenin, Norton, and Superposition. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
     <div class="panel">
-      <div class="step" id="stepLabel">Lesson 1 of 13</div>
+      <div class="step" id="stepLabel">Lesson 1 of 14</div>
       <h2 id="lessonTitle">Close the loop</h2>
       <p id="lessonBody">Current only moves when the path is complete. Open the switch, then close it. Watch the loop light up.</p>
       <div class="readout" id="readout">
@@ -132,6 +132,7 @@ button.go:disabled{opacity:.4;cursor:default}
         <button type="button" class="chip" data-top="divider" aria-pressed="false">Divider</button>
         <button type="button" class="chip" data-top="thevenin" aria-pressed="false">Thévenin</button>
         <button type="button" class="chip" data-top="norton" aria-pressed="false">Norton</button>
+        <button type="button" class="chip" data-top="super" aria-pressed="false">Superposition</button>
       </div>
       <p class="note" id="formula">I = 0 while the switch is open.</p>
       <div class="row">
@@ -191,7 +192,8 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:'Voltage divider', body:'Pick Divider. Two resistors share the battery. Vout sits at the middle: Vin × R2 / (R1 + R2). Move either resistor and watch the split. Bench: V div.', goal:function(){return topo==='divider' && closed && (movedR || movedR2);}},
     {title:"Kirchhoff — loops & nodes", body:'Two bookkeeping rules. Series: around the loop the battery equals the resistor drops (KVL). Parallel: at a node the source current equals the branch currents (KCL). Try Series closed, then Parallel closed.', goal:function(){return sawKvl && sawKcl;}},
     {title:"Thévenin — Voc & Rth", body:'A linear source looks like Voc in series with Rth. Pick Thévenin. Close the switch: the load gets Voc × RL / (Rth + RL). Move Rth or RL and watch the split. Bench cousin: V div.', goal:function(){return topo==='thevenin' && closed && (movedR || movedR2);}},
-    {title:"Norton — Isc & Rn", body:'A linear source also looks like Isc in parallel with Rn. Pick Norton. Close the switch: the load gets Isc × Rn/(Rn+RL) of the source current (Vload = Isc×(Rn∥RL)). Move Rn or RL and watch the split. Dual of Thévenin.', goal:function(){return topo==='norton' && closed && (movedR || movedR2);}}
+    {title:"Norton — Isc & Rn", body:'A linear source also looks like Isc in parallel with Rn. Pick Norton. Close the switch: the load gets Isc × Rn/(Rn+RL) of the source current (Vload = Isc×(Rn∥RL)). Move Rn or RL and watch the split. Dual of Thévenin.', goal:function(){return topo==='norton' && closed && (movedR || movedR2);}},
+    {title:"Superposition — add the parts", body:'Linear circuits add. Pick Superposition. Two sources share one load. Close the switch: Vload = V1 + V2. Each source alone (other shorted to 0 V) is a piece — the pieces sum to the whole. Move V1 or V2 and watch the parts.', goal:function(){return topo==='super' && closed && (movedV || movedR2);}}
   ];
 
   function fmt(n,d){
@@ -223,13 +225,13 @@ button.go:disabled{opacity:.4;cursor:default}
 
   function syncControls(){
     var needC=topo==='cap'||topo==='rc';
-    var needR2=topo==='divider'||topo==='thevenin'||topo==='norton';
+    var needR2=topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super';
     document.getElementById('cLabel').classList.toggle('hid', !needC);
     document.getElementById('r2Label').classList.toggle('hid', !needR2);
     document.getElementById('rLabel').classList.toggle('hid', topo==='cap');
     var four=needC||needR2||topo==='rc';
     document.getElementById('readout').classList.toggle('four', four);
-    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'||topo==='norton'));
+    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super'));
     if(topo==='divider'){
       document.getElementById('k1').textContent='Vin';
       document.getElementById('k2').textContent='R1';
@@ -245,6 +247,11 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('k2').textContent='Rn';
       document.getElementById('k3').textContent='Vload';
       document.getElementById('k4').textContent='RL';
+    } else if(topo==='super'){
+      document.getElementById('k1').textContent='V1';
+      document.getElementById('k2').textContent='R';
+      document.getElementById('k3').textContent='Vload';
+      document.getElementById('k4').textContent='V2';
     } else if(needC||topo==='rc'){
       document.getElementById('k1').textContent='Volts';
       document.getElementById('k2').textContent=topo==='cap'?'µF':'Ohms';
@@ -265,6 +272,10 @@ button.go:disabled{opacity:.4;cursor:default}
         document.getElementById('vLabel').childNodes[0].nodeValue='Norton Isc ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Parallel Rn ';
         document.getElementById('r2Label').childNodes[0].nodeValue='Load RL ';
+      } else if(topo==='super'){
+        document.getElementById('vLabel').childNodes[0].nodeValue='Source V1 ';
+        document.getElementById('rLabel').childNodes[0].nodeValue='Load R ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Source V2 ';
       } else if(topo==='divider'){
         document.getElementById('vLabel').childNodes[0].nodeValue='Battery voltage ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Top resistor R1 ';
@@ -349,6 +360,19 @@ button.go:disabled{opacity:.4;cursor:default}
       I=Isc*Rn/(Rn+RL);
       note='Vload = Isc × (Rn∥RL) = '+Isc_mA+' mA × '+fmt(Rpar,1)+' Ω ≈ '+fmt(Vout,2)+' V · Iload = Isc × Rn/(Rn+RL) ≈ '+fmt(I*1000,1)+' mA. Ideal Norton: Isc ∥ Rn. Dual of Thévenin.';
       return {V:Isc_mA,R:Rn,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:RL};
+    }
+
+    if(topo==='super'){
+      var V1=V, V2=R2, RL=R1;
+      if(!closed){
+        note='Switch open — both sources idle. Close to drive the load. Superposition: kill one source at a time (short a voltage source), then add the pieces.';
+        return {V:V1,R:RL,I:0,note:note,Vc:0,charge:0,tauS:0,Vout:0,R2:V2};
+      }
+      Vout=V1+V2;
+      I=Vout/Math.max(RL,1e-9);
+      var I1=V1/Math.max(RL,1e-9), I2=V2/Math.max(RL,1e-9);
+      note='Vload = V1 + V2 = '+V1+' + '+V2+' = '+fmt(Vout,2)+' V. Alone: V1→'+fmt(V1,2)+' V / '+fmt(I1*1000,1)+' mA; V2→'+fmt(V2,2)+' V / '+fmt(I2*1000,1)+' mA. Parts sum: '+fmt((I1+I2)*1000,1)+' mA ≈ '+fmt(I*1000,1)+' mA.';
+      return {V:V1,R:RL,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vout,R2:V2};
     }
 
     if(!closed){
@@ -436,6 +460,7 @@ button.go:disabled{opacity:.4;cursor:default}
     var isDiv=topo==='divider';
     var isThev=topo==='thevenin';
     var isNorton=topo==='norton';
+    var isSuper=topo==='super';
     var fillH=Math.max(2, Math.round(s.charge*48));
     var curve='';
     if(topo==='rc'){
@@ -520,6 +545,19 @@ button.go:disabled{opacity:.4;cursor:default}
         +'</g>'
         +'<text x="470" y="120" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vload '+(closed?fmt(s.Vout,2)+'V':fmt(s.Vout,2)+'V open')+'</text>'
         +'<text x="300" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Isc ∥ Rn · dual of Thévenin</text>';
+    } else if(isSuper){
+      html+=''
+        +'<g transform="translate(280,250)">'
+        +'<line x1="0" y1="10" x2="0" y2="50" stroke="currentColor" stroke-width="4"/>'
+        +'<line x1="16" y1="18" x2="16" y2="42" stroke="currentColor" stroke-width="2"/>'
+        +'<text x="24" y="36" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">V2 '+s.R2+'V</text>'
+        +'</g>'
+        +'<g transform="translate(500,150)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="-4" y="40" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">R '+ohms.value+'Ω</text>'
+        +'</g>'
+        +'<text x="430" y="120" fill="currentColor" font-size="13" font-family="IBM Plex Mono,monospace">Vload '+(closed?fmt(s.Vout,2)+'V':'—')+'</text>'
+        +'<text x="300" y="210" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">'+(closed?('parts '+s.V+'+'+s.R2+' V'):'V1 + V2 aiding')+'</text>';
     } else {
       html+=''
         +'<g transform="translate(500,150)">'
@@ -539,6 +577,8 @@ button.go:disabled{opacity:.4;cursor:default}
       centerTxt=closed?(fmt(s.Vout,2)+' V load · '+fmt(s.I*1000,1)+' mA'):('Voc '+s.V+' V · open');
     } else if(isNorton){
       centerTxt=closed?(fmt(s.Vout,2)+' V load · Iload '+fmt(s.I*1000,1)+' mA'):('Vopen '+fmt(s.Vout,2)+' V · Isc '+s.V+' mA');
+    } else if(isSuper){
+      centerTxt=closed?(fmt(s.Vout,2)+' V · '+fmt(s.I*1000,1)+' mA (V1+V2)'):'no current';
     } else if(topo==='rc'){
       centerTxt=fmtTime(s.tauS)+' τ · '+fmt(s.charge*100,0)+'%';
     } else {
@@ -580,6 +620,11 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('rOut').textContent=Math.round(+ohms.value);
       document.getElementById('iOut').textContent=fmt(s.Vout,2);
       document.getElementById('qOut').textContent=Math.round(+ohms2.value);
+    } else if(topo==='super'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=Math.round(+ohms.value);
+      document.getElementById('iOut').textContent=closed?fmt(s.Vout,2):'0';
+      document.getElementById('qOut').textContent=Math.round(+ohms2.value);
     } else if(topo==='cap'){
       document.getElementById('vOut').textContent=s.V;
       document.getElementById('rOut').textContent=caps.value;
@@ -597,7 +642,7 @@ button.go:disabled{opacity:.4;cursor:default}
     }
     document.getElementById('vLab').textContent=topo==='norton'?(s.V+' mA'):(s.V+' V');
     document.getElementById('rLab').textContent=ohms.value+' Ω';
-    document.getElementById('r2Lab').textContent=ohms2.value+' Ω';
+    document.getElementById('r2Lab').textContent=topo==='super'?(ohms2.value+' V'):(ohms2.value+' Ω');
     document.getElementById('cLab').textContent=caps.value+' µF';
     document.getElementById('formula').innerHTML=s.note;
     sw.textContent=closed?'Switch closed':'Switch open';
@@ -616,10 +661,22 @@ button.go:disabled{opacity:.4;cursor:default}
   ohms.addEventListener('input', function(){ movedR=true; if(topo==='rc') sawTau=true; paint(); });
   ohms2.addEventListener('input', function(){ movedR2=true; paint(); });
   caps.addEventListener('input', function(){ movedC=true; if(topo==='rc') sawTau=true; paint(); });
+  function tuneSuperKnobs(entering){
+    if(entering){
+      ohms2.min=3; ohms2.max=12; ohms2.step=1;
+      if(+ohms2.value>12 || +ohms2.value<3) ohms2.value=6;
+    } else {
+      ohms2.min=100; ohms2.max=1000; ohms2.step=10;
+      if(+ohms2.value<100) ohms2.value=220;
+    }
+  }
   [].forEach.call(document.querySelectorAll('[data-top]'), function(b){
     b.addEventListener('click', function(){
+      var prev=topo;
       setTopo(b.dataset.top);
       if(topo==='cap'||topo==='rc'){ charge=0; lastTs=0; }
+      if(topo==='super' && prev!=='super') tuneSuperKnobs(true);
+      if(prev==='super' && topo!=='super') tuneSuperKnobs(false);
       paint();
     });
   });
@@ -628,7 +685,7 @@ button.go:disabled{opacity:.4;cursor:default}
     if(lesson===lessons.length-1){
       lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false; movedC=false; movedR2=false;
       sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; sawThev=false; charge=0;
-      volts.value=9; ohms.value=220; ohms2.value=220; caps.value=100;
+      volts.value=9; ohms.value=220; ohms2.min=100; ohms2.max=1000; ohms2.step=10; ohms2.value=220; caps.value=100;
       setTopo('single');
     } else lesson+=1;
     paint();
