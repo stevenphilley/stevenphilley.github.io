@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weather — Steven Philley</title>
-<meta name="description" content="Live US weather by ZIP — current conditions and a short forecast. Defaults to Campbell, CA (95008). Open-Meteo, no API key.">
+<meta name="description" content="Live US weather by ZIP — current conditions and a 10-day forecast with temperature graph. Defaults to Campbell, CA (95008). Open-Meteo, no API key.">
 <link rel="canonical" href="https://stevenphilley.com/weather/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
@@ -81,6 +81,23 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 .zip-hint{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.5;color:var(--muted,#63666e);margin:8px 0 0}
 .zip-err{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--accent,#c8b48a);margin:8px 0 0}
 @media (max-width:560px){.zip-form{max-width:100%}.zip-form button[type="submit"]{flex:1 1 auto}}
+
+.wx-graph-wrap{margin:0 0 18px;border:1px solid var(--line,#2c303a);padding:14px 12px 10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.wx-graph-wrap svg{display:block;width:100%;min-width:520px;height:auto;font-family:"IBM Plex Mono",monospace}
+.wx-graph-wrap .g-hi{fill:none;stroke:var(--accent,#c8b48a);stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round}
+.wx-graph-wrap .g-lo{fill:none;stroke:var(--ink-soft,#9b9a96);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:5 4}
+.wx-graph-wrap .g-band{fill:var(--accent,#c8b48a);opacity:.12}
+.wx-graph-wrap .g-pop{fill:var(--ink,#e8e6e1);opacity:.28}
+.wx-graph-wrap .g-dot-hi{fill:var(--accent,#c8b48a)}
+.wx-graph-wrap .g-dot-lo{fill:var(--ink-soft,#9b9a96)}
+.wx-graph-wrap .g-axis{stroke:var(--line,#2c303a);stroke-width:1}
+.wx-graph-wrap .g-grid{stroke:var(--line,#2c303a);stroke-width:1;opacity:.55}
+.wx-graph-wrap .g-label{fill:var(--muted,#63666e);font-size:10px;letter-spacing:.06em}
+.wx-graph-wrap .g-day{fill:var(--ink-soft,#9b9a96);font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+.wx-graph-wrap .g-legend{fill:var(--ink-soft,#9b9a96);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.wx-graph-wrap .g-legend-swatch-hi{stroke:var(--accent,#c8b48a);stroke-width:2.25}
+.wx-graph-wrap .g-legend-swatch-lo{stroke:var(--ink-soft,#9b9a96);stroke-width:2;stroke-dasharray:4 3}
+.wx-graph-wrap .g-legend-pop{fill:var(--ink,#e8e6e1);opacity:.35}
 </style>
 </head>
 <body>
@@ -104,7 +121,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 
   <p class="kicker" id="place-kicker">Campbell · 95008 · South Bay</p>
   <h1>Weather</h1>
-  <p class="lede">Live conditions and a short forecast for a US ZIP code. Defaults to Campbell (95008). Data from Open-Meteo in the browser — no API key; last ZIP stays in this browser only.</p>
+  <p class="lede">Live conditions and a 10-day forecast for a US ZIP code. Defaults to Campbell (95008). High/low temperature graph plus day cards. Data from Open-Meteo in the browser — no API key; last ZIP stays in this browser only.</p>
 
   <form class="zip-form" id="zip-form" action="#" method="get">
     <label for="zip-input">US ZIP code</label>
@@ -152,7 +169,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     </section>
 
     <section class="forecast" aria-labelledby="forecast-title">
-      <h2 id="forecast-title">Next few days</h2>
+      <h2 id="forecast-title">10-day forecast</h2>
+      <div class="wx-graph-wrap" id="wx-graph"></div>
       <div class="days" id="days"></div>
     </section>
   </div>
@@ -403,9 +421,146 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
       '</article>';
     }
     document.getElementById('days').innerHTML=html;
+    renderGraph();
     statusEl.textContent=placeLine()+' · updated '+prettyChecked(cur.time)+' · Open-Meteo';
     panel.hidden=false;
     errorEl.hidden=true;
+  }
+
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  }
+  function renderGraph(){
+    var el=document.getElementById('wx-graph');
+    if(!el || !cache) return;
+    var daily=cache.daily||{};
+    var times=daily.time||[];
+    var n=times.length;
+    if(!n){ el.innerHTML=''; return; }
+    var highs=[], lows=[], pops=[], labels=[];
+    var i, hi, lo, pop, tDisp;
+    function dispF(f){
+      if(!isFinite(f)) return NaN;
+      return unit==='C' ? toC(f) : f;
+    }
+    for(i=0;i<n;i++){
+      hi=daily.temperature_2m_max&&daily.temperature_2m_max[i];
+      lo=daily.temperature_2m_min&&daily.temperature_2m_min[i];
+      pop=daily.precipitation_probability_max&&daily.precipitation_probability_max[i];
+      highs.push(dispF(hi));
+      lows.push(dispF(lo));
+      pops.push(isFinite(pop)?pop:0);
+      var d=new Date(times[i]+'T12:00:00');
+      labels.push(isNaN(d.getTime())?times[i]:d.toLocaleDateString([], {weekday:'short'}));
+    }
+    var vals=[];
+    for(i=0;i<n;i++){
+      if(isFinite(highs[i])) vals.push(highs[i]);
+      if(isFinite(lows[i])) vals.push(lows[i]);
+    }
+    if(!vals.length){ el.innerHTML=''; return; }
+    var tMin=Math.min.apply(null,vals);
+    var tMax=Math.max.apply(null,vals);
+    var span=Math.max(4, tMax-tMin);
+    var pad=Math.max(2, span*0.15);
+    tMin=Math.floor(tMin-pad);
+    tMax=Math.ceil(tMax+pad);
+    if(tMax<=tMin) tMax=tMin+4;
+
+    var W=720, H=240;
+    var ml=46, mr=18, mt=36, mb=52;
+    var plotW=W-ml-mr, plotH=H-mt-mb;
+    var unitLabel=unit==='C'?'°C':'°F';
+    function xAt(idx){
+      if(n===1) return ml+plotW/2;
+      return ml+idx*(plotW/(n-1));
+    }
+    function yAt(t){
+      return mt+plotH*(1-(t-tMin)/(tMax-tMin));
+    }
+    function pathFor(arr){
+      var d='', first=true;
+      for(var k=0;k<n;k++){
+        if(!isFinite(arr[k])) continue;
+        d+=(first?'M':'L')+xAt(k).toFixed(1)+','+yAt(arr[k]).toFixed(1)+' ';
+        first=false;
+      }
+      return d.trim();
+    }
+    // Band between hi and lo
+    var band='';
+    for(i=0;i<n;i++){
+      if(!isFinite(highs[i])) continue;
+      band+=(i===0?'M':'L')+xAt(i).toFixed(1)+','+yAt(highs[i]).toFixed(1)+' ';
+    }
+    for(i=n-1;i>=0;i--){
+      if(!isFinite(lows[i])) continue;
+      band+='L'+xAt(i).toFixed(1)+','+yAt(lows[i]).toFixed(1)+' ';
+    }
+    band+='Z';
+
+    var grid='';
+    var ticks=4;
+    for(i=0;i<=ticks;i++){
+      var tv=tMin+(tMax-tMin)*(i/ticks);
+      var yy=yAt(tv);
+      grid+='<line class="g-grid" x1="'+ml+'" y1="'+yy.toFixed(1)+'" x2="'+(W-mr)+'" y2="'+yy.toFixed(1)+'"/>';
+      grid+='<text class="g-label" x="'+(ml-8)+'" y="'+(yy+3).toFixed(1)+'" text-anchor="end">'+Math.round(tv)+'</text>';
+    }
+
+    var popBars='';
+    var barW=Math.max(6, Math.min(18, plotW/(n*1.8)));
+    for(i=0;i<n;i++){
+      var p=pops[i]||0;
+      var bh=(p/100)*plotH*0.35;
+      var bx=xAt(i)-barW/2;
+      var by=mt+plotH-bh;
+      popBars+='<rect class="g-pop" x="'+bx.toFixed(1)+'" y="'+by.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+Math.max(0,bh).toFixed(1)+'" rx="1"/>';
+    }
+
+    var dayLabs='';
+    for(i=0;i<n;i++){
+      dayLabs+='<text class="g-day" x="'+xAt(i).toFixed(1)+'" y="'+(H-18)+'" text-anchor="middle">'+esc(labels[i])+'</text>';
+    }
+
+    var dots='';
+    for(i=0;i<n;i++){
+      if(isFinite(highs[i])) dots+='<circle class="g-dot-hi" cx="'+xAt(i).toFixed(1)+'" cy="'+yAt(highs[i]).toFixed(1)+'" r="3.2"/>';
+      if(isFinite(lows[i])) dots+='<circle class="g-dot-lo" cx="'+xAt(i).toFixed(1)+'" cy="'+yAt(lows[i]).toFixed(1)+'" r="2.8"/>';
+    }
+
+    var hiNum=Math.round(Math.max.apply(null, highs.filter(isFinite)));
+    var loNum=Math.round(Math.min.apply(null, lows.filter(isFinite)));
+    var maxPop=Math.round(Math.max.apply(null, pops));
+    var aria='10-day temperature forecast ranging from '+loNum+' to '+hiNum+' '+unitLabel+
+      '. Peak precipitation probability '+maxPop+' percent.';
+
+    var legend=
+      '<g class="g-legend-group" aria-hidden="true">'+
+        '<line class="g-legend-swatch-hi" x1="'+ml+'" y1="14" x2="'+(ml+22)+'" y2="14"/>'+
+        '<text class="g-legend" x="'+(ml+28)+'" y="17">High</text>'+
+        '<line class="g-legend-swatch-lo" x1="'+(ml+78)+'" y1="14" x2="'+(ml+100)+'" y2="14"/>'+
+        '<text class="g-legend" x="'+(ml+106)+'" y="17">Low</text>'+
+        '<rect class="g-legend-pop" x="'+(ml+156)+'" y="8" width="10" height="12" rx="1"/>'+
+        '<text class="g-legend" x="'+(ml+172)+'" y="17">Precip %</text>'+
+        '<text class="g-legend" x="'+(W-mr)+'" y="17" text-anchor="end">'+esc(unitLabel)+'</text>'+
+      '</g>';
+
+    var svg=
+      '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(aria)+'" focusable="false">'+
+        '<title>'+esc(aria)+'</title>'+
+        legend+
+        grid+
+        '<path class="g-band" d="'+band+'"/>'+
+        popBars+
+        '<path class="g-hi" d="'+pathFor(highs)+'"/>'+
+        '<path class="g-lo" d="'+pathFor(lows)+'"/>'+
+        dots+
+        '<line class="g-axis" x1="'+ml+'" y1="'+(mt+plotH)+'" x2="'+(W-mr)+'" y2="'+(mt+plotH)+'"/>'+
+        dayLabs+
+      '</svg>'+
+      '<p class="sr-only">'+esc(aria)+'</p>';
+    el.innerHTML=svg;
   }
 
   unitF.addEventListener('click',function(){
@@ -429,7 +584,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
       '&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,precipitation'+
       '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max'+
       '&temperature_unit=fahrenheit&wind_speed_unit=mph'+
-      '&timezone='+tz+'&forecast_days=5';
+      '&timezone='+tz+'&forecast_days=10';
   }
 
   function loadForecast(){
