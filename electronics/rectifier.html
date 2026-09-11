@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rectifier — Electronics — Steven Philley</title>
+<meta name="description" content="Half-wave, full-wave, and bridge rectifier helper. Set Vin peak, Vf, C, Rload, and f; get Vout peak, ripple frequency, and ΔV ≈ I/(fr C) live.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/rectifier.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Rectifier — Steven Philley">
+<meta property="og:description" content="Live rectifier intuition: half-wave, full-wave (center-tap), and bridge. Peak Vout, diode drops, ripple frequency, and capacitor ripple as you type.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/rectifier.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rectifier — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.legend a{color:var(--accent,#c8b48a);text-decoration:none}
+.legend a:hover{text-decoration:underline}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html">LC</a>
+      <a href="/electronics/capacitor-codes.html">Cap</a>
+      <a href="/electronics/inductor-codes.html">L</a>
+      <a href="/electronics/rc-filter.html">Filter</a>
+      <a href="/electronics/rl-filter.html">RL F</a>
+      <a href="/electronics/turns-ratio.html">Turns</a>
+      <a href="/electronics/impedance.html">Imped</a>
+      <a href="/electronics/q-factor.html">Q</a>
+      <a href="/electronics/db.html">dB</a>
+      <a href="/electronics/op-amp.html">Op-amp</a>
+      <a href="/electronics/555.html">555</a>
+      <a href="/electronics/wheatstone.html">Bridge</a>
+      <a href="/electronics/schmitt.html">Schmitt</a>
+      <a href="/electronics/peak-detector.html">Peak</a>
+      <a href="/electronics/rectifier.html" aria-current="page">Rect</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>Rectifier</h1>
+  <p class="lede">AC in, pulsed DC out — then a reservoir capacitor smooths it. Half-wave uses one diode; full-wave (center-tap) and bridge double the ripple frequency. Change Vin peak, Vf, C, Rload, and line f — peak Vout and ripple update as you type.</p>
+  <div class="modes" id="modes" role="tablist" aria-label="Rectifier topology">
+    <button type="button" data-mode="half" aria-selected="true">Half-wave</button>
+    <button type="button" data-mode="full" aria-selected="false">Full-wave</button>
+    <button type="button" data-mode="bridge" aria-selected="false">Bridge</button>
+  </div>
+
+  <div class="stage">
+    <div class="fields" id="fields"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>Half-wave: one diode passes the positive crest. Peak after the diode is about Vin_peak − Vf. With a load and filter C, ripple ≈ I_load / (f · C) at the line frequency f. Negative half-cycles are discarded — larger ripple for the same C.</p>
+    <p>Full-wave (center-tap): two diodes on a center-tapped secondary; each crest charges C. Still one Vf in the path. Ripple frequency doubles to 2f, so ΔV ≈ I_load / (2f · C) — flatter for the same capacitor.</p>
+    <p>Bridge: four diodes, two in series on each half-cycle, so peak ≈ Vin_peak − 2·Vf. Same 2f ripple as full-wave, no center tap needed. Pair with the <a href="/electronics/peak-detector.html">peak detector</a>, <a href="/electronics/circuits.html">circuit explorer</a> Diode lesson, and <a href="/electronics/rc-time.html">RC time</a>.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var mode='half';
+  var modeBtns=[].slice.call(document.querySelectorAll('#modes button'));
+  var fields=document.getElementById('fields');
+  var out=document.getElementById('out');
+  var state={vin:'12', vf:'0.7', c_uF:'1000', rload:'470', f:'60'};
+
+  function num(el){
+    if(!el) return NaN;
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    if(abs>=1e6) return fmt(n/1e6,3)+' MΩ';
+    if(abs>=1e3) return fmt(n/1e3,3)+' kΩ';
+    return fmt(n, abs>=100 ? 1 : 2)+' Ω';
+  }
+  function formatVolts(v){
+    if(!isFinite(v)) return '—';
+    var abs=Math.abs(v);
+    if(abs>=1) return fmt(v, abs>=100?1:3)+' V';
+    if(abs>=1e-3) return fmt(v*1e3,3)+' mV';
+    return fmt(v*1e6,3)+' µV';
+  }
+  function formatFarads(uF){
+    if(!isFinite(uF)) return '—';
+    var abs=Math.abs(uF);
+    if(abs>=1000) return fmt(uF/1000,3)+' mF';
+    if(abs>=1) return fmt(uF, abs>=100?1:3)+' µF';
+    if(abs>=0.001) return fmt(uF*1000,3)+' nF';
+    return fmt(uF*1e6,3)+' pF';
+  }
+  function formatHz(f){
+    if(!isFinite(f)) return '—';
+    var abs=Math.abs(f);
+    if(abs>=1e6) return fmt(f/1e6,3)+' MHz';
+    if(abs>=1e3) return fmt(f/1e3,3)+' kHz';
+    return fmt(f, abs>=100?1:3)+' Hz';
+  }
+  function formatAmps(i){
+    if(!isFinite(i)) return '—';
+    var abs=Math.abs(i);
+    if(abs>=1) return fmt(i,3)+' A';
+    if(abs>=1e-3) return fmt(i*1e3,3)+' mA';
+    if(abs>=1e-6) return fmt(i*1e6,3)+' µA';
+    return fmt(i*1e9,3)+' nA';
+  }
+  function formatSec(t){
+    if(!isFinite(t)) return '—';
+    var abs=Math.abs(t);
+    if(abs>=1) return fmt(t,3)+' s';
+    if(abs>=1e-3) return fmt(t*1e3,3)+' ms';
+    return fmt(t*1e6,3)+' µs';
+  }
+  function fieldHtml(id, label, value){
+    return '<label>'+label+'<input id="'+id+'" inputmode="decimal" step="any" value="'+(value==null?'':value)+'"></label>';
+  }
+  function diodeDrops(){
+    return mode==='bridge' ? 2 : 1;
+  }
+  function rippleMult(){
+    return mode==='half' ? 1 : 2;
+  }
+  function modeLabel(){
+    if(mode==='half') return 'Half-wave';
+    if(mode==='full') return 'Full-wave (center-tap)';
+    return 'Bridge';
+  }
+  function drawFields(){
+    var html='';
+    html += fieldHtml('vin','Vin peak (volts)',state.vin);
+    html += fieldHtml('vf','Diode Vf (volts)',state.vf);
+    html += fieldHtml('c_uF','C filter (µF)',state.c_uF);
+    html += fieldHtml('rload','Rload (ohms)',state.rload);
+    html += fieldHtml('f','Line frequency f (Hz)',state.f);
+    html += '<div class="presets" role="group" aria-label="Rectifier presets">';
+    if(mode==='half'){
+      html += '<button type="button" data-vin="12" data-vf="0.7" data-c_uf="1000" data-rload="470" data-f="60" aria-pressed="false">12 V · 60 Hz</button>';
+      html += '<button type="button" data-vin="5" data-vf="0.3" data-c_uf="470" data-rload="100" data-f="60" aria-pressed="false">Schottky · 5 V</button>';
+      html += '<button type="button" data-vin="170" data-vf="0.7" data-c_uf="47" data-rload="10000" data-f="60" aria-pressed="false">~120 Vrms peak</button>';
+    } else if(mode==='full'){
+      html += '<button type="button" data-vin="12" data-vf="0.7" data-c_uf="1000" data-rload="470" data-f="60" aria-pressed="false">12 V CT · 60 Hz</button>';
+      html += '<button type="button" data-vin="18" data-vf="0.7" data-c_uf="2200" data-rload="220" data-f="60" aria-pressed="false">18 V · heavier C</button>';
+      html += '<button type="button" data-vin="6.3" data-vf="0.3" data-c_uf="1000" data-rload="100" data-f="50" aria-pressed="false">6.3 V · 50 Hz</button>';
+    } else {
+      html += '<button type="button" data-vin="12" data-vf="0.7" data-c_uf="1000" data-rload="470" data-f="60" aria-pressed="false">12 V bridge</button>';
+      html += '<button type="button" data-vin="5" data-vf="0.3" data-c_uf="470" data-rload="50" data-f="60" aria-pressed="false">USB-ish Schottky</button>';
+      html += '<button type="button" data-vin="170" data-vf="0.7" data-c_uf="100" data-rload="2200" data-f="60" aria-pressed="false">Mains · bridge</button>';
+    }
+    html += '</div>';
+    fields.innerHTML=html;
+    [].forEach.call(fields.querySelectorAll('input'), function(el){
+      el.addEventListener('input',function(){
+        if(el.id && state[el.id]!=null) state[el.id]=el.value;
+        render();
+      });
+    });
+    [].forEach.call(fields.querySelectorAll('.presets button'), function(b){
+      b.addEventListener('click',function(){
+        if(b.dataset.vin!=null) state.vin=b.dataset.vin;
+        if(b.dataset.vf!=null) state.vf=b.dataset.vf;
+        if(b.dataset.c_uf!=null) state.c_uF=b.dataset.c_uf;
+        if(b.dataset.rload!=null) state.rload=b.dataset.rload;
+        if(b.dataset.f!=null) state.f=b.dataset.f;
+        drawFields();
+        render();
+      });
+    });
+  }
+  function syncChips(){
+    var chips=[].slice.call(fields.querySelectorAll('.presets button'));
+    chips.forEach(function(b){
+      var match=true;
+      var map={vin:'vin',vf:'vf',c_uf:'c_uF',rload:'rload',f:'f'};
+      Object.keys(map).forEach(function(dk){
+        if(b.dataset[dk]==null) return;
+        var el=document.getElementById(map[dk]);
+        var v=num(el);
+        var t=parseFloat(b.dataset[dk]);
+        match = match && isFinite(v) && Math.abs(v-t)/Math.max(Math.abs(t),1e-12)<0.02;
+      });
+      b.setAttribute('aria-pressed', String(!!match));
+    });
+  }
+  function setMode(m){
+    mode=m;
+    modeBtns.forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.mode===mode));});
+    drawFields();
+    render();
+  }
+  function render(){
+    syncChips();
+    var vin=num(document.getElementById('vin'));
+    var vf=num(document.getElementById('vf'));
+    var c_uF=num(document.getElementById('c_uF'));
+    var rload=num(document.getElementById('rload'));
+    var f=num(document.getElementById('f'));
+    var C=c_uF*1e-6;
+    var nDrop=diodeDrops();
+    var frMult=rippleMult();
+
+    var vpeak = (isFinite(vin) && isFinite(vf)) ? (vin - nDrop*vf) : NaN;
+    if(isFinite(vpeak) && vpeak < 0) vpeak = 0;
+
+    var vrms = isFinite(vin) ? (vin / Math.SQRT2) : NaN;
+    var fr = (isFinite(f) && f>0) ? (frMult * f) : NaN;
+    var iload = (isFinite(vpeak) && isFinite(rload) && rload>0) ? (vpeak / rload) : NaN;
+    var ripple = (isFinite(iload) && isFinite(fr) && fr>0 && isFinite(C) && C>0) ? (iload / (fr * C)) : NaN;
+    var vavg = (isFinite(vpeak) && isFinite(ripple)) ? (vpeak - ripple/2) : vpeak;
+    if(isFinite(vavg) && vavg < 0) vavg = 0;
+    var tau = (isFinite(rload) && rload>0 && isFinite(C) && C>0) ? (rload * C) : NaN;
+    var periodR = (isFinite(fr) && fr>0) ? (1/fr) : NaN;
+    var ripplePct = (isFinite(ripple) && isFinite(vpeak) && vpeak>0) ? (100*ripple/vpeak) : NaN;
+    var pdc = (isFinite(vpeak) && isFinite(iload)) ? (vpeak * iload) : NaN;
+
+    // Unfiltered average of ideal rectified sine (educational, diode-adjusted crest)
+    var vavgBare = NaN;
+    if(isFinite(vpeak) && vpeak>0){
+      vavgBare = mode==='half' ? (vpeak / Math.PI) : (2 * vpeak / Math.PI);
+    }
+
+    var unitLabel = 'Peak Vout · '+modeLabel();
+    var html = '<div class="unit">'+unitLabel+'</div>';
+    html += '<div class="num">'+formatVolts(vpeak)+'</div>';
+    html += '<div class="stats">';
+    html += '<div class="stat"><div class="lab">Avg ≈ Vpeak − ΔV/2</div><div class="val">'+formatVolts(vavg)+(isFinite(ripple)?' · trough ≈ '+formatVolts(Math.max(0,vpeak-ripple)):'')+'</div></div>';
+    html += '<div class="stat"><div class="lab">Ripple ΔV ≈ I/(fr C)</div><div class="val">'+formatVolts(ripple)+(isFinite(ripplePct)?' · '+fmt(ripplePct,2)+'% of peak':'')+'</div></div>';
+    html += '<div class="stat"><div class="lab">Ripple frequency fr</div><div class="val">'+formatHz(fr)+' · '+(frMult===1?'1× line f':'2× line f')+'</div></div>';
+    html += '<div class="stat"><div class="lab">Load current</div><div class="val">'+formatAmps(iload)+(isFinite(pdc)?' · ~'+fmt(pdc,3)+' W into R':'')+'</div></div>';
+    html += '<div class="stat"><div class="lab">Diode path</div><div class="val">'+nDrop+' × Vf = '+formatVolts(isFinite(vf)?nDrop*vf:NaN)+' · crest '+formatVolts(vin)+'</div></div>';
+    html += '<div class="stat"><div class="lab">AC Vin RMS</div><div class="val">'+formatVolts(vrms)+' · period 1/fr '+formatSec(periodR)+' · C '+formatFarads(c_uF)+'</div></div>';
+    html += '<div class="stat"><div class="lab">No-C average (≈)</div><div class="val">'+formatVolts(vavgBare)+' · '+(mode==='half'?'Vp/π':'2 Vp/π')+' of diode-adjusted crest</div></div>';
+    html += '</div>';
+
+    var formula = mode==='half'
+      ? 'Vpeak ≈ Vin − Vf · fr = f · ΔV ≈ I/(f C)'
+      : (mode==='full'
+        ? 'Vpeak ≈ Vin − Vf · fr = 2f · ΔV ≈ I/(2f C)'
+        : 'Vpeak ≈ Vin − 2 Vf · fr = 2f · ΔV ≈ I/(2f C)');
+    html += '<p class="formula">'+formula+'</p>';
+    var note = 'Educational capacitor-input estimate. Real transformers sag, diodes have dynamic resistance, and ESR changes the waveform.';
+    if(isFinite(ripple) && isFinite(vpeak) && vpeak>0 && ripple > 0.3*vpeak){
+      note = 'Ripple is large vs peak — raise C, raise Rload, switch to full-wave/bridge (2f), or raise line f.';
+    }
+    if(isFinite(vpeak) && vpeak===0 && isFinite(vin)){
+      note = 'Vin peak is at or below the diode path drop — no useful DC in this ideal model.';
+    }
+    if(mode==='full'){
+      note += ' Center-tap: each half of the secondary is Vin peak to the center.';
+    }
+    html += '<p class="note">'+note+'</p>';
+    out.innerHTML=html;
+  }
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){ setMode(b.dataset.mode); });
+  });
+  drawFields();
+  render();
+})();
+</script>
+</body>
+</html>
