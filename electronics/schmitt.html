@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schmitt trigger / comparator — Electronics — Steven Philley</title>
+<meta name="description" content="Ideal comparator and Schmitt trigger. Set Vin, Vref, rails, and R1/R2; get thresholds, hysteresis, and HIGH/LOW state live.">
+<link rel="canonical" href="https://stevenphilley.com/electronics/schmitt.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Schmitt trigger / comparator — Steven Philley">
+<meta property="og:description" content="Live comparator and Schmitt thresholds with hysteresis. Vin vs Vref or R1/R2 feedback; HIGH/LOW state as you type.">
+<meta property="og:url" content="https://stevenphilley.com/electronics/schmitt.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Schmitt trigger / comparator — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,9vw,92px);line-height:.88;margin:0}
+.lede{max-width:62ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.modes{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0}
+.modes button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.modes button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:28px}
+@media (max-width:800px){.stage{grid-template-columns:1fr}}
+.fields{display:grid;gap:14px}
+label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+input{width:100%;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+input:focus{border-bottom-color:var(--accent,#c8b48a)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.out{border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.out .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.out .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(48px,8vw,84px);line-height:.9;margin:8px 0 6px}
+.stats{display:grid;gap:12px;margin-top:18px;border-top:1px solid var(--line,#2c303a);padding-top:14px}
+.stat{display:grid;gap:4px}
+.stat .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stat .val{font-family:"IBM Plex Mono",monospace;font-size:15px;color:var(--ink,#e8e6e1)}
+.formula{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{margin-top:28px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.legend h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
+.legend p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);margin:0 0 8px;max-width:70ch}
+.legend a{color:var(--accent,#c8b48a);text-decoration:none}
+.legend a:hover{text-decoration:underline}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/electronics/">Converters</a>
+      <a href="/electronics/circuits.html">Circuits</a>
+      <a href="/electronics/resistor-codes.html">Codes</a>
+      <a href="/electronics/led-resistor.html">LED R</a>
+      <a href="/electronics/voltage-divider.html">V div</a>
+      <a href="/electronics/current-divider.html">I div</a>
+      <a href="/electronics/series-parallel.html">S&#8741;P</a>
+      <a href="/electronics/rc-time.html">RC</a>
+      <a href="/electronics/rl-time.html">RL</a>
+      <a href="/electronics/reactance.html">X</a>
+      <a href="/electronics/resonance.html">LC</a>
+      <a href="/electronics/capacitor-codes.html">Cap</a>
+      <a href="/electronics/inductor-codes.html">L</a>
+      <a href="/electronics/rc-filter.html">Filter</a>
+      <a href="/electronics/rl-filter.html">RL F</a>
+      <a href="/electronics/turns-ratio.html">Turns</a>
+      <a href="/electronics/impedance.html">Imped</a>
+      <a href="/electronics/q-factor.html">Q</a>
+      <a href="/electronics/db.html">dB</a>
+      <a href="/electronics/op-amp.html">Op-amp</a>
+      <a href="/electronics/555.html">555</a>
+      <a href="/electronics/wheatstone.html">Bridge</a>
+      <a href="/electronics/schmitt.html" aria-current="page">Schmitt</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="e-kicker">Vol. IV — Electronics · Tool</p>
+  <h1>Schmitt / comparator</h1>
+  <p class="lede">Ideal rails only. A plain comparator flips at one threshold. A Schmitt trigger adds hysteresis so noise does not chatter the output. Change Vin, Vref, rails, and R1 / R2 — thresholds and HIGH / LOW update as you type.</p>
+  <div class="modes" id="modes" role="tablist" aria-label="Comparator topology">
+    <button type="button" data-mode="comparator" aria-selected="true">Comparator</button>
+    <button type="button" data-mode="invschmitt" aria-selected="false">Inverting Schmitt</button>
+    <button type="button" data-mode="nischmitt" aria-selected="false">Non-inverting Schmitt</button>
+  </div>
+
+  <div class="stage">
+    <div class="fields" id="fields"></div>
+    <div class="out" id="out" aria-live="polite"></div>
+  </div>
+
+  <section class="legend">
+    <h2>How it works</h2>
+    <p>Comparator: Vout rails to Voh when Vin &gt; Vref, and to Vol when Vin &lt; Vref (ideal, no open-loop gain). Equal inputs stay at the last state for this demo.</p>
+    <p>Inverting Schmitt: positive feedback through R1 (from output) and R2 (to the signal / ground node). Thresholds sit at β·Voh and β·Vol where β = R2 / (R1 + R2) for the classic divider on the + input while Vin drives the − input — crossing either way flips the rail and the threshold jumps the other way. Hysteresis width is |Vth_high − Vth_low|.</p>
+    <p>Non-inverting Schmitt: Vin into the divider with R1 to the + node and R2 back from the output; thresholds become weighted mixes of Vin and the rails. Pair with <a href="/electronics/op-amp.html">Op-amp gain</a>, the <a href="/electronics/voltage-divider.html">voltage divider</a>, and the <a href="/electronics/">electronics bench</a>.</p>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/">Photography</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/markets/">Markets</a>
+    <a href="/news/">News</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var c=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var mode='comparator';
+  var modeBtns=[].slice.call(document.querySelectorAll('#modes button'));
+  var fields=document.getElementById('fields');
+  var out=document.getElementById('out');
+  var lastHigh=false;
+  var state={vin:'2.5', vref:'2.5', voh:'5', vol:'0', r1:'10000', r2:'100000'};
+
+  function num(el){
+    if(!el) return NaN;
+    return parseFloat(String(el.value).replace(/,/g,''));
+  }
+  function fmt(n, digits){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    var d = digits != null ? digits : (abs>=100 ? 2 : abs>=1 ? 3 : 4);
+    return n.toLocaleString(undefined,{maximumFractionDigits:d});
+  }
+  function formatOhms(n){
+    if(!isFinite(n)) return '—';
+    var abs=Math.abs(n);
+    if(abs>=1e6) return fmt(n/1e6,3)+' MΩ';
+    if(abs>=1e3) return fmt(n/1e3,3)+' kΩ';
+    return fmt(n, abs>=100 ? 1 : 2)+' Ω';
+  }
+  function formatVolts(v){
+    if(!isFinite(v)) return '—';
+    var abs=Math.abs(v);
+    if(abs>=1) return fmt(v, abs>=100?1:3)+' V';
+    if(abs>=1e-3) return fmt(v*1e3,3)+' mV';
+    return fmt(v*1e6,3)+' µV';
+  }
+  function fieldHtml(id, label, value){
+    return '<label>'+label+'<input id="'+id+'" inputmode="decimal" step="any" value="'+(value==null?'':value)+'"></label>';
+  }
+  function drawFields(){
+    var html='';
+    html += fieldHtml('vin','Vin (volts)',state.vin);
+    if(mode==='comparator'){
+      html += fieldHtml('vref','Vref (volts)',state.vref);
+      html += fieldHtml('voh','Voh high rail (V)',state.voh);
+      html += fieldHtml('vol','Vol low rail (V)',state.vol);
+      html += '<div class="presets" role="group" aria-label="Comparator presets">';
+      html += '<button type="button" data-vin="3" data-vref="2.5" data-voh="5" data-vol="0" aria-pressed="false">Above 2.5</button>';
+      html += '<button type="button" data-vin="1" data-vref="2.5" data-voh="5" data-vol="0" aria-pressed="false">Below 2.5</button>';
+      html += '<button type="button" data-vin="0" data-vref="0" data-voh="3.3" data-vol="-3.3" aria-pressed="false">±3.3 zero</button>';
+      html += '</div>';
+    } else {
+      html += fieldHtml('r1','R1 feedback (ohms)',state.r1);
+      html += fieldHtml('r2','R2 (ohms)',state.r2);
+      html += fieldHtml('voh','Voh high rail (V)',state.voh);
+      html += fieldHtml('vol','Vol low rail (V)',state.vol);
+      html += '<div class="presets" role="group" aria-label="Schmitt presets">';
+      html += '<button type="button" data-vin="2.5" data-r1="10000" data-r2="100000" data-voh="5" data-vol="0" aria-pressed="false">β≈0.91 · 5 V</button>';
+      html += '<button type="button" data-vin="1.5" data-r1="10000" data-r2="10000" data-voh="5" data-vol="0" aria-pressed="false">β=0.5 · 5 V</button>';
+      html += '<button type="button" data-vin="0" data-r1="10000" data-r2="47000" data-voh="3.3" data-vol="0" aria-pressed="false">3.3 V soft</button>';
+      html += '</div>';
+    }
+    fields.innerHTML=html;
+    [].forEach.call(fields.querySelectorAll('input'), function(el){
+      el.addEventListener('input',function(){
+        if(el.id && state[el.id]!=null) state[el.id]=el.value;
+        render();
+      });
+    });
+    [].forEach.call(fields.querySelectorAll('.presets button'), function(b){
+      b.addEventListener('click',function(){
+        ['vin','vref','voh','vol','r1','r2'].forEach(function(k){
+          if(b.dataset[k]!=null) state[k]=b.dataset[k];
+        });
+        drawFields();
+        render();
+      });
+    });
+  }
+  function syncChips(){
+    var chips=[].slice.call(fields.querySelectorAll('.presets button'));
+    chips.forEach(function(b){
+      var match=true;
+      ['vin','vref','voh','vol','r1','r2'].forEach(function(k){
+        if(b.dataset[k]==null) return;
+        var el=document.getElementById(k);
+        var v=num(el);
+        var t=parseFloat(b.dataset[k]);
+        match = match && isFinite(v) && Math.abs(v-t)/Math.max(Math.abs(v),1e-12)<0.02;
+      });
+      b.setAttribute('aria-pressed', String(!!match));
+    });
+  }
+  function setMode(m){
+    mode=m;
+    modeBtns.forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.mode===mode));});
+    drawFields();
+    render();
+  }
+  function render(){
+    syncChips();
+    var vin=num(document.getElementById('vin'));
+    var voh=num(document.getElementById('voh'));
+    var vol=num(document.getElementById('vol'));
+    if(!isFinite(vin) || !isFinite(voh) || !isFinite(vol)){
+      out.innerHTML='<div class="unit">Vout</div><div class="num">—</div><p class="note">Enter Vin and both rails.</p>';
+      return;
+    }
+    if(voh===vol){
+      out.innerHTML='<div class="unit">Vout</div><div class="num">—</div><p class="note">Voh and Vol must differ.</p>';
+      return;
+    }
+    var vout, formula, note, stats='', thrHigh=NaN, thrLow=NaN, hyst=NaN, high;
+
+    if(mode==='comparator'){
+      var vref=num(document.getElementById('vref'));
+      if(!isFinite(vref)){
+        out.innerHTML='<div class="unit">Vout</div><div class="num">—</div><p class="note">Enter Vref.</p>';
+        return;
+      }
+      if(vin>vref) high=true;
+      else if(vin<vref) high=false;
+      else high=lastHigh;
+      lastHigh=high;
+      vout=high?voh:vol;
+      formula='Comparator · Vout = Voh if Vin &gt; Vref, else Vol';
+      note='Ideal open-loop compare. Diff = '+(formatVolts(vin-vref))+'.';
+      stats += '<div class="stat"><div class="lab">State</div><div class="val">'+(high?'HIGH':'LOW')+'</div></div>';
+      stats += '<div class="stat"><div class="lab">Vin − Vref</div><div class="val">'+formatVolts(vin-vref)+'</div></div>';
+      stats += '<div class="stat"><div class="lab">Threshold</div><div class="val">'+formatVolts(vref)+'</div></div>';
+    } else {
+      var r1=num(document.getElementById('r1'));
+      var r2=num(document.getElementById('r2'));
+      if(!(r1>0) || !(r2>0)){
+        out.innerHTML='<div class="unit">Vout</div><div class="num">—</div><p class="note">Enter R1 and R2 above zero.</p>';
+        return;
+      }
+      var beta=r2/(r1+r2);
+      if(mode==='invschmitt'){
+        // Classic inverting Schmitt: + input is divider of Vout to ground via R1/R2; Vin on −.
+        // V+ = Vout * R2/(R1+R2) = β·Vout when R2 to gnd and R1 from output.
+        thrHigh=beta*voh;
+        thrLow=beta*vol;
+        // When output is LOW, threshold is thrLow; trip HIGH when Vin drops below thrLow (inverting).
+        // When HIGH, trip LOW when Vin rises above thrHigh.
+        // For initial state without history: use midpoint hysteresis.
+        if(vin < thrLow) high=true;       // Vin low → output high (inverting)
+        else if(vin > thrHigh) high=false;
+        else high=lastHigh;
+        // Correct trip using last state:
+        if(lastHigh){
+          // currently HIGH, threshold is thrHigh; stays HIGH until Vin > thrHigh → goes LOW
+          if(vin > thrHigh) high=false;
+          else high=true;
+        } else {
+          if(vin < thrLow) high=true;
+          else high=false;
+        }
+        lastHigh=high;
+        vout=high?voh:vol;
+        formula='Inverting Schmitt · Vth = β·Vrail, β = R2/(R1+R2)';
+        note='Vin on −, divider on +. Hysteresis keeps the last rail until the other threshold.';
+      } else {
+        // Non-inverting: Vin through R1 to +, R2 from output to +. Thresholds when V+ crosses 0 (or mid) — use ground-ref compare at 0 for bipolar, or for single-supply compare V+ to mid? 
+        // Common teaching model: trip when Vin crosses weighted thresholds:
+        // Vth_high = ((R1+R2)/R2)*Vref_internal — simpler popular form with ground reference on −:
+        // Vth = −(R1/R2)*Vout for bipolar ground-ref on − with Vin via R1... 
+        // Clean single-supply form used on many bench pages:
+        // Thresholds: Vth = (R1/(R1+R2))*Vout  wait that's same β...
+        // Non-inverting Schmitt with − grounded: V+ = (R2*Vin + R1*Vout)/(R1+R2); trip when V+ = 0 for bipolar,
+        // so Vin_th = −(R1/R2)*Vout.
+        // For single-supply with − at midrail it's messier. Use − grounded / bipolar-capable rails:
+        thrHigh= -(r1/r2)*vol; // when output low, next trip upward
+        thrLow= -(r1/r2)*voh;  // when output high, next trip downward
+        // Ensure thrHigh > thrLow for positive hysteresis when Voh>Vol and R>0
+        if(thrHigh < thrLow){ var tmp=thrHigh; thrHigh=thrLow; thrLow=tmp; }
+        if(lastHigh){
+          if(vin < thrLow) high=false;
+          else high=true;
+        } else {
+          if(vin > thrHigh) high=true;
+          else high=false;
+        }
+        lastHigh=high;
+        vout=high?voh:vol;
+        formula='Non-inverting Schmitt · Vth = −(R1/R2)·Vrail (− input at 0 V)';
+        note='− grounded. Thresholds flip with the rail. Works cleanly with ± rails; single-supply still shows the math.';
+      }
+      hyst=Math.abs(thrHigh-thrLow);
+      stats += '<div class="stat"><div class="lab">State</div><div class="val">'+(high?'HIGH':'LOW')+'</div></div>';
+      stats += '<div class="stat"><div class="lab">Vth high</div><div class="val">'+formatVolts(thrHigh)+'</div></div>';
+      stats += '<div class="stat"><div class="lab">Vth low</div><div class="val">'+formatVolts(thrLow)+'</div></div>';
+      stats += '<div class="stat"><div class="lab">Hysteresis</div><div class="val">'+formatVolts(hyst)+'</div></div>';
+      stats += '<div class="stat"><div class="lab">R1 · R2</div><div class="val">'+formatOhms(r1)+' · '+formatOhms(r2)+'</div></div>';
+    }
+
+    var html='<div class="unit">Vout</div><div class="num">'+formatVolts(vout)+'</div>';
+    html += '<div class="stats">'+stats+'</div>';
+    html += '<p class="formula">'+formula+'</p>';
+    html += '<p class="note">'+note+'</p>';
+    out.innerHTML=html;
+  }
+
+  modeBtns.forEach(function(b){
+    b.addEventListener('click',function(){ setMode(b.dataset.mode); });
+  });
+  drawFields();
+  render();
+})();
+</script>
+</div>
+</body>
+</html>
