@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Circuit explorer — Electronics — Steven Philley</title>
-<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, and BJT common-emitter bias.">
+<meta name="description" content="Beginner interactive circuit explorer and trainer. Loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, BJT common-emitter bias, and FET/MOSFET voltage-controlled switching.">
 <link rel="canonical" href="https://stevenphilley.com/electronics/circuits.html">
 <meta property="og:title" content="Circuit explorer — Steven Philley">
 <meta property="og:url" content="https://stevenphilley.com/electronics/circuits.html">
-<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, and BJT common-emitter bias.">
+<meta property="og:description" content="A short interactive trainer for closed loops, Ohm's law, series, parallel, LEDs, capacitors, RC time, voltage dividers, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, BJT common-emitter bias, and FET/MOSFET voltage-controlled switching.">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,7 +95,7 @@ button.go:disabled{opacity:.4;cursor:default}
   </div>
   <p class="e-kicker">Vol. IV — Electronics · Trainer</p>
   <h1>Circuit explorer</h1>
-  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, and BJT common-emitter bias. Change the knobs. The numbers and the drawing update together.</p>
+  <p class="lede">A closed loop, Ohm's law, series and parallel, then capacitors, RC time, Kirchhoff, Thévenin, Norton, Superposition, diode I-V, mesh/nodal equations, BJT common-emitter bias, and an N-channel MOSFET as a voltage valve. Change the knobs. The numbers and the drawing update together.</p>
 
   <div class="stage">
     <div class="board" id="board"></div>
@@ -136,6 +136,7 @@ button.go:disabled{opacity:.4;cursor:default}
         <button type="button" class="chip" data-top="super" aria-pressed="false">Superposition</button>
         <button type="button" class="chip" data-top="mesh" aria-pressed="false">Mesh</button>
         <button type="button" class="chip" data-top="bjt" aria-pressed="false">BJT</button>
+        <button type="button" class="chip" data-top="fet" aria-pressed="false">FET</button>
       </div>
       <p class="note" id="formula">I = 0 while the switch is open.</p>
       <div class="row">
@@ -179,7 +180,7 @@ button.go:disabled{opacity:.4;cursor:default}
   var toggled=false, movedV=false, movedR=false, movedC=false, movedR2=false;
   var charge=0; // 0..1
   var lastTs=0;
-  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false, sawKvl=false, sawKcl=false, sawThev=false, sawActive=false, sawSat=false;
+  var sawCharge=false, sawDischarge=false, sawTau=false, saw63=false, sawKvl=false, sawKcl=false, sawThev=false, sawActive=false, sawSat=false, sawFetOff=false, sawFetOn=false;
   var raf=0;
 
   var lessons=[
@@ -199,7 +200,8 @@ button.go:disabled{opacity:.4;cursor:default}
     {title:"Superposition — add the parts", body:'Linear circuits add. Pick Superposition. Two sources share one load. Close the switch: Vload = V1 + V2. Each source alone (other shorted to 0 V) is a piece — the pieces sum to the whole. Move V1 or V2 and watch the parts.', goal:function(){return topo==='super' && closed && (movedV || movedR2);}},
     {title:"Diode I-V — the knee", body:'A diode barely conducts until the voltage hits the knee (about 0.7 V for silicon), then current rises fast. Pick Diode. Close the switch. Sweep volts or ohms and watch the I-V mark cross the knee. Series R still limits runaway. Cousin: LED lesson.', goal:function(){return topo==='diode' && closed && (movedV || movedR);}},
     {title:"Mesh / Nodal — write the equations", body:'Mesh analysis uses loop currents and KVL. Nodal analysis uses node voltages and KCL. Pick Mesh. Close the switch. Move a resistor or a voltage and watch the two mesh equations update live — then glance at the shared-node KCL check.', goal:function(){return topo==='mesh' && closed && (movedR || movedR2 || movedV);}},
-    {title:"BJT intro — common-emitter bias", body:'An NPN transistor is a current valve: a small base current steers a larger collector current. Pick BJT. Close the switch. Simple bias: Rb from Vcc to the base, Rc from Vcc to the collector, emitter grounded. Watch Ic ≈ β·Ib in the active region — then push it into saturation where Vce floors near 0.2 V and Rc, not β, limits Ic.', goal:function(){return topo==='bjt' && closed && sawActive && sawSat;}}
+    {title:"BJT intro — common-emitter bias", body:'An NPN transistor is a current valve: a small base current steers a larger collector current. Pick BJT. Close the switch. Simple bias: Rb from Vcc to the base, Rc from Vcc to the collector, emitter grounded. Watch Ic ≈ β·Ib in the active region — then push it into saturation where Vce floors near 0.2 V and Rc, not β, limits Ic.', goal:function(){return topo==='bjt' && closed && sawActive && sawSat;}},
+    {title:"FET intro — MOSFET as a voltage valve", body:'An N-channel enhancement MOSFET is a voltage valve: the gate voltage steers drain current — no base current like a BJT. Pick FET. Close the switch. Rd from Vdd to the drain, gate at Vgs, source grounded. Raise Vgs past the threshold Vth and watch Id rise while Vds falls; drop below Vth to cut off. Real MOSFET curves are richer than this sketch.', goal:function(){return topo==='fet' && closed && sawFetOff && sawFetOn;}}
   ];
 
   function fmt(n,d){
@@ -230,14 +232,14 @@ button.go:disabled{opacity:.4;cursor:default}
   }
 
   function syncControls(){
-    var needC=topo==='cap'||topo==='rc'||topo==='mesh'||topo==='bjt';
-    var needR2=topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super'||topo==='mesh'||topo==='bjt';
+    var needC=topo==='cap'||topo==='rc'||topo==='mesh'||topo==='bjt'||topo==='fet';
+    var needR2=topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super'||topo==='mesh'||topo==='bjt'||topo==='fet';
     document.getElementById('cLabel').classList.toggle('hid', !needC);
     document.getElementById('r2Label').classList.toggle('hid', !needR2);
     document.getElementById('rLabel').classList.toggle('hid', topo==='cap');
-    var four=needC||needR2||topo==='rc'||topo==='diode'||topo==='mesh'||topo==='bjt';
+    var four=needC||needR2||topo==='rc'||topo==='diode'||topo==='mesh'||topo==='bjt'||topo==='fet';
     document.getElementById('readout').classList.toggle('four', four);
-    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super'||topo==='diode'||topo==='mesh'||topo==='bjt'));
+    document.getElementById('slot4').classList.toggle('hid', !(needC||topo==='rc'||topo==='divider'||topo==='thevenin'||topo==='norton'||topo==='super'||topo==='diode'||topo==='mesh'||topo==='bjt'||topo==='fet'));
     if(topo==='divider'){
       document.getElementById('k1').textContent='Vin';
       document.getElementById('k2').textContent='R1';
@@ -268,6 +270,11 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('k2').textContent='β';
       document.getElementById('k3').textContent='Ic';
       document.getElementById('k4').textContent='Vce';
+    } else if(topo==='fet'){
+      document.getElementById('k1').textContent='Vdd';
+      document.getElementById('k2').textContent='Vth';
+      document.getElementById('k3').textContent='Id';
+      document.getElementById('k4').textContent='Vds';
     } else if(topo==='diode'){
       document.getElementById('k1').textContent='Volts';
       document.getElementById('k2').textContent='Ohms';
@@ -307,6 +314,11 @@ button.go:disabled{opacity:.4;cursor:default}
         document.getElementById('rLabel').childNodes[0].nodeValue='Collector Rc ';
         document.getElementById('r2Label').childNodes[0].nodeValue='Base Rb ';
         document.getElementById('cLabel').childNodes[0].nodeValue='Beta β ';
+      } else if(topo==='fet'){
+        document.getElementById('vLabel').childNodes[0].nodeValue='Supply Vdd ';
+        document.getElementById('rLabel').childNodes[0].nodeValue='Drain Rd ';
+        document.getElementById('r2Label').childNodes[0].nodeValue='Gate Vgs ';
+        document.getElementById('cLabel').childNodes[0].nodeValue='Threshold Vth ';
       } else if(topo==='divider'){
         document.getElementById('vLabel').childNodes[0].nodeValue='Battery voltage ';
         document.getElementById('rLabel').childNodes[0].nodeValue='Top resistor R1 ';
@@ -454,6 +466,35 @@ button.go:disabled{opacity:.4;cursor:default}
       return {V:Vcc,R:Rc,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vce,R2:Rb,Ib:Ib,Ic:Ic,Vce:Vce,beta:beta,region:region,IcForce:IcForce,IcMax:IcMax};
     }
 
+    if(topo==='fet'){
+      var Vdd=V, Rd=R1, Vgs=+ohms2.value, Vth=+caps.value, k=0.5e-3, VdsFloor=0.1;
+      if(!closed){
+        note='Switch open — N-MOS idle. Close to bias a common-source stage. Simple sketch: Rd from Vdd to drain, gate held at Vgs, source grounded. Id rises when Vgs exceeds Vth. Caveat: real MOSFET Id–Vds curves are richer than this beginner sketch.';
+        return {V:Vdd,R:Rd,I:0,note:note,Vc:0,charge:0,tauS:0,Vout:0,R2:Vgs,Id:0,Vds:0,Vgs:Vgs,Vth:Vth,region:'off'};
+      }
+      if(Vgs<Vth){
+        sawFetOff=true;
+        note='Cutoff: Vgs = '+fmt(Vgs,1)+' V is below Vth ≈ '+fmt(Vth,1)+' V — the channel is off. Id ≈ 0 · Vds ≈ Vdd = '+fmt(Vdd,2)+' V. Raise the gate past threshold to open the voltage valve. No base current like a BJT — the gate is insulated.';
+        return {V:Vdd,R:Rd,I:0,note:note,Vc:0,charge:0,tauS:0,Vout:Vdd,R2:Vgs,Id:0,Vds:Vdd,Vgs:Vgs,Vth:Vth,region:'cutoff'};
+      }
+      var over=Vgs-Vth;
+      var IdWant=k*over*over;
+      var IdMax=(Vdd-VdsFloor)/Math.max(Rd,1e-9);
+      var limited=IdWant>=IdMax;
+      var Id=limited?IdMax:IdWant;
+      var Vds=limited?VdsFloor:(Vdd-Id*Rd);
+      if(Vds<0) Vds=0;
+      I=Id;
+      sawFetOn=true;
+      var region=limited?'Rd-limited':'active';
+      if(limited){
+        note='Rd-limited / triode-ish: Id_want ≈ k(Vgs−Vth)² = '+fmt(IdWant*1000,2)+' mA wants more than Id_max ≈ (Vdd−0.1)/Rd ≈ '+fmt(IdMax*1000,2)+' mA. Vds ≈ '+fmt(Vds,2)+' V · Id limited by Rd. Caveat: real MOSFET triode/saturation regions are richer — this is a beginner sketch (k ≈ 0.5 mA/V²).';
+      } else {
+        note='Active-ish: Vgs = '+fmt(Vgs,1)+' V · Vth = '+fmt(Vth,1)+' V · Id ≈ k(Vgs−Vth)² = '+fmt(Id*1000,2)+' mA · Vds = Vdd − Id·Rd ≈ '+fmt(Vds,2)+' V. Voltage at the gate steers current — no base current like a BJT. Caveat: real MOSFET curves are richer than k(Vgs−Vth)².';
+      }
+      return {V:Vdd,R:Rd,I:I,note:note,Vc:0,charge:0,tauS:0,Vout:Vds,R2:Vgs,Id:Id,Vds:Vds,Vgs:Vgs,Vth:Vth,region:region,IdWant:IdWant,IdMax:IdMax};
+    }
+
     if(!closed){
       return {V:V,R:R,I:0,note:'I = 0 while the switch is open.',Vc:0,charge:0,tauS:0,Vout:0,R2:R2};
     }
@@ -544,7 +585,7 @@ button.go:disabled{opacity:.4;cursor:default}
   }
 
   function draw(s){
-    var on=s.I>0 || ((topo==='cap'||topo==='rc') && closed && s.charge<0.98) || (topo==='mesh' && closed && (Math.abs(s.I1||0)>1e-6||Math.abs(s.I2||0)>1e-6)) || (topo==='bjt' && closed && (s.Ic||0)>1e-6);
+    var on=s.I>0 || ((topo==='cap'||topo==='rc') && closed && s.charge<0.98) || (topo==='mesh' && closed && (Math.abs(s.I1||0)>1e-6||Math.abs(s.I2||0)>1e-6)) || (topo==='bjt' && closed && (s.Ic||0)>1e-6) || (topo==='fet' && closed && (s.Id||0)>1e-6);
     var flow=on?'flow':'flow off';
     var swX=closed?118:96;
     var led=topo==='led';
@@ -556,6 +597,7 @@ button.go:disabled{opacity:.4;cursor:default}
     var isSuper=topo==='super';
     var isMesh=topo==='mesh';
     var isBjt=topo==='bjt';
+    var isFet=topo==='fet';
     var fillH=Math.max(2, Math.round(s.charge*48));
     var curve='';
     if(topo==='rc'){
@@ -612,6 +654,26 @@ button.go:disabled{opacity:.4;cursor:default}
         +'<line x1="'+satX+'" y1="330" x2="'+satX+'" y2="250" stroke="currentColor" stroke-width="1" opacity=".35" stroke-dasharray="3 3"/>'
         +'<circle cx="'+ox+'" cy="'+oy+'" r="4" fill="var(--accent,#c8b48a)"/>'
         +'<text x="40" y="236" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">load line · sat ~0.2 V</text>';
+    }
+    if(topo==='fet'){
+      var VddN=+volts.value, RdN=+ohms.value, IdMaxN=(VddN-0.1)/Math.max(RdN,1);
+      var pts=[];
+      for(var i=0;i<=40;i++){
+        var vds=i/40*VddN;
+        var id=(VddN-vds)/Math.max(RdN,1);
+        var x=40+i*4;
+        var y=330-Math.min(1, id/Math.max(IdMaxN*1.15,1e-6))*80;
+        pts.push(x+','+y);
+      }
+      var vNow=closed?(s.Vds||0):VddN;
+      var iNow=closed?(s.Id||0):0;
+      var ox=40+(vNow/Math.max(VddN,1e-6))*160;
+      var oy=330-Math.min(1, iNow/Math.max(IdMaxN*1.15,1e-6))*80;
+      var floorX=40+(0.1/Math.max(VddN,1e-6))*160;
+      curve='<polyline points="'+pts.join(' ')+'" fill="none" stroke="var(--accent,#c8b48a)" stroke-width="2" opacity=".85"/>'
+        +'<line x1="'+floorX+'" y1="330" x2="'+floorX+'" y2="250" stroke="currentColor" stroke-width="1" opacity=".35" stroke-dasharray="3 3"/>'
+        +'<circle cx="'+ox+'" cy="'+oy+'" r="4" fill="var(--accent,#c8b48a)"/>'
+        +'<text x="40" y="236" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">load line · floor ~0.1 V</text>';
     }
     var isDiode=topo==='diode';
     var midY=isDiv?180:150;
@@ -751,6 +813,33 @@ button.go:disabled{opacity:.4;cursor:default}
         +'<text x="140" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Ib '+(closed?fmt((s.Ib||0)*1e6,1)+' µA':'—')+'</text>'
         +'<text x="140" y="270" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">β '+((s.beta!=null)?s.beta:caps.value)+'</text>'
         +'<text x="300" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">region '+(closed?(s.region||'—'):'off')+'</text>';
+    } else if(isFet){
+      html+=''
+        +'<g transform="translate(420,95)">'
+        +'<polyline points="0,0 10,0 16,14 28,-14 40,14 52,-14 64,14 70,0 80,0" fill="none" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="8" y="-10" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Rd '+ohms.value+'Ω</text>'
+        +'</g>'
+        +'<g transform="translate(460,150)">'
+        +'<line x1="40" y1="0" x2="40" y2="18" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="40" y1="62" x2="40" y2="90" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="28" y1="18" x2="28" y2="62" stroke="currentColor" stroke-width="5"/>'
+        +'<line x1="28" y1="28" x2="40" y2="28" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="28" y1="52" x2="40" y2="52" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="12" y1="18" x2="12" y2="62" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="0" y1="40" x2="12" y2="40" stroke="currentColor" stroke-width="3"/>'
+        +'<polyline points="34,48 40,52 34,56" fill="none" stroke="currentColor" stroke-width="2"/>'
+        +'<text x="52" y="18" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">D</text>'
+        +'<text x="52" y="78" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">S</text>'
+        +'<text x="-10" y="36" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">G</text>'
+        +'</g>'
+        +'<line x1="280" y1="190" x2="460" y2="190" stroke="currentColor" stroke-width="3"/>'
+        +'<text x="200" y="186" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Vgs '+(closed?fmt(s.Vgs!=null?s.Vgs:+ohms2.value,1)+'V':fmt(+ohms2.value,1)+'V')+'</text>'
+        +'<line x1="500" y1="95" x2="500" y2="150" stroke="currentColor" stroke-width="3"/>'
+        +'<line x1="500" y1="240" x2="500" y2="290" stroke="currentColor" stroke-width="3"/>'
+        +(on?'<line x1="500" y1="95" x2="500" y2="150" class="'+flow+'"/>':'')
+        +'<text x="140" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Id '+(closed?fmt((s.Id||0)*1000,2)+' mA':'—')+'</text>'
+        +'<text x="140" y="270" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">Vth '+((s.Vth!=null)?fmt(s.Vth,1):caps.value)+' V</text>'
+        +'<text x="300" y="250" fill="currentColor" font-size="12" font-family="IBM Plex Mono,monospace">region '+(closed?(s.region||'—'):'off')+'</text>';
     } else if(isDiode){
       html+=''
         +'<g transform="translate(300,150)">'
@@ -855,6 +944,11 @@ button.go:disabled{opacity:.4;cursor:default}
       document.getElementById('rOut').textContent=(s.beta!=null?s.beta:caps.value);
       document.getElementById('iOut').textContent=closed?fmt((s.Ic||0)*1000,2):'0';
       document.getElementById('qOut').textContent=closed?fmt(s.Vce||0,2):'—';
+    } else if(topo==='fet'){
+      document.getElementById('vOut').textContent=s.V;
+      document.getElementById('rOut').textContent=(s.Vth!=null?fmt(s.Vth,1):caps.value);
+      document.getElementById('iOut').textContent=closed?fmt((s.Id||0)*1000,2):'0';
+      document.getElementById('qOut').textContent=closed?fmt(s.Vds||0,2):'—';
     } else if(topo==='diode'){
       document.getElementById('vOut').textContent=s.V;
       document.getElementById('rOut').textContent=Math.round(s.R);
@@ -867,8 +961,8 @@ button.go:disabled{opacity:.4;cursor:default}
     }
     document.getElementById('vLab').textContent=topo==='norton'?(s.V+' mA'):(s.V+' V');
     document.getElementById('rLab').textContent=ohms.value+' Ω';
-    document.getElementById('r2Lab').textContent=topo==='super'?(ohms2.value+' V'):(topo==='bjt'?( (+ohms2.value>=1000)?(fmt(+ohms2.value/1000,+ohms2.value>=10000?0:1)+' kΩ'):(ohms2.value+' Ω') ):(ohms2.value+' Ω'));
-    document.getElementById('cLab').textContent=topo==='mesh'?(caps.value+' V'):(topo==='bjt'?('β '+caps.value):(caps.value+' µF'));
+    document.getElementById('r2Lab').textContent=topo==='super'?(ohms2.value+' V'):(topo==='fet'?(ohms2.value+' V'):(topo==='bjt'?( (+ohms2.value>=1000)?(fmt(+ohms2.value/1000,+ohms2.value>=10000?0:1)+' kΩ'):(ohms2.value+' Ω') ):(ohms2.value+' Ω')));
+    document.getElementById('cLab').textContent=topo==='mesh'?(caps.value+' V'):(topo==='fet'?(caps.value+' V'):(topo==='bjt'?('β '+caps.value):(caps.value+' µF')));
     document.getElementById('formula').innerHTML=s.note;
     sw.textContent=closed?'Switch closed':'Switch open';
     sw.setAttribute('aria-pressed', String(closed));
@@ -918,6 +1012,20 @@ button.go:disabled{opacity:.4;cursor:default}
       if(+caps.value<10 || +caps.value>470) caps.value=100;
     }
   }
+  function tuneFetKnobs(entering){
+    if(entering){
+      ohms2.min=0; ohms2.max=12; ohms2.step=1;
+      if(+ohms2.value<0 || +ohms2.value>12 || +ohms2.value===220 || +ohms2.value===220000 || +ohms2.value===6) ohms2.value=3;
+      caps.min=1; caps.max=5; caps.step=1;
+      if(+caps.value<1 || +caps.value>5 || +caps.value>=10) caps.value=2;
+      if(+ohms.value<100) ohms.value=470;
+    } else {
+      ohms2.min=100; ohms2.max=1000; ohms2.step=10;
+      if(+ohms2.value<100 || +ohms2.value>1000) ohms2.value=220;
+      caps.min=10; caps.max=470; caps.step=10;
+      if(+caps.value<10 || +caps.value>470) caps.value=100;
+    }
+  }
   [].forEach.call(document.querySelectorAll('[data-top]'), function(b){
     b.addEventListener('click', function(){
       var prev=topo;
@@ -929,12 +1037,22 @@ button.go:disabled{opacity:.4;cursor:default}
       if(prev==='super' && topo==='mesh'){ /* ohms2 already restored above if leaving super first — re-apply R2 range */ ohms2.min=100; ohms2.max=1000; ohms2.step=10; if(+ohms2.value<100) ohms2.value=220; }
       if(prev==='mesh' && topo!=='mesh') tuneMeshKnobs(false);
       if(topo==='bjt' && prev!=='bjt'){
+        if(prev==='fet') tuneFetKnobs(false);
         if(prev==='mesh'){ /* caps was V2 — retune to β */ }
         if(prev==='super'){ /* ohms2 was V2 — retune to Rb */ }
         tuneBjtKnobs(true);
       }
       if(prev==='bjt' && topo!=='bjt'){
         tuneBjtKnobs(false);
+        if(topo==='mesh') tuneMeshKnobs(true);
+        if(topo==='super') tuneSuperKnobs(true);
+        if(topo==='fet') tuneFetKnobs(true);
+      }
+      if(topo==='fet' && prev!=='fet' && prev!=='bjt'){
+        tuneFetKnobs(true);
+      }
+      if(prev==='fet' && topo!=='fet' && topo!=='bjt'){
+        tuneFetKnobs(false);
         if(topo==='mesh') tuneMeshKnobs(true);
         if(topo==='super') tuneSuperKnobs(true);
       }
@@ -945,7 +1063,7 @@ button.go:disabled{opacity:.4;cursor:default}
     if(next.disabled) return;
     if(lesson===lessons.length-1){
       lesson=0; closed=false; topo='single'; toggled=false; movedV=false; movedR=false; movedC=false; movedR2=false;
-      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; sawThev=false; sawActive=false; sawSat=false; charge=0;
+      sawCharge=false; sawDischarge=false; sawTau=false; saw63=false; sawKvl=false; sawKcl=false; sawThev=false; sawActive=false; sawSat=false; sawFetOff=false; sawFetOn=false; charge=0;
       volts.value=9; ohms.value=220; ohms2.min=100; ohms2.max=1000; ohms2.step=10; ohms2.value=220; caps.min=10; caps.max=470; caps.step=10; caps.value=100;
       setTopo('single');
     } else lesson+=1;
