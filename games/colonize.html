@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Colonize — Steven Philley</title>
+<meta name="description" content="Explore a procedural world, found outposts, gather food/ore/energy, build, and outpace a light rival AI. Vanilla JS strategy — mobile-friendly.">
+<link rel="canonical" href="https://stevenphilley.com/games/colonize.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Colonize — Steven Philley">
+<meta property="og:description" content="Procedural exploration and colonization strategy. Found outposts, gather resources, beat a light rival.">
+<meta property="og:url" content="https://stevenphilley.com/games/colonize.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Colonize — Steven Philley">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1);margin:0;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.m-wrap{max-width:980px;margin:0 auto;padding:0 clamp(12px,3vw,32px) 48px}
+.m-top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.m-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.m-top a:hover,.m-top a[aria-current="page"]{color:inherit}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 8px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.m-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:20px 0 8px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(36px,8vw,64px);line-height:.9;margin:0 0 8px}
+.lede{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);max-width:62ch;margin:0 0 14px}
+.hud{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;margin:0 0 10px}
+.hud .box{border:1px solid var(--line,#2c303a);padding:8px 10px}
+.hud .label{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.hud .val{font-family:"Bebas Neue",Impact,sans-serif;font-size:22px;letter-spacing:.04em}
+.panel{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px}
+.panel button,.btn{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:8px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+.panel button:hover,.btn:hover{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.panel button:disabled{opacity:.35;cursor:not-allowed}
+.panel button.primary{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a)}
+.status{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--accent,#c8b48a);min-height:1.35em;margin:0 0 10px}
+.stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.25);overflow:auto;-webkit-overflow-scrolling:touch;max-height:min(70vh,560px)}
+canvas#map{display:block;image-rendering:pixelated;cursor:pointer}
+.side{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+@media(max-width:640px){.side{grid-template-columns:1fr}}
+.card{border:1px solid var(--line,#2c303a);padding:12px;background:rgba(255,255,255,.02);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-soft,#9b9a96);min-height:120px}
+.card h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.06em;margin:0 0 8px;color:var(--ink,#e8e6e1);text-transform:uppercase}
+.card .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase}
+.sw{display:inline-block;width:10px;height:10px;margin-right:4px;vertical-align:middle;border:1px solid var(--line,#2c303a)}
+.rules{margin-top:18px;padding-top:14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.rules strong{color:var(--ink,#e8e6e1);font-weight:500}
+.m-foot{margin-top:28px;padding-top:14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.m-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;z-index:40;padding:20px}
+.overlay.show{display:flex}
+.overlay .box{border:1px solid var(--line,#2c303a);background:var(--base-2,#14161c);padding:24px;max-width:420px;width:100%;font-family:"IBM Plex Mono",monospace}
+.overlay h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:36px;margin:0 0 10px;letter-spacing:.04em}
+.overlay p{font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+</style>
+</head>
+<body>
+<div class="m-wrap">
+  <div class="m-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <a href="/games/">Games</a>
+      <a href="/games/colonize.html" aria-current="page">Colonize</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="m-kicker">G7 · Games</p>
+  <h1>Colonize</h1>
+  <p class="lede">Explore a seeded world, found outposts, gather food / ore / energy, and build. A light rival expands too. Win with 5 colonies or charter research — lose if your last colony falls.</p>
+
+  <div class="hud">
+    <div class="box"><p class="label">Food</p><p class="val" id="vFood">0</p></div>
+    <div class="box"><p class="label">Ore</p><p class="val" id="vOre">0</p></div>
+    <div class="box"><p class="label">Energy</p><p class="val" id="vEnergy">0</p></div>
+    <div class="box"><p class="label">Turn</p><p class="val" id="vTurn">1</p></div>
+    <div class="box"><p class="label">Colonies</p><p class="val" id="vCol">1</p></div>
+    <div class="box"><p class="label">Research</p><p class="val" id="vRes">0%</p></div>
+  </div>
+
+  <div class="panel">
+    <button type="button" class="primary" id="btnEnd">End turn</button>
+    <button type="button" id="btnExplore">Spawn explorer (8F 4E)</button>
+    <button type="button" id="btnFound">Found colony (20F 12O 8E)</button>
+    <button type="button" id="btnFarm">Build farm (10F 4O)</button>
+    <button type="button" id="btnMine">Build mine (8F 10O)</button>
+    <button type="button" id="btnLab">Build lab (12F 8O 10E)</button>
+    <button type="button" id="btnNew">New map</button>
+  </div>
+  <p class="status" id="status">Tap a tile. Move explorers into fog. Found colonies on explored land.</p>
+
+  <div class="stage"><canvas id="map" width="720" height="480"></canvas></div>
+  <div class="legend">
+    <span><i class="sw" style="background:#1a3040"></i>Fog</span>
+    <span><i class="sw" style="background:#2a4a32"></i>Land</span>
+    <span><i class="sw" style="background:#1e3a55"></i>Water</span>
+    <span><i class="sw" style="background:#5a4830"></i>Hills</span>
+    <span><i class="sw" style="background:#c8b48a"></i>You</span>
+    <span><i class="sw" style="background:#e07070"></i>Rival</span>
+    <span><i class="sw" style="background:#7ec8e0"></i>Explorer</span>
+  </div>
+
+  <div class="side">
+    <div class="card" id="selCard"><h2>Selected</h2><p id="selText">Nothing selected.</p><div class="row" id="selActs"></div></div>
+    <div class="card"><h2>How to play</h2><p>End turn to harvest and move the rival. Explorers reveal fog (3-tile vision). Colonies need land (not water). Farms→food, mines→ore (best on hills), labs→research toward Charter win.</p></div>
+  </div>
+
+  <div class="rules"><strong>Win / lose.</strong> Hold <strong>5 colonies</strong> or reach <strong>100% charter research</strong>. Lose if you have <strong>0 colonies</strong>. Original light strategy — not based on any commercial 4X title.</div>
+
+  <footer class="m-foot">
+    <a href="/games/">All games</a>
+    <a href="/games/hockey.html">Hockey</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="box">
+    <h2 id="ovTitle">Victory</h2>
+    <p id="ovBody"></p>
+    <div class="panel" style="margin-top:16px"><button type="button" class="primary" id="ovNew">New map</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  paint();
+})();
+</script>
+<script>
+(function(){
+  var W=24,H=16,TS=30;
+  var LAND=1,WATER=0,HILL=2;
+  var canvas=document.getElementById('map');
+  var ctx=canvas.getContext('2d');
+  canvas.width=W*TS; canvas.height=H*TS;
+
+  var el={
+    food:document.getElementById('vFood'), ore:document.getElementById('vOre'), energy:document.getElementById('vEnergy'),
+    turn:document.getElementById('vTurn'), col:document.getElementById('vCol'), res:document.getElementById('vRes'),
+    status:document.getElementById('status'), selText:document.getElementById('selText'),
+    overlay:document.getElementById('overlay'), ovTitle:document.getElementById('ovTitle'), ovBody:document.getElementById('ovBody')
+  };
+
+  var seed, map, fog, you, rival, explorers, selected, turn, over;
+
+  function mulberry32(a){return function(){var t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+
+  function gen(s){
+    var rnd=mulberry32(s>>>0);
+    var g=[];
+    for(var y=0;y<H;y++){g[y]=[];for(var x=0;x<W;x++){
+      var n=rnd()+rnd()*0.5+(Math.sin(x*0.4)+Math.cos(y*0.35))*0.15;
+      if(n<0.85) g[y][x]=WATER; else if(n>1.55) g[y][x]=HILL; else g[y][x]=LAND;
+    }}
+    // smooth a bit
+    for(var i=0;i<2;i++){
+      var n2=g.map(function(r){return r.slice();});
+      for(var y=1;y<H-1;y++) for(var x=1;x<W-1;x++){
+        var c=0; for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++) if(g[y+dy][x+dx]!==WATER) c++;
+        if(c<=2) n2[y][x]=WATER; else if(c>=7 && g[y][x]===WATER) n2[y][x]=LAND;
+      }
+      g=n2;
+    }
+    return g;
+  }
+
+  function inb(x,y){return x>=0&&y>=0&&x<W&&y<H;}
+  function reveal(x,y,r){
+    for(var dy=-r;dy<=r;dy++) for(var dx=-r;dx<=r;dx++) if(dx*dx+dy*dy<=r*r+1){
+      var nx=x+dx,ny=y+dy; if(inb(nx,ny)) fog[ny][nx]=1;
+    }
+  }
+  function findLand(rnd){
+    for(var t=0;t<400;t++){var x=(rnd()*W)|0,y=(rnd()*H)|0; if(map[y][x]!==WATER) return {x:x,y:y};}
+    return {x:2,y:2};
+  }
+  function colonyAt(owner,x,y){
+    return owner.colonies.find(function(c){return c.x===x&&c.y===y;});
+  }
+  function explorerAt(x,y){
+    return explorers.find(function(e){return e.x===x&&e.y===y;});
+  }
+
+  function newGame(s){
+    seed=s!=null?s:((Math.random()*1e9)|0);
+    var rnd=mulberry32(seed);
+    map=gen(seed);
+    fog=[]; for(var y=0;y<H;y++){fog[y]=[];for(var x=0;x<W;x++) fog[y][x]=0;}
+    var a=findLand(rnd), b=findLand(rnd);
+    var guard=0; while(Math.abs(a.x-b.x)+Math.abs(a.y-b.y)<8 && guard++<80) b=findLand(rnd);
+    you={food:24,ore:16,energy:14,research:0,colonies:[{x:a.x,y:a.y,farm:1,mine:0,lab:0}]};
+    rival={colonies:[{x:b.x,y:b.y,farm:1,mine:0,lab:0}], food:20,ore:12,energy:10};
+    explorers=[{x:a.x,y:a.y,moves:3}];
+    reveal(a.x,a.y,3); reveal(b.x,b.y,1);
+    selected=null; turn=1; over=false;
+    el.overlay.classList.remove('show');
+    setStatus('Seed '+seed+'. Explore, found colonies, end turn to harvest.');
+    try{localStorage.setItem('sp-colonize-seed',String(seed));}catch(e){}
+    draw(); hud();
+  }
+
+  function setStatus(t){el.status.textContent=t;}
+
+  function accent(){return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c8b48a';}
+
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var ac=accent();
+    for(var y=0;y<H;y++) for(var x=0;x<W;x++){
+      var px=x*TS, py=y*TS;
+      if(!fog[y][x]){ ctx.fillStyle='#12151c'; ctx.fillRect(px,py,TS,TS); continue; }
+      var t=map[y][x];
+      ctx.fillStyle=t===WATER?'#1e3a55':(t===HILL?'#5a4830':'#2a4a32');
+      ctx.fillRect(px,py,TS-1,TS-1);
+    }
+    // colonies
+    function paintCol(c,col){
+      if(!fog[c.y][c.x]) return;
+      ctx.fillStyle=col;
+      ctx.fillRect(c.x*TS+6,c.y*TS+6,TS-12,TS-12);
+      ctx.strokeStyle='#000'; ctx.strokeRect(c.x*TS+6,c.y*TS+6,TS-12,TS-12);
+      if(c.lab){ctx.fillStyle='#fff';ctx.fillRect(c.x*TS+12,c.y*TS+10,4,8);}
+    }
+    you.colonies.forEach(function(c){paintCol(c,ac);});
+    rival.colonies.forEach(function(c){paintCol(c,'#e07070');});
+    explorers.forEach(function(e){
+      if(!fog[e.y][e.x]) return;
+      ctx.beginPath(); ctx.arc(e.x*TS+TS/2,e.y*TS+TS/2,6,0,Math.PI*2);
+      ctx.fillStyle='#7ec8e0'; ctx.fill();
+    });
+    if(selected){
+      ctx.strokeStyle='#fff'; ctx.lineWidth=2;
+      ctx.strokeRect(selected.x*TS+1,selected.y*TS+1,TS-3,TS-3);
+      ctx.lineWidth=1;
+    }
+  }
+
+  function hud(){
+    el.food.textContent=String(you.food|0);
+    el.ore.textContent=String(you.ore|0);
+    el.energy.textContent=String(you.energy|0);
+    el.turn.textContent=String(turn);
+    el.col.textContent=you.colonies.length+' / 5';
+    el.res.textContent=(you.research|0)+'%';
+    renderSel();
+  }
+
+  function renderSel(){
+    if(!selected){ el.selText.textContent='Nothing selected.'; return; }
+    var x=selected.x,y=selected.y;
+    if(!fog[y][x]){ el.selText.textContent='Fog at '+x+','+y; return; }
+    var terrain=map[y][x]===WATER?'Water':(map[y][x]===HILL?'Hills':'Land');
+    var bits=[terrain+' · '+x+','+y];
+    var yc=colonyAt(you,x,y); var rc=colonyAt(rival,x,y); var ex=explorerAt(x,y);
+    if(yc) bits.push('Your colony — farms '+yc.farm+', mines '+yc.mine+', labs '+yc.lab);
+    if(rc) bits.push('Rival colony');
+    if(ex) bits.push('Explorer · '+ex.moves+' moves left');
+    el.selText.textContent=bits.join('. ');
+  }
+
+  function canAfford(f,o,e){return you.food>=f&&you.ore>=o&&you.energy>=e;}
+  function pay(f,o,e){you.food-=f;you.ore-=o;you.energy-=e;}
+
+  function neighbors(x,y){
+    var out=[]; for(var dy=-1;dy<=1;dy++) for(var dx=-1;dx<=1;dx++) if(dx||dy){
+      var nx=x+dx,ny=y+dy; if(inb(nx,ny)) out.push({x:nx,y:ny});
+    } return out;
+  }
+
+  function clickMap(ev){
+    if(over) return;
+    var rect=canvas.getBoundingClientRect();
+    var x=((ev.clientX-rect.left)/rect.width*W)|0;
+    var y=((ev.clientY-rect.top)/rect.height*H)|0;
+    if(!inb(x,y)) return;
+
+    // move explorer if one selected
+    if(selected && selected.kind==='ex'){
+      var ex=explorers[selected.i];
+      if(ex && ex.moves>0){
+        var dist=Math.max(Math.abs(ex.x-x),Math.abs(ex.y-y));
+        if(dist===1 && map[y][x]!==WATER){
+          ex.x=x; ex.y=y; ex.moves--; reveal(x,y,2);
+          selected={kind:'ex',i:selected.i,x:x,y:y};
+          setStatus('Explorer moved. Moves left: '+ex.moves);
+          draw(); hud(); return;
+        }
+      }
+    }
+
+    var exi=explorers.findIndex(function(e){return e.x===x&&e.y===y;});
+    if(exi>=0){ selected={kind:'ex',i:exi,x:x,y:y}; setStatus('Explorer selected — tap adjacent land to move.'); draw(); hud(); return; }
+    if(colonyAt(you,x,y)){ selected={kind:'you',x:x,y:y}; setStatus('Colony selected.'); draw(); hud(); return; }
+    selected={kind:'tile',x:x,y:y}; setStatus('Tile selected.'); draw(); hud();
+  }
+
+  function endTurn(){
+    if(over) return;
+    // harvest
+    you.colonies.forEach(function(c){
+      you.food+=2+c.farm*3;
+      you.ore+=1+c.mine*(map[c.y][c.x]===HILL?3:2);
+      you.energy+=1+Math.floor(c.farm/2)+c.lab;
+      you.research+=c.lab*8;
+    });
+    if(you.research>100) you.research=100;
+    // upkeep
+    you.food-=you.colonies.length;
+    if(you.food<0) you.food=0;
+    // reset explorer moves
+    explorers.forEach(function(e){e.moves=3; reveal(e.x,e.y,2);});
+    // rival AI: sometimes found / build / expand
+    rivalAI();
+    turn++;
+    checkEnd();
+    setStatus('Turn '+turn+'. Harvest complete.');
+    hud(); draw();
+  }
+
+  function rivalAI(){
+    if(!rival.colonies.length) return;
+    rival.colonies.forEach(function(c){
+      rival.food+=2+c.farm*2; rival.ore+=1+c.mine*2; rival.energy+=1;
+    });
+    // try found nearby
+    if(rival.colonies.length<4 && rival.food>=18){
+      var base=rival.colonies[(Math.random()*rival.colonies.length)|0];
+      var opts=neighbors(base.x,base.y).filter(function(p){
+        return map[p.y][p.x]!==WATER && !colonyAt(you,p.x,p.y) && !colonyAt(rival,p.x,p.y);
+      });
+      if(opts.length){
+        var p=opts[(Math.random()*opts.length)|0];
+        rival.colonies.push({x:p.x,y:p.y,farm:1,mine:0,lab:0});
+        rival.food-=18; reveal(p.x,p.y,1);
+      }
+    } else {
+      var c=rival.colonies[(Math.random()*rival.colonies.length)|0];
+      if(rival.ore>=8 && Math.random()<0.5){c.mine++; rival.ore-=8;}
+      else if(rival.food>=8){c.farm++; rival.food-=8;}
+    }
+    // rare attack: remove a lonely player colony adjacent
+    if(Math.random()<0.12){
+      rival.colonies.forEach(function(rc){
+        neighbors(rc.x,rc.y).forEach(function(p){
+          var yc=colonyAt(you,p.x,p.y);
+          if(yc && you.colonies.length>1 && Math.random()<0.3){
+            you.colonies=you.colonies.filter(function(c){return !(c.x===p.x&&c.y===p.y);});
+            setStatus('Rival pressured a border colony!');
+          }
+        });
+      });
+    }
+  }
+
+  function checkEnd(){
+    if(you.colonies.length>=5){ win('You hold five colonies. Charter secured.'); return; }
+    if(you.research>=100){ win('Charter research complete. The frontier recognizes your claim.'); return; }
+    if(you.colonies.length<=0){ lose('Your last colony fell. The frontier moves on.'); }
+  }
+  function win(msg){ over=true; el.ovTitle.textContent='Victory'; el.ovBody.textContent=msg+' Turn '+turn+'.'; el.overlay.classList.add('show'); try{localStorage.setItem('sp-colonize-best',String(Math.min(turn, +(localStorage.getItem('sp-colonize-best')||999))));}catch(e){} }
+  function lose(msg){ over=true; el.ovTitle.textContent='Defeat'; el.ovBody.textContent=msg; el.overlay.classList.add('show'); }
+
+  function spawnExplorer(){
+    if(over) return;
+    if(!canAfford(8,0,4)){ setStatus('Need 8 food and 4 energy.'); return; }
+    if(!you.colonies.length){ setStatus('No colony to spawn from.'); return; }
+    var c=you.colonies[0];
+    if(selected&&selected.kind==='you') c=colonyAt(you,selected.x,selected.y)||c;
+    pay(8,0,4);
+    explorers.push({x:c.x,y:c.y,moves:3});
+    setStatus('Explorer ready.'); hud(); draw();
+  }
+  function foundColony(){
+    if(over) return;
+    if(!selected){ setStatus('Select an explored land tile first.'); return; }
+    var x=selected.x,y=selected.y;
+    if(!fog[y][x]||map[y][x]===WATER){ setStatus('Need explored land.'); return; }
+    if(colonyAt(you,x,y)||colonyAt(rival,x,y)){ setStatus('Tile occupied.'); return; }
+    // must be near explorer or colony
+    var near=explorers.some(function(e){return Math.max(Math.abs(e.x-x),Math.abs(e.y-y))<=1;})
+      || you.colonies.some(function(c){return Math.max(Math.abs(c.x-x),Math.abs(c.y-y))<=1;});
+    if(!near){ setStatus('Found next to an explorer or your colony.'); return; }
+    if(!canAfford(20,12,8)){ setStatus('Need 20F 12O 8E.'); return; }
+    pay(20,12,8);
+    you.colonies.push({x:x,y:y,farm:0,mine:0,lab:0});
+    reveal(x,y,2);
+    setStatus('Colony founded.');
+    checkEnd(); hud(); draw();
+  }
+  function build(kind){
+    if(over) return;
+    if(!selected||selected.kind!=='you'){ setStatus('Select one of your colonies.'); return; }
+    var c=colonyAt(you,selected.x,selected.y); if(!c) return;
+    if(kind==='farm'){ if(!canAfford(10,4,0)){setStatus('Need 10F 4O');return;} pay(10,4,0); c.farm++; setStatus('Farm built.'); }
+    if(kind==='mine'){ if(!canAfford(8,10,0)){setStatus('Need 8F 10O');return;} pay(8,10,0); c.mine++; setStatus('Mine built.'); }
+    if(kind==='lab'){ if(!canAfford(12,8,10)){setStatus('Need 12F 8O 10E');return;} pay(12,8,10); c.lab++; setStatus('Lab built.'); }
+    hud(); draw();
+  }
+
+  canvas.addEventListener('click', clickMap);
+  document.getElementById('btnEnd').onclick=endTurn;
+  document.getElementById('btnExplore').onclick=spawnExplorer;
+  document.getElementById('btnFound').onclick=foundColony;
+  document.getElementById('btnFarm').onclick=function(){build('farm');};
+  document.getElementById('btnMine').onclick=function(){build('mine');};
+  document.getElementById('btnLab').onclick=function(){build('lab');};
+  document.getElementById('btnNew').onclick=function(){newGame();};
+  document.getElementById('ovNew').onclick=function(){newGame();};
+
+  var saved=null; try{saved=localStorage.getItem('sp-colonize-seed');}catch(e){}
+  newGame(saved?+saved:null);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
