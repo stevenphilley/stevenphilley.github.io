@@ -85,6 +85,19 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
 .rules strong{color:var(--ink,#e8e6e1);font-weight:500}
 .m-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .m-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
+.tools label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.tools select,.tools input[type="search"]{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:12px;padding:7px 10px;min-width:0}
+.tools input[type="search"]{flex:1;min-width:140px}
+.tools .seg{display:flex;border:1px solid var(--line,#2c303a)}
+.tools .seg button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:6px 10px;cursor:pointer;text-transform:uppercase}
+.tools .seg button:last-child{border-right:0}
+.tools .seg button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.sortbar{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line,#2c303a);align-items:center}
+.sortbar label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin-right:4px}
+.sortbar select{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:11px;padding:4px 8px}
+.game-row .extra{color:var(--muted,#63666e);font-size:10px;margin-top:6px;letter-spacing:.04em}
 .hidden{display:none!important}
 </style>
 </head>
@@ -109,21 +122,37 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
 
   <p class="m-kicker">G6 · Games</p>
   <h1>Fantasy Hockey</h1>
-  <p class="lede">Draft a line — three forwards, two defensemen, one goalie — within a $50M fantasy budget. Then run a five-game series against a CPU lineup. Outcomes are weighted from illustrative player stats.</p>
+  <p class="lede">Draft a line — three forwards, two defensemen, one goalie — within a $50M fantasy budget. Search and sort the pool, pick difficulty and best-of length, then simulate vs the CPU. Outcomes are weighted from illustrative player stats.</p>
   <p class="note" id="seasonNote">Stats: loading…</p>
 
   <div class="hud">
     <div class="box"><p class="label">Budget left</p><p class="val" id="budgetVal">$50.0M</p></div>
     <div class="box"><p class="label">Lineup</p><p class="val" id="slotsVal">0 / 6</p></div>
     <div class="box"><p class="label">Series</p><p class="val" id="seriesVal">—</p></div>
+    <div class="box"><p class="label">Career vs CPU</p><p class="val" id="recordVal">0–0–0</p></div>
+  </div>
+
+  <div class="tools" aria-label="Series settings">
+    <label for="diffSel">Difficulty</label>
+    <div class="seg" role="group" aria-label="Difficulty">
+      <button type="button" data-diff="easy" aria-pressed="false">Easy</button>
+      <button type="button" data-diff="normal" aria-pressed="true">Normal</button>
+      <button type="button" data-diff="hard" aria-pressed="false">Hard</button>
+    </div>
+    <label for="boSel">Best of</label>
+    <div class="seg" role="group" aria-label="Series length">
+      <button type="button" data-bo="5" aria-pressed="true">5</button>
+      <button type="button" data-bo="7" aria-pressed="false">7</button>
+    </div>
   </div>
 
   <div class="panel">
     <button type="button" class="primary" id="btnSim" disabled>Simulate series</button>
     <button type="button" id="btnReset">Reset draft</button>
     <button type="button" id="btnAutofill">Autofill cheap</button>
+    <button type="button" id="btnClearRecord">Clear career</button>
   </div>
-  <p class="status" id="status">Pick 3F + 2D + G. Stars cost more — leave room for a goalie.</p>
+  <p class="status" id="status">Pick 3F + 2D + G. Stars cost more — leave room for a goalie. Draft auto-saves in this browser.</p>
 
   <div class="layout">
     <div class="col">
@@ -132,6 +161,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     </div>
     <div class="col">
       <h2>Available</h2>
+      <div class="sortbar">
+        <label for="playerSearch">Search</label>
+        <input type="search" id="playerSearch" placeholder="Name or team" autocomplete="off">
+        <label for="sortSel">Sort</label>
+        <select id="sortSel">
+          <option value="default">Pos · rating</option>
+          <option value="sal-desc">Salary ↓</option>
+          <option value="sal-asc">Salary ↑</option>
+          <option value="ppg">PPG / SV%</option>
+          <option value="name">Name A–Z</option>
+        </select>
+      </div>
       <div class="filters" role="group" aria-label="Position filter">
         <button type="button" data-filter="ALL" aria-pressed="true">All</button>
         <button type="button" data-filter="F" aria-pressed="false">F</button>
@@ -149,7 +190,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
   </div>
 
   <div class="rules">
-    <strong>How it works.</strong> Need 3F + 2D + G under $50M (fantasy dollars, not real contracts). Simulation: each game rolls scoring chances from skater points-per-game (plus a small plus/minus nudge); your goalie’s GAA / SV% vs the CPU goalie shifts the final score. Demo stats only — see season note above. Reset anytime to re-draft.
+    <strong>How it works.</strong> Need 3F + 2D + G under $50M (fantasy dollars, not real contracts). Search/sort the pool; Easy / Normal / Hard scales the CPU; best-of 5 or 7. Simulation rolls scoring chances from skater points-per-game (plus a small plus/minus nudge); goalie GAA / SV% shifts the score. Draft and career record save in this browser. Demo stats only — see season note above.
   </div>
 
   <footer class="m-foot">
@@ -174,26 +215,43 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
   var NEED={F:3,D:2,G:1};
   var BUDGET=50;
   var SIM_GAMES=5;
+  var LS_DRAFT='sp-hockey-draft-v1';
+  var LS_REC='sp-hockey-record-v1';
+  var LS_DIFF='sp-hockey-diff-v1';
+  var LS_BO='sp-hockey-bo-v1';
   var players=[];
   var meta=null;
   var lineup={F:[],D:[],G:[]};
   var filter='ALL';
+  var sortMode='default';
+  var searchQ='';
+  var difficulty='normal';
   var byId={};
+  var record={w:0,l:0,t:0};
+  var DIFF={
+    easy:{cpuSalCap:42,offMul:0.88,goalieNudge:-1.5,label:'Easy'},
+    normal:{cpuSalCap:50,offMul:1,goalieNudge:0,label:'Normal'},
+    hard:{cpuSalCap:50,offMul:1.12,goalieNudge:2.2,label:'Hard'}
+  };
 
   var el={
     budget:document.getElementById('budgetVal'),
     slots:document.getElementById('slotsVal'),
     series:document.getElementById('seriesVal'),
+    record:document.getElementById('recordVal'),
     status:document.getElementById('status'),
     list:document.getElementById('playerList'),
     slotsBox:document.getElementById('lineupSlots'),
     btnSim:document.getElementById('btnSim'),
     btnReset:document.getElementById('btnReset'),
     btnAuto:document.getElementById('btnAutofill'),
+    btnClear:document.getElementById('btnClearRecord'),
     results:document.getElementById('results'),
     boxscore:document.getElementById('boxscore'),
     seriesSum:document.getElementById('seriesSummary'),
-    seasonNote:document.getElementById('seasonNote')
+    seasonNote:document.getElementById('seasonNote'),
+    search:document.getElementById('playerSearch'),
+    sort:document.getElementById('sortSel')
   };
 
   function money(n){return '$'+n.toFixed(1)+'M';}
@@ -215,13 +273,81 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     if(spent()+p.sal>BUDGET+1e-9) return false;
     return true;
   }
-
   function skaterLine(p){
     var pm=p.pm>=0?('+'+p.pm):String(p.pm);
     return p.team+' · '+p.pos+' · '+p.g+'G '+p.a+'A '+p.pts+'P · '+pm+' · '+p.gp+'GP';
   }
   function goalieLine(p){
     return p.team+' · G · '+p.w+'W · '+p.gaa.toFixed(2)+' GAA · '+(p.sv*100).toFixed(1)+'% · '+p.gp+'GP';
+  }
+  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+  function fullNameList(arr){return arr.map(function(p){return p.name;}).join(', ');}
+
+  function loadRecord(){
+    try{
+      var raw=localStorage.getItem(LS_REC);
+      if(!raw) return;
+      var o=JSON.parse(raw);
+      if(o&&typeof o.w==='number') record={w:o.w|0,l:o.l|0,t:o.t|0};
+    }catch(e){}
+  }
+  function saveRecord(){
+    try{localStorage.setItem(LS_REC,JSON.stringify(record));}catch(e){}
+  }
+  function renderRecord(){
+    el.record.textContent=record.w+'\u2013'+record.l+'\u2013'+record.t;
+  }
+  function saveDraft(){
+    try{
+      var ids={F:lineup.F.map(function(p){return p.id;}),D:lineup.D.map(function(p){return p.id;}),G:lineup.G.map(function(p){return p.id;})};
+      localStorage.setItem(LS_DRAFT,JSON.stringify(ids));
+    }catch(e){}
+  }
+  function restoreDraft(){
+    try{
+      var raw=localStorage.getItem(LS_DRAFT);
+      if(!raw) return false;
+      var ids=JSON.parse(raw);
+      var next={F:[],D:[],G:[]},pos,i,p;
+      for(pos in NEED){
+        var list=ids[pos]||[];
+        for(i=0;i<list.length&&next[pos].length<NEED[pos];i++){
+          p=byId[list[i]];
+          if(!p||p.pos!==pos) continue;
+          var spend=0,q;
+          for(q in next) next[q].forEach(function(x){spend+=x.sal;});
+          if(spend+p.sal>BUDGET+1e-9) continue;
+          if(next[pos].some(function(x){return x.id===p.id;})) continue;
+          next[pos].push(p);
+        }
+      }
+      lineup=next;
+      return count()>0;
+    }catch(e){return false;}
+  }
+  function loadPrefs(){
+    try{
+      var d=localStorage.getItem(LS_DIFF);
+      if(d&&DIFF[d]) difficulty=d;
+      var bo=localStorage.getItem(LS_BO);
+      if(bo==='5'||bo==='7') SIM_GAMES=+bo;
+    }catch(e){}
+  }
+  function savePrefs(){
+    try{
+      localStorage.setItem(LS_DIFF,difficulty);
+      localStorage.setItem(LS_BO,String(SIM_GAMES));
+    }catch(e){}
+  }
+  function paintDiff(){
+    document.querySelectorAll('[data-diff]').forEach(function(b){
+      b.setAttribute('aria-pressed',String(b.getAttribute('data-diff')===difficulty));
+    });
+  }
+  function paintBo(){
+    document.querySelectorAll('[data-bo]').forEach(function(b){
+      b.setAttribute('aria-pressed',String(+b.getAttribute('data-bo')===SIM_GAMES));
+    });
   }
 
   function renderHud(){
@@ -230,7 +356,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     el.budget.className='val'+(left<0?' warn':'');
     el.slots.textContent=count()+' / 6';
     el.btnSim.disabled=!isFull();
-    if(isFull()) el.status.textContent='Line locked under budget. Simulate a five-game series vs CPU.';
+    renderRecord();
+    if(isFull()) el.status.textContent='Line locked under budget. Simulate best-of-'+SIM_GAMES+' ('+DIFF[difficulty].label+') vs CPU.';
   }
 
   function renderSlots(){
@@ -255,15 +382,31 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     });
   }
 
+  function rateSortKey(p){
+    if(p.pos==='G') return -(p.sv||0);
+    return -ppg(p);
+  }
   function renderList(){
+    var q=searchQ.trim().toLowerCase();
     var rows=players.filter(function(p){
       if(filter!=='ALL'&&p.pos!==filter) return false;
+      if(q){
+        var hay=(p.name+' '+p.team+' '+p.pos).toLowerCase();
+        if(hay.indexOf(q)<0) return false;
+      }
       return true;
-    }).slice().sort(function(a,b){
+    }).slice();
+    rows.sort(function(a,b){
+      if(sortMode==='sal-desc') return b.sal-a.sal;
+      if(sortMode==='sal-asc') return a.sal-b.sal;
+      if(sortMode==='ppg'){
+        var av=a.pos==='G'?(a.sv||0):ppg(a);
+        var bv=b.pos==='G'?(b.sv||0):ppg(b);
+        return bv-av;
+      }
+      if(sortMode==='name') return String(a.name).localeCompare(String(b.name));
       if(a.pos!==b.pos) return a.pos<b.pos?-1:1;
-      var av=a.pos==='G'?(-a.sv):(-a.pts);
-      var bv=b.pos==='G'?(-b.sv):(-b.pts);
-      return av-bv;
+      return rateSortKey(a)-rateSortKey(b);
     });
     var html='';
     rows.forEach(function(p){
@@ -273,7 +416,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
       html+='<div><div class="nm">'+esc(p.name)+'</div><div class="meta">'+(p.pos==='G'?goalieLine(p):skaterLine(p))+'</div></div>';
       html+='<div class="sal">'+money(p.sal)+'</div></div>';
     });
-    el.list.innerHTML=html||'<div class="prow taken"><div class="meta">No players in this filter.</div></div>';
+    el.list.innerHTML=html||'<div class="prow taken"><div class="meta">No players match.</div></div>';
     el.list.querySelectorAll('.prow[data-id]').forEach(function(row){
       function tryAdd(){
         var p=byId[row.getAttribute('data-id')];
@@ -285,13 +428,12 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     });
   }
 
-  function esc(s){return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
-
   function add(p){
     if(!canAdd(p)) return;
     lineup[p.pos].push(p);
     el.results.classList.remove('show');
     el.series.textContent='—';
+    saveDraft();
     renderAll();
     el.status.textContent='Added '+p.name+'.';
   }
@@ -304,6 +446,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     }
     el.results.classList.remove('show');
     el.series.textContent='—';
+    saveDraft();
     renderAll();
     el.status.textContent='Dropped. Re-pick as needed.';
   }
@@ -311,6 +454,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     lineup={F:[],D:[],G:[]};
     el.results.classList.remove('show');
     el.series.textContent='—';
+    saveDraft();
     renderAll();
     el.status.textContent='Draft cleared. Pick 3F + 2D + G.';
   }
@@ -319,13 +463,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     reset();
     var pool=players.slice().sort(function(a,b){return a.sal-b.sal;});
     ['F','D','G'].forEach(function(pos){
-      var need=NEED[pos];
-      for(var i=0;i<pool.length&&lineup[pos].length<need;i++){
+      for(var i=0;i<pool.length&&lineup[pos].length<NEED[pos];i++){
         var p=pool[i];
         if(p.pos===pos&&canAdd(p)) lineup[pos].push(p);
       }
     });
-    // If still incomplete (budget / scarcity), try value sort (pts per $)
     if(!isFull()){
       lineup={F:[],D:[],G:[]};
       var value=players.slice().sort(function(a,b){
@@ -340,6 +482,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
         }
       });
     }
+    saveDraft();
     renderAll();
     el.status.textContent=isFull()?'Autofill ready — simulate or tweak.':'Could not autofill under budget; pick manually.';
   }
@@ -357,7 +500,6 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     return Math.max(0.5,r);
   }
   function goalieFactor(g){
-    // Higher is better for preventing goals
     var sv=g.sv||0.9;
     var gaa=g.gaa||3.0;
     return (sv*100) - gaa*4;
@@ -379,28 +521,27 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
   }
 
   function buildCpuLine(){
-    // Avoid user's players; pick strong value within budget
+    var cfg=DIFF[difficulty]||DIFF.normal;
     var used={};
     lineup.F.concat(lineup.D,lineup.G).forEach(function(p){used[p.id]=true;});
     var cpu={F:[],D:[],G:[]};
     var pool=players.filter(function(p){return !used[p.id];}).slice().sort(function(a,b){
       var av=a.pos==='G'?(a.sv*100-a.gaa):(a.pts);
       var bv=b.pos==='G'?(b.sv*100-b.gaa):(b.pts);
+      if(difficulty==='easy') return a.sal-b.sal;
       return bv-av;
     });
     var spend=0;
-    function tryPos(pos,preferMaxSal){
+    var cap=cfg.cpuSalCap;
+    function tryPos(pos){
       for(var i=0;i<pool.length&&cpu[pos].length<NEED[pos];i++){
         var p=pool[i];
         if(p.pos!==pos) continue;
-        if(spend+p.sal>BUDGET) continue;
-        if(preferMaxSal!=null&&p.sal>preferMaxSal) continue;
+        if(spend+p.sal>cap) continue;
         cpu[pos].push(p);spend+=p.sal;
       }
     }
-    // First pass: fill with top talent that fits
     tryPos('F');tryPos('D');tryPos('G');
-    // Fill remaining with cheaper
     if(cpu.F.length<NEED.F||cpu.D.length<NEED.D||cpu.G.length<NEED.G){
       pool.sort(function(a,b){return a.sal-b.sal;});
       tryPos('F');tryPos('D');tryPos('G');
@@ -409,30 +550,39 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
   }
 
   function simGame(you,cpu,n){
+    var cfg=DIFF[difficulty]||DIFF.normal;
     var ySk=you.F.concat(you.D);
     var cSk=cpu.F.concat(cpu.D);
     var yOff=offenseRating(ySk);
-    var cOff=offenseRating(cSk);
+    var cOff=offenseRating(cSk)*cfg.offMul;
     var yG=goalieFactor(you.G[0]);
-    var cG=goalieFactor(cpu.G[0]);
+    var cG=goalieFactor(cpu.G[0])+cfg.goalieNudge;
 
-    // Expected goals ~ Poisson-ish via rounded random counts
     function expectedGoals(off,oppG){
       var base=2.2*(off/35);
-      var saveDrag=(oppG-82)/40; // typical goalieFactor ~ 88
+      var saveDrag=(oppG-82)/40;
       var mu=Math.max(0.4, base - saveDrag*0.8 + (Math.random()-0.5)*0.6);
-      // sample small integer around mu
-      var g=0,i,p=Math.exp(-mu),L=p,u=Math.random();
-      // Knuth Poisson
+      var g=0,p=Math.exp(-mu),L=p,u=Math.random();
       while(u>L){g++;p*=mu/g;L+=p;if(g>12)break;}
       return g;
     }
     var yGoals=expectedGoals(yOff,cG);
     var cGoals=expectedGoals(cOff,yG);
-    // Avoid too many 0-0; nudge
     if(yGoals===0&&cGoals===0&&Math.random()<0.55){
       if(Math.random()<0.5) yGoals=1; else cGoals=1;
     }
+
+    // Shots derived from goals so box score stays consistent
+    function shotsFor(goals,off){
+      var base=Math.round(22+off*0.55+(Math.random()*8-2));
+      return Math.max(goals+8, Math.min(48, base+goals*2));
+    }
+    var ySh=shotsFor(yGoals,yOff);
+    var cSh=shotsFor(cGoals,cOff);
+    var ySvPct=ySh>0?((ySh-cGoals)/ySh):1;
+    var cSvPct=cSh>0?((cSh-yGoals)/cSh):1;
+    ySvPct=Math.max(0.7,Math.min(1,ySvPct));
+    cSvPct=Math.max(0.7,Math.min(1,cSvPct));
 
     var yScorers=[],cScorers=[],i,sc,as;
     function lastName(p){
@@ -453,6 +603,12 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
       cpu:cGoals,
       yList:yScorers,
       cList:cScorers,
+      ySh:ySh,
+      cSh:cSh,
+      ySv:ySvPct,
+      cSv:cSvPct,
+      yGname:you.G[0].name,
+      cGname:cpu.G[0].name,
       result:yGoals>cGoals?'W':(yGoals<cGoals?'L':'T')
     };
   }
@@ -470,20 +626,27 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
       games.push(g);
       if(g.result==='W') w++; else if(g.result==='L') l++; else t++;
     }
+    record.w+=w>l?1:0;
+    record.l+=w<l?1:0;
+    record.t+=w===l?1:0;
+    saveRecord();
+    renderRecord();
+
     el.series.textContent=w+'-'+l+(t?('-'+t):'');
     var html='';
     games.forEach(function(g){
       html+='<div class="game-row"><div class="hd"><span class="wk">Game '+g.n+' · '+g.result+'</span>';
       html+='<span class="score">You '+g.you+' – '+g.cpu+' CPU</span></div>';
       html+='<div class="scorers"><strong>You:</strong> '+(g.yList.length?g.yList.join(', '):'—');
-      html+='<br><strong>CPU:</strong> '+(g.cList.length?g.cList.join(', '):'—')+'</div></div>';
+      html+='<br><strong>CPU:</strong> '+(g.cList.length?g.cList.join(', '):'—')+'</div>';
+      html+='<div class="extra">SOG '+g.ySh+'\u2013'+g.cSh+' · '+esc(g.yGname)+' '+(g.ySv*100).toFixed(1)+'% SV · '+esc(g.cGname)+' '+(g.cSv*100).toFixed(1)+'% SV</div></div>';
     });
     el.boxscore.innerHTML=html;
-    var cpuNames=cpu.F.concat(cpu.D,cpu.G).map(function(p){return p.name.split(' ').pop();}).join(', ');
+    var cpuNames=fullNameList(cpu.F.concat(cpu.D,cpu.G));
     var verdict=w>l?'You take the series.':(w<l?'CPU takes the series.':'Series tied.');
-    el.seriesSum.innerHTML='<strong>'+verdict+'</strong> Final '+w+'-'+l+(t?(' ('+t+' ties)'):'')+'. CPU line: '+esc(cpuNames)+'.';
+    el.seriesSum.innerHTML='<strong>'+verdict+'</strong> Final '+w+'-'+l+(t?(' ('+t+' ties)'):'')+' · '+DIFF[difficulty].label+' · best-of-'+SIM_GAMES+'.<br>CPU line: '+esc(cpuNames)+'.';
     el.results.classList.add('show');
-    el.status.textContent='Series complete. Reset to re-draft, or simulate again with the same line.';
+    el.status.textContent='Series complete. Simulate again, tweak the line, or reset.';
     try{el.results.scrollIntoView({behavior:'smooth',block:'nearest'});}catch(e){}
   }
 
@@ -496,9 +659,45 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
       renderList();
     });
   });
+  document.querySelectorAll('[data-diff]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      difficulty=btn.getAttribute('data-diff');
+      savePrefs();
+      paintDiff();
+      renderHud();
+    });
+  });
+  document.querySelectorAll('[data-bo]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      SIM_GAMES=+btn.getAttribute('data-bo');
+      savePrefs();
+      paintBo();
+      renderHud();
+    });
+  });
+  el.search.addEventListener('input',function(){
+    searchQ=el.search.value||'';
+    renderList();
+  });
+  el.sort.addEventListener('change',function(){
+    sortMode=el.sort.value||'default';
+    renderList();
+  });
   el.btnSim.addEventListener('click',simulate);
   el.btnReset.addEventListener('click',reset);
   el.btnAuto.addEventListener('click',autofill);
+  el.btnClear.addEventListener('click',function(){
+    record={w:0,l:0,t:0};
+    saveRecord();
+    renderRecord();
+    el.status.textContent='Career record cleared.';
+  });
+
+  loadRecord();
+  loadPrefs();
+  paintDiff();
+  paintBo();
+  renderRecord();
 
   fetch('hockey-players.json').then(function(r){
     if(!r.ok) throw new Error('HTTP '+r.status);
@@ -508,14 +707,17 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40
     players=data.players||[];
     players.forEach(function(p){byId[p.id]=p;});
     if(meta.budget) BUDGET=meta.budget;
-    if(meta.simGames) SIM_GAMES=meta.simGames;
+    // Prefer saved best-of; else meta default if prefs unset
     el.seasonNote.textContent=(meta.label||'Demo stats')+' · Season '+ (meta.season||'?') +'. '+(meta.note||'');
+    var restored=restoreDraft();
     renderAll();
+    if(restored) el.status.textContent='Restored saved draft from this browser.';
   }).catch(function(err){
     el.status.textContent='Failed to load player data.';
     el.seasonNote.textContent='Could not load hockey-players.json ('+err.message+').';
   });
 })();
+</script>
 </script>
 <script src="/js/sp-share.js" defer></script>
 </body>
