@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moon — phases &amp; observing — Steven Philley</title>
+<meta name="description" content="Interactive Moon phase dial, synodic month basics, Earth–Moon scale notes, and Bay Area observing tips (when moonlight washes the deep sky). Educational schematic.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/moon/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Moon — phases &amp; observing">
+<meta property="og:description" content="Drag the phase dial: illumination, names, and when the Moon crowds out faint galaxies from Campbell skies.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/moon/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Moon — phases &amp; observing">
+<meta name="twitter:description" content="Interactive lunar phase desk with Bay Area observing notes.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:64ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:64ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1fr) minmax(260px,.95fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);padding:12px;position:relative}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;cursor:grab;max-height:420px}
+.diagram canvas:active{cursor:grabbing}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 16px}
+.detail p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:12px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.presets button:hover,.presets button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.presets button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.slider-row{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--muted,#63666e)}
+.slider-row input[type=range]{width:100%;accent-color:var(--accent,#c8b48a)}
+.facts{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:4px}
+.fact{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.fact dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.fact dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.tips{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 20px;margin-top:4px}
+.tips h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:26px;letter-spacing:.04em;margin:0 0 10px}
+.tips ul{margin:0;padding:0 0 0 18px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.tips a{color:var(--ink,#e8e6e1)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:70ch}
+@media (max-width:860px){
+  .stage,.facts,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/light-pollution/">Light pollution</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/" aria-current="page">Moon</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Luna</p>
+  <h1>Moon<br>phases</h1>
+  <p class="lede">Drag the dial (or use presets) to walk a <strong>synodic month</strong> — new through full and back. Illumination here is a simple geometric cartoon for learning names and sky brightness, not a precision ephemeris. Pair with the <a href="/science/astronomy/local-sky/">Campbell / Bay Area local sky</a> and <a href="/science/light-pollution/">light pollution</a> desk when planning faint-object nights.</p>
+  <p class="note-schematic">Phase angle ≈ age / 29.53 × 360°. Real Moon also librates and has a ~5° orbital tilt (eclipses are special). Figures round NASA educational orders of magnitude.</p>
+
+  <p class="band">Interactive · Phase dial</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint">Drag around the Moon · Sun light from the right</p>
+      <canvas id="moon" width="640" height="640" role="img" aria-label="Interactive Moon phase diagram"></canvas>
+      <div class="slider-row">
+        <label for="age">Age in synodic month (days)</label>
+        <input type="range" id="age" min="0" max="29.53" step="0.01" value="7.4">
+      </div>
+    </div>
+    <aside class="detail" aria-live="polite">
+      <p class="tier">Phase</p>
+      <h2 id="ph-name">First quarter</h2>
+      <p class="range" id="ph-range">~50% illuminated · waxing</p>
+      <p id="ph-body">Half the near side lit. Good for crater shadows along the terminator — the line between day and night on the Moon.</p>
+      <p id="ph-obs" style="color:var(--muted,#63666e);font-size:12px"></p>
+      <div class="presets" role="group" aria-label="Named phases">
+        <button type="button" data-age="0">New</button>
+        <button type="button" data-age="3.69">Wax crescent</button>
+        <button type="button" data-age="7.38" aria-pressed="true">First Q</button>
+        <button type="button" data-age="11.07">Wax gibbous</button>
+        <button type="button" data-age="14.77">Full</button>
+        <button type="button" data-age="18.46">Wan gibbous</button>
+        <button type="button" data-age="22.15">Last Q</button>
+        <button type="button" data-age="25.84">Wan crescent</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="band">Handy numbers</p>
+  <dl class="facts">
+    <div class="fact"><dt>Synodic month</dt><dd>~29.53 days — new Moon to new Moon as seen from Earth (phase cycle).</dd></div>
+    <div class="fact"><dt>Sidereal month</dt><dd>~27.3 days — one orbit relative to the stars; shorter than the phase cycle.</dd></div>
+    <div class="fact"><dt>Mean distance</dt><dd>~384,400 km · about 30 Earth diameters · light travel ~1.3 s.</dd></div>
+    <div class="fact"><dt>Diameter</dt><dd>~3,475 km · roughly 1/4 Earth’s · gravity ~1/6 g on the surface.</dd></div>
+    <div class="fact"><dt>Terminator</dt><dd>Day/night line on the Moon — best contrast for craters near first/last quarter.</dd></div>
+    <div class="fact"><dt>Earthshine</dt><dd>Near new, the dark disk can glow faintly from sunlight reflected off Earth.</dd></div>
+  </dl>
+
+  <p class="band">Observing from the South Bay</p>
+  <div class="tips">
+    <h3>Moon vs deep sky</h3>
+    <ul>
+      <li><strong>Near full:</strong> great for maria and bright rays; terrible for galaxies and dim nebulae — skyglow rises hard, especially under already-bright Campbell / San Jose skies.</li>
+      <li><strong>Near new / thin crescent:</strong> best window for the Milky Way band and faint fuzzies if haze and local lights cooperate — see <a href="/science/light-pollution/">light pollution</a>.</li>
+      <li><strong>First / last quarter:</strong> sweet spot for lunar topography (long shadows) without maximum washout.</li>
+      <li>Check rise/set against your <a href="/science/astronomy/local-sky/">local sky</a> plan; hills west of SR-17 and marine layer timing still win or lose the night.</li>
+    </ul>
+  </div>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">01</p><h3>Solar map</h3><p>Sun through Neptune schematic — click planets for AU and plain-English cards.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">02</p><h3>Local sky</h3><p>Campbell / Bay Area orientation chart for planning sessions.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">03</p><h3>Nearest stars</h3><p>Proxima through the local neighborhood scale.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">04</p><h3>Galaxy</h3><p>Milky Way arms and Sol on the Orion Spur.</p></a>
+  </div>
+
+  <p class="credit">Educational schematic. Phase names follow common Northern-hemisphere naming. Distances and periods round public NASA / USGS educational figures — not for navigation or eclipse prediction. Earthrise preview image: NASA / Bill Anders (public domain).</p>
+
+  <footer class="foot">
+    <a href="/science/">Science</a>
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/light-pollution/">Light pollution</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  paint();
+})();
+</script>
+<script>
+(function(){
+  var SYN=29.53059;
+  var age=7.38;
+  var canvas=document.getElementById('moon');
+  var ctx=canvas.getContext('2d');
+  var slider=document.getElementById('age');
+  var elName=document.getElementById('ph-name');
+  var elRange=document.getElementById('ph-range');
+  var elBody=document.getElementById('ph-body');
+  var elObs=document.getElementById('ph-obs');
+  var dragging=false;
+
+  var copy={
+    new:{name:'New Moon',body:'Near side faces Earth in shadow. Best for deep-sky if the thin crescent has set — sky is darkest.',obs:'Deep-sky friendly (if haze/lights allow).'},
+    wxc:{name:'Waxing crescent',body:'A thin lit edge grows after sunset in the west. Earthshine can show on the dark disk.',obs:'Mild skybrightening after dusk.'},
+    fq:{name:'First quarter',body:'Half lit. Terminator shadows make craters pop in binoculars or a small scope.',obs:'Moderate wash — still workable for brighter clusters.'},
+    wxg:{name:'Waxing gibbous',body:'More than half lit and climbing toward full. Contrast on the terminator softens as glare rises.',obs:'Faint galaxies get harder each night.'},
+    full:{name:'Full Moon',body:'Near side fully illuminated. Brightest night sky of the month — maria and rays easy, deep sky washed out.',obs:'Worst for faint fuzzies under South Bay light pollution.'},
+    wng:{name:'Waning gibbous',body:'Past full; rises later. Still bright for most of the night until it sinks.',obs:'Still harsh for nebulae until late.'},
+    lq:{name:'Last quarter',body:'Half lit again, now in morning sky. Another strong terminator for crater hunting.',obs:'Evening can be darker before moonrise — plan around rise time.'},
+    wnc:{name:'Waning crescent',body:'Thin morning crescent. Nights before dawn brighten; evenings stay relatively dark.',obs:'Evening deep-sky window opens again.'}
+  };
+
+  function phaseInfo(a){
+    var t=((a%SYN)+SYN)%SYN;
+    var ill=0.5*(1-Math.cos(2*Math.PI*t/SYN));
+    var key;
+    if(t<1.0||t>SYN-1.0) key='new';
+    else if(t<6.0) key='wxc';
+    else if(t<9.0) key='fq';
+    else if(t<13.5) key='wxg';
+    else if(t<16.0) key='full';
+    else if(t<20.5) key='wng';
+    else if(t<23.5) key='lq';
+    else key='wnc';
+    var waxing=t<SYN/2;
+    return {t:t,ill:ill,key:key,waxing:waxing,info:copy[key]};
+  }
+
+  function accent(){
+    return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c8b48a';
+  }
+  function ink(){
+    return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#e8e6e1';
+  }
+  function line(){
+    return getComputedStyle(document.documentElement).getPropertyValue('--line').trim()||'#2c303a';
+  }
+
+  function draw(){
+    var dpr=window.devicePixelRatio||1;
+    var css=Math.min(640, canvas.clientWidth||640);
+    canvas.width=Math.floor(css*dpr);
+    canvas.height=Math.floor(css*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var W=css,H=css;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='rgba(0,0,0,0.35)';
+    ctx.fillRect(0,0,W,H);
+
+    var cx=W*0.5, cy=H*0.52, R=Math.min(W,H)*0.28;
+    var info=phaseInfo(age);
+    var ang=2*Math.PI*info.t/SYN; // 0=new
+
+    // orbit ring + sun direction
+    ctx.strokeStyle=line();
+    ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*1.55,0,Math.PI*2);
+    ctx.stroke();
+
+    // Sun indicator (right)
+    ctx.fillStyle=accent();
+    ctx.beginPath();
+    ctx.arc(W*0.92, cy, 10, 0, Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle=ink();
+    ctx.font='10px "IBM Plex Mono", monospace';
+    ctx.textAlign='center';
+    ctx.fillText('SUN', W*0.92, cy+24);
+
+    // Earth
+    ctx.beginPath();
+    ctx.arc(cx,cy,R*0.22,0,Math.PI*2);
+    ctx.fillStyle='#3a5a7a';
+    ctx.fill();
+    ctx.strokeStyle=accent();
+    ctx.stroke();
+    ctx.fillStyle=ink();
+    ctx.font='9px "IBM Plex Mono", monospace';
+    ctx.fillText('EARTH', cx, cy+R*0.22+14);
+
+    // Moon position on ring (new at left/opposite sun → put new at left)
+    var mx=cx+Math.cos(Math.PI-ang)*R*1.55;
+    var my=cy+Math.sin(Math.PI-ang)*R*1.55;
+
+    // Moon disk with phase (lit from right)
+    var mR=R*0.34;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.clip();
+    ctx.fillStyle='#1a1c22';
+    ctx.fillRect(mx-mR,my-mR,mR*2,mR*2);
+    // illuminated portion using phase
+    // Simple: draw lit semicircle offset by phase
+    var k=Math.cos(ang); // 1 at full? ang=0 new → cos0=1; we want dark at new
+    // At new (ang=0) fully dark; at full (pi) fully lit. Light from +x.
+    ctx.fillStyle='#d8d2c4';
+    ctx.beginPath();
+    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.fill();
+    // shadow ellipse
+    var shadowOffset=Math.cos(ang)*mR; // at new cos0=mR covers all; at full cos pi=-mR
+    ctx.fillStyle='#12141a';
+    ctx.beginPath();
+    ctx.ellipse(mx+shadowOffset, my, Math.abs(Math.cos(ang))*mR+0.01, mR, 0, 0, Math.PI*2);
+    // Actually classic approach:
+    ctx.restore();
+
+    // redraw moon properly
+    ctx.beginPath();
+    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.fillStyle='#12141a';
+    ctx.fill();
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.clip();
+    // lit half from the right (sun)
+    var phase=ang; // 0 new, pi full
+    // Use terminator as vertical offset of ellipse
+    ctx.fillStyle='#e4dfd2';
+    ctx.fillRect(mx, my-mR, mR+1, mR*2); // right half base
+    // For waxing/waning, cover with ellipse
+    var t=Math.cos(phase);
+    ctx.fillStyle=t>0?'#12141a':'#e4dfd2';
+    ctx.beginPath();
+    ctx.ellipse(mx, my, Math.abs(t)*mR, mR, 0, 0, Math.PI*2);
+    ctx.fill();
+    if(t<=0){
+      // gibbous/full: ensure right stays lit
+      ctx.fillStyle='#e4dfd2';
+      ctx.fillRect(mx, my-mR, mR+1, mR*2);
+      ctx.fillStyle='#12141a';
+      ctx.beginPath();
+      ctx.ellipse(mx, my, Math.abs(t)*mR, mR, 0, 0, Math.PI*2);
+      ctx.fill();
+      // left dark remainder for waning? handled by ellipse
+    }
+    ctx.restore();
+    ctx.strokeStyle=accent();
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle=ink();
+    ctx.font='10px "IBM Plex Mono", monospace';
+    ctx.textAlign='center';
+    ctx.fillText('MOON', mx, my+mR+16);
+
+    // labels
+    elName.textContent=info.info.name;
+    elRange.textContent=(info.ill*100).toFixed(0)+'% illuminated · '+(info.waxing?'waxing':'waning')+' · day '+info.t.toFixed(1);
+    elBody.textContent=info.info.body;
+    elObs.textContent='South Bay tip: '+info.info.obs;
+
+    document.querySelectorAll('.presets [data-age]').forEach(function(b){
+      var da=+b.getAttribute('data-age');
+      b.setAttribute('aria-pressed', String(Math.abs(da-info.t)<0.6||(da===0&&(info.t<0.6||info.t>SYN-0.6))));
+    });
+  }
+
+  function setAge(a, fromSlider){
+    age=((a%SYN)+SYN)%SYN;
+    if(!fromSlider) slider.value=String(age.toFixed(2));
+    draw();
+  }
+
+  slider.addEventListener('input', function(){ setAge(+slider.value, true); age=+slider.value; draw(); });
+  document.querySelectorAll('.presets [data-age]').forEach(function(b){
+    b.addEventListener('click', function(){ setAge(+b.getAttribute('data-age')); });
+  });
+
+  function pointerAngle(ev){
+    var rect=canvas.getBoundingClientRect();
+    var x=(ev.clientX-rect.left)/rect.width;
+    var y=(ev.clientY-rect.top)/rect.height;
+    var cx=0.5, cy=0.52;
+    var ang=Math.atan2(y-cy, x-cx); // -pi..pi, 0 to the right
+    // Map: sun on right; new moon on left → phase 0 when moon at left (ang=pi)
+    var phase=Math.PI-ang;
+    if(phase<0) phase+=Math.PI*2;
+    return (phase/(Math.PI*2))*SYN;
+  }
+  canvas.addEventListener('pointerdown', function(ev){ dragging=true; canvas.setPointerCapture(ev.pointerId); setAge(pointerAngle(ev)); });
+  canvas.addEventListener('pointermove', function(ev){ if(dragging) setAge(pointerAngle(ev)); });
+  canvas.addEventListener('pointerup', function(){ dragging=false; });
+  canvas.addEventListener('pointercancel', function(){ dragging=false; });
+
+  window.addEventListener('resize', draw);
+  // theme changes
+  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  setAge(7.38);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
