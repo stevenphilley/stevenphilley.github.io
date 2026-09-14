@@ -2,6 +2,7 @@
  *  Share URL = canonical page URL with theme param set/replaced (no duplicates).
  *  Site pages: ?theme=<neon|emerald|dusk|sage|tide|sand>
  *  circular-calendar.html: ?theme=<dial skin> (brass|led|vapor|hallow|xmas|neon)
+ *  Page-mode flags on <html> (not Share controls): data-sp-share="dial"|"markets".
  *  Optional: data-sp-share-param="sp_theme" on <html> to force that query key.
  */
 (function () {
@@ -186,8 +187,27 @@
     }
   }
 
+  function isShareControl(el) {
+    // data-sp-share on <html>/<body> is a page-mode flag (dial/markets), not a control.
+    if (!el || el === document.documentElement || el === document.body) return false;
+    if (el.classList && el.classList.contains("sp-share-btn")) return true;
+    if (!el.hasAttribute || !el.hasAttribute("data-sp-share")) return false;
+    var tag = (el.tagName || "").toUpperCase();
+    return tag === "BUTTON" || tag === "A" || tag === "INPUT";
+  }
+
+  function findShareControls() {
+    var nodes = document.querySelectorAll("[data-sp-share], .sp-share-btn");
+    var out = [];
+    Array.prototype.forEach.call(nodes, function (el) {
+      if (isShareControl(el)) out.push(el);
+    });
+    return out;
+  }
+
   function wire(btn) {
-    if (!btn || btn.getAttribute("data-sp-share-wired") === "1") return;
+    if (!isShareControl(btn)) return;
+    if (btn.getAttribute("data-sp-share-wired") === "1") return;
     btn.setAttribute("data-sp-share-wired", "1");
     btn.addEventListener("click", function (e) {
       e.preventDefault();
@@ -234,7 +254,7 @@
   }
 
   function placeButton() {
-    var existing = document.querySelectorAll("[data-sp-share], .sp-share-btn");
+    var existing = findShareControls();
     if (existing.length) {
       Array.prototype.forEach.call(existing, wire);
       placeSuggestBeside(existing[0], false);
