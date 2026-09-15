@@ -348,12 +348,20 @@
 
   /* ---------- storage ---------- */
   const K_EV = 'annual-dial-entries', K_TH = 'annual-dial-theme';
-  async function loadAll(){
-    try{ const r = await window.storage.get(K_EV); if(r) state.events = JSON.parse(r.value); }catch(e){}
-    try{ const r = await window.storage.get(K_TH); if(r) state.theme = normalizeTheme(r.value); }catch(e){}
+  async function storageRead(key){
+    try{ const r = await window.storage.get(key); if(r && r.value != null) return r.value; }catch(e){}
+    try{ return localStorage.getItem(key); }catch(e){ return null; }
   }
-  async function saveEvents(){ try{ await window.storage.set(K_EV, JSON.stringify(state.events)); }catch(e){} }
-  async function saveTheme(){ try{ await window.storage.set(K_TH, state.theme); }catch(e){} }
+  async function storageWrite(key, value){
+    try{ await window.storage.set(key, value); }catch(e){}
+    try{ localStorage.setItem(key, value); }catch(e){}
+  }
+  async function loadAll(){
+    try{ const ev = await storageRead(K_EV); if(ev) state.events = JSON.parse(ev); }catch(e){}
+    try{ const th = await storageRead(K_TH); if(th) state.theme = normalizeTheme(th); }catch(e){}
+  }
+  async function saveEvents(){ try{ await storageWrite(K_EV, JSON.stringify(state.events)); }catch(e){} }
+  async function saveTheme(){ try{ await storageWrite(K_TH, state.theme); }catch(e){} }
 
   /* ---------- defs: bloom filter for the LED theme ---------- */
   function defs(){
