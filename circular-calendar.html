@@ -755,11 +755,22 @@
       ? 'the year, read as a clock'
       : MONTHS[state.month].toLowerCase()+', hour by day';
   }
+  function goToday(){
+    const t = new Date();
+    state.year = t.getFullYear();
+    state.month = t.getMonth();
+    select(isoOf(t));
+  }
   document.getElementById('scope').addEventListener('click', e=>{
-    state.view = state.view==='year' ? 'month' : 'year';
+    const enteringMonth = state.view === 'year';
+    state.view = enteringMonth ? 'month' : 'year';
     e.currentTarget.textContent = state.view==='year' ? 'Month dial' : 'Year dial';
-    e.currentTarget.setAttribute('aria-pressed', state.view==='month');
-    draw();
+    e.currentTarget.setAttribute('aria-pressed', String(state.view==='month'));
+    // Month dial should land on today (same as the Today button) so the
+    // elapsed band is visible without an extra tap. Prev/next in month
+    // view is unchanged, so browsing other months stays put.
+    if(enteringMonth) goToday();
+    else draw();
   });
   function shift(n){
     if(state.view==='year'){ state.year += n; }
@@ -772,11 +783,7 @@
   }
   document.getElementById('prev').addEventListener('click', ()=>shift(-1));
   document.getElementById('next').addEventListener('click', ()=>shift(1));
-  document.getElementById('today').addEventListener('click', ()=>{
-    const t = new Date();
-    state.year=t.getFullYear(); state.month=t.getMonth();
-    select(isoOf(t));
-  });
+  document.getElementById('today').addEventListener('click', goToday);
 
   const input = document.getElementById('entryText');
   async function addEntry(){
