@@ -551,14 +551,16 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     updatePlayBtn();
     var ds=dateEl.value;
     var h=+timeEl.value;
-    if(!ds){ setNow(); return; }
+    /* Native date inputs can emit incomplete values while typing — wait for YYYY-MM-DD. */
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)) return;
     var p=ds.split('-');
-    if(p.length!==3) return;
     var y=+p[0], mo=+p[1]-1, day=+p[2];
+    if(y<1800||y>2100||mo<0||mo>11||day<1||day>31) return;
     var hh=Math.floor(h), mm=Math.round((h-hh)*60);
     if(mm>=60){ hh+=1; mm=0; }
     var next=new Date(y, mo, day, hh, mm, 0, 0);
     if(isNaN(next.getTime())) return;
+    if(next.getFullYear()!==y || next.getMonth()!==mo || next.getDate()!==day) return;
     epoch=next;
     epochIsCustom=true;
     paintEpochChrome();
@@ -685,6 +687,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   document.getElementById('btn-now').addEventListener('click', setNow);
   dateEl.addEventListener('change', applyInputs);
   dateEl.addEventListener('input', applyInputs);
+  dateEl.addEventListener('blur', function(){
+    if(dateEl.value!==dateValue(epoch)) dateEl.value=dateValue(epoch);
+  });
   timeEl.addEventListener('input', applyInputs);
 
   window.addEventListener('resize',resize);
