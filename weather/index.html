@@ -367,7 +367,46 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
         query:loc.query||''
       }));
     }catch(e){}
+    syncShareQuery();
   }
+  var pendingShareQuery='';
+  function weatherShareZip(){
+    if(pendingShareQuery && looksLikeZip(pendingShareQuery)){
+      return normalizeZip(pendingShareQuery) || '';
+    }
+    var zip=String(loc.zip||'').replace(/\D/g,'');
+    return zip.length===5 ? zip : '';
+  }
+  function weatherShareQuery(){
+    return String(pendingShareQuery||loc.query||loc.label||'').trim();
+  }
+  function decorateShareUrl(url){
+    if(!url || !url.searchParams) return;
+    try{
+      if(!/\/weather\/?$/i.test(url.pathname||'')) return;
+    }catch(e){ return; }
+    url.searchParams.delete('q');
+    url.searchParams.delete('place');
+    url.searchParams.delete('zip');
+    var zip=weatherShareZip();
+    if(zip){
+      url.searchParams.set('zip', zip);
+      return;
+    }
+    var q=weatherShareQuery();
+    if(q) url.searchParams.set('q', q);
+  }
+  function syncShareQuery(){
+    try{
+      var url=new URL(location.href);
+      decorateShareUrl(url);
+      var next=url.pathname+url.search+url.hash;
+      var cur=location.pathname+location.search+location.hash;
+      if(next!==cur) history.replaceState(null, '', next);
+    }catch(e){}
+  }
+  window.spShare=window.spShare||{};
+  window.spShare.decorate=decorateShareUrl;
   function showZipMsg(text){
     if(!text){ zipMsg.hidden=true; zipMsg.textContent=''; return; }
     zipMsg.hidden=false;
@@ -526,6 +565,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
       timezone:hit.timezone || 'auto',
       query:opts.query || opts.zip || hit.name || ''
     };
+    pendingShareQuery='';
     persistLoc();
     hidePicker();
     showZipMsg('');
@@ -830,9 +870,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 
   updatePlaceUI();
   if(bootQuery){
+    pendingShareQuery=bootQuery;
     zipInput.value=bootQuery;
     lookupRaw(bootQuery);
   }else{
+    syncShareQuery();
     loadForecast();
   }
 })();
