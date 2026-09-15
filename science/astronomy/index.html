@@ -35,16 +35,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .lede a:hover{color:var(--accent,#c8b48a)}
 .note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:62ch}
 .map-shell{margin-top:28px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:stretch}
+.map-col{min-width:0}
 .map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:420px;overflow:hidden}
 .map-stage canvas{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
-.controls{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);position:absolute;left:0;right:0;bottom:0;z-index:2}
-.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.controls label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
-.controls button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
-.controls button:hover,.controls button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);position:absolute;left:0;right:0;bottom:0;z-index:2}
+.controls button,.epoch-bar button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
+.controls button:hover,.controls button[aria-pressed="true"],.epoch-bar button:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
 .controls button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
-.controls input[type="date"]{appearance:none;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 8px;color-scheme:dark;min-width:9.4rem}
-.controls input[type="range"]{flex:1 1 110px;min-width:88px;accent-color:var(--accent,#c8b48a)}
+.epoch-bar{border:1px solid var(--line,#2c303a);border-top:0;background:rgba(0,0,0,.22);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.epoch-bar label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.epoch-bar input[type="date"]{appearance:none;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 8px;color-scheme:dark;min-width:9.4rem}
+.epoch-bar input[type="range"]{flex:1 1 110px;min-width:88px;accent-color:var(--accent,#c8b48a)}
 .time-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink,#e8e6e1);min-width:4.5ch}
 .epoch-val{margin:0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft,#9b9a96)}
 .hint{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
@@ -94,9 +96,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 }
 @media (max-width:520px){
   .map-stage{min-height:340px}
-  .controls{gap:6px;padding:8px 10px}
-  .controls button{padding:6px 9px;font-size:9px}
-  .controls input[type="date"]{min-width:8.6rem;font-size:10px}
+  .controls,.epoch-bar{gap:6px;padding:8px 10px}
+  .controls button,.epoch-bar button{padding:6px 9px;font-size:9px}
+  .epoch-bar input[type="date"]{min-width:8.6rem;font-size:10px}
 }
 </style>
 </head>
@@ -147,26 +149,28 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   <p class="note-schematic">Educational schematic with compressed orbital scale and exaggerated planet sizes so everything fits and stays visible. Planet angles are approximate mean heliocentric longitudes for the chosen date and time (circular orbits, NASA/JPL-style mean elements) — <strong>not a precision ephemeris</strong>. Distances and periods are mean values from public NASA fact sheets.</p>
 
   <div class="map-shell">
+    <div class="map-col">
     <div class="map-stage" id="stage">
       <p class="hint" id="hint">Tap a planet · set day &amp; time · drag to pan · scroll to zoom</p>
       <canvas id="sys" width="800" height="800" role="img" aria-label="Interactive solar system map for today, now, local time. Approximate heliocentric positions, not a precision ephemeris."></canvas>
-      <div class="controls" role="toolbar" aria-label="Map and date controls">
-        <div class="ctrl-row" role="group" aria-label="Map display">
-          <button type="button" id="btn-play" aria-pressed="false" aria-label="Play through days" title="Advance the date so orbits walk forward">Play</button>
-          <button type="button" id="btn-labels" aria-pressed="true">Labels</button>
-          <button type="button" id="btn-pluto" aria-pressed="true">Pluto</button>
-          <button type="button" id="btn-reset">Reset view</button>
-        </div>
-        <div class="ctrl-row ctrl-epoch" role="group" aria-label="Date and local time">
-          <label for="map-date">Day</label>
-          <input type="date" id="map-date" min="1800-01-01" max="2100-12-31" aria-label="Calendar date (local)">
-          <label for="map-time">Local time</label>
-          <input type="range" id="map-time" min="0" max="23.75" step="0.25" value="12" aria-valuetext="12:00">
-          <span class="time-val" id="map-time-lab">12:00</span>
-          <button type="button" id="btn-now" aria-label="Reset to today, now (local time)">Now</button>
-        </div>
-        <p class="epoch-val" id="epoch-lab">Today · now (local)</p>
+      <div class="controls" role="toolbar" aria-label="Map display">
+        <button type="button" id="btn-play" aria-pressed="false" aria-label="Play through days" title="Advance the date so orbits walk forward">Play</button>
+        <button type="button" id="btn-labels" aria-pressed="true">Labels</button>
+        <button type="button" id="btn-pluto" aria-pressed="true">Pluto</button>
+        <button type="button" id="btn-reset">Reset view</button>
       </div>
+    </div>
+    <div class="epoch-bar" role="group" aria-label="Date and local time">
+      <div class="ctrl-row ctrl-epoch">
+        <label for="map-date">Day</label>
+        <input type="date" id="map-date" min="1800-01-01" max="2100-12-31" aria-label="Calendar date (local)">
+        <label for="map-time">Local time</label>
+        <input type="range" id="map-time" min="0" max="23.75" step="0.25" value="12" aria-valuetext="12:00">
+        <span class="time-val" id="map-time-lab">12:00</span>
+        <button type="button" id="btn-now" aria-label="Reset to today, now (local time)">Now</button>
+      </div>
+      <p class="epoch-val" id="epoch-lab">Today · now (local)</p>
+    </div>
     </div>
     <aside class="panel" id="info" aria-live="polite">
       <p class="tier">Select a body</p>
@@ -551,6 +555,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     updatePlayBtn();
     var ds=dateEl.value;
     var h=+timeEl.value;
+    timeLab.textContent=fmtHour(h);
+    timeEl.setAttribute('aria-valuetext', fmtHour(h));
     /* Native date inputs can emit incomplete values while typing — wait for YYYY-MM-DD. */
     if(!/^\d{4}-\d{2}-\d{2}$/.test(ds)) return;
     var p=ds.split('-');
