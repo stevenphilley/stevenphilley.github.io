@@ -1,7 +1,7 @@
 /*! sp-theme-boot.js — early site theme from ?theme= / ?sp_theme= then localStorage.
  *  Site themes: neon|emerald|dusk|sage|tide|sand (key: sp-theme, attr: html[data-theme]).
  *  circular-calendar.html does NOT load this file: its ?theme= is for dial skins
- *  (brass|led|vapor|hallow|xmas|neon) under annual-dial-theme. Neon collides, so
+ *  (brass|led|vapor|columbus|hallow|xmas|neon) under annual-dial-theme. Neon collides, so
  *  dial keeps ?theme=; site chrome elsewhere uses ?theme= for sp-theme.
  */
 (function () {

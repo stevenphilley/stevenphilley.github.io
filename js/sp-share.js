@@ -1,7 +1,7 @@
 /*! sp-share.js — Share control with current theme in the URL.
  *  Share URL = canonical page URL with theme param set/replaced (no duplicates).
  *  Site pages: ?theme=<neon|emerald|dusk|sage|tide|sand>
- *  circular-calendar.html: ?theme=<dial skin> (brass|led|vapor|hallow|xmas|neon)
+ *  circular-calendar.html: ?theme=<dial skin> (brass|led|vapor|columbus|hallow|xmas|neon)
  *  Page-mode flags on <html> (not Share controls): data-sp-share="dial"|"markets".
  *  Optional: data-sp-share-param="sp_theme" on <html> to force that query key.
  */
@@ -9,7 +9,7 @@
   "use strict";
 
   var SITE = ["neon", "emerald", "dusk", "sage", "tide", "sand"];
-  var DIAL = ["brass", "led", "vapor", "hallow", "xmas", "neon"];
+  var DIAL = ["brass", "led", "vapor", "columbus", "hallow", "xmas", "neon"];
   var MARKET = ["accounting", "emerald-light", "emerald-dark"];
 
   function isDialPage() {

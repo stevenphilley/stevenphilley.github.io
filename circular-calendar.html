@@ -23,10 +23,11 @@
 <title>Annual Dial — a calendar built like a clock</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,ital,wght@6..96,0,400;6..96,1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&family=Orbitron:wght@400;600&family=Share+Tech+Mono&family=Michroma&family=Space+Mono:wght@400;700&family=Rye&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,ital,wght@6..96,0,400;6..96,1,400&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&family=Orbitron:wght@400;600&family=Share+Tech+Mono&family=Michroma&family=Space+Mono:wght@400;700&family=Rye&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/themes/dial/brass.css">
 <link rel="stylesheet" href="/themes/dial/led.css">
 <link rel="stylesheet" href="/themes/dial/vapor.css">
+<link rel="stylesheet" href="/themes/dial/columbus.css">
 <link rel="stylesheet" href="/themes/dial/hallow.css">
 <link rel="stylesheet" href="/themes/dial/xmas.css">
 <link rel="stylesheet" href="/themes/dial/neon.css">
@@ -183,6 +184,7 @@
         <button class="theme" data-theme-id="brass" aria-pressed="true">Brass</button>
         <button class="theme" data-theme-id="led" aria-pressed="false">LED</button>
         <button class="theme" data-theme-id="vapor" aria-pressed="false">Vapor</button>
+        <button class="theme" data-theme-id="columbus" aria-pressed="false">Columbus</button>
         <button class="theme" data-theme-id="hallow" aria-pressed="false">Halloween</button>
         <button class="theme" data-theme-id="xmas" aria-pressed="false">Christmas</button>
         <button class="theme" data-theme-id="neon" aria-pressed="false">Neon</button>
@@ -264,6 +266,9 @@
   // Halloween: five candy hues, stepped by month + day so the wheel reads as stripes.
   const HALLOW = [24, 84, 45, 330, 275]; // orange, poison green, gold, pink, violet
 
+  // Columbus Day: navy / compass-gold / sea / parchment — four-point rose, striped like hallow.
+  const COLUMBUS = [212, 40, 175, 32]; // ocean navy, compass gold, sea teal, parchment amber
+
   // Neon '80s: hot pink / cyan / violet / magenta — stripe cycle for readable glow bands.
   const NEON = [328, 190, 275, 310]; // hot pink, electric cyan, violet, magenta
 
@@ -280,6 +285,11 @@
       const h = (monthHue(m) + (d/days)*14) % 360;
       const l = 46 + (d/days)*22;
       return 'hsla('+h.toFixed(1)+',96%,'+l.toFixed(0)+'%,'+(weekend?.52:.30)+')';
+    }
+    if(th === 'columbus'){
+      const h = COLUMBUS[(m + d) % 4];
+      const warm = h === 40 || h === 32;
+      return 'hsla('+h+','+(warm?62:48)+'%,'+(weekend?56:44)+'%,'+(weekend?.50:.30)+')';
     }
     if(th === 'hallow'){
       const h = HALLOW[(m + d) % 5];
@@ -298,6 +308,7 @@
   function dayEdge(m,d,days){
     const th = state.theme;
     if(th === 'vapor') return 'hsla('+((monthHue(m)+(d/days)*14)%360).toFixed(1)+',96%,74%,.5)';
+    if(th === 'columbus') return 'hsla('+COLUMBUS[(m+d)%4]+',62%,68%,.5)';
     if(th === 'hallow') return 'hsla('+HALLOW[(m+d)%5]+',92%,70%,.55)';
     if(th === 'xmas')   return 'hsla('+(d%2?353:145)+',70%,68%,.5)';
     if(th === 'neon')   return 'hsla('+NEON[(m+d)%4]+',100%,72%,.55)';
@@ -305,6 +316,7 @@
   }
   function monthLabelColor(m){
     if(vapor())               return 'hsl('+monthHue(m).toFixed(1)+',96%,74%)';
+    if(state.theme==='columbus')return 'hsl('+COLUMBUS[m%4]+',62%,68%)';
     if(state.theme==='hallow')return 'hsl('+HALLOW[m%5]+',92%,66%)';
     if(state.theme==='xmas')  return m%2 ? 'var(--second)' : 'var(--accent-lit)';
     if(state.theme==='neon')  return 'hsl('+NEON[m%4]+',100%,72%)';
@@ -312,14 +324,15 @@
   }
 
   /* ---------- theme ids (shared; skins in /themes/dial/*.css) ---------- */
-  const THEME_ORDER = ['brass','led','vapor','hallow','xmas','neon'];
+  const THEME_ORDER = ['brass','led','vapor','columbus','hallow','xmas','neon'];
   function normalizeTheme(id){
     return THEME_ORDER.includes(id) ? id : 'brass';
   }
   /* Site-wide share/theme contract:
    *  Most pages use ?theme=<neon|emerald|dusk|sage|tide|sand> for sp-theme.
-   *  This dial page keeps ?theme= for dial skins (brass|led|vapor|hallow|xmas|neon)
-   *  under annual-dial-theme. Neon collides with the site theme name, so we do NOT
+   *  This dial page keeps ?theme= for dial skins
+   *  (brass|led|vapor|columbus|hallow|xmas|neon) under annual-dial-theme.
+   *  Neon collides with the site theme name, so we do NOT
    *  load /js/sp-theme-boot.js here. Page Share uses dial ?theme= via sp-share.js.
    */
   function themeFromQuery(){
@@ -652,6 +665,17 @@
         '<span class="formula">blur(σ=5) ×2 + source\nblur(σ=9) ×1 + source  ← hands</span>' +
         '<p>The glow is a real SVG filter, not a brighter fill — a Gaussian blur composited twice back under the shape, so light bleeds past the edges. Hands and the elapsed arc use the wider, softer pass so they read as the brightest thing on the panel.</p>' +
         '<p>Today burns amber at <strong>#FFD166</strong>, entry days cyan at <strong>#22E0C8</strong>.</p>';
+    } else if(state.theme === 'columbus'){
+      const chips = COLUMBUS.map(h=>'<i style="background:hsl('+h+',62%,52%)"></i>').join('');
+      const k = state.month % 4;
+      note.innerHTML =
+        '<h4>Columbus · compass hues</h4>' +
+        '<p>Age-of-sail palette: deep navy, parchment, weathered wood, and compass gold. Days stripe on a four-hue rose so the wheel reads as rhumb lines rather than a solid wash.</p>' +
+        '<span class="formula">hue = COLUMBUS[(m + d) mod 4]\nCOLUMBUS = [212, 40, 175, 32]</span>' +
+        '<div class="ramp">'+chips+'</div>' +
+        '<div class="ramp-key"><span>NAVY</span><span>GOLD</span><span>SEA</span><span>PARCHMENT</span></div>' +
+        '<p>Warm golds and ambers take a richer chroma than the cool navy and sea. Weekends lift lightness and alpha so the bands still read. Today is parchment cream and breathes on a slow lantern pulse.</p>' +
+        '<p>The faint compass rose behind the plate is dressing only — CSS conic ticks, no extra DOM. '+MONTHS[state.month]+' labels sit on hue <strong>'+COLUMBUS[k]+'°</strong>.</p>';
     } else if(state.theme === 'hallow'){
       const chips = HALLOW.map(h=>'<i style="background:hsl('+h+',92%,57%)"></i>').join('');
       const k = (state.month + 1) % 5;
