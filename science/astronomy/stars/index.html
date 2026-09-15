@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stars — types, color, and life phases — Steven Philley</title>
+<meta name="description" content="Interactive color lesson on stellar spectral types OBAFGKM and life phases: protostar, main sequence, red giant, planetary nebula, white dwarf, supernova, neutron star, black hole. Educational schematic — not a research tool.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/stars/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Stars — types, color, and life phases">
+<meta property="og:description" content="Click the OBAFGKM strip and walk a stellar life timeline. Color teaches temperature. Educational, not a catalog.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/stars/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stars — types, color, and life phases">
+<meta name="twitter:description" content="Interactive stellar types and life phases — spectral color, Wien’s law, Sun-like vs high-mass paths.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:66ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.15fr) minmax(250px,.85fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 10px;position:relative;min-height:320px;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;max-height:420px;touch-action:manipulation;cursor:pointer}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column}
+.detail .tier,.panel .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2,.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.detail p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none}
+.facts li{position:relative;padding:8px 0 8px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.spec-strip,.lum-strip,.phase-strip,.path-toggle,.hr-presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.spec-strip button,.lum-strip button,.phase-strip button,.path-toggle button,.hr-presets button,.stepper button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 11px;cursor:pointer
+}
+.spec-strip button:hover,.lum-strip button:hover,.phase-strip button:hover,.path-toggle button:hover,.hr-presets button:hover,.stepper button:hover{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)
+}
+.spec-strip button[aria-pressed="true"],.lum-strip button[aria-pressed="true"],.phase-strip button[aria-pressed="true"],
+.path-toggle button[aria-pressed="true"],.hr-presets button[aria-pressed="true"]{
+  color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)
+}
+.spec-strip button.spec-swatch{color:#111;border-color:transparent;font-weight:500;min-width:42px;text-align:center}
+.spec-strip button.spec-swatch[aria-pressed="true"]{outline:2px solid var(--ink,#e8e6e1);outline-offset:2px}
+.brown-note{margin:10px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;color:var(--muted,#63666e)}
+.stepper{display:flex;gap:8px;margin-top:auto;padding-top:12px}
+.credit,.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.credit a,.page-credit a{color:inherit}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs a{color:var(--ink,#e8e6e1)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.callout{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:14px 16px;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.callout strong{color:var(--accent,#c8b48a);font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:10px;display:block;margin:0 0 6px}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/stars/" aria-current="page">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Color lesson</p>
+  <h1>Stars<br>types &amp; lives</h1>
+  <p class="lede">A color-first literacy desk: the Harvard sequence <strong>O B A F G K M</strong>, why hotter stars look bluer (Wien’s law), what “dwarf / giant / supergiant” means, and two life-path cartoons — Sun-like (planetary nebula → white dwarf) and high-mass (supernova → neutron star or black hole). Pair with the <a href="/science/astronomy/nearest-stars/">nearest-stars</a> yardstick, <a href="/science/astronomy/exoplanets/">exoplanets</a>, the <a href="/science/astronomy/local-sky/">local sky</a> chart, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>.</p>
+  <p class="note-schematic">Educational schematic. Temperatures, masses, and lifetimes are rounded NASA / textbook order-of-magnitude ranges — not a research catalog, not an HR-diagram fit, and not NASA imagery. Sizes on the canvases are exaggerated so the lesson stays visible on a phone.</p>
+
+  <p class="band" id="types">Interactive · Spectral types</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint">Tap a letter · color follows temperature (hot left)</p>
+      <canvas id="spec-canvas" width="720" height="420" role="img" aria-label="Preview of the selected spectral type"></canvas>
+      <div class="spec-strip" id="spec-strip" role="group" aria-label="Spectral classes"></div>
+      <p class="brown-note">L / T / Y are brown-dwarf classes — cooler than M, not sustained hydrogen-fusion stars. NASA puts typical brown dwarfs at about 13–80 Jupiter masses.</p>
+    </div>
+    <aside class="detail" id="spec-detail" aria-live="polite">
+      <p class="tier" id="s-tier">Class G · yellow</p>
+      <h2 id="s-name">G</h2>
+      <p class="range" id="s-range">~5,200–6,000 K · Sun is G2V</p>
+      <ul class="stats" id="s-stats"></ul>
+      <p id="s-body"></p>
+      <p class="tier" style="margin-top:8px">Luminosity class</p>
+      <div class="lum-strip" id="lum-strip" role="group" aria-label="Luminosity class"></div>
+    </aside>
+  </div>
+
+  <div class="callout">
+    <strong>Yellow Sun, white Sun</strong>
+    Class G is traditionally called yellow, and textbooks still say “yellow dwarf.” From space the Sun looks white: its photosphere is about 5,500 °C (~5,800 K) and the spectrum is broad. Earth’s air scatters blue, so the disk often looks yellow-white from the ground — especially near the horizon. The nickname is literacy, not a paint chip.
+  </div>
+
+  <p class="band" id="phases">Interactive · Life phases</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="phase-hint">Sun-like path · color and size change with the stage</p>
+      <canvas id="phase-canvas" width="720" height="420" role="img" aria-label="Preview of the selected stellar life phase"></canvas>
+      <div class="path-toggle" id="path-toggle" role="group" aria-label="Evolutionary path"></div>
+      <div class="phase-strip" id="phase-strip" role="group" aria-label="Life phases"></div>
+    </div>
+    <aside class="detail" id="phase-detail" aria-live="polite">
+      <p class="tier" id="p-tier">Sun-like path · 02</p>
+      <h2 id="p-name">Main sequence</h2>
+      <p class="range" id="p-range">Hydrogen fusion in the core</p>
+      <p id="p-body"></p>
+      <div class="stepper">
+        <button type="button" id="phase-prev">Prev</button>
+        <button type="button" id="phase-next">Next</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="band" id="hr">Interactive · HR cartoon</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint">Hot left · bright up · tap a landmark · not catalog-precise</p>
+      <canvas id="hr-canvas" width="720" height="440" role="img" aria-label="Schematic Hertzsprung-Russell diagram"></canvas>
+    </div>
+    <aside class="detail" id="hr-detail" aria-live="polite">
+      <p class="tier" id="h-tier">Landmark</p>
+      <h2 id="h-name">Sun</h2>
+      <p class="range" id="h-range">G2V · ~5,800 K · L = 1</p>
+      <p id="h-body"></p>
+      <div class="hr-presets" id="hr-presets" role="group" aria-label="HR landmarks"></div>
+    </aside>
+  </div>
+
+  <p class="band">Literacy · words that keep getting mixed</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>OBAFGKM</dt><dd>Harvard spectral sequence, hottest to coolest. Mnemonic leftovers exist; the physics is Wien’s law: hotter photospheres peak bluer (often in the ultraviolet), cooler ones redder.</dd></div>
+    <div class="gloss"><dt>Main sequence</dt><dd>NASA: stars fusing hydrogen to helium in the core — about 90% of the stellar population, from roughly a tenth to ~200 solar masses, living millions to billions of years (the smallest, much longer).</dd></div>
+    <div class="gloss"><dt>Dwarf / giant / supergiant</dt><dd>Morgan–Keenan luminosity class, not a personality test. V = main-sequence “dwarf” (the Sun is G2V). III = giant. I = supergiant. Same spectral letter can be a compact dwarf or a swollen giant.</dd></div>
+    <div class="gloss"><dt>Red giant / AGB</dt><dd>After core hydrogen is gone (stars under about eight solar masses), the envelope puffs out. NASA notes red giants often look more orange than red. The asymptotic giant branch is a later, pulsing, mass-losing stage before the planetary nebula.</dd></div>
+    <div class="gloss"><dt>Planetary nebula</dt><dd>A misleading 18th-century name: not planets. The star’s outer layers drift away as a glowing shell; the leftover core is a white dwarf.</dd></div>
+    <div class="gloss"><dt>White dwarf</dt><dd>Earth-size remnant, hundreds of thousands of times more massive than Earth. NASA: a teaspoon would outweigh a pickup. No new fusion; it cools for billions of years. The Sun is headed here in about 10 billion years.</dd></div>
+    <div class="gloss"><dt>Supernova → remnant</dt><dd>Stars about 8–20 solar masses can end in a core-collapse supernova and leave a neutron star (more mass than the Sun packed into a city-scale ball). Still heavier stars can leave a stellar-mass black hole.</dd></div>
+    <div class="gloss"><dt>Brown dwarfs</dt><dd>Between giant planets and stars. NASA’s teaching range is about 13–80 Jupiter masses. They never settle into sustained core hydrogen fusion the way a main-sequence star does.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA / ESA / textbook</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/universe/stars/" rel="noopener" target="_blank">NASA Science — Star basics</a> — birth in molecular clouds, main-sequence fusion, mass vs lifetime, low-mass vs high-mass deaths.</li>
+      <li><a href="https://science.nasa.gov/universe/stars/types/" rel="noopener" target="_blank">NASA Science — Star types</a> — main sequence (~90%), red giants (&lt;8 M☉), white dwarfs, neutron stars (≈8–20 M☉), black holes (heavier), red dwarfs (~75% of the Milky Way; some ~⅓ M☉ up to ~14 trillion years), brown dwarfs (≈13–80 M_J).</li>
+      <li><a href="https://science.nasa.gov/sun/facts/" rel="noopener" target="_blank">NASA Science — Sun facts</a> — ~4.6 billion years old; photosphere about 10,000 °F / 5,500 °C; about 5 billion years of main-sequence fuel left.</li>
+      <li><a href="https://science.nasa.gov/mission/hubble/science/explore-the-night-sky/hubble-messier-catalog/messier-57-the-ring-nebula/" rel="noopener" target="_blank">NASA / Hubble — planetary nebulae</a> (e.g. Messier 57) — the Sun-like end-state shell, not a planet.</li>
+      <li>Harvard / Morgan–Keenan spectral types and luminosity classes, and Wien’s displacement law (λT ≈ constant), as taught in standard intro-astronomy textbooks. Temperature bins on this page follow common NASA/textbook OBAFGKM ranges, rounded.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Figures are teaching toys. A real star’s type, mass, and remaining life need spectra and models. This page will not tell you whether Betelgeuse explodes next year. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima through Procyon — the OBAFGKM letters on real neighbors.</p></a>
+    <a href="/science/astronomy/exoplanets/"><p class="n">Other suns</p><h3>Exoplanets</h3><p>Worlds around other spectral types — methods and a teaching set.</p></a>
+    <a href="/science/astronomy/"><p class="n">Solar system</p><h3>Solar map</h3><p>Our G2V star and the planets it still holds.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>Phase dial — the night you actually go outside.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>City or ZIP chart — Vega, Sirius, and the rest from your horizon.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Milky Way</p><h3>Galaxy start</h3><p>Where these lives play out — Sol on the Orion Arm.</p></a>
+    <a href="/science/light-pollution/"><p class="n">Night</p><h3>Light pollution</h3><p>Why spectral color is hard to see from Campbell streets.</p></a>
+    <a href="/science/atmosphere/"><p class="n">Earth systems</p><h3>Atmosphere</h3><p>The air that yellows the white Sun and scatters skyglow.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY="sp-theme";
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c=root.getAttribute("data-theme")||"neon";
+    buttons.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click",function(){
+      root.setAttribute("data-theme",b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+      drawAll();
+    });
+  });
+  paintTheme();
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+  function hexToRgb(hex){
+    var h=hex.replace("#","");
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};
+  }
+  function rgba(hex,a){
+    var c=hexToRgb(hex);
+    return "rgba("+c.r+","+c.g+","+c.b+","+a+")";
+  }
+
+  /* Harvard classes — NASA/textbook rounded ranges. Colors are teaching swatches, not lab photometry. */
+  var SPECS=[
+    {id:"O",name:"O",hue:"Blue",temp:"≥ 30,000 K",mass:"≳ 16 M☉",life:"A few million years",color:"#9bb8ff",glow:"#6f8cff",T:35000,r:1.55,body:"Rare, luminous, and short-lived. An O star can outshine tens of thousands of Suns and burn through its hydrogen in a few million years — a blink next to the Sun’s ~10-billion-year main sequence. Many end as supernovae.",ink:"#0b1020"},
+    {id:"B",name:"B",hue:"Blue-white",temp:"10,000–30,000 K",mass:"~2–16 M☉",life:"Tens to hundreds of millions of years",color:"#c5d4ff",glow:"#9eb6ff",T:18000,r:1.35,body:"Still hot and uncommon. Rigel is a famous B supergiant; many B stars in Orion light the winter sky. Lifetimes are short enough that they never wander far from the nurseries that made them.",ink:"#101424"},
+    {id:"A",name:"A",hue:"White",temp:"7,500–10,000 K",mass:"~1.4–2.1 M☉",life:"~1 billion years",color:"#f4f7ff",glow:"#dce6ff",T:9000,r:1.15,body:"Sirius A and Vega are A-type main-sequence stars — the “white” that textbooks mean. Hydrogen lines are strong in their spectra. A-stars live on the order of a billion years, not ten.",ink:"#161820"},
+    {id:"F",name:"F",hue:"Yellow-white",temp:"6,000–7,500 K",mass:"~1.04–1.4 M☉",life:"A few billion years",color:"#fff6d2",glow:"#ffe9a0",T:6800,r:1.05,body:"A step hotter than the Sun. Procyon A is a nearby F star. Habitable-zone cartoons sit a bit farther out than Earth’s 1 AU because the star is more luminous.",ink:"#1a1810"},
+    {id:"G",name:"G",hue:"Yellow (white in space)",temp:"~5,200–6,000 K",mass:"~0.8–1.04 M☉",life:"~10 billion years",color:"#ffe08a",glow:"#ffc44d",T:5800,r:1.0,body:"The Sun is G2V — a main-sequence “yellow dwarf.” Photosphere ~5,500 °C. About 4.6 billion years old, with roughly 5 billion years of core-hydrogen left (NASA Sun facts). From space it looks white; the yellow is atmosphere plus habit.",ink:"#1c1608"},
+    {id:"K",name:"K",hue:"Orange",temp:"~3,700–5,200 K",mass:"~0.45–0.8 M☉",life:"Tens of billions of years",color:"#ffb15a",glow:"#ff8a2b",T:4500,r:0.85,body:"Orange dwarfs outlive G stars and are common planet-search targets (cooler, long-lived, not as flare-stormy as the smallest M dwarfs). Alpha Centauri B is a nearby K star.",ink:"#1a1008"},
+    {id:"M",name:"M",hue:"Orange-red",temp:"~2,400–3,700 K",mass:"~0.08–0.45 M☉",life:"100+ billion to ~trillions of years",color:"#ff6a3a",glow:"#ff3d18",T:3000,r:0.62,body:"Red dwarfs. NASA: they make up about 75% of the Milky Way’s stars and can churn hydrogen for trillions of years — some ~⅓ M☉ up to ~14 trillion years. Too faint for the unaided eye; Proxima is the nearest. Often look more orange than crayon-red.",ink:"#140806"},
+    {id:"L",name:"L",hue:"Deep red / IR",temp:"~1,300–2,400 K",mass:"Star / brown-dwarf border",life:"Cooling objects, not MS stars",color:"#c45a32",glow:"#a33a18",T:1800,r:0.5,body:"L dwarfs straddle the coolest true stars and the warmest brown dwarfs. They glow mainly in the infrared. Included so the sequence does not pretend M is the end of the temperature ladder.",ink:"#f0e6dc"},
+    {id:"T",name:"T",hue:"Methane brown dwarf",temp:"~600–1,300 K",mass:"~13–80 M_Jup (typical BD)",life:"Not a hydrogen-fusion star",color:"#8a4a28",glow:"#6a3018",T:900,r:0.42,body:"T dwarfs show methane in the infrared — more like a failed star / giant-planet overlap than a sun. NASA: brown dwarfs are not technically stars.",ink:"#f0e6dc"},
+    {id:"Y",name:"Y",hue:"Cold brown dwarf",temp:"≲ 600 K",mass:"Planetary-to-BD range",life:"Not a hydrogen-fusion star",color:"#5a3a28",glow:"#3a2418",T:400,r:0.36,body:"The coolest spectral class in common use. Some Y dwarfs are not much warmer than a kitchen oven. They exist so the “star” story can admit a fuzzy lower edge.",ink:"#f0e6dc"}
+  ];
+
+  var LUMS=[
+    {id:"V",name:"V · dwarf",size:1,note:"Main sequence. The Sun is G2V — “dwarf” here means not a giant, not that it is small."},
+    {id:"III",name:"III · giant",size:2.15,note:"Evolved, puffed envelope. Arcturus is a K giant. Same letter, much larger and usually cooler-looking."},
+    {id:"I",name:"I · supergiant",size:3.15,note:"Rare, enormous, short-lived. Betelgeuse is an M supergiant. Luminosity class, not spectral class."}
+  ];
+
+  var PATHS={
+    sunlike:[
+      {id:"proto",name:"Protostar",tier:"Birth",range:"Collapse · not yet main sequence",color:"#d4a06a",glow:"#c47a40",r:0.72,kind:"star",body:"A cold molecular-cloud clump collapses. Friction heats the center into a protostar — a baby star, still gathering mass. NASA: fusion has not yet balanced gravity. Dust often hides the object in the infrared."},
+      {id:"ms",name:"Main sequence",tier:"Life",range:"H → He in the core · ~10 billion years for a Sun",color:"#ffe08a",glow:"#ffc44d",r:1.0,kind:"star",body:"NASA: a star fusing hydrogen to helium in its core. About 90% of stars are here. The Sun is midway — ~4.6 Gyr old, ~5 Gyr of core hydrogen left. Color is G-type yellow-white; from space, white."},
+      {id:"giant",name:"Red giant",tier:"Late",range:"Envelope swells · looks more orange than red",color:"#ff7a3a",glow:"#ff4d12",r:2.35,kind:"star",body:"When core hydrogen runs out (stars under about eight solar masses), the core shrinks and heats; the envelope expands. NASA: the Sun becomes a red giant in about 5 billion years. Surface cools; Wien’s law slides the color toward orange-red."},
+      {id:"agb",name:"AGB",tier:"Late",range:"Pulses · sheds mass",color:"#ff5a28",glow:"#ff2a00",r:2.7,kind:"star",body:"Asymptotic giant branch: helium-shell and hydrogen-shell burning, instability, and a wind that throws the atmosphere into space. This is the last bright, cool chapter for a Sun-like star before the nebula."},
+      {id:"pn",name:"Planetary nebula",tier:"Death",range:"Glowing shell · leftover hot core",color:"#7ec8ff",glow:"#3aa0ff",r:1.15,kind:"nebula",body:"A historical misnomer — not a planet. The ejected gas fluoresces; the exposed core is already a hot white dwarf. The Ring Nebula (M57) is the textbook picture. The shell dissipates; the core remains."},
+      {id:"wd",name:"White dwarf",tier:"Remnant",range:"Earth-size · cools for billions of years",color:"#e8f0ff",glow:"#b8d0ff",r:0.28,kind:"star",body:"NASA: after the giant sheds its atmosphere, only the core remains — Earth-size, hundreds of thousands of times more massive. No new heat from fusion. The Sun becomes a white dwarf about 10 billion years from now."}
+    ],
+    massive:[
+      {id:"mproto",name:"Protostar",tier:"Birth",range:"Faster collapse · more mass",color:"#f0c8a0",glow:"#e0a060",r:0.95,kind:"star",body:"Same nursery physics, higher stakes. A clump that will make an O or B star gathers mass quickly. The main sequence, when it starts, will be short and blue."},
+      {id:"mms",name:"Hot main sequence",tier:"Life",range:"Few million years · O/B color",color:"#9bb8ff",glow:"#6f8cff",r:1.55,kind:"star",body:"Massive stars must burn hotter to hold themselves up. NASA: some live only a few million years. The color is textbook blue — Wien’s peak sits in the ultraviolet; the eye still reads “blue-white.”"},
+      {id:"sg",name:"Supergiant",tier:"Late",range:"Blue or red · huge radius",color:"#ff6a3a",glow:"#ff3a10",r:2.9,kind:"star",body:"After core hydrogen, a high-mass star balloons. Betelgeuse is a red supergiant (cool, enormous). Other supergiants stay blue. Either way the clock is short. Fusion climbs the periodic table toward iron."},
+      {id:"sn",name:"Supernova",tier:"Death",range:"Core collapse · shock",color:"#fff4d0",glow:"#ffe080",r:2.2,kind:"supernova",body:"When the core reaches iron, fusion no longer pays. The core collapses and rebounds; a shock unbinds the star. NASA’s teaching split: about 8–20 solar masses can leave a neutron star; heavier stars can leave a black hole."},
+      {id:"ns",name:"Neutron star",tier:"Remnant",range:"City-scale · more mass than the Sun",color:"#d0e4ff",glow:"#8ab4ff",r:0.18,kind:"star",body:"NASA: more mass than the Sun packed into a sphere about as wide as Manhattan. Some spin as pulsars; magnetars carry extreme fields. Too faint for backyard eyes — radio and X-ray objects."},
+      {id:"bh",name:"Black hole",tier:"Remnant",range:"Stellar-mass · event horizon",color:"#1a1a22",glow:"#ff8a3a",r:0.22,kind:"hole",body:"If the leftover core is heavy enough, collapse does not stop at a neutron star. What you “see” in cartoons is usually a hot accretion glow, not the hole. This page is a sketch, not a Kerr metric."}
+    ]
+  };
+
+  var HR=[
+    {id:"sun",name:"Sun",spec:"G2V",temp:"~5,800 K",lum:"L = 1",T:5800,L:1,color:"#ffe08a",body:"Our calibration point. Mid-main-sequence G dwarf. Educational seat only — this cartoon is not a Hipparcos reduction."},
+    {id:"vega",name:"Vega",spec:"A0V",temp:"~9,600 K",lum:"~40 L☉",T:9600,L:40,color:"#f4f7ff",body:"Summer Triangle landmark from Campbell. A-type main sequence, hotter and more luminous than the Sun. Vega defined an older magnitude-zero scale."},
+    {id:"sirius",name:"Sirius",spec:"A1V + DA",temp:"~9,900 K (A)",lum:"~25 L☉ (A)",T:9900,L:25,color:"#e8eeff",body:"Brightest night-sky star. The A-star we see; companion B is a white dwarf — the Sun-like end-state sitting next door. Winter landmark on the local-sky desk."},
+    {id:"betel",name:"Betelgeuse",spec:"M1–2 Ia",temp:"~3,500 K",lum:"~10⁵ L☉ (varies)",T:3500,L:120000,color:"#ff6a3a",body:"Red supergiant in Orion. Cool photosphere, enormous radius, unstable brightness. A high-mass late stage — not a main-sequence M dwarf like Proxima."},
+    {id:"prox",name:"Proxima",spec:"M5.5Ve",temp:"~3,000 K",lum:"~0.0015 L☉",T:3040,L:0.0017,color:"#ff6a3a",body:"Nearest star, a flare-active red dwarf. Cool and tiny on the main sequence. Hosts Proxima b — continue on the exoplanets desk."}
+  ];
+
+  var specId="G";
+  var lumId="V";
+  var pathId="sunlike";
+  var phaseIdx=1;
+  var hrId="sun";
+
+  function specById(id){for(var i=0;i<SPECS.length;i++) if(SPECS[i].id===id) return SPECS[i]; return SPECS[4];}
+  function lumById(id){for(var i=0;i<LUMS.length;i++) if(LUMS[i].id===id) return LUMS[i]; return LUMS[0];}
+  function hrById(id){for(var i=0;i<HR.length;i++) if(HR[i].id===id) return HR[i]; return HR[0];}
+  function phases(){return PATHS[pathId];}
+
+  function fitCanvas(canvas, cssH){
+    var w=canvas.clientWidth||canvas.parentNode.clientWidth||320;
+    var h=cssH||Math.max(240, Math.min(420, w*0.58));
+    var dpr=Math.min(window.devicePixelRatio||1, 2);
+    canvas.style.height=h+"px";
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx,w:w,h:h};
+  }
+
+  function starfield(ctx,w,h){
+    var base=cssVar("--base-2","#14161c");
+    ctx.fillStyle=base;
+    ctx.fillRect(0,0,w,h);
+    var seed=91;
+    for(var i=0;i<90;i++){
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      var x=(seed%1000)/1000*w;
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      var y=(seed%1000)/1000*h;
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      ctx.fillStyle="rgba(255,255,255,"+(0.12+(seed%10)/40)+")";
+      ctx.beginPath(); ctx.arc(x,y,0.4+(seed%8)/10,0,Math.PI*2); ctx.fill();
+    }
+  }
+
+  function drawStar(ctx,x,y,r,color,glow,kind){
+    if(kind==="nebula"){
+      var ng=ctx.createRadialGradient(x,y,r*0.15,x,y,r*2.4);
+      ng.addColorStop(0,rgba("#f4f7ff",0.95));
+      ng.addColorStop(0.18,rgba("#7ec8ff",0.55));
+      ng.addColorStop(0.45,rgba("#3aa0ff",0.18));
+      ng.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=ng;
+      ctx.beginPath(); ctx.arc(x,y,r*2.4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r*0.22,0,Math.PI*2);
+      ctx.fillStyle="#f4f7ff"; ctx.fill();
+      return;
+    }
+    if(kind==="supernova"){
+      var sg=ctx.createRadialGradient(x,y,0,x,y,r*2.6);
+      sg.addColorStop(0,"#fffdf4");
+      sg.addColorStop(0.2,rgba("#ffe080",0.9));
+      sg.addColorStop(0.55,rgba("#ff8a3a",0.25));
+      sg.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=sg;
+      ctx.beginPath(); ctx.arc(x,y,r*2.6,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=rgba("#fff4d0",0.45);
+      ctx.lineWidth=2;
+      for(var k=0;k<8;k++){
+        var a=k*Math.PI/4;
+        ctx.beginPath();
+        ctx.moveTo(x+Math.cos(a)*r*0.4,y+Math.sin(a)*r*0.4);
+        ctx.lineTo(x+Math.cos(a)*r*2.1,y+Math.sin(a)*r*2.1);
+        ctx.stroke();
+      }
+      return;
+    }
+    if(kind==="hole"){
+      var hg=ctx.createRadialGradient(x,y,r*0.4,x,y,r*2.3);
+      hg.addColorStop(0,"#000");
+      hg.addColorStop(0.42,"#000");
+      hg.addColorStop(0.55,rgba(glow,0.85));
+      hg.addColorStop(0.72,rgba(glow,0.15));
+      hg.addColorStop(1,"rgba(0,0,0,0)");
+      ctx.fillStyle=hg;
+      ctx.beginPath(); ctx.arc(x,y,r*2.3,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x,y,r*0.55,0,Math.PI*2);
+      ctx.fillStyle="#050508"; ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(x,y,r*1.7,r*0.42, -0.35, 0, Math.PI*2);
+      ctx.strokeStyle=rgba(glow,0.7);
+      ctx.lineWidth=3;
+      ctx.stroke();
+      return;
+    }
+    var g=ctx.createRadialGradient(x,y,0,x,y,r*2.3);
+    g.addColorStop(0,color);
+    g.addColorStop(0.42,glow);
+    g.addColorStop(1,"rgba(0,0,0,0)");
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(x,y,r*2.3,0,Math.PI*2); ctx.fill();
+    var core=ctx.createRadialGradient(x-r*0.25,y-r*0.25,r*0.05,x,y,r);
+    core.addColorStop(0,"#fffef6");
+    core.addColorStop(0.35,color);
+    core.addColorStop(1,glow);
+    ctx.fillStyle=core;
+    ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  }
+
+  function drawSpec(){
+    var canvas=document.getElementById("spec-canvas");
+    var fit=fitCanvas(canvas, 300);
+    var ctx=fit.ctx,w=fit.w,h=fit.h;
+    starfield(ctx,w,h);
+    var s=specById(specId);
+    var lum=lumById(lumId);
+    var R=Math.min(w,h)*0.16*s.r*lum.size;
+    R=Math.min(R, Math.min(w,h)*0.38);
+    drawStar(ctx,w*0.5,h*0.52,R,s.color,s.glow,"star");
+    ctx.fillStyle=cssVar("--muted","#63666e");
+    ctx.font='500 11px "IBM Plex Mono", monospace';
+    ctx.textAlign="center";
+    ctx.fillText(s.id+" · "+lum.id+" · teaching swatch", w/2, 22);
+  }
+
+  function drawPhase(){
+    var canvas=document.getElementById("phase-canvas");
+    var fit=fitCanvas(canvas, 300);
+    var ctx=fit.ctx,w=fit.w,h=fit.h;
+    starfield(ctx,w,h);
+    var p=phases()[phaseIdx];
+    var R=Math.min(w,h)*0.14*p.r;
+    R=Math.min(R, Math.min(w,h)*0.36);
+    drawStar(ctx,w*0.5,h*0.52,R,p.color,p.glow,p.kind);
+    ctx.fillStyle=cssVar("--muted","#63666e");
+    ctx.font='500 11px "IBM Plex Mono", monospace';
+    ctx.textAlign="center";
+    ctx.fillText((pathId==="sunlike"?"Sun-like":"High-mass")+" · "+p.name, w/2, 22);
+  }
+
+  function hrXY(star,w,h,pad){
+    var tMin=2500, tMax=11000;
+    var x=pad.l + (Math.log(tMax)-Math.log(star.T))/(Math.log(tMax)-Math.log(tMin))*(w-pad.l-pad.r);
+    var lMin=Math.log10(0.0004), lMax=Math.log10(400000);
+    var y=pad.t + (lMax-Math.log10(star.L))/(lMax-lMin)*(h-pad.t-pad.b);
+    return {x:x,y:y};
+  }
+
+  var hrHits=[];
+  function drawHR(){
+    var canvas=document.getElementById("hr-canvas");
+    var fit=fitCanvas(canvas, 340);
+    var ctx=fit.ctx,w=fit.w,h=fit.h;
+    starfield(ctx,w,h);
+    var pad={t:36,r:18,b:36,l:48};
+    var line=cssVar("--line","#2c303a");
+    var muted=cssVar("--muted","#63666e");
+    var ink=cssVar("--ink","#e8e6e1");
+    var accent=cssVar("--accent","#c8b48a");
+
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath();
+    ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,h-pad.b); ctx.lineTo(w-pad.r,h-pad.b);
+    ctx.stroke();
+    ctx.fillStyle=muted;
+    ctx.font='500 10px "IBM Plex Mono", monospace';
+    ctx.textAlign="center";
+    ctx.fillText("← hotter   temperature   cooler →", w/2, h-12);
+    ctx.save();
+    ctx.translate(14,h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText("brighter ↑   luminosity", 0, 0);
+    ctx.restore();
+
+    /* main-sequence band (schematic) */
+    ctx.beginPath();
+    var msA=hrXY({T:30000,L:100000},w,h,pad);
+    var msB=hrXY({T:2800,L:0.001},w,h,pad);
+    ctx.strokeStyle=rgba(accent,0.28);
+    ctx.lineWidth=14;
+    ctx.lineCap="round";
+    ctx.moveTo(msA.x,msA.y); ctx.lineTo(msB.x,msB.y); ctx.stroke();
+    ctx.lineWidth=1;
+    ctx.fillStyle=muted;
+    ctx.textAlign="left";
+    ctx.fillText("main sequence", msB.x-90, msB.y-16);
+
+    hrHits=[];
+    HR.forEach(function(star){
+      var p=hrXY(star,w,h,pad);
+      hrHits.push({s:star,x:p.x,y:p.y,r:12});
+      var sel=star.id===hrId;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y, sel?7:5, 0, Math.PI*2);
+      ctx.fillStyle=star.color;
+      ctx.fill();
+      if(sel){ ctx.strokeStyle=ink; ctx.lineWidth=2; ctx.stroke(); }
+      ctx.fillStyle=ink;
+      ctx.font='500 10px "IBM Plex Mono", monospace';
+      ctx.textAlign="left";
+      ctx.fillText(star.name, p.x+9, p.y-6);
+    });
+  }
+
+  function renderSpecUI(){
+    var strip=document.getElementById("spec-strip");
+    strip.innerHTML="";
+    SPECS.forEach(function(s){
+      var b=document.createElement("button");
+      b.type="button";
+      b.className="spec-swatch";
+      b.textContent=s.id;
+      b.style.background=s.color;
+      b.style.color=s.ink||"#111";
+      b.setAttribute("aria-pressed",String(s.id===specId));
+      b.addEventListener("click",function(){ specId=s.id; paintSpec(); });
+      strip.appendChild(b);
+    });
+    var lum=document.getElementById("lum-strip");
+    lum.innerHTML="";
+    LUMS.forEach(function(L){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=L.name;
+      b.setAttribute("aria-pressed",String(L.id===lumId));
+      b.addEventListener("click",function(){ lumId=L.id; paintSpec(); });
+      lum.appendChild(b);
+    });
+  }
+
+  function paintSpec(){
+    var s=specById(specId);
+    var L=lumById(lumId);
+    document.getElementById("s-tier").textContent="Class "+s.id+" · "+s.hue;
+    document.getElementById("s-name").textContent=s.name;
+    document.getElementById("s-range").textContent=s.temp+" · "+s.hue;
+    document.getElementById("s-stats").innerHTML=
+      "<li><span class=\"k\">Typical mass</span><span class=\"v\">"+s.mass+"</span></li>"+
+      "<li><span class=\"k\">Main-seq. life</span><span class=\"v\">"+s.life+"</span></li>"+
+      "<li><span class=\"k\">MK class now</span><span class=\"v\">"+L.name+"</span></li>";
+    document.getElementById("s-body").textContent=s.body+" "+L.note;
+    renderSpecUI();
+    drawSpec();
+  }
+
+  function renderPhaseUI(){
+    var tog=document.getElementById("path-toggle");
+    tog.innerHTML="";
+    [{id:"sunlike",lab:"Sun-like path"},{id:"massive",lab:"High-mass path"}].forEach(function(p){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=p.lab;
+      b.setAttribute("aria-pressed",String(p.id===pathId));
+      b.addEventListener("click",function(){
+        pathId=p.id;
+        phaseIdx=1;
+        paintPhase();
+      });
+      tog.appendChild(b);
+    });
+    var strip=document.getElementById("phase-strip");
+    strip.innerHTML="";
+    phases().forEach(function(p,i){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=p.name;
+      b.style.borderColor=p.color;
+      b.setAttribute("aria-pressed",String(i===phaseIdx));
+      b.addEventListener("click",function(){ phaseIdx=i; paintPhase(); });
+      strip.appendChild(b);
+    });
+  }
+
+  function paintPhase(){
+    var list=phases();
+    if(phaseIdx<0) phaseIdx=0;
+    if(phaseIdx>list.length-1) phaseIdx=list.length-1;
+    var p=list[phaseIdx];
+    document.getElementById("p-tier").textContent=(pathId==="sunlike"?"Sun-like":"High-mass")+" · 0"+(phaseIdx+1);
+    document.getElementById("p-name").textContent=p.name;
+    document.getElementById("p-range").textContent=p.range;
+    document.getElementById("p-body").textContent=p.body;
+    document.getElementById("phase-hint").textContent=(pathId==="sunlike"?"Sun-like":"High-mass")+" · color and size change with the stage";
+    renderPhaseUI();
+    drawPhase();
+  }
+
+  function paintHR(){
+    var s=hrById(hrId);
+    document.getElementById("h-tier").textContent=s.spec;
+    document.getElementById("h-name").textContent=s.name;
+    document.getElementById("h-range").textContent=s.spec+" · "+s.temp+" · "+s.lum;
+    document.getElementById("h-body").textContent=s.body;
+    var box=document.getElementById("hr-presets");
+    box.innerHTML="";
+    HR.forEach(function(h){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=h.name;
+      b.setAttribute("aria-pressed",String(h.id===hrId));
+      b.addEventListener("click",function(){ hrId=h.id; paintHR(); });
+      box.appendChild(b);
+    });
+    drawHR();
+  }
+
+  document.getElementById("phase-prev").addEventListener("click",function(){
+    phaseIdx=Math.max(0,phaseIdx-1); paintPhase();
+  });
+  document.getElementById("phase-next").addEventListener("click",function(){
+    phaseIdx=Math.min(phases().length-1,phaseIdx+1); paintPhase();
+  });
+
+  document.getElementById("hr-canvas").addEventListener("click",function(e){
+    var rect=this.getBoundingClientRect();
+    var x=e.clientX-rect.left, y=e.clientY-rect.top;
+    for(var i=hrHits.length-1;i>=0;i--){
+      var h=hrHits[i];
+      var dx=x-h.x, dy=y-h.y;
+      if(dx*dx+dy*dy<=h.r*h.r){ hrId=h.s.id; paintHR(); return; }
+    }
+  });
+
+  function drawAll(){ drawSpec(); drawPhase(); drawHR(); }
+  window.addEventListener("resize",function(){ drawAll(); });
+
+  paintSpec();
+  paintPhase();
+  paintHR();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
