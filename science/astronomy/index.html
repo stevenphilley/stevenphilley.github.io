@@ -40,14 +40,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .map-stage canvas{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
 .controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);position:absolute;left:0;right:0;bottom:0;z-index:2}
 .controls button,.epoch-bar button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 12px;cursor:pointer}
-.controls button:hover,.controls button[aria-pressed="true"],.epoch-bar button:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
-.controls button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.controls button:hover,.controls button[aria-pressed="true"],.epoch-bar button:hover,.epoch-bar button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.controls button[aria-pressed="true"],.epoch-bar button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
 .epoch-bar{border:1px solid var(--line,#2c303a);border-top:0;background:rgba(0,0,0,.22);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
 .ctrl-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .epoch-bar label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
 .epoch-bar input[type="date"]{appearance:none;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;padding:6px 8px;color-scheme:dark;min-width:9.4rem}
 .epoch-bar input[type="range"]{flex:1 1 110px;min-width:88px;accent-color:var(--accent,#c8b48a)}
-.time-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink,#e8e6e1);min-width:4.5ch}
+.time-val,.speed-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink,#e8e6e1);white-space:nowrap}
+.time-val{min-width:4.5ch}
+.speed-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.ctrl-speed input[type="range"]{flex:1 1 90px;max-width:160px}
+.speed-group .speed-btn{padding:6px 9px;letter-spacing:.08em;min-width:2.8rem}
 .epoch-val{margin:0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft,#9b9a96)}
 .hint{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
 .panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;min-height:420px}
@@ -99,6 +103,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   .controls,.epoch-bar{gap:6px;padding:8px 10px}
   .controls button,.epoch-bar button{padding:6px 9px;font-size:9px}
   .epoch-bar input[type="date"]{min-width:8.6rem;font-size:10px}
+  .speed-group{gap:5px}
+  .speed-val{font-size:10px}
 }
 </style>
 </head>
@@ -145,7 +151,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 
   <p class="kicker">Vol. Science · Astronomy · Interactive map</p>
   <h1>Solar system<br>map</h1>
-  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
+  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. <strong>Play</strong> walks the date forward; set the speed (0.5×–10×) to go slower or faster. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
   <p class="note-schematic">Educational schematic with compressed orbital scale and exaggerated planet sizes so everything fits and stays visible. Planet angles are approximate mean heliocentric longitudes for the chosen date and time (circular orbits, NASA/JPL-style mean elements) — <strong>not a precision ephemeris</strong>. Distances and periods are mean values from public NASA fact sheets.</p>
 
   <div class="map-shell">
@@ -160,7 +166,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
         <button type="button" id="btn-reset">Reset view</button>
       </div>
     </div>
-    <div class="epoch-bar" role="group" aria-label="Date and local time">
+    <div class="epoch-bar" role="group" aria-label="Date, local time, and play speed">
       <div class="ctrl-row ctrl-epoch">
         <label for="map-date">Day</label>
         <input type="date" id="map-date" min="1800-01-01" max="2100-12-31" aria-label="Calendar date (local)">
@@ -168,6 +174,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
         <input type="range" id="map-time" min="0" max="23.75" step="0.25" value="12" aria-valuetext="12:00">
         <span class="time-val" id="map-time-lab">12:00</span>
         <button type="button" id="btn-now" aria-label="Reset to today, now (local time)">Now</button>
+      </div>
+      <div class="ctrl-row ctrl-speed">
+        <label id="speed-lab-txt" for="map-speed">Speed</label>
+        <input type="range" id="map-speed" min="0" max="4" step="1" value="1" aria-labelledby="speed-lab-txt" aria-valuetext="1×, 36 days per second">
+        <span class="speed-group" id="speed-group" role="group" aria-label="Walkthrough speed presets">
+          <button type="button" class="speed-btn" data-speed="0.5" aria-pressed="false" title="Half speed — 18 days per second">0.5×</button>
+          <button type="button" class="speed-btn" data-speed="1" aria-pressed="true" title="Default speed — 36 days per second">1×</button>
+          <button type="button" class="speed-btn" data-speed="2" aria-pressed="false" title="Double speed — 72 days per second">2×</button>
+          <button type="button" class="speed-btn" data-speed="5" aria-pressed="false" title="5× speed — 180 days per second">5×</button>
+          <button type="button" class="speed-btn" data-speed="10" aria-pressed="false" title="10× speed — 360 days per second">10×</button>
+        </span>
+        <span class="speed-val" id="speed-val" aria-live="polite">1× · 36 days/s</span>
       </div>
       <p class="epoch-val" id="epoch-lab">Today · now (local)</p>
     </div>
@@ -319,13 +337,19 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   var timeLab=document.getElementById('map-time-lab');
   var epochLab=document.getElementById('epoch-lab');
   var playBtn=document.getElementById('btn-play');
+  var speedEl=document.getElementById('map-speed');
+  var speedVal=document.getElementById('speed-val');
+  var speedBtns=[].slice.call(document.querySelectorAll('.speed-btn'));
   var playing=false, showLabels=true, showPluto=true;
   var selected=null;
   var epoch=new Date();
   var epochIsCustom=false;
   var lastPlayWall=0;
   var lastShareSync=0;
-  var PLAY_DAYS_PER_SEC=36;
+  var SPEED_KEY='sp-astro-play-speed';
+  var SPEED_PRESETS=[0.5,1,2,5,10];
+  var BASE_DAYS_PER_SEC=36;
+  var playSpeed=1;
   var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var MONTHS_LONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
   var view={scale:1, ox:0, oy:0};
@@ -491,7 +515,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
       if(!lastPlayWall) lastPlayWall=now;
       var dt=Math.max(0, Math.min(0.08, (now-lastPlayWall)/1000));
       lastPlayWall=now;
-      epoch=new Date(epoch.getTime()+dt*PLAY_DAYS_PER_SEC*86400000);
+      epoch=new Date(epoch.getTime()+dt*playDaysPerSec()*86400000);
       epochIsCustom=true;
       syncInputsFromEpoch(true);
       if(now-lastShareSync>400){ lastShareSync=now; syncShareQuery(); }
@@ -533,6 +557,37 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     canvas.setAttribute('aria-label','Interactive solar system map for '+fmtEpochLong(epoch)+'. Approximate heliocentric positions, not a precision ephemeris.');
     var el=document.getElementById('helio-long');
     if(el && selected) el.textContent=meanLongDeg(selected, julianDate(epoch)).toFixed(1)+'°';
+  }
+  function playDaysPerSec(){ return BASE_DAYS_PER_SEC*playSpeed; }
+  function fmtSpeedLabel(mult){
+    var dps=BASE_DAYS_PER_SEC*mult;
+    return mult+'× · '+dps+' days/s';
+  }
+  function loadPlaySpeed(){
+    try{
+      var n=parseFloat(localStorage.getItem(SPEED_KEY));
+      if(SPEED_PRESETS.indexOf(n)>=0) playSpeed=n;
+    }catch(e){}
+  }
+  function savePlaySpeed(){
+    try{ localStorage.setItem(SPEED_KEY, String(playSpeed)); }catch(e){}
+  }
+  function paintSpeed(){
+    var idx=SPEED_PRESETS.indexOf(playSpeed);
+    if(idx<0) idx=SPEED_PRESETS.indexOf(1);
+    if(speedEl && String(speedEl.value)!==String(idx)) speedEl.value=String(idx);
+    if(speedEl) speedEl.setAttribute('aria-valuetext', playSpeed+'×, '+playDaysPerSec()+' days per second');
+    speedBtns.forEach(function(b){
+      var s=parseFloat(b.getAttribute('data-speed'));
+      b.setAttribute('aria-pressed', String(s===playSpeed));
+    });
+    if(speedVal) speedVal.textContent=fmtSpeedLabel(playSpeed);
+  }
+  function setPlaySpeed(mult){
+    if(SPEED_PRESETS.indexOf(mult)<0) return;
+    playSpeed=mult;
+    savePlaySpeed();
+    paintSpeed();
   }
   function updatePlayBtn(){
     playBtn.textContent=playing?'Pause':'Play';
@@ -679,6 +734,19 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     updatePlayBtn();
     if(!playing) syncShareQuery();
   });
+  speedBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      setPlaySpeed(parseFloat(b.getAttribute('data-speed')));
+    });
+  });
+  if(speedEl){
+    speedEl.addEventListener('input',function(){
+      var idx=Math.round(+speedEl.value);
+      if(idx<0) idx=0;
+      if(idx>SPEED_PRESETS.length-1) idx=SPEED_PRESETS.length-1;
+      setPlaySpeed(SPEED_PRESETS[idx]);
+    });
+  }
   document.getElementById('btn-labels').addEventListener('click',function(){
     showLabels=!showLabels;
     this.setAttribute('aria-pressed',String(showLabels));
@@ -710,6 +778,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     epoch=new Date();
     epochIsCustom=false;
   }
+  loadPlaySpeed();
+  paintSpeed();
   updatePlayBtn();
   syncInputsFromEpoch(true);
   if(epochIsCustom) syncShareQuery();
