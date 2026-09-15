@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Local sky — Campbell / Bay Area — Steven Philley</title>
-<meta name="description" content="Approximate sky orientation for Campbell, CA (Bay Area): seasonal constellations and major landmarks with month and local-time controls. Client-side sidereal math — no paid APIs.">
+<title>Local sky — city or ZIP — Steven Philley</title>
+<meta name="description" content="Approximate sky orientation by city or ZIP. Defaults to Campbell, CA (95008). Seasonal constellations and major landmarks with month and local-time controls. Client-side sidereal math — no paid APIs.">
 <link rel="canonical" href="https://stevenphilley.com/science/astronomy/local-sky/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="Local sky — Campbell / Bay Area">
-<meta property="og:description" content="Tonight-ish sky orientation for lat ~37.29°N, lon ~121.95°W — seasonal constellations with month and time controls.">
+<meta property="og:title" content="Local sky — city or ZIP">
+<meta property="og:description" content="Tonight-ish sky orientation by city or ZIP. Defaults to Campbell / South Bay — seasonal constellations with month and time controls.">
 <meta property="og:url" content="https://stevenphilley.com/science/astronomy/local-sky/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Local sky — Campbell / Bay Area">
-<meta name="twitter:description" content="Approximate Bay Area sky chart with month and time controls.">
+<meta name="twitter:title" content="Local sky — city or ZIP">
+<meta name="twitter:description" content="Approximate sky chart by city or ZIP. Defaults to Campbell, CA.">
 <meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -81,6 +81,30 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
 .dial-link svg{width:14px;height:14px;display:block}
 .top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.zip-form{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:18px 0 0;max-width:480px}
+.zip-form label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.zip-form input[type="text"]{flex:1 1 140px;min-width:120px;appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;padding:10px 12px;outline:none}
+.zip-form input[type="text"]::placeholder{color:var(--muted,#63666e)}
+.zip-form input[type="text"]:focus{border-color:var(--accent,#c8b48a)}
+.zip-form button[type="submit"]{appearance:none;background:var(--ink,#e8e6e1);border:1px solid var(--ink,#e8e6e1);color:var(--base-2,#14161c);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;cursor:pointer}
+.zip-form button[type="submit"]:hover{opacity:.9}
+.zip-form button[type="submit"]:disabled{opacity:.5;cursor:wait}
+.zip-hint{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.5;color:var(--muted,#63666e);margin:8px 0 0;max-width:64ch}
+.zip-err{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--accent,#c8b48a);margin:8px 0 0}
+.place-picker{margin:10px 0 0;max-width:480px;border:1px solid var(--line,#2c303a)}
+.place-picker-lead{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0;padding:10px 12px;border-bottom:1px solid var(--line,#2c303a)}
+.place-picker-list{margin:0;padding:0;list-style:none}
+.place-picker button{display:block;width:100%;appearance:none;background:transparent;border:0;border-top:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.45;text-align:left;padding:10px 12px;cursor:pointer}
+.place-picker button:first-child{border-top:0}
+.place-picker button:hover,.place-picker button:focus{color:var(--accent,#c8b48a);outline:none;background:color-mix(in srgb,var(--accent,#c8b48a) 8%,transparent)}
+.place-picker .pick-name{display:block}
+.place-picker .pick-meta{display:block;margin-top:2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+@media (max-width:560px){
+  .zip-form{max-width:100%}
+  .zip-form button[type="submit"]{flex:1 1 auto}
+  .place-picker{max-width:100%}
+}
 @media (max-width:860px){
   .shell{grid-template-columns:1fr}
   .stage{min-height:400px;aspect-ratio:1/1}
@@ -126,15 +150,24 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     <a href="/science/astronomy/galaxy/">Galaxy</a>
   </nav>
 
-  <p class="kicker">Vol. Science · Astronomy · Bay Area sky</p>
+  <p class="kicker" id="place-kicker">Campbell · 95008 · South Bay</p>
   <h1>Local sky</h1>
-  <p class="lede">Orientation chart for <strong>Campbell, CA / South Bay</strong> (≈37.29°N, 121.95°W). Pick a month and local time; the wheel shows which major landmarks sit above the horizon. Educational — approximate sidereal rotation, not a precision planetarium.</p>
-  <p class="note-schematic">Method: local sidereal time ≈ Greenwich mean sidereal (Meeus-style approximation) + longitude. Horizon altitude from equitorial (RA/Dec) → alt/az. Bright-star catalog is a small public educational subset (Hipparcos/Yale Bright Star magnitudes, rounded). No paid APIs.</p>
+  <p class="lede">Approximate sky orientation by <strong>city or ZIP</strong>. Defaults to Campbell, CA (95008). Pick a month and local time; the wheel shows which major landmarks sit above the horizon from that viewpoint. Educational — approximate sidereal rotation, not a precision planetarium.</p>
+  <p class="note-schematic">Method: local sidereal time ≈ Greenwich mean sidereal (Meeus-style approximation) + longitude. Horizon altitude from equitorial (RA/Dec) → alt/az. Bright-star catalog is a small public educational subset (Hipparcos/Yale Bright Star magnitudes, rounded). Place lookup via Open-Meteo geocoding. No paid APIs.</p>
+
+  <form class="zip-form" id="zip-form" action="#" method="get">
+    <label for="zip-input">City or ZIP</label>
+    <input type="text" id="zip-input" name="q" autocomplete="off" maxlength="80" placeholder="City or ZIP" aria-describedby="zip-hint zip-msg" value="95008">
+    <button type="submit" id="zip-go">Go</button>
+  </form>
+  <p class="zip-hint" id="zip-hint">City name (Campbell, CA) or a 5-digit US ZIP (ZIP+4 ok — first 5 used). Ambiguous names get a short picker. Last place stays in this browser only.</p>
+  <p class="zip-err" id="zip-msg" role="alert" hidden></p>
+  <div class="place-picker" id="place-picker" hidden></div>
 
   <div class="shell">
     <div class="stage" id="stage">
       <p class="hint" id="hint">N at top · zenith at center · horizon rim</p>
-      <canvas id="sky" width="800" height="800" role="img" aria-label="Approximate all-sky chart for Campbell California"></canvas>
+      <canvas id="sky" width="800" height="800" role="img" aria-label="Approximate all-sky chart for Campbell, California"></canvas>
       <div class="controls">
         <div class="row">
           <label for="month">Month</label>
@@ -164,8 +197,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       <h2 id="info-name">Campbell · Bay Area</h2>
       <p class="type" id="info-type">Facing zenith · north up</p>
       <ul class="stats">
-        <li><span class="k">Latitude</span><span class="v">37.29° N</span></li>
-        <li><span class="k">Longitude</span><span class="v">121.95° W</span></li>
+        <li><span class="k">Latitude</span><span class="v" id="lat-val">37.29° N</span></li>
+        <li><span class="k">Longitude</span><span class="v" id="lon-val">121.95° W</span></li>
         <li><span class="k">LST</span><span class="v" id="lst-val">—</span></li>
         <li><span class="k">Season cue</span><span class="v" id="season-val">—</span></li>
       </ul>
@@ -243,10 +276,42 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paintTheme();});});
   paintTheme();
 
-  var LAT=37.29, LON=-121.95;
+  var LOC_KEY='sp-local-sky-loc';
+  var DEFAULT={
+    zip:'95008',
+    lat:37.29,
+    lon:-121.95,
+    label:'Campbell',
+    admin1:'California',
+    timezone:'America/Los_Angeles',
+    query:'95008'
+  };
+  function locFromSaved(saved){
+    if(!saved || !isFinite(saved.lat) || !isFinite(saved.lon)) return null;
+    var zip=saved.zip ? String(saved.zip).replace(/\D/g,'').slice(0,5) : '';
+    return {
+      zip:zip,
+      lat:+saved.lat,
+      lon:+saved.lon,
+      label:saved.label || DEFAULT.label,
+      admin1:saved.admin1 || '',
+      timezone:saved.timezone || DEFAULT.timezone,
+      query:saved.query || zip || saved.label || ''
+    };
+  }
+  var loc=Object.assign({}, DEFAULT);
+  try{
+    var rawSaved=localStorage.getItem(LOC_KEY);
+    if(rawSaved){
+      var savedLoc=locFromSaved(JSON.parse(rawSaved));
+      if(savedLoc) loc=savedLoc;
+    }
+  }catch(e){}
+  var LAT=loc.lat, LON=loc.lon;
+
   /* Bright landmarks: ra hours, dec deg, mag, name, note, optional constellation group */
   var STARS=[
-    {ra:2.530,dec:89.264,mag:2.0,name:'Polaris',note:'North Star — nearly fixed; Bay Area altitude ≈ latitude (~37°).'},
+    {ra:2.530,dec:89.264,mag:2.0,name:'Polaris',note:'North Star — nearly fixed. Altitude ≈ latitude everywhere.'},
     {ra:5.920,dec:7.407,mag:0.45,name:'Betelgeuse',note:'Orion’s shoulder — red giant; winter landmark in the south-east early evening.'},
     {ra:5.242,dec:-8.202,mag:0.13,name:'Rigel',note:'Orion’s foot — blue-white; winter south sky with the Belt.'},
     {ra:5.603,dec:-1.202,mag:1.7,name:'Alnilam',note:'Middle Belt star — Orion’s line points to Sirius and Aldebaran.'},
@@ -254,7 +319,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     {ra:4.598,dec:16.509,mag:0.87,name:'Aldebaran',note:'Taurus eye — follows the Pleiades; winter eastern sky.'},
     {ra:3.790,dec:24.105,mag:2.9,name:'Pleiades',note:'Seven Sisters cluster — small dipper-like mist in Taurus.'},
     {ra:7.655,dec:5.225,mag:0.34,name:'Procyon',note:'Little Dog — winter triangle with Sirius and Betelgeuse.'},
-    {ra:5.278,dec:45.998,mag:0.08,name:'Capella',note:'Auriga — bright northern winter star, high for Bay Area.'},
+    {ra:5.278,dec:45.998,mag:0.08,name:'Capella',note:'Auriga — bright northern winter star.'},
     {ra:14.261,dec:19.182,mag:-0.05,name:'Arcturus',note:'Boötes — spring orange beacon; follow Big Dipper’s handle “arc.”'},
     {ra:13.419,dec:-11.161,mag:0.98,name:'Spica',note:'Virgo — spring south; spike from Dipper handle.'},
     {ra:18.616,dec:38.783,mag:0.03,name:'Vega',note:'Lyra — summer triangle corner; nearly overhead midsummer evenings.'},
@@ -266,10 +331,10 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     {ra:12.900,dec:55.960,mag:1.9,name:'Alioth',note:'Dipper handle — useful for arc-to-Arcturus.'},
     {ra:0.140,dec:29.091,mag:2.1,name:'Alpheratz',note:'Andromeda / Great Square corner — autumn northeast.'},
     {ra:2.119,dec:42.330,mag:3.4,name:'M31',note:'Andromeda Galaxy direction (naked-eye fuzzy under dark skies).'},
-    {ra:22.711,dec:-46.885,mag:1.2,name:'Fomalhaut',note:'Autumn south — lonely bright star near the horizon from Campbell.'},
-    {ra:1.628,dec:-57.237,mag:0.5,name:'Achernar',note:'Usually below Bay Area horizon — included to show southern limit.'},
+    {ra:22.711,dec:-46.885,mag:1.2,name:'Fomalhaut',note:'Autumn south — lonely bright star.'},
+    {ra:1.628,dec:-57.237,mag:0.5,name:'Achernar',note:'Southern first-magnitude star — a horizon-limit lesson.'},
     {ra:16.490,dec:-26.432,mag:2.3,name:'Shaula',note:'Scorpius stinger — summer south with Antares.'},
-    {ra:12.443,dec:-63.099,mag:0.6,name:'Acrux',note:'Crux — never rises at Campbell latitude.'}
+    {ra:12.443,dec:-63.099,mag:0.6,name:'Acrux',note:'Crux — a southern-horizon lesson.'}
   ];
 
   var LINES=[
@@ -301,6 +366,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   var hourLab=document.getElementById('hour-lab');
   var lstVal=document.getElementById('lst-val');
   var seasonVal=document.getElementById('season-val');
+  var kicker=document.getElementById('place-kicker');
+  var zipForm=document.getElementById('zip-form');
+  var zipInput=document.getElementById('zip-input');
+  var zipGo=document.getElementById('zip-go');
+  var zipMsg=document.getElementById('zip-msg');
+  var picker=document.getElementById('place-picker');
+  var pickerHits=[];
+  var pendingShareQuery='';
   var hitStars=[];
 
   function pad2(n){return (n<10?'0':'')+n;}
@@ -328,17 +401,58 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     var jdn=d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;
     return jdn+(ut-12)/24;
   }
-  function lstHours(y,mo,day,localHours){
-    /* Pacific: treat control as local civil; approximate UT = local + 7 (PDT) or +8 (PST). Use +7 for Sep daylight. */
-    var offset=isPdtMonth(mo)?7:8;
+  function isPdtMonth(mo){return mo>=2&&mo<=9;} /* rough Mar–Oct */
+  function tzParts(date, tz){
+    var fmt=new Intl.DateTimeFormat('en-US',{
+      timeZone:tz,year:'numeric',month:'numeric',day:'numeric',
+      hour:'numeric',minute:'numeric',second:'numeric',hourCycle:'h23'
+    });
+    var map={};
+    fmt.formatToParts(date).forEach(function(p){ map[p.type]=p.value; });
+    var h=+map.hour;
+    if(h===24) h=0;
+    return {y:+map.year, mo:+map.month-1, d:+map.day, h:h, min:+map.minute, sec:+map.second};
+  }
+  function fallbackOffsetHours(mo, lon){
+    if(Math.abs((lon||0)+122)<10) return isPdtMonth(mo)?7:8;
+    return Math.round(-(lon||0)/15);
+  }
+  function localToUt(y,mo,day,localHours,tz){
+    var hh=Math.floor(localHours);
+    var mm=Math.round((localHours-hh)*60);
+    if(mm>=60){hh+=1;mm-=60;}
+    var target=Date.UTC(y,mo,day,hh,mm);
+    var guess=target;
+    if(tz && tz!=='auto'){
+      try{
+        for(var i=0;i<8;i++){
+          var p=tzParts(new Date(guess), tz);
+          var got=Date.UTC(p.y,p.mo,p.d,p.h,p.min);
+          var err=target-got;
+          if(Math.abs(err)<30000) break;
+          guess+=err;
+        }
+        var d=new Date(guess);
+        return {
+          y:d.getUTCFullYear(),
+          mo:d.getUTCMonth(),
+          day:d.getUTCDate(),
+          ut:d.getUTCHours()+d.getUTCMinutes()/60+d.getUTCSeconds()/3600
+        };
+      }catch(e){}
+    }
+    var offset=fallbackOffsetHours(mo, LON);
     var ut=localHours+offset;
     var dayAdj=day;
     if(ut>=24){ut-=24;dayAdj+=1;}
     if(ut<0){ut+=24;dayAdj-=1;}
-    var gmst=gmstHours(y,mo+1,dayAdj,ut);
+    return {y:y, mo:mo, day:dayAdj, ut:ut};
+  }
+  function lstHours(y,mo,day,localHours){
+    var conv=localToUt(y,mo,day,localHours, loc.timezone||DEFAULT.timezone);
+    var gmst=gmstHours(conv.y,conv.mo+1,conv.day,conv.ut);
     return norm24(gmst+LON/15);
   }
-  function isPdtMonth(mo){return mo>=2&&mo<=9;} /* rough Mar–Oct */
 
   function eqToAltAz(raH,decD,lstH,latD){
     var ha=deg2rad((lstH-raH)*15);
@@ -376,10 +490,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     var lst=lstHours(y,month,day,localH);
     lstVal.textContent=fmtHour(lst)+' h';
     seasonVal.textContent=(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][month]);
-    document.getElementById('info-type').textContent=fmtHour(localH)+' local · mid-month · LST '+fmtHour(lst)+' h';
-    var facts=document.getElementById('info-facts');
-    if(!facts.dataset.locked){
-      facts.innerHTML='<li>'+SEASON[month]+'</li><li>Big landmarks for Bay Area nights: summer triangle (Vega, Deneb, Altair), Orion in winter, Big Dipper / Polaris as the northern hinge.</li><li>Light pollution washes the Milky Way in town — darker hills help for faint structure.</li>';
+    if(!document.getElementById('info-facts').dataset.locked){
+      document.getElementById('info-type').textContent=fmtHour(localH)+' local · mid-month · LST '+fmtHour(lst)+' h';
+      showViewpointFacts(month);
     }
 
     var dpr=window.devicePixelRatio||1;
@@ -469,12 +582,414 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     });
   }
 
+  function shortState(admin1){
+    if(!admin1) return '';
+    var map={
+      'Alabama':'AL','Alaska':'AK','Arizona':'AZ','Arkansas':'AR','California':'CA','Colorado':'CO',
+      'Connecticut':'CT','Delaware':'DE','Florida':'FL','Georgia':'GA','Hawaii':'HI','Idaho':'ID',
+      'Illinois':'IL','Indiana':'IN','Iowa':'IA','Kansas':'KS','Kentucky':'KY','Louisiana':'LA',
+      'Maine':'ME','Maryland':'MD','Massachusetts':'MA','Michigan':'MI','Minnesota':'MN','Mississippi':'MS',
+      'Missouri':'MO','Montana':'MT','Nebraska':'NE','Nevada':'NV','New Hampshire':'NH','New Jersey':'NJ',
+      'New Mexico':'NM','New York':'NY','North Carolina':'NC','North Dakota':'ND','Ohio':'OH','Oklahoma':'OK',
+      'Oregon':'OR','Pennsylvania':'PA','Rhode Island':'RI','South Carolina':'SC','South Dakota':'SD',
+      'Tennessee':'TN','Texas':'TX','Utah':'UT','Vermont':'VT','Virginia':'VA','Washington':'WA',
+      'West Virginia':'WV','Wisconsin':'WI','Wyoming':'WY','District of Columbia':'DC'
+    };
+    return map[admin1]||admin1;
+  }
+  function isCampbell(){
+    return loc.label==='Campbell' && (loc.zip==='95008' || Math.abs(loc.lat-DEFAULT.lat)<0.05 && Math.abs(loc.lon-DEFAULT.lon)<0.05);
+  }
+  function placeShort(){
+    return loc.label || 'this viewpoint';
+  }
+  function placeTitle(){
+    if(isCampbell()) return 'Campbell · Bay Area';
+    var st=shortState(loc.admin1);
+    var parts=[loc.label];
+    if(st && st!==loc.label) parts.push(st);
+    if(loc.zip) parts.push(loc.zip);
+    return parts.filter(Boolean).join(' · ');
+  }
+  function searchBoxValue(){
+    if(loc.query) return loc.query;
+    if(loc.zip) return loc.zip;
+    var st=shortState(loc.admin1);
+    return loc.label+(st?', '+st:'');
+  }
+  function fmtLat(lat){
+    if(!isFinite(lat)) return '—';
+    return Math.abs(lat).toFixed(2)+'° '+(lat>=0?'N':'S');
+  }
+  function fmtLon(lon){
+    if(!isFinite(lon)) return '—';
+    return Math.abs(lon).toFixed(2)+'° '+(lon>=0?'E':'W');
+  }
+  function maxAltitude(dec, lat){
+    return 90-Math.abs(lat-dec);
+  }
+  function starNote(s){
+    var place=placeShort();
+    var top=maxAltitude(s.dec, LAT);
+    if(s.name==='Polaris'){
+      return 'North Star — nearly fixed. Altitude ≈ latitude (~'+Math.abs(LAT).toFixed(0)+'°) from '+place+'.';
+    }
+    if(s.name==='Fomalhaut' || s.name==='Achernar' || s.name==='Acrux'){
+      if(top<0) return s.note+' Does not rise from '+place+' (lat '+fmtLat(LAT)+').';
+      if(top<12) return s.note+' From '+place+' it stays low — tops out around '+top.toFixed(0)+'°.';
+      return s.note+' From '+place+' it can reach about '+top.toFixed(0)+'°.';
+    }
+    return s.note;
+  }
+  function defaultFactsHtml(month){
+    var latCue='Polaris altitude ≈ latitude (~'+Math.abs(LAT).toFixed(0)+'°) — true everywhere.';
+    var landmarks=isCampbell()
+      ? 'Big landmarks for Bay Area nights: summer triangle (Vega, Deneb, Altair), Orion in winter, Big Dipper / Polaris as the northern hinge. '+latCue
+      : 'Big landmarks: summer triangle (Vega, Deneb, Altair), Orion in winter, Big Dipper / Polaris as the northern hinge. '+latCue;
+    var light=isCampbell()
+      ? 'Light pollution washes the Milky Way in town — darker hills (e.g. toward the Coast Range) help for faint structure. See the <a href="/science/light-pollution/">light pollution</a> desk and the <a href="/science/light-pollution/salesforce-tower/">Salesforce Tower</a> essay.'
+      : 'Light pollution washes the Milky Way in town — darker sites help for faint structure. See the <a href="/science/light-pollution/">light pollution</a> desk.';
+    return '<li>'+SEASON[month]+'</li><li>'+landmarks+'</li><li>'+light+'</li>';
+  }
+  function showViewpointFacts(month){
+    document.getElementById('info-name').textContent=placeTitle();
+    document.getElementById('info-facts').innerHTML=defaultFactsHtml(month);
+  }
+  function updatePlaceChrome(){
+    var st=shortState(loc.admin1);
+    var kick=loc.label+(st?' · '+st:'')+(loc.zip?' · '+loc.zip:'');
+    if(isCampbell()) kick='Campbell · 95008 · South Bay';
+    kicker.textContent=kick;
+    zipInput.value=searchBoxValue();
+    document.getElementById('lat-val').textContent=fmtLat(LAT);
+    document.getElementById('lon-val').textContent=fmtLon(LON);
+    canvas.setAttribute('aria-label','Approximate all-sky chart for '+placeTitle());
+  }
+  function persistLoc(){
+    try{
+      localStorage.setItem(LOC_KEY, JSON.stringify({
+        zip:loc.zip||'', lat:loc.lat, lon:loc.lon,
+        label:loc.label, admin1:loc.admin1, timezone:loc.timezone,
+        query:loc.query||''
+      }));
+    }catch(e){}
+    syncShareQuery();
+  }
+  function shareZip(){
+    if(pendingShareQuery && looksLikeZip(pendingShareQuery)){
+      return normalizeZip(pendingShareQuery) || '';
+    }
+    var zip=String(loc.zip||'').replace(/\D/g,'');
+    return zip.length===5 ? zip : '';
+  }
+  function shareQuery(){
+    return String(pendingShareQuery||loc.query||loc.label||'').trim();
+  }
+  function decorateShareUrl(url){
+    if(!url || !url.searchParams) return;
+    try{
+      if(!/\/science\/astronomy\/local-sky\/?$/i.test(url.pathname||'')) return;
+    }catch(e){ return; }
+    url.searchParams.delete('q');
+    url.searchParams.delete('place');
+    url.searchParams.delete('zip');
+    url.searchParams.delete('lat');
+    url.searchParams.delete('lon');
+    var zip=shareZip();
+    if(zip){
+      url.searchParams.set('zip', zip);
+      return;
+    }
+    var q=shareQuery();
+    if(q) url.searchParams.set('q', q);
+    if(!q && isFinite(loc.lat) && isFinite(loc.lon) && !isCampbell()){
+      url.searchParams.set('lat', String(Math.round(loc.lat*100)/100));
+      url.searchParams.set('lon', String(Math.round(loc.lon*100)/100));
+    }
+  }
+  function syncShareQuery(){
+    try{
+      var url=new URL(location.href);
+      decorateShareUrl(url);
+      var next=url.pathname+url.search+url.hash;
+      var cur=location.pathname+location.search+location.hash;
+      if(next!==cur) history.replaceState(null, '', next);
+    }catch(e){}
+  }
+  window.spShare=window.spShare||{};
+  window.spShare.decorate=decorateShareUrl;
+
+  function showZipMsg(text){
+    if(!text){ zipMsg.hidden=true; zipMsg.textContent=''; return; }
+    zipMsg.hidden=false;
+    zipMsg.textContent=text;
+  }
+  function hidePicker(){
+    pickerHits=[];
+    picker.hidden=true;
+    picker.innerHTML='';
+  }
+  function looksLikeZip(raw){
+    return /^\s*\d{5}(?:[-\s]?\d{4})?\s*$/.test(String(raw||''));
+  }
+  function normalizeZip(raw){
+    var digits=String(raw||'').replace(/\D/g,'');
+    if(digits.length<5) return null;
+    return digits.slice(0,5);
+  }
+  function parsePlaceQuery(raw){
+    var q=String(raw||'').trim().replace(/\s+/g,' ');
+    if(!q) return {name:'', qualifier:''};
+    var m=q.match(/^(.+?),\s*([^,]+)$/);
+    if(m) return {name:m[1].trim(), qualifier:m[2].trim()};
+    return {name:q, qualifier:''};
+  }
+  function pickResult(results, zip){
+    if(!results || !results.length) return null;
+    var us=results.filter(function(r){ return r.country_code==='US'; });
+    var pool=us.length ? us : results;
+    for(var i=0;i<pool.length;i++){
+      var pcs=pool[i].postcodes||[];
+      for(var j=0;j<pcs.length;j++){
+        var p=String(pcs[j]).replace(/\D/g,'').slice(0,5);
+        if(p===zip) return pool[i];
+      }
+    }
+    return pool[0];
+  }
+  function geocodeUrl(name, countryCode){
+    var url='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(name)+
+      '&count=15&language=en&format=json';
+    if(countryCode) url+='&countryCode='+encodeURIComponent(countryCode);
+    return url;
+  }
+  function fetchGeocode(url){
+    var ctrl=typeof AbortController!=='undefined'?new AbortController():null;
+    var timer=ctrl?setTimeout(function(){ try{ctrl.abort();}catch(e){} },12000):null;
+    return fetch(url,{cache:'no-store',signal:ctrl?ctrl.signal:undefined}).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(function(j){ return j.results||[]; }).finally(function(){
+      if(timer) clearTimeout(timer);
+    });
+  }
+  function geocodeZip(zip){
+    var q1=geocodeUrl(zip,'US');
+    var q2='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=15&language=en&format=json&country=US';
+    var q3=geocodeUrl(zip);
+    return fetchGeocode(q1).then(function(results){
+      var hit=pickResult(results, zip);
+      if(hit) return hit;
+      return fetchGeocode(q2);
+    }).then(function(hitOrResults){
+      if(hitOrResults && !Array.isArray(hitOrResults)) return hitOrResults;
+      var hit=pickResult(hitOrResults, zip);
+      if(hit) return hit;
+      return fetchGeocode(q3);
+    }).then(function(hitOrResults){
+      if(hitOrResults && !Array.isArray(hitOrResults)) return hitOrResults;
+      return pickResult(hitOrResults, zip);
+    });
+  }
+  function namesEqual(a,b){
+    return String(a||'').toLowerCase()===String(b||'').toLowerCase();
+  }
+  function qualifierMatches(hit, qualifier){
+    var q=String(qualifier||'').trim().toLowerCase();
+    if(!q) return true;
+    var admin=String(hit.admin1||'').toLowerCase();
+    var st=shortState(hit.admin1).toLowerCase();
+    var country=String(hit.country||'').toLowerCase();
+    var cc=String(hit.country_code||'').toLowerCase();
+    return q===admin || q===st || q===country || q===cc;
+  }
+  function rankPlaces(results, raw){
+    var parsed=parsePlaceQuery(raw);
+    var city=parsed.name.toLowerCase();
+    var placeCodes={PPL:1,PPLA:1,PPLA2:1,PPLA3:1,PPLA4:1,PPLC:1,PPLX:1,PPLL:1};
+    return (results||[]).slice().sort(function(a,b){
+      var ae=namesEqual(a.name,city)?1:0;
+      var be=namesEqual(b.name,city)?1:0;
+      if(ae!==be) return be-ae;
+      var ap=placeCodes[a.feature_code]?1:0;
+      var bp=placeCodes[b.feature_code]?1:0;
+      if(ap!==bp) return bp-ap;
+      var aus=a.country_code==='US'?1:0;
+      var bus=b.country_code==='US'?1:0;
+      if(aus!==bus) return bus-aus;
+      return (b.population||0)-(a.population||0);
+    });
+  }
+  function candidatePlaces(results, raw){
+    var parsed=parsePlaceQuery(raw);
+    var pool=rankPlaces(results, raw);
+    if(parsed.qualifier){
+      var narrowed=pool.filter(function(r){ return qualifierMatches(r, parsed.qualifier); });
+      if(narrowed.length) pool=narrowed;
+    }
+    var exact=pool.filter(function(r){ return namesEqual(r.name, parsed.name); });
+    if(exact.length) pool=exact;
+    var us=pool.filter(function(r){ return r.country_code==='US'; });
+    return us.length ? us : pool;
+  }
+  function shouldAutoPick(hits, raw){
+    if(!hits || hits.length<=1) return true;
+    var parsed=parsePlaceQuery(raw);
+    var top=hits[0];
+    var same=hits.filter(function(h){ return namesEqual(h.name, top.name); });
+    if(same.length<=1) return true;
+    var topPop=top.population||0;
+    var nextPop=same.length>1 ? (same[1].population||0) : 0;
+    if(parsed.qualifier && qualifierMatches(top, parsed.qualifier) && (nextPop===0 || topPop>=3*nextPop)) return true;
+    if(!parsed.qualifier && topPop>=10000 && topPop>=3*Math.max(nextPop,1)) return true;
+    return false;
+  }
+  function geocodePlace(raw){
+    var q=String(raw||'').trim().replace(/\s+/g,' ');
+    return fetchGeocode(geocodeUrl(q,'US')).then(function(results){
+      if(results && results.length) return results;
+      return fetchGeocode(geocodeUrl(q));
+    });
+  }
+  function zipFromHit(hit, forcedZip){
+    if(forcedZip) return forcedZip;
+    var pcs=hit && hit.postcodes || [];
+    if(pcs.length){
+      var p=String(pcs[0]).replace(/\D/g,'').slice(0,5);
+      if(p.length===5) return p;
+    }
+    return '';
+  }
+  function hitMeta(hit){
+    var st=shortState(hit.admin1) || hit.admin1 || '';
+    var parts=[];
+    if(st) parts.push(st);
+    if(hit.admin2 && !st) parts.push(hit.admin2);
+    if(hit.country_code && hit.country_code!=='US') parts.push(hit.country || hit.country_code);
+    else if(hit.country_code==='US') parts.push('US');
+    return parts.filter(Boolean).join(' · ');
+  }
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  }
+  function applyViewpoint(){
+    LAT=loc.lat;
+    LON=loc.lon;
+    updatePlaceChrome();
+    var f=document.getElementById('info-facts');
+    delete f.dataset.locked;
+    draw();
+  }
+  function applyHit(hit, opts){
+    opts=opts||{};
+    loc={
+      zip:zipFromHit(hit, opts.zip),
+      lat:+hit.latitude,
+      lon:+hit.longitude,
+      label:hit.name || (opts.zip ? ('ZIP '+opts.zip) : 'Place'),
+      admin1:hit.admin1 || '',
+      timezone:hit.timezone || DEFAULT.timezone,
+      query:opts.query || opts.zip || hit.name || ''
+    };
+    pendingShareQuery='';
+    persistLoc();
+    hidePicker();
+    showZipMsg('');
+    applyViewpoint();
+  }
+  function applyCoords(lat, lon, opts){
+    opts=opts||{};
+    loc={
+      zip:opts.zip||'',
+      lat:+lat,
+      lon:+lon,
+      label:opts.label || 'Custom viewpoint',
+      admin1:opts.admin1 || '',
+      timezone:opts.timezone || 'auto',
+      query:opts.query || ''
+    };
+    pendingShareQuery='';
+    persistLoc();
+    hidePicker();
+    showZipMsg('');
+    applyViewpoint();
+  }
+  function showPicker(hits, query){
+    pickerHits=hits.slice(0,8);
+    var html='<p class="place-picker-lead">Several places match. Pick one:</p><div class="place-picker-list" role="listbox" aria-label="Matching places">';
+    for(var i=0;i<pickerHits.length;i++){
+      var hit=pickerHits[i];
+      html+='<button type="button" role="option" data-pick="'+i+'">'+
+        '<span class="pick-name">'+esc(hit.name)+'</span>'+
+        '<span class="pick-meta">'+esc(hitMeta(hit))+'</span>'+
+      '</button>';
+    }
+    html+='</div>';
+    picker.innerHTML=html;
+    picker.hidden=false;
+    var buttons=picker.querySelectorAll('[data-pick]');
+    for(var b=0;b<buttons.length;b++){
+      buttons[b].addEventListener('click',function(){
+        var hit=pickerHits[+this.getAttribute('data-pick')];
+        if(!hit) return;
+        applyHit(hit, {query:query});
+      });
+    }
+    if(buttons[0]) buttons[0].focus();
+  }
+  function setBusy(on){
+    zipGo.disabled=!!on;
+    zipInput.disabled=!!on;
+  }
+  function lookupRaw(raw){
+    showZipMsg('');
+    hidePicker();
+    raw=String(raw||'').trim();
+    if(!raw){
+      showZipMsg('Enter a city name or a 5-digit US ZIP.');
+      zipInput.focus();
+      return Promise.resolve();
+    }
+    if(looksLikeZip(raw)){
+      var zip=normalizeZip(raw);
+      setBusy(true);
+      return geocodeZip(zip).then(function(hit){
+        if(!hit){
+          showZipMsg('No US location found for ZIP '+zip+'. Try another code.');
+          return;
+        }
+        return applyHit(hit, {zip:zip, query:zip});
+      }).catch(function(){
+        showZipMsg('Geocoding failed. Check the connection and try again.');
+      }).then(function(){ setBusy(false); });
+    }
+    if(raw.length<2){
+      showZipMsg('Enter a fuller city name, or a 5-digit US ZIP.');
+      zipInput.focus();
+      return Promise.resolve();
+    }
+    setBusy(true);
+    return geocodePlace(raw).then(function(results){
+      var hits=candidatePlaces(results, raw);
+      if(!hits.length){
+        showZipMsg('No place found for “'+raw+'”. Try a city and state (Campbell, CA) or a ZIP.');
+        return;
+      }
+      if(shouldAutoPick(hits, raw)){
+        return applyHit(hits[0], {query:raw});
+      }
+      showPicker(hits, raw);
+    }).catch(function(){
+      showZipMsg('Geocoding failed. Check the connection and try again.');
+    }).then(function(){ setBusy(false); });
+  }
+
   function selectStar(s,alt){
     document.getElementById('info-name').textContent=s.name;
     document.getElementById('info-type').textContent='mag ≈ '+s.mag+(alt!=null?' · alt '+alt.toFixed(0)+'°':'');
     var facts=document.getElementById('info-facts');
     facts.dataset.locked='1';
-    facts.innerHTML='<li>'+s.note+'</li><li>RA ≈ '+s.ra.toFixed(2)+' h · Dec ≈ '+s.dec.toFixed(1)+'° (educational J2000-ish).</li><li>Chart is approximate — use a planetarium app for telescope pointing.</li>';
+    facts.innerHTML='<li>'+starNote(s)+'</li><li>RA ≈ '+s.ra.toFixed(2)+' h · Dec ≈ '+s.dec.toFixed(1)+'° (educational J2000-ish).</li><li>Chart is approximate — use a planetarium app for telescope pointing.</li>';
   }
 
   canvas.addEventListener('click',function(ev){
@@ -488,23 +1003,65 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     if(best)selectStar(best.star,best.alt);
   });
 
-  function setNow(){
+  function nowAtViewpoint(){
     var d=new Date();
+    var tz=loc.timezone||DEFAULT.timezone;
+    try{
+      if(tz && tz!=='auto'){
+        var p=tzParts(d, tz);
+        monthEl.value=String(p.mo);
+        return p.h+p.min/60;
+      }
+    }catch(e){}
     monthEl.value=String(d.getMonth());
-    var h=d.getHours()+d.getMinutes()/60;
+    return d.getHours()+d.getMinutes()/60;
+  }
+  function setNow(){
+    var h=nowAtViewpoint();
     hourEl.value=String(Math.round(h*4)/4);
     var f=document.getElementById('info-facts');
     delete f.dataset.locked;
-    document.getElementById('info-name').textContent='Campbell · Bay Area';
+    draw();
+  }
+  function unlockViewpoint(){
+    delete document.getElementById('info-facts').dataset.locked;
     draw();
   }
 
-  monthEl.addEventListener('change',function(){delete document.getElementById('info-facts').dataset.locked;document.getElementById('info-name').textContent='Campbell · Bay Area';draw();});
+  zipForm.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    lookupRaw(zipInput.value);
+  });
+  monthEl.addEventListener('change',unlockViewpoint);
   hourEl.addEventListener('input',draw);
   document.getElementById('btn-now').addEventListener('click',setNow);
   window.addEventListener('resize',draw);
-  setNow();
+
+  var bootQuery='';
+  var bootLat=NaN, bootLon=NaN;
+  try{
+    var params=new URLSearchParams(location.search);
+    bootQuery=params.get('q') || params.get('place') || params.get('zip') || '';
+    if(params.get('lat')!=null) bootLat=+params.get('lat');
+    if(params.get('lon')!=null) bootLon=+params.get('lon');
+  }catch(e){}
+
+  updatePlaceChrome();
+  if(bootQuery){
+    pendingShareQuery=bootQuery;
+    zipInput.value=bootQuery;
+    setNow();
+    lookupRaw(bootQuery);
+  }else if(isFinite(bootLat) && isFinite(bootLon)){
+    applyCoords(bootLat, bootLon, {query:''});
+    setNow();
+  }else{
+    syncShareQuery();
+    applyViewpoint();
+    setNow();
+  }
 })();
 </script>
+<script src="/js/sp-share.js" defer></script>
 </body>
 </html>
