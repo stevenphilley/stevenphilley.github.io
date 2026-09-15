@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exoplanets — discovery methods &amp; notable worlds — Steven Philley</title>
+<meta name="description" content="Educational exoplanet desk: how we find planets around other stars (transit, radial velocity, imaging, microlensing, timing) and a schematic explorer of notable confirmed worlds from NASA public records.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/exoplanets/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Exoplanets — discovery methods &amp; notable worlds">
+<meta property="og:description" content="Interactive schematic: discovery methods plus a hand-picked set of confirmed exoplanets — not a catalog dump.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/exoplanets/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Exoplanets — discovery methods &amp; notable worlds">
+<meta name="twitter:description" content="How we find planets around other stars, plus a schematic explorer of famous confirmed worlds.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:64ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:64ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.1fr) minmax(240px,.9fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);padding:12px;position:relative;min-height:320px}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;max-height:420px}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column}
+.detail .tier,.panel .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2,.panel h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 16px}
+.detail p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.method-list,.filters,.presets{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto;padding-top:12px}
+.method-list button,.filters button,.presets button,.controls button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:7px 10px;cursor:pointer}
+.method-list button:hover,.method-list button[aria-pressed="true"],
+.filters button:hover,.filters button[aria-pressed="true"],
+.presets button:hover,.presets button[aria-pressed="true"],
+.controls button:hover,.controls button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.method-list button[aria-pressed="true"],
+.filters button[aria-pressed="true"],
+.presets button[aria-pressed="true"],
+.controls button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.shell{margin-top:4px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:start}
+.map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:380px;overflow:hidden}
+.map-stage canvas{display:block;width:100%;height:100%;min-height:340px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);position:absolute;left:0;right:0;bottom:0;z-index:2}
+.hint-abs{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;position:sticky;top:12px}
+.panel .type{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-soft,#9b9a96);margin:0 0 14px}
+.stats{margin:0 0 14px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none;flex:1}
+.facts li{position:relative;padding:9px 0 9px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.credit{margin-top:auto;padding-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e)}
+.credit a{color:inherit}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:14px}
+.card{appearance:none;text-align:left;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 14px 12px;cursor:pointer;color:inherit;font:inherit}
+.card:hover,.card[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a))}
+.card[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
+.card .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 4px}
+.card h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em;margin:0;line-height:1}
+.card .meta{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:70ch}
+.page-credit a{color:inherit}
+@media (max-width:860px){
+  .stage,.shell,.glossary,.more{grid-template-columns:1fr}
+  .panel{position:static}
+  .map-stage{min-height:320px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/" aria-current="page">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Worlds around other stars</p>
+  <h1>Exoplanets</h1>
+  <p class="lede">Planets beyond our solar system — usually orbiting another star in the <a href="/science/astronomy/galaxy/">Milky Way</a>. NASA’s public archive now lists <strong>more than 6,000 confirmed</strong> worlds (the tally keeps rising), plus thousands of candidates still waiting on follow-up. This desk is a literacy schematic: how we find them, and a handful of famous confirmed examples. Pair with the <a href="/science/astronomy/nearest-stars/">nearest-stars</a> yardstick — Proxima b is the closest known exoplanet, still about four light-years out.</p>
+  <p class="note-schematic">Educational cartoon, not an ephemeris and not a dump of the NASA Exoplanet Archive. Orbits are scaled to fit; planet sizes are exaggerated. Figures are rounded from NASA Science / NASA Exoplanet Archive public pages. Habitable-zone rings are order-of-magnitude Goldilocks bands for that stellar type — liquid-water possibility, not a life detection.</p>
+
+  <p class="band">Interactive · Discovery methods</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="method-hint">Tap a method · cartoon of the signal</p>
+      <canvas id="method-canvas" width="720" height="420" role="img" aria-label="Schematic of the selected exoplanet discovery method"></canvas>
+    </div>
+    <aside class="detail" id="method-detail" aria-live="polite">
+      <p class="tier">Method</p>
+      <h2 id="m-name">Transit</h2>
+      <p class="range" id="m-range">Star dims when a planet crosses</p>
+      <p id="m-body">If a planet’s orbit lines up with our view, it blocks a sliver of starlight. Kepler and TESS hunted those tiny dips — the workhorse of the modern catalog.</p>
+      <div class="method-list" id="method-btns" role="group" aria-label="Discovery methods"></div>
+    </aside>
+  </div>
+
+  <p class="band">Interactive · Notable confirmed worlds</p>
+  <div class="filters" id="filters" role="group" aria-label="Filter notable worlds by method"></div>
+  <div class="shell">
+    <div>
+      <div class="map-stage" id="orbit-stage">
+        <p class="hint-abs" id="orbit-hint">Star at center · gold ring ≈ habitable zone · sizes exaggerated</p>
+        <canvas id="orbit" width="800" height="520" role="img" aria-label="Schematic orbit of the selected exoplanet"></canvas>
+        <div class="controls" role="toolbar" aria-label="Orbit controls">
+          <button type="button" id="btn-play" aria-pressed="true">Pause</button>
+          <button type="button" id="btn-labels" aria-pressed="true">Labels</button>
+          <button type="button" id="btn-hz" aria-pressed="true">Habitable zone</button>
+        </div>
+      </div>
+      <div class="cards" id="cards" role="list"></div>
+    </div>
+    <aside class="panel" id="info" aria-live="polite">
+      <p class="tier">Select a world</p>
+      <h2 id="info-name">Notable worlds</h2>
+      <p class="type" id="info-type">Tap a card or wait for the default.</p>
+      <ul class="stats" id="info-stats" hidden></ul>
+      <ul class="facts" id="info-facts">
+        <li>This is a teaching set — famous firsts and classroom examples, not a survey of all 6,000+ confirmed planets.</li>
+        <li>Most known exoplanets were found by transit (Kepler, K2, TESS, ground surveys) or radial velocity.</li>
+        <li>“Habitable zone” means liquid water could exist on a rocky surface if an atmosphere cooperates. It is not a biosignature.</li>
+      </ul>
+      <p class="credit" id="info-credit">Rounded public NASA / NASA Exoplanet Archive figures · schematic art for this page.</p>
+    </aside>
+  </div>
+
+  <p class="band">Glossary · starter terms</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Exoplanet</dt><dd>A planet outside our solar system. Most confirmed cases orbit another star; a few are free-floating (rogue) or circle pulsars.</dd></div>
+    <div class="gloss"><dt>Confirmed vs candidate</dt><dd>A candidate is a likely signal that still needs follow-up. Confirmed worlds have passed extra checks so a false positive (eclipsing binary, starspot, noise) is unlikely.</dd></div>
+    <div class="gloss"><dt>Transit</dt><dd>Planet crosses the star’s disk and the light curve dips. Depth hints at radius; repeat dips give the period. Alignment is required — we miss most systems this way.</dd></div>
+    <div class="gloss"><dt>Radial velocity</dt><dd>The star wobbles toward and away from us. Spectral lines shift blue then red. That gives a minimum mass (m sin i) and the period.</dd></div>
+    <div class="gloss"><dt>Habitable zone</dt><dd>The Goldilocks band where a rocky planet could hold liquid water. Red-dwarf zones hug the star; Sun-like zones sit near 1 AU. Climate and atmosphere still decide.</dd></div>
+    <div class="gloss"><dt>Hot Jupiter</dt><dd>A gas giant on a few-day orbit — 51 Pegasi b’s class. Common in early RV samples because they tug hard and transit often. Not like our Jupiter.</dd></div>
+    <div class="gloss"><dt>Mini-Neptune / super-Earth</dt><dd>Worlds between Earth and Neptune in size. Super-Earths are often rocky-ish; mini-Neptunes keep thick envelopes. The galaxy is full of them; our solar system is not.</dd></div>
+    <div class="gloss"><dt>Naming</dt><dd>Host designation + a lowercase letter. The first planet found is <em>b</em> (the star is the unspoken A). Earth as an exoplanet would be Sun d.</dd></div>
+    <div class="gloss"><dt>Kepler / TESS / JWST</dt><dd>Kepler surveyed one deep field; TESS watches bright nearby dwarfs. JWST does not hunt thousands of new planets — it reads atmospheres of worlds we already have.</dd></div>
+    <div class="gloss"><dt>Archive, not this page</dt><dd>For the live tally and tables, use the <a href="https://exoplanetarchive.ipac.caltech.edu/" rel="noopener" target="_blank">NASA Exoplanet Archive</a>. Counts change weekly.</dd></div>
+  </dl>
+
+  <p class="band">Astronomy desk</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Solar system</p><h3>Solar map</h3><p>Our own eight (plus Pluto as a dwarf) — the comparison set.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima through Procyon — where the closest exoplanet sits.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Milky Way</p><h3>Galaxy start</h3><p>Most known exoplanets are still a local patch of one disk.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Bay Area</p><h3>Local sky</h3><p>The stars we actually see from Campbell — hosts are usually too faint.</p></a>
+  </div>
+
+  <p class="page-credit">Educational schematic. Discovery-method cartoons follow <a href="https://science.nasa.gov/exoplanets/facts/" rel="noopener" target="_blank">NASA Science exoplanet facts</a>. World cards use rounded public values from NASA Solar System / Exoplanet pages and the <a href="https://exoplanetarchive.ipac.caltech.edu/" rel="noopener" target="_blank">NASA Exoplanet Archive</a> — not a precision catalog and not NASA imagery. “More than 6,000 confirmed” is NASA’s 2025–2026 public tally language; check the archive for today’s integer.</p>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY="sp-theme";
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c=root.getAttribute("data-theme")||"neon";
+    buttons.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click",function(){
+      root.setAttribute("data-theme",b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+
+  var METHODS={
+    transit:{
+      name:"Transit",
+      range:"Star dims when a planet crosses",
+      body:"If a planet’s orbit lines up with our view, it blocks a sliver of starlight. Repeat dips give the period; dip depth hints at the planet’s size versus the star. Kepler, K2, TESS, and ground surveys (WASP, TRAPPIST) built most of the modern catalog this way. We only see systems that happen to be edge-on."
+    },
+    rv:{
+      name:"Radial velocity",
+      range:"Star wobbles · spectrum shifts",
+      body:"A planet tugs its star. From Earth the star’s light blueshifts then redshifts each orbit. That yields a period and a minimum mass (m sin i). 51 Pegasi b (1995) opened the Sun-like-star era. Best for massive, close-in worlds; Earth twins around Sun-like stars are a hard, slow signal."
+    },
+    imaging:{
+      name:"Direct imaging",
+      range:"See the planet’s own light",
+      body:"Block or subtract the star and photograph the planet — usually a young, glowing giant far from its host (HR 8799). Rare: the star outshines planets by many magnitudes. Coronagraphs and future missions (Roman, Habitable Worlds concepts) push closer in."
+    },
+    microlens:{
+      name:"Microlensing",
+      range:"Gravity briefly magnifies a background star",
+      body:"If a foreground star (and planet) pass in front of a distant star, general relativity magnifies the background light. A planetary bump in the light curve can reveal a cold, distant world — often toward the galactic bulge, often never seen again. Roman is expected to find thousands this way."
+    },
+    timing:{
+      name:"Timing",
+      range:"Clock a pulsar (or eclipse) and watch it wander",
+      body:"The first confirmed exoplanets (1992) orbit the millisecond pulsar PSR B1257+12 — pulse arrival times wobble if planets tug the pulsar. Related tricks time transits or binary eclipses. Powerful, but it samples odd neighborhoods, not typical main-sequence yards."
+    }
+  };
+  var METHOD_ORDER=["transit","rv","imaging","microlens","timing"];
+
+  var WORLDS=[
+    {id:"psr1257",name:"PSR B1257+12",method:"timing",year:"1992",dist:"~2,300 ly",period:"25–98 d (c, d)",size:"~few Earth masses",au:0.36,star:"PSR B1257+12",starType:"Millisecond pulsar",hzIn:0,hzOut:0,kind:"Pulsar planets",color:"#c9b8a8",rPx:4.2,facts:[
+      "First confirmed exoplanets — Wolszczan & Frail, using pulsar timing, not a pretty optical wobble.",
+      "A supernova leftover hosts the worlds. Not a place for the textbook habitable-zone story.",
+      "Three planets (b is a tiny inner body). Educational reminder: “first” and “Earth-like host” are different achievements."
+    ]},
+    {id:"peg51b",name:"51 Pegasi b",method:"rv",year:"1995",dist:"50 ly",period:"4.23 days",size:"~0.46 MJup",au:0.053,star:"51 Pegasi",starType:"G2–G5 dwarf",hzIn:0.95,hzOut:1.7,kind:"Hot Jupiter",color:"#d4a574",rPx:9,facts:[
+      "First planet confirmed around a Sun-like star (Mayor & Queloz). Nobel Prize in Physics, 2019.",
+      "A gas giant on a four-day orbit — the prototype hot Jupiter, nothing like our Jupiter at 5 AU.",
+      "Opened the radial-velocity flood. Distance ~50 light-years in Pegasus."
+    ]},
+    {id:"hd209458b",name:"HD 209458 b",method:"transit",year:"1999",dist:"159 ly",period:"3.52 days",size:"~1.4 RJup · 0.69 MJup",au:0.047,star:"HD 209458",starType:"G0 dwarf",hzIn:1.0,hzOut:1.8,kind:"Transiting hot Jupiter",color:"#e6d4a8",rPx:10,facts:[
+      "First exoplanet seen in transit — the light-curve era starts here (also called Osiris in some outreach).",
+      "First extrasolar atmosphere detection (sodium). Later work mapped escaping hydrogen.",
+      "Inflated radius: hot Jupiters are puffy compared with Jupiter itself."
+    ]},
+    {id:"cancri55e",name:"55 Cancri e",method:"rv",year:"2004",dist:"41 ly",period:"17.7 hours",size:"~1.9 REarth · ~8 MEarth",au:0.015,star:"55 Cancri A",starType:"K0 / G8 dwarf",hzIn:0.7,hzOut:1.4,kind:"Ultra-short-period super-Earth",color:"#e07a4c",rPx:5.4,facts:[
+      "A lava-world-class super-Earth on an 18-hour orbit — later also seen in transit.",
+      "JWST and earlier IR work chase a possible secondary atmosphere; the surface would be magma if bare rock.",
+      "Nearby (Cancer, ~41 ly) and a long-studied multi-planet RV system."
+    ]},
+    {id:"hd189733b",name:"HD 189733 b",method:"transit",year:"2005",dist:"65 ly",period:"2.22 days",size:"~1.1 RJup",au:0.031,star:"HD 189733 A",starType:"K dwarf",hzIn:0.6,hzOut:1.2,kind:"Hot Jupiter",color:"#4f7cff",rPx:9.2,facts:[
+      "A nearby hot Jupiter used as an atmosphere laboratory — haze, sodium, and a deep-blue Rayleigh-scattering story in Hubble-era work.",
+      "Weather here is violent by solar-system standards (supersonic winds in models and maps).",
+      "Still a gas giant hugging a K star — not a habitable-zone case."
+    ]},
+    {id:"ogle390",name:"OGLE-2005-BLG-390Lb",method:"microlens",year:"2006",dist:"~21,000 ly",period:"~9–10 yr (est.)",size:"~5.5 MEarth",au:2.6,star:"OGLE-2005-BLG-390L",starType:"Cool dwarf / late M",hzIn:0.1,hzOut:0.25,kind:"Cold super-Earth",color:"#9fd6e8",rPx:5,facts:[
+      "A textbook microlensing planet: a few-Earth-mass world far from its star, toward the galactic bulge.",
+      "Likely a frozen super-Earth — the method is good at cold, distant planets that transits miss.",
+      "One-off alignment. We will not watch this orbit the way Kepler watched transits."
+    ]},
+    {id:"wasp12b",name:"WASP-12b",method:"transit",year:"2008",dist:"~1,400 ly",period:"1.09 days",size:"~1.9 RJup",au:0.023,star:"WASP-12",starType:"Late-F dwarf",hzIn:1.2,hzOut:2.2,kind:"Ultra-hot Jupiter",color:"#ff8a4c",rPx:11,facts:[
+      "So close it is being stripped — material spills toward the star; the planet is measurably decaying on human-ish timescales.",
+      "An ultra-hot Jupiter: dayside temperatures high enough to dissociate molecules.",
+      "Ground-based WASP survey discovery — transit surveys find the extreme close-in tail."
+    ]},
+    {id:"gj1214b",name:"GJ 1214 b",method:"transit",year:"2009",dist:"48 ly",period:"1.58 days",size:"~2.7 REarth",au:0.014,star:"GJ 1214",starType:"M4.5 dwarf",hzIn:0.07,hzOut:0.16,kind:"Mini-Neptune",color:"#6ec8ff",rPx:6.2,facts:[
+      "A nearby mini-Neptune — the common “in-between” class our solar system skipped.",
+      "Early Hubble spectra looked flat (high clouds/haze). JWST later showed a metal-rich, steamy envelope under that haze.",
+      "MEarth survey target: small stars make small planets easier to see in transit."
+    ]},
+    {id:"hr8799e",name:"HR 8799 e",method:"imaging",year:"2010",dist:"129 ly",period:"~45 years",size:"~7–10 MJup",au:16,star:"HR 8799",starType:"A5 young star",hzIn:2.5,hzOut:5.5,kind:"Imaged giant (system of 4)",color:"#e8c989",rPx:8.5,facts:[
+      "One of four young giants photographed around HR 8799 (b, c, d in 2008; e in 2010) — a poster child for direct imaging.",
+      "Wide orbits (roughly 15–70 AU). The planets still glow from formation heat.",
+      "An A-type host; the conventional habitable zone sits well inside these giants."
+    ]},
+    {id:"kepler16b",name:"Kepler-16b",method:"transit",year:"2011",dist:"245 ly",period:"229 days",size:"~0.75 RJup",au:0.70,star:"Kepler-16 (A+B)",starType:"K + M binary",hzIn:0.4,hzOut:0.8,kind:"Circumbinary giant",color:"#d4a574",rPx:8,facts:[
+      "A Saturn-size world that orbits both stars — the classroom “Tatooine” transit case.",
+      "Two sunsets are real geometry here; the habitable zone of a binary is a moving target.",
+      "Kepler’s timing and transit shape proved the circumbinary orbit."
+    ]},
+    {id:"kepler22b",name:"Kepler-22b",method:"transit",year:"2011",dist:"640 ly",period:"290 days",size:"~2.4 REarth",au:0.85,star:"Kepler-22",starType:"G5 dwarf",hzIn:0.8,hzOut:1.5,kind:"HZ mini-Neptune-ish",color:"#7eb8d4",rPx:6,facts:[
+      "First Kepler planet confirmed in its star’s habitable zone — a 290-day year around a Sun-ish star.",
+      "Radius ~2.4 Earths: likely a volatile-rich mini-Neptune, not a second Earth.",
+      "HZ membership is about starlight, not a detected ocean or biosignature."
+    ]},
+    {id:"wasp39b",name:"WASP-39 b",method:"transit",year:"2011",dist:"~700 ly",period:"4.06 days",size:"~1.3 RJup · Saturn-mass",au:0.049,star:"WASP-39",starType:"G8 dwarf",hzIn:0.85,hzOut:1.6,kind:"Hot Saturn (JWST atmosphere)",color:"#e6d4a8",rPx:9.5,facts:[
+      "A puffy Saturn-mass transiting planet that became an early JWST atmosphere showcase.",
+      "Webb spectra showed water, carbon dioxide, and sulfur dioxide — photochemistry in a hot envelope.",
+      "JWST characterizes; it did not “discover” this 2011 WASP world."
+    ]},
+    {id:"kepler186f",name:"Kepler-186f",method:"transit",year:"2014",dist:"~580 ly",period:"130 days",size:"~1.17 REarth",au:0.36,star:"Kepler-186",starType:"M1 dwarf",hzIn:0.23,hzOut:0.46,kind:"Earth-size in M-dwarf HZ",color:"#6ec8ff",rPx:5.2,facts:[
+      "First Earth-size planet found in the habitable zone of another star (an M dwarf).",
+      "A 130-day year at ~0.36 AU — close by solar-system standards, right for a cooler star.",
+      "We have a radius, not a measured mass or atmosphere. “Earth-size” ≠ “Earth-like.”"
+    ]},
+    {id:"k218b",name:"K2-18 b",method:"transit",year:"2015",dist:"124 ly",period:"33 days",size:"~2.6 REarth · ~8.6 MEarth",au:0.14,star:"K2-18",starType:"M2.5 dwarf",hzIn:0.12,hzOut:0.25,kind:"HZ mini-Neptune",color:"#8fd0c8",rPx:6.4,facts:[
+      "A mini-Neptune in the habitable zone of a nearby red dwarf — Hubble and JWST both stared here.",
+      "Carbon-bearing molecules (methane, carbon dioxide) are the solid atmospheric story. Dimethyl sulfide as a biosignature remains disputed — treat headlines as headlines.",
+      "A hycean (hydrogen + ocean) picture is a model, not a shoreline photo."
+    ]},
+    {id:"kepler452b",name:"Kepler-452b",method:"transit",year:"2015",dist:"~1,400 ly",period:"385 days",size:"~1.6 REarth",au:1.05,star:"Kepler-452",starType:"G2 dwarf",hzIn:0.95,hzOut:1.7,kind:"“Earth’s cousin” (size unknown habitability)",color:"#6ec8ff",rPx:5.6,facts:[
+      "A ~385-day orbit around a Sun-like (G2) star — the year length that made the “cousin” nickname.",
+      "About 60% larger than Earth. Could be a rocky super-Earth or a world with a thick envelope; we do not know the mass well.",
+      "Kepler photometry, not a visit. Habitability is an open homework problem."
+    ]},
+    {id:"proximab",name:"Proxima Centauri b",method:"rv",year:"2016",dist:"4.24 ly",period:"11.2 days",size:"≳1.1 MEarth (min.)",au:0.049,star:"Proxima Centauri",starType:"M5.5Ve red dwarf",hzIn:0.04,hzOut:0.09,kind:"Nearest known exoplanet",color:"#e07a4c",rPx:5,facts:[
+      "Closest known exoplanet — around the nearest star, the faint C component of Alpha Centauri.",
+      "Sits in the optimistic habitable zone, but Proxima flares. Radiation and a possible thin or stripped air are the open worries.",
+      "Radial-velocity minimum mass; no confirmed transit as of the public record this page follows. See also Nearest stars."
+    ]},
+    {id:"trappist1e",name:"TRAPPIST-1 e",method:"transit",year:"2017",dist:"41 ly",period:"6.10 days",size:"~0.92 REarth",au:0.029,star:"TRAPPIST-1",starType:"M8 ultra-cool dwarf",hzIn:0.024,hzOut:0.049,kind:"Earth-size in a 7-planet system",color:"#7eb8d4",rPx:5,facts:[
+      "TRAPPIST-1 hosts seven Earth-size transiting planets. e, f, and g sit in or near the conservative habitable zone.",
+      "Ultra-cool dwarf: the whole system would fit well inside Mercury’s orbit. Planets are likely tidally locked.",
+      "Spitzer + ground photometry nailed the pack; JWST is working atmospheres. No confirmed biosignature."
+    ]},
+    {id:"toi700d",name:"TOI-700 d",method:"transit",year:"2020",dist:"101 ly",period:"37.4 days",size:"~1.1 REarth",au:0.16,star:"TOI-700",starType:"M2 dwarf",hzIn:0.11,hzOut:0.24,kind:"TESS Earth-size in HZ",color:"#6ec8ff",rPx:5.1,facts:[
+      "TESS’s first Earth-size habitable-zone planet around a nearby M dwarf — later confirmed from the ground and Spitzer.",
+      "A 37-day year. The system has additional planets (including another HZ-adjacent world in later TESS work).",
+      "Radius is Earth-ish; mass and air remain to be measured. Quiet-ish host compared with Proxima."
+    ]}
+  ];
+
+  /* ---- Method cartoon ---- */
+  var mCanvas=document.getElementById("method-canvas");
+  var mCtx=mCanvas.getContext("2d");
+  var methodId="transit";
+  var methodT0=performance.now();
+
+  function fitCanvas(canvas, cssH){
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var w=Math.max(280, canvas.parentElement.clientWidth-24);
+    var h=cssH||Math.min(420, Math.max(260, w*0.55));
+    canvas.style.width=w+"px";
+    canvas.style.height=h+"px";
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w:w,h:h,ctx:ctx};
+  }
+
+  function drawMethod(now){
+    var dim=fitCanvas(mCanvas, 320);
+    var ctx=dim.ctx,w=dim.w,h=dim.h;
+    var ink=cssVar("--ink","#e8e6e1");
+    var soft=cssVar("--ink-soft","#9b9a96");
+    var muted=cssVar("--muted","#63666e");
+    var accent=cssVar("--accent","#c8b48a");
+    var line=cssVar("--line","#2c303a");
+    var base=cssVar("--base-2","#14161c");
+    var t=((now-methodT0)/1000);
+    ctx.fillStyle=base;
+    ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="rgba(255,255,255,0.28)";
+    var seed=19;
+    for(var s=0;s<50;s++){
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      ctx.beginPath();
+      ctx.arc((seed%1000)/1000*w, ((seed*7)%1000)/1000*h, 0.5+(seed%8)/10, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.strokeStyle=line;
+    ctx.fillStyle=ink;
+    ctx.font='500 11px "IBM Plex Mono", monospace';
+
+    if(methodId==="transit"){
+      var cx=w*0.32, cy=h*0.42, R=Math.min(w,h)*0.16;
+      var g=ctx.createRadialGradient(cx,cy,0,cx,cy,R);
+      g.addColorStop(0,"#ffe08a"); g.addColorStop(1,"#c88820");
+      ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
+      var u=(t%4)/4;
+      var px=cx+(-1.35+2.7*u)*R;
+      var behind=Math.abs(px-cx)<R*0.92;
+      ctx.fillStyle="#2a303c";
+      ctx.beginPath(); ctx.arc(px, cy, R*0.18, 0, Math.PI*2); ctx.fill();
+      if(behind){ ctx.fillStyle=g; ctx.beginPath(); ctx.arc(cx,cy,R,0,Math.PI*2); ctx.fill();
+        ctx.save(); ctx.beginPath(); ctx.rect(px-R,0,w,h); ctx.clip();
+        ctx.fillStyle="#2a303c"; ctx.beginPath(); ctx.arc(px,cy,R*0.18,0,Math.PI*2); ctx.fill(); ctx.restore();
+      }
+      ctx.fillStyle=muted; ctx.fillText("STAR + PLANET", cx-40, cy+R+22);
+      /* light curve */
+      var x0=w*0.58, y0=h*0.28, lw=w*0.36, lh=h*0.42;
+      ctx.strokeStyle=line; ctx.strokeRect(x0,y0,lw,lh);
+      ctx.fillStyle=muted; ctx.fillText("LIGHT CURVE", x0, y0-8);
+      ctx.beginPath();
+      var dip=behind?0.22:0;
+      for(var i=0;i<=40;i++){
+        var xx=x0+4+i/40*(lw-8);
+        var yy=y0+lh*0.28+dip*lh*Math.exp(-Math.pow((i/40-u)*10,2));
+        if(i===0)ctx.moveTo(xx,yy); else ctx.lineTo(xx,yy);
+      }
+      ctx.strokeStyle=accent; ctx.lineWidth=2; ctx.stroke();
+    } else if(methodId==="rv"){
+      var cx=w*0.30, cy=h*0.46;
+      var wob=Math.sin(t*1.6)*18;
+      ctx.fillStyle="#ffe08a"; ctx.beginPath(); ctx.arc(cx+wob,cy,16,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle="#6ec8ff"; ctx.beginPath(); ctx.arc(cx-wob*2.2, cy+4, 6, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle=line; ctx.beginPath(); ctx.ellipse(cx,cy,36,10,0,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle=muted; ctx.fillText("STAR WOBBLE", cx-36, cy+48);
+      var x0=w*0.58, y0=h*0.28, lw=w*0.36, lh=h*0.42;
+      ctx.strokeStyle=line; ctx.strokeRect(x0,y0,lw,lh);
+      ctx.fillStyle=muted; ctx.fillText("SPECTRUM SHIFT", x0, y0-8);
+      var mid=x0+lw/2+Math.sin(t*1.6)*22;
+      ctx.fillStyle=wob>0?"#7eb8ff":"#e07a4c";
+      ctx.fillRect(mid-6,y0+20,12,lh-40);
+      ctx.fillStyle=soft; ctx.font='10px "IBM Plex Mono", monospace';
+      ctx.fillText(wob>0?"BLUE · toward":"RED · away", x0+10, y0+lh-12);
+    } else if(methodId==="imaging"){
+      var cx=w*0.5, cy=h*0.48;
+      ctx.fillStyle="rgba(255,200,80,0.15)"; ctx.beginPath(); ctx.arc(cx,cy,70,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle=base; ctx.beginPath(); ctx.arc(cx,cy,28,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle=accent; ctx.beginPath(); ctx.arc(cx,cy,28,0,Math.PI*2); ctx.stroke();
+      ctx.fillStyle=muted; ctx.fillText("STAR BLOCKED", cx-42, cy+6);
+      [{a:t*0.4,r:78},{a:t*0.25+1.2,r:110},{a:t*0.18+2.4,r:142},{a:t*0.12+3.5,r:168}].forEach(function(p,i){
+        ctx.fillStyle=["#e8c989","#d4a574","#e07a4c","#c9b8a8"][i];
+        ctx.beginPath(); ctx.arc(cx+Math.cos(p.a)*p.r*0.55, cy+Math.sin(p.a)*p.r*0.32, 4+i*0.4, 0, Math.PI*2); ctx.fill();
+      });
+      ctx.fillStyle=muted; ctx.fillText("WIDE-ORBIT GIANTS", 16, h-16);
+    } else if(methodId==="microlens"){
+      var cx=w*0.36, cy=h*0.46;
+      ctx.fillStyle="#9aa8c0"; ctx.beginPath(); ctx.arc(w*0.72, cy, 7, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle=muted; ctx.fillText("BACKGROUND", w*0.62, cy+28);
+      ctx.fillStyle="#ffe08a"; ctx.beginPath(); ctx.arc(cx+Math.sin(t*0.7)*40, cy, 10, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle="#6ec8ff"; ctx.beginPath(); ctx.arc(cx+Math.sin(t*0.7)*40+14, cy+6, 3, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle=muted; ctx.fillText("LENS + PLANET", cx-20, cy+40);
+      var amp=1+2.2*Math.exp(-Math.pow(Math.sin(t*0.7)*3.2,2));
+      ctx.strokeStyle=accent; ctx.beginPath();
+      ctx.moveTo(w*0.08, h*0.16); ctx.lineTo(w*0.08+amp*28, h*0.16);
+      ctx.stroke();
+      ctx.fillStyle=soft; ctx.fillText("MAG × "+amp.toFixed(1), w*0.08, h*0.14);
+    } else {
+      var y=h*0.38;
+      ctx.fillStyle=muted; ctx.fillText("PULSE ARRIVALS", 20, 28);
+      for(var i=0;i<12;i++){
+        var x=24+i*(w-48)/12;
+        var jitter=Math.sin(t*1.3+i)*6;
+        ctx.strokeStyle=i%4===2?accent:ink;
+        ctx.beginPath(); ctx.moveTo(x+jitter, y-30); ctx.lineTo(x+jitter, y+30); ctx.stroke();
+      }
+      ctx.fillStyle="#ffe08a"; ctx.beginPath(); ctx.arc(w*0.5, h*0.72, 8, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle="#c9b8a8"; ctx.beginPath(); ctx.arc(w*0.5+Math.cos(t)*36, h*0.72+Math.sin(t)*10, 4, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle=muted; ctx.fillText("PULSAR + PLANET", w*0.5-50, h-18);
+    }
+  }
+
+  function selectMethod(id){
+    methodId=id;
+    var m=METHODS[id];
+    document.getElementById("m-name").textContent=m.name;
+    document.getElementById("m-range").textContent=m.range;
+    document.getElementById("m-body").textContent=m.body;
+    document.querySelectorAll("#method-btns button").forEach(function(b){
+      b.setAttribute("aria-pressed",String(b.dataset.method===id));
+    });
+  }
+
+  var methodBtns=document.getElementById("method-btns");
+  METHOD_ORDER.forEach(function(id){
+    var b=document.createElement("button");
+    b.type="button";
+    b.dataset.method=id;
+    b.textContent=METHODS[id].name;
+    b.addEventListener("click",function(){selectMethod(id);});
+    methodBtns.appendChild(b);
+  });
+  selectMethod("transit");
+
+  /* ---- Worlds explorer ---- */
+  var filter="all";
+  var selected=WORLDS[15]; /* Proxima b */
+  var playing=true, showLabels=true, showHZ=true;
+  var t0=performance.now(), pausedAt=0;
+  var oCanvas=document.getElementById("orbit");
+  var oStage=document.getElementById("orbit-stage");
+
+  function worldsVisible(){
+    if(filter==="all") return WORLDS;
+    return WORLDS.filter(function(w){return w.method===filter;});
+  }
+
+  function methodLabel(id){
+    return ({transit:"Transit",rv:"Radial velocity",imaging:"Direct imaging",microlens:"Microlensing",timing:"Timing"})[id]||id;
+  }
+
+  function selectWorld(id){
+    var w=WORLDS.filter(function(x){return x.id===id;})[0];
+    if(!w) return;
+    selected=w;
+    document.querySelectorAll(".card[aria-pressed]").forEach(function(el){el.setAttribute("aria-pressed","false");});
+    var card=document.querySelector('.card[data-id="'+id+'"]');
+    if(card) card.setAttribute("aria-pressed","true");
+    document.getElementById("info-name").textContent=w.name;
+    document.getElementById("info-type").textContent=w.kind+" · "+w.starType;
+    var stats=document.getElementById("info-stats");
+    stats.hidden=false;
+    stats.innerHTML=
+      '<li><span class="k">Found</span><span class="v">'+w.year+' · '+methodLabel(w.method)+"</span></li>"+
+      '<li><span class="k">Distance</span><span class="v">'+w.dist+"</span></li>"+
+      '<li><span class="k">Period</span><span class="v">'+w.period+"</span></li>"+
+      '<li><span class="k">Size / mass</span><span class="v">'+w.size+"</span></li>"+
+      '<li><span class="k">Orbit (mean)</span><span class="v">'+(w.au?w.au+" AU":"—")+"</span></li>"+
+      '<li><span class="k">Host</span><span class="v">'+w.star+"</span></li>";
+    document.getElementById("info-facts").innerHTML=w.facts.map(function(f){return "<li>"+f+"</li>";}).join("");
+    document.getElementById("info-credit").innerHTML='Rounded from <a href="https://exoplanetarchive.ipac.caltech.edu/" rel="noopener" target="_blank">NASA Exoplanet Archive</a> / NASA Science public pages · schematic — not a precision orbit.';
+    if(filter!=="all" && w.method!==filter){
+      /* keep filter; card still selectable */
+    }
+  }
+
+  function renderCards(){
+    var wrap=document.getElementById("cards");
+    wrap.innerHTML="";
+    worldsVisible().forEach(function(w){
+      var c=document.createElement("button");
+      c.type="button";
+      c.className="card";
+      c.dataset.id=w.id;
+      c.setAttribute("role","listitem");
+      c.setAttribute("aria-pressed",String(selected && selected.id===w.id));
+      c.innerHTML='<p class="n">'+w.year+' · '+methodLabel(w.method)+"</p><h3>"+w.name+"</h3><p class=\"meta\">"+w.kind+" · "+w.dist+"</p>";
+      c.addEventListener("click",function(){selectWorld(w.id);});
+      wrap.appendChild(c);
+    });
+  }
+
+  var filters=document.getElementById("filters");
+  [{id:"all",label:"All examples"},{id:"transit",label:"Transit"},{id:"rv",label:"Radial velocity"},{id:"imaging",label:"Imaging"},{id:"microlens",label:"Microlensing"},{id:"timing",label:"Timing"}].forEach(function(f){
+    var b=document.createElement("button");
+    b.type="button";
+    b.dataset.filter=f.id;
+    b.textContent=f.label;
+    b.addEventListener("click",function(){
+      filter=f.id;
+      document.querySelectorAll("#filters button").forEach(function(el){
+        el.setAttribute("aria-pressed",String(el.dataset.filter===filter));
+      });
+      var vis=worldsVisible();
+      if(vis.length && vis.indexOf(selected)<0) selectWorld(vis[0].id);
+      renderCards();
+    });
+    filters.appendChild(b);
+  });
+  document.querySelector("#filters button").setAttribute("aria-pressed","true");
+
+  function drawOrbit(now){
+    var dpr=Math.min(window.devicePixelRatio||1,2);
+    var rect=oStage.getBoundingClientRect();
+    var ctrlH=(oStage.querySelector(".controls").offsetHeight||48);
+    var w=Math.max(280,rect.width);
+    var h=Math.max(280,rect.height-ctrlH);
+    oCanvas.style.width=w+"px";
+    oCanvas.style.height=h+"px";
+    oCanvas.width=Math.floor(w*dpr);
+    oCanvas.height=Math.floor(h*dpr);
+    var ctx=oCanvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var ink=cssVar("--ink","#e8e6e1");
+    var muted=cssVar("--muted","#63666e");
+    var accent=cssVar("--accent","#c8b48a");
+    var line=cssVar("--line","#2c303a");
+    var base=cssVar("--base-2","#14161c");
+    ctx.fillStyle=base; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle="rgba(255,255,255,0.32)";
+    var seed=77;
+    for(var s=0;s<70;s++){
+      seed=(seed*1103515245+12345)&0x7fffffff;
+      ctx.beginPath();
+      ctx.arc((seed%1000)/1000*w, ((seed*13)%1000)/1000*h, 0.4+(seed%10)/12, 0, Math.PI*2);
+      ctx.fill();
+    }
+    var wld=selected;
+    var cx=w*0.5, cy=h*0.48;
+    var maxAU=Math.max(wld.au*1.35, (wld.hzOut||0)*1.15, 0.08);
+    function rOf(au){ return (au/maxAU)*Math.min(w,h)*0.40; }
+    if(showHZ && wld.hzOut>0){
+      ctx.beginPath();
+      ctx.arc(cx,cy,rOf(wld.hzOut),0,Math.PI*2);
+      ctx.arc(cx,cy,rOf(wld.hzIn),0,Math.PI*2,true);
+      ctx.fillStyle="rgba(200,180,100,0.12)";
+      ctx.fill();
+      ctx.strokeStyle="rgba(200,180,100,0.35)";
+      ctx.setLineDash([3,4]);
+      ctx.beginPath(); ctx.arc(cx,cy,rOf(wld.hzIn),0,Math.PI*2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy,rOf(wld.hzOut),0,Math.PI*2); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    var or=rOf(wld.au||0.05);
+    ctx.strokeStyle=line; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.arc(cx,cy,or,0,Math.PI*2); ctx.stroke();
+    /* star */
+    var sg=ctx.createRadialGradient(cx,cy,0,cx,cy,22);
+    sg.addColorStop(0,"#ffe08a"); sg.addColorStop(0.5,"#ffaa33"); sg.addColorStop(1,"rgba(255,170,50,0)");
+    ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(cx,cy,22,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle="#ffcc66"; ctx.beginPath(); ctx.arc(cx,cy,8,0,Math.PI*2); ctx.fill();
+    var sim=playing?now:pausedAt;
+    var ang=(sim-t0)/1000*0.55;
+    var px=cx+Math.cos(ang)*or;
+    var py=cy+Math.sin(ang)*or;
+    ctx.beginPath(); ctx.arc(px,py,wld.rPx,0,Math.PI*2);
+    ctx.fillStyle=wld.color; ctx.fill();
+    ctx.strokeStyle=accent; ctx.lineWidth=1.5; ctx.stroke();
+    if(showLabels){
+      ctx.fillStyle=ink; ctx.font='500 11px "IBM Plex Mono", monospace';
+      ctx.fillText(wld.name, px+wld.rPx+6, py+4);
+      ctx.fillStyle=muted; ctx.font='10px "IBM Plex Mono", monospace';
+      ctx.fillText(wld.star, cx+12, cy-14);
+      if(showHZ && wld.hzOut>0){
+        ctx.fillText("HZ", cx+rOf((wld.hzIn+wld.hzOut)/2)*0.15, cy-rOf((wld.hzIn+wld.hzOut)/2)-6);
+      }
+    }
+  }
+
+  document.getElementById("btn-play").addEventListener("click",function(){
+    var now=performance.now();
+    if(playing){ pausedAt=now; playing=false; }
+    else { t0+=(now-pausedAt); playing=true; }
+    this.textContent=playing?"Pause":"Play";
+    this.setAttribute("aria-pressed",String(playing));
+  });
+  document.getElementById("btn-labels").addEventListener("click",function(){
+    showLabels=!showLabels;
+    this.setAttribute("aria-pressed",String(showLabels));
+  });
+  document.getElementById("btn-hz").addEventListener("click",function(){
+    showHZ=!showHZ;
+    this.setAttribute("aria-pressed",String(showHZ));
+  });
+
+  renderCards();
+  selectWorld("proximab");
+
+  function loop(now){
+    drawMethod(now);
+    drawOrbit(now);
+    requestAnimationFrame(loop);
+  }
+  window.addEventListener("resize",function(){ drawMethod(performance.now()); drawOrbit(performance.now()); });
+  requestAnimationFrame(loop);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
