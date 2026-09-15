@@ -764,10 +764,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     return url;
   }
   function fetchGeocode(url){
-    return fetch(url,{cache:'no-store'}).then(function(r){
+    var ctrl=typeof AbortController!=='undefined'?new AbortController():null;
+    var timer=ctrl?setTimeout(function(){ try{ctrl.abort();}catch(e){} },12000):null;
+    return fetch(url,{cache:'no-store',signal:ctrl?ctrl.signal:undefined}).then(function(r){
       if(!r.ok) throw new Error('HTTP '+r.status);
       return r.json();
-    }).then(function(j){ return j.results||[]; });
+    }).then(function(j){ return j.results||[]; }).finally(function(){
+      if(timer) clearTimeout(timer);
+    });
   }
   function geocodeZip(zip){
     var q1=geocodeUrl(zip,'US');
