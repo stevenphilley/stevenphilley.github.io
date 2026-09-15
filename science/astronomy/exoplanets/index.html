@@ -59,9 +59,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .filters button[aria-pressed="true"],
 .presets button[aria-pressed="true"],
 .controls button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
-.shell{margin-top:4px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:start}
-.map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:420px;aspect-ratio:5/4;overflow:hidden}
-.map-stage canvas{display:block;width:100%;height:100%}
+.shell{margin-top:4px;display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,320px);gap:12px;align-items:start}
+.map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:0;overflow:hidden;max-width:100%}
+.map-stage canvas{display:block;width:100%;height:auto;max-width:100%;vertical-align:top}
 .controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);position:absolute;left:0;right:0;bottom:0;z-index:2}
 .hint-abs{position:absolute;top:10px;left:12px;z-index:2;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
 .panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;position:sticky;top:12px}
@@ -104,7 +104,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 @media (max-width:860px){
   .stage,.shell,.glossary,.more{grid-template-columns:1fr}
   .panel{position:static}
-  .map-stage{min-height:300px;aspect-ratio:1/1}
+  .map-stage{min-height:0}
 }
 </style>
 </head>
@@ -588,10 +588,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 
   function drawOrbit(now){
     var dpr=Math.min(window.devicePixelRatio||1,2);
-    var rect=oStage.getBoundingClientRect();
-    var ctrlH=(oStage.querySelector(".controls").offsetHeight||48);
-    var w=Math.max(280,rect.width);
-    var h=Math.max(300, Math.round(w*0.72)-ctrlH);
+    var w=Math.max(280, oStage.clientWidth);
+    var h=Math.max(300, Math.min(460, Math.round(w*0.78)));
     oCanvas.style.width=w+"px";
     oCanvas.style.height=h+"px";
     oCanvas.width=Math.floor(w*dpr);
@@ -613,7 +611,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       ctx.fill();
     }
     var wld=selected;
-    var cx=w*0.5, cy=h*0.50;
+    var cx=w*0.5, cy=h*0.46;
     var maxAU=Math.max(wld.au*1.45, (wld.hzOut||0)*1.2, 0.08);
     function rOf(au){ return (au/maxAU)*Math.min(w,h)*0.42; }
     if(showHZ && wld.hzOut>0){
