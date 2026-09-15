@@ -4,12 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weather — Steven Philley</title>
-<meta name="description" content="Live US weather by ZIP — current conditions and a 10-day forecast with temperature graph. Defaults to Campbell, CA (95008). Open-Meteo, no API key.">
+<meta name="description" content="Live US weather by city or ZIP — current conditions and a 10-day forecast with temperature graph. Defaults to Campbell, CA (95008). Open-Meteo, no API key.">
 <link rel="canonical" href="https://stevenphilley.com/weather/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Weather — Steven Philley">
-<meta property="og:description" content="Live US weather by ZIP code. Defaults to Campbell / South Bay.">
+<meta property="og:description" content="Live US weather by city or ZIP. Defaults to Campbell / South Bay.">
 <meta property="og:url" content="https://stevenphilley.com/weather/">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -70,7 +70,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 .err{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--ink-soft,#9b9a96);margin:18px 0 0}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-.zip-form{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:18px 0 0;max-width:420px}
+.zip-form{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:18px 0 0;max-width:480px}
 .zip-form label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .zip-form input[type="text"]{flex:1 1 140px;min-width:120px;appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;padding:10px 12px;outline:none}
 .zip-form input[type="text"]::placeholder{color:var(--muted,#63666e)}
@@ -80,7 +80,15 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 .zip-form button[type="submit"]:disabled{opacity:.5;cursor:wait}
 .zip-hint{font-family:"IBM Plex Mono",monospace;font-size:11px;line-height:1.5;color:var(--muted,#63666e);margin:8px 0 0}
 .zip-err{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--accent,#c8b48a);margin:8px 0 0}
-@media (max-width:560px){.zip-form{max-width:100%}.zip-form button[type="submit"]{flex:1 1 auto}}
+.place-picker{margin:10px 0 0;max-width:480px;border:1px solid var(--line,#2c303a)}
+.place-picker-lead{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0;padding:10px 12px;border-bottom:1px solid var(--line,#2c303a)}
+.place-picker-list{margin:0;padding:0;list-style:none}
+.place-picker button{display:block;width:100%;appearance:none;background:transparent;border:0;border-top:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.45;text-align:left;padding:10px 12px;cursor:pointer}
+.place-picker button:first-child{border-top:0}
+.place-picker button:hover,.place-picker button:focus{color:var(--accent,#c8b48a);outline:none;background:color-mix(in srgb,var(--accent,#c8b48a) 8%,transparent)}
+.place-picker .pick-name{display:block}
+.place-picker .pick-meta{display:block;margin-top:2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+@media (max-width:560px){.zip-form{max-width:100%}.zip-form button[type="submit"]{flex:1 1 auto}.place-picker{max-width:100%}}
 
 .wx-graph-wrap{margin:0 0 18px;border:1px solid var(--line,#2c303a);padding:14px 12px 10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .wx-graph-wrap svg{display:block;width:100%;min-width:520px;height:auto;font-family:"IBM Plex Mono",monospace}
@@ -121,15 +129,16 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
 
   <p class="kicker" id="place-kicker">Campbell · 95008 · South Bay</p>
   <h1>Weather</h1>
-  <p class="lede">Live conditions and a 10-day forecast for a US ZIP code. Defaults to Campbell (95008). High/low temperature graph plus day cards. Data from Open-Meteo in the browser — no API key; last ZIP stays in this browser only.</p>
+  <p class="lede">Live conditions and a 10-day forecast for a US city or ZIP. Defaults to Campbell (95008). High/low temperature graph plus day cards. Data from Open-Meteo in the browser — no API key; last place stays in this browser only.</p>
 
   <form class="zip-form" id="zip-form" action="#" method="get">
-    <label for="zip-input">US ZIP code</label>
-    <input type="text" id="zip-input" name="zip" inputmode="numeric" autocomplete="postal-code" maxlength="10" placeholder="ZIP code" aria-describedby="zip-hint zip-msg" value="95008">
+    <label for="zip-input">City or ZIP</label>
+    <input type="text" id="zip-input" name="q" autocomplete="off" maxlength="80" placeholder="City or ZIP" aria-describedby="zip-hint zip-msg" value="95008">
     <button type="submit" id="zip-go">Go</button>
   </form>
-  <p class="zip-hint" id="zip-hint">Enter a 5-digit US ZIP (ZIP+4 ok — first 5 used).</p>
+  <p class="zip-hint" id="zip-hint">City name (Campbell, CA) or a 5-digit US ZIP (ZIP+4 ok — first 5 used). Ambiguous names get a short picker.</p>
   <p class="zip-err" id="zip-msg" role="alert" hidden></p>
+  <div class="place-picker" id="place-picker" hidden></div>
 
   <div class="toolbar">
     <p class="meta" id="status" aria-live="polite">Loading…</p>
@@ -203,7 +212,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     lon:-121.950,
     label:'Campbell',
     admin1:'California',
-    timezone:'America/Los_Angeles'
+    timezone:'America/Los_Angeles',
+    query:'95008'
   };
   var root=document.documentElement;
   var themeButtons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
@@ -220,21 +230,25 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   });
   paintTheme();
 
+  function locFromSaved(saved){
+    if(!saved || !isFinite(saved.lat) || !isFinite(saved.lon)) return null;
+    var zip=saved.zip ? String(saved.zip).replace(/\D/g,'').slice(0,5) : '';
+    return {
+      zip:zip,
+      lat:+saved.lat,
+      lon:+saved.lon,
+      label:saved.label || DEFAULT.label,
+      admin1:saved.admin1 || '',
+      timezone:saved.timezone || DEFAULT.timezone,
+      query:saved.query || zip || saved.label || ''
+    };
+  }
   var loc=Object.assign({}, DEFAULT);
   try{
     var raw=localStorage.getItem(LOC_KEY);
     if(raw){
-      var saved=JSON.parse(raw);
-      if(saved && isFinite(saved.lat) && isFinite(saved.lon) && saved.zip){
-        loc={
-          zip:String(saved.zip).replace(/\D/g,'').slice(0,5) || DEFAULT.zip,
-          lat:+saved.lat,
-          lon:+saved.lon,
-          label:saved.label || DEFAULT.label,
-          admin1:saved.admin1 || '',
-          timezone:saved.timezone || DEFAULT.timezone
-        };
-      }
+      var savedLoc=locFromSaved(JSON.parse(raw));
+      if(savedLoc) loc=savedLoc;
     }
   }catch(e){}
 
@@ -254,7 +268,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   var zipInput=document.getElementById('zip-input');
   var zipGo=document.getElementById('zip-go');
   var zipMsg=document.getElementById('zip-msg');
+  var picker=document.getElementById('place-picker');
   var cache=null;
+  var pickerHits=[];
 
   var WX={
     0:'Clear sky',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',
@@ -310,13 +326,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
   }
   function placeLine(){
     var parts=[loc.label];
-    if(loc.admin1){
-      var st=loc.admin1;
-      if(st==='California') st='CA';
-      else if(st.length>2){ /* keep full for others */ }
-      parts.push(st);
-    }
-    parts.push(loc.zip);
+    var st=shortState(loc.admin1);
+    if(st) parts.push(st);
+    if(loc.zip) parts.push(loc.zip);
     return parts.filter(Boolean).join(' · ');
   }
   function shortState(admin1){
@@ -334,18 +346,25 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     };
     return map[admin1]||admin1;
   }
+  function searchBoxValue(){
+    if(loc.query) return loc.query;
+    if(loc.zip) return loc.zip;
+    var st=shortState(loc.admin1);
+    return loc.label+(st?', '+st:'');
+  }
   function updatePlaceUI(){
     var st=shortState(loc.admin1);
-    var kick=loc.label+(st?' · '+st:'')+' · '+loc.zip;
+    var kick=loc.label+(st?' · '+st:'')+(loc.zip?' · '+loc.zip:'');
     if(loc.zip==='95008' && loc.label==='Campbell') kick='Campbell · 95008 · South Bay';
     kicker.textContent=kick;
-    zipInput.value=loc.zip;
+    zipInput.value=searchBoxValue();
   }
   function persistLoc(){
     try{
       localStorage.setItem(LOC_KEY, JSON.stringify({
-        zip:loc.zip, lat:loc.lat, lon:loc.lon,
-        label:loc.label, admin1:loc.admin1, timezone:loc.timezone
+        zip:loc.zip||'', lat:loc.lat, lon:loc.lon,
+        label:loc.label, admin1:loc.admin1, timezone:loc.timezone,
+        query:loc.query||''
       }));
     }catch(e){}
   }
@@ -354,10 +373,25 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     zipMsg.hidden=false;
     zipMsg.textContent=text;
   }
+  function hidePicker(){
+    pickerHits=[];
+    picker.hidden=true;
+    picker.innerHTML='';
+  }
+  function looksLikeZip(raw){
+    return /^\s*\d{5}(?:[-\s]?\d{4})?\s*$/.test(String(raw||''));
+  }
   function normalizeZip(raw){
     var digits=String(raw||'').replace(/\D/g,'');
     if(digits.length<5) return null;
     return digits.slice(0,5);
+  }
+  function parsePlaceQuery(raw){
+    var q=String(raw||'').trim().replace(/\s+/g,' ');
+    if(!q) return {name:'', qualifier:''};
+    var m=q.match(/^(.+?),\s*([^,]+)$/);
+    if(m) return {name:m[1].trim(), qualifier:m[2].trim()};
+    return {name:q, qualifier:''};
   }
   function pickResult(results, zip){
     if(!results || !results.length) return null;
@@ -373,27 +407,152 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     }
     return pool[0];
   }
+  function geocodeUrl(name, countryCode){
+    var url='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(name)+
+      '&count=15&language=en&format=json';
+    if(countryCode) url+='&countryCode='+encodeURIComponent(countryCode);
+    return url;
+  }
+  function fetchGeocode(url){
+    return fetch(url,{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    }).then(function(j){ return j.results||[]; });
+  }
   function geocodeZip(zip){
-    var q1='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json&countryCode=US';
-    var q2='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json&country=US';
-    var q3='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=10&language=en&format=json';
-    function tryUrl(url){
-      return fetch(url,{cache:'no-store'}).then(function(r){
-        if(!r.ok) throw new Error('HTTP '+r.status);
-        return r.json();
-      }).then(function(j){
-        var hit=pickResult(j.results, zip);
-        if(hit) return hit;
-        return null;
+    var q1=geocodeUrl(zip,'US');
+    var q2='https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(zip)+'&count=15&language=en&format=json&country=US';
+    var q3=geocodeUrl(zip);
+    return fetchGeocode(q1).then(function(results){
+      var hit=pickResult(results, zip);
+      if(hit) return hit;
+      return fetchGeocode(q2);
+    }).then(function(hitOrResults){
+      if(hitOrResults && !Array.isArray(hitOrResults)) return hitOrResults;
+      var hit=pickResult(hitOrResults, zip);
+      if(hit) return hit;
+      return fetchGeocode(q3);
+    }).then(function(hitOrResults){
+      if(hitOrResults && !Array.isArray(hitOrResults)) return hitOrResults;
+      return pickResult(hitOrResults, zip);
+    });
+  }
+  function namesEqual(a,b){
+    return String(a||'').toLowerCase()===String(b||'').toLowerCase();
+  }
+  function qualifierMatches(hit, qualifier){
+    var q=String(qualifier||'').trim().toLowerCase();
+    if(!q) return true;
+    var admin=String(hit.admin1||'').toLowerCase();
+    var st=shortState(hit.admin1).toLowerCase();
+    var country=String(hit.country||'').toLowerCase();
+    var cc=String(hit.country_code||'').toLowerCase();
+    return q===admin || q===st || q===country || q===cc;
+  }
+  function rankPlaces(results, raw){
+    var parsed=parsePlaceQuery(raw);
+    var city=parsed.name.toLowerCase();
+    var placeCodes={PPL:1,PPLA:1,PPLA2:1,PPLA3:1,PPLA4:1,PPLC:1,PPLX:1,PPLL:1};
+    return (results||[]).slice().sort(function(a,b){
+      var ae=namesEqual(a.name,city)?1:0;
+      var be=namesEqual(b.name,city)?1:0;
+      if(ae!==be) return be-ae;
+      var ap=placeCodes[a.feature_code]?1:0;
+      var bp=placeCodes[b.feature_code]?1:0;
+      if(ap!==bp) return bp-ap;
+      var aus=a.country_code==='US'?1:0;
+      var bus=b.country_code==='US'?1:0;
+      if(aus!==bus) return bus-aus;
+      return (b.population||0)-(a.population||0);
+    });
+  }
+  function candidatePlaces(results, raw){
+    var parsed=parsePlaceQuery(raw);
+    var pool=rankPlaces(results, raw);
+    if(parsed.qualifier){
+      var narrowed=pool.filter(function(r){ return qualifierMatches(r, parsed.qualifier); });
+      if(narrowed.length) pool=narrowed;
+    }
+    var exact=pool.filter(function(r){ return namesEqual(r.name, parsed.name); });
+    if(exact.length) pool=exact;
+    var us=pool.filter(function(r){ return r.country_code==='US'; });
+    return us.length ? us : pool;
+  }
+  function shouldAutoPick(hits, raw){
+    if(!hits || hits.length<=1) return true;
+    var parsed=parsePlaceQuery(raw);
+    var top=hits[0];
+    var same=hits.filter(function(h){ return namesEqual(h.name, top.name); });
+    if(same.length<=1) return true;
+    var topPop=top.population||0;
+    var nextPop=same.length>1 ? (same[1].population||0) : 0;
+    if(parsed.qualifier && qualifierMatches(top, parsed.qualifier) && (nextPop===0 || topPop>=3*nextPop)) return true;
+    if(!parsed.qualifier && topPop>=10000 && topPop>=3*Math.max(nextPop,1)) return true;
+    return false;
+  }
+  function geocodePlace(raw){
+    var q=String(raw||'').trim().replace(/\s+/g,' ');
+    return fetchGeocode(geocodeUrl(q,'US')).then(function(results){
+      if(results && results.length) return results;
+      return fetchGeocode(geocodeUrl(q));
+    });
+  }
+  function zipFromHit(hit, forcedZip){
+    if(forcedZip) return forcedZip;
+    var pcs=hit && hit.postcodes || [];
+    if(pcs.length){
+      var p=String(pcs[0]).replace(/\D/g,'').slice(0,5);
+      if(p.length===5) return p;
+    }
+    return '';
+  }
+  function hitMeta(hit){
+    var st=shortState(hit.admin1) || hit.admin1 || '';
+    var parts=[];
+    if(st) parts.push(st);
+    if(hit.admin2 && !st) parts.push(hit.admin2);
+    if(hit.country_code && hit.country_code!=='US') parts.push(hit.country || hit.country_code);
+    else if(hit.country_code==='US') parts.push('US');
+    return parts.filter(Boolean).join(' · ');
+  }
+  function applyHit(hit, opts){
+    opts=opts||{};
+    loc={
+      zip:zipFromHit(hit, opts.zip),
+      lat:+hit.latitude,
+      lon:+hit.longitude,
+      label:hit.name || (opts.zip ? ('ZIP '+opts.zip) : 'Place'),
+      admin1:hit.admin1 || '',
+      timezone:hit.timezone || 'auto',
+      query:opts.query || opts.zip || hit.name || ''
+    };
+    persistLoc();
+    hidePicker();
+    showZipMsg('');
+    return loadForecast();
+  }
+  function showPicker(hits, query){
+    pickerHits=hits.slice(0,8);
+    var html='<p class="place-picker-lead">Several places match. Pick one:</p><div class="place-picker-list" role="listbox" aria-label="Matching places">';
+    for(var i=0;i<pickerHits.length;i++){
+      var hit=pickerHits[i];
+      html+='<button type="button" role="option" data-pick="'+i+'">'+
+        '<span class="pick-name">'+esc(hit.name)+'</span>'+
+        '<span class="pick-meta">'+esc(hitMeta(hit))+'</span>'+
+      '</button>';
+    }
+    html+='</div>';
+    picker.innerHTML=html;
+    picker.hidden=false;
+    var buttons=picker.querySelectorAll('[data-pick]');
+    for(var b=0;b<buttons.length;b++){
+      buttons[b].addEventListener('click',function(){
+        var hit=pickerHits[+this.getAttribute('data-pick')];
+        if(!hit) return;
+        applyHit(hit, {query:query});
       });
     }
-    return tryUrl(q1).then(function(hit){
-      if(hit) return hit;
-      return tryUrl(q2);
-    }).then(function(hit){
-      if(hit) return hit;
-      return tryUrl(q3);
-    });
+    if(buttons[0]) buttons[0].focus();
   }
   function render(){
     if(!cache) return;
@@ -610,41 +769,72 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52
     zipInput.disabled=!!on;
   }
 
-  zipForm.addEventListener('submit',function(ev){
-    ev.preventDefault();
+  function lookupRaw(raw){
     showZipMsg('');
-    var zip=normalizeZip(zipInput.value);
-    if(!zip){
-      showZipMsg('Enter a valid 5-digit US ZIP code.');
+    hidePicker();
+    raw=String(raw||'').trim();
+    if(!raw){
+      showZipMsg('Enter a city name or a 5-digit US ZIP.');
       zipInput.focus();
-      return;
+      return Promise.resolve();
+    }
+    if(looksLikeZip(raw)){
+      var zip=normalizeZip(raw);
+      setBusy(true);
+      statusEl.textContent='Looking up ZIP…';
+      return geocodeZip(zip).then(function(hit){
+        if(!hit){
+          showZipMsg('No US location found for ZIP '+zip+'. Try another code.');
+          statusEl.textContent=placeLine()+(cache?' · Open-Meteo':'');
+          return;
+        }
+        return applyHit(hit, {zip:zip, query:zip});
+      }).catch(function(){
+        showZipMsg('Geocoding failed. Check the connection and try again.');
+      }).then(function(){ setBusy(false); });
+    }
+    if(raw.length<2){
+      showZipMsg('Enter a fuller city name, or a 5-digit US ZIP.');
+      zipInput.focus();
+      return Promise.resolve();
     }
     setBusy(true);
-    statusEl.textContent='Looking up ZIP…';
-    geocodeZip(zip).then(function(hit){
-      if(!hit){
-        showZipMsg('No US location found for ZIP '+zip+'. Try another code.');
+    statusEl.textContent='Looking up place…';
+    return geocodePlace(raw).then(function(results){
+      var hits=candidatePlaces(results, raw);
+      if(!hits.length){
+        showZipMsg('No place found for “'+raw+'”. Try a city and state (Campbell, CA) or a ZIP.');
         statusEl.textContent=placeLine()+(cache?' · Open-Meteo':'');
         return;
       }
-      loc={
-        zip:zip,
-        lat:+hit.latitude,
-        lon:+hit.longitude,
-        label:hit.name || ('ZIP '+zip),
-        admin1:hit.admin1 || '',
-        timezone:hit.timezone || 'auto'
-      };
-      persistLoc();
-      showZipMsg('');
-      return loadForecast();
+      if(shouldAutoPick(hits, raw)){
+        return applyHit(hits[0], {query:raw});
+      }
+      showPicker(hits, raw);
+      statusEl.textContent='Several places match — pick one.';
     }).catch(function(){
       showZipMsg('Geocoding failed. Check the connection and try again.');
     }).then(function(){ setBusy(false); });
+  }
+
+  zipForm.addEventListener('submit',function(ev){
+    ev.preventDefault();
+    lookupRaw(zipInput.value);
   });
 
+  var bootQuery='';
+  try{
+    var params=new URLSearchParams(location.search);
+    bootQuery=params.get('q') || params.get('place') || params.get('zip') || '';
+  }catch(e){}
+
   updatePlaceUI();
-  loadForecast();
+  if(bootQuery){
+    zipInput.value=bootQuery;
+    lookupRaw(bootQuery);
+  }else{
+    loadForecast();
+  }
 })();
 </script>
 <script src="/js/sp-share.js" defer></script>
