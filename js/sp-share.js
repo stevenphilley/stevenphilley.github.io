@@ -4,6 +4,8 @@
  *  circular-calendar.html: ?theme=<dial skin> (brass|led|vapor|columbus|hallow|xmas|neon)
  *  Page-mode flags on <html> (not Share controls): data-sp-share="dial"|"markets".
  *  Optional: data-sp-share-param="sp_theme" on <html> to force that query key.
+ *  Optional: window.spShare.decorate(url) — page hook to add/replace extra query
+ *  params (weather ZIP, etc.) after theme keys are cleared, before theme is set.
  */
 (function () {
   "use strict";
@@ -61,6 +63,12 @@
     // Replace theme / sp_theme cleanly — no duplicate keys.
     url.searchParams.delete("theme");
     url.searchParams.delete("sp_theme");
+    var decorate = window.spShare && window.spShare.decorate;
+    if (typeof decorate === "function") {
+      try {
+        decorate(url);
+      } catch (err) {}
+    }
     url.searchParams.set(key, theme);
     return url.toString();
   }
@@ -283,9 +291,12 @@
   }
 
   // Public helpers for pages with custom share (lightbox, typing results).
+  // Preserve decorate if the page registered it before this script ran.
+  var prior = window.spShare || {};
   window.spShare = {
     url: themedShareUrl,
     theme: currentTheme,
+    decorate: prior.decorate || null,
     share: function () {
       shareFrom(null);
     },
