@@ -47,9 +47,9 @@ Methodologically, the work follows practice-based research traditions (Schön’
 
 If you read Draft 1.2, start here for what densified:
 
-1. **Living stevenphilley.com desks** — beyond photography Vol. I: Local (`/local/`, `/local/pruneyard/` orchards / arsenic / marsh fill, earthquakes, liquefaction, groceries, nuts), Weather (city-or-ZIP + share `?zip=`), Science/astronomy (solar map, Moon, local sky, nearest stars, exoplanets, galaxy, atmosphere), Annual Dial `/circular-calendar.html` (Columbus theme; month-dial auto-selects today), Suggest/suggestions board + `/sell/` product surface, maths / tools / games inventory.
-2. **Public-surface refresh (fetched 2026-09-15)** — `coloritcompany.com` now redirects to `https://colorit.co/`; BBS JSON follows to `https://colorit.co/bbs/bbslist.json`. Snapshot C: `count` **1323**, `statusCounts` green **1091** / red **207** / yellow **22** (`generated` 2026-09-12). `suggestpage.com` is independently live (Page Pack **$39/yr**, Site Care **$39/mo**; **$299** also appears on the public page). GitHub PR #4 would point `/sell/` at suggestpage.com — **open, not merged**; `/sell/` still hosts the offer on this domain.
-3. **Pending, not live** — `/local/education/` is **HTTP 404** on main. Compton–Campbell essay is **not on main**. Cite GitHub PRs #11 (draft) and #12 (draft) as pending work; do not invent those URLs as published.
+1. **Living stevenphilley.com desks** — beyond photography Vol. I: Local (`/local/`, `/local/pruneyard/` orchards / arsenic / marsh fill, earthquakes, liquefaction, groceries, nuts, `/local/education/`, `/local/compton-campbell/`), Weather (city-or-ZIP + share `?zip=`), Science/astronomy (solar map, Moon, local sky, nearest stars, exoplanets, galaxy, atmosphere), Annual Dial `/circular-calendar.html` (Columbus theme; month-dial auto-selects today), Suggest/suggestions board + `/sell/` stub to suggestpage.com, maths / tools / games inventory.
+2. **Public-surface refresh (fetched 2026-09-15)** — `coloritcompany.com` now redirects to `https://colorit.co/`; BBS JSON follows to `https://colorit.co/bbs/bbslist.json`. Snapshot C: `count` **1323**, `statusCounts` green **1091** / red **207** / yellow **22** (`generated` 2026-09-12). `suggestpage.com` is independently live (Page Pack **$39/yr**, Site Care **$39/mo**; **$299** also appears on the public page). After PR #4 merged, `/sell/` is an HTML stub to `https://suggestpage.com/sell/` (`/sell/thanks/` stays).
+3. **Local essays now on main** — `/local/education/` and `/local/compton-campbell/` are **HTTP 200** after PRs #11 and #12 merged (same drafting day). Earlier 1.3 wording that treated them as pending is superseded here.
 4. **Steam / Digiflux unchanged-honest** — Ra Steam still **$49.99** Early Access; digiflux `/products|/pricing|/about` still **404**; docs **$250** COPY DRIFT retained. Laser Tag AppID still GAP.
 5. **Draft 1.2 densifiers kept in full** — drift register, file:line Ablockalypse cites, Launch Up manual Ch01–08, BBS Snapshots A/B, Appendices F–H, fair ownership table.
 
@@ -377,9 +377,9 @@ Draft 1.3 adds a living-site layer without relaxing Draft 1.2 rules:
 
 1. Prefer **live HTTP fetches** of stevenphilley.com, colorit.co / coloritcompany.com, suggestpage.com, digiflux.one, and Steam storefronts on the drafting day (2026-09-15 UTC for this file).
 2. Prefer **dated BBS JSON snapshots** A/B/C; never collapse them into one eternal census.
-3. Treat **GitHub open/draft PRs** as pending work. Do not cite `/local/education/` or `/local/compton-campbell/` as live if main returns 404 / not found.
+3. Treat **GitHub open/draft PRs** as pending work until they land on main. After PRs #11 and #12 merged, cite `/local/education/` and `/local/compton-campbell/` as live (HTTP 200).
 4. Mark interpretive adjacency (local literacy + weather instruments as attention/systems craft parallel to engine ownership) as **Grade E**.
-5. Record domain cutovers (`coloritcompany.com` → `colorit.co`) and dual commercial surfaces (`/sell/` still live; `suggestpage.com` independently live; PR #4 unmerged) as COPY-DRIFT-adjacent geography, not as a completed cutover invented for neatness.
+5. Record domain cutovers (`coloritcompany.com` → `colorit.co`) and the completed `/sell/` → `suggestpage.com/sell/` stub (PR #4 merged) as dated geography.
 6. Keep every Draft 1.2 densifier; add; do not replace.
 
 ## 2.10 Self-directed doctoral form and artistic-research debates
@@ -1978,12 +1978,14 @@ Live on main (HTTP 200, 2026-09-15):[^sp-local]
 
 Also linked from the Local hub and sitemap, with thinner “past / present / future” lanes: Dolphin Pet Village, DJ hobby, guitar showcase.[^sp-local]
 
-Place is no longer only the CIC postal block. The practice now publishes **place literacy** with the same exactness ethic as pitfall tables: cite USGS / city / museum sources; print the disclaimer; refuse to guess a lot.
+Two further Local essays landed on `main` the same day (PRs #11 and #12 merged; live HTTP 200 on 2026-09-15):[^pr-education][^pr-compton]
 
-**Not live on main (2026-09-15):**
+| Path | What the public page is | Bound |
+| --- | --- | --- |
+| `/local/education/` | South Bay education-quality literacy, **Campbell Union School District (K–8, CDS 43-69393)** first — enrollment, how California measured quality (STAR/API → CAASPP/Dashboard), then county gaps | Cited public numbers. **Not** a school ranking or parent-advice product |
+| `/local/compton-campbell/` | Compare/contrast: **1981 Compton** (Los Angeles County) and **2026 Campbell** (Santa Clara County) — population, work, housing, civic story | Census / city ACFR / histories. **Not** a stereotype tour or city ranking |
 
-- `https://stevenphilley.com/local/education/` returns **HTTP 404**. GitHub PR #11 (*South Bay education quality — Campbell Union first*, draft) would add that essay. Draft 1.3 does **not** treat `/local/education/` as published.[^pr-education]
-- A 1981 Compton / 2026 Campbell compare/contrast essay is proposed at `/local/compton-campbell/` on GitHub PR #12 (draft). That path is **not on main**. Do not invent it as a live URL.[^pr-compton]
+Place is no longer only the CIC postal block. The practice now publishes **place literacy** with the same exactness ethic as pitfall tables: cite USGS / city / museum / CDE sources; print the disclaimer; refuse to guess a lot.
 
 ## 8.12 Weather as a shareable instrument
 
@@ -2028,10 +2030,8 @@ Draft 1.3 window (already on `main` when this file was drafted):
 Three public layers, do not collapse them:[^sp-suggest][^sp-sell][^suggestpage]
 
 1. **Practice demo on this domain.** `/suggest/` emails Steven (`formsubmit.co` → steven@coloritcompany.com); `/suggestions/` is a public Yes / Later / No / Pending / Done board. That is the living instrument the rest of the site points at.
-2. **Offer still hosted on stevenphilley.com.** `/sell/` remains a full commercial page (HTTP 200 on 2026-09-15): “Suggestion pages with a live Yes / Later / No board”; public copy names **Page Pack $39/yr** and **Site Care $39/mo**; **$299** also appears on the fetched page. Demo language points at the on-domain board.
-3. **Independent product host.** `https://suggestpage.com/` (www redirects to apex) is live with the same product sentence—“A static page with a live suggestion board”—and the same $39/yr, $39/mo, and $299 figures on the 2026-09-15 fetch.
-
-GitHub PR #4 (*Point /sell/ at suggestpage.com…*) is **OPEN and unmerged**. If merged, `/sell/` would become an HTML stub toward `https://suggestpage.com/sell/` (`/sell/thanks/` would stay). Draft 1.3 records the PR as pending geography; it does **not** pretend the redirect already shipped.[^pr-sell-redirect]
+2. **Offer cutover (PR #4 merged).** `/sell/` on this domain is now an HTML stub (`meta refresh` + `location.replace`) to `https://suggestpage.com/sell/`; canonical points at suggestpage. `/sell/thanks/` stays on stevenphilley.com. Live fetch of both hosts returned HTTP 200 on 2026-09-15.[^pr-sell-redirect][^sp-sell]
+3. **Independent product host.** `https://suggestpage.com/` (www redirects to apex) is live with the product sentence—“A static page with a live suggestion board”—and Page Pack **$39/yr**, Site Care **$39/mo**, and **$299** on the 2026-09-15 fetch.
 
 `colorit.co` is live as Color It Company — Independent Media & Games; `coloritcompany.com` **redirects there** on this fetch. The CIC hub HTML includes the $39/yr and $39/mo suggestion-page figures. That is studio multi-surface identity continuing: Digiflux still owns the engine story; CIC/`colorit.co` is the media/games/BBS/suggest-page face; stevenphilley.com is the living desk + photography face.[^colorit-co][^cic-home]
 
@@ -2205,7 +2205,7 @@ Draft 1.3 does not move the identity-bearing layers of Ra, Ablockalypse, or Digi
 2. **Sky instruments** — solar map, Moon dial, local sky, nearest stars, exoplanets, galaxy, atmosphere — schematic, cited, disclaimer-first.
 3. **Time instrument** — Annual Dial with Columbus skin and month-dial-today UX.
 4. **Feedback instrument** — suggest form + public Yes/Later/No board; commercial twin on `/sell/` and live `suggestpage.com`; CIC hostname now `colorit.co`.
-5. **Pending honesty** — education and Compton–Campbell essays exist only as open/draft PRs; `/local/education/` 404 on main.
+5. **Same-day main landings** — `/local/education/` and `/local/compton-campbell/` are live after PRs #11/#12; `/sell/` stubs to suggestpage.com after PR #4.
 
 **Grade E** where this is called “ownership epistemology.” **Grade A** where it is a dated URL inventory. Reciprocity holds if the same practice that documents silent UBO failure also documents “not a parcel diagnosis” and “not a login test.” It fails if the living site becomes unsourced vibe while the engine docs stay exact—or the reverse.
 
@@ -2786,7 +2786,7 @@ Do **not** cite as “PhD dissertation, [University].”
 | Draft 1.0 | 2026-09-09 | Initial public-artifact synthesis monograph created at `/workspace/dissertation/Steven_Philley_Practice_Based_Dissertation.md` |
 | Draft 1.1 | 2026-09-09 | Word count **24652** (`wc -w`; Draft 1.0 was 14942). Expansion from public sources pack (`01-expansion-sources.md`) + live fetches: Preface blog self-statements; Ch4 Lua/UBO/price-drift/ray-order/pitfall commentary; Ch5 sdl2-blocks architecture + Input.h 180/45 + releasenotes + license + Firefly disclosure + board/CI notes; Ch6 Workshop/Launch Up/Laser Tag GAP/EA honesty/one-seat research; Ch7 BBS 1304/1092 + 17 sources + ETL/protocol ethics; Ch8 photo/panatau structure; Ch9 reciprocity synthesis; comparative ownership table; expanded failure register; Interlude drift table; twelve added literature works; densification toward monograph scale. |
 | Draft 1.2 | 2026-09-10 | Word count **34523** (`wc -w`). Folds `02-draft12-sources.md` + vendor line cites. Adds major section **Documentation Drift as Epistemic Object** (T13 drift register); Ch3 close readings (Driscoll, Swink, Candy); Ch4 McCandless operationalization, full F-key pedagogy, BLAS lifecycle narrative, SPIR-V roles, Linux/RADV/Arc notes; Ch5 `ley::` file walk, public wall-kick code walk, localization CSV craft, Firefly ethics deepen, board-size instrument; Ch7 `bbslist.json` schema + field frequencies + Snapshot B (1322/1099 on 2026-09-10) + probe ethics / multilingual / anti-nostalgia cosplay; Ch9 falsifiability expansion + Draft 1.2 synthesis addendum; **Appendix F** Lua API catalog (48) + minimal script lifecycle; **Appendix G** competitive feel paired case studies (Launch Up × Ablockalypse); refreshed Author Revision Checklist (✅/🔶/❌). Honest COPY DRIFT flags retained. No hipck claims; no Laser Tag AppID invention. |
-| Draft 1.3 | 2026-09-15 | Word count **38101** (`wc -w`). Keeps all Draft 1.2 densifiers. Adds living-site layer: Ch8 §§8.10–8.17 (Local / Pruneyard orchards-arsenic-fill / quakes / liquefaction / groceries / nuts; Weather city-or-ZIP + share `?zip=`; astronomy + atmosphere; Annual Dial Columbus + month-dial-today; suggest/suggestions/`/sell/` + live suggestpage.com; maths/tools/games inventory); BBS Snapshot C (1323 / `statusCounts` 1091 green, 207 red, 22 yellow; `generated` 2026-09-12; JSON now at colorit.co); `coloritcompany.com`→`colorit.co` cutover; pending PRs #11 education and #12 Compton–Campbell **not** treated as live (`/local/education/` 404); PR #4 sell→suggestpage **open, unmerged**. Light Ch3/Ch9/Ch10 adjacency only. Steam Ra still $49.99 EA; digiflux `/products` still 404. No fabricated metrics. Not an institutional PhD. |
+| Draft 1.3 | 2026-09-15 | Word count **38080** (`wc -w`). Keeps all Draft 1.2 densifiers. Adds living-site layer: Ch8 §§8.10–8.17 (Local / Pruneyard / quakes / liquefaction / groceries / nuts / **education** / **Compton–Campbell**; Weather city-or-ZIP + share `?zip=`; astronomy + atmosphere; Annual Dial Columbus + month-dial-today; suggest/suggestions + `/sell/` stub to suggestpage.com; maths/tools/games inventory); BBS Snapshot C (1323 / `statusCounts` 1091 green, 207 red, 22 yellow; `generated` 2026-09-12; JSON now at colorit.co); `coloritcompany.com`→`colorit.co` cutover. Same-day main landings after rebase: PRs #11, #12, #4 **merged** — education and Compton–Campbell HTTP 200; `/sell/` stubs to suggestpage.com. Light Ch3/Ch9/Ch10 adjacency only. Steam Ra still $49.99 EA; digiflux `/products` still 404. No fabricated metrics. Not an institutional PhD. |
 
 
 
@@ -2805,8 +2805,8 @@ Research-public (this monograph’s next honest moves):
 3. Publish Laser Tag AppID when live; optional measured appendices (frame times, BLAS rebuild costs, BBS probe methodology paper).  
 4. Longitudinal audit of EA time bounds across Ra/Launch Up/Ablockalypse.  
 5. Confirm or omit panatau authorship and hipck entirely.  
-6. If PRs #11 / #12 merge, fold `/local/education/` and `/local/compton-campbell/` into Ch8/Appendix A as live pages; until then keep them pending.  
-7. Resolve `/sell/` vs suggestpage.com (PR #4) in Steven’s voice without inventing a completed cutover.
+6. Keep `/local/education/` and `/local/compton-campbell/` dated as live; do not re-pending them.  
+7. `/sell/` stub vs suggestpage.com offer copy — cite both hosts; do not invent a second on-domain storefront.
 
 Hardware-RT craft literature such as *Ray Tracing Gems* remains recommended literacy for readers extending Ch4 claims into their own engines.[^rt-gems]
 
@@ -3061,18 +3061,18 @@ Hold Draft 1.2 to these checkable public commitments—no private metrics requir
 [^bbs-json]: Color It Company. Worldwide active BBS directory data. Historical handle https://coloritcompany.com/bbs/bbslist.json ; live fetch 2026-09-15 followed redirect to https://colorit.co/bbs/bbslist.json (Snapshot C: `generated` 2026-09-12). Snapshots A (2026-09-09) and B (2026-09-10) remain dated citations.  
 [^colorit-co]: Color It Company. Studio hub after hostname cutover. https://colorit.co/ (accessed 2026-09-15). BBS directory https://colorit.co/bbs/ .  
 [^suggestpage]: Suggest Page (Color It Company). Public product host. https://suggestpage.com/ (accessed 2026-09-15).  
-[^sp-local]: Steven Philley. Local desk and child essays. https://stevenphilley.com/local/ ; https://stevenphilley.com/local/pruneyard/ ; https://stevenphilley.com/local/earthquakes/ ; https://stevenphilley.com/local/liquefaction/ ; https://stevenphilley.com/local/groceries/ ; https://stevenphilley.com/local/nuts/ (all HTTP 200 on 2026-09-15).  
+[^sp-local]: Steven Philley. Local desk and child essays. https://stevenphilley.com/local/ ; https://stevenphilley.com/local/pruneyard/ ; https://stevenphilley.com/local/earthquakes/ ; https://stevenphilley.com/local/liquefaction/ ; https://stevenphilley.com/local/groceries/ ; https://stevenphilley.com/local/nuts/ ; https://stevenphilley.com/local/education/ ; https://stevenphilley.com/local/compton-campbell/ (all HTTP 200 on 2026-09-15).  
 [^sp-weather]: Steven Philley. Weather desk (city-or-ZIP; share `?zip=`). https://stevenphilley.com/weather/ (accessed 2026-09-15).  
 [^sp-astro]: Steven Philley. Science / astronomy cluster. https://stevenphilley.com/science/ ; https://stevenphilley.com/science/astronomy/ and child paths moon, local-sky, nearest-stars, exoplanets, galaxy; https://stevenphilley.com/science/atmosphere/ (HTTP 200 on 2026-09-15).  
 [^sp-dial]: Steven Philley. Annual Dial. https://stevenphilley.com/circular-calendar.html (accessed 2026-09-15).  
 [^sp-suggest]: Steven Philley. Suggest box and public board. https://stevenphilley.com/suggest/ ; https://stevenphilley.com/suggestions/ (accessed 2026-09-15).  
-[^sp-sell]: Color It Company / Steven Philley. Suggestion-page offer still hosted on this domain. https://stevenphilley.com/sell/ (HTTP 200 on 2026-09-15).  
+[^sp-sell]: Color It Company / Steven Philley. `/sell/` stub after PR #4. https://stevenphilley.com/sell/ (HTTP 200 stub → https://suggestpage.com/sell/ , 2026-09-15).  
 [^sp-maths]: Steven Philley. Maths desk. https://stevenphilley.com/maths/ (accessed 2026-09-15).  
 [^sp-games]: Steven Philley. Games hub. https://stevenphilley.com/games/ (accessed 2026-09-15).  
 [^whats-new]: Steven Philley. What’s new. https://stevenphilley.com/whats-new/ (accessed 2026-09-15).  
-[^pr-education]: GitHub PR #11 (draft), stevenphilley/stevenphilley.github.io. *South Bay education quality — Campbell Union first.* https://github.com/stevenphilley/stevenphilley.github.io/pull/11 — **not merged**; `/local/education/` 404 on live main as of 2026-09-15.  
-[^pr-compton]: GitHub PR #12 (draft), stevenphilley/stevenphilley.github.io. *Local desk: 1981 Compton and 2026 Campbell compare/contrast.* https://github.com/stevenphilley/stevenphilley.github.io/pull/12 — **not merged**; path not on main.  
-[^pr-sell-redirect]: GitHub PR #4 (open), stevenphilley/stevenphilley.github.io. *Point /sell/ at suggestpage.com so live traffic is not a second commercial offer.* https://github.com/stevenphilley/stevenphilley.github.io/pull/4 — **unmerged** as of 2026-09-15.  
+[^pr-education]: GitHub PR #11 (merged), stevenphilley/stevenphilley.github.io. *South Bay education quality — Campbell Union first.* Live page: https://stevenphilley.com/local/education/ (HTTP 200, 2026-09-15).  
+[^pr-compton]: GitHub PR #12 (merged), stevenphilley/stevenphilley.github.io. *Local desk: 1981 Compton and 2026 Campbell compare/contrast.* Live page: https://stevenphilley.com/local/compton-campbell/ (HTTP 200, 2026-09-15).  
+[^pr-sell-redirect]: GitHub PR #4 (merged), stevenphilley/stevenphilley.github.io. *Point /sell/ at suggestpage.com…* Live stub: https://stevenphilley.com/sell/ → https://suggestpage.com/sell/ .  
 [^expansion-pack]: Internal drafting aid: `/workspace/dissertation/01-expansion-sources.md` (public extracts compiled 2026-09-09).  
 [^draft12-pack]: Internal drafting aid: `/workspace/dissertation/02-draft12-sources.md` (public technical mining compiled 2026-09-10; vendor clone `vendor/sdl2-blocks`).  
 
@@ -3114,6 +3114,8 @@ Hold Draft 1.2 to these checkable public commitments—no private metrics requir
 | Liquefaction | USGS-cited South Bay literacy | https://stevenphilley.com/local/liquefaction/ | Ch8 |
 | Local groceries | Seasonal produce notes | https://stevenphilley.com/local/groceries/ | Ch8 |
 | Local nuts | Small local desk | https://stevenphilley.com/local/nuts/ | Ch8 |
+| South Bay education | Campbell Union ESD first; cited quality trends | https://stevenphilley.com/local/education/ | Ch8 |
+| Compton–Campbell | 1981 Compton / 2026 Campbell compare | https://stevenphilley.com/local/compton-campbell/ | Ch8 |
 | Weather desk | City-or-ZIP + share `?zip=` | https://stevenphilley.com/weather/ | Ch8 |
 | Science hub | Status desk + doors | https://stevenphilley.com/science/ | Ch8 |
 | Astronomy / solar map | Schematic solar system | https://stevenphilley.com/science/astronomy/ | Ch8 |
@@ -3126,7 +3128,7 @@ Hold Draft 1.2 to these checkable public commitments—no private metrics requir
 | Annual Dial | Year/month clock calendar | https://stevenphilley.com/circular-calendar.html | Ch8 |
 | Suggest | Public suggestion box | https://stevenphilley.com/suggest/ | Ch8 |
 | Suggestions board | Yes / Later / No board | https://stevenphilley.com/suggestions/ | Ch8 |
-| Sell (still on this domain) | Suggestion-page offer | https://stevenphilley.com/sell/ | Ch8 |
+| Sell stub | Redirects to suggestpage.com/sell/ | https://stevenphilley.com/sell/ | Ch8 |
 | suggestpage.com | Independent product host (live) | https://suggestpage.com/ | Ch8 |
 | colorit.co | CIC studio hub (coloritcompany.com redirects here) | https://colorit.co/ | Ch8 / CIC |
 | BBS directory (colorit.co) | Same directory after hostname cutover | https://colorit.co/bbs/ | Ch7 |
@@ -3164,9 +3166,9 @@ Hold Draft 1.2 to these checkable public commitments—no private metrics requir
 | Steam SDK auto-language / Simplified Chinese | Blog intent only — GAP |
 | digiflux.one/products|/pricing|/about | **404** (2026-09-10) — commercial story on Steam + docs footer |
 | Launch Up wall-run constants | Store EA yes; manual pedagogy thin — COPY DRIFT / GAP |
-| `/local/education/` | **HTTP 404** on main (2026-09-15). GitHub PR #11 draft only — not a live page |
-| `/local/compton-campbell/` | **Not on main.** GitHub PR #12 draft only — do not invent as published |
-| `/sell/` → suggestpage.com redirect | GitHub PR #4 **open, unmerged**. `/sell/` still hosts the offer; suggestpage.com independently live |
+| `/local/education/` | **Live** after PR #11 merged (HTTP 200, 2026-09-15) |
+| `/local/compton-campbell/` | **Live** after PR #12 merged (HTTP 200, 2026-09-15) |
+| `/sell/` → suggestpage.com | **Live stub** after PR #4 merged; offer at https://suggestpage.com/sell/ |
 
 ---
 
@@ -3474,8 +3476,8 @@ Use this list to inject first-person thirty-year knowledge without breaking the 
 21. ❌ **digiflux.one `/products` `/pricing` `/about`** — **404** as of Draft 1.2 source pack; commercial story lives on Steam + docs footer—do not invent pages.  
 22. ❌ **Synchronet core authorship** — still unverified; directory ≠ engine author.
 23. 🔶 **Living-site desks** — ✅ Draft 1.3 inventory of live main URLs; ❌ author first-person map from named photo sessions / local walks onto Ra controls still open.
-24. 🔶 **Education / Compton–Campbell** — ❌ not live; merge-or-omit after review of PRs #11 and #12.
-25. 🔶 **`/sell/` vs suggestpage.com** — ✅ both fetched; ❌ your cutover decision (PR #4) still yours.
+24. ✅ **Education / Compton–Campbell** — live on main after PRs #11/#12 (HTTP 200).
+25. ✅ **`/sell/` vs suggestpage.com** — PR #4 merged; `/sell/` stubs to suggestpage.com/sell/.
 
 ---
 
