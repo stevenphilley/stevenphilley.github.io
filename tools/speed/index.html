@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Internet speed test — Steven Philley</title>
+<meta name="description" content="Browser internet speed test: ping, download, and upload. Measures the path to Cloudflare’s public edge — approximate, not a lab meter.">
+<link rel="canonical" href="https://stevenphilley.com/tools/speed/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Internet speed test">
+<meta property="og:description" content="Ping, download, and upload in the browser. Path to Cloudflare’s public edge. Approximate.">
+<meta property="og:url" content="https://stevenphilley.com/tools/speed/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Internet speed test">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://speed.cloudflare.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:28px 0 8px}
+.actions button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:14px 22px;cursor:pointer;min-height:48px;min-width:120px}
+.actions button.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.actions button:hover,.actions button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.actions button.primary:hover,.actions button.primary:focus-visible{border-color:var(--accent,#c8b48a)}
+.actions button:disabled{opacity:.38;cursor:not-allowed}
+.status{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
+.track{margin:16px 0 4px;height:3px;background:var(--line,#2c303a)}
+.track > i{display:block;height:100%;width:0;background:var(--accent,#c8b48a);transition:width .18s ease}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:22px 0 8px;border-top:1px solid var(--line,#2c303a);margin-top:18px}
+.metric{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.metric .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.metric .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(42px,7vw,76px);line-height:.9;margin:8px 0 4px}
+.metric .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.meta{margin:10px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.65;color:var(--muted,#63666e)}
+.also{margin-top:8px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.also a{color:inherit}
+.also a:hover{color:var(--accent,#c8b48a)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:760px){
+  .metrics{grid-template-columns:1fr}
+  .actions{flex-direction:column}
+  .actions button{width:100%}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/speed/" aria-current="page">Speed</a>
+      <a href="/tools/temperature.html">Temperature</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools</p>
+    <h1>Speed test</h1>
+    <p class="lede">Ping, download, and upload from this browser. The test talks to Cloudflare’s public <code>speed.cloudflare.com</code> edge — so the number is the path from you to that CDN, not a lab meter and not “the internet” as a whole.</p>
+  </header>
+
+  <div class="actions">
+    <button type="button" class="primary" id="start">Start</button>
+    <button type="button" id="stop" disabled>Stop</button>
+  </div>
+  <p class="status" id="status" aria-live="polite">Idle — Start when you are ready. A full run may move about 20–80 MB on a fast line.</p>
+  <div class="track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="track"><i id="bar"></i></div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="lab">Ping</div>
+      <div class="num" id="ping-num">—</div>
+      <div class="unit" id="ping-unit">ms · idle</div>
+    </div>
+    <div class="metric">
+      <div class="lab">Download</div>
+      <div class="num" id="down-num">—</div>
+      <div class="unit" id="down-unit">Mbps</div>
+    </div>
+    <div class="metric">
+      <div class="lab">Upload</div>
+      <div class="num" id="up-num">—</div>
+      <div class="unit" id="up-unit">Mbps</div>
+    </div>
+  </div>
+  <p class="meta" id="meta">Uses Cloudflare <code>__down</code> / <code>__up</code>. Not affiliated with Cloudflare, Ookla, or Speedtest.net.</p>
+
+  <section class="also">
+    <h2>How it works</h2>
+    <ul>
+      <li>Latency — several tiny downloads; the median round-trip is the ping.</li>
+      <li>Download — ramps file size and may open a few parallel streams so a single TCP flow does not cap a fast line.</li>
+      <li>Upload — posts blobs to the same public endpoint. Some networks or browsers throttle or block large POSTs; if upload fails, ping and download still stand.</li>
+      <li>This page is static GitHub Pages. There is no speed server here — only the browser and Cloudflare’s public test URLs.</li>
+    </ul>
+    <h2>Read it honestly</h2>
+    <ul>
+      <li>Approximate. Wi-Fi, VPN, browser tabs, CPU, and the particular Cloudflare colo you land on all move the number.</li>
+      <li>Not a lab instrument and not an ISP dispute tool. Re-run, then compare with your provider’s own test if you need a second opinion.</li>
+      <li>Credit: measurement traffic goes to <a href="https://speed.cloudflare.com/" rel="noopener" target="_blank">speed.cloudflare.com</a> public <code>__down</code> and <code>__up</code> endpoints. Cloudflare can see those requests the way any CDN sees a download. This page does not post your scores anywhere else.</li>
+      <li>Not affiliated with Cloudflare, Ookla, Speedtest.net, or any ISP.</li>
+    </ul>
+    <h2>Also</h2>
+    <ul>
+      <li><a href="/tools/">All tools</a> — everyday converters and helpers</li>
+      <li><a href="/tools/temperature.html">Temperature</a> — Fahrenheit ↔ Celsius</li>
+      <li><a href="/electronics/">Electronics</a> — watts, amps, volts, and ohms</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/tools/">Tools</a>
+    <a href="/tools/temperature.html">Temperature</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var DOWN='https://speed.cloudflare.com/__down';
+  var UP='https://speed.cloudflare.com/__up';
+
+  var startBtn=document.getElementById('start');
+  var stopBtn=document.getElementById('stop');
+  var statusEl=document.getElementById('status');
+  var trackEl=document.getElementById('track');
+  var barEl=document.getElementById('bar');
+  var pingNum=document.getElementById('ping-num');
+  var pingUnit=document.getElementById('ping-unit');
+  var downNum=document.getElementById('down-num');
+  var downUnit=document.getElementById('down-unit');
+  var upNum=document.getElementById('up-num');
+  var upUnit=document.getElementById('up-unit');
+  var metaEl=document.getElementById('meta');
+
+  var running=false;
+  var ac=null;
+  var xhrs=[];
+
+  function isAbort(err){
+    if(!err) return false;
+    var name=err.name||'';
+    return name==='AbortError' || err.message==='Aborted' || err.message==='aborted';
+  }
+  function median(arr){
+    if(!arr.length) return NaN;
+    var s=arr.slice().sort(function(a,b){return a-b;});
+    var m=Math.floor(s.length/2);
+    return s.length%2 ? s[m] : (s[m-1]+s[m])/2;
+  }
+  function percentile(arr,p){
+    if(!arr.length) return NaN;
+    var s=arr.slice().sort(function(a,b){return a-b;});
+    var i=(s.length-1)*p;
+    var lo=Math.floor(i), hi=Math.ceil(i);
+    if(lo===hi) return s[lo];
+    return s[lo]+(s[hi]-s[lo])*(i-lo);
+  }
+  function fmtMs(n){
+    if(!isFinite(n)) return '—';
+    if(n<10) return n.toFixed(1);
+    return String(Math.round(n));
+  }
+  function fmtRate(n){
+    if(!isFinite(n)) return {text:'—', unit:'Mbps'};
+    if(n>=1000) return {text:(n/1000).toFixed(2), unit:'Gbps'};
+    if(n<10) return {text:n.toFixed(2), unit:'Mbps'};
+    if(n<100) return {text:n.toFixed(1), unit:'Mbps'};
+    return {text:String(Math.round(n)), unit:'Mbps'};
+  }
+  function showRate(numEl, unitEl, n, suffix){
+    var r=fmtRate(n);
+    numEl.textContent=r.text;
+    unitEl.textContent=r.unit+(suffix?' · '+suffix:'');
+  }
+  function parseServerMs(header){
+    if(!header) return 0;
+    var total=0;
+    String(header).split(',').forEach(function(part){
+      var d=/dur=([\d.]+)/.exec(part);
+      if(d) total+=parseFloat(d[1])||0;
+    });
+    return total;
+  }
+  function resourceFor(url){
+    try{
+      var named=performance.getEntriesByName(url);
+      if(named && named.length) return named[named.length-1];
+    }catch(e){}
+    return null;
+  }
+  function lightPlan(){
+    var c=navigator.connection;
+    if(!c) return false;
+    if(c.saveData) return true;
+    return /2g/i.test(c.effectiveType||'');
+  }
+  function setProgress(pct){
+    var n=Math.max(0,Math.min(100,pct));
+    barEl.style.width=n+'%';
+    trackEl.setAttribute('aria-valuenow',String(Math.round(n)));
+  }
+  function setStatus(text){ statusEl.textContent=text; }
+  function setRunning(on){
+    running=on;
+    startBtn.disabled=on;
+    stopBtn.disabled=!on;
+  }
+  function resetView(){
+    pingNum.textContent='—';
+    pingUnit.textContent='ms · idle';
+    downNum.textContent='—';
+    downUnit.textContent='Mbps';
+    upNum.textContent='—';
+    upUnit.textContent='Mbps';
+    setProgress(0);
+  }
+
+  function pingFromTiming(url, wallMs, serverMs){
+    var entry=resourceFor(url);
+    if(entry && entry.responseStart>0 && entry.requestStart>=0){
+      var ttfb=entry.responseStart-entry.requestStart;
+      return Math.max(0, ttfb-(serverMs||0));
+    }
+    return Math.max(0, wallMs-(serverMs||0));
+  }
+
+  async function readTrace(signal){
+    try{
+      var res=await fetch('https://speed.cloudflare.com/cdn-cgi/trace',{cache:'no-store',mode:'cors',signal:signal});
+      if(!res.ok) return {};
+      var text=await res.text();
+      var map={};
+      text.split('\n').forEach(function(line){
+        var i=line.indexOf('=');
+        if(i>0) map[line.slice(0,i)]=line.slice(i+1).trim();
+      });
+      return {colo:map.colo||'', city:'', country:map.loc||''};
+    }catch(e){
+      return {};
+    }
+  }
+
+  async function pingOnce(signal){
+    var url=DOWN+'?bytes=0&r='+Math.random();
+    var t0=performance.now();
+    var res=await fetch(url,{cache:'no-store',mode:'cors',signal:signal});
+    var wall=performance.now()-t0;
+    var serverMs=parseServerMs(res.headers.get('server-timing'));
+    if(!res.ok) throw new Error('Ping HTTP '+res.status);
+    await res.arrayBuffer();
+    return {
+      ms: pingFromTiming(url, wall, serverMs),
+      colo: res.headers.get('cf-meta-colo')||res.headers.get('colo')||'',
+      city: res.headers.get('cf-meta-city')||'',
+      country: res.headers.get('cf-meta-country')||''
+    };
+  }
+
+  async function downloadOnce(bytes, signal, onBytes){
+    var url=DOWN+'?bytes='+bytes+'&r='+Math.random();
+    var t0=performance.now();
+    var res=await fetch(url,{cache:'no-store',mode:'cors',signal:signal});
+    if(!res.ok) throw new Error('Download HTTP '+res.status);
+    var received=0;
+    var bodyT0=performance.now();
+    if(res.body && res.body.getReader){
+      var reader=res.body.getReader();
+      while(true){
+        var chunk=await reader.read();
+        if(chunk.done) break;
+        received+=chunk.value.byteLength;
+        if(onBytes) onBytes(received, performance.now()-bodyT0);
+      }
+    }else{
+      var buf=await res.arrayBuffer();
+      received=buf.byteLength;
+    }
+    var bodyMs=Math.max(1, performance.now()-bodyT0);
+    var wall=performance.now()-t0;
+    var transfer=received;
+    var entry=resourceFor(url);
+    if(entry && entry.transferSize) transfer=entry.transferSize;
+    var dur=bodyMs;
+    if(entry && entry.responseEnd>entry.responseStart){
+      dur=Math.max(1, entry.responseEnd-entry.responseStart);
+    }
+    return {bytes:received, transfer:transfer, ms:dur, wall:wall, mbps:(transfer*8)/(dur/1000)/1e6};
+  }
+
+  async function downloadParallel(bytes, streams, signal, onLive){
+    var got=new Array(streams);
+    for(var i=0;i<streams;i++) got[i]=0;
+    var t0=performance.now();
+    var jobs=[];
+    for(var s=0;s<streams;s++){
+      (function(idx){
+        jobs.push(downloadOnce(bytes, signal, function(n){
+          got[idx]=n;
+          var sum=got.reduce(function(a,b){return a+b;},0);
+          var ms=Math.max(1, performance.now()-t0);
+          if(onLive) onLive((sum*8)/(ms/1000)/1e6, sum);
+        }));
+      })(s);
+    }
+    var parts=await Promise.all(jobs);
+    var total=parts.reduce(function(a,p){return a+p.transfer;},0);
+    var ms=Math.max(1, performance.now()-t0);
+    return {mbps:(total*8)/(ms/1000)/1e6, bytes:total, ms:ms};
+  }
+
+  function uploadOnce(bytes, signal, onLive){
+    return new Promise(function(resolve, reject){
+      var xhr=new XMLHttpRequest();
+      xhrs.push(xhr);
+      var payload=new Uint8Array(bytes);
+      var t0=0;
+      xhr.open('POST', UP);
+      xhr.setRequestHeader('Content-Type','application/octet-stream');
+      xhr.onload=function(){
+        var ms=Math.max(1, performance.now()-t0);
+        if(xhr.status>=200 && xhr.status<300){
+          resolve({bytes:bytes, ms:ms, mbps:(bytes*8)/(ms/1000)/1e6});
+        }else{
+          reject(new Error('Upload HTTP '+xhr.status));
+        }
+      };
+      xhr.onerror=function(){ reject(new Error('Upload network error')); };
+      xhr.onabort=function(){ reject(new DOMException('Aborted','AbortError')); };
+      if(xhr.upload){
+        xhr.upload.onprogress=function(ev){
+          if(!t0) return;
+          var ms=Math.max(1, performance.now()-t0);
+          var sent=ev.loaded||0;
+          if(onLive && sent) onLive((sent*8)/(ms/1000)/1e6, sent);
+        };
+      }
+      if(signal){
+        if(signal.aborted){ xhr.abort(); return; }
+        signal.addEventListener('abort', function(){ xhr.abort(); });
+      }
+      t0=performance.now();
+      xhr.send(payload);
+    });
+  }
+
+  async function uploadParallel(bytes, streams, signal, onLive){
+    var got=new Array(streams);
+    for(var i=0;i<streams;i++) got[i]=0;
+    var t0=performance.now();
+    var jobs=[];
+    for(var s=0;s<streams;s++){
+      (function(idx){
+        jobs.push(uploadOnce(bytes, signal, function(mbps, n){
+          got[idx]=n;
+          var sum=got.reduce(function(a,b){return a+b;},0);
+          var ms=Math.max(1, performance.now()-t0);
+          if(onLive) onLive((sum*8)/(ms/1000)/1e6, sum);
+        }));
+      })(s);
+    }
+    var parts=await Promise.all(jobs);
+    var total=parts.reduce(function(a,p){return a+p.bytes;},0);
+    var ms=Math.max(1, performance.now()-t0);
+    return {mbps:(total*8)/(ms/1000)/1e6, bytes:total, ms:ms};
+  }
+
+  function paintMeta(info){
+    var bits=['Uses Cloudflare __down / __up. Not affiliated with Cloudflare, Ookla, or Speedtest.net.'];
+    if(info && (info.colo||info.city)){
+      var where=info.colo||'';
+      if(info.city) where+=(where?' · ':'')+info.city;
+      if(info.country) where+=' '+info.country;
+      bits.unshift('Path this run: this browser → Cloudflare '+where+'.');
+    }
+    metaEl.textContent=bits.join(' ');
+  }
+
+  async function run(){
+    if(running) return;
+    ac=new AbortController();
+    xhrs=[];
+    setRunning(true);
+    resetView();
+    var light=lightPlan();
+    var pingSamples=[];
+    var downSamples=[];
+    var upSamples=[];
+    var info={};
+    try{
+      setStatus(light?'Light plan (save-data / slow link) — warming up…':'Warming up the path to Cloudflare…');
+      setProgress(2);
+      info=await readTrace(ac.signal);
+      paintMeta(info);
+      try{ await pingOnce(ac.signal); }catch(e){ if(isAbort(e)) throw e; }
+
+      var pingN=light?6:8;
+      for(var i=0;i<pingN;i++){
+        setStatus('Ping · sample '+(i+1)+' of '+pingN);
+        setProgress(4+((i+1)/pingN)*18);
+        var p=await pingOnce(ac.signal);
+        pingSamples.push(p.ms);
+        if(p.colo) info=p;
+        var med=median(pingSamples);
+        pingNum.textContent=fmtMs(med);
+        pingUnit.textContent='ms · median of '+pingSamples.length;
+        paintMeta(info);
+      }
+
+      var downPlan=light
+        ? [{bytes:2e5,streams:1},{bytes:8e5,streams:2},{bytes:25e5,streams:2}]
+        : [{bytes:25e4,streams:1},{bytes:1e6,streams:2},{bytes:5e6,streams:3},{bytes:12e6,streams:4}];
+      for(var d=0;d<downPlan.length;d++){
+        var step=downPlan[d];
+        setStatus('Download · '+(step.bytes/1e6>=1?(step.bytes/1e6)+' MB':(step.bytes/1e3)+' KB')+' × '+step.streams);
+        setProgress(24+(d/downPlan.length)*38);
+        var live=function(mbps){
+          showRate(downNum, downUnit, mbps, 'live');
+        };
+        var sample=await downloadParallel(step.bytes, step.streams, ac.signal, live);
+        if(sample.ms>=80) downSamples.push(sample.mbps);
+        else downSamples.push(sample.mbps);
+        var downVal=percentile(downSamples,0.9);
+        if(!isFinite(downVal)) downVal=median(downSamples);
+        showRate(downNum, downUnit, downVal, 'best of recent');
+        if(sample.ms>=1200 && d>=1) break;
+      }
+
+      var upPlan=light
+        ? [{bytes:8e4,streams:1},{bytes:4e5,streams:1},{bytes:12e5,streams:2}]
+        : [{bytes:15e4,streams:1},{bytes:8e5,streams:1},{bytes:3e6,streams:2},{bytes:8e6,streams:2}];
+      var upFailed=false;
+      for(var u=0;u<upPlan.length;u++){
+        var ustep=upPlan[u];
+        setStatus('Upload · '+(ustep.bytes/1e6>=1?(ustep.bytes/1e6)+' MB':(ustep.bytes/1e3)+' KB')+' × '+ustep.streams);
+        setProgress(64+(u/upPlan.length)*34);
+        try{
+          var usample=await uploadParallel(ustep.bytes, ustep.streams, ac.signal, function(mbps){
+            showRate(upNum, upUnit, mbps, 'live');
+          });
+          upSamples.push(usample.mbps);
+          var upVal=percentile(upSamples,0.9);
+          if(!isFinite(upVal)) upVal=median(upSamples);
+          showRate(upNum, upUnit, upVal, 'best of recent');
+          if(usample.ms>=1200 && u>=1) break;
+        }catch(ue){
+          if(isAbort(ue)) throw ue;
+          upFailed=true;
+          break;
+        }
+      }
+
+      setProgress(100);
+      var pingOut=median(pingSamples);
+      var downOut=percentile(downSamples,0.9);
+      var upOut=percentile(upSamples,0.9);
+      pingNum.textContent=fmtMs(pingOut);
+      pingUnit.textContent='ms · median';
+      showRate(downNum, downUnit, downOut, '');
+      if(upSamples.length){
+        showRate(upNum, upUnit, upOut, '');
+        setStatus('Done — approximate path to Cloudflare'+(info.colo?' '+info.colo:'')+'. Re-run if the line was busy.');
+      }else{
+        upNum.textContent='—';
+        upUnit.textContent=upFailed?'unavailable':'Mbps';
+        setStatus(upFailed
+          ? 'Ping and download finished. Upload was blocked or failed on this path.'
+          : 'Done.');
+      }
+      paintMeta(info);
+    }catch(err){
+      if(isAbort(err)){
+        setStatus('Stopped. Partial numbers stay if a phase already finished.');
+      }else{
+        setStatus('Could not finish — '+((err&&err.message)||'network error')+'. Check the connection and try again.');
+      }
+    }finally{
+      setRunning(false);
+      ac=null;
+      xhrs=[];
+    }
+  }
+
+  function stop(){
+    if(ac) ac.abort();
+    xhrs.forEach(function(x){ try{x.abort();}catch(e){} });
+  }
+
+  startBtn.addEventListener('click', run);
+  stopBtn.addEventListener('click', stop);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
