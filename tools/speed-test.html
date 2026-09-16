@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speed test — Browser throughput — Steven Philley</title>
+<meta name="description" content="Browser internet speed test: ping, jitter, download, and upload against Cloudflare’s public speed endpoints. Approximate everyday bands — not an ISP line-rate promise.">
+<link rel="canonical" href="https://stevenphilley.com/tools/speed-test.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Speed test — Browser throughput">
+<meta property="og:description" content="Ping, jitter, download, and upload in the browser. Measures throughput to a test server — not true ISP line rate.">
+<meta property="og:url" content="https://stevenphilley.com/tools/speed-test.html">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Speed test — Browser throughput">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52px,11vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:60ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.bench{padding:28px 0 8px}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:0 0 18px}
+.btn{appearance:none;border:1px solid var(--ink,#e8e6e1);background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:12px 20px;cursor:pointer}
+.btn:hover,.btn:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink,#e8e6e1);border-color:var(--line,#2c303a)}
+.btn-ghost:hover,.btn-ghost:focus-visible{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1)}
+.mode{display:flex;border:1px solid var(--line,#2c303a)}
+.mode button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;padding:10px 14px;cursor:pointer;text-transform:uppercase}
+.mode button:last-child{border-right:0}
+.mode button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.mode button:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:-2px}
+.data-note{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96);max-width:62ch}
+.status{margin:18px 0 0;padding:16px 0;border-top:1px solid var(--line,#2c303a)}
+.status-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.status-text{font-family:"IBM Plex Mono",monospace;font-size:14px;line-height:1.6;margin:0;color:var(--ink,#e8e6e1)}
+.status-text.is-error{color:var(--accent,#c8b48a)}
+.stages{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.stage{border:1px solid var(--line,#2c303a);padding:12px 12px 10px;min-height:72px}
+.stage .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stage .t{font-family:"Bebas Neue",Impact,sans-serif;font-size:22px;letter-spacing:.04em;margin:6px 0 0}
+.stage[aria-current="step"]{border-color:var(--accent,#c8b48a)}
+.stage[aria-current="step"] .n{color:var(--accent,#c8b48a)}
+.stage.is-done{border-color:var(--ink,#e8e6e1)}
+.stage.is-fail .t{color:var(--ink-soft,#9b9a96)}
+.bar{margin-top:14px;height:3px;background:var(--line,#2c303a);overflow:hidden}
+.bar > span{display:block;height:100%;width:0;background:var(--accent,#c8b48a);transition:width .2s ease}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 8px}
+.card{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.card .k{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.card .v{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(36px,6vw,56px);line-height:.9;margin:8px 0 4px}
+.card .u{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.card.is-empty .v{color:var(--ink-soft,#9b9a96)}
+.guide{margin-top:8px}
+.guide h2,.also h2,.notes h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.guide p,.notes p,.also li{margin:0 0 10px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:68ch}
+.bands{width:100%;border-collapse:collapse;margin:12px 0 6px;font-family:"IBM Plex Mono",monospace;font-size:12px}
+.bands th,.bands td{text-align:left;padding:8px 10px 8px 0;border-top:1px solid var(--line,#2c303a);vertical-align:top}
+.bands th{color:var(--muted,#63666e);font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+.bands td{color:var(--ink-soft,#9b9a96)}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;margin:0}
+.also a{color:inherit}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.offline{display:none;margin:18px 0 0;padding:14px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+body.is-offline .offline{display:block}
+body.is-offline .bench{opacity:.55}
+@media (max-width:760px){
+  .cards{grid-template-columns:1fr 1fr}
+  .stages{grid-template-columns:1fr}
+  .controls{flex-direction:column;align-items:stretch}
+  .btn,.mode{width:100%}
+  .mode{justify-content:stretch}
+  .mode button{flex:1}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/speed-test.html" aria-current="page">Speed test</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools</p>
+    <h1>Speed test</h1>
+    <p class="lede">Latency, download, and upload from this browser to Cloudflare’s public speed-test servers. That is browser-to-test-server throughput — not a promise of your ISP’s line rate. Press Start; nothing runs on its own.</p>
+  </header>
+
+  <div class="offline" id="offline-banner" role="status">Not available offline. This page needs a live network to reach the test servers.</div>
+
+  <div class="bench">
+    <div class="controls">
+      <button type="button" class="btn" id="start-btn">Start test</button>
+      <button type="button" class="btn btn-ghost" id="stop-btn" disabled>Stop</button>
+      <button type="button" class="btn btn-ghost" id="copy-btn" disabled>Copy results</button>
+      <div class="mode" role="group" aria-label="Test size">
+        <button type="button" id="mode-light" aria-pressed="false">Light</button>
+        <button type="button" id="mode-standard" aria-pressed="true">Standard</button>
+      </div>
+    </div>
+    <p class="data-note" id="data-note">Standard uses about 25&nbsp;MB down and 8&nbsp;MB up of generated test data. Light is about 4.5&nbsp;MB down and 2&nbsp;MB up — better on phones or metered links. Neither sends your files.</p>
+
+    <div class="status">
+      <p class="status-label">Progress</p>
+      <p class="status-text" id="status" aria-live="polite">Idle. Choose a size, then Start.</p>
+      <ol class="stages">
+        <li class="stage" id="stage-ping" data-stage="ping"><div class="n">01</div><div class="t">Latency</div></li>
+        <li class="stage" id="stage-down" data-stage="down"><div class="n">02</div><div class="t">Download</div></li>
+        <li class="stage" id="stage-up" data-stage="up"><div class="n">03</div><div class="t">Upload</div></li>
+      </ol>
+      <div class="bar" aria-hidden="true"><span id="bar-fill"></span></div>
+    </div>
+
+    <div class="cards" id="results">
+      <div class="card is-empty" id="card-ping">
+        <div class="k">Ping</div>
+        <div class="v" id="val-ping">—</div>
+        <div class="u" id="unit-ping">ms median</div>
+      </div>
+      <div class="card is-empty" id="card-jitter">
+        <div class="k">Jitter</div>
+        <div class="v" id="val-jitter">—</div>
+        <div class="u" id="unit-jitter">ms</div>
+      </div>
+      <div class="card is-empty" id="card-down">
+        <div class="k">Download</div>
+        <div class="v" id="val-down">—</div>
+        <div class="u" id="unit-down">Mbps</div>
+      </div>
+      <div class="card is-empty" id="card-up">
+        <div class="k">Upload</div>
+        <div class="v" id="val-up">—</div>
+        <div class="u" id="unit-up">Mbps</div>
+      </div>
+    </div>
+  </div>
+
+  <section class="guide">
+    <h2>Rough everyday bands</h2>
+    <p>Approximate reading aids for this browser-to-server sample — not ISP promises, not a line-rate certificate, and not a comparison to Ookla or Fast.com.</p>
+    <table class="bands">
+      <thead>
+        <tr><th>Measure</th><th>Basic</th><th>Everyday</th><th>Comfortable</th><th>Fast</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Ping</td><td>over 100&nbsp;ms</td><td>50–100&nbsp;ms</td><td>20–50&nbsp;ms</td><td>under 20&nbsp;ms</td></tr>
+        <tr><td>Download</td><td>under 5&nbsp;Mbps</td><td>5–25&nbsp;Mbps</td><td>25–100&nbsp;Mbps</td><td>over 100&nbsp;Mbps</td></tr>
+        <tr><td>Upload</td><td>under 3&nbsp;Mbps</td><td>3–10&nbsp;Mbps</td><td>10–25&nbsp;Mbps</td><td>over 25&nbsp;Mbps</td></tr>
+      </tbody>
+    </table>
+    <p id="readout" aria-live="polite"></p>
+  </section>
+
+  <section class="notes">
+    <h2>Privacy &amp; method</h2>
+    <p>The test generates random-looking binary blobs in this tab. It does not read your disk or upload personal files. Endpoints still see your IP address, user-agent, and timing — the same as any web request.</p>
+    <p>Latency is the median of several tiny cache-busted GETs. Jitter is the mean absolute gap between consecutive samples. Download times one or more cache-busted GETs. Upload POSTs generated blobs; if that is blocked, the card says unavailable instead of inventing a number.</p>
+    <p>Servers: <code>speed.cloudflare.com/__down</code> and <code>__up</code> — Cloudflare’s public speed-test endpoints, CORS-open. Results move with Wi-Fi, device, VPN, browser tabs, and how busy that edge is. A failed stage keeps whatever already finished.</p>
+  </section>
+
+  <section class="also">
+    <h2>Also</h2>
+    <ul>
+      <li><a href="/tools/">All tools</a> — everyday converters and helpers</li>
+      <li><a href="/tools/temperature.html">Temperature</a> — Fahrenheit ↔ Celsius</li>
+      <li><a href="/electronics/">Electronics</a> — watts, amps, volts, and ohms</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/tools/">Tools</a>
+    <a href="/electronics/">Electronics</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<noscript><p style="max-width:920px;margin:24px auto;padding:0 24px;font-family:'IBM Plex Mono',monospace;font-size:13px;color:#9b9a96">JavaScript is required for the speed test. Nothing is measured without it.</p></noscript>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var KB=1024;
+  var MB=1024*1024;
+  var DOWN='https://speed.cloudflare.com/__down';
+  var UP='https://speed.cloudflare.com/__up';
+  var MODES={
+    light:{
+      ping:6,
+      down:[512*KB, 4*MB],
+      up:[2*MB],
+      note:'Light uses about 4.5\u00a0MB down and 2\u00a0MB up of generated test data. Standard is about 25\u00a0MB down and 8\u00a0MB up. Neither sends your files.'
+    },
+    standard:{
+      ping:8,
+      down:[1*MB, 8*MB, 16*MB],
+      up:[2*MB, 6*MB],
+      note:'Standard uses about 25\u00a0MB down and 8\u00a0MB up of generated test data. Light is about 4.5\u00a0MB down and 2\u00a0MB up — better on phones or metered links. Neither sends your files.'
+    }
+  };
+
+  var startBtn=document.getElementById('start-btn');
+  var stopBtn=document.getElementById('stop-btn');
+  var copyBtn=document.getElementById('copy-btn');
+  var modeLight=document.getElementById('mode-light');
+  var modeStd=document.getElementById('mode-standard');
+  var dataNote=document.getElementById('data-note');
+  var statusEl=document.getElementById('status');
+  var readout=document.getElementById('readout');
+  var barFill=document.getElementById('bar-fill');
+  var stageEls={
+    ping:document.getElementById('stage-ping'),
+    down:document.getElementById('stage-down'),
+    up:document.getElementById('stage-up')
+  };
+
+  var mode='standard';
+  var running=false;
+  var controller=null;
+  var lastResults=null;
+
+  function preferLight(){
+    try{
+      var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+      if(!c) return false;
+      if(c.saveData) return true;
+      var t=String(c.effectiveType||'').toLowerCase();
+      return t==='slow-2g'||t==='2g'||t==='3g';
+    }catch(e){ return false; }
+  }
+
+  function setMode(next, fromAuto){
+    mode=next==='light'?'light':'standard';
+    modeLight.setAttribute('aria-pressed',String(mode==='light'));
+    modeStd.setAttribute('aria-pressed',String(mode==='standard'));
+    dataNote.textContent=MODES[mode].note+(fromAuto?' Light was preselected from this connection hint.':'');
+  }
+
+  function setOffline(off){
+    document.body.classList.toggle('is-offline',!!off);
+  }
+
+  function online(){
+    return navigator.onLine!==false;
+  }
+
+  function cacheBust(){
+    return Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10);
+  }
+
+  function isAbort(err){
+    return err && (err.name==='AbortError' || err.code===20);
+  }
+
+  function median(arr){
+    var a=arr.slice().sort(function(x,y){return x-y;});
+    if(!a.length) return NaN;
+    var mid=Math.floor(a.length/2);
+    return a.length%2?a[mid]:(a[mid-1]+a[mid])/2;
+  }
+
+  function jitterOf(arr){
+    if(arr.length<2) return 0;
+    var sum=0;
+    for(var i=1;i<arr.length;i++) sum+=Math.abs(arr[i]-arr[i-1]);
+    return sum/(arr.length-1);
+  }
+
+  function fmtMs(n){
+    if(!isFinite(n)) return '—';
+    if(n<10) return (Math.round(n*10)/10).toFixed(1);
+    return String(Math.round(n));
+  }
+
+  function fmtMbps(n){
+    if(!isFinite(n) || n<0) return '—';
+    if(n<1) return (Math.round(n*100)/100).toFixed(2);
+    if(n<10) return (Math.round(n*10)/10).toFixed(1);
+    return String(Math.round(n));
+  }
+
+  function mbps(bytes, ms){
+    if(!(ms>0) || !(bytes>0)) return NaN;
+    return (bytes*8)/(ms/1000)/1e6;
+  }
+
+  function setCard(kind, value, unit, emptyText){
+    var val=document.getElementById('val-'+kind);
+    var uni=document.getElementById('unit-'+kind);
+    var card=document.getElementById('card-'+kind);
+    if(!val) return;
+    if(value==null || value===''){
+      val.textContent=emptyText||'—';
+      card.classList.add('is-empty');
+    }else{
+      val.textContent=value;
+      card.classList.remove('is-empty');
+    }
+    if(unit && uni) uni.textContent=unit;
+  }
+
+  function resetCards(){
+    setCard('ping','','ms median');
+    setCard('jitter','','ms');
+    setCard('down','','Mbps');
+    setCard('up','','Mbps');
+    readout.textContent='';
+  }
+
+  function setStage(name, state){
+    Object.keys(stageEls).forEach(function(k){
+      var el=stageEls[k];
+      if(k===name && state==='current'){
+        el.setAttribute('aria-current','step');
+      }else if(el.getAttribute('aria-current')==='step' && k!==name){
+        el.removeAttribute('aria-current');
+      }
+      if(k===name){
+        el.classList.toggle('is-done',state==='done');
+        el.classList.toggle('is-fail',state==='fail');
+        if(state!=='current') el.removeAttribute('aria-current');
+        if(state==='current') el.setAttribute('aria-current','step');
+      }
+    });
+  }
+
+  function resetStages(){
+    Object.keys(stageEls).forEach(function(k){
+      stageEls[k].classList.remove('is-done','is-fail');
+      stageEls[k].removeAttribute('aria-current');
+    });
+    barFill.style.width='0%';
+  }
+
+  function setStatus(text, isError){
+    statusEl.textContent=text;
+    statusEl.classList.toggle('is-error',!!isError);
+  }
+
+  function setProgress(pct){
+    barFill.style.width=Math.max(0,Math.min(100,pct))+'%';
+  }
+
+  function interpret(res){
+    if(!res) return '';
+    var bits=[];
+    if(isFinite(res.ping)){
+      if(res.ping<20) bits.push('Ping looks snappy to this edge.');
+      else if(res.ping<50) bits.push('Ping is in a typical everyday range.');
+      else if(res.ping<100) bits.push('Ping is usable, with some lag.');
+      else bits.push('Ping is high — Wi-Fi, VPN, or a distant edge can do that.');
+    }
+    if(isFinite(res.down)){
+      if(res.down<5) bits.push('Download is basic for this sample.');
+      else if(res.down<25) bits.push('Download is everyday-video territory.');
+      else if(res.down<100) bits.push('Download is comfortable in this sample.');
+      else bits.push('Download is fast in this sample.');
+    }
+    if(res.up==='unavailable') bits.push('Upload could not be measured from this browser.');
+    else if(isFinite(res.up)){
+      if(res.up<3) bits.push('Upload is basic for this sample.');
+      else if(res.up<10) bits.push('Upload is enough for calls and light sharing.');
+      else if(res.up<25) bits.push('Upload is comfortable in this sample.');
+      else bits.push('Upload is fast in this sample.');
+    }
+    if(!bits.length) return '';
+    return bits.join(' ')+' Approximate, this run only.';
+  }
+
+  function resultsText(res){
+    if(!res) return '';
+    var ping=isFinite(res.ping)?fmtMs(res.ping)+' ms':'unavailable';
+    var jit=isFinite(res.jitter)?fmtMs(res.jitter)+' ms':'unavailable';
+    var down=isFinite(res.down)?fmtMbps(res.down)+' Mbps':'unavailable';
+    var up=res.up==='unavailable'?'unavailable':(isFinite(res.up)?fmtMbps(res.up)+' Mbps':'unavailable');
+    return [
+      'stevenphilley.com speed test',
+      'Ping '+ping+' · Jitter '+jit,
+      'Download '+down+' · Upload '+up,
+      'Browser-to-Cloudflare throughput. Not an ISP line-rate guarantee.'
+    ].join('\n');
+  }
+
+  async function pingOnce(signal){
+    var url=DOWN+'?bytes=0&ck='+encodeURIComponent(cacheBust());
+    var t0=performance.now();
+    var res=await fetch(url,{method:'GET',cache:'no-store',mode:'cors',credentials:'omit',signal:signal});
+    if(!res.ok) throw new Error('ping HTTP '+res.status);
+    await res.arrayBuffer();
+    return performance.now()-t0;
+  }
+
+  async function downloadOnce(bytes, signal){
+    var url=DOWN+'?bytes='+bytes+'&ck='+encodeURIComponent(cacheBust());
+    var t0=performance.now();
+    var res=await fetch(url,{method:'GET',cache:'no-store',mode:'cors',credentials:'omit',signal:signal});
+    if(!res.ok) throw new Error('download HTTP '+res.status);
+    var buf=await res.arrayBuffer();
+    var ms=performance.now()-t0;
+    var got=buf.byteLength;
+    if(got<bytes*0.85) throw new Error('short download');
+    return {bytes:got, ms:ms, mbps:mbps(got,ms)};
+  }
+
+  async function uploadOnce(bytes, signal){
+    var body=new Blob([new Uint8Array(bytes)],{type:'application/octet-stream'});
+    var url=UP+'?bytes='+bytes+'&ck='+encodeURIComponent(cacheBust());
+    var t0=performance.now();
+    var res=await fetch(url,{
+      method:'POST',
+      cache:'no-store',
+      mode:'cors',
+      credentials:'omit',
+      headers:{'Content-Type':'application/octet-stream'},
+      body:body,
+      signal:signal
+    });
+    if(!res.ok) throw new Error('upload HTTP '+res.status);
+    await res.text();
+    var ms=performance.now()-t0;
+    var reported=parseInt(res.headers.get('cf-meta-upload-bytes'),10);
+    var used=(isFinite(reported)&&reported>0)?reported:bytes;
+    return {bytes:used, ms:ms, mbps:mbps(used,ms)};
+  }
+
+  function pickMbps(samples){
+    if(!samples.length) return NaN;
+    var totalBytes=0, totalMs=0, best=0;
+    samples.forEach(function(s){
+      totalBytes+=s.bytes;
+      totalMs+=s.ms;
+      if(s.mbps>best) best=s.mbps;
+    });
+    var weighted=mbps(totalBytes,totalMs);
+    // Prefer the stronger of weighted average and best single transfer,
+    // but only if both are finite. Weighted is the honest headline.
+    return isFinite(weighted)?weighted:best;
+  }
+
+  function setRunning(on){
+    running=on;
+    startBtn.disabled=on;
+    stopBtn.disabled=!on;
+    modeLight.disabled=on;
+    modeStd.disabled=on;
+    if(!on) startBtn.textContent=lastResults?'Run again':'Start test';
+  }
+
+  async function runTest(){
+    if(running) return;
+    lastResults=null;
+    copyBtn.disabled=true;
+    resetCards();
+    resetStages();
+    if(!online()){
+      setOffline(true);
+      setStatus('Not available offline. Connect to the internet and try again.',true);
+      return;
+    }
+    setOffline(false);
+    controller=new AbortController();
+    var signal=controller.signal;
+    var cfg=MODES[mode];
+    var results={ping:NaN,jitter:NaN,down:NaN,up:NaN};
+    setRunning(true);
+    setStatus('Checking the network…');
+    setProgress(2);
+
+    try{
+      await pingOnce(signal);
+    }catch(err){
+      if(isAbort(err)){
+        setStatus('Stopped. No results yet.');
+        setRunning(false);
+        return;
+      }
+      setOffline(!online());
+      setStatus(online()?'Could not reach the test server. Try again in a moment.':'Not available offline. Connect to the internet and try again.',true);
+      setRunning(false);
+      return;
+    }
+
+    // Latency
+    setStage('ping','current');
+    setStatus('Measuring latency…');
+    var pings=[];
+    try{
+      var n=cfg.ping;
+      for(var i=0;i<n;i++){
+        var p=await pingOnce(signal);
+        pings.push(p);
+        setStatus('Measuring latency… '+(i+1)+' of '+n);
+        setProgress(6+((i+1)/n)*22);
+      }
+      results.ping=median(pings);
+      results.jitter=jitterOf(pings);
+      setCard('ping',fmtMs(results.ping),'ms median');
+      setCard('jitter',fmtMs(results.jitter),'ms');
+      setStage('ping','done');
+    }catch(err){
+      if(isAbort(err)){
+        lastResults=results;
+        setStage('ping','fail');
+        setStatus('Stopped. Partial results kept where they exist.');
+        copyBtn.disabled=false;
+        setRunning(false);
+        return;
+      }
+      setStage('ping','fail');
+      setCard('ping','unavailable','ms median');
+      setCard('jitter','unavailable','ms');
+      setStatus('Latency failed; continuing with download.',true);
+    }
+
+    // Download
+    setStage('down','current');
+    setStatus('Measuring download…');
+    var downs=[];
+    try{
+      var dlist=cfg.down.slice();
+      for(var d=0;d<dlist.length;d++){
+        var size=dlist[d];
+        setStatus('Measuring download… chunk '+(d+1)+' of '+dlist.length+' ('+Math.round(size/MB*10)/10+' MB)');
+        var sample=await downloadOnce(size,signal);
+        downs.push(sample);
+        setProgress(28+((d+1)/dlist.length)*36);
+        // If the first chunk is very slow, skip remaining large pieces.
+        if(d===0 && sample.mbps<3 && dlist.length>1){
+          setStatus('Slow first chunk — skipping the remaining large download.');
+          break;
+        }
+      }
+      results.down=pickMbps(downs);
+      if(!isFinite(results.down)) throw new Error('no download samples');
+      setCard('down',fmtMbps(results.down),'Mbps');
+      setStage('down','done');
+    }catch(err){
+      if(isAbort(err)){
+        lastResults=results;
+        setStage('down','fail');
+        readout.textContent=interpret(results);
+        setStatus('Stopped. Partial results kept where they exist.');
+        copyBtn.disabled=!(isFinite(results.ping)||isFinite(results.down));
+        setRunning(false);
+        return;
+      }
+      setStage('down','fail');
+      setCard('down','unavailable','Mbps');
+      setStatus('Download failed; trying upload.',true);
+    }
+
+    // Upload
+    setStage('up','current');
+    setStatus('Measuring upload…');
+    var ups=[];
+    try{
+      var ulist=cfg.up.slice();
+      for(var u=0;u<ulist.length;u++){
+        var usize=ulist[u];
+        setStatus('Measuring upload… chunk '+(u+1)+' of '+ulist.length+' ('+Math.round(usize/MB*10)/10+' MB)');
+        ups.push(await uploadOnce(usize,signal));
+        setProgress(64+((u+1)/ulist.length)*34);
+      }
+      results.up=pickMbps(ups);
+      if(!isFinite(results.up)) throw new Error('no upload samples');
+      setCard('up',fmtMbps(results.up),'Mbps');
+      setStage('up','done');
+    }catch(err){
+      if(isAbort(err)){
+        lastResults=results;
+        setStage('up','fail');
+        readout.textContent=interpret(results);
+        setStatus('Stopped. Partial results kept where they exist.');
+        copyBtn.disabled=!(isFinite(results.ping)||isFinite(results.down));
+        setRunning(false);
+        return;
+      }
+      results.up='unavailable';
+      setStage('up','fail');
+      setCard('up','unavailable','Mbps');
+      setStatus('Upload unavailable — the POST was blocked or failed. Other results kept.');
+    }
+
+    lastResults=results;
+    readout.textContent=interpret(results);
+    var any=isFinite(results.ping)||isFinite(results.down)||isFinite(results.up);
+    if(any){
+      setStatus('Done. Browser-to-Cloudflare sample — not an ISP line-rate guarantee.');
+      setProgress(100);
+      copyBtn.disabled=false;
+    }else{
+      setStatus('No stage returned a number. Check the network and try again.',true);
+    }
+    setRunning(false);
+  }
+
+  startBtn.addEventListener('click',function(){ runTest(); });
+  stopBtn.addEventListener('click',function(){
+    if(controller) controller.abort();
+  });
+  copyBtn.addEventListener('click',function(){
+    var text=resultsText(lastResults);
+    if(!text) return;
+    function ok(){ setStatus('Results copied. The numbers are not in the page URL.'); }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok).catch(function(){
+        window.prompt('Copy results',text);
+      });
+    }else{
+      window.prompt('Copy results',text);
+    }
+  });
+  modeLight.addEventListener('click',function(){ if(!running) setMode('light'); });
+  modeStd.addEventListener('click',function(){ if(!running) setMode('standard'); });
+  window.addEventListener('online',function(){ setOffline(false); });
+  window.addEventListener('offline',function(){
+    setOffline(true);
+    if(running && controller) controller.abort();
+    if(!running) setStatus('Not available offline. Connect to the internet and try again.',true);
+  });
+
+  if(preferLight()) setMode('light',true);
+  else setMode('standard');
+  setOffline(!online());
+  if(!online()) setStatus('Not available offline. Connect to the internet and try again.',true);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
