@@ -141,6 +141,29 @@
     color:var(--text-dim);line-height:2}
   .swatch{display:inline-block;width:.55rem;height:.55rem;border-radius:50%;margin-right:.5rem;
     vertical-align:middle}
+  .backup{display:flex;flex-direction:column;gap:.45rem}
+  .backup-row{display:flex;gap:.4rem;flex-wrap:wrap}
+  .backup-hint{font-family:var(--mono);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--text-dim);line-height:1.55}
+  .backup-status{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--accent);
+    min-height:1.1em;line-height:1.45}
+  .backup-file{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  .drop-aim{outline:2px dashed var(--accent);outline-offset:-8px;box-shadow:inset 0 0 0 1px var(--accent-lit)}
+  .backup-dialog{
+    position:fixed;inset:0;z-index:30;display:none;place-items:center;
+    background:rgba(0,0,0,.48);padding:1rem;
+  }
+  .backup-dialog.on{display:grid}
+  .backup-card{
+    width:min(26rem,100%);background:var(--plate-2);border:1px solid var(--hair);border-radius:4px;
+    padding:1.15rem 1.2rem;box-shadow:0 16px 44px rgba(0,0,0,.55);
+  }
+  .backup-card h4{font-family:var(--mono);font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent);margin:0 0 .65rem;text-shadow:var(--glow)}
+  .backup-card p{font-size:.86rem;line-height:1.55;margin:0 0 .7rem;color:var(--text)}
+  .backup-card .quiet{color:var(--text-dim);font-size:.8rem}
+  .backup-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.85rem}
 
   .tip{
     position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-140%);
@@ -219,11 +242,34 @@
         <div><span class="swatch" style="background:var(--cell-ev)"></span>day with entries</div>
         <div><span class="swatch" style="background:var(--cell-we);outline:1px solid var(--hair)"></span>weekend</div>
       </div>
+      <div class="divider"></div>
+      <div class="backup">
+        <div class="backup-row">
+          <button type="button" id="saveFile" title="Download a text file of your day marks">Save file</button>
+          <button type="button" id="restoreFileBtn" title="Restore day marks from a text file">Restore file</button>
+        </div>
+        <input type="file" id="restoreFile" class="backup-file" accept=".txt,.text,.json,text/plain,application/json" aria-label="Choose a backup text file">
+        <div class="backup-hint">Save a text file backup of your day marks. Stays in this browser and the file you download — nothing is uploaded.</div>
+        <div class="backup-status" id="backupStatus" role="status" aria-live="polite"></div>
+      </div>
     </aside>
   </main>
 </div>
 <div class="tip" id="tip"></div>
+<div class="backup-dialog" id="restoreDialog" hidden>
+  <div class="backup-card" role="dialog" aria-modal="true" aria-labelledby="restoreTitle">
+    <h4 id="restoreTitle">Restore day marks?</h4>
+    <p id="restoreSummary"></p>
+    <p class="quiet">Replace clears what is on this dial now. Merge keeps current marks and adds any new ones from the file. The file is read only in this browser.</p>
+    <div class="backup-actions">
+      <button type="button" id="restoreReplace">Replace current</button>
+      <button type="button" id="restoreMerge">Merge with current</button>
+      <button type="button" id="restoreCancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
+<script src="/js/annual-dial-backup.js"></script>
 <script>
 (() => {
   const SVG = "http://www.w3.org/2000/svg";
@@ -797,8 +843,166 @@
   document.getElementById('addEntry').addEventListener('click', addEntry);
   input.addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
 
+  /* ---------- local text-file backup (no upload) ---------- */
+  const backup = window.annualDialBackup;
+  const restoreInput = document.getElementById('restoreFile');
+  const restoreDialog = document.getElementById('restoreDialog');
+  const backupStatus = document.getElementById('backupStatus');
+  let pendingRestore = null;
+
+  function setBackupStatus(msg){
+    backupStatus.textContent = msg || '';
+  }
+  function closeRestoreDialog(){
+    pendingRestore = null;
+    restoreDialog.classList.remove('on');
+    restoreDialog.hidden = true;
+    restoreInput.value = '';
+  }
+  function openRestoreDialog(parsed){
+    pendingRestore = parsed;
+    const notes = backup.countNotes(parsed.events);
+    const days = backup.countDays(parsed.events);
+    const current = backup.countNotes(state.events);
+    const themeBit = parsed.theme ? ' Theme in file: '+parsed.theme+'.' : '';
+    document.getElementById('restoreSummary').textContent =
+      (notes
+        ? 'This file has '+notes+' '+(notes===1?'note':'notes')+' on '+days+' '+(days===1?'day':'days')+'.'
+        : 'This file has no day marks. Replace will clear what is on the dial now.') +
+      (current ? ' You currently have '+current+' '+(current===1?'note':'notes')+' saved in this browser.' : '') +
+      themeBit;
+    restoreDialog.hidden = false;
+    restoreDialog.classList.add('on');
+    document.getElementById('restoreReplace').focus();
+  }
+  function downloadBackup(){
+    if(!backup){ setBackupStatus('Backup helper failed to load.'); return; }
+    const text = backup.serializeBackup({events:state.events, theme:state.theme});
+    const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = backup.backupFilename(new Date());
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1500);
+    const n = backup.countNotes(state.events);
+    setBackupStatus(n ? 'Saved '+n+' '+(n===1?'note':'notes')+' to '+a.download+'.' : 'Saved an empty backup file.');
+  }
+  async function applyRestore(parsed, mode){
+    if(!parsed) return;
+    if(mode === 'merge'){
+      state.events = backup.mergeEvents(state.events, parsed.events);
+    }else{
+      state.events = parsed.events;
+    }
+    await saveEvents();
+    if(parsed.theme) applyTheme(parsed.theme, true);
+    else { draw(); }
+    renderRail();
+    const n = backup.countNotes(parsed.events);
+    setBackupStatus(mode==='merge'
+      ? 'Merged '+n+' '+(n===1?'note':'notes')+' from the file. Still only on this device.'
+      : 'Replaced day marks with '+n+' '+(n===1?'note':'notes')+' from the file. Still only on this device.');
+    closeRestoreDialog();
+  }
+  function handleBackupText(text){
+    if(!backup){ setBackupStatus('Backup helper failed to load.'); return; }
+    const parsed = backup.parseBackup(text, THEME_ORDER);
+    if(parsed.error === 'empty'){
+      setBackupStatus('That file was empty.');
+      return;
+    }
+    if(parsed.error === 'unrecognized'){
+      setBackupStatus('Could not read that file. Use an Annual Dial .txt, or a JSON object of day marks.');
+      return;
+    }
+    if(!backup.countNotes(parsed.events) && !Object.keys(state.events).length){
+      setBackupStatus('That file has no day marks, and the dial is already empty.');
+      return;
+    }
+    if(!backup.countNotes(state.events)){
+      applyRestore(parsed, 'replace');
+      return;
+    }
+    openRestoreDialog(parsed);
+  }
+  async function readBackupFile(file){
+    if(!file) return;
+    const name = (file.name||'').toLowerCase();
+    const type = (file.type||'').toLowerCase();
+    const looksOk = /\.(txt|text|json)$/.test(name) ||
+      type==='text/plain' || type==='application/json' || type==='text/json' || type==='';
+    if(!looksOk){
+      setBackupStatus('Choose a .txt or .json backup file.');
+      return;
+    }
+    try{
+      const text = await file.text();
+      handleBackupText(text);
+    }catch(e){
+      setBackupStatus('Could not read that file.');
+    }
+  }
+
+  document.getElementById('saveFile').addEventListener('click', downloadBackup);
+  document.getElementById('restoreFileBtn').addEventListener('click', ()=>restoreInput.click());
+  restoreInput.addEventListener('change', ()=>{
+    const f = restoreInput.files && restoreInput.files[0];
+    readBackupFile(f);
+    restoreInput.value = '';
+  });
+  document.getElementById('restoreReplace').addEventListener('click', ()=>applyRestore(pendingRestore, 'replace'));
+  document.getElementById('restoreMerge').addEventListener('click', ()=>applyRestore(pendingRestore, 'merge'));
+  document.getElementById('restoreCancel').addEventListener('click', ()=>{
+    setBackupStatus('Restore cancelled.');
+    closeRestoreDialog();
+  });
+  restoreDialog.addEventListener('click', e=>{
+    if(e.target === restoreDialog){
+      setBackupStatus('Restore cancelled.');
+      closeRestoreDialog();
+    }
+  });
+
+  const dropRoots = [document.querySelector('.stage'), document.querySelector('aside')].filter(Boolean);
+  function setDropAim(on){
+    dropRoots.forEach(el=>el.classList.toggle('drop-aim', on));
+  }
+  function hasFiles(e){
+    const types = e.dataTransfer && e.dataTransfer.types;
+    if(!types) return false;
+    return Array.prototype.indexOf.call(types, 'Files') !== -1;
+  }
+  ['dragenter','dragover'].forEach(ev=>{
+    document.addEventListener(ev, e=>{
+      if(!hasFiles(e)) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      setDropAim(true);
+    });
+  });
+  document.addEventListener('dragleave', e=>{
+    if(e.target === document.documentElement || e.relatedTarget == null) setDropAim(false);
+  });
+  document.addEventListener('drop', e=>{
+    setDropAim(false);
+    if(!hasFiles(e)) return;
+    e.preventDefault();
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    if(file) readBackupFile(file);
+  });
+  document.addEventListener('keydown', e=>{
+    if(e.key==='Escape' && restoreDialog.classList.contains('on')){
+      setBackupStatus('Restore cancelled.');
+      closeRestoreDialog();
+    }
+  });
+
   document.addEventListener('keydown', e=>{
     if(e.target.tagName==='INPUT') return;
+    if(restoreDialog.classList.contains('on')) return;
     if(e.key==='ArrowLeft') shift(-1);
     if(e.key==='ArrowRight') shift(1);
     const k = e.key.toLowerCase();
