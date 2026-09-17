@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gravity — weight, orbits, spacetime — Steven Philley</title>
+<meta name="description" content="Interactive gravity literacy: everyday weight and free fall, Newton’s inverse-square law, Einstein’s spacetime curvature, why the Standard Model omits gravity, and honest cosmology hooks. Cited NASA / NIST / CERN. Educational schematic — not a GR course.">
+<link rel="canonical" href="https://stevenphilley.com/science/gravity/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Gravity — weight, orbits, spacetime">
+<meta property="og:description" content="Click scales from apple to black hole. Newton for engineering, Einstein for GPS and light. Gravity is not in the Standard Model. Cited NASA / NIST / CERN.">
+<meta property="og:url" content="https://stevenphilley.com/science/gravity/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gravity — weight, orbits, spacetime">
+<meta name="twitter:description" content="Interactive gravity literacy: weight, Newton, Einstein, orbits, and the quantum gap. Not a theory of everything.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.needs{margin-top:22px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:start}
+.needs .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);padding-top:2px}
+.needs p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:72ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stand{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px}
+.stand h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,36px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
+.stand p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:70ch}
+.stand p:last-child{margin-bottom:0}
+.stand a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.stand a:hover{color:var(--accent,#c8b48a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(250px,.8fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);padding:12px 12px 10px;display:flex;flex-direction:column;min-width:0}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 10px}
+.diagram canvas{display:block;width:100%;height:auto;max-height:420px;touch-action:manipulation;cursor:pointer}
+.scale-strip,.orbit-tog{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.scale-strip button,.orbit-tog button,.stepper button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 11px;cursor:pointer
+}
+.scale-strip button:hover,.orbit-tog button:hover,.stepper button:hover{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)
+}
+.scale-strip button[aria-pressed="true"],.orbit-tog button[aria-pressed="true"]{
+  color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)
+}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-height:280px}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.detail p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.detail a{color:var(--ink,#e8e6e1)}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none}
+.facts li{position:relative;padding:8px 0 8px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.stepper{display:flex;gap:8px;margin-top:auto;padding-top:12px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss a{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs a{color:var(--ink,#e8e6e1)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.note{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:72ch}
+.note a{color:var(--ink,#e8e6e1)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.page-credit a{color:inherit}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .needs{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .scale-strip button,.orbit-tog button{padding:7px 9px;font-size:9px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/gravity/" aria-current="page">Gravity</a>
+      <a href="/science/standard-model/">Standard Model</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/maths/">Maths</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Vol. Science · Gravity · literacy</p>
+  <h1>Gravity</h1>
+  <p class="lede">A public-education desk for the force that gives you <strong>weight</strong>, keeps the <strong>atmosphere</strong> on the planet, and runs the <a href="/science/astronomy/">solar-system map</a> — and that the <a href="/science/standard-model/">Standard Model</a> correctly leaves out. Tap a scale (apple → Earth → orbit → black hole → spacetime sketch). Pair with <a href="/science/astronomy/stars/">stars</a>, <a href="/science/astronomy/exoplanets/">exoplanets</a>, <a href="/local/earthquakes/">earthquakes</a> / <a href="/local/liquefaction/">liquefaction</a> when ground and weight meet, and <a href="/maths/">maths</a> if you want the calculus under a field later.</p>
+  <p class="note-schematic">Educational schematic. Cartoons are teaching toys — not a general-relativity course, not a precision ephemeris, and not a claim that quantum gravity is solved. No fabricated papers. Numbers are rounded NASA / NIST / CERN classroom figures.</p>
+
+  <aside class="needs" aria-label="What this page is for">
+    <span class="tag">Literacy, not a theory of everything</span>
+    <p>Newton is good enough for many engineering jobs. Einstein is required for clocks in orbit and for light near mass. Neither is a finished quantum theory of gravity. This page teaches the everyday story, the two classical pictures, and the honest gap. It will not sell a unification.</p>
+  </aside>
+
+  <p class="band" id="everyday">Everyday gravity</p>
+  <article class="stand">
+    <h2>Weight, free fall, and falling sideways</h2>
+    <p>NASA Space Place’s classroom line: gravity is the pull by which a planet (or any mass) draws other objects toward its center. It is why you land when you jump, why dropped things fall, why the air stays on Earth, and why the Moon stays with us. Anything with mass has gravity; more mass means a stronger pull; the pull gets weaker with distance.</p>
+    <p><strong>Weight</strong> is that pull on your mass, not the mass itself. On the Moon you have the same mass and less weight. In free fall — a dropped apple, an elevator cable cut, the International Space Station — you and the floor accelerate together, so “weightlessness” is falling, not escaping gravity. An <strong>orbit</strong> is the same idea with sideways speed: you keep missing the ground. Newton’s cannonball thought-experiment is the ancestor of every circular cartoon on this page.</p>
+  </article>
+
+  <p class="band" id="scales">Interactive · Scales</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="scale-hint">Tap a scale · apple → Earth → orbit → black hole → spacetime</p>
+      <canvas id="scale-canvas" width="720" height="400" role="img" aria-label="Cartoon of the selected gravity scale"></canvas>
+      <div class="scale-strip" id="scale-strip" role="group" aria-label="Gravity scales"></div>
+    </div>
+    <aside class="detail" id="scale-detail" aria-live="polite">
+      <p class="tier" id="sc-tier">Everyday · 01</p>
+      <h2 id="sc-name">Apple</h2>
+      <p class="range" id="sc-range">Weight and free fall</p>
+      <ul class="stats" id="sc-stats"></ul>
+      <p id="sc-body"></p>
+      <div class="stepper">
+        <button type="button" id="scale-prev">Prev</button>
+        <button type="button" id="scale-next">Next</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="band" id="orbit">Interactive · Free fall &amp; orbit</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Play · free fall is a drop · orbit is a miss</p>
+      <canvas id="orbit-canvas" width="720" height="400" role="img" aria-label="Schematic free-fall or orbit cartoon"></canvas>
+      <div class="orbit-tog" id="orbit-tog" role="group" aria-label="Schematic mode"></div>
+    </div>
+    <aside class="detail" id="orbit-detail" aria-live="polite">
+      <p class="tier" id="or-tier">Schematic</p>
+      <h2 id="or-name">Free fall</h2>
+      <p class="range" id="or-range">Same acceleration, different sideways speed</p>
+      <p id="or-body"></p>
+      <ul class="facts" id="or-facts"></ul>
+    </aside>
+  </div>
+
+  <p class="band" id="newton">Newton</p>
+  <article class="stand">
+    <h2>Inverse square, good enough, then not</h2>
+    <p>Newton’s law: two masses attract with a force proportional to the product of the masses and inversely proportional to the square of the distance between centers — <em>F</em> = <em>G m<sub>1</sub> m<sub>2</sub> / r</em>². NASA’s Imagine the Universe classroom notes put <em>G</em> near 6.67 × 10<sup>−11</sup> N·m²/kg², and surface gravity on Earth near 9.8 m/s². Drop a hammer and a feather in vacuum and they fall together; weight scales with mass, acceleration does not.</p>
+    <p>That inverse-square picture still flies rockets, sites dams, and predicts most solar-system motion to engineering accuracy. Limits show up when you need high-precision clocks, when light itself is the test mass, near compact objects, or when you ask what gravity <em>is</em> instead of how it pulls. Mercury’s leftover perihelion, gravitational lensing, and GPS are the public reminders that “good enough” is not “complete.”</p>
+  </article>
+
+  <p class="band" id="einstein">Einstein · general relativity</p>
+  <article class="stand">
+    <h2>Spacetime curves; clocks and light notice</h2>
+    <p><strong>Equivalence, in plain words:</strong> you cannot tell a closed elevator that is accelerating in empty space from one that is sitting in a gravitational field. Einstein used that to argue that gravity is not a special force layered on flat space — it is the geometry of spacetime responding to energy and mass. Free-fall paths are the straightest lines that geometry allows (geodesics). A planet’s ellipse is that “straightest line” drawn on a curved map.</p>
+    <p><strong>Light bending.</strong> If space is curved, a light ray grazing the Sun is deflected. The 1919 solar-eclipse expeditions made that a public fact; Hubble and later surveys turned the same idea into gravitational lensing — mass as a lens. NASA’s black-hole and Hubble desks treat lensing as observed astronomy, not metaphor.</p>
+    <p><strong>GPS time dilation</strong> is the everyday receipt. NIST’s public clock writing: GPS satellites move fast enough that special relativity would slow their clocks by about 7 microseconds per day relative to the ground, while weaker gravity in medium-Earth orbit would speed them by about 45 microseconds per day — a net <strong>+38 μs/day</strong> if you did nothing. The constellation is built with that offset. Your blue dot is a relativity instrument, not a Newtonian afterthought.</p>
+  </article>
+
+  <p class="band" id="solar">Solar-system scale</p>
+  <article class="stand">
+    <h2>The map gravity actually runs</h2>
+    <p>At planets and moons, gravity is the scheduler. The <a href="/science/astronomy/">solar map</a> (day and local time) is a schematic of that schedule — compressed orbits, not a JPL ephemeris. <a href="/science/astronomy/stars/">Stars</a> live and die by gravity versus pressure; a high-mass path can leave a <strong>black hole</strong>, where escape speed meets the speed of light. <a href="/science/astronomy/exoplanets/">Exoplanets</a> are found in part because gravity tugs (radial velocity) or because a star’s gravity and a planet’s silhouette line up (transit). The force the Standard Model omits is the one that draws the sky.</p>
+    <p>Closer to home, the same pull is why loose, wet sand can fail when shaken — see <a href="/local/earthquakes/">Bay Area earthquakes</a> and <a href="/local/liquefaction/">liquefaction</a>. Gravity does not cause the rupture; it is why the ground and the building still have weight after the shear strength is gone.</p>
+  </article>
+
+  <p class="band" id="weak">Weakness vs the other forces</p>
+  <article class="stand">
+    <h2>Why a collider can ignore it</h2>
+    <p>CERN states the luck plainly: on the size of a particle, gravity is so weak next to electromagnetism, the weak force, and the strong force that you can omit it and still have a working collider theory. Two protons in the LHC feel electric repulsion and QCD far more than they feel each other’s weight. Gravity dominates only when matter is in bulk — a body, a planet, a star.</p>
+    <p>That is why the <a href="/science/standard-model/">Standard Model</a> desk can be honest about three forces without pretending the fourth is a missing tile on the grid. The outsider card there points here on purpose.</p>
+  </article>
+
+  <p class="band" id="quantum">The quantum gap</p>
+  <article class="stand">
+    <h2>No observed graviton, no weekend patch</h2>
+    <p>A quantum carrier is sometimes nicknamed the <strong>graviton</strong>. CERN’s Standard Model page: it has not been found, and fitting gravity into the quantum-field framework has not been done. Gravitational waves (LIGO/Virgo) confirm Einstein’s <em>classical</em> prediction of ripples in spacetime — they are not a detection of individual gravitons. Extra-dimension or microscopic-black-hole searches at the LHC remain speculative; this page will not narrate them as results.</p>
+    <p>There is no public, experimentally confirmed theory of everything that swallows both general relativity and the Standard Model. Saying so is the literacy. Anything that claims the gap closed last Tuesday belongs in a blog, not on this desk.</p>
+  </article>
+
+  <p class="band" id="cosmo">Cosmology hooks</p>
+  <article class="stand">
+    <h2>Inventory questions, not slogans</h2>
+    <p><strong>Dark matter</strong> is inferred because galaxies, lensing, and the cosmic microwave background behave as if most matter does not shine and does not match leftover Standard Model species. Neutrinos have mass but are too light and too fast to be the cold dark matter those maps require. NASA’s <a href="https://science.nasa.gov/dark-matter/" rel="noopener" target="_blank">dark-matter desk</a> is the honest door — already cited on the Standard Model page.</p>
+    <p><strong>Dark energy</strong> is the name for the dominant term in the present cosmic energy budget, inferred from supernovae, baryon acoustic oscillations, and the CMB — an accelerating expansion whose microphysical cause is not a measured particle. NASA’s <a href="https://science.nasa.gov/dark-energy/" rel="noopener" target="_blank">dark-energy desk</a> stays labeled unknown. Both are gravity-related accounting problems: we watch how spacetime and motion respond, and the books do not close with atoms alone.</p>
+  </article>
+
+  <p class="band">Literacy · words that keep getting mixed</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Mass vs weight</dt><dd>Mass is how much stuff. Weight is gravity’s pull on that stuff. Same mass, different weight on Earth and Moon. NASA’s classroom pages keep this distinction on purpose.</dd></div>
+    <div class="gloss"><dt>Free fall</dt><dd>Accelerating with the local gravitational field. “Weightless” in orbit is continuous free fall with enough sideways speed to miss the planet.</dd></div>
+    <div class="gloss"><dt>Inverse square</dt><dd>Double the distance, a quarter the force (point masses, Newton). Fine for many orbits and engineering estimates; not the last word near the Sun’s limb or a black hole.</dd></div>
+    <div class="gloss"><dt>Equivalence principle</dt><dd>A closed box cannot tell gravity from acceleration. The seed of general relativity, in one elevator.</dd></div>
+    <div class="gloss"><dt>Spacetime curvature</dt><dd>Mass-energy tells spacetime how to bend; spacetime tells matter and light how to move. A rubber-sheet sketch is a cartoon, not the 4-D math.</dd></div>
+    <div class="gloss"><dt>Graviton</dt><dd>Hypothetical quantum of gravity. Not observed. Not a Standard Model particle. Gravitational waves are a different, classical success.</dd></div>
+    <div class="gloss"><dt>Black hole</dt><dd>A region where gravity is strong enough that light cannot escape. NASA: stellar-mass holes from heavy-star collapse; supermassive holes in galaxy centers. Cartoon, not a metric.</dd></div>
+    <div class="gloss"><dt>Dark matter / dark energy</dt><dd>Cosmology inventory names. Gravity (and geometry) is how we noticed them. Neither is a solved particle on the Standard Model grid.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA / NIST / CERN</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://spaceplace.nasa.gov/what-is-gravity/en/" rel="noopener" target="_blank">NASA Space Place — What is gravity?</a> — pull toward a center; mass and distance; orbits; atmosphere held down; GRACE as a note that Earth’s gravity is not perfectly uniform.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/educators/programs/swift/classroom/law_grav_guide.html" rel="noopener" target="_blank">NASA Imagine the Universe — Newton’s law of gravitation</a> — <em>F</em> = <em>G m M / r</em>²; <em>g</em> ≈ 9.8 m/s²; mass vs weight; same-rate free fall.</li>
+      <li><a href="https://science.nasa.gov/universe/black-holes/" rel="noopener" target="_blank">NASA Science — Black holes</a> and <a href="https://science.nasa.gov/universe/stars/types/" rel="noopener" target="_blank">star types</a> — compact remnants and lensing as observed astronomy, not a comic-book drain.</li>
+      <li><a href="https://www.nist.gov/atomic-clocks/a-powerful-tool-for-science/putting-einstein-test" rel="noopener" target="_blank">NIST — Putting Einstein to the Test</a> — GPS clocks: ≈ −7 μs/day from speed, ≈ +45 μs/day from weaker gravity, net ≈ +38 μs/day; clocks in higher gravity tick more slowly.</li>
+      <li><a href="https://home.cern/science/physics/standard-model/" rel="noopener" target="_blank">CERN — The Standard Model</a> — gravity omitted; graviton not found; effect negligible at particle scales; GR and QFT not fitted into one SM framework.</li>
+      <li><a href="https://science.nasa.gov/dark-matter/" rel="noopener" target="_blank">NASA Science — Dark matter</a> and <a href="https://science.nasa.gov/dark-energy/" rel="noopener" target="_blank">dark energy</a> — the same cosmology doors already cited on the Standard Model page.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Figures are teaching toys. A real geodesic needs a metric; a real orbit needs an ephemeris. Earthrise preview: NASA / Bill Anders (public domain). This page will not announce a theory of everything.</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/standard-model/"><p class="n">Particles</p><h3>Standard Model</h3><p>Three forces on the grid. Gravity is the dashed outsider that sent you here.</p></a>
+    <a href="/science/astronomy/"><p class="n">Solar system</p><h3>Astronomy</h3><p>Day-and-time map of the neighborhood gravity actually schedules.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Color</p><h3>Stars</h3><p>Pressure versus gravity — and the black-hole end of the high-mass path.</p></a>
+    <a href="/science/astronomy/exoplanets/"><p class="n">Other suns</p><h3>Exoplanets</h3><p>Worlds found by a tug or a transit — gravity as a detection tool.</p></a>
+    <a href="/local/earthquakes/"><p class="n">Ground</p><h3>Earthquakes</h3><p>Plate-boundary history. Weight is still there after the shaking.</p></a>
+    <a href="/local/liquefaction/"><p class="n">Soft ground</p><h3>Liquefaction</h3><p>When grains lose contact, gravity still wants the building down.</p></a>
+    <a href="/maths/"><p class="n">Study</p><h3>Maths</h3><p>Trig, linear algebra, calculus — habits before a field equation.</p></a>
+    <a href="/science/"><p class="n">Status</p><h3>Science desk</h3><p>Nanomaterials, robotics, space — and the rest of the literacy doors.</p></a>
+  </div>
+
+  <p class="note">Educational schematic from public NASA, NIST, and CERN materials. Not a general-relativity course, not a quantum-gravity result, and not a catalog of unconfirmed particles. Cross-read the outbound links when a number matters.</p>
+
+  <footer class="foot">
+    <a href="/science/">Science</a>
+    <a href="/science/standard-model/">Standard Model</a>
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/maths/">Maths</a>
+    <a href="/local/earthquakes/">Earthquakes</a>
+    <a href="/news/science.html">Science headlines</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY="sp-theme";
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c=root.getAttribute("data-theme")||"neon";
+    buttons.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click",function(){
+      root.setAttribute("data-theme",b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+      drawScale();
+      drawOrbit(true);
+    });
+  });
+  paintTheme();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+
+  var root=document.documentElement;
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+  function ink(){ return cssVar("--ink","#e8e6e1"); }
+  function soft(){ return cssVar("--ink-soft","#9b9a96"); }
+  function muted(){ return cssVar("--muted","#63666e"); }
+  function accent(){ return cssVar("--accent","#c8b48a"); }
+  function line(){ return cssVar("--line","#2c303a"); }
+  function base(){ return cssVar("--base-2","#14161c"); }
+
+  var SCALES = [
+    {id:"apple",name:"Apple",tier:"Everyday · 01",range:"Weight and free fall",scale:"Human",g:"~9.8 m/s² nearby",pic:"Drop",
+      body:"The classroom apple: gravity pulls it toward Earth’s center. Weight is that pull. In free fall the apple and a scale would both accelerate, so the reading goes to zero — not because gravity vanished.",
+      facts:[["What you feel","Weight"],["If it drops","Free fall"],["Escape?","No — still pulled"]]},
+    {id:"earth",name:"Earth",tier:"Planet · 02",range:"Holds air, oceans, you",scale:"~6,400 km radius",g:"~9.8 m/s² surface",pic:"World",
+      body:"NASA: Earth’s gravity keeps you on the ground, holds the atmosphere, and keeps the Moon in company. It is slightly stronger over extra mass underground — GRACE mapped those wiggles. This is still Newton-plus-small-corrections territory.",
+      facts:[["Atmosphere","Held down"],["Moon","In orbit"],["Uniform?","Almost, not quite"]]},
+    {id:"orbit",name:"Orbit",tier:"Neighborhood · 03",range:"Falling sideways",scale:"LEO to planets",g:"Still plenty of g",pic:"Miss",
+      body:"Enough sideways speed and the ground curves away as fast as you fall. The ISS is not above gravity; it is in continuous free fall around Earth. The solar map is this idea drawn for eight planets.",
+      facts:[["Trick","Miss the ground"],["Weightless?","Falling together"],["Map","/science/astronomy/"]]},
+    {id:"hole",name:"Black hole",tier:"Compact · 04",range:"Light cannot climb out",scale:"Stellar to supermassive",g:"Extreme curvature",pic:"Cartoon",
+      body:"NASA: a region where gravity is strong enough that light cannot escape. Stellar-mass holes can follow a high-mass star’s collapse; galaxy centers keep supermassive ones. The swirl here is a teaching cartoon, not an accretion-disk simulation.",
+      facts:[["Escape speed","≥ c"],["Seen how","Waves, shadows, stars"],["SM particle?","No"]]},
+    {id:"space",name:"Spacetime",tier:"Geometry · 05",range:"Einstein’s picture",scale:"Wherever mass-energy is",g:"Clocks and rays notice",pic:"Sketch",
+      body:"A mass sits in a grid and the grid dents — a rubber-sheet metaphor for curvature. Equivalence: an accelerating box feels like gravity. GPS clocks and bent starlight are the receipts. The sheet is 2-D; the theory is not.",
+      facts:[["Plain words","Geometry, not a tug"],["Test","Lensing · clocks"],["Quantum?","Open"]]}
+  ];
+
+  var scaleId="apple";
+  var strip=document.getElementById("scale-strip");
+  var canvas=document.getElementById("scale-canvas");
+  var ctx=canvas.getContext("2d");
+
+  function scaleById(id){
+    for(var i=0;i<SCALES.length;i++) if(SCALES[i].id===id) return SCALES[i];
+    return SCALES[0];
+  }
+  function scaleIndex(){
+    for(var i=0;i<SCALES.length;i++) if(SCALES[i].id===scaleId) return i;
+    return 0;
+  }
+
+  function renderStrip(){
+    strip.innerHTML="";
+    SCALES.forEach(function(s){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=s.name;
+      b.setAttribute("aria-pressed",String(s.id===scaleId));
+      b.addEventListener("click",function(){ selectScale(s.id); });
+      strip.appendChild(b);
+    });
+  }
+
+  function showScale(s){
+    document.getElementById("sc-tier").textContent=s.tier;
+    document.getElementById("sc-name").textContent=s.name;
+    document.getElementById("sc-range").textContent=s.range;
+    var ul=document.getElementById("sc-stats");
+    ul.innerHTML="";
+    [["Scale",s.scale],["g-ish",s.g],["Picture",s.pic]].forEach(function(row){
+      var li=document.createElement("li");
+      li.innerHTML="<span class=\"k\">"+row[0]+"</span><span class=\"v\">"+row[1]+"</span>";
+      ul.appendChild(li);
+    });
+    document.getElementById("sc-body").textContent=s.body;
+    document.getElementById("scale-hint").textContent="Tap a scale · "+s.name.toLowerCase()+" selected";
+  }
+
+  function rounded(c,x,y,w,h,r){
+    c.beginPath();
+    c.moveTo(x+r,y);
+    c.arcTo(x+w,y,x+w,y+h,r);
+    c.arcTo(x+w,y+h,x,y+h,r);
+    c.arcTo(x,y+h,x,y,r);
+    c.arcTo(x,y,x+w,y,r);
+    c.closePath();
+  }
+
+  function drawScale(){
+    var w=canvas.width,h=canvas.height;
+    var c=ctx;
+    c.clearRect(0,0,w,h);
+    c.fillStyle=base();
+    c.fillRect(0,0,w,h);
+    var s=scaleById(scaleId);
+    if(s.id==="apple") drawApple(c,w,h);
+    else if(s.id==="earth") drawEarth(c,w,h);
+    else if(s.id==="orbit") drawOrbitStill(c,w,h);
+    else if(s.id==="hole") drawHole(c,w,h);
+    else drawSpacetime(c,w,h);
+  }
+
+  function drawApple(c,w,h){
+    var gx=w*0.5, gy=h*0.78;
+    c.strokeStyle=line();
+    c.lineWidth=2;
+    c.beginPath();
+    c.moveTo(40,gy);
+    c.lineTo(w-40,gy);
+    c.stroke();
+    c.fillStyle=accent();
+    c.beginPath();
+    c.ellipse(gx, gy-92, 28, 32, 0, 0, Math.PI*2);
+    c.fill();
+    c.strokeStyle=ink();
+    c.lineWidth=1.5;
+    c.beginPath();
+    c.moveTo(gx, gy-122);
+    c.quadraticCurveTo(gx+12, gy-138, gx+22, gy-130);
+    c.stroke();
+    c.strokeStyle=soft();
+    c.setLineDash([4,6]);
+    c.beginPath();
+    c.moveTo(gx, gy-58);
+    c.lineTo(gx, gy-8);
+    c.stroke();
+    c.setLineDash([]);
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("weight ↓", gx, gy+22);
+    c.fillText("same pull on you", gx, gy+40);
+  }
+
+  function drawEarth(c,w,h){
+    var cx=w*0.5, cy=h*0.48, r=Math.min(w,h)*0.28;
+    var grd=c.createRadialGradient(cx-r*0.3,cy-r*0.3,r*0.2,cx,cy,r);
+    grd.addColorStop(0, accent());
+    grd.addColorStop(1, soft());
+    c.fillStyle=grd;
+    c.beginPath();
+    c.arc(cx,cy,r,0,Math.PI*2);
+    c.fill();
+    c.strokeStyle=ink();
+    c.lineWidth=1.2;
+    c.beginPath();
+    c.ellipse(cx, cy, r*1.18, r*0.22, 0.15, 0, Math.PI*2);
+    c.stroke();
+    c.fillStyle=accent();
+    c.beginPath();
+    c.arc(cx+r+36, cy-10, 8, 0, Math.PI*2);
+    c.fill();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("Earth holds air + Moon", cx, cy+r+36);
+  }
+
+  function drawOrbitStill(c,w,h){
+    var cx=w*0.42, cy=h*0.52, R=Math.min(w,h)*0.32;
+    c.strokeStyle=line();
+    c.lineWidth=1.5;
+    c.setLineDash([3,5]);
+    c.beginPath();
+    c.arc(cx,cy,R,0,Math.PI*2);
+    c.stroke();
+    c.setLineDash([]);
+    c.fillStyle=accent();
+    c.beginPath();
+    c.arc(cx,cy,18,0,Math.PI*2);
+    c.fill();
+    var a=-0.7;
+    var sx=cx+Math.cos(a)*R, sy=cy+Math.sin(a)*R;
+    c.fillStyle=ink();
+    c.beginPath();
+    c.arc(sx,sy,7,0,Math.PI*2);
+    c.fill();
+    c.strokeStyle=soft();
+    c.beginPath();
+    c.moveTo(sx,sy);
+    c.lineTo(sx+Math.cos(a+1.2)*34, sy+Math.sin(a+1.2)*34);
+    c.stroke();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="left";
+    c.fillText("falling + missing", sx+16, sy-10);
+  }
+
+  function drawHole(c,w,h){
+    var cx=w*0.5, cy=h*0.5;
+    for(var i=7;i>=1;i--){
+      c.beginPath();
+      c.ellipse(cx, cy+i*4, 20+i*18, 8+i*7, 0, 0, Math.PI*2);
+      c.strokeStyle=i===1?ink():(i<4?accent():line());
+      c.lineWidth=i===1?2:1;
+      c.stroke();
+    }
+    c.fillStyle=base();
+    c.beginPath();
+    c.arc(cx,cy,16,0,Math.PI*2);
+    c.fill();
+    c.strokeStyle=ink();
+    c.stroke();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("cartoon · not a metric", cx, h-28);
+  }
+
+  function drawSpacetime(c,w,h){
+    var cols=11, rows=8;
+    var pad=36, left=40, top=28;
+    var cw=(w-left-pad)/(cols-1), rh=(h-top-50)/(rows-1);
+    var mx=w*0.5, my=h*0.55;
+    c.strokeStyle=line();
+    c.lineWidth=1;
+    function warp(x,y){
+      var dx=x-mx, dy=y-my;
+      var d=Math.sqrt(dx*dx+dy*dy)+8;
+      var dip=1400/(d);
+      return {x:x, y:y+dip};
+    }
+    for(var r=0;r<rows;r++){
+      c.beginPath();
+      for(var col=0;col<cols;col++){
+        var p=warp(left+col*cw, top+r*rh);
+        if(col===0) c.moveTo(p.x,p.y); else c.lineTo(p.x,p.y);
+      }
+      c.stroke();
+    }
+    for(var col=0;col<cols;col++){
+      c.beginPath();
+      for(var r=0;r<rows;r++){
+        var p=warp(left+col*cw, top+r*rh);
+        if(r===0) c.moveTo(p.x,p.y); else c.lineTo(p.x,p.y);
+      }
+      c.stroke();
+    }
+    c.fillStyle=accent();
+    c.beginPath();
+    c.arc(mx, my+28, 14, 0, Math.PI*2);
+    c.fill();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("mass dents the sketch", w/2, h-18);
+  }
+
+  function selectScale(id){
+    scaleId=id;
+    if(history.replaceState) try{ history.replaceState(null,"","#"+id); }catch(e){}
+    renderStrip();
+    showScale(scaleById(id));
+    drawScale();
+  }
+
+  document.getElementById("scale-prev").addEventListener("click",function(){
+    var i=scaleIndex();
+    selectScale(SCALES[(i+SCALES.length-1)%SCALES.length].id);
+  });
+  document.getElementById("scale-next").addEventListener("click",function(){
+    var i=scaleIndex();
+    selectScale(SCALES[(i+1)%SCALES.length].id);
+  });
+
+  canvas.addEventListener("click",function(ev){
+    var rect=canvas.getBoundingClientRect();
+    var x=(ev.clientX-rect.left)/rect.width;
+    var i=Math.min(SCALES.length-1, Math.max(0, Math.floor(x*SCALES.length)));
+    selectScale(SCALES[i].id);
+  });
+
+  /* Orbit / free-fall schematic */
+  var MODE="fall";
+  var playing=true;
+  var t0=performance.now();
+  var oCanvas=document.getElementById("orbit-canvas");
+  var octx=oCanvas.getContext("2d");
+  var tog=document.getElementById("orbit-tog");
+
+  var MODES = [
+    {id:"fall",name:"Free fall",range:"Dropped · no sideways speed",
+      body:"The apple and the ground’s local field share an acceleration. A cartoon of g, not a vacuum chamber. Air resistance is omitted on purpose.",
+      facts:["Weight reads ~0 on the way down if you fall with the scale.","Newton: acceleration does not care about the apple’s mass.","Einstein: this local free fall is the “straight” path."]},
+    {id:"orbit",name:"Orbit",range:"Falling and missing",
+      body:"Same pull, plus enough horizontal speed that the planet’s surface curves away. Newton’s mountain cannon; today’s ISS. Play walks a circular cartoon — not Kepler software.",
+      facts:["Circle here is a teaching toy (real orbits are ellipses).","See the solar map for a day-and-time neighborhood sketch.","GPS still needs Einstein on top of this picture."]}
+  ];
+
+  function modeById(id){ return id==="orbit"?MODES[1]:MODES[0]; }
+
+  function renderMode(){
+    tog.innerHTML="";
+    MODES.forEach(function(m){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=m.name;
+      b.setAttribute("aria-pressed",String(MODE===m.id));
+      b.addEventListener("click",function(){ MODE=m.id; t0=performance.now(); showMode(); drawOrbit(true); });
+      tog.appendChild(b);
+    });
+    var p=document.createElement("button");
+    p.type="button";
+    p.textContent=playing?"Pause":"Play";
+    p.setAttribute("aria-pressed",String(playing));
+    p.addEventListener("click",function(){ playing=!playing; if(playing) t0=performance.now()-(window._gravT||0); renderMode(); });
+    tog.appendChild(p);
+  }
+
+  function showMode(){
+    var m=modeById(MODE);
+    document.getElementById("or-tier").textContent="Schematic · "+(MODE==="fall"?"drop":"miss");
+    document.getElementById("or-name").textContent=m.name;
+    document.getElementById("or-range").textContent=m.range;
+    document.getElementById("or-body").textContent=m.body;
+    var ul=document.getElementById("or-facts");
+    ul.innerHTML="";
+    m.facts.forEach(function(f){
+      var li=document.createElement("li");
+      li.textContent=f;
+      ul.appendChild(li);
+    });
+    document.getElementById("orbit-hint").textContent=MODE==="fall"?"Play · a drop with g omitted of air":"Play · circular miss · not an ephemeris";
+    renderMode();
+  }
+
+  function drawOrbit(force){
+    var now=performance.now();
+    var t=playing? (now-t0)/1000 : (window._gravT||0);
+    window._gravT=t;
+    var w=oCanvas.width,h=oCanvas.height,c=octx;
+    c.clearRect(0,0,w,h);
+    c.fillStyle=base();
+    c.fillRect(0,0,w,h);
+    if(MODE==="fall"){
+      var gy=h*0.82;
+      c.strokeStyle=line();
+      c.beginPath();
+      c.moveTo(30,gy); c.lineTo(w-30,gy); c.stroke();
+      var y=70+((t*90)%(gy-100));
+      c.fillStyle=accent();
+      c.beginPath();
+      c.ellipse(w*0.5, y, 16, 18, 0, 0, Math.PI*2);
+      c.fill();
+      c.fillStyle=muted();
+      c.font="11px \"IBM Plex Mono\", monospace";
+      c.textAlign="center";
+      c.fillText("free fall · replay loop", w/2, gy+24);
+    } else {
+      var cx=w*0.5, cy=h*0.5, R=Math.min(w,h)*0.30;
+      c.strokeStyle=line();
+      c.setLineDash([3,5]);
+      c.beginPath();
+      c.arc(cx,cy,R,0,Math.PI*2);
+      c.stroke();
+      c.setLineDash([]);
+      c.fillStyle=accent();
+      c.beginPath();
+      c.arc(cx,cy,22,0,Math.PI*2);
+      c.fill();
+      var a=t*0.7;
+      var sx=cx+Math.cos(a)*R, sy=cy+Math.sin(a)*R;
+      c.fillStyle=ink();
+      c.beginPath();
+      c.arc(sx,sy,7,0,Math.PI*2);
+      c.fill();
+      c.strokeStyle=soft();
+      c.beginPath();
+      c.moveTo(sx,sy);
+      c.lineTo(cx,cy);
+      c.stroke();
+      c.fillStyle=muted();
+      c.font="11px \"IBM Plex Mono\", monospace";
+      c.textAlign="center";
+      c.fillText("always falling · always missing", cx, h-22);
+    }
+    if(playing||force){ /* keep going */ }
+  }
+
+  function loop(now){
+    drawOrbit(false);
+    requestAnimationFrame(loop);
+  }
+
+  var hash=(location.hash||"").replace("#","");
+  if(hash && scaleById(hash).id===hash) scaleId=hash;
+
+  renderStrip();
+  showScale(scaleById(scaleId));
+  drawScale();
+  showMode();
+  requestAnimationFrame(loop);
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
