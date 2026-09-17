@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text toolbox — character counter — Steven Philley</title>
+<meta name="description" content="Paste or type: live character, word, sentence, and byte counts plus local case, sort, and slug helpers. Nothing is uploaded.">
+<link rel="canonical" href="https://stevenphilley.com/tools/text/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Text toolbox — character counter">
+<meta property="og:description" content="Live counts and local text helpers in the browser. Nothing is uploaded.">
+<meta property="og:url" content="https://stevenphilley.com/tools/text/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Text toolbox — character counter">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(52px,11vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.desk{padding:22px 0 8px}
+.field-lab{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+textarea#src{display:block;width:100%;min-height:min(52vh,420px);resize:vertical;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:16px;line-height:1.55;padding:14px 14px;outline:none;border-radius:0}
+textarea#src:focus{border-color:var(--accent,#c8b48a)}
+textarea#src.is-over{border-color:var(--accent-2,#d98b97);box-shadow:inset 0 0 0 1px var(--accent-2,#d98b97)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;padding:22px 0 6px;border-top:1px solid var(--line,#2c303a);margin-top:20px}
+.metric{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.metric .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.metric .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(36px,6vw,64px);line-height:.9;margin:8px 0 4px}
+.metric .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.08em;color:var(--muted,#63666e)}
+.limit{margin:18px 0 4px;padding:16px 0 4px;border-top:1px solid var(--line,#2c303a)}
+.limit-row{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:flex-end}
+.limit-row label{display:grid;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.limit-row input[type="number"]{width:7.5rem;background:transparent;border:0;border-bottom:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:22px;padding:8px 0;outline:none}
+.limit-row input[type="number"]:focus{border-bottom-color:var(--accent,#c8b48a)}
+.remain{min-width:10rem}
+.remain .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.remain .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(32px,5vw,48px);line-height:.9;margin:6px 0 2px}
+.remain .unit{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--muted,#63666e)}
+.remain.is-over .lab,.remain.is-over .num{color:var(--accent-2,#d98b97)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.chips button,.tools button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;cursor:pointer;min-height:44px}
+.chips button:hover,.chips button:focus-visible,.tools button:hover,.tools button:focus-visible{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.chips button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.tools{margin-top:8px}
+.tools h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.tool-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 0;border-top:1px solid var(--line,#2c303a)}
+.tool-row .row-lab{flex:0 0 5.5rem;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.status{margin:10px 0 0;min-height:1.5em;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.also{margin-top:8px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.also a{color:inherit}
+.also a:hover{color:var(--accent,#c8b48a)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:760px){
+  .metrics{grid-template-columns:1fr 1fr}
+  .tool-row{flex-direction:column;align-items:stretch}
+  .tool-row .row-lab{flex:none}
+  .tools button,.chips button{width:auto}
+}
+@media (max-width:420px){
+  .metrics{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/text/" aria-current="page">Text</a>
+      <a href="/tools/temperature.html">Temperature</a>
+      <a href="/tools/speed/">Speed</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools</p>
+    <h1>Text</h1>
+    <p class="lede">Paste or type. Counts update as you go — characters, words, sentences, bytes — plus a small desk of case, line, and slug helpers. All of it stays in this browser. Nothing is uploaded.</p>
+  </header>
+
+  <div class="desk">
+    <label class="field-lab" for="src">Paste or type</label>
+    <textarea id="src" name="text" spellcheck="true" autocomplete="off" autocapitalize="off" placeholder="Paste or type…"></textarea>
+
+    <div class="metrics" id="stats" aria-live="polite">
+      <div class="metric">
+        <div class="lab">Characters</div>
+        <div class="num" id="n-chars">0</div>
+        <div class="unit" id="n-chars-unit">with spaces</div>
+      </div>
+      <div class="metric">
+        <div class="lab">No spaces</div>
+        <div class="num" id="n-tight">0</div>
+        <div class="unit">letters &amp; marks</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Words</div>
+        <div class="num" id="n-words">0</div>
+        <div class="unit">whitespace split</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Sentences</div>
+        <div class="num" id="n-sents">0</div>
+        <div class="unit">. ? ! heuristic</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Lines</div>
+        <div class="num" id="n-lines">0</div>
+        <div class="unit" id="n-lines-unit">including blanks</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Paragraphs</div>
+        <div class="num" id="n-paras">0</div>
+        <div class="unit">blank-line breaks</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Bytes</div>
+        <div class="num" id="n-bytes">0</div>
+        <div class="unit">UTF-8</div>
+      </div>
+      <div class="metric">
+        <div class="lab">Reading</div>
+        <div class="num" id="n-read">—</div>
+        <div class="unit">~230 words / min</div>
+      </div>
+    </div>
+
+    <div class="limit">
+      <div class="limit-row">
+        <label for="limit">Soft limit
+          <input id="limit" name="limit" type="number" inputmode="numeric" min="0" step="1" placeholder="off" aria-describedby="remain-unit">
+        </label>
+        <div class="remain" id="remain-box">
+          <div class="lab" id="remain-lab">Remaining</div>
+          <div class="num" id="remain-num">—</div>
+          <div class="unit" id="remain-unit">no limit — type freely</div>
+        </div>
+      </div>
+      <div class="chips" id="limit-presets" role="group" aria-label="Common limits">
+        <button type="button" data-limit="" aria-pressed="true">Off</button>
+        <button type="button" data-limit="160" aria-pressed="false">SMS 160</button>
+        <button type="button" data-limit="280" aria-pressed="false">X 280</button>
+        <button type="button" data-limit="300" aria-pressed="false">Bluesky 300</button>
+        <button type="button" data-limit="500" aria-pressed="false">500</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="tools">
+    <h2>Helpers</h2>
+    <div class="tool-row">
+      <span class="row-lab">Case</span>
+      <button type="button" data-fn="lower">lower</button>
+      <button type="button" data-fn="upper">UPPER</button>
+      <button type="button" data-fn="title">Title Case</button>
+      <button type="button" data-fn="sentence">Sentence case</button>
+    </div>
+    <div class="tool-row">
+      <span class="row-lab">Space</span>
+      <button type="button" data-fn="trim">Trim</button>
+      <button type="button" data-fn="collapse">Collapse space</button>
+    </div>
+    <div class="tool-row">
+      <span class="row-lab">Lines</span>
+      <button type="button" data-fn="sort-az">Sort A→Z</button>
+      <button type="button" data-fn="sort-za">Sort Z→A</button>
+      <button type="button" data-fn="dedupe">Deduplicate</button>
+      <button type="button" data-fn="rev-lines">Reverse lines</button>
+    </div>
+    <div class="tool-row">
+      <span class="row-lab">Text</span>
+      <button type="button" data-fn="rev-text">Reverse text</button>
+      <button type="button" data-fn="slug">Slugify</button>
+    </div>
+    <div class="tool-row">
+      <span class="row-lab">Desk</span>
+      <button type="button" id="undo" disabled>Undo</button>
+      <button type="button" id="clear">Clear</button>
+      <button type="button" id="select">Select all</button>
+      <button type="button" id="copy">Copy</button>
+      <button type="button" id="download">Download .txt</button>
+    </div>
+    <p class="status" id="status" aria-live="polite">Local only — this page never sends your text anywhere.</p>
+  </section>
+
+  <section class="also">
+    <h2>How it counts</h2>
+    <ul>
+      <li>Characters include spaces and line breaks. “No spaces” drops any Unicode whitespace.</li>
+      <li>Words are runs of non-space. CJK and similar scripts will under-count — this is a Latin-ish desk.</li>
+      <li>Sentences split on <code>.</code> <code>?</code> <code>!</code> <code>…</code>. Common abbreviations (Mr., Dr., U.S.) are skipped when obvious. Unfinished last sentences still count.</li>
+      <li>Lines follow the textarea (empty draft = 0). Paragraphs are blocks split by a blank line.</li>
+      <li>Bytes are UTF-8. Emoji and accented letters cost more than one byte.</li>
+      <li>Reading time is ~230 words per minute — a casual adult skim, not a lab measure.</li>
+      <li>The limit is soft. Going over tints the box; it does not block typing.</li>
+    </ul>
+    <h2>Privacy</h2>
+    <ul>
+      <li>Everything runs in this tab. There is no form post and no analytics on the draft.</li>
+      <li>Copy uses the clipboard API. Download builds a <code>.txt</code> in the browser.</li>
+      <li>The soft-limit choice can stay in <code>localStorage</code>. The text itself is not saved.</li>
+    </ul>
+    <h2>Also</h2>
+    <ul>
+      <li><a href="/tools/">All tools</a> — everyday converters and helpers</li>
+      <li><a href="/tools/temperature.html">Temperature</a> — Fahrenheit ↔ Celsius</li>
+      <li><a href="/tools/speed/">Speed test</a> — ping, download, and upload</li>
+      <li><a href="/typing-tutor.html">Stilltype</a> — a quiet typing tutor</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <a href="/tools/">Tools</a>
+    <a href="/tools/temperature.html">Temperature</a>
+    <a href="/tools/speed/">Speed</a>
+    <a href="/sitemap.html">Full site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var LIMIT_KEY='sp-text-limit';
+  var root=document.documentElement;
+  var themeBtns=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paintTheme(){
+    var cur=root.getAttribute('data-theme')||'neon';
+    themeBtns.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===cur));});
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      root.setAttribute('data-theme',b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+    });
+  });
+  paintTheme();
+
+  var src=document.getElementById('src');
+  var limitEl=document.getElementById('limit');
+  var remainBox=document.getElementById('remain-box');
+  var remainLab=document.getElementById('remain-lab');
+  var remainNum=document.getElementById('remain-num');
+  var remainUnit=document.getElementById('remain-unit');
+  var statusEl=document.getElementById('status');
+  var undoBtn=document.getElementById('undo');
+  var copyBtn=document.getElementById('copy');
+  var presetBtns=[].slice.call(document.querySelectorAll('#limit-presets button'));
+  var undoStack=null;
+  var copyTimer=null;
+
+  function fmtN(n){
+    try{return Number(n).toLocaleString('en-US');}catch(e){return String(n);}
+  }
+  function utf8Bytes(s){
+    try{return new TextEncoder().encode(s).length;}catch(e){
+      try{return unescape(encodeURIComponent(s)).length;}catch(e2){return s.length;}
+    }
+  }
+  function countWords(s){
+    var m=String(s||'').match(/\S+/g);
+    return m?m.length:0;
+  }
+  function countSentences(text){
+    var t=String(text||'').replace(/\s+/g,' ').trim();
+    if(!t) return 0;
+    t=t.replace(/\b(mr|mrs|ms|dr|prof|sr|jr|st|vs|etc|approx|est|dept|inc|ltd|co|no|vol|fig|eq|al|ed)\./gi,'$1');
+    t=t.replace(/\b([A-Za-z])\.(?=[A-Za-z]\.)/g,'$1');
+    t=t.replace(/\b(e\.g|i\.e|u\.s|u\.k|n\.y|d\.c|p\.m|a\.m)\./gi,function(m){return m.replace(/\./g,'');});
+    var parts=t.split(/[.!?…]+(?:\s+|$)/).filter(function(p){return /[0-9A-Za-z\u00C0-\u024F]/.test(p);});
+    if(!parts.length) return /[0-9A-Za-z\u00C0-\u024F]/.test(t)?1:0;
+    return parts.length;
+  }
+  function countLines(s){
+    if(s==='') return 0;
+    return s.split(/\r\n|\r|\n/).length;
+  }
+  function countParas(s){
+    if(!String(s).trim()) return 0;
+    return s.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split(/\n\s*\n/).filter(function(p){return p.trim();}).length;
+  }
+  function readingLabel(words){
+    if(!words) return '—';
+    var minutes=words/230;
+    if(minutes<0.5){
+      var sec=Math.max(1,Math.round(minutes*60));
+      return '~'+sec+'s';
+    }
+    if(minutes<1.5) return '~1m';
+    return '~'+Math.round(minutes)+'m';
+  }
+  function splitLines(s){
+    var nl=/\n$/.test(s);
+    var body=nl?s.slice(0,-1):s;
+    return {lines:body.split('\n'), nl:nl};
+  }
+  function joinLines(parts, nl){
+    return parts.join('\n')+(nl?'\n':'');
+  }
+  function titleCase(s){
+    return s.replace(/([A-Za-z\u00C0-\u024F])([A-Za-z\u00C0-\u024F'’]*)/g,function(_,a,b){
+      return a.toUpperCase()+b.toLowerCase();
+    });
+  }
+  function sentenceCase(s){
+    var lower=s.toLowerCase();
+    return lower.replace(/(^|[.!?…]\s+|\n+\s*)([A-Za-z\u00C0-\u024F])/g,function(m,p,c){
+      return p+c.toUpperCase();
+    });
+  }
+  function slugify(s){
+    var t=s;
+    if(t.normalize) t=t.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return t.toLowerCase()
+      .replace(/['’]/g,'')
+      .replace(/[^a-z0-9]+/g,'-')
+      .replace(/-{2,}/g,'-')
+      .replace(/^-+|-+$/g,'');
+  }
+  function applyFn(name,s){
+    if(name==='lower') return s.toLowerCase();
+    if(name==='upper') return s.toUpperCase();
+    if(name==='title') return titleCase(s);
+    if(name==='sentence') return sentenceCase(s);
+    if(name==='trim') return s.replace(/[ \t]+$/gm,'').replace(/^[ \t]+/gm,'').replace(/^\s+|\s+$/g,'');
+    if(name==='collapse') return s.replace(/[ \t]+/g,' ').replace(/ *\n */g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+    if(name==='sort-az'||name==='sort-za'){
+      var pack=splitLines(s);
+      pack.lines.sort(function(a,b){
+        var c=a.localeCompare(b,undefined,{sensitivity:'base',numeric:true});
+        return name==='sort-za'?-c:c;
+      });
+      return joinLines(pack.lines,pack.nl);
+    }
+    if(name==='dedupe'){
+      var d=splitLines(s);
+      var seen=Object.create(null);
+      var out=[];
+      d.lines.forEach(function(line){
+        if(Object.prototype.hasOwnProperty.call(seen,line)) return;
+        seen[line]=1;
+        out.push(line);
+      });
+      return joinLines(out,d.nl);
+    }
+    if(name==='rev-lines'){
+      var r=splitLines(s);
+      r.lines.reverse();
+      return joinLines(r.lines,r.nl);
+    }
+    if(name==='rev-text'){
+      try{return Array.from(s).reverse().join('');}catch(e){return s.split('').reverse().join('');}
+    }
+    if(name==='slug') return slugify(s);
+    return s;
+  }
+  function setStatus(msg){ statusEl.textContent=msg; }
+  function parseLimit(){
+    var raw=String(limitEl.value||'').trim();
+    if(!raw) return 0;
+    var n=parseInt(raw,10);
+    return (isFinite(n)&&n>0)?n:0;
+  }
+  function paintPresets(n){
+    presetBtns.forEach(function(b){
+      var v=b.getAttribute('data-limit');
+      var on=v===''?n===0:String(n)===v;
+      b.setAttribute('aria-pressed',String(on));
+    });
+  }
+  function paint(){
+    var text=src.value;
+    var chars=text.length;
+    var tight=text.replace(/\s/g,'').length;
+    var words=countWords(text);
+    var sents=countSentences(text);
+    var lines=countLines(text);
+    var paras=countParas(text);
+    var bytes=utf8Bytes(text);
+    document.getElementById('n-chars').textContent=fmtN(chars);
+    document.getElementById('n-tight').textContent=fmtN(tight);
+    document.getElementById('n-words').textContent=fmtN(words);
+    document.getElementById('n-sents').textContent=fmtN(sents);
+    document.getElementById('n-lines').textContent=fmtN(lines);
+    document.getElementById('n-paras').textContent=fmtN(paras);
+    document.getElementById('n-bytes').textContent=fmtN(bytes);
+    document.getElementById('n-read').textContent=readingLabel(words);
+    var max=parseLimit();
+    paintPresets(max);
+    if(!max){
+      src.classList.remove('is-over');
+      remainBox.classList.remove('is-over');
+      remainLab.textContent='Remaining';
+      remainNum.textContent='—';
+      remainUnit.textContent='no limit — type freely';
+      return;
+    }
+    var left=max-chars;
+    var over=left<0;
+    src.classList.toggle('is-over',over);
+    remainBox.classList.toggle('is-over',over);
+    remainLab.textContent=over?'Over':'Remaining';
+    remainNum.textContent=fmtN(Math.abs(left));
+    remainUnit.textContent=over
+      ? (Math.abs(left)===1?'1 character over '+fmtN(max):fmtN(Math.abs(left))+' over '+fmtN(max))
+      : (left===1?'1 character left of '+fmtN(max):fmtN(left)+' left of '+fmtN(max));
+  }
+  function rememberLimit(){
+    try{
+      var n=parseLimit();
+      if(n) localStorage.setItem(LIMIT_KEY,String(n));
+      else localStorage.removeItem(LIMIT_KEY);
+    }catch(e){}
+  }
+  function pushUndo(){
+    undoStack=src.value;
+    undoBtn.disabled=false;
+  }
+  function setText(next, note){
+    if(next===src.value){
+      setStatus(note||'Already in that shape.');
+      return;
+    }
+    pushUndo();
+    src.value=next;
+    paint();
+    setStatus(note||'Updated in this tab only.');
+  }
+
+  src.addEventListener('input',paint);
+  limitEl.addEventListener('input',function(){
+    rememberLimit();
+    paint();
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener('click',function(){
+      var v=b.getAttribute('data-limit');
+      limitEl.value=v||'';
+      rememberLimit();
+      paint();
+      if(!v) setStatus('Soft limit off — type freely.');
+      else setStatus('Soft limit '+v+' — overage tints the box, it does not block.');
+    });
+  });
+  [].slice.call(document.querySelectorAll('[data-fn]')).forEach(function(b){
+    b.addEventListener('click',function(){
+      var name=b.getAttribute('data-fn');
+      setText(applyFn(name,src.value), name==='slug'?'Slug — URL-ish, ASCII, hyphens.':'Applied in this tab only.');
+    });
+  });
+  undoBtn.addEventListener('click',function(){
+    if(undoStack==null) return;
+    var prev=undoStack;
+    undoStack=src.value;
+    src.value=prev;
+    paint();
+    setStatus('Undid the last change.');
+  });
+  document.getElementById('clear').addEventListener('click',function(){
+    if(!src.value){ setStatus('Already empty.'); return; }
+    setText('','Cleared. Undo brings it back.');
+  });
+  document.getElementById('select').addEventListener('click',function(){
+    src.focus();
+    src.select();
+    setStatus('Selected — Copy or type over it.');
+  });
+  copyBtn.addEventListener('click',function(){
+    var text=src.value;
+    function ok(){
+      copyBtn.textContent='Copied';
+      setStatus('Copied to the clipboard. Still only on this device until you paste.');
+      clearTimeout(copyTimer);
+      copyTimer=setTimeout(function(){ copyBtn.textContent='Copy'; },1600);
+    }
+    function fail(){
+      src.focus();
+      src.select();
+      setStatus('Clipboard blocked — text is selected, use the keyboard copy.');
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok).catch(fail);
+    }else{
+      try{
+        var okExec=document.execCommand('copy');
+        if(okExec) ok(); else fail();
+      }catch(e){ fail(); }
+    }
+  });
+  document.getElementById('download').addEventListener('click',function(){
+    var blob=new Blob([src.value],{type:'text/plain;charset=utf-8'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='text.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); },800);
+    setStatus('Download started — text.txt from this browser.');
+  });
+
+  try{
+    var saved=localStorage.getItem(LIMIT_KEY);
+    if(saved&&/^\d+$/.test(saved)&&+saved>0) limitEl.value=saved;
+  }catch(e){}
+  paint();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
