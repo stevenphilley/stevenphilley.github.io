@@ -294,9 +294,8 @@ textarea#src.is-over{border-color:var(--accent-2,#d98b97);box-shadow:inset 0 0 0
   function countSentences(text){
     var t=String(text||'').replace(/\s+/g,' ').trim();
     if(!t) return 0;
+    t=t.replace(/\b(?:[A-Za-z]\.){2,}/g,function(m){return m.replace(/\./g,'');});
     t=t.replace(/\b(mr|mrs|ms|dr|prof|sr|jr|st|vs|etc|approx|est|dept|inc|ltd|co|no|vol|fig|eq|al|ed)\./gi,'$1');
-    t=t.replace(/\b([A-Za-z])\.(?=[A-Za-z]\.)/g,'$1');
-    t=t.replace(/\b(e\.g|i\.e|u\.s|u\.k|n\.y|d\.c|p\.m|a\.m)\./gi,function(m){return m.replace(/\./g,'');});
     var parts=t.split(/[.!?…]+(?:\s+|$)/).filter(function(p){return /[0-9A-Za-z\u00C0-\u024F]/.test(p);});
     if(!parts.length) return /[0-9A-Za-z\u00C0-\u024F]/.test(t)?1:0;
     return parts.length;
