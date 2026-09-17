@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text tools — character counter — Steven Philley</title>
+<meta name="description" content="Browser text tools: live character, word, line, and byte counts; case convert; trim; sort; dedupe; copy and download. Runs locally — nothing is uploaded.">
+<link rel="canonical" href="https://stevenphilley.com/tools/text/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Text tools — character counter">
+<meta property="og:description" content="Count characters, words, lines, and bytes. Case, trim, sort, dedupe, copy, download — all in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/tools/text/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Text tools — character counter">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:920px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:58ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:22px 0 8px;border-bottom:1px solid var(--line,#2c303a)}
+.metric{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.metric .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.metric .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(36px,6vw,64px);line-height:.9;margin:8px 0 4px}
+.metric .unit{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--muted,#63666e)}
+.editor{margin-top:22px}
+.editor label{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 10px}
+.editor textarea{
+  width:100%;min-height:280px;box-sizing:border-box;resize:vertical;
+  background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);
+  font-family:"IBM Plex Mono",monospace;font-size:14px;line-height:1.65;padding:16px 18px
+}
+.editor textarea:focus{outline:none;border-color:var(--accent,#c8b48a)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.actions button,.actions label.file-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+  padding:12px 16px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center
+}
+.actions button.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.actions button:hover,.actions button:focus-visible,.actions label.file-btn:hover{border-color:var(--accent,#c8b48a);outline:none}
+.actions button:disabled{opacity:.38;cursor:not-allowed}
+.status{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
+.extra{margin-top:10px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--muted,#63666e)}
+.also{margin-top:8px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.also a{color:inherit}
+.also a:hover{color:var(--accent,#c8b48a)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:760px){
+  .metrics{grid-template-columns:1fr 1fr}
+  .actions{flex-direction:column}
+  .actions button,.actions label.file-btn{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/text/" aria-current="page">Text</a>
+      <a href="/tools/speed/">Speed</a>
+      <a href="/tools/temperature.html">Temperature</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools</p>
+    <h1>Text</h1>
+    <p class="lede">Live character, word, line, and UTF-8 byte counts. Case convert, trim, sort lines, dedupe, copy, and download — all in this browser. Nothing leaves the page.</p>
+  </header>
+
+  <div class="metrics" aria-live="polite">
+    <div class="metric"><div class="lab">Characters</div><div class="num" id="m-chars">0</div><div class="unit" id="m-chars-note">with spaces</div></div>
+    <div class="metric"><div class="lab">Words</div><div class="num" id="m-words">0</div><div class="unit">whitespace split</div></div>
+    <div class="metric"><div class="lab">Lines</div><div class="num" id="m-lines">0</div><div class="unit">including blanks</div></div>
+    <div class="metric"><div class="lab">Bytes</div><div class="num" id="m-bytes">0</div><div class="unit">UTF-8</div></div>
+  </div>
+  <p class="extra" id="extra">No spaces: 0 · Sentences (approx.): 0 · Selection: —</p>
+
+  <div class="editor">
+    <label for="input">Your text</label>
+    <textarea id="input" spellcheck="true" placeholder="Paste or type here…"></textarea>
+  </div>
+
+  <div class="actions" role="toolbar" aria-label="Text helpers">
+    <button type="button" class="primary" id="btn-copy">Copy</button>
+    <button type="button" id="btn-download">Download .txt</button>
+    <button type="button" id="btn-clear">Clear</button>
+    <button type="button" id="btn-upper">UPPER</button>
+    <button type="button" id="btn-lower">lower</button>
+    <button type="button" id="btn-title">Title Case</button>
+    <button type="button" id="btn-trim">Trim</button>
+    <button type="button" id="btn-squash">Squash spaces</button>
+    <button type="button" id="btn-sort-az">Sort A→Z</button>
+    <button type="button" id="btn-sort-za">Sort Z→A</button>
+    <button type="button" id="btn-dedupe">Dedupe lines</button>
+    <button type="button" id="btn-reverse">Reverse lines</button>
+    <label class="file-btn">Load file<input type="file" id="file" accept=".txt,text/plain,.md,.csv,.json,.html,.css,.js" hidden></label>
+  </div>
+  <p class="status" id="status" aria-live="polite">Ready — type or paste to count.</p>
+
+  <div class="also">
+    <h2>Also in Tools</h2>
+    <ul>
+      <li><a href="/tools/speed/">Speed test</a> — ping, download, upload against Cloudflare’s public edge.</li>
+      <li><a href="/tools/temperature.html">Temperature</a> — Fahrenheit ↔ Celsius with live presets.</li>
+      <li><a href="/tools/">Tools desk</a> — the full index.</li>
+    </ul>
+  </div>
+
+  <footer class="e-foot">
+    <span><a href="/">Home</a> · <a href="/tools/">Tools</a> · <a href="/whats-new/">What’s new</a></span>
+    <span>Local only — no upload</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  var ta = document.getElementById("input");
+  var statusEl = document.getElementById("status");
+  var enc = new TextEncoder();
+
+  function setStatus(msg) { statusEl.textContent = msg || ""; }
+
+  function wordCount(s) {
+    var t = s.trim();
+    if (!t) return 0;
+    return t.split(/\s+/).length;
+  }
+
+  function sentenceCount(s) {
+    var t = s.trim();
+    if (!t) return 0;
+    var m = t.match(/[^.!?…]+[.!?…]+|[^.!?…]+$/g);
+    return m ? m.filter(function (x) { return x.trim().length; }).length : 0;
+  }
+
+  function lineCount(s) {
+    if (s === "") return 0;
+    return s.split(/\r\n|\n|\r/).length;
+  }
+
+  function refresh() {
+    var s = ta.value;
+    var chars = s.length;
+    var noSpace = s.replace(/\s/g, "").length;
+    document.getElementById("m-chars").textContent = String(chars);
+    document.getElementById("m-chars-note").textContent = "with spaces · " + noSpace + " without";
+    document.getElementById("m-words").textContent = String(wordCount(s));
+    document.getElementById("m-lines").textContent = String(lineCount(s));
+    document.getElementById("m-bytes").textContent = String(enc.encode(s).length);
+    var sel = "";
+    if (typeof ta.selectionStart === "number" && ta.selectionEnd > ta.selectionStart) {
+      sel = "Selection: " + (ta.selectionEnd - ta.selectionStart) + " chars";
+    } else {
+      sel = "Selection: —";
+    }
+    document.getElementById("extra").textContent =
+      "No spaces: " + noSpace + " · Sentences (approx.): " + sentenceCount(s) + " · " + sel;
+  }
+
+  function transform(fn, label) {
+    var start = ta.selectionStart, end = ta.selectionEnd;
+    var hasSel = end > start;
+    var before = ta.value;
+    if (hasSel) {
+      ta.value = before.slice(0, start) + fn(before.slice(start, end)) + before.slice(end);
+    } else {
+      ta.value = fn(before);
+    }
+    refresh();
+    setStatus(label + (hasSel ? " (selection)." : "."));
+    ta.focus();
+  }
+
+  ta.addEventListener("input", refresh);
+  ta.addEventListener("select", refresh);
+  ta.addEventListener("keyup", refresh);
+  ta.addEventListener("click", refresh);
+
+  document.getElementById("btn-clear").addEventListener("click", function () {
+    ta.value = "";
+    refresh();
+    setStatus("Cleared.");
+    ta.focus();
+  });
+
+  document.getElementById("btn-copy").addEventListener("click", function () {
+    var text = ta.value;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        setStatus("Copied " + text.length + " characters.");
+      }).catch(function () {
+        ta.select();
+        try { document.execCommand("copy"); setStatus("Copied via fallback."); }
+        catch (e) { setStatus("Copy failed — select and copy manually."); }
+      });
+    } else {
+      ta.select();
+      try { document.execCommand("copy"); setStatus("Copied via fallback."); }
+      catch (e) { setStatus("Copy failed — select and copy manually."); }
+    }
+  });
+
+  document.getElementById("btn-download").addEventListener("click", function () {
+    var blob = new Blob([ta.value], { type: "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url;
+    a.download = "text.txt";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+    setStatus("Download started (text.txt).");
+  });
+
+  document.getElementById("btn-upper").addEventListener("click", function () {
+    transform(function (s) { return s.toUpperCase(); }, "Uppercased");
+  });
+  document.getElementById("btn-lower").addEventListener("click", function () {
+    transform(function (s) { return s.toLowerCase(); }, "Lowercased");
+  });
+  document.getElementById("btn-title").addEventListener("click", function () {
+    transform(function (s) {
+      try {
+        return s.toLowerCase().replace(/(^|[^\p{L}\p{N}])(\p{L})/gu, function (_, a, b) { return a + b.toUpperCase(); });
+      } catch (e) {
+        return s.toLowerCase().replace(/(^|[^A-Za-z0-9])([A-Za-z])/g, function (_, a, b) { return a + b.toUpperCase(); });
+      }
+    }, "Title-cased");
+  });
+  document.getElementById("btn-trim").addEventListener("click", function () {
+    transform(function (s) {
+      return s.split(/\r\n|\n|\r/).map(function (l) { return l.trim(); }).join("\n").trim();
+    }, "Trimmed");
+  });
+  document.getElementById("btn-squash").addEventListener("click", function () {
+    transform(function (s) {
+      return s.replace(/[ \t]+/g, " ").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    }, "Squashed spaces");
+  });
+  document.getElementById("btn-sort-az").addEventListener("click", function () {
+    transform(function (s) {
+      var lines = s.split(/\r\n|\n|\r/);
+      return lines.slice().sort(function (a, b) { return a.localeCompare(b, undefined, { sensitivity: "base" }); }).join("\n");
+    }, "Sorted A→Z");
+  });
+  document.getElementById("btn-sort-za").addEventListener("click", function () {
+    transform(function (s) {
+      var lines = s.split(/\r\n|\n|\r/);
+      return lines.slice().sort(function (a, b) { return b.localeCompare(a, undefined, { sensitivity: "base" }); }).join("\n");
+    }, "Sorted Z→A");
+  });
+  document.getElementById("btn-dedupe").addEventListener("click", function () {
+    transform(function (s) {
+      var lines = s.split(/\r\n|\n|\r/);
+      var seen = Object.create(null);
+      var out = [];
+      lines.forEach(function (l) {
+        if (!Object.prototype.hasOwnProperty.call(seen, l)) { seen[l] = 1; out.push(l); }
+      });
+      return out.join("\n");
+    }, "Deduped lines");
+  });
+  document.getElementById("btn-reverse").addEventListener("click", function () {
+    transform(function (s) {
+      return s.split(/\r\n|\n|\r/).reverse().join("\n");
+    }, "Reversed lines");
+  });
+
+  document.getElementById("file").addEventListener("change", function (ev) {
+    var f = ev.target.files && ev.target.files[0];
+    if (!f) return;
+    if (f.size > 2 * 1024 * 1024) {
+      setStatus("File too large (max 2 MB in the browser).");
+      ev.target.value = "";
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function () {
+      ta.value = String(reader.result || "");
+      refresh();
+      setStatus("Loaded " + f.name + " (" + f.size + " bytes on disk).");
+      ev.target.value = "";
+    };
+    reader.onerror = function () { setStatus("Could not read file."); };
+    reader.readAsText(f);
+  });
+
+  document.querySelectorAll("[data-set-theme]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var t = btn.getAttribute("data-set-theme");
+      document.documentElement.setAttribute("data-theme", t);
+      try { localStorage.setItem("sp-theme", t); } catch (e) {}
+      document.querySelectorAll("[data-set-theme]").forEach(function (b) {
+        b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+      });
+    });
+  });
+
+  refresh();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
