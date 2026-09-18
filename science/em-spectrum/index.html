@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Electromagnetic spectrum — radio to gamma — Steven Philley</title>
+<meta name="description" content="Interactive electromagnetic-spectrum literacy: tap Radio through Gamma, then slide a Wien’s-law peak across a schematic. Cited NASA classroom ranges. Educational cartoon — not a lab instrument or medical advice.">
+<link rel="canonical" href="https://stevenphilley.com/science/em-spectrum/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Electromagnetic spectrum — radio to gamma">
+<meta property="og:description" content="Click the bands. Wien’s law moves the peak. Visible is a sliver. Cited NASA / Imagine the Universe. Not a spectrometer.">
+<meta property="og:url" content="https://stevenphilley.com/science/em-spectrum/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Electromagnetic spectrum — radio to gamma">
+<meta name="twitter:description" content="Interactive spectrum literacy: bands, Wien’s peak, atmospheric windows. Classroom ranges. Not medical advice.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.needs{margin-top:22px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 18px;display:grid;grid-template-columns:auto 1fr;gap:14px 18px;align-items:start}
+.needs .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);padding-top:2px}
+.needs p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:72ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stand{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px}
+.stand h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,36px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
+.stand p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:70ch}
+.stand p:last-child{margin-bottom:0}
+.stand a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.stand a:hover{color:var(--accent,#c8b48a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(250px,.8fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);padding:12px 12px 10px;display:flex;flex-direction:column;min-width:0}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 10px}
+.diagram canvas{display:block;width:100%;height:auto;max-height:420px;touch-action:manipulation;cursor:pointer}
+.band-strip,.wien-presets,.stepper{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.band-strip button,.wien-presets button,.stepper button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 11px;cursor:pointer
+}
+.band-strip button:hover,.wien-presets button:hover,.stepper button:hover{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a));color:var(--ink,#e8e6e1)
+}
+.band-strip button[aria-pressed="true"],.wien-presets button[aria-pressed="true"]{
+  color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)
+}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-height:280px}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.detail p{margin:0 0 12px;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.detail a{color:var(--ink,#e8e6e1)}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.facts{margin:0;padding:0;list-style:none}
+.facts li{position:relative;padding:8px 0 8px 14px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.facts li:first-child{border-top:0;padding-top:0}
+.facts li::before{content:"";position:absolute;left:0;top:1.1em;width:6px;height:1px;background:var(--accent,#c8b48a)}
+.stepper{display:flex;gap:8px;margin-top:auto;padding-top:12px}
+.slider-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:10px}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;accent-color:var(--accent,#c8b48a)}
+.slider-val{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink,#e8e6e1);white-space:nowrap;min-width:7ch}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss a{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs a{color:var(--ink,#e8e6e1)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.note{margin-top:36px;padding:18px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:72ch}
+.note a{color:var(--ink,#e8e6e1)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.page-credit a{color:inherit}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .needs{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .band-strip button,.wien-presets button{padding:7px 9px;font-size:9px}
+}
+@media (prefers-reduced-motion:reduce){
+  .band-strip button,.wien-presets button,.more a{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/em-spectrum/" aria-current="page">EM spectrum</a>
+      <a href="/science/astronomy/stars/">Stars</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Vol. Science · Light · literacy</p>
+  <h1>Electromagnetic<br>spectrum</h1>
+  <p class="lede">Radio to gamma is one kind of light. Eyes only catch a sliver. Tap a band for classroom wavelength and frequency order-of-magnitude, then slide a temperature to watch Wien’s peak move — the same rule that paints <a href="/science/astronomy/stars/">stellar color</a>. Earth’s air is a filter: some bands reach the ground, others need space telescopes — see <a href="/science/atmosphere/">atmosphere</a>. The visible haze over cities is <a href="/science/light-pollution/">skyglow</a>. The <a href="/science/astronomy/">solar map</a> is what that light lets us schedule. The particle that carries this force is the photon on the <a href="/science/standard-model/">Standard Model</a> grid.</p>
+  <p class="note-schematic">Educational schematic. Teaching cartoon — not a lab spectrometer, not a flight instrument, and not medical advice. Wavelengths and frequencies are rounded NASA / textbook classroom ranges; band edges are conventions, not walls. No fabricated papers or mission claims.</p>
+
+  <aside class="needs" aria-label="What this page is for">
+    <span class="tag">Literacy, not a spectrometer</span>
+    <p>Same photons, different energy. Radio is not a different substance from gamma — NASA’s Imagine the Universe line — just a different place on one ladder. This desk teaches the names, the everyday and astronomy uses, and the honest limits (atmosphere, light pollution, “not a clinic”). It will not diagnose a sunburn or fly a telescope.</p>
+  </aside>
+
+  <p class="band" id="bands">Interactive · Bands</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="band-hint">Tap a band · radio → gamma · long wave left</p>
+      <canvas id="band-canvas" width="720" height="400" role="img" aria-label="Cartoon of the selected electromagnetic band on a schematic spectrum"></canvas>
+      <div class="band-strip" id="band-strip" role="group" aria-label="Electromagnetic bands"></div>
+    </div>
+    <aside class="detail" id="band-detail" aria-live="polite">
+      <p class="tier" id="b-tier">Band · 01</p>
+      <h2 id="b-name">Radio</h2>
+      <p class="range" id="b-range">Longest waves · lowest energy</p>
+      <ul class="stats" id="b-stats"></ul>
+      <p id="b-body"></p>
+      <ul class="facts" id="b-facts"></ul>
+      <div class="stepper">
+        <button type="button" id="band-prev">Prev</button>
+        <button type="button" id="band-next">Next</button>
+      </div>
+    </aside>
+  </div>
+
+  <p class="band" id="wien">Interactive · Wien’s peak</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="wien-hint">Slide temperature · peak wavelength moves · Sun ~5800 K near visible</p>
+      <canvas id="wien-canvas" width="720" height="360" role="img" aria-label="Schematic blackbody curve. A marker shows the Wien peak wavelength for the selected temperature."></canvas>
+      <div class="slider-row">
+        <label for="wien-temp">Temperature</label>
+        <input type="range" id="wien-temp" min="2500" max="20000" step="100" value="5800" aria-valuetext="5800 kelvin">
+        <span class="slider-val" id="wien-temp-lab">5800 K</span>
+      </div>
+      <div class="wien-presets" id="wien-presets" role="group" aria-label="Temperature presets"></div>
+    </div>
+    <aside class="detail" id="wien-detail" aria-live="polite">
+      <p class="tier" id="w-tier">Wien’s law · schematic</p>
+      <h2 id="w-name">Sun</h2>
+      <p class="range" id="w-range">~5800 K · peak near 500 nm</p>
+      <ul class="stats" id="w-stats"></ul>
+      <p id="w-body"></p>
+      <ul class="facts" id="w-facts"></ul>
+    </aside>
+  </div>
+
+  <p class="band" id="windows">Atmospheric windows</p>
+  <article class="stand">
+    <h2>Most of the sky never reaches the ground</h2>
+    <p>NASA Imagine the Universe: Earth’s atmosphere stops most electromagnetic radiation from space. <strong>Radio</strong> and <strong>visible</strong> light (plus a little ultraviolet) make it to sea level. Some <strong>infrared</strong> can be observed from high, dry mountains. <strong>X-rays</strong> and <strong>gamma rays</strong> need orbit. That is why Hubble and JWST are not vanity projects — they sit above the filter. Pair with the <a href="/science/atmosphere/">atmosphere layers</a> desk: ozone is why most UV never tans the troposphere, and why this page is not a sunburn guide.</p>
+    <p>From a Campbell street, the window you actually use is the visible one — and <a href="/science/light-pollution/">skyglow</a> can close even that.</p>
+  </article>
+
+  <p class="band">Literacy · words that keep getting mixed</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Wavelength vs frequency vs energy</dt><dd>Three labels for one photon. Longer wave → lower frequency → less energy. Radio is long and gentle; gamma is short and energetic. NASA: pick the units that stay human-sized.</dd></div>
+    <div class="gloss"><dt>Photon</dt><dd>A packet of electromagnetic radiation — massless, speed of light. Radio through gamma are the same particle at different energies. The <a href="/science/standard-model/">Standard Model</a> carrier of the electromagnetic force.</dd></div>
+    <div class="gloss"><dt>Atmospheric window</dt><dd>A band the air lets through. Radio and visible are the famous ground-level windows. Most IR, UV, X-ray, and gamma from space are absorbed — space telescopes exist for that reason.</dd></div>
+    <div class="gloss"><dt>Spectral line</dt><dd>A bright or dark spike at a specific wavelength — an atom or molecule’s fingerprint. Color of a star is the continuum; lines are the chemistry. This page sketches the continuum, not a lab atlas.</dd></div>
+    <div class="gloss"><dt>Wien’s law</dt><dd>A hotter blackbody peaks at a shorter wavelength: λ<sub>max</sub> T ≈ 2.90 × 10<sup>−3</sup> m·K (textbook). The Sun (~5800 K) peaks near visible green; a cool lamp slides into infrared; an O star into ultraviolet.</dd></div>
+    <div class="gloss"><dt>Visible sliver</dt><dd>About 400–700 nm — a tiny cut of the ladder. Skyglow, cameras, and backyard telescopes live here. Everything else needs a different detector.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA / ESA / textbook</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/ems/" rel="noopener" target="_blank">NASA Science — Electromagnetic Spectrum</a> (video series &amp; companion book) — radio through gamma as one radiation; everyday and astronomy uses; atmosphere as a shield for X-rays and most UV.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/science/toolbox/emspectrum1.html" rel="noopener" target="_blank">NASA Imagine the Universe — Electromagnetic Spectrum</a> — same photons, different energy; why telescopes go to orbit; radio and visible (plus some UV) reach the surface.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/science/toolbox/spectrum_chart.html" rel="noopener" target="_blank">NASA Imagine the Universe — Wavelength, frequency, and energy</a> — approximate classroom band table used on this page (radio ≳ 0.1 m; microwave ~1 mm–0.1 m; IR ~700 nm–1 mm; optical ~400–700 nm; UV ~10–400 nm; X-ray ~0.01–10 nm; gamma ≲ 0.01 nm). Boundaries are conventions.</li>
+      <li><a href="https://spaceplace.nasa.gov/magic-windows/" rel="noopener" target="_blank">NASA Space Place — Magic Windows</a> — kids’-altitude tour of the same bands (radio as long as a football field; microwaves about a millimeter to a foot).</li>
+      <li><a href="https://science.nasa.gov/sun/facts/" rel="noopener" target="_blank">NASA Science — Sun facts</a> — photosphere about 5,500 °C (~5,800 K). Wien’s peak for that temperature sits near visible (~500 nm) on the slider.</li>
+      <li><a href="https://www.esa.int/Science_Exploration/Space_Science/Herschel/Caroline_and_William_Herschel_Revealing_the_invisible" rel="noopener" target="_blank">ESA — Caroline and William Herschel: Revealing the invisible</a> — infrared discovered as heat beyond the red end of a prism; the reason ESA’s infrared observatory is named Herschel.</li>
+      <li>Wien’s displacement law (λ<sub>max</sub> T ≈ constant) as taught in standard intro-astronomy textbooks — the same rule already named on the <a href="/science/astronomy/stars/">stars</a> desk. The curve here is a teaching sketch, not a calibrated Planck fit.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Figures are teaching toys. A real spectrum needs a calibrated instrument; a real blackbody needs more than Wien’s peak. Medical imaging is mentioned as an everyday use — this page is not advice. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/stars/"><p class="n">Color</p><h3>Stars</h3><p>Wien’s law as stellar type — OBAFGKM, and why the Sun is “yellow” from the ground.</p></a>
+    <a href="/science/atmosphere/"><p class="n">Filter</p><h3>Atmosphere</h3><p>The layers that open radio and visible windows and close most UV, X-ray, and gamma.</p></a>
+    <a href="/science/light-pollution/"><p class="n">Night</p><h3>Light pollution</h3><p>Visible skyglow — the sliver we actually lose from Campbell streets.</p></a>
+    <a href="/science/astronomy/"><p class="n">Solar system</p><h3>Astronomy</h3><p>Day-and-time map of the neighborhood that visible and radio still let us watch.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>The force that is not a photon — sibling literacy, not a unification.</p></a>
+    <a href="/science/standard-model/"><p class="n">Carrier</p><h3>Standard Model</h3><p>The photon as the electromagnetic force carrier — one tile, every band on this page.</p></a>
+  </div>
+
+  <p class="note">Educational schematic from public NASA, ESA, and textbook materials. Not a lab instrument, not a flight plan, and not medical or tanning advice. Cross-read the outbound links when a number matters.</p>
+
+  <footer class="foot">
+    <a href="/science/">Science</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/atmosphere/">Atmosphere</a>
+    <a href="/science/light-pollution/">Light pollution</a>
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/gravity/">Gravity</a>
+    <a href="/science/standard-model/">Standard Model</a>
+    <a href="/news/science.html">Science headlines</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY="sp-theme";
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c=root.getAttribute("data-theme")||"neon";
+    buttons.forEach(function(b){b.setAttribute("aria-pressed",String(b.dataset.setTheme===c));});
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click",function(){
+      root.setAttribute("data-theme",b.dataset.setTheme);
+      try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}
+      paintTheme();
+      if(window.spEmDraw) window.spEmDraw();
+    });
+  });
+  paintTheme();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+
+  var root=document.documentElement;
+
+  function cssVar(name, fallback){
+    var v=getComputedStyle(root).getPropertyValue(name).trim();
+    return v||fallback;
+  }
+  function ink(){ return cssVar("--ink","#e8e6e1"); }
+  function soft(){ return cssVar("--ink-soft","#9b9a96"); }
+  function muted(){ return cssVar("--muted","#63666e"); }
+  function accent(){ return cssVar("--accent","#c8b48a"); }
+  function line(){ return cssVar("--line","#2c303a"); }
+  function base(){ return cssVar("--base-2","#14161c"); }
+
+  function hexToRgb(hex){
+    var h=String(hex||"").replace("#","");
+    if(h.length===3) h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16)};
+  }
+  function rgba(hex,a){
+    var c=hexToRgb(hex);
+    return "rgba("+c.r+","+c.g+","+c.b+","+a+")";
+  }
+
+  /* NASA Imagine classroom table — approximate, labeled as such. */
+  var BANDS=[
+    {id:"radio",name:"Radio",tier:"Band · 01",wave:"≳ 10 cm (≳ 0.1 m)",freq:"≲ 3 GHz",energy:"Lowest",
+      use:"Broadcast radio; radio astronomy (stars, gas, pulsars).",
+      limit:"Long waves can bounce off the ionosphere; not every frequency is a ground window.",
+      body:"Longest waves, lowest-energy photons. NASA Imagine: your radio captures station waves; stars and gases emit them too. Space Place: from about a football field up to tens of kilometers and more.",
+      color:"#8a3a28"},
+    {id:"microwave",name:"Microwave",tier:"Band · 02",wave:"~1 mm – 10 cm",freq:"~3–300 GHz",energy:"Low",
+      use:"Ovens, radar, satellite links; cosmic microwave background.",
+      limit:"Water vapor swallows some microwave bands — weather, not a kitchen manual.",
+      body:"NASA Imagine: microwave radiation cooks popcorn and lets astronomers map nearby galaxies. Space Place: about a millimeter (pencil point) to about a foot. The leftover glow of the early universe is a microwave sky.",
+      color:"#c45a28"},
+    {id:"infrared",name:"Infrared",tier:"Band · 03",wave:"~700 nm – 1 mm",freq:"~0.3–400 THz",energy:"Warm",
+      use:"Heat, remotes, night-vision; JWST and dusty star-forming regions.",
+      limit:"Much IR from space is absorbed by air (water, CO₂). Mountains help; orbit helps more.",
+      body:"Just longer than red. Imagine: night-vision goggles see the IR from skin and warm objects; in space, IR maps dust between stars. ESA names its infrared observatory for Herschel, who first measured heat beyond the red end of a prism.",
+      color:"#e07a30"},
+    {id:"visible",name:"Visible",tier:"Band · 04",wave:"~400–700 nm",freq:"~400–750 THz",energy:"Eyes",
+      use:"Human vision, cameras, backyard and Hubble-class optical work.",
+      limit:"A sliver of the ladder. Clouds and skyglow can close the window from the ground.",
+      body:"The only band eyes evolved to read. Imagine: fireflies, bulbs, and stars. Optical astronomers quote 400–700 nm — violet through red — a tiny cut of the whole spectrum. City glow lives here: see light pollution.",
+      color:"#ffe08a"},
+    {id:"ultraviolet",name:"Ultraviolet",tier:"Band · 05",wave:"~10–400 nm",freq:"~750 THz – 30 PHz",energy:"Higher",
+      use:"Hot-star and solar activity; ozone chemistry in the stratosphere.",
+      limit:"Ozone and air block most UV from space. Not a tanning or medical guide.",
+      body:"Shorter than violet. Imagine: the Sun emits UV — the classroom reason skin tans and burns — and hot objects in space do too. NASA EMS: most solar UV is blocked by the atmosphere. Pair with the atmosphere desk, not a clinic.",
+      color:"#8a6cff"},
+    {id:"xray",name:"X-ray",tier:"Band · 06",wave:"~0.01–10 nm",freq:"~30 PHz – 30 EHz",energy:"High",
+      use:"Chandra-class astronomy (hot gas, accretion); everyday medical / security imaging.",
+      limit:"Earth’s air stops cosmic X-rays. Mention of dentists is literacy, not advice.",
+      body:"NASA EMS: much higher energy than UV; scientists usually quote energy, not wavelength. Imagine: a dentist images teeth; hot cosmic gas emits X-rays. The atmosphere is the reason those cosmic X-rays need a satellite.",
+      color:"#b8d4ff"},
+    {id:"gamma",name:"Gamma",tier:"Band · 07",wave:"≲ 0.01 nm",freq:"≳ 30 EHz",energy:"Highest",
+      use:"Fermi-class astronomy; gamma-ray bursts; radioactive decay in textbooks.",
+      limit:"Atmosphere blocks cosmic gamma rays. Highest energy — not a treatment plan.",
+      body:"Shortest waves, most energetic photons. NASA EMS: produced by the hottest, most energetic objects. Imagine: doctors use gamma-ray imaging; the Universe is the biggest generator. Same particle as radio — different energy.",
+      color:"#f4f0e4"}
+  ];
+
+  var bandId="visible";
+  var strip=document.getElementById("band-strip");
+  var bandCanvas=document.getElementById("band-canvas");
+  var wienCanvas=document.getElementById("wien-canvas");
+  var tempEl=document.getElementById("wien-temp");
+  var WIEN_B=2.897e6; /* nm·K, textbook Wien displacement */
+
+  var PRESETS=[
+    {id:"lamp",name:"Cool lamp",T:3000,note:"A warm incandescent-ish temperature. Peak sits in the near-infrared — you feel heat more than you see a blue-white glare."},
+    {id:"sun",name:"Sun",T:5800,note:"NASA Sun facts: photosphere about 5,500 °C (~5,800 K). Wien’s peak near 500 nm — visible green. The disk still looks white in space because the curve is broad."},
+    {id:"hot",name:"Hot star",T:15000,note:"B-star territory on the stars desk. Peak slides into the ultraviolet. The eye still reads “blue-white”; the energy maximum is already off the rainbow."}
+  ];
+  var presetId="sun";
+
+  function bandById(id){
+    for(var i=0;i<BANDS.length;i++) if(BANDS[i].id===id) return BANDS[i];
+    return BANDS[3];
+  }
+  function bandIndex(){
+    for(var i=0;i<BANDS.length;i++) if(BANDS[i].id===bandId) return i;
+    return 3;
+  }
+  function presetById(id){
+    for(var i=0;i<PRESETS.length;i++) if(PRESETS[i].id===id) return PRESETS[i];
+    return PRESETS[1];
+  }
+
+  function fitCanvas(canvas, cssH){
+    var w=canvas.clientWidth||canvas.parentNode.clientWidth||320;
+    var h=cssH||Math.max(220, Math.min(400, w*0.55));
+    var dpr=Math.min(window.devicePixelRatio||1, 2);
+    canvas.style.height=h+"px";
+    canvas.width=Math.floor(w*dpr);
+    canvas.height=Math.floor(h*dpr);
+    var ctx=canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {ctx:ctx,w:w,h:h};
+  }
+
+  function rainbowAt(t){
+    var stops=[
+      {t:0,c:[180,40,50]},
+      {t:0.18,c:[220,90,30]},
+      {t:0.36,c:[240,200,60]},
+      {t:0.52,c:[80,180,80]},
+      {t:0.68,c:[50,140,200]},
+      {t:0.84,c:[70,70,200]},
+      {t:1,c:[120,60,180]}
+    ];
+    var i=0;
+    while(i<stops.length-1 && t>stops[i+1].t) i++;
+    var a=stops[i], b=stops[Math.min(i+1,stops.length-1)];
+    var u=(t-a.t)/Math.max(1e-6,b.t-a.t);
+    return "rgb("+Math.round(a.c[0]+(b.c[0]-a.c[0])*u)+","+Math.round(a.c[1]+(b.c[1]-a.c[1])*u)+","+Math.round(a.c[2]+(b.c[2]-a.c[2])*u)+")";
+  }
+
+  function drawSpectrumBar(c,x,y,w,h,sel){
+    var n=BANDS.length;
+    var gap=3;
+    var bw=(w-(n-1)*gap)/n;
+    for(var i=0;i<n;i++){
+      var bx=x+i*(bw+gap);
+      if(BANDS[i].id==="visible"){
+        for(var px=0;px<bw;px++){
+          c.fillStyle=rainbowAt(px/Math.max(1,bw-1));
+          c.fillRect(bx+px,y,1,h);
+        }
+      } else {
+        c.fillStyle=BANDS[i].color;
+        c.fillRect(bx,y,bw,h);
+      }
+      if(BANDS[i].id===sel){
+        c.strokeStyle=ink();
+        c.lineWidth=2;
+        c.strokeRect(bx+1,y+1,bw-2,h-2);
+      }
+    }
+  }
+
+  function drawBand(){
+    var fit=fitCanvas(bandCanvas, 300);
+    var c=fit.ctx,w=fit.w,h=fit.h;
+    c.fillStyle=base();
+    c.fillRect(0,0,w,h);
+    var s=bandById(bandId);
+    var barY=h-52, barH=18, pad=28;
+    drawSpectrumBar(c, pad, barY, w-pad*2, barH, bandId);
+
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="left";
+    c.fillText("long →", pad, barY+barH+16);
+    c.textAlign="right";
+    c.fillText("← short", w-pad, barY+barH+16);
+
+    var cx=w*0.5, cy=h*0.42;
+    if(s.id==="radio") drawRadio(c,cx,cy);
+    else if(s.id==="microwave") drawMicro(c,cx,cy);
+    else if(s.id==="infrared") drawIR(c,cx,cy);
+    else if(s.id==="visible") drawVisible(c,cx,cy,w);
+    else if(s.id==="ultraviolet") drawUV(c,cx,cy);
+    else if(s.id==="xray") drawX(c,cx,cy);
+    else drawGamma(c,cx,cy);
+
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText(s.name.toLowerCase()+" · teaching cartoon", w/2, 22);
+  }
+
+  function drawRadio(c,cx,cy){
+    c.strokeStyle=accent();
+    c.lineWidth=2;
+    c.beginPath();
+    c.moveTo(cx, cy+48);
+    c.lineTo(cx, cy-10);
+    c.stroke();
+    c.beginPath();
+    c.moveTo(cx-22, cy+48);
+    c.lineTo(cx+22, cy+48);
+    c.stroke();
+    c.strokeStyle=soft();
+    for(var i=1;i<=3;i++){
+      c.beginPath();
+      c.arc(cx, cy-10, 16*i, -Math.PI*0.75, -Math.PI*0.25);
+      c.stroke();
+    }
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("long wave · low energy", cx, cy+72);
+  }
+
+  function drawMicro(c,cx,cy){
+    c.strokeStyle=line();
+    c.strokeRect(cx-40, cy-18, 80, 52);
+    c.fillStyle=accent();
+    c.fillRect(cx-28, cy-6, 56, 28);
+    c.strokeStyle=soft();
+    c.beginPath();
+    c.ellipse(cx+70, cy, 18, 26, 0.4, 0, Math.PI*2);
+    c.stroke();
+    c.beginPath();
+    c.moveTo(cx+56, cy+8);
+    c.lineTo(cx+40, cy+22);
+    c.stroke();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("oven · dish · CMB", cx, cy+56);
+  }
+
+  function drawIR(c,cx,cy){
+    var g=c.createRadialGradient(cx,cy,8,cx,cy,70);
+    g.addColorStop(0,rgba("#ff8a3a",0.85));
+    g.addColorStop(1,"rgba(0,0,0,0)");
+    c.fillStyle=g;
+    c.beginPath();
+    c.arc(cx,cy,70,0,Math.PI*2);
+    c.fill();
+    c.fillStyle=accent();
+    c.beginPath();
+    c.arc(cx,cy,16,0,Math.PI*2);
+    c.fill();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("heat we feel · dust we map", cx, cy+64);
+  }
+
+  function drawVisible(c,cx,cy,w){
+    var left=cx-90, width=180, y=cy-10;
+    for(var i=0;i<width;i++){
+      c.fillStyle=rainbowAt(i/(width-1));
+      c.fillRect(left+i, y, 1, 36);
+    }
+    c.strokeStyle=ink();
+    c.lineWidth=1;
+    c.strokeRect(left, y, width, 36);
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("400–700 nm · the sliver", cx, cy+52);
+  }
+
+  function drawUV(c,cx,cy){
+    c.fillStyle=accent();
+    c.beginPath();
+    c.arc(cx, cy-8, 28, 0, Math.PI*2);
+    c.fill();
+    c.strokeStyle=soft();
+    c.setLineDash([4,5]);
+    c.beginPath();
+    c.moveTo(cx-70, cy+36);
+    c.lineTo(cx+70, cy+36);
+    c.stroke();
+    c.setLineDash([]);
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("ozone cuts most of it", cx, cy+58);
+  }
+
+  function drawX(c,cx,cy){
+    c.strokeStyle=line();
+    c.strokeRect(cx-50, cy-6, 36, 28);
+    c.strokeRect(cx+14, cy-6, 36, 28);
+    c.strokeStyle=accent();
+    c.beginPath();
+    c.moveTo(cx-8, cy+8);
+    c.lineTo(cx+8, cy+8);
+    c.stroke();
+    c.fillStyle=ink();
+    c.font="18px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("×", cx, cy-18);
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.fillText("air stops cosmic X-rays", cx, cy+50);
+  }
+
+  function drawGamma(c,cx,cy){
+    c.strokeStyle=accent();
+    c.lineWidth=1.5;
+    for(var k=0;k<6;k++){
+      var a=-Math.PI/2 + k*Math.PI/3;
+      c.beginPath();
+      c.moveTo(cx, cy);
+      c.lineTo(cx+Math.cos(a)*48, cy+Math.sin(a)*48);
+      c.stroke();
+    }
+    c.fillStyle=ink();
+    c.beginPath();
+    c.arc(cx,cy,6,0,Math.PI*2);
+    c.fill();
+    c.fillStyle=muted();
+    c.font="11px \"IBM Plex Mono\", monospace";
+    c.textAlign="center";
+    c.fillText("highest energy · cartoon burst", cx, cy+68);
+  }
+
+  function renderStrip(){
+    strip.innerHTML="";
+    BANDS.forEach(function(s){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=s.name;
+      b.setAttribute("aria-pressed",String(s.id===bandId));
+      b.addEventListener("click",function(){ selectBand(s.id); });
+      strip.appendChild(b);
+    });
+  }
+
+  function showBand(s){
+    document.getElementById("b-tier").textContent=s.tier;
+    document.getElementById("b-name").textContent=s.name;
+    document.getElementById("b-range").textContent=s.wave+" · "+s.freq;
+    var ul=document.getElementById("b-stats");
+    ul.innerHTML="";
+    [["Wavelength",s.wave],["Frequency",s.freq],["Energy",s.energy]].forEach(function(row){
+      var li=document.createElement("li");
+      li.innerHTML="<span class=\"k\">"+row[0]+"</span><span class=\"v\">"+row[1]+"</span>";
+      ul.appendChild(li);
+    });
+    document.getElementById("b-body").textContent=s.body;
+    var facts=document.getElementById("b-facts");
+    facts.innerHTML="";
+    [s.use, "Honest limit: "+s.limit].forEach(function(f){
+      var li=document.createElement("li");
+      li.textContent=f;
+      facts.appendChild(li);
+    });
+    document.getElementById("band-hint").textContent="Tap a band · "+s.name.toLowerCase()+" selected · long wave left";
+    bandCanvas.setAttribute("aria-label","Schematic of the "+s.name+" band. Approximate wavelength "+s.wave+". "+s.use+" Limit: "+s.limit);
+  }
+
+  function selectBand(id){
+    bandId=id;
+    if(history.replaceState) try{ history.replaceState(null,"","#"+id); }catch(e){}
+    renderStrip();
+    showBand(bandById(id));
+    drawBand();
+  }
+
+  /* Wien’s law sketch — peak marker only; no animation loop. */
+  function peakNm(T){ return WIEN_B/T; }
+
+  function formatNm(nm){
+    if(nm>=1000) return (nm/1000).toFixed(2)+" μm";
+    return Math.round(nm)+" nm";
+  }
+
+  function bandForNm(nm){
+    if(nm>=700) return "infrared";
+    if(nm>=400) return "visible";
+    return "ultraviolet";
+  }
+
+  function lamToX(nm, left, width){
+    var lo=Math.log(140), hi=Math.log(1300);
+    var t=(Math.log(nm)-lo)/(hi-lo);
+    t=Math.max(0, Math.min(1, t));
+    return left + (1-t)*width; /* short (UV) right, long (IR) left */
+  }
+
+  function planckSketch(nm, T){
+    var c2=1.4388e7; /* nm·K */
+    var x=c2/(nm*T);
+    if(x>20) return 0;
+    return 1/(Math.pow(nm,5)*(Math.exp(x)-1));
+  }
+
+  function nearestPreset(T){
+    var best=null, d=1e9;
+    PRESETS.forEach(function(p){
+      var dd=Math.abs(p.T-T);
+      if(dd<d){ d=dd; best=p; }
+    });
+    return (best && d<=150) ? best : null;
+  }
+
+  function drawWien(){
+    var fit=fitCanvas(wienCanvas, 280);
+    var c=fit.ctx,w=fit.w,h=fit.h;
+    c.fillStyle=base();
+    c.fillRect(0,0,w,h);
+    var T=parseInt(tempEl.value,10)||5800;
+    var peak=peakNm(T);
+    var pad={l:36,r:18,t:36,b:48};
+    var left=pad.l, width=w-pad.l-pad.r;
+    var top=pad.t, height=h-pad.t-pad.b;
+
+    var visL=lamToX(700,left,width), visR=lamToX(400,left,width);
+    for(var i=0;i<Math.max(1,visR-visL);i++){
+      c.fillStyle=rainbowAt(i/Math.max(1,visR-visL));
+      c.globalAlpha=0.22;
+      c.fillRect(visL+i, top, 1, height);
+    }
+    c.globalAlpha=1;
+
+    var samples=120;
+    var maxV=0;
+    var pts=[];
+    for(var i=0;i<=samples;i++){
+      var t=i/samples;
+      var nm=Math.exp(Math.log(1300)-(Math.log(1300)-Math.log(140))*t);
+      var v=planckSketch(nm,T);
+      pts.push({x:lamToX(nm,left,width), v:v, nm:nm});
+      if(v>maxV) maxV=v;
+    }
+    c.beginPath();
+    for(var i=0;i<pts.length;i++){
+      var y=top+height-(pts[i].v/maxV)*height*0.88;
+      if(i===0) c.moveTo(pts[i].x,y); else c.lineTo(pts[i].x,y);
+    }
+    c.strokeStyle=accent();
+    c.lineWidth=2;
+    c.stroke();
+
+    var px=lamToX(Math.max(140, Math.min(1300, peak)), left, width);
+    c.strokeStyle=ink();
+    c.lineWidth=1.5;
+    c.setLineDash([3,4]);
+    c.beginPath();
+    c.moveTo(px, top);
+    c.lineTo(px, top+height);
+    c.stroke();
+    c.setLineDash([]);
+    c.fillStyle=ink();
+    c.beginPath();
+    c.moveTo(px, top+8);
+    c.lineTo(px-5, top+18);
+    c.lineTo(px+5, top+18);
+    c.closePath();
+    c.fill();
+
+    c.strokeStyle=line();
+    c.lineWidth=1;
+    c.beginPath();
+    c.moveTo(left, top+height);
+    c.lineTo(left+width, top+height);
+    c.stroke();
+
+    c.fillStyle=muted();
+    c.font="10px \"IBM Plex Mono\", monospace";
+    c.textAlign="left";
+    c.fillText("IR", left, top+height+16);
+    c.textAlign="center";
+    c.fillText("visible", (visL+visR)/2, top+height+16);
+    c.textAlign="right";
+    c.fillText("UV", left+width, top+height+16);
+    c.textAlign="center";
+    c.fillText("longer λ ←    schematic axis    → shorter λ", w/2, h-10);
+    c.fillText("peak "+formatNm(peak), px, top-8);
+  }
+
+  function showWien(){
+    var T=parseInt(tempEl.value,10)||5800;
+    var peak=peakNm(T);
+    var hit=nearestPreset(T);
+    presetId=hit?hit.id:"";
+    var name=hit?hit.name:"Custom T";
+    var zone=bandForNm(peak);
+    document.getElementById("w-tier").textContent="Wien’s law · schematic";
+    document.getElementById("w-name").textContent=name;
+    document.getElementById("w-range").textContent="~"+T+" K · peak "+formatNm(peak)+" · "+zone;
+    var ul=document.getElementById("w-stats");
+    ul.innerHTML="";
+    [["Temperature",T+" K"],["λ peak",formatNm(peak)],["Lands in",zone]].forEach(function(row){
+      var li=document.createElement("li");
+      li.innerHTML="<span class=\"k\">"+row[0]+"</span><span class=\"v\">"+row[1]+"</span>";
+      ul.appendChild(li);
+    });
+    var body=hit?hit.note:"Textbook Wien: λ_max T ≈ 2.90 × 10⁻³ m·K. Hotter → shorter peak. This curve is a teaching sketch of the shape, not a calibrated spectrum.";
+    document.getElementById("w-body").textContent=body;
+    var facts=document.getElementById("w-facts");
+    facts.innerHTML="";
+    [
+      "Sun ~5800 K peaks near visible (~500 nm).",
+      "Cooler lamps slide the marker into infrared.",
+      "Hot O/B stars peak in ultraviolet — see the stars desk."
+    ].forEach(function(f){
+      var li=document.createElement("li");
+      li.textContent=f;
+      facts.appendChild(li);
+    });
+    document.getElementById("wien-temp-lab").textContent=T+" K";
+    tempEl.setAttribute("aria-valuetext", T+" kelvin, peak "+formatNm(peak));
+    document.getElementById("wien-hint").textContent="Slide temperature · peak "+formatNm(peak)+" · "+name.toLowerCase();
+    wienCanvas.setAttribute("aria-label","Blackbody sketch at "+T+" kelvin. Wien peak near "+formatNm(peak)+", in the "+zone+".");
+    renderPresets();
+  }
+
+  function renderPresets(){
+    var box=document.getElementById("wien-presets");
+    box.innerHTML="";
+    PRESETS.forEach(function(p){
+      var b=document.createElement("button");
+      b.type="button";
+      b.textContent=p.name+" · "+p.T+" K";
+      b.setAttribute("aria-pressed",String(p.id===presetId));
+      b.addEventListener("click",function(){
+        tempEl.value=String(p.T);
+        paintWien();
+      });
+      box.appendChild(b);
+    });
+  }
+
+  function paintWien(){
+    showWien();
+    drawWien();
+  }
+
+  document.getElementById("band-prev").addEventListener("click",function(){
+    var i=bandIndex();
+    selectBand(BANDS[(i+BANDS.length-1)%BANDS.length].id);
+  });
+  document.getElementById("band-next").addEventListener("click",function(){
+    var i=bandIndex();
+    selectBand(BANDS[(i+1)%BANDS.length].id);
+  });
+
+  bandCanvas.addEventListener("click",function(ev){
+    var rect=bandCanvas.getBoundingClientRect();
+    var x=(ev.clientX-rect.left)/rect.width;
+    var i=Math.min(BANDS.length-1, Math.max(0, Math.floor(x*BANDS.length)));
+    selectBand(BANDS[i].id);
+  });
+
+  tempEl.addEventListener("input", paintWien);
+
+  window.spEmDraw=function(){ drawBand(); drawWien(); };
+  window.addEventListener("resize", function(){ window.spEmDraw(); });
+
+  var hash=(location.hash||"").replace("#","");
+  if(hash && bandById(hash).id===hash) bandId=hash;
+
+  renderStrip();
+  showBand(bandById(bandId));
+  drawBand();
+  paintWien();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
