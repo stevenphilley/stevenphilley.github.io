@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Seasons — axial tilt, not distance — Steven Philley</title>
+<meta name="description" content="Interactive Earth seasons desk: axial tilt of about 23.4° stays parallel around the Sun. Walk the year, compare hemispheres, and see why perihelion in early January is Northern winter.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/seasons/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Seasons — axial tilt, not distance">
+<meta property="og:description" content="Walk a year around the Sun. Earth’s axis stays tilted about 23.4° and does not flip. Distance is not the season driver — perihelion is Northern winter.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/seasons/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Seasons — axial tilt, not distance">
+<meta name="twitter:description" content="Orbit schematic with a fixed 23.4° tilt, hemisphere readouts, and the January perihelion correction.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(250px,.8fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;accent-color:var(--accent,#c8b48a);height:28px}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:8.5ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.today-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;cursor:pointer
+}
+.presets button:hover,.today-btn:hover,.presets button:focus-visible,.today-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/" aria-current="page">Seasons</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Year</p>
+  <h1>Seasons<br>axial tilt</h1>
+  <p class="lede">Earth’s axis leans about <strong>23.4°</strong> from straight up-and-down to its orbit, and that lean keeps pointing the same way in space all year. The hemisphere tipped toward the Sun gets a higher Sun, more direct light, and a longer day. Pair with the <a href="/science/astronomy/">solar map</a> (where Earth sits among the planets) and the <a href="/circular-calendar.html">Annual Dial</a> (the year as a circle of days).</p>
+  <p class="note-schematic">Educational schematic — not a precision ephemeris and not a weather forecast. The orbit oval is exaggerated (Earth’s real path is almost a circle), and the Earth disks are enlarged so the axis is visible. Solstice and equinox buttons use a non-leap classroom calendar: about March 20, June 21, September 22, and December 21. Real dates drift by a day.</p>
+
+  <p class="band">Interactive · Orbit and tilt</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Move the day · the axis stays parallel · it does not flip</p>
+      <canvas id="orbit" width="720" height="460" role="img" aria-label="Schematic of Earth orbiting the Sun with a fixed axial tilt"></canvas>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="doy">Day of year</label>
+          <input type="range" id="doy" min="1" max="365" step="1" value="172" aria-valuemin="1" aria-valuemax="365" aria-valuenow="172" aria-valuetext="June 21, Northern summer">
+          <span class="date-val" id="date-val">Jun 21</span>
+          <button type="button" class="today-btn" id="btn-today">Today</button>
+        </div>
+        <div class="presets" role="group" aria-label="Season and orbit markers">
+          <button type="button" data-doy="79" aria-pressed="false">March equinox</button>
+          <button type="button" data-doy="172" aria-pressed="true">June solstice</button>
+          <button type="button" data-doy="265" aria-pressed="false">September equinox</button>
+          <button type="button" data-doy="355" aria-pressed="false">December solstice</button>
+          <button type="button" data-doy="4" aria-pressed="false">Perihelion</button>
+          <button type="button" data-doy="185" aria-pressed="false">Aphelion</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">June solstice · approximate</p>
+      <h2 id="r-date">June 21</h2>
+      <p class="range" id="r-range">Northern summer · Southern winter</p>
+      <ul class="stats">
+        <li><span class="k">Northern</span><span class="v" id="r-nh">Summer</span></li>
+        <li><span class="k">Southern</span><span class="v" id="r-sh">Winter</span></li>
+        <li><span class="k">Sun overhead</span><span class="v" id="r-dec">About 23° north</span></li>
+      </ul>
+      <p class="why" id="r-why">The north leans toward the Sun. Sunlight hits the Northern Hemisphere more directly, and the day is longer there. The Southern Hemisphere gets a lower Sun and a shorter day.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Distance myth">
+    <p class="tag">Myth · distance</p>
+    <h2>Closest in Northern winter</h2>
+    <p>Earth is closest to the Sun — perihelion — in early January, during Northern winter, and farthest — aphelion — in early July, during Northern summer. <a href="https://spaceplace.nasa.gov/seasons/en/" rel="noopener" target="_blank">NASA Space Place</a> gives perihelion as 91,400,000 miles and aphelion as 94,500,000 miles: a difference of over 3 million miles, small beside an average distance of about 93 million miles (about 147 and 152 million kilometers for those same mile figures, rounded). If distance made the seasons, both hemispheres would warm and cool together. They don’t. The tilt does.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the year</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Axial tilt (obliquity)</dt><dd>Earth’s spin axis leans about 23.4° from perpendicular to its orbit. <a href="https://science.nasa.gov/earth/facts/" rel="noopener" target="_blank">NASA</a> names that tilt as the cause of the yearly seasons. The lean keeps pointing the same direction in space while Earth goes around the Sun — it does not flip each season.</dd></div>
+    <div class="gloss"><dt>Solstice</dt><dd>The two dates when a pole leans most toward or away from the Sun — about June 21 and December 21 on this classroom calendar. One hemisphere has its longest day; the other has its shortest. The Sun’s midday height stops climbing or falling and turns back.</dd></div>
+    <div class="gloss"><dt>Equinox</dt><dd>The two dates when the axis leans sideways to the Sun–Earth line — about March 20 and September 22 here. Day and night are roughly equal in both hemispheres, and the most direct sunlight falls near the equator.</dd></div>
+    <div class="gloss"><dt>Perihelion / aphelion</dt><dd>Closest and farthest points in the orbit. Perihelion falls in early January (Northern winter); aphelion falls in early July (Northern summer). The mile gap NASA publishes is real, and it is not what drives the seasons.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/earth/facts/" rel="noopener" target="_blank">NASA Science — Earth facts</a> — axis tilted 23.4° to the orbit; that tilt causes the seasons; six months later the hemispheres reverse; at the start of spring and fall both receive roughly equal heat.</li>
+      <li><a href="https://spaceplace.nasa.gov/seasons/en/" rel="noopener" target="_blank">NASA Space Place — What causes the seasons?</a> — the axis keeps pointing the same way; perihelion 91,400,000 miles in January; aphelion 94,500,000 miles in July; Northern winter happens at the closer distance.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Figures are teaching toys. A real solstice clock time, a local sunrise, or tomorrow’s weather needs an almanac or a forecast — not this page. Kilometer values are the Space Place mile figures rounded, not a second ephemeris. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits among the planets — day and local time, still a schematic.</p></a>
+    <a href="/circular-calendar.html"><p class="n">Year circle</p><h3>Annual Dial</h3><p>The same 365 days as a clock you can mark. This page is why the year has seasons.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>Which constellations the tilted year actually puts over Campbell.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>Phase dial — a month, not a season, but the other light you plan around.</p></a>
+    <a href="/science/atmosphere/"><p class="n">Earth systems</p><h3>Atmosphere</h3><p>The air the seasons’ weather happens in. Tilt sets the sunlight; the air carries the weather.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Color</p><h3>Stars</p><p>The Sun is a G star. Seasons are geometry, not a change in the star.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/circular-calendar.html">Annual Dial</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var canvas = document.getElementById("orbit");
+  var ctx = canvas.getContext("2d");
+  var slider = document.getElementById("doy");
+  var presets = [].slice.call(document.querySelectorAll(".presets button"));
+  var OBL = 23.4;
+  var YEAR = 365;
+  var PERI = 4;
+  var ECC = 0.22;
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var MDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+  var MARKS = [
+    {day:79, name:"March equinox"},
+    {day:172, name:"June solstice"},
+    {day:265, name:"September equinox"},
+    {day:355, name:"December solstice"},
+    {day:4, name:"Perihelion"},
+    {day:185, name:"Aphelion"}
+  ];
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function dayOfYear(d){
+    var start = new Date(d.getFullYear(), 0, 0);
+    var n = Math.round((d - start) / 86400000);
+    if (n < 1) n = 1;
+    if (n > 365) n = 365;
+    return n;
+  }
+  function splitDay(day){
+    var d = day;
+    for (var m = 0; m < 12; m++){
+      if (d <= MDAYS[m]) return {month: MONTHS[m], mon: MONTHS[m].slice(0,3), date: d};
+      d -= MDAYS[m];
+    }
+    return {month:"December", mon:"Dec", date:31};
+  }
+  function declination(day){
+    return OBL * Math.sin(2 * Math.PI * (day - 79) / YEAR);
+  }
+  function thetaOf(day){
+    return (day - PERI) / YEAR * Math.PI * 2;
+  }
+  function radiusOf(theta){
+    return (1 - ECC * ECC) / (1 + ECC * Math.cos(theta));
+  }
+  function seasonNorth(day){
+    if (day >= 79 && day <= 171) return "Spring";
+    if (day >= 172 && day <= 264) return "Summer";
+    if (day >= 265 && day <= 354) return "Autumn";
+    return "Winter";
+  }
+  function opposite(name){
+    if (name === "Spring") return "Autumn";
+    if (name === "Summer") return "Winter";
+    if (name === "Autumn") return "Spring";
+    return "Summer";
+  }
+  function markerName(day){
+    for (var i = 0; i < MARKS.length; i++){
+      if (MARKS[i].day === day) return MARKS[i].name;
+    }
+    return "";
+  }
+  function whyText(dec){
+    if (dec > 8) return "The north leans toward the Sun. Sunlight hits the Northern Hemisphere more directly, and the day is longer there. The Southern Hemisphere gets a lower Sun and a shorter day.";
+    if (dec < -8) return "The north leans away from the Sun. Sunlight hits the Southern Hemisphere more directly, and the day is longer there. The Northern Hemisphere gets a lower Sun and a shorter day.";
+    return "The axis leans sideways to the Sun–Earth line. Day and night are nearly equal in both hemispheres, and the most direct sunlight falls near the equator.";
+  }
+  function decLabel(dec){
+    var a = Math.abs(dec);
+    var where = a < 1.5 ? "near the equator" : (dec > 0 ? "about " + Math.round(a) + "° north" : "about " + Math.round(a) + "° south");
+    return where;
+  }
+
+  function readInitial(){
+    var q = new URLSearchParams(location.search).get("doy");
+    var n = q ? parseInt(q, 10) : dayOfYear(new Date());
+    if (!isFinite(n)) n = 172;
+    return clamp(n, 1, 365);
+  }
+
+  var state = {day: readInitial()};
+
+  function syncUrl(){
+    var url = new URL(location.href);
+    url.searchParams.set("doy", String(state.day));
+    history.replaceState(null, "", url.pathname + url.search);
+  }
+
+  function updateReadout(){
+    var day = state.day;
+    var parts = splitDay(day);
+    var dec = declination(day);
+    var nh = seasonNorth(day);
+    var sh = opposite(nh);
+    var mark = markerName(day);
+    document.getElementById("date-val").textContent = parts.mon + " " + parts.date;
+    document.getElementById("r-date").textContent = parts.month + " " + parts.date;
+    document.getElementById("r-tier").textContent = (mark || "Classroom calendar") + " · approximate";
+    document.getElementById("r-range").textContent = "Northern " + nh.toLowerCase() + " · Southern " + sh.toLowerCase();
+    document.getElementById("r-nh").textContent = nh;
+    document.getElementById("r-sh").textContent = sh;
+    document.getElementById("r-dec").textContent = decLabel(dec);
+    document.getElementById("r-why").textContent = whyText(dec);
+    slider.value = String(day);
+    slider.setAttribute("value", String(day));
+    slider.setAttribute("aria-valuenow", String(day));
+    slider.setAttribute("aria-valuetext", parts.month + " " + parts.date + ", Northern " + nh.toLowerCase());
+    presets.forEach(function(b){
+      b.setAttribute("aria-pressed", String(parseInt(b.dataset.doy, 10) === day));
+    });
+    var label = "Earth on a schematic orbit for " + parts.month + " " + parts.date + ". Northern " + nh.toLowerCase() + ", Southern " + sh.toLowerCase() + ". Axis tilt stays about 23.4 degrees and does not flip.";
+    canvas.setAttribute("aria-label", label);
+  }
+
+  function setDay(day, push){
+    state.day = clamp(day, 1, 365);
+    updateReadout();
+    draw();
+    if (push) syncUrl();
+  }
+
+  function axisScreen(){
+    var t = OBL * Math.PI / 180;
+    return {x: Math.sin(t), y: -Math.cos(t)};
+  }
+
+  function orbitPoint(day, cx, cy, sx, sy){
+    var th = thetaOf(day);
+    var r = radiusOf(th);
+    return {
+      x: cx + Math.cos(th) * r * sx,
+      y: cy - Math.sin(th) * r * sy,
+      r: r,
+      th: th
+    };
+  }
+
+  function mix(a, b, t){
+    return a + (b - a) * t;
+  }
+  function rgb(r, g, b){
+    return "rgb(" + Math.round(r) + "," + Math.round(g) + "," + Math.round(b) + ")";
+  }
+
+  function drawSlice(ctx, cx, cy, R, dec){
+    var tilt = dec * Math.PI / 180;
+    var ax = -Math.sin(tilt);
+    var az = Math.cos(tilt);
+    var off = document.createElement("canvas");
+    var w = Math.max(2, Math.round(R * 2));
+    off.width = w;
+    off.height = w;
+    var octx = off.getContext("2d");
+    var img = octx.createImageData(w, w);
+    var data = img.data;
+    var rad = w / 2;
+    for (var py = 0; py < w; py++){
+      for (var px = 0; px < w; px++){
+        var x = (px + 0.5 - rad) / rad;
+        var z = -(py + 0.5 - rad) / rad;
+        var y2 = 1 - x * x - z * z;
+        var i = (py * w + px) * 4;
+        if (y2 < 0){
+          data[i + 3] = 0;
+          continue;
+        }
+        var y = Math.sqrt(y2);
+        var lit = clamp(-x, -1, 1);
+        var lat = Math.asin(clamp(x * ax + z * az, -1, 1));
+        var dayAmt = clamp((lit + 0.08) / 1.08, 0, 1);
+        dayAmt = dayAmt * dayAmt * (3 - 2 * dayAmt);
+        var pole = Math.min(1, Math.max(0, (Math.abs(lat) - 1.05) / 0.35));
+        var dayR = mix(48, 92, 0.5 + 0.5 * Math.cos(lat));
+        var dayG = mix(110, 150, 0.5 + 0.5 * Math.cos(lat));
+        var dayB = mix(176, 196, 0.5);
+        var nr = 18, ng = 28, nb = 52;
+        var rr = mix(nr, dayR, dayAmt);
+        var gg = mix(ng, dayG, dayAmt);
+        var bb = mix(nb, dayB, dayAmt);
+        rr = mix(rr, 226, pole * dayAmt);
+        gg = mix(gg, 236, pole * dayAmt);
+        bb = mix(bb, 242, pole * dayAmt);
+        var limb = Math.sqrt(x * x + z * z);
+        var shade = 0.55 + 0.45 * y * (1 - limb * 0.25);
+        data[i] = rr * shade;
+        data[i + 1] = gg * shade;
+        data[i + 2] = bb * shade;
+        data[i + 3] = 255;
+      }
+    }
+    octx.putImageData(img, 0, 0);
+    ctx.drawImage(off, cx - R, cy - R, R * 2, R * 2);
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.strokeStyle = cssVar("--ink-soft", "#9b9a96");
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    var len = R * 1.28;
+    ctx.beginPath();
+    ctx.moveTo(cx - ax * len, cy + az * len);
+    ctx.lineTo(cx + ax * len, cy - az * len);
+    ctx.strokeStyle = cssVar("--accent", "#c8b48a");
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+    ctx.fillStyle = cssVar("--accent", "#c8b48a");
+    ctx.font = "11px IBM Plex Mono, monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("N", cx + ax * (len + 12), cy - az * (len + 12));
+    ctx.fillText("S", cx - ax * (len + 12), cy + az * (len + 12));
+
+    ctx.strokeStyle = cssVar("--ink", "#e8e6e1");
+    ctx.globalAlpha = 0.45;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    var steps = 48;
+    for (var s = 0; s <= steps; s++){
+      var a = s / steps * Math.PI * 2;
+      var ex = Math.cos(a) * az;
+      var ey = Math.sin(a);
+      var ez = Math.cos(a) * (-ax);
+      if (ey < -0.05 && s !== 0) continue;
+      var px = cx + ex * R * 0.98;
+      var py = cy - ez * R * 0.98;
+      if (s === 0 || ey < 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var sunX = cx - R - 28;
+    ctx.strokeStyle = cssVar("--accent", "#c8b48a");
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.25;
+    for (var k = -2; k <= 2; k++){
+      ctx.beginPath();
+      ctx.moveTo(sunX - 16, cy + k * 12);
+      ctx.lineTo(cx - R + 2, cy + k * 8);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    ctx.arc(sunX - 6, cy, 6.5, 0, Math.PI * 2);
+    ctx.fillStyle = cssVar("--accent", "#c8b48a");
+    ctx.fill();
+  }
+
+  function drawEarthDisk(ctx, p, radius){
+    var ax = axisScreen();
+    var night = "rgba(16,24,48,0.95)";
+    var day = "rgba(110,168,214,0.95)";
+    var th = p.th;
+    var sunx = -Math.cos(th);
+    var suny = -Math.sin(th);
+    var g = ctx.createLinearGradient(
+      p.x - sunx * radius, p.y + suny * radius,
+      p.x + sunx * radius, p.y - suny * radius
+    );
+    g.addColorStop(0, night);
+    g.addColorStop(0.42, night);
+    g.addColorStop(0.58, day);
+    g.addColorStop(1, day);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = cssVar("--ink", "#e8e6e1");
+    ctx.stroke();
+    var L = radius + 16;
+    ctx.beginPath();
+    ctx.moveTo(p.x - ax.x * L, p.y - ax.y * L);
+    ctx.lineTo(p.x + ax.x * L, p.y + ax.y * L);
+    ctx.strokeStyle = cssVar("--accent", "#c8b48a");
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = cssVar("--accent", "#c8b48a");
+    ctx.beginPath();
+    ctx.arc(p.x + ax.x * L, p.y + ax.y * L, 2.2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function draw(){
+    var cssW = canvas.clientWidth || 720;
+    var narrow = cssW < 520;
+    var cssH = narrow ? Math.round(cssW * 1.38) : Math.round(Math.max(400, Math.min(470, cssW * 0.8)));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.height = cssH + "px";
+    if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)){
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    var orbitW = narrow ? cssW : cssW * 0.62;
+    var globeW = narrow ? cssW : cssW - orbitW;
+    var orbitH = narrow ? cssH * 0.58 : cssH;
+    var globeTop = narrow ? orbitH : 0;
+
+    var cx = orbitW * 0.5;
+    var cy = orbitH * 0.52;
+    var sx = orbitW * 0.36;
+    var sy = sx * 0.62;
+
+    ctx.beginPath();
+    for (var i = 0; i <= 180; i++){
+      var th = i / 180 * Math.PI * 2;
+      var rr = radiusOf(th);
+      var x = cx + Math.cos(th) * rr * sx;
+      var y = cy - Math.sin(th) * rr * sy;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = cssVar("--ink-faint", "#5c5066");
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+
+    var sunR = Math.max(10, sx * 0.08);
+    var sg = ctx.createRadialGradient(cx, cy, 2, cx, cy, sunR * 2.4);
+    sg.addColorStop(0, cssVar("--accent", "#c8b48a"));
+    sg.addColorStop(0.45, cssVar("--accent", "#c8b48a"));
+    sg.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.arc(cx, cy, sunR * 2.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = cssVar("--ink", "#e8e6e1");
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("SUN", cx, cy);
+
+    var ghosts = [79, 172, 265, 355];
+    ghosts.forEach(function(day){
+      if (Math.abs(day - state.day) < 8) return;
+      var g = orbitPoint(day, cx, cy, sx, sy);
+      drawEarthDisk(ctx, g, 8);
+    });
+
+    var earth = orbitPoint(state.day, cx, cy, sx, sy);
+    drawEarthDisk(ctx, earth, 15);
+    ctx.fillStyle = cssVar("--ink", "#e8e6e1");
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "left";
+    var ax = axisScreen();
+    ctx.fillText("N", earth.x + ax.x * 36 + 4, earth.y + ax.y * 36);
+
+    function tag(day, text, dx, dy){
+      var p = orbitPoint(day, cx, cy, sx, sy);
+      ctx.fillStyle = cssVar("--ink-soft", "#9b9a96");
+      ctx.font = "10px IBM Plex Mono, monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(text, p.x + dx, p.y + dy);
+    }
+    tag(4, "PERIHELION", 0, 22);
+    tag(185, "APHELION", 0, -18);
+    tag(79, "MAR", 28, -8);
+    tag(172, "JUN", -8, -20);
+    tag(265, "SEP", -26, 16);
+    tag(355, "DEC", 26, 14);
+
+    ctx.fillStyle = cssVar("--muted", "#63666e");
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("Oval exaggerated · axis parallel", 12, orbitH - 12);
+
+    var gx = narrow ? cssW * 0.64 : orbitW + globeW * 0.66;
+    var gy = globeTop + (narrow ? (cssH - globeTop) * 0.42 : cssH * 0.46);
+    var gr = Math.max(52, Math.min(narrow ? cssW * 0.2 : globeW * 0.34, 86));
+    drawSlice(ctx, gx, gy, gr, declination(state.day));
+    ctx.fillStyle = cssVar("--ink-soft", "#9b9a96");
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("Sun-facing slice", gx, gy + gr + 28);
+    ctx.fillStyle = cssVar("--muted", "#63666e");
+    ctx.fillText("Orbit keeps the axis parallel", gx, gy + gr + 42);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      draw();
+    });
+  });
+  paintTheme();
+
+  slider.addEventListener("input", function(){
+    setDay(parseInt(slider.value, 10), true);
+  });
+  presets.forEach(function(b){
+    b.addEventListener("click", function(){
+      setDay(parseInt(b.dataset.doy, 10), true);
+    });
+  });
+  document.getElementById("btn-today").addEventListener("click", function(){
+    setDay(dayOfYear(new Date()), true);
+  });
+
+  var resizeTimer = 0;
+  window.addEventListener("resize", function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(draw, 60);
+  });
+
+  updateReadout();
+  draw();
+})();
+</script>
+</body>
+</html>
