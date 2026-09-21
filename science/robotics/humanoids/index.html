@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Humanoid robots, 2025–2026 — from parkour to early shifts — Steven Philley</title>
+<meta name="description" content="Status essay on humanoid robots in 2025–2026: learned whole-body policies, early factory and logistics pilots, and first volume claims. Cited public sources. Company claims and supply-chain reports can outrun verified deployments. Not investment or safety advice.">
+<link rel="canonical" href="https://stevenphilley.com/science/robotics/humanoids/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Humanoid robots, 2025–2026 — from parkour to early shifts">
+<meta property="og:description" content="Pilots, learned policies, and first factories — with batteries, hands, safety, and data still the hard parts. Cited. Not a product pitch.">
+<meta property="og:url" content="https://stevenphilley.com/science/robotics/humanoids/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — Apollo 8">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Humanoid robots, 2025–2026 — parkour to early shifts">
+<meta name="twitter:description" content="Science-desk status: Figure Helix 2.5, electric Atlas, Digit 5, Optimus production talk. Cited. Claims can outrun deployments.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 80px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,9vw,72px);line-height:.92;margin:0;max-width:20ch}
+.lede{max-width:62ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.75;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.meta{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:14px 0 0}
+.toc{margin:28px 0 0;padding:14px 0 0;border-top:1px solid var(--line,#2c303a);display:flex;flex-wrap:wrap;gap:10px 18px}
+.toc a{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.toc a:hover{color:var(--accent,#c8b48a)}
+.desk{margin-top:36px;border-top:1px solid var(--line,#2c303a);padding-top:18px;scroll-margin-top:24px}
+.desk > h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:30px;letter-spacing:.06em;margin:0 0 14px}
+.sub{margin:22px 0 8px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
+.body p,.desk p{margin:0 0 14px;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.75;color:var(--ink-soft,#9b9a96);max-width:66ch}
+.desk a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.desk a:hover{color:var(--accent,#c8b48a)}
+.callout{margin:16px 0 18px;padding:14px 16px;border:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:66ch}
+.callout strong{color:var(--ink,#e8e6e1);font-weight:500}
+.trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:16px 0 20px;max-width:66ch}
+.trio article{border:1px solid var(--line,#2c303a);padding:12px 14px}
+.trio h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.06em;margin:0 0 8px}
+.trio p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+@media (max-width:700px){.trio{grid-template-columns:1fr}}
+.fix{list-style:none;margin:0 0 14px;padding:0;max-width:66ch}
+.fix li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.fix strong{color:var(--ink,#e8e6e1);font-weight:500}
+.sources{list-style:none;margin:0;padding:0}
+.sources li{border-top:1px solid var(--line,#2c303a);padding:12px 0}
+.sources a{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink,#e8e6e1);text-decoration:none}
+.sources a:hover{color:var(--accent,#c8b48a)}
+.sources .note{display:block;margin-top:4px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--muted,#63666e)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 0;max-width:66ch}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit;transition:border-color .2s}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em;margin:0;line-height:1;color:var(--ink,#e8e6e1)}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+@media (max-width:640px){.more{grid-template-columns:1fr}}
+.disclaimer{margin-top:40px;padding:16px 0 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7;color:var(--muted,#63666e);max-width:68ch}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+</style>
+</head>
+<body>
+<div class="l-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/robotics/humanoids/" aria-current="page">Humanoids</a>
+      <a href="/news/science.html">Live desk</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="kicker">Science desk · Robotics · Status 2025–2026</p>
+  <h1>Humanoids at the factory door</h1>
+  <p class="meta">Educational essay · Cited public sources · Not investment, legal, or safety advice · Updated Sep 2026</p>
+  <p class="lede">The parkour reel is no longer the whole story. In 2025–2026 a handful of companies moved humanoids from lab clips into early factory and logistics pilots, published learned whole-body policies that survive a new room, and started talking like manufacturers. Batteries, hands, safety paperwork, and the long tail of messy scenes are still the hard parts. Pair this with the parent <a href="/science/#robotics">robotics stand</a> on the science hub and the live <a href="/news/science.html">science news desk</a>. Industrial arms still earn the rent. This page is about the two-legged bet.</p>
+
+  <nav class="toc" aria-label="On this page">
+    <a href="#changed">What changed</a>
+    <a href="#helix">Autonomy &amp; data</a>
+    <a href="#bodies">Industrial bodies</a>
+    <a href="#scale">Scale vs shipments</a>
+    <a href="#hard">Still hard</a>
+    <a href="#southbay">South Bay glance</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
+  <section class="desk" id="changed" aria-labelledby="changed-h">
+    <h2 id="changed-h">What actually changed</h2>
+    <p>Three public facts, not a slogan. First: learned controllers — vision–language–action stacks, diffusion-style action models, whole-body policies — left papers and entered company reports you can read. Second: a few platforms are on real floors for tote work, sequencing, or inspection, with named customers and hour or tote counts the companies themselves publish. Third: factories for the robots, not just for the cars or totes they might one day move, are under construction or already assembling units. That is a different year than the one where every humanoid story was a backflip.</p>
+    <p>It is not a solved product category. General-purpose household autonomy is still a research and teleop story. Multi-shift deployments that survive months without a hero video remain the watch item on the <a href="/science/#robotics">science hub</a>. Company press, supplier gossip, and drone footage of steel frames can all outrun a verified shipment. This essay keeps those layers separate on purpose.</p>
+    <div class="trio" role="list">
+      <article role="listitem">
+        <h3>Policies</h3>
+        <p>One foundation model, a few long-horizon chores, tested in rooms the robot has not mapped. Data is the argument. 56% is not a household product.</p>
+      </article>
+      <article role="listitem">
+        <h3>Bodies</h3>
+        <p>Electric industrial humanoids with published lift, battery-swap, and IP ratings — plus a warehouse biped sold as cage-optional. Specs are brochures until a floor keeps them.</p>
+      </article>
+      <article role="listitem">
+        <h3>Lines</h3>
+        <p>First assembly halls and converted auto lines. Capacity numbers in the millions are plans and chain reports, not a delivery table.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="desk" id="helix" aria-labelledby="helix-h">
+    <h2 id="helix-h">Autonomy, data, and a 56% house</h2>
+    <p>Figure’s <a href="https://www.figure.ai/news/helix-2-5-zero-shot-30-home-generalization" target="_blank" rel="noopener">Helix 2.5 note</a> (September 17, 2026) is the cleanest public card on learned whole-body generalization this season. The company says it pretrained a foundation model on Index, its human-behavior dataset, adapted that single base to three behaviors — tidying a living room, folding towels, making a bed — and then ran the robot in <strong style="color:var(--ink);font-weight:500">30 Bay Area homes</strong> with no data collected in any of them and no fine-tuning on those rooms or the objects being handled. “Zero-shot” here means the evaluation houses and objects, not the tasks. The tasks were specified with fine-tuning data gathered elsewhere.</p>
+    <p>The comparison they published is the part worth keeping. Holding task-specific data, architecture, training, and evaluation fixed, a policy trained from scratch succeeded on <strong style="color:var(--ink);font-weight:500">9%</strong> of zero-shot trials. The Index-pretrained policy succeeded on <strong style="color:var(--ink);font-weight:500">56%</strong>. Success, they say, required the whole task: every toy in the basket, every towel folded and placed, or the whole bed made — no partial credit. That is a company evaluation, not a third-party audit. It is still a useful sentence: broad human video, in their report, is doing most of the generalization work.</p>
+    <p>Helix 02, on their telling, could already coordinate a whole body over long horizons — dishwasher unloading, a logistics task they say ran autonomously for 200 hours — but those systems learned from data collected where the robots would operate. Helix 2.5 is the “new house, same policy” claim. They also say the pretrained model matched a Helix 02 in-environment success rate with about half the task-specific data, and that doubling Index data improved downstream robot-action prediction smoothly enough to call it a scaling law. Those are their plots. Treat them as a published experiment, not as proof that homes are a finished market.</p>
+    <div class="callout"><strong>Figure’s own brake pedal.</strong> “The point is not that general humanoid robotics is solved.” That sentence is in the same post as the 56%. Keep it. A 56% all-or-nothing score on three chores, in 30 unseen houses, with human safety interventions counted as fails, is an interesting research result. It is not a roommate you can forget about.</div>
+    <p>The rest of the Helix note is a data-scale pitch: Index generating “roughly 35 minutes of new human experience every second,” and a committed <strong style="color:var(--ink);font-weight:500">$3.5 billion</strong> of compute. Those are company figures. They belong next to the parent desk’s reminder that robot data is still scarce next to internet text, and that sim-to-real gaps do not vanish because a scaling curve looks smooth on a held-out loss.</p>
+  </section>
+
+  <section class="desk" id="bodies" aria-labelledby="bodies-h">
+    <h2 id="bodies-h">Industrial bodies: Atlas and Digit</h2>
+    <h3 class="sub">Electric Atlas, sold as enterprise hardware</h3>
+    <p>Boston Dynamics’ <a href="https://bostondynamics.com/products/atlas/" target="_blank" rel="noopener">Atlas product page</a> is no longer a research-mascot site. The electric machine is framed as an industrial humanoid for material handling: barcode workflows, fleet learning through their Orbit software, and a battery the robot is said to swap itself so a shift can continue. Published specs, as of the page checked in September 2026:</p>
+    <ul class="fix">
+      <li><strong>Size and motion.</strong> Height 1.9&nbsp;m (6.2&nbsp;ft); mass 90&nbsp;kg (198&nbsp;lb); 56 degrees of freedom; reach 2.3&nbsp;m (7.5&nbsp;ft); continuous range of motion.</li>
+      <li><strong>Lift.</strong> Instant capacity 50&nbsp;kg (110&nbsp;lb); sustained 30&nbsp;kg (66&nbsp;lb).</li>
+      <li><strong>Energy and weather.</strong> Stated battery life of 4 hours; self-swappable pack; IP67; operating temperature −20° to 40°C (−4° to 104°F).</li>
+      <li><strong>Sensing.</strong> Tactile sensing and a 360° camera view, in their wording.</li>
+    </ul>
+    <p>The same page says Atlas is already in a customer facility with <strong style="color:var(--ink);font-weight:500">Hyundai</strong> for field testing on real-world sequencing tasks, and that a later “product version” incorporates lessons from that testing. The commercial path they sketch is early adopters first: evaluate, train on the job, then adopt. That is a pilot-and-pipeline story, not a claim that Atlas fleets are a normal warehouse SKU. Treat the kilograms and the IP rating as manufacturer specifications. Field testing is the interesting verb.</p>
+    <h3 class="sub">Digit 5, sold as cage-optional work</h3>
+    <p>Agility Robotics unveiled <a href="https://www.agilityrobotics.com/content/agility-unveils-digit-5-humanoid-robot-built-for-cooperatively-safe-work-at-scale" target="_blank" rel="noopener">Digit 5 on September 15, 2026</a>. The pitch is specific: a humanoid engineered for “cooperatively safe work at scale,” meant to work near people without the physical cages traditional industrial robots use. The company says this sits on more than <strong style="color:var(--ink);font-weight:500">65,000 hours</strong> of Digit 4 operation, including named sites at GXO, Schaeffler, Amazon, and Toyota Motor Manufacturing Canada, and a 100,000-tote milestone at GXO’s Flowery Branch facility near Atlanta with “approximately 98% accuracy while on-task.” Those hours and that tote count are Agility’s. They are the longest industrial tenure story a humanoid maker is currently willing to put on a press page.</p>
+    <p>Hardware upgrades they list: a new leg and cycloidal actuators for repeated lifts up to <strong style="color:var(--ink);font-weight:500">50&nbsp;lb (22.7&nbsp;kg)</strong>; a 90-minute battery they say charges in 9 minutes (a 10:1 run-to-charge ratio, up from Digit 4’s 2:1); swappable grippers on ISO-standard flanges; 5&nbsp;ft 11&nbsp;in (1.81&nbsp;m) tall, 284&nbsp;lb (129&nbsp;kg), reach to 7.2&nbsp;ft (2.2&nbsp;m). Safety architecture, in their telling: people-detection that can avoid, stop, or sit; visual and auditory motion cues; an independent safety controller. They say Digit was the first humanoid to pass an independent field evaluation on a customer line for industrial safety standards administered by OSHA — cite that as Agility’s claim, not as a government endorsement you can look up in a single OSHA bulletin from this page.</p>
+    <p>Scale language needs a pencil. Agility says Digit is assembled at RoboFab, a 70,000-square-foot plant in Salem, Oregon, “designed to produce up to 10,000 Digit robots per year” at full capacity. As of May 2026 they report more than <strong style="color:var(--ink);font-weight:500">$300 million</strong> in multi-year Digit 5 orders “subject to satisfaction of certain contractual milestones.” Early access is expected in the first half of 2027, with general availability by the end of 2027, and a first commercial path outside North America into the EU and UK, CE mark expected. The same release carries a long forward-looking-statements block. Designed capacity and milestone-gated orders are not the same as 10,000 robots on docks.</p>
+  </section>
+
+  <section class="desk" id="scale" aria-labelledby="scale-h">
+    <h2 id="scale-h">Scale ambitions versus a shipment table</h2>
+    <h3 class="sub">Tesla Optimus Gen 3 — plans, not proven volume</h3>
+    <p>Tesla’s own words are narrower than the supply-chain week. The <a href="https://assets-ir.tesla.com/tesla-contents/IR/TSLA-Q2-2026-Update.pdf" target="_blank" rel="noopener">Q2 2026 shareholder update</a> (July) says the company decommissioned Model S and Model X lines at Fremont, is installing first-generation Optimus lines, and expects to start production soon — “in anticipation of production in 2026.” Initial builds “will be used in our Optimus Academy for training data collection and further functionality development.” The manufacturing table lists Optimus in California and Texas as <strong style="color:var(--ink);font-weight:500">Construction</strong>, with capacity marked “-”. Texas is “building construction now in full swing.” That is the primary card: a converted Fremont line, an internal academy, a Texas building, no installed annual capacity in the table, no customer shipment count.</p>
+    <p>September 2026 secondary reporting runs ahead of that table. <a href="https://cnevpost.com/2026/09/21/tesla-audits-china-suppliers-optimus-mass-production/" target="_blank" rel="noopener">CnEVPost</a> (September 21), relaying <em>The Paper</em> and 21jingji, says a Tesla robotics team is auditing Yangtze River Delta suppliers — Tuopu, Sanhua Intelligent Controls, Joyson Electronics — for a third-generation Optimus designed for volume, and that those outlets describe Fremont as a dedicated line with a <em>planned</em> annual capacity of 1 million units and a Texas line with a <em>long-term designed</em> capacity of 10 million, “expected to start production around summer next year.” Those million-unit figures are industry-chain numbers in a secondary story, not a Tesla delivery report. Drone watchers have been filming steel at Giga Texas; that is construction progress, not a first-year output forecast. Treat Gen 3 mass-production talk as prep: audits, line conversion, a building going up. Do not cash it as proven shipments.</p>
+    <div class="callout"><strong>How to read a production tracker.</strong> Official deck: lines going in, academy robots first, capacity blank. Supplier and fan-site copy: millions of units, weekly run rates, price targets. The gap is the literacy. If a number does not appear in Tesla’s table or a named customer invoice, it is a plan or a leak.</div>
+    <h3 class="sub">Other volume and pilot players, briefly</h3>
+    <p><strong style="color:var(--ink);font-weight:500">Unitree</strong> is the research-volume door you can actually click. The <a href="https://www.unitree.com/g1" target="_blank" rel="noopener">G1 product page</a> lists a starting price of <strong style="color:var(--ink);font-weight:500">US $13.5K</strong> (tax and shipping excluded), about 2 hours of battery life, and 23–43 degrees of freedom depending on the EDU configuration. The same page tells individual buyers the global humanoid industry is “in the early stages of exploration” and to keep a safe distance. That is a catalog robot for labs and developers, not a named factory fleet in Unitree’s own spec sheet.</p>
+    <p><strong style="color:var(--ink);font-weight:500">Apptronik Apollo</strong> is the enterprise-plus-contract-manufacturer story. Apptronik and Jabil’s <a href="https://investors.jabil.com/news/news-details/2025/Apptronik-and-Jabil-Collaborate-to-Scale-Production-of-Apollo-Humanoid-Robots-and-Deploy-in-Manufacturing-Operations/default.aspx" target="_blank" rel="noopener">February 25, 2025 release</a> announced a pilot and strategic collaboration: Jabil as worldwide manufacturing partner, and Apollo units to be integrated into specific Jabil operations — including, they write, the lines that will build Apollo. That is a real named partnership. It is still a collaboration announcement, not a 2026 unit-shipment table.</p>
+    <p><strong style="color:var(--ink);font-weight:500">1X Neo</strong> is the home-preorder narrative. 1X’s <a href="https://www.1x.tech/discover/neo-home-robot" target="_blank" rel="noopener">October 28, 2025 launch</a> and <a href="https://www.1x.tech/order" target="_blank" rel="noopener">order page</a> offer Early Access at $20,000 or a $499/month subscription, with U.S. deliveries said to start in 2026. The same pages are explicit that complex chores Neo does not know can be handled by a scheduled 1X “Expert” who remotely supervises — teleoperation as a product feature, not a rumor. Engadget’s contemporary write-up matches that disclosure. A preorder with a remote human in the loop is not household autonomy. It is an honest, and limited, commercial shape.</p>
+  </section>
+
+  <section class="desk" id="hard" aria-labelledby="hard-h">
+    <h2 id="hard-h">Still hard: energy, hands, paper, the long tail</h2>
+    <p>The parent robotics stand already had this right. Hardware still bites. A 90-minute Digit pack or a 4-hour Atlas pack is a shift-planning problem, not a footnote. Hot-swaps and 9-minute charges are how you paper over energy density; they do not invent a new battery chemistry. Hands and tactile sensing still lag cameras. Figure’s chores and Digit’s tote history are impressive inside their published rubrics. A messy, novel object in a cluttered aisle is the everyday remainder.</p>
+    <p>Safety and liability are catching up in public. Agility says it is contributing to ANSI/A3 TR R15.108 (a technical report for dynamically stable industrial mobile robots, including humanoids, in the U.S. and Canada) and to ISO 25785-1, which they call the first international safety standard for the humanoid category. Those are standards in motion, not a finished certificate you can hang on every two-legged machine. Learning controllers make the paperwork stranger: who is responsible when a policy does something nobody wrote as a branch? This page will not answer that. It will say shipping into human spaces is a legal and insurance problem, not only a demo problem.</p>
+    <p>Reliability is the difference between a pilot and a product you can forget about. Helix 2.5’s 56% is a whole-task, no-partial-credit number on three behaviors. Digit’s 65,000 hours are the other pole: narrower work, longer clock. Neither is “the robot did the house, then the warehouse, then went home.” Watch multi-shift deployments that survive a quarter without a new video. Watch whether fleet learning closes the data gap without papering over a safety case. The live desk will catch the headlines. This page is here so the headlines have somewhere honest to sit.</p>
+  </section>
+
+  <section class="desk" id="southbay" aria-labelledby="southbay-h">
+    <h2 id="southbay-h">A South Bay glance</h2>
+    <p>You do not need a tour badge to notice the geography. Figure’s Helix 2.5 evaluation used 30 unseen <strong style="color:var(--ink);font-weight:500">Bay Area homes</strong>. The company’s manufacturing and HQ story in 2025–2026 sits in San Jose — local real-estate reporting put a new headquarters plant at 3960 North First Street after a Sunnyvale chapter. Tesla is converting Fremont’s former Model S / Model X space into Optimus lines. Agility opened a Fremont, California facility in July 2026 as a hardware and physical-AI hub, while Digit assembly stays at RoboFab in Salem. The South Bay is not “where humanoids were solved.” It is where several of the loudest English-language programs collect data, convert floors, or keep an office. The same valley still runs on ordinary industrial arms. That split is the local sentence.</p>
+  </section>
+
+  <section class="desk" id="sources" aria-labelledby="sources-h">
+    <h2 id="sources-h">Sources and further reading</h2>
+    <ul class="sources">
+      <li><a href="https://www.figure.ai/news/helix-2-5-zero-shot-30-home-generalization" target="_blank" rel="noopener">Figure — Helix 2.5: Zero-Shot 30-Home Generalization</a><span class="note">Sept 17, 2026. Index pretraining; 30 unseen Bay Area homes; 9% from-scratch vs 56% pretrained; three behaviors; company eval rubric; $3.5B compute and Index rate are company figures</span></li>
+      <li><a href="https://bostondynamics.com/products/atlas/" target="_blank" rel="noopener">Boston Dynamics — Atlas product page</a><span class="note">Electric industrial specs: 56 DoF, 50/30 kg lift, 4-hour battery and self-swap, IP67, 1.9 m / 90 kg; Hyundai field testing; Orbit fleet software. Manufacturer page, not a third-party teardown</span></li>
+      <li><a href="https://www.agilityrobotics.com/content/agility-unveils-digit-5-humanoid-robot-built-for-cooperatively-safe-work-at-scale" target="_blank" rel="noopener">Agility Robotics — Digit 5 unveiling</a><span class="note">Sept 15, 2026. Cage-optional safety pitch; 65,000+ Digit 4 hours; GXO 100,000 totes / ~98%; RoboFab Salem; Fremont hub July 2026; EU/UK path; early access ~1H 2027; $300M milestone-gated orders as of May 2026</span></li>
+      <li><a href="https://assets-ir.tesla.com/tesla-contents/IR/TSLA-Q2-2026-Update.pdf" target="_blank" rel="noopener">Tesla — Q2 2026 Update (PDF)</a><span class="note">Fremont S/X lines decommissioned; first-generation Optimus lines installing; production expected 2026; initial units for Optimus Academy; CA and TX Optimus listed as Construction with capacity “-”</span></li>
+      <li><a href="https://cnevpost.com/2026/09/21/tesla-audits-china-suppliers-optimus-mass-production/" target="_blank" rel="noopener">CnEVPost — Tesla audits China suppliers (Sept 21, 2026)</a><span class="note">Secondary. Relays The Paper / 21jingji on Tuopu, Sanhua, Joyson audits and planned 1M / 10M capacities. Not a Tesla shipment table</span></li>
+      <li><a href="https://www.humanoidsdaily.com/news/tesla-optimus-texas-factory-steel-frame" target="_blank" rel="noopener">Humanoids Daily — Texas Optimus steel frame</a><span class="note">Sept 2026 construction-watcher recap; useful for labeling drone/capacity talk as unofficial. Cross-check against Tesla’s table</span></li>
+      <li><a href="https://www.unitree.com/g1" target="_blank" rel="noopener">Unitree — G1 product page</a><span class="note">Listed from US $13.5K; research/developer platform; company cautions that the industry is early and to keep safe distance</span></li>
+      <li><a href="https://investors.jabil.com/news/news-details/2025/Apptronik-and-Jabil-Collaborate-to-Scale-Production-of-Apollo-Humanoid-Robots-and-Deploy-in-Manufacturing-Operations/default.aspx" target="_blank" rel="noopener">Jabil / Apptronik — Apollo production collaboration</a><span class="note">Feb 25, 2025. Pilot plus worldwide manufacturing partner; Apollo into selected Jabil operations, including Apollo-build lines</span></li>
+      <li><a href="https://apptronik.com/news-collection/apptronik-and-jabil-collaborate-to-scale-production" target="_blank" rel="noopener">Apptronik — same Jabil collaboration</a><span class="note">Company copy of the Feb 2025 announcement</span></li>
+      <li><a href="https://www.1x.tech/discover/neo-home-robot" target="_blank" rel="noopener">1X — Neo home-robot launch</a><span class="note">Oct 28, 2025. $20,000 Early Access / $499 per month; U.S. deliveries said to start 2026</span></li>
+      <li><a href="https://www.1x.tech/order" target="_blank" rel="noopener">1X — Order Neo</a><span class="note">Scheduled 1X Expert remote supervision for unknown complex tasks; owner-controlled teleop is a published product feature</span></li>
+      <li><a href="https://www.engadget.com/ai/1x-neo-is-a-20000-home-robot-that-will-learn-chores-via-teleoperation-040252200.html" target="_blank" rel="noopener">Engadget — Neo teleoperation write-up</a><span class="note">Oct 2025 secondary match on scheduled remote operators and privacy controls</span></li>
+      <li><a href="https://therealdeal.com/san-francisco/2025/03/17/figure-ai-leases-99k-sf-for-new-san-jose-headquarters-plant/" target="_blank" rel="noopener">The Real Deal — Figure San Jose headquarters plant</a><span class="note">March 2025 local real-estate reporting: 3960 North First Street, move from Sunnyvale. Not a production audit</span></li>
+      <li><a href="https://spectrum.ieee.org/topic/robotics/" target="_blank" rel="noopener">IEEE Spectrum — Robotics</a><span class="note">Standing secondary desk for the field; not a cite for any one number on this page</span></li>
+      <li><a href="https://www.iso.org/committee/5915511.html" target="_blank" rel="noopener">ISO — robotics committee</a><span class="note">Standards door already on the science hub. Agility cites ISO 25785-1 as a humanoid-category standard in development</span></li>
+      <li><a href="/science/#robotics">This site — Science hub, robotics stand</a><span class="note">Parent “where we stand” block this essay extends</span></li>
+    </ul>
+  </section>
+
+  <p class="band-inline" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:40px 0 14px">Keep going</p>
+  <div class="more">
+    <a href="/science/#robotics">
+      <p class="n">Parent stand</p>
+      <h3>Robotics on the science hub</h3>
+      <p>Foundation models meet factory floors — capabilities, limits, and what to watch next.</p>
+    </a>
+    <a href="/news/science.html">
+      <p class="n">Ticker</p>
+      <h3>Live science desk</h3>
+      <p>Headlines and the breaking strip. This essay is context, not a feed.</p>
+    </a>
+    <a href="/science/">
+      <p class="n">Status</p>
+      <h3>Where we stand</h3>
+      <p>Nanomaterials, robotics, space — public-knowledge altitude for 2025–2026.</p>
+    </a>
+    <a href="/science/light-pollution/salesforce-tower/">
+      <p class="n">Sibling essay</p>
+      <h3>Day for Night</h3>
+      <p>Another nested science desk: cited, local, allergic to press kits.</p>
+    </a>
+  </div>
+
+  <p class="disclaimer"><strong style="color:var(--ink-soft,#9b9a96);font-weight:500">Disclaimer.</strong> Educational science literacy, not investment advice, not a product review, and not safety, legal, or insurance guidance. Figures and quotes come from the public pages listed above, checked in September 2026. Company evaluations, manufacturer specifications, order backlogs, designed plant capacities, and supply-chain reports can all outrun independently verified deployments and shipments. Operations, specs, and timelines change — trust the outbound pages over a static paragraph. For workplace safety or procurement, use current standards, counsel, and qualified engineers.</p>
+
+  <footer class="e-foot">
+    <a href="/science/#robotics">Robotics stand</a>
+    <a href="/science/">Science hub</a>
+    <a href="/news/science.html">Science headlines</a>
+    <a href="/science/light-pollution/salesforce-tower/">Salesforce Tower</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  paint();
+})();
+</script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
