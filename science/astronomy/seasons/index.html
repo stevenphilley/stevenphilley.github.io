@@ -4,18 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Seasons — axial tilt, not distance — Steven Philley</title>
-<meta name="description" content="Interactive Earth seasons desk: axial tilt of about 23.4° stays parallel around the Sun. Walk the year, compare hemispheres, and see why perihelion in early January is Northern winter.">
+<meta name="description" content="Interactive Earth seasons desk: axial tilt of about 23.4° stays parallel around the Sun. Walk the year, compare hemispheres, and read approximate day length by latitude — nearly 12 hours everywhere near equinox.">
 <link rel="canonical" href="https://stevenphilley.com/science/astronomy/seasons/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Seasons — axial tilt, not distance">
-<meta property="og:description" content="Walk a year around the Sun. Earth’s axis stays tilted about 23.4° and does not flip. Distance is not the season driver — perihelion is Northern winter.">
+<meta property="og:description" content="Walk a year around the Sun. Earth’s axis stays tilted about 23.4° and does not flip. A latitude strip shows approximate daylight — nearly 12 hours everywhere near equinox.">
 <meta property="og:url" content="https://stevenphilley.com/science/astronomy/seasons/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Seasons — axial tilt, not distance">
-<meta name="twitter:description" content="Orbit schematic with a fixed 23.4° tilt, hemisphere readouts, and the January perihelion correction.">
+<meta name="twitter:description" content="Orbit schematic with a fixed 23.4° tilt, hemisphere readouts, and approximate day length by latitude.">
 <meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -99,8 +99,22 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
 .dial-link svg{width:14px;height:14px;display:block}
 .top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.daylen{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.daylen-grid{display:grid;grid-template-columns:minmax(240px,.9fr) minmax(220px,1.1fr);gap:8px 22px;align-items:center}
+.daylen .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.daylen-hours{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(42px,7vw,64px);line-height:.88;letter-spacing:.03em;margin:0}
+.daylen-phrase{margin:6px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a)}
+.daylen-when{margin:4px 0 12px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.daylen .why{margin:12px 0 0}
+.lat-val{min-width:12ch;text-align:right}
+.daylen-chart{min-width:0}
+.daylen-chart .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.daylen-chart canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.daylen-note{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e)}
+.daylen-note a{color:var(--ink,#e8e6e1)}
+.gloss-wide{grid-column:1 / -1}
 @media (max-width:860px){
-  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stage,.glossary,.more,.daylen-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -183,6 +197,31 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     </aside>
   </div>
 
+  <p class="band">Interactive · Day length by latitude</p>
+  <section class="daylen" aria-label="Day length by latitude">
+    <div class="daylen-grid">
+      <div>
+        <p class="tier">Classroom hour angle · approximate</p>
+        <div id="dl-live" aria-live="polite">
+          <p class="daylen-hours" id="dl-hours">~14.5 h</p>
+          <p class="daylen-phrase" id="dl-phrase">long day in the north</p>
+          <p class="daylen-when" id="dl-when">June 21 · 37° N</p>
+        </div>
+        <div class="slider-row">
+          <label for="lat">Latitude</label>
+          <input type="range" id="lat" min="-90" max="90" step="1" value="37" aria-valuemin="-90" aria-valuemax="90" aria-valuenow="37" aria-valuetext="37 degrees north">
+          <span class="date-val lat-val" id="lat-val">37° N</span>
+        </div>
+        <p class="why" id="dl-why">Northern latitudes get the long day. Toward the Arctic Circle the geometric Sun stays up almost all day; toward the Antarctic Circle it barely rises.</p>
+      </div>
+      <div class="daylen-chart">
+        <p class="hint" id="dl-chart-hint">Daylight vs latitude · declination about 23.4° north</p>
+        <canvas id="daylen" width="640" height="200" role="img" aria-label="Bar chart of approximate daylight hours from 90 degrees south to 90 degrees north. At 37 degrees north on June 21, about 14.5 hours, a long day in the north."></canvas>
+      </div>
+    </div>
+    <p class="daylen-note">Approximate classroom math, not a sunrise almanac. It uses the declination already drawn above and the standard hour-angle relation: cosine of the hour angle equals minus tan(latitude) times tan(declination), and day length is about twice that angle divided by 15. When the cosine falls outside −1 to 1, the label switches to polar day or polar night. Refraction, elevation, and the equation of time are ignored. The slider starts at 37° N — Campbell / South Bay, the <a href="/science/astronomy/local-sky/">Local sky</a> default — and this day is the one on the <a href="/circular-calendar.html">Annual Dial</a>.</p>
+  </section>
+
   <aside class="myth" aria-label="Distance myth">
     <p class="tag">Myth · distance</p>
     <h2>Closest in Northern winter</h2>
@@ -195,6 +234,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     <div class="gloss"><dt>Solstice</dt><dd>The two dates when a pole leans most toward or away from the Sun — about June 21 and December 21 on this classroom calendar. One hemisphere has its longest day; the other has its shortest. The Sun’s midday height stops climbing or falling and turns back.</dd></div>
     <div class="gloss"><dt>Equinox</dt><dd>The two dates when the axis leans sideways to the Sun–Earth line — about March 20 and September 22 here. Day and night are roughly equal in both hemispheres, and the most direct sunlight falls near the equator.</dd></div>
     <div class="gloss"><dt>Perihelion / aphelion</dt><dd>Closest and farthest points in the orbit. Perihelion falls in early January (Northern winter); aphelion falls in early July (Northern summer). The mile gap NASA publishes is real, and it is not what drives the seasons.</dd></div>
+    <div class="gloss gloss-wide"><dt>Day length / hour angle</dt><dd>How long the geometric Sun stays above a flat horizon. Latitude φ and declination δ set the hour angle by cos ω = −tan φ tan δ; daylight is about 2ω/15 hours when ω is in degrees. If that cosine falls outside −1 to 1, the latitude is in polar day or polar night. Classroom approximation — refraction makes a real sunrise a few minutes earlier.</dd></div>
   </dl>
 
   <p class="band">Sources · public NASA education</p>
@@ -203,6 +243,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     <ul>
       <li><a href="https://science.nasa.gov/earth/facts/" rel="noopener" target="_blank">NASA Science — Earth facts</a> — axis tilted 23.4° to the orbit; that tilt causes the seasons; six months later the hemispheres reverse; at the start of spring and fall both receive roughly equal heat.</li>
       <li><a href="https://spaceplace.nasa.gov/seasons/en/" rel="noopener" target="_blank">NASA Space Place — What causes the seasons?</a> — the axis keeps pointing the same way; perihelion 91,400,000 miles in January; aphelion 94,500,000 miles in July; Northern winter happens at the closer distance.</li>
+      <li><a href="https://gml.noaa.gov/grad/solcalc/calcdetails.html" rel="noopener" target="_blank">NOAA Global Monitoring Laboratory — Solar calculation details</a> — sunrise and sunset calculations based on Jean Meeus, Astronomical Algorithms, with about 0.833° of refraction assumed. NOAA says the results are approximate and not certified for legal use.</li>
+      <li>Geometric daylight, as in standard spherical-astronomy textbooks: cos ω = −tan φ tan δ, and day length ≈ 2ω/15 hours (ω in degrees). Polar day or polar night when that cosine falls outside −1 to 1. This strip uses that classroom form — no refraction — with the declination sine already on the page.</li>
     </ul>
   </div>
   <p class="page-credit">Figures are teaching toys. A real solstice clock time, a local sunrise, or tomorrow’s weather needs an almanac or a forecast — not this page. Kilometer values are the Space Place mile figures rounded, not a second ephemeris. Earthrise preview: NASA / Bill Anders (public domain).</p>
@@ -235,6 +277,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   var canvas = document.getElementById("orbit");
   var ctx = canvas.getContext("2d");
   var slider = document.getElementById("doy");
+  var latSlider = document.getElementById("lat");
+  var daylenCanvas = document.getElementById("daylen");
+  var daylenCtx = daylenCanvas.getContext("2d");
   var presets = [].slice.call(document.querySelectorAll(".presets button"));
   var OBL = 23.4;
   var YEAR = 365;
@@ -312,6 +357,57 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     var where = a < 1.5 ? "near the equator" : (dec > 0 ? "about " + Math.round(a) + "° north" : "about " + Math.round(a) + "° south");
     return where;
   }
+  function decShort(dec){
+    var a = Math.abs(dec);
+    if (a < 0.05) return "declination 0°";
+    var n = (Math.round(a * 10) / 10).toFixed(1);
+    return "declination about " + n + "° " + (dec > 0 ? "north" : "south");
+  }
+  function latLabel(lat){
+    if (lat === 0) return "0° equator";
+    return Math.abs(lat) + "° " + (lat > 0 ? "N" : "S");
+  }
+  function latSpeech(lat){
+    if (lat === 0) return "equator";
+    return Math.abs(lat) + " degrees " + (lat > 0 ? "north" : "south");
+  }
+  function daylight(lat, dec){
+    if (Math.abs(lat) >= 89.5){
+      if (Math.abs(dec) < 0.05) return {hours: 12, kind: "horizon"};
+      if (lat * dec > 0) return {hours: 24, kind: "polar-day"};
+      return {hours: 0, kind: "polar-night"};
+    }
+    var phi = lat * Math.PI / 180;
+    var delta = dec * Math.PI / 180;
+    var cosOmega = -Math.tan(phi) * Math.tan(delta);
+    if (!isFinite(cosOmega) || cosOmega <= -1) return {hours: 24, kind: "polar-day"};
+    if (cosOmega >= 1) return {hours: 0, kind: "polar-night"};
+    var omegaDeg = Math.acos(cosOmega) * 180 / Math.PI;
+    return {hours: (2 * omegaDeg) / 15, kind: "day"};
+  }
+  function formatHours(info){
+    if (info.kind === "polar-day") return "24 h";
+    if (info.kind === "polar-night") return "0 h";
+    if (info.kind === "horizon") return "~12 h";
+    var n = Math.round(info.hours * 10) / 10;
+    return "~" + n.toFixed(1) + " h";
+  }
+  function dayLengthPhrase(info, lat){
+    if (info.kind === "polar-day") return lat >= 0 ? "polar day in the north" : "polar day in the south";
+    if (info.kind === "polar-night") return lat >= 0 ? "polar night in the north" : "polar night in the south";
+    if (info.kind === "horizon") return "Sun on the horizon all day";
+    if (Math.abs(info.hours - 12) < 0.45) return "nearly equal day and night";
+    if (info.hours > 12) return lat >= 0 ? "long day in the north" : "long day in the south";
+    return lat >= 0 ? "short day in the north" : "short day in the south";
+  }
+  function dayLengthWhy(dec){
+    var a = Math.abs(dec);
+    if (a < 1.5) return "The tilt is sideways, so day length is nearly 12 hours from pole to pole. On this model’s exact equinox — day 79, declination zero — it is 12 hours at every latitude. A degree off that, only the poles leave the 12-hour line.";
+    if (dec > 18) return "Northern latitudes get the long day. Toward the Arctic Circle the geometric Sun stays up almost all day; toward the Antarctic Circle it barely rises.";
+    if (dec < -18) return "Southern latitudes get the long day. Toward the Antarctic Circle the geometric Sun stays up almost all day; toward the Arctic Circle it barely rises.";
+    if (dec > 0) return "The north is tipped toward the Sun, so days run longer as you go north and shorter as you go south — a milder split than at the June solstice.";
+    return "The south is tipped toward the Sun, so days run longer as you go south and shorter as you go north — a milder split than at the December solstice.";
+  }
 
   function readInitial(){
     var q = new URLSearchParams(location.search).get("doy");
@@ -320,7 +416,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     return clamp(n, 1, 365);
   }
 
-  var state = {day: readInitial()};
+  var state = {day: readInitial(), lat: 37};
 
   function syncUrl(){
     var url = new URL(location.href);
@@ -352,6 +448,119 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     });
     var label = "Earth on a schematic orbit for " + parts.month + " " + parts.date + ". Northern " + nh.toLowerCase() + ", Southern " + sh.toLowerCase() + ". Axis tilt stays about 23.4 degrees and does not flip.";
     canvas.setAttribute("aria-label", label);
+    updateDaylen();
+  }
+
+  function updateDaylen(){
+    var day = state.day;
+    var lat = state.lat;
+    var parts = splitDay(day);
+    var dec = declination(day);
+    var info = daylight(lat, dec);
+    var phrase = dayLengthPhrase(info, lat);
+    var hours = formatHours(info);
+    document.getElementById("dl-hours").textContent = hours;
+    document.getElementById("dl-phrase").textContent = phrase;
+    document.getElementById("dl-when").textContent = parts.month + " " + parts.date + " · " + latLabel(lat);
+    document.getElementById("dl-why").textContent = dayLengthWhy(dec);
+    document.getElementById("dl-chart-hint").textContent = "Daylight vs latitude · " + decShort(dec);
+    document.getElementById("lat-val").textContent = latLabel(lat);
+    latSlider.value = String(lat);
+    latSlider.setAttribute("aria-valuenow", String(lat));
+    latSlider.setAttribute("aria-valuetext", latSpeech(lat));
+    daylenCanvas.setAttribute("aria-label", "Bar chart of approximate daylight hours from 90 degrees south to 90 degrees north on " + parts.month + " " + parts.date + ". At " + latSpeech(lat) + ", " + hours + ", " + phrase + ".");
+    drawDaylen();
+  }
+
+  function drawDaylen(){
+    var cssW = daylenCanvas.clientWidth || 640;
+    var cssH = Math.round(Math.max(168, Math.min(210, cssW * 0.42)));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    daylenCanvas.style.height = cssH + "px";
+    if (daylenCanvas.width !== Math.round(cssW * dpr) || daylenCanvas.height !== Math.round(cssH * dpr)){
+      daylenCanvas.width = Math.round(cssW * dpr);
+      daylenCanvas.height = Math.round(cssH * dpr);
+    }
+    daylenCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    daylenCtx.clearRect(0, 0, cssW, cssH);
+
+    var padL = 32;
+    var padR = 16;
+    var padT = 12;
+    var padB = 26;
+    var plotW = Math.max(10, cssW - padL - padR);
+    var plotH = Math.max(10, cssH - padT - padB);
+    var dec = declination(state.day);
+    var y12 = padT + plotH * 0.5;
+    var base = padT + plotH;
+
+    daylenCtx.strokeStyle = cssVar("--line", "#2c303a");
+    daylenCtx.lineWidth = 1;
+    daylenCtx.beginPath();
+    daylenCtx.moveTo(padL, padT);
+    daylenCtx.lineTo(padL, base);
+    daylenCtx.lineTo(padL + plotW, base);
+    daylenCtx.stroke();
+
+    daylenCtx.strokeStyle = cssVar("--accent", "#c8b48a");
+    daylenCtx.globalAlpha = 0.55;
+    daylenCtx.setLineDash([3, 3]);
+    daylenCtx.beginPath();
+    daylenCtx.moveTo(padL, y12);
+    daylenCtx.lineTo(padL + plotW, y12);
+    daylenCtx.stroke();
+    daylenCtx.setLineDash([]);
+    daylenCtx.globalAlpha = 1;
+
+    var samples = [];
+    for (var lat = -90; lat <= 90; lat += 5) samples.push(lat);
+    var slot = plotW / samples.length;
+    var barW = Math.max(2, slot * 0.62);
+    function xCenter(lat){
+      return padL + ((lat + 90) / 180) * (plotW - slot) + slot / 2;
+    }
+    var nearest = clamp(Math.round(state.lat / 5) * 5, -90, 90);
+    samples.forEach(function(lat){
+      var info = daylight(lat, dec);
+      var bh = (info.hours / 24) * plotH;
+      if (bh < 0.5) return;
+      var x = xCenter(lat) - barW / 2;
+      var y = base - bh;
+      var selected = lat === nearest;
+      daylenCtx.globalAlpha = selected ? 1 : 0.72;
+      daylenCtx.fillStyle = selected ? cssVar("--accent", "#c8b48a") : cssVar("--ink-soft", "#9b9a96");
+      daylenCtx.fillRect(x, y, barW, bh);
+    });
+    daylenCtx.globalAlpha = 1;
+
+    var mx = xCenter(state.lat);
+    var sel = daylight(state.lat, dec);
+    var my = base - (sel.hours / 24) * plotH;
+    daylenCtx.strokeStyle = cssVar("--accent", "#c8b48a");
+    daylenCtx.lineWidth = 1.25;
+    daylenCtx.beginPath();
+    daylenCtx.moveTo(mx, padT);
+    daylenCtx.lineTo(mx, base);
+    daylenCtx.stroke();
+    daylenCtx.fillStyle = cssVar("--base-2", "#14161c");
+    daylenCtx.beginPath();
+    daylenCtx.arc(mx, my, 4.5, 0, Math.PI * 2);
+    daylenCtx.fill();
+    daylenCtx.lineWidth = 1.5;
+    daylenCtx.stroke();
+
+    daylenCtx.fillStyle = cssVar("--muted", "#63666e");
+    daylenCtx.font = "10px IBM Plex Mono, monospace";
+    daylenCtx.textBaseline = "middle";
+    daylenCtx.textAlign = "right";
+    daylenCtx.fillText("24", padL - 6, padT + 1);
+    daylenCtx.fillText("12", padL - 6, y12);
+    daylenCtx.fillText("0", padL - 6, base);
+    daylenCtx.textAlign = "center";
+    daylenCtx.textBaseline = "top";
+    daylenCtx.fillText("90° S", padL + 8, base + 8);
+    daylenCtx.fillText("Eq", padL + plotW / 2, base + 8);
+    daylenCtx.fillText("90° N", padL + plotW - 10, base + 8);
   }
 
   function setDay(day, push){
@@ -627,6 +836,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
       paintTheme();
       draw();
+      drawDaylen();
     });
   });
   paintTheme();
@@ -642,11 +852,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   document.getElementById("btn-today").addEventListener("click", function(){
     setDay(dayOfYear(new Date()), true);
   });
+  latSlider.addEventListener("input", function(){
+    state.lat = clamp(parseInt(latSlider.value, 10), -90, 90);
+    updateDaylen();
+  });
 
   var resizeTimer = 0;
   window.addEventListener("resize", function(){
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(draw, 60);
+    resizeTimer = setTimeout(function(){
+      draw();
+      drawDaylen();
+    }, 60);
   });
 
   updateReadout();
