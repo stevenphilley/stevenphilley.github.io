@@ -5,8 +5,9 @@
   var catalog = null;
   var materials = null;
   var groups = null;
-  var selected = "pure-ferrite";
+  var selected = "pure_ferrite";
   var query = "";
+  var tier = "all";
 
   var listEl = document.getElementById("mineral-list");
   var detailEl = document.getElementById("detail");
@@ -55,12 +56,13 @@
     var inputs = (recipe.inputs || []).map(function (part) {
       return chip(part, currentId);
     }).join('<span class="op">+</span>');
-    var output = chip(recipe.output, currentId);
+    var output = chip(recipe.out, currentId);
     var note = recipe.note ? '<p class="rx-note">' + esc(recipe.note) + "</p>" : "";
+    var expansion = recipe.expansion ? '<span class="tag exp">Expansion</span>' : "";
     return (
       '<article class="rx">' +
-      '<header class="rx-head"><h3>' + esc(recipe.name) + "</h3>" +
-      '<span class="tag">' + esc(NmsRefine.refinerLabel(recipe)) + "</span></header>" +
+      '<header class="rx-head"><h3>' + esc(recipe.name) + expansion + "</h3>" +
+      '<span class="tag">' + esc(NmsRefine.slotLabel(recipe)) + "</span></header>" +
       '<p class="ratio">' + inputs + '<span class="op arr" aria-hidden="true">→</span>' + output + "</p>" +
       note +
       "</article>"
@@ -85,7 +87,7 @@
     var html = "";
     var shown = 0;
     (catalog.groups || []).forEach(function (group) {
-      var items = (catalog.materials || []).filter(function (material) {
+      var items = (catalog.nodes || []).filter(function (material) {
         return material.group === group.id && matches(material, query);
       });
       if (!items.length) return;
@@ -120,9 +122,12 @@
       '<span class="sym-lg">' + esc(material.symbol || "") + "</span></div>" +
       '<p class="blurb">' + esc(material.blurb || "") + "</p>" +
       '<div class="split">' +
-      section("Converts from", "from-h", from, "Nothing in this set refines into " + material.name + ".", material.id) +
-      section("Converts to", "to-h", to, material.name + " is not an input in this set.", material.id) +
-      "</div>";
+      section("Made from", "from-h", from, "Nothing in this set refines into " + material.name + " at this tier.", material.id) +
+      section("Converts to", "to-h", to, material.name + " is not an input in this set at this tier.", material.id) +
+      "</div>" +
+      (touchesExpansion(material.id)
+        ? '<p class="rx-note">Chromatic Expansion can be paired with Extract Chromatic Material and repeated. The ratio is listed. This page does not walk through multiplying a stock.</p>'
+        : "");
     var countFrom = document.getElementById("m-from");
     var countTo = document.getElementById("m-to");
     if (countFrom) countFrom.textContent = String(from.length);
@@ -263,9 +268,23 @@
     graphEl.setAttribute("height", String(y + 4));
   }
 
+  function touchesExpansion(id) {
+    return (catalog.edges || []).some(function (edge) {
+      if (edge.name !== "Chromatic Expansion") return false;
+      if (edge.out && edge.out.id === id) return true;
+      return (edge.inputs || []).some(function (input) { return input.id === id; });
+    });
+  }
+
+  function tiered(list) {
+    return NmsRefine.sortEdges(list.filter(function (edge) {
+      return NmsRefine.passesTier(edge, tier);
+    }));
+  }
+
   function render(focusDetail) {
-    var from = NmsRefine.sortRecipes(NmsRefine.producing(catalog, selected));
-    var to = NmsRefine.sortRecipes(NmsRefine.consuming(catalog, selected));
+    var from = tiered(NmsRefine.producing(catalog, selected));
+    var to = tiered(NmsRefine.consuming(catalog, selected));
     var neighbors = NmsRefine.neighborIds(catalog, selected);
     renderList(neighbors);
     renderDetail(from, to);
@@ -277,7 +296,7 @@
   }
 
   function select(id, focusDetail) {
-    if (!materials[id]) id = "pure-ferrite";
+    if (!materials[id]) id = "pure_ferrite";
     selected = id;
     if (history.replaceState) history.replaceState(null, "", "#" + id);
     render(!!focusDetail);
@@ -310,12 +329,25 @@
     });
   }
 
+  var tierEl = document.getElementById("tiers");
+  if (tierEl) {
+    tierEl.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-tier]");
+      if (!button) return;
+      tier = button.getAttribute("data-tier") || "all";
+      [].slice.call(tierEl.querySelectorAll("[data-tier]")).forEach(function (el) {
+        el.setAttribute("aria-pressed", String(el === button));
+      });
+      render(false);
+    });
+  }
+
   window.addEventListener("hashchange", function () {
     var id = (location.hash || "").replace(/^#/, "");
     if (materials[id] && id !== selected) select(id, false);
   });
 
-  fetch("../refine.json", { credentials: "same-origin" })
+  fetch("minerals.json", { credentials: "same-origin" })
     .then(function (response) {
       if (!response.ok) throw new Error("HTTP " + response.status);
       return response.json();
@@ -324,12 +356,12 @@
       var problems = NmsRefine.validate(data);
       if (problems.length) throw new Error(problems[0]);
       catalog = data;
-      materials = NmsRefine.byId(catalog.materials);
+      materials = NmsRefine.byId(catalog.nodes);
       groups = NmsRefine.byId(catalog.groups);
       var matCount = document.getElementById("m-mat");
       var rxCount = document.getElementById("m-rx");
-      if (matCount) matCount.textContent = String(catalog.materials.length);
-      if (rxCount) rxCount.textContent = String(catalog.recipes.length);
+      if (matCount) matCount.textContent = String(catalog.nodes.length);
+      if (rxCount) rxCount.textContent = String(catalog.edges.length);
       var sources = document.getElementById("sources");
       if (sources && catalog.meta && catalog.meta.sources) {
         sources.innerHTML = catalog.meta.sources.map(function (source) {
@@ -337,7 +369,7 @@
         }).join("");
       }
       var hash = (location.hash || "").replace(/^#/, "");
-      selected = materials[hash] ? hash : "pure-ferrite";
+      selected = materials[hash] ? hash : "pure_ferrite";
       if (history.replaceState) history.replaceState(null, "", "#" + selected);
       render(false);
     })
