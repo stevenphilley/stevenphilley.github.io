@@ -7,8 +7,8 @@
   var catalog = null;
   var materials = null;
   var categories = null;
-  var focusId = "pure_ferrite";
-  var anchorId = "pure_ferrite";
+  var focusId = "pure-ferrite";
+  var anchorId = "pure-ferrite";
   var selected = [];
   var query = "";
   var category = "all";
@@ -44,8 +44,7 @@
       material.name,
       material.short,
       material.symbol,
-      material.id.replace(/_/g, " "),
-      material.id.replace(/_/g, "-"),
+      material.id.replace(/[_-]/g, " "),
       material.blurb,
       material.category,
       cat ? cat.label : ""
@@ -70,6 +69,7 @@
     var out = [];
     var seen = Object.create(null);
     (list || []).forEach(function (id) {
+      id = NmsRefine.canonId(id);
       if (!materials[id] || seen[id]) return;
       seen[id] = true;
       out.push(id);
@@ -287,7 +287,7 @@
   }
 
   function setFocus(id, mode) {
-    if (!materials[id]) id = "pure_ferrite";
+    if (!materials[id]) id = "pure-ferrite";
     focusId = id;
     anchorId = id;
     writeAddress();
@@ -513,7 +513,7 @@
     var hash = (location.hash || "").replace(/^#/, "");
     if (materials[share.item]) focusId = share.item;
     else if (materials[hash]) focusId = hash;
-    else if (!materials[focusId]) focusId = "pure_ferrite";
+    else if (!materials[focusId]) focusId = "pure-ferrite";
     anchorId = focusId;
     if (share.pins) pins = cleanIds(share.pins);
     else pins = readPins();
