@@ -69,6 +69,188 @@
     }
   ];
 
+  // Euclid quadrant references. Signal-booster XXXX:YYYY:ZZZZ:SSSS, planet
+  // index 1. Glyphs are derived with glyphsFromSignal, the inverse of the
+  // offsets in analyzeGlyphs. Wiki ":PC" Polaris rows use SSI 0001.
+  // Sources: No Man's Sky Wiki (fandom) NMS Hub, Civilized space, and the
+  // Polaris / civilization pages; Galactic Hub capital context on Miraheze.
+  // Community landmarks move. These are not a star catalog.
+  // Empire of Anomalies is filed under Beta on the NMS Hub directory, but its
+  // capital address and civilization page are Alpha, so it is plotted there.
+  // The Hub capital, HUB1, and Former Hub stay on the Hub layer.
+  var REFERENCES = [
+    {
+      id: "alpha-polaris",
+      label: "Alpha Polaris",
+      quadrant: "alpha",
+      note: "Fade pole · Vedulay Cloud",
+      coords: "0000:007F:0000:0001",
+      galaxy: 0
+    },
+    {
+      id: "amino",
+      label: "Amino Hub",
+      quadrant: "alpha",
+      note: "Ocopad Conflux · Amino Prime",
+      coords: "064A:0082:01B9:0022",
+      galaxy: 0
+    },
+    {
+      id: "qitanian",
+      label: "Qitanian Empire",
+      quadrant: "alpha",
+      note: "Oefergia Boundary · Qitand-Tus",
+      coords: "07FA:0081:07F9:0036",
+      galaxy: 0
+    },
+    {
+      id: "rss",
+      label: "Royal Space Society",
+      quadrant: "alpha",
+      note: "Uekenbe Shallows · Urticalia",
+      coords: "0523:0076:06BF:0141",
+      galaxy: 0
+    },
+    {
+      id: "nmh",
+      label: "No Man's High",
+      quadrant: "alpha",
+      note: "Lahanhar Conflux · Notric-Lis XIII",
+      coords: "014C:0077:06DA:01F2",
+      galaxy: 0
+    },
+    {
+      id: "eoa",
+      label: "Empire of Anomalies",
+      quadrant: "alpha",
+      note: "Domoni Boundary · Uroish-Dubb V. Directory lists Beta; this address is Alpha.",
+      coords: "0478:0078:0225:00AC",
+      galaxy: 0
+    },
+    {
+      id: "beta-polaris",
+      label: "Beta Polaris",
+      quadrant: "beta",
+      note: "Fade pole · Ongyimid Shallows",
+      coords: "0FFE:007F:0000:0001",
+      galaxy: 0
+    },
+    {
+      id: "conjunction",
+      label: "Grand Conjunction",
+      quadrant: "beta",
+      note: "Gwriginhi Conflux · Mestr-Gebo at'Folr",
+      coords: "0CF1:0082:031B:006F",
+      galaxy: 0
+    },
+    {
+      id: "astrocasters",
+      label: "Astrocasters",
+      quadrant: "beta",
+      note: "Elvindr · Binaza",
+      coords: "0FB1:00F1:0001:0026",
+      galaxy: 0
+    },
+    {
+      id: "pnms",
+      label: "Pirates of No Mans Sky",
+      quadrant: "beta",
+      note: "Olatzman Spur · Sentinal Home Planet",
+      coords: "089A:0081:0105:0091",
+      galaxy: 0
+    },
+    {
+      id: "eld",
+      label: "Empire of Eld",
+      quadrant: "beta",
+      note: "Tufinglu Adjunct · Eld Galactic Prime",
+      coords: "0FFC:00FE:04D6:0053",
+      galaxy: 0
+    },
+    {
+      id: "gamma-polaris",
+      label: "Gamma Polaris",
+      quadrant: "gamma",
+      note: "Fade pole · Sea of Siwain",
+      coords: "0000:007F:0FFE:0001",
+      galaxy: 0
+    },
+    {
+      id: "agt",
+      label: "AGT",
+      quadrant: "gamma",
+      note: "Yihelli Quadrant · Firstfall. Embassy SSI 005F is the same region.",
+      coords: "043D:0072:0D44:001C",
+      galaxy: 0
+    },
+    {
+      id: "heian",
+      label: "Heian Empire",
+      quadrant: "gamma",
+      note: "Bibiol Instability · Kyomei",
+      coords: "0442:007A:0DD7:01E7",
+      galaxy: 0
+    },
+    {
+      id: "egr",
+      label: "Euclidean Republic",
+      quadrant: "gamma",
+      note: "Jaelott Band · Kutmoria ER-1",
+      coords: "06AB:0085:0914:01B2",
+      galaxy: 0
+    },
+    {
+      id: "puf",
+      label: "Pioneers of Universal Frontiers",
+      quadrant: "gamma",
+      note: "Midaribe Anomaly · 3rdFTS-PUF",
+      coords: "0262:007D:0B4E:0022",
+      galaxy: 0
+    },
+    {
+      id: "delta-polaris",
+      label: "Delta Polaris",
+      quadrant: "delta",
+      note: "Fade pole · Sea of Onhakitc",
+      coords: "0FFE:007F:0FFE:0001",
+      galaxy: 0
+    },
+    {
+      id: "pirate-hub",
+      label: "Pirate Hub",
+      quadrant: "delta",
+      note: "Lughunh · NMS Hub directory. The civ page leaves coordinates blank.",
+      coords: "0E76:0084:0A72:0055",
+      galaxy: 0
+    },
+    {
+      id: "rsf",
+      label: "Royal Space Federation",
+      quadrant: "delta",
+      note: "Ilmatch Conflux · Primus Capitis",
+      coords: "080B:0080:0804:01D5",
+      galaxy: 0
+    },
+    {
+      id: "bso",
+      label: "Black Star Order",
+      quadrant: "delta",
+      note: "Tejeti Cloud · Rerkungan",
+      coords: "0B15:007C:0AD7:002D",
+      galaxy: 0
+    },
+    {
+      id: "pandora",
+      label: "Pandora's Consortium",
+      quadrant: "delta",
+      note: "Mistiacia Shallows · (PC) Pandora",
+      coords: "0994:0078:0976:019D",
+      galaxy: 0
+    }
+  ];
+
+  var QUADRANT_LABELS = { alpha: "Alpha", beta: "Beta", gamma: "Gamma", delta: "Delta" };
+
   var HG_MAGIC = 0xFEEDA1E5;
   var HG_CHUNK_MAX = 0x80000;
   var SAVE_BYTE_MAX = 48 * 1024 * 1024;
@@ -86,6 +268,34 @@
   function sign8(n) {
     n &= 0xFF;
     return (n & 0x80) ? n - 0x100 : n;
+  }
+
+  function glyphsFromSignal(coords, planet) {
+    var parts = String(coords || "").toUpperCase().trim().split(":");
+    if (parts.length !== 4) throw new Error("Signal-booster coordinates must be XXXX:YYYY:ZZZZ:SSSS.");
+    var sbX = parseInt(parts[0], 16);
+    var sbY = parseInt(parts[1], 16);
+    var sbZ = parseInt(parts[2], 16);
+    var ssi = parseInt(parts[3], 16);
+    if (![sbX, sbY, sbZ, ssi].every(function (n) { return isFinite(n); })) {
+      throw new Error("Signal-booster coordinates are not hex.");
+    }
+    if (!/^[0-9A-F]{4}$/.test(parts[0]) || !/^[0-9A-F]{4}$/.test(parts[1]) ||
+        !/^[0-9A-F]{4}$/.test(parts[2]) || !/^[0-9A-F]{4}$/.test(parts[3])) {
+      throw new Error("Signal-booster coordinates are not hex.");
+    }
+    var p = planet == null ? 1 : (Number(planet) & 0xF);
+    var x = (sbX - 0x7FF) & 0xFFF;
+    var y = (sbY - 0x7F) & 0xFF;
+    var z = (sbZ - 0x7FF) & 0xFFF;
+    return hexPad(p, 1) + hexPad(ssi & 0xFFF, 3) + hexPad(y, 2) + hexPad(z, 3) + hexPad(x, 3);
+  }
+
+  function quadrantOf(voxelX, voxelZ) {
+    if (voxelX < 0 && voxelZ < 0) return "alpha";
+    if (voxelX >= 0 && voxelZ < 0) return "beta";
+    if (voxelX < 0 && voxelZ >= 0) return "gamma";
+    return "delta";
   }
 
   function analyzeGlyphs(glyphs) {
@@ -506,6 +716,37 @@
     });
   }
 
+  function referenceMarks() {
+    var seen = Object.create(null);
+    return REFERENCES.map(function (r) {
+      var glyphs = glyphsFromSignal(r.coords, 1);
+      var info = analyzeGlyphs(glyphs);
+      if (info.coords !== String(r.coords).toUpperCase()) {
+        throw new Error("Reference " + r.id + " did not round-trip.");
+      }
+      if (info.planet !== 1) throw new Error("Reference " + r.id + " is not planet index 1.");
+      if (quadrantOf(info.voxelX, info.voxelZ) !== r.quadrant) {
+        throw new Error("Reference " + r.id + " is not in " + r.quadrant + ".");
+      }
+      if (seen[glyphs]) throw new Error("Duplicate reference glyphs " + glyphs);
+      seen[glyphs] = 1;
+      return {
+        id: r.id,
+        label: r.label,
+        quadrant: r.quadrant,
+        glyphs: glyphs,
+        coords: info.coords,
+        note: r.note || "",
+        galaxy: r.galaxy,
+        planet: info.planet,
+        ssi: info.ssi,
+        voxelX: info.voxelX,
+        voxelY: info.voxelY,
+        voxelZ: info.voxelZ
+      };
+    });
+  }
+
   var MIN_ZOOM = 0.8;
   var MAX_ZOOM = 128;
   // Neighbor spacing (px) of a same-voxel ring when zoom === CLUMP_REF_ZOOM.
@@ -639,17 +880,21 @@
     var mCenter = document.getElementById("m-center");
     var showCenter = document.getElementById("show-center");
     var showHubs = document.getElementById("show-hubs");
+    var showRefs = document.getElementById("show-refs");
     var drop = document.getElementById("drop");
     if (!canvas) return;
 
     var hubs = hubMarks();
+    var refs = referenceMarks();
     var state = {
       planetary: [],
       freighters: [],
       problems: [],
       galaxy: 0,
       selected: null,
+      selectedRef: null,
       hover: null,
+      hoverRef: null,
       filter: "",
       fileName: "",
       source: ""
@@ -864,6 +1109,28 @@
       return off;
     }
 
+    function paintStar(ctx, x, y, r, fill, stroke) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.beginPath();
+      var i;
+      for (i = 0; i < 8; i++) {
+        var rad = i % 2 === 0 ? r : r * 0.38;
+        var ang = -Math.PI / 2 + (i * Math.PI / 4);
+        var px = Math.cos(ang) * rad;
+        var py = Math.sin(ang) * rad;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = 1.25;
+      ctx.strokeStyle = stroke;
+      ctx.stroke();
+      ctx.restore();
+    }
+
     function paintLabel(ctx, text, x, y, color, base) {
       ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
       ctx.textAlign = "left";
@@ -1016,6 +1283,18 @@
         });
       }
 
+      var refLabels = [];
+      var showRef = state.galaxy === 0 && (!showRefs || showRefs.checked);
+      if (showRef) {
+        refs.forEach(function (ref) {
+          var p = project(ref.voxelX, ref.voxelZ, w, h);
+          var on = state.selectedRef === ref.id || state.hoverRef === ref.id;
+          paintStar(ctx, p.x, p.y, on ? 8 : 5.5, c.ink, withAlpha(c.base, 0.92));
+          hits.push({ x: p.x, y: p.y, r: 12, kind: "ref", id: ref.id });
+          if (on) refLabels.push({ text: ref.label, x: p.x + 12, y: p.y - 12 });
+        });
+      }
+
       var bases = visibleBases();
       var groups = Object.create(null);
       var groupKeys = [];
@@ -1069,6 +1348,9 @@
       nameJobs.concat(pickedJobs).forEach(function (job) {
         paintName(ctx, job.text, job.x, job.y, job.off, c.accent, c.base);
       });
+      refLabels.forEach(function (job) {
+        paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
+      });
     }
 
     function esc(s) {
@@ -1082,6 +1364,15 @@
     function hubById(id) {
       for (var i = 0; i < hubs.length; i++) if (hubs[i].id === id) return hubs[i];
       return null;
+    }
+
+    function refById(id) {
+      for (var i = 0; i < refs.length; i++) if (refs[i].id === id) return refs[i];
+      return null;
+    }
+
+    function quadrantName(q) {
+      return QUADRANT_LABELS[q] || q;
     }
 
     function nearestHubLy(b) {
@@ -1117,7 +1408,7 @@
       if (!bases.length) {
         baseList.innerHTML = '<li class="empty">' + (state.fileName
           ? "No planetary bases in this galaxy" + (state.filter ? " match the filter." : ".")
-          : "Load a save to list bases. Euclid Hub marks are already on the map.") + "</li>";
+          : "Load a save to list bases. Euclid Hub marks and quadrant references are already on the map.") + "</li>";
       } else {
         baseList.innerHTML = bases.map(function (b) {
           var on = state.selected === b.id ? "true" : "false";
@@ -1178,11 +1469,15 @@
         showHubs.disabled = state.galaxy !== 0;
         if (state.galaxy !== 0) showHubs.checked = false;
       }
+      if (showRefs) {
+        showRefs.disabled = state.galaxy !== 0;
+        if (state.galaxy !== 0) showRefs.checked = false;
+      }
     }
 
     function summarize() {
       if (!state.fileName) {
-        setStatus("Ready — Euclid schematic with Hub marks. Choose exported JSON or a Steam save. Nothing is uploaded.");
+        setStatus("Ready — Euclid schematic with Hub marks and quadrant references. Choose exported JSON or a Steam save. Nothing is uploaded.");
         return;
       }
       var here = visibleBases().length;
@@ -1197,6 +1492,7 @@
     function refresh() {
       fillGalaxies();
       renderLists();
+      renderRefList();
       draw();
       summarize();
     }
@@ -1208,7 +1504,9 @@
       state.freighters = parsed.freighters;
       state.problems = parsed.problems;
       state.selected = null;
+      state.selectedRef = null;
       state.hover = null;
+      state.hoverRef = null;
       aim = null;
       var counts = Object.create(null);
       parsed.planetary.forEach(function (b) {
@@ -1219,6 +1517,7 @@
       if (!ids.length) state.galaxy = 0;
       else state.galaxy = Number(ids.sort(function (a, b) { return counts[b] - counts[a]; })[0]);
       if (showHubs) showHubs.checked = state.galaxy === 0;
+      if (showRefs) showRefs.checked = state.galaxy === 0;
       resetView();
       refresh();
       if (!parsed.planetary.length && parsed.freighters.length) {
@@ -1231,7 +1530,9 @@
       state.freighters = [];
       state.problems = [];
       state.selected = null;
+      state.selectedRef = null;
       state.hover = null;
+      state.hoverRef = null;
       aim = null;
       state.fileName = "";
       state.source = "";
@@ -1379,12 +1680,14 @@
       if (drag) return;
       var h = hitTest(ev);
       var next = h && h.kind === "base" ? h.id : null;
+      var nextRef = h && h.kind === "ref" ? h.id : null;
       var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
       canvas.style.cursor = h ? "pointer" : "grab";
-      var sameHover = next === state.hover;
+      var sameHover = next === state.hover && nextRef === state.hoverRef;
       var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
       if (sameHover && sameAim) return;
       state.hover = next;
+      state.hoverRef = nextRef;
       aim = nextAim;
       draw();
     });
@@ -1392,8 +1695,9 @@
     if (mapWrap) {
       mapWrap.addEventListener("mouseleave", function () {
         if (drag) return;
-        if (!state.hover && !aim) return;
+        if (!state.hover && !state.hoverRef && !aim) return;
         state.hover = null;
+        state.hoverRef = null;
         aim = null;
         draw();
       });
@@ -1407,10 +1711,22 @@
       if (!h) return;
       if (h.kind === "base") {
         state.selected = state.selected === h.id ? null : h.id;
+        if (state.selected) state.selectedRef = null;
         renderLists();
+        renderRefList();
         draw();
         var btn = baseList && baseList.querySelector('[data-base="' + h.id + '"]');
         if (btn) btn.focus();
+      } else if (h.kind === "ref") {
+        var ref = refById(h.id);
+        state.selectedRef = state.selectedRef === h.id ? null : h.id;
+        if (state.selectedRef) state.selected = null;
+        renderLists();
+        renderRefList();
+        draw();
+        if (ref && state.selectedRef) {
+          setStatus(ref.label + " — " + quadrantName(ref.quadrant) + " — " + (ref.note ? ref.note + " — " : "") + "glyphs " + ref.glyphs + " — " + ref.coords + ". Community landmark, not from your save.");
+        }
       } else if (h.kind === "hub") {
         var hub = hubById(h.id);
         if (hub) setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
@@ -1610,9 +1926,12 @@
           showHubs.disabled = state.galaxy !== 0;
         }
         state.selected = null;
+        state.selectedRef = null;
         state.hover = null;
+        state.hoverRef = null;
         aim = null;
         renderLists();
+        renderRefList();
         draw();
         summarize();
       });
@@ -1621,6 +1940,7 @@
       filterInput.addEventListener("input", function () {
         state.filter = filterInput.value || "";
         state.hover = null;
+        state.hoverRef = null;
         aim = null;
         renderLists();
         draw();
@@ -1628,6 +1948,69 @@
     }
     if (showCenter) showCenter.addEventListener("change", draw);
     if (showHubs) showHubs.addEventListener("change", draw);
+    if (showRefs) showRefs.addEventListener("change", function () {
+      if (showRefs.checked) return draw();
+      state.selectedRef = null;
+      state.hoverRef = null;
+      if (aim && aim.kind === "ref") aim = null;
+      renderRefList();
+      draw();
+    });
+
+    function focusRef(id) {
+      var ref = refById(id);
+      if (!ref) return;
+      if (state.galaxy !== 0) {
+        state.galaxy = 0;
+        if (galaxySel) galaxySel.value = "0";
+        if (showHubs) showHubs.disabled = false;
+        if (showRefs) { showRefs.disabled = false; showRefs.checked = true; }
+      }
+      state.selectedRef = id;
+      state.selected = null;
+      state.hover = null;
+      state.hoverRef = null;
+      var size = canvasSize();
+      lastSize = size;
+      var framed = frameOf(size.w, size.h);
+      var pan = panToMarker(ref.voxelX, ref.voxelZ, 0, 1, view.zoom, framed, size.w / 2, size.h / 2);
+      view.panX = pan.panX;
+      view.panY = pan.panY;
+      clampPan();
+      aim = { x: size.w / 2, y: size.h / 2, kind: "ref", id: id };
+      setStatus(ref.label + " — " + quadrantName(ref.quadrant) + " — " + (ref.note ? ref.note + " — " : "") + "glyphs " + ref.glyphs + " — " + ref.coords + ". Community landmark, not from your save.");
+    }
+
+    function renderRefList() {
+      var refList = document.getElementById("ref-list");
+      if (!refList) return;
+      var order = ["alpha", "beta", "gamma", "delta"];
+      var html = [];
+      order.forEach(function (q) {
+        refs.forEach(function (r) {
+          if (r.quadrant !== q) return;
+          var on = state.selectedRef === r.id ? "true" : "false";
+          html.push('<li><button type="button" data-ref="' + esc(r.id) + '" aria-pressed="' + on + '">' +
+            '<span class="q">' + esc(quadrantName(r.quadrant)) + "</span> " +
+            "<strong>" + esc(r.label) + "</strong>" +
+            (r.note ? " — " + esc(r.note) : "") +
+            " — glyphs " + esc(r.glyphs) + " — coords " + esc(r.coords) + "</button></li>");
+        });
+      });
+      refList.innerHTML = html.join("");
+    }
+
+    var refList = document.getElementById("ref-list");
+    if (refList) {
+      refList.addEventListener("click", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-ref]") : null;
+        if (!btn) return;
+        focusRef(btn.getAttribute("data-ref"));
+        renderLists();
+        renderRefList();
+        draw();
+      });
+    }
 
     var hubList = document.getElementById("hub-list");
     if (hubList) {
@@ -1644,7 +2027,9 @@
       state.freighters = [];
       state.problems = [];
       state.selected = null;
+      state.selectedRef = null;
       state.hover = null;
+      state.hoverRef = null;
       aim = null;
       state.filter = "";
       state.fileName = "";
@@ -1653,12 +2038,13 @@
       if (filterInput) filterInput.value = "";
       if (fileInput) fileInput.value = "";
       if (showHubs) { showHubs.checked = true; showHubs.disabled = false; }
+      if (showRefs) { showRefs.checked = true; showRefs.disabled = false; }
       if (showCenter) showCenter.checked = true;
       view.zoom = 1;
       view.panX = 0;
       view.panY = 0;
       refresh();
-      setStatus("Cleared. Euclid Hub marks stay on the map. Nothing was uploaded.");
+      setStatus("Cleared. Euclid Hub marks and quadrant references stay on the map. Nothing was uploaded.");
     });
 
     window.addEventListener("resize", draw);
@@ -1670,12 +2056,16 @@
       }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     }
 
+    renderRefList();
     refresh();
   }
 
   return {
     HUBS: HUBS,
+    REFERENCES: REFERENCES,
     analyzeGlyphs: analyzeGlyphs,
+    glyphsFromSignal: glyphsFromSignal,
+    quadrantOf: quadrantOf,
     decodeGalacticAddress: decodeGalacticAddress,
     decodeAddressField: decodeAddressField,
     quoteGalacticAddresses: quoteGalacticAddresses,
@@ -1683,6 +2073,7 @@
     playerStateOf: playerStateOf,
     looksBinary: looksBinary,
     hubMarks: hubMarks,
+    referenceMarks: referenceMarks,
     lz4BlockDecompress: lz4BlockDecompress,
     decompressHg: decompressHg,
     detectSaveFormat: detectSaveFormat,

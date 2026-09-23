@@ -251,6 +251,41 @@ assert(Math.abs(baseX - cx) < 0.01 && Math.abs(baseY - cy) < 0.01, "framing a ba
 var disk = api.fitView([{ x: -2048, z: -2048 }, { x: 2048, z: 2048 }], frame, { w: 800, h: 500 }, { padVoxels: 0, maxZoom: 14 });
 assert(disk.zoom <= 1.2, "a full-disk fit does not zoom into one corner");
 
+eq(api.glyphsFromSignal("041C:004F:0D89:0205", 2), "2205D058AC1D", "signal booster inverts to the capital glyphs");
+eq(api.analyzeGlyphs(api.glyphsFromSignal("041C:004F:0D89:0205", 2)).coords, "041C:004F:0D89:0205", "capital coords round-trip");
+eq(api.glyphsFromSignal("0000:007F:0000:0001", 1), "100100801801", "Alpha Polaris glyphs use SSI 0001");
+eq(api.quadrantOf(-2047, -2047), "alpha", "negative X and Z is Alpha");
+eq(api.quadrantOf(2047, -2047), "beta", "positive X and negative Z is Beta");
+eq(api.quadrantOf(-2047, 2047), "gamma", "negative X and positive Z is Gamma");
+eq(api.quadrantOf(2047, 2047), "delta", "positive X and Z is Delta");
+
+var refs = api.referenceMarks();
+var refCounts = { alpha: 0, beta: 0, gamma: 0, delta: 0 };
+var refGlyphs = {};
+refs.forEach(function (r) {
+  refCounts[r.quadrant]++;
+  assert(r.planet === 1, r.id + " uses planet index 1");
+  assert(r.glyphs.charAt(0) === "1", r.id + " glyph planet digit is 1");
+  eq(api.analyzeGlyphs(r.glyphs).coords, r.coords, r.id + " glyphs match its signal-booster coords");
+  eq(api.quadrantOf(r.voxelX, r.voxelZ), r.quadrant, r.id + " plots in its quadrant");
+  assert(!refGlyphs[r.glyphs], r.id + " glyphs are unique");
+  refGlyphs[r.glyphs] = 1;
+});
+eq(refCounts, { alpha: 6, beta: 5, gamma: 5, delta: 5 }, "five references in each quadrant, plus Anomalies in Alpha");
+assert(refs.length >= 20 && refs.length <= 22, "about twenty quadrant references");
+["alpha-polaris", "beta-polaris", "gamma-polaris", "delta-polaris", "agt"].forEach(function (id) {
+  assert(refs.some(function (r) { return r.id === id; }), id + " is a reference");
+});
+eq(refs.filter(function (r) { return r.id === "alpha-polaris"; })[0].ssi, 1, "Alpha Polaris SSI is 0001");
+eq(refs.filter(function (r) { return r.id === "agt"; })[0].coords, "043D:0072:0D44:001C", "AGT uses the Yihelli Firstfall address");
+var hubGlyphs = {};
+api.hubMarks().forEach(function (h) { hubGlyphs[h.glyphs] = h.label; });
+refs.forEach(function (r) {
+  assert(!hubGlyphs[r.glyphs], r.label + " is not a second copy of a Hub mark");
+});
+assert(api.hubMarks().length === 3, "Hub capital, HUB1, and Former Hub stay");
+eq(api.hubMarks().map(function (h) { return h.id; }), ["capital", "hub1", "former"], "Hub mark ids are unchanged");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);
