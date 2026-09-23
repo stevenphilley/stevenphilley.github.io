@@ -382,6 +382,8 @@
       var button = event.target.closest("[data-cat]");
       if (!button) return;
       category = button.getAttribute("data-cat") || "all";
+      query = "";
+      if (filterEl) filterEl.value = "";
       render(false);
     });
   }
