@@ -506,6 +506,77 @@
     });
   }
 
+  var MIN_ZOOM = 0.8;
+  var MAX_ZOOM = 32;
+
+  function clampZoom(z) {
+    if (!isFinite(z) || z <= 0) return 1;
+    return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+  }
+
+  function frameOf(w, h) {
+    var rx = Math.min(w, h * 1.35) * 0.42;
+    var ry = rx * 0.72;
+    if (ry > h * 0.40) {
+      ry = h * 0.40;
+      rx = ry / 0.72;
+    }
+    return { cx: w / 2, cy: h / 2, rx: rx, ry: ry };
+  }
+
+  function zoomAbout(view, sx, sy, cx, cy, factor) {
+    var zoom = view.zoom > 0 ? view.zoom : 1;
+    var next = clampZoom(zoom * factor);
+    var wx = (sx - cx - view.panX) / zoom;
+    var wy = (sy - cy - view.panY) / zoom;
+    return {
+      zoom: next,
+      panX: sx - cx - wx * next,
+      panY: sy - cy - wy * next
+    };
+  }
+
+  function fitView(points, frame, size, opts) {
+    opts = opts || {};
+    var pad = opts.padVoxels == null ? 160 : opts.padVoxels;
+    var minZoom = opts.minZoom == null ? MIN_ZOOM : opts.minZoom;
+    var maxZoom = opts.maxZoom == null ? MAX_ZOOM : opts.maxZoom;
+    var list = [];
+    (points || []).forEach(function (p) {
+      if (!p) return;
+      var x = p.x != null ? p.x : p.voxelX;
+      var z = p.z != null ? p.z : p.voxelZ;
+      if (!isFinite(x) || !isFinite(z)) return;
+      list.push({ x: x, z: z });
+    });
+    if (!list.length) list.push({ x: 0, z: 0 });
+    var minX = Infinity;
+    var maxX = -Infinity;
+    var minZ = Infinity;
+    var maxZ = -Infinity;
+    list.forEach(function (p) {
+      if (p.x < minX) minX = p.x;
+      if (p.x > maxX) maxX = p.x;
+      if (p.z < minZ) minZ = p.z;
+      if (p.z > maxZ) maxZ = p.z;
+    });
+    minX -= pad;
+    maxX += pad;
+    minZ -= pad;
+    maxZ += pad;
+    var spanX = Math.max(8, ((maxX - minX) / 2048) * frame.rx);
+    var spanY = Math.max(8, ((maxZ - minZ) / 2048) * frame.ry);
+    var zoom = clampZoom(Math.min((size.w * 0.72) / spanX, (size.h * 0.66) / spanY));
+    zoom = clampZoom(Math.max(minZoom, Math.min(maxZoom, zoom)));
+    var midX = (minX + maxX) / 2;
+    var midZ = (minZ + maxZ) / 2;
+    return {
+      zoom: zoom,
+      panX: -(midX / 2048) * frame.rx * zoom,
+      panY: (midZ / 2048) * frame.ry * zoom
+    };
+  }
+
   function mount() {
     var canvas = document.getElementById("map");
     var fileInput = document.getElementById("file");
@@ -539,6 +610,8 @@
     };
     var hits = [];
     var starCache = null;
+    var view = { zoom: 1, panX: 0, panY: 0 };
+    var lastSize = { w: 640, h: 480 };
 
     function setStatus(msg) {
       if (statusEl) statusEl.textContent = msg || "";
@@ -583,24 +656,80 @@
       };
     }
 
+    function canvasSize() {
+      var rect = canvas.getBoundingClientRect();
+      return {
+        w: Math.max(280, Math.round(rect.width || canvas.clientWidth || 640)),
+        h: Math.max(260, Math.round(rect.height || 480))
+      };
+    }
+
     function project(vx, vz, w, h) {
-      var cx = w / 2;
-      var cy = h / 2;
-      var rx = Math.min(w, h * 1.35) * 0.42;
-      var ry = rx * 0.72;
-      if (ry > h * 0.40) {
-        ry = h * 0.40;
-        rx = ry / 0.72;
-      }
+      var frame = frameOf(w, h);
       var R = 2048;
       return {
-        x: cx + (vx / R) * rx,
-        y: cy - (vz / R) * ry,
-        cx: cx,
-        cy: cy,
-        rx: rx,
-        ry: ry
+        x: frame.cx + view.panX + (vx / R) * frame.rx * view.zoom,
+        y: frame.cy + view.panY - (vz / R) * frame.ry * view.zoom,
+        cx: frame.cx,
+        cy: frame.cy,
+        rx: frame.rx,
+        ry: frame.ry
       };
+    }
+
+    function clampPan() {
+      var frame = frameOf(lastSize.w, lastSize.h);
+      var maxX = frame.rx * view.zoom + lastSize.w * 0.35;
+      var maxY = frame.ry * view.zoom + lastSize.h * 0.35;
+      view.panX = Math.max(-maxX, Math.min(maxX, view.panX));
+      view.panY = Math.max(-maxY, Math.min(maxY, view.panY));
+    }
+
+    function zoomBy(factor, sx, sy) {
+      var size = lastSize.w ? lastSize : canvasSize();
+      var next = zoomAbout(view, sx, sy, size.w / 2, size.h / 2, factor);
+      view.zoom = next.zoom;
+      view.panX = next.panX;
+      view.panY = next.panY;
+      clampPan();
+    }
+
+    function applyFit(points, opts) {
+      var size = canvasSize();
+      lastSize = size;
+      var next = fitView(points, frameOf(size.w, size.h), size, opts);
+      view.zoom = next.zoom;
+      view.panX = next.panX;
+      view.panY = next.panY;
+      clampPan();
+    }
+
+    function resetView() {
+      var pts = [];
+      visibleBases().forEach(function (b) { pts.push({ x: b.voxelX, z: b.voxelZ }); });
+      if (!pts.length) {
+        view.zoom = 1;
+        view.panX = 0;
+        view.panY = 0;
+        return;
+      }
+      if (state.galaxy === 0 && (!showHubs || showHubs.checked)) {
+        hubs.forEach(function (h) { pts.push({ x: h.voxelX, z: h.voxelZ }); });
+      }
+      applyFit(pts, { padVoxels: 160, minZoom: 0.8, maxZoom: 14 });
+    }
+
+    function focusCluster(id) {
+      var b = null;
+      state.planetary.forEach(function (item) { if (item.id === id) b = item; });
+      if (!b) return;
+      state.selected = id;
+      var mates = visibleBases().filter(function (other) {
+        var dx = other.voxelX - b.voxelX;
+        var dz = other.voxelZ - b.voxelZ;
+        return dx * dx + dz * dz <= 80 * 80;
+      });
+      applyFit(mates.length ? mates : [b], { padVoxels: 70, minZoom: 4, maxZoom: 18 });
     }
 
     function ensureStars(w, h, c) {
@@ -610,7 +739,7 @@
       off.width = w;
       off.height = h;
       var ctx = off.getContext("2d");
-      var frame = project(0, 0, w, h);
+      var frame = frameOf(w, h);
       ctx.fillStyle = c.base;
       ctx.fillRect(0, 0, w, h);
       var glow = ctx.createRadialGradient(frame.cx, frame.cy, frame.ry * 0.08, frame.cx, frame.cy, Math.max(frame.rx, frame.ry));
@@ -695,16 +824,25 @@
     }
 
     function draw() {
-      var rect = canvas.getBoundingClientRect();
+      var size = canvasSize();
+      var w = size.w;
+      var h = size.h;
+      lastSize = size;
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
-      var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
-      var h = Math.max(260, Math.round(rect.height || 480));
       canvas.width = Math.round(w * dpr);
       canvas.height = Math.round(h * dpr);
       var ctx = canvas.getContext("2d");
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       var c = colors();
+      var frame = frameOf(w, h);
+      ctx.fillStyle = c.base;
+      ctx.fillRect(0, 0, w, h);
+      ctx.save();
+      ctx.translate(frame.cx + view.panX, frame.cy + view.panY);
+      ctx.scale(view.zoom, view.zoom);
+      ctx.translate(-frame.cx, -frame.cy);
       ctx.drawImage(ensureStars(w, h, c), 0, 0, w, h);
+      ctx.restore();
       hits = [];
 
       if (!showCenter || showCenter.checked) {
@@ -770,8 +908,9 @@
         var jy = 0;
         if (group.length > 1) {
           var ang = (idx / group.length) * Math.PI * 2;
-          jx = Math.cos(ang) * 8;
-          jy = Math.sin(ang) * 8;
+          var spread = Math.min(28, 7 * Math.sqrt(view.zoom));
+          jx = Math.cos(ang) * spread;
+          jy = Math.sin(ang) * spread;
         }
         var x = p.x + jx;
         var y = p.y + jy;
@@ -935,6 +1074,7 @@
       if (!ids.length) state.galaxy = 0;
       else state.galaxy = Number(ids.sort(function (a, b) { return counts[b] - counts[a]; })[0]);
       if (showHubs) showHubs.checked = state.galaxy === 0;
+      resetView();
       refresh();
       if (!parsed.planetary.length && parsed.freighters.length) {
         setStatus("Only freighter bases were found. They stay off the map and are listed separately. Nothing was uploaded.");
@@ -1047,17 +1187,35 @@
       return null;
     }
 
+    var pointers = {};
+    var drag = null;
+    var suppressClick = false;
+
+    function localPoint(ev) {
+      var rect = canvas.getBoundingClientRect();
+      return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+    }
+
     canvas.addEventListener("mousemove", function (ev) {
+      if (drag) return;
       var h = hitTest(ev);
-      state.hover = h && h.kind === "base" ? h.id : null;
-      canvas.style.cursor = h ? "pointer" : "crosshair";
+      var next = h && h.kind === "base" ? h.id : null;
+      canvas.style.cursor = h ? "pointer" : "grab";
+      if (next === state.hover) return;
+      state.hover = next;
       draw();
     });
     canvas.addEventListener("mouseleave", function () {
+      if (drag) return;
+      if (!state.hover) return;
       state.hover = null;
       draw();
     });
     canvas.addEventListener("click", function (ev) {
+      if (suppressClick) {
+        suppressClick = false;
+        return;
+      }
       var h = hitTest(ev);
       if (!h) return;
       if (h.kind === "base") {
@@ -1073,17 +1231,152 @@
         setStatus("Galactic center — voxel 0, 0, 0 on this schematic. Not a catalog star.");
       }
     });
+    canvas.addEventListener("dblclick", function (ev) {
+      var h = hitTest(ev);
+      if (!h || h.kind !== "base") return;
+      ev.preventDefault();
+      focusCluster(h.id);
+      renderLists();
+      draw();
+      var btn = baseList && baseList.querySelector('[data-base="' + h.id + '"]');
+      if (btn) btn.scrollIntoView({ block: "nearest" });
+    });
+    canvas.addEventListener("wheel", function (ev) {
+      ev.preventDefault();
+      var p = localPoint(ev);
+      var factor = ev.deltaY < 0 ? 1.12 : 1 / 1.12;
+      if (ev.deltaMode === 1) factor = ev.deltaY < 0 ? 1.2 : 1 / 1.2;
+      var next = zoomAbout(view, p.x, p.y, lastSize.w / 2, lastSize.h / 2, factor);
+      view.zoom = next.zoom;
+      view.panX = next.panX;
+      view.panY = next.panY;
+      clampPan();
+      draw();
+    }, { passive: false });
+    canvas.addEventListener("pointerdown", function (ev) {
+      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      if (canvas.setPointerCapture) {
+        try { canvas.setPointerCapture(ev.pointerId); } catch (err) { /* synthetic pointers */ }
+      }
+      pointers[ev.pointerId] = localPoint(ev);
+      var ids = Object.keys(pointers);
+      if (ids.length >= 2) {
+        var a = pointers[ids[0]];
+        var b = pointers[ids[1]];
+        drag = {
+          pinch: true,
+          moved: true,
+          dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+          zoom: view.zoom,
+          panX: view.panX,
+          panY: view.panY,
+          midX: (a.x + b.x) / 2,
+          midY: (a.y + b.y) / 2
+        };
+      } else {
+        var p = pointers[ids[0]];
+        drag = { pinch: false, moved: false, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
+      }
+    });
+    canvas.addEventListener("pointermove", function (ev) {
+      if (!pointers[ev.pointerId]) return;
+      pointers[ev.pointerId] = localPoint(ev);
+      var ids = Object.keys(pointers);
+      if (ids.length >= 2) {
+        var a = pointers[ids[0]];
+        var b = pointers[ids[1]];
+        if (!drag || !drag.pinch) {
+          drag = {
+            pinch: true,
+            moved: true,
+            dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
+            zoom: view.zoom,
+            panX: view.panX,
+            panY: view.panY,
+            midX: (a.x + b.x) / 2,
+            midY: (a.y + b.y) / 2
+          };
+        }
+        var dist = Math.max(1, Math.hypot(a.x - b.x, a.y - b.y));
+        var midX = (a.x + b.x) / 2;
+        var midY = (a.y + b.y) / 2;
+        var next = zoomAbout(
+          { zoom: drag.zoom, panX: drag.panX, panY: drag.panY },
+          drag.midX, drag.midY, lastSize.w / 2, lastSize.h / 2, dist / drag.dist
+        );
+        view.zoom = next.zoom;
+        view.panX = next.panX + (midX - drag.midX);
+        view.panY = next.panY + (midY - drag.midY);
+        clampPan();
+        drag.moved = true;
+        draw();
+        return;
+      }
+      if (!drag || drag.pinch) return;
+      var p = pointers[ids[0]];
+      var dx = p.x - drag.x;
+      var dy = p.y - drag.y;
+      if (dx * dx + dy * dy > 16) drag.moved = true;
+      if (!drag.moved) return;
+      view.panX = drag.panX + dx;
+      view.panY = drag.panY + dy;
+      clampPan();
+      canvas.classList.add("panning");
+      canvas.style.cursor = "grabbing";
+      draw();
+    });
+    function endPointer(ev) {
+      delete pointers[ev.pointerId];
+      var ids = Object.keys(pointers);
+      if (!ids.length) {
+        if (drag && drag.moved) suppressClick = true;
+        drag = null;
+        canvas.classList.remove("panning");
+        canvas.style.cursor = "grab";
+        return;
+      }
+      var p = pointers[ids[0]];
+      drag = { pinch: false, moved: true, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
+    }
+    canvas.addEventListener("pointerup", endPointer);
+    canvas.addEventListener("pointercancel", endPointer);
+    canvas.addEventListener("keydown", function (ev) {
+      var key = ev.key;
+      if (key === "+" || key === "=") zoomBy(1.25, lastSize.w / 2, lastSize.h / 2);
+      else if (key === "-" || key === "_") zoomBy(1 / 1.25, lastSize.w / 2, lastSize.h / 2);
+      else if (key === "0" || key === "Home") resetView();
+      else if (key === "ArrowLeft") view.panX += 40;
+      else if (key === "ArrowRight") view.panX -= 40;
+      else if (key === "ArrowUp") view.panY += 40;
+      else if (key === "ArrowDown") view.panY -= 40;
+      else return;
+      ev.preventDefault();
+      clampPan();
+      draw();
+    });
 
     if (baseList) {
       baseList.addEventListener("click", function (ev) {
         var btn = ev.target.closest ? ev.target.closest("[data-base]") : null;
         if (!btn) return;
         var id = btn.getAttribute("data-base");
-        state.selected = state.selected === id ? null : id;
+        focusCluster(id);
         renderLists();
         draw();
       });
     }
+
+    function bindZoom(id, fn) {
+      var btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        fn();
+        draw();
+      });
+    }
+    bindZoom("zoom-in", function () { zoomBy(1.25, lastSize.w / 2, lastSize.h / 2); });
+    bindZoom("zoom-out", function () { zoomBy(1 / 1.25, lastSize.w / 2, lastSize.h / 2); });
+    bindZoom("zoom-reset", function () { resetView(); });
 
     if (fileInput) {
       fileInput.addEventListener("change", function () {
@@ -1158,6 +1451,9 @@
       if (fileInput) fileInput.value = "";
       if (showHubs) { showHubs.checked = true; showHubs.disabled = false; }
       if (showCenter) showCenter.checked = true;
+      view.zoom = 1;
+      view.panX = 0;
+      view.panY = 0;
       refresh();
       setStatus("Cleared. Euclid Hub marks stay on the map. Nothing was uploaded.");
     });
@@ -1192,6 +1488,10 @@
     mappingFromJson: mappingFromJson,
     unmapTree: unmapTree,
     needsUnmap: needsUnmap,
+    clampZoom: clampZoom,
+    zoomAbout: zoomAbout,
+    fitView: fitView,
+    frameOf: frameOf,
     mount: mount
   };
 });
