@@ -1,8 +1,6 @@
-/*! tree.js — moodboard for the No Man's Sky tech tree. */
+/*! tree.js — edge explorer for the shared No Man's Sky graph. */
 (function () {
   "use strict";
-
-  var PIN_KEY = "nms-tech-pins";
 
   var catalog = null;
   var materials = null;
@@ -11,14 +9,12 @@
   var query = "";
   var tier = "all";
   var category = "all";
-  var pins = [];
 
-  var boardEl = document.getElementById("board");
+  var listEl = document.getElementById("list");
   var detailEl = document.getElementById("detail");
   var graphEl = document.getElementById("graph");
   var filterEl = document.getElementById("q");
   var statusEl = document.getElementById("status");
-  var trayEl = document.getElementById("tray");
   var catsEl = document.getElementById("cats");
 
   function esc(value) {
@@ -58,46 +54,6 @@
   function visible(material) {
     if (category !== "all" && material.category !== category) return false;
     return matches(material, query);
-  }
-
-  function cleanPins(list) {
-    var out = [];
-    var seen = Object.create(null);
-    (list || []).forEach(function (id) {
-      if (!materials[id] || seen[id]) return;
-      seen[id] = true;
-      out.push(id);
-    });
-    return out;
-  }
-
-  function readStoredPins() {
-    try {
-      var raw = localStorage.getItem(PIN_KEY);
-      if (!raw) return [];
-      var parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function writeStoredPins() {
-    try {
-      localStorage.setItem(PIN_KEY, JSON.stringify(pins));
-    } catch (e) {}
-  }
-
-  function writeAddress() {
-    if (!history.replaceState) return;
-    var params = new URLSearchParams(location.search);
-    var extra = [];
-    ["theme", "sp_theme"].forEach(function (key) {
-      if (params.has(key)) extra.push(key + "=" + encodeURIComponent(params.get(key)));
-    });
-    var next = NmsRefine.formatShare(selected, pins);
-    if (extra.length) next += (next ? "&" : "?") + extra.join("&");
-    history.replaceState(null, "", location.pathname + next);
   }
 
   function chip(part, currentId) {
@@ -146,31 +102,9 @@
     catsEl.innerHTML = html;
   }
 
-  function renderTray() {
-    if (!trayEl) return;
-    if (!pins.length) {
-      trayEl.innerHTML = '<p class="tray-empty"><span class="tray-label">Pinned</span> Nothing pinned. Pin a tile to keep a short list in this browser.</p>';
-      return;
-    }
-    var html = '<div class="tray-row"><span class="tray-label">Pinned · ' + pins.length + "</span>";
-    pins.forEach(function (id) {
-      var material = materials[id];
-      if (!material) return;
-      var on = id === selected ? " is-on" : "";
-      html += '<span class="chip' + on + '">' +
-        '<button type="button" class="go" data-go="' + esc(id) + '"><span class="sym">' + esc(material.symbol || "") + "</span> " + esc(material.name) + "</button>" +
-        '<button type="button" class="x" data-unpin="' + esc(id) + '" aria-label="Unpin ' + esc(material.name) + '">×</button>' +
-        "</span>";
-    });
-    html += "</div>";
-    trayEl.innerHTML = html;
-  }
-
-  function renderBoard(neighbors) {
+  function renderList(neighbors) {
     var near = Object.create(null);
     neighbors.forEach(function (id) { near[id] = true; });
-    var pinned = Object.create(null);
-    pins.forEach(function (id) { pinned[id] = true; });
     var html = "";
     var shown = 0;
     (catalog.categories || []).forEach(function (cat) {
@@ -179,28 +113,19 @@
       });
       if (!items.length) return;
       shown += items.length;
-      html += '<section class="board-group" aria-labelledby="cat-' + esc(cat.id) + '">' +
-        '<h2 id="cat-' + esc(cat.id) + '"><i class="swatch cat-' + esc(cat.id) + '" aria-hidden="true"></i>' + esc(cat.label) + "</h2>" +
-        '<div class="board">';
+      html += '<section class="list-group" aria-labelledby="cat-' + esc(cat.id) + '">' +
+        '<h2 id="cat-' + esc(cat.id) + '"><i class="swatch cat-' + esc(cat.id) + '" aria-hidden="true"></i>' + esc(cat.label) + "</h2>";
       items.forEach(function (material) {
         var cls = material.id === selected ? " is-on" : (near[material.id] ? " is-near" : "");
-        var pressed = material.id === selected ? "true" : "false";
-        var pinPressed = pinned[material.id] ? "true" : "false";
-        var pinLabel = (pinned[material.id] ? "Unpin " : "Pin ") + material.name;
-        html += '<div class="cell">' +
-          '<button type="button" class="tile' + cls + '" data-id="' + esc(material.id) + '" data-cat="' + esc(material.category) + '" aria-pressed="' + pressed + '">' +
+        html += '<button type="button" class="row' + cls + '" data-id="' + esc(material.id) + '" aria-pressed="' +
+          (material.id === selected ? "true" : "false") + '">' +
           '<span class="sym">' + esc(material.symbol || "") + "</span>" +
-          '<span class="nm">' + esc(material.name) + "</span>" +
-          '<span class="catlab">' + esc(cat.label) + "</span>" +
-          "</button>" +
-          '<button type="button" class="pin" data-pin="' + esc(material.id) + '" aria-pressed="' + pinPressed + '" aria-label="' + esc(pinLabel) + '">' +
-          (pinned[material.id] ? "Pinned" : "Pin") + "</button>" +
-          "</div>";
+          '<span class="nm">' + esc(material.name) + "</span></button>";
       });
-      html += "</div></section>";
+      html += "</section>";
     });
     if (!shown) html = '<p class="empty">No item matches that.</p>';
-    boardEl.innerHTML = html;
+    listEl.innerHTML = html;
   }
 
   function renderDetail(from, to) {
@@ -210,14 +135,12 @@
       return;
     }
     var cat = categories[material.category];
-    var pinned = pins.indexOf(material.id) !== -1;
     detailEl.innerHTML =
       '<p class="kicker">' + esc(cat ? cat.label : "") + " · " + esc(material.kind || "") + "</p>" +
       '<div class="detail-title"><h2 id="detail-h" tabindex="-1">' + esc(material.name) + "</h2>" +
-      '<div class="detail-side"><span class="sym-lg">' + esc(material.symbol || "") + "</span>" +
-      '<button type="button" class="pin-lg" data-pin="' + esc(material.id) + '" aria-pressed="' + (pinned ? "true" : "false") + '">' +
-      (pinned ? "Pinned" : "Pin") + "</button></div></div>" +
+      '<span class="sym-lg">' + esc(material.symbol || "") + "</span></div>" +
       '<p class="blurb">' + esc(material.blurb || "") + "</p>" +
+      '<p class="rx-note"><a href="../moodboard/?item=' + encodeURIComponent(material.id) + '">Open on the moodboard</a></p>' +
       '<div class="split">' +
       section("Made from", "from-h", from, "Nothing in this set makes " + material.name + " at this tier.", material.id) +
       section("Converts to", "to-h", to, material.name + " is not spent by anything in this set at this tier.", material.id) +
@@ -232,8 +155,7 @@
     if (statusEl) {
       var shown = (catalog.nodes || []).filter(visible).length;
       statusEl.textContent = material.name + " — " + from.length + " way" + (from.length === 1 ? "" : "s") +
-        " in, " + to.length + " way" + (to.length === 1 ? "" : "s") + " out. " +
-        pins.length + " pinned. " + shown + " on the board.";
+        " in, " + to.length + " way" + (to.length === 1 ? "" : "s") + " out. " + shown + " in the list.";
     }
   }
 
@@ -385,17 +307,16 @@
     var to = tiered(NmsRefine.consuming(catalog, selected));
     var neighbors = NmsRefine.neighborIds(catalog, selected);
     renderCats();
-    renderTray();
-    renderBoard(neighbors);
+    renderList(neighbors);
     renderDetail(from, to);
     renderGraph(neighbors);
     if (focus === "detail") {
       var heading = document.getElementById("detail-h");
       if (heading) heading.focus();
     }
-    if (focus === "tile") {
-      var tile = boardEl.querySelector('[data-id="' + selected + '"]');
-      if (tile) tile.focus();
+    if (focus === "row") {
+      var row = listEl.querySelector('[data-id="' + selected + '"]');
+      if (row) row.focus();
     }
     if (focus === "view" && window.matchMedia && window.matchMedia("(max-width: 800px)").matches) {
       var panel = document.querySelector(".detail-col") || detailEl;
@@ -414,25 +335,19 @@
     render(focus || false);
   }
 
-  function pin(id) {
-    if (!materials[id]) return;
-    pins = NmsRefine.togglePin(pins, id);
-    writeStoredPins();
-    writeAddress();
-    render(false);
+  function writeAddress() {
+    if (!history.replaceState) return;
+    var params = new URLSearchParams(location.search);
+    var extra = [];
+    ["theme", "sp_theme"].forEach(function (key) {
+      if (params.has(key)) extra.push(key + "=" + encodeURIComponent(params.get(key)));
+    });
+    var next = NmsRefine.formatShare(selected, null);
+    if (extra.length) next += (next ? "&" : "?") + extra.join("&");
+    history.replaceState(null, "", location.pathname + next);
   }
 
   function onClick(event) {
-    var unpin = event.target.closest("[data-unpin]");
-    if (unpin) {
-      pin(unpin.getAttribute("data-unpin"));
-      return;
-    }
-    var pinBtn = event.target.closest("[data-pin]");
-    if (pinBtn) {
-      pin(pinBtn.getAttribute("data-pin"));
-      return;
-    }
     var go = event.target.closest("[data-go]");
     if (go) {
       query = "";
@@ -440,18 +355,17 @@
       select(go.getAttribute("data-go"), "detail");
       return;
     }
-    var tile = event.target.closest(".tile[data-id]");
-    if (!tile || !boardEl.contains(tile)) return;
-    select(tile.getAttribute("data-id"), "view");
+    var row = event.target.closest(".row[data-id]");
+    if (!row || !listEl.contains(row)) return;
+    select(row.getAttribute("data-id"), "view");
     if (window.matchMedia && window.matchMedia("(max-width: 800px)").matches) {
       var heading = document.getElementById("detail-h");
       if (heading) heading.focus({ preventScroll: true });
     }
   }
 
-  boardEl.addEventListener("click", onClick);
+  listEl.addEventListener("click", onClick);
   detailEl.addEventListener("click", onClick);
-  if (trayEl) trayEl.addEventListener("click", onClick);
   if (graphEl) {
     graphEl.addEventListener("click", function (event) {
       var node = event.target.closest("[data-id]");
@@ -515,87 +429,25 @@
       query = filterEl.value.trim().toLowerCase();
       if (query) category = "all";
       render(false);
-      return;
-    }
-    if (event.key === "ArrowRight" || event.key === "ArrowLeft" || event.key === "ArrowDown" || event.key === "ArrowUp") {
-      event.preventDefault();
-      moveBoard(event.key);
     }
   });
 
-  function moveBoard(key) {
-    var tiles = [].slice.call(boardEl.querySelectorAll(".tile"));
-    if (!tiles.length) return;
-    var rows = [];
-    tiles.forEach(function (tile) {
-      var top = tile.getBoundingClientRect().top;
-      var row = null;
-      rows.forEach(function (candidate) {
-        if (Math.abs(candidate.top - top) < 8) row = candidate;
-      });
-      if (!row) {
-        row = { top: top, tiles: [] };
-        rows.push(row);
-      }
-      row.tiles.push(tile);
-    });
-    var r = 0;
-    var c = 0;
-    var found = false;
-    rows.forEach(function (row, ri) {
-      row.tiles.forEach(function (tile, ci) {
-        if (tile.getAttribute("data-id") === selected) {
-          r = ri;
-          c = ci;
-          found = true;
-        }
-      });
-    });
-    if (!found) {
-      select(rows[0].tiles[0].getAttribute("data-id"), "tile");
-      return;
-    }
-    if (key === "ArrowRight") {
-      c += 1;
-      if (c >= rows[r].tiles.length) {
-        r = Math.min(rows.length - 1, r + 1);
-        c = 0;
-      }
-    } else if (key === "ArrowLeft") {
-      c -= 1;
-      if (c < 0) {
-        r = Math.max(0, r - 1);
-        c = rows[r].tiles.length - 1;
-      }
-    } else if (key === "ArrowDown") {
-      r = Math.min(rows.length - 1, r + 1);
-      c = Math.min(c, rows[r].tiles.length - 1);
-    } else if (key === "ArrowUp") {
-      r = Math.max(0, r - 1);
-      c = Math.min(c, rows[r].tiles.length - 1);
-    }
-    select(rows[r].tiles[c].getAttribute("data-id"), "tile");
-  }
-
-  function applyLocation(write) {
+  function applyLocation() {
     var share = NmsRefine.parseShare(location.search);
     var hash = (location.hash || "").replace(/^#/, "");
     if (materials[share.item]) selected = share.item;
     else if (materials[hash]) selected = hash;
     else if (!materials[selected]) selected = "pure_ferrite";
-    if (share.pins) pins = cleanPins(share.pins);
-    else pins = cleanPins(readStoredPins());
-    writeStoredPins();
-    if (write) writeAddress();
+    writeAddress();
     render(false);
   }
 
   window.addEventListener("popstate", function () {
     if (!materials) return;
-    applyLocation(false);
+    applyLocation();
   });
 
-  fetch("minerals.json", { credentials: "same-origin" })
+  fetch("../data/graph-v2.json", { credentials: "same-origin" })
     .then(function (response) {
       if (!response.ok) throw new Error("HTTP " + response.status);
       return response.json();
@@ -616,11 +468,13 @@
           return '<li><a href="' + esc(source.url) + '" rel="noopener">' + esc(source.name) + "</a></li>";
         }).join("");
       }
-      applyLocation(true);
+      var note = document.getElementById("graph-note");
+      if (note && catalog.meta && catalog.meta.disclaimer) note.textContent = catalog.meta.disclaimer;
+      applyLocation();
     })
     .catch(function (err) {
-      if (statusEl) statusEl.textContent = "Could not read the tech tree.";
-      boardEl.innerHTML = '<p class="empty">The recipe file did not load.</p>';
+      if (statusEl) statusEl.textContent = "Could not read the graph.";
+      listEl.innerHTML = '<p class="empty">The graph file did not load.</p>';
       if (typeof console !== "undefined" && console.warn) console.warn(err);
     });
 })();

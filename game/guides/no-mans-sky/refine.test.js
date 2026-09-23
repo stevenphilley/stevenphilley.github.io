@@ -16,9 +16,9 @@ function assert(cond, msg) {
   }
 }
 
-var catalog = JSON.parse(fs.readFileSync(path.join(__dirname, "refine", "minerals.json"), "utf8"));
+var catalog = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "graph-v2.json"), "utf8"));
 var errors = api.validate(catalog);
-assert(errors.length === 0, "minerals.json validates" + (errors.length ? "\n    " + errors.join("\n    ") : ""));
+assert(errors.length === 0, "graph-v2.json validates" + (errors.length ? "\n    " + errors.join("\n    ") : ""));
 
 function has(outId, outQty, inputs, label) {
   var found = api.findEdges(catalog, outId, outQty, inputs);
@@ -64,8 +64,7 @@ assert(loop.name === "Chromatic Expansion" && loop.slots === 2, "expansion is a 
 var names = catalog.edges.map(function (edge) { return edge.name; });
 assert(names[0] === "Extract Metallic Elements", "list opens on Extract Metallic Elements");
 assert(names.indexOf("Chromatic Expansion") !== -1, "chromatic expansion stays in the set");
-var alchemy = has("paraffinium", 2, [{ id: "silver", qty: 1 }, { id: "oxygen", qty: 1 }], "silver mineral alchemy");
-assert(alchemy.name === "Mineral Alchemy" && alchemy.kind === "refine" && alchemy.slots === 2, "alchemy is a two-slot refine");
+assert(!catalog.nodes.some(function (node) { return node.id === "silver" || node.id === "gold" || node.id === "platinum"; }), "asteroid metals stay out");
 
 var made = api.producing(catalog, "pure_ferrite").map(function (edge) { return edge.id; });
 assert(made.indexOf("extract_metallic_elements") !== -1 && made.indexOf("demagnetise_metal") !== -1, "pure ferrite is made from dust and magnetised ferrite");
@@ -74,10 +73,10 @@ assert(used.indexOf("magnetise_metal") !== -1, "pure ferrite converts to magneti
 
 var portable = catalog.edges.filter(function (edge) { return api.passesTier(edge, "1"); });
 var medium = catalog.edges.filter(function (edge) { return api.passesTier(edge, "2"); });
-var crafted = catalog.edges.filter(function (edge) { return api.passesTier(edge, "craft"); });
+var crafted = catalog.edges.filter(function (edge) { return api.passesTier(edge, "inventory"); });
 assert(portable.length && medium.length && crafted.length && portable.length + medium.length + crafted.length === catalog.edges.length, "tier filter covers every edge");
 assert(portable.every(function (edge) { return edge.slots === 1 && edge.kind === "refine"; }), "portable filter is slot 1 refine");
-assert(crafted.every(function (edge) { return edge.kind === "craft" && api.slotLabel(edge) === "Craft"; }), "craft filter is the blueprint badge");
+assert(crafted.every(function (edge) { return edge.kind === "craft" && api.slotLabel(edge) === "Inventory"; }), "inventory filter is the blueprint badge");
 
 has("chlorine", 1, [{ id: "salt", qty: 2 }], "Concentrate Salt");
 has("salt", 2, [{ id: "chlorine", qty: 1 }], "Salt Production");
@@ -93,31 +92,48 @@ has("di_hydrogen", 1, [{ id: "tritium", qty: 5 }], "Tritium Cycling");
 
 has("nitrogen", 1, [{ id: "radon", qty: 3 }], "three radon transfer to nitrogen");
 has("sulphurine", 1, [{ id: "nitrogen", qty: 1 }, { id: "oxygen", qty: 1 }], "oxygen transfers nitrogen to sulphurine");
-has("radon", 1, [{ id: "sulphurine", qty: 1 }, { id: "chromatic_metal", qty: 1 }], "chromatic metal catalyses sulphurine to radon");
-has("platinum", 1, [{ id: "silver", qty: 1 }, { id: "gold", qty: 1 }], "silver and gold transmute to platinum");
+has("radon", 1, [{ id: "sulphurine", qty: 1 }, { id: "oxygen", qty: 1 }], "oxygen transfers sulphurine to radon");
+has("radon", 1, [{ id: "sulphurine", qty: 3 }], "three sulphurine transfer to radon");
 has("carbon", 2, [{ id: "cactus_flesh", qty: 1 }], "cactus burns to carbon");
 has("carbon", 2, [{ id: "star_bulb", qty: 1 }], "star bulb burns to carbon");
 has("star_bulb", 2, [{ id: "star_bulb", qty: 1 }, { id: "paraffinium", qty: 1 }], "paraffinium expands star bulb");
 has("paraffinium", 1, [{ id: "star_bulb", qty: 2 }, { id: "salt", qty: 1 }], "star bulb titrates to paraffinium");
 
 var plating = has("metal_plating", 1, [{ id: "ferrite_dust", qty: 50 }], "Metal Plating");
-assert(plating.kind === "craft" && api.slotLabel(plating) === "Craft", "metal plating is a craft badge");
+assert(plating.kind === "craft" && api.slotLabel(plating) === "Inventory", "metal plating is an inventory badge");
 has("hermetic_seal", 1, [{ id: "condensed_carbon", qty: 30 }], "Hermetic Seal");
 has("carbon_nanotubes", 1, [{ id: "carbon", qty: 50 }], "Carbon Nanotubes");
 has("microprocessor", 1, [{ id: "chromatic_metal", qty: 40 }, { id: "carbon_nanotubes", qty: 1 }], "Microprocessor");
 has("antimatter_housing", 1, [{ id: "oxygen", qty: 30 }, { id: "ferrite_dust", qty: 50 }], "Antimatter Housing");
 has("antimatter", 1, [{ id: "chromatic_metal", qty: 25 }, { id: "condensed_carbon", qty: 20 }], "Antimatter");
-has("portable_refiner", 1, [{ id: "metal_plating", qty: 1 }, { id: "oxygen", qty: 30 }], "Portable Refiner");
 has("ion_battery", 1, [{ id: "ferrite_dust", qty: 5 }, { id: "cobalt", qty: 10 }], "Ion Battery");
 has("life_support_gel", 1, [{ id: "di_hydrogen_jelly", qty: 1 }, { id: "carbon", qty: 20 }], "Life Support Gel");
-has("starship_launch_fuel", 1, [{ id: "di_hydrogen", qty: 40 }, { id: "metal_plating", qty: 1 }], "Starship Launch Fuel");
 has("warp_cell", 1, [{ id: "antimatter_housing", qty: 1 }, { id: "antimatter", qty: 1 }], "Warp Cell");
 var jellyCraft = has("di_hydrogen_jelly", 1, [{ id: "di_hydrogen", qty: 40 }], "blueprint jelly is forty");
 assert(jellyCraft.kind === "craft", "forty di-hydrogen is the blueprint, not the refiner");
 
+var glasses = api.findEdges(catalog, "glass", 1, [{ id: "frost_crystal", qty: 40 }]);
+assert(glasses.length === 2, "frost crystal makes glass two ways, found " + glasses.length);
+assert(glasses.some(function (edge) { return edge.kind === "craft" && edge.name === "Glass" && api.slotLabel(edge) === "Inventory"; }), "glass blueprint is inventory");
+assert(glasses.some(function (edge) { return edge.kind === "refine" && edge.name === "Polish Crystals" && edge.slots === 1; }), "polish crystals is portable");
+has("glass", 1, [{ id: "silicate_powder", qty: 40 }], "Silicate Forging");
+has("lubricant", 1, [{ id: "faecium", qty: 50 }, { id: "gamma_root", qty: 400 }], "Lubricant");
+has("circuit_board", 1, [{ id: "heat_capacitor", qty: 1 }, { id: "poly_fibre", qty: 1 }], "Circuit Board");
+has("living_glass", 1, [{ id: "lubricant", qty: 1 }, { id: "glass", qty: 5 }], "Living Glass");
+var bonded = has("chlorine", 2, [{ id: "kelp_sac", qty: 1 }, { id: "oxygen", qty: 1 }], "Bonded Chlorine Extraction");
+assert(bonded.kind === "refine" && bonded.slots === 2, "bonded chlorine is a two-slot refine");
+has("nitrogen_salt", 1, [{ id: "nitrogen", qty: 250 }, { id: "condensed_carbon", qty: 50 }], "Nitrogen Salt");
+has("unstable_plasma", 1, [{ id: "oxygen", qty: 50 }, { id: "metal_plating", qty: 1 }], "Unstable Plasma");
+
 assert(catalog.nodes.every(function (node) { return node.category && node.kind; }), "every node has a category and a kind");
-assert(catalog.nodes.filter(function (node) { return node.kind === "component"; }).length === 11, "eleven crafted components");
-assert(!catalog.nodes.some(function (node) { return node.id === "frost_crystal"; }), "frost crystal stays out");
+assert(catalog.nodes.filter(function (node) { return node.kind === "component"; }).length === 20, "twenty crafted components");
+var faecium = catalog.nodes.filter(function (node) { return node.id === "faecium"; })[0];
+assert(faecium && (faecium.aliases || []).indexOf("coprite") !== -1, "faecium answers to coprite");
+assert(!catalog.nodes.some(function (node) { return node.id === "wiring_loom" || node.id === "starship_launch_fuel" || node.id === "portable_refiner"; }), "loom, launch fuel, and the portable refiner stay out");
+assert(!catalog.edges.some(function (edge) { return /loom|launch fuel/i.test((edge.name || "") + " " + (edge.id || "")); }), "no loom or launch-fuel edge");
+assert(!catalog.edges.some(function (edge) {
+  return edge.out && edge.out.id === "carbon" && (edge.inputs || []).some(function (input) { return input.id === "frost_crystal"; });
+}), "frost crystal does not burn to carbon");
 
 var share = api.parseShare("?item=pure_ferrite&pins=salt,warp_cell");
 assert(share.item === "pure_ferrite" && share.pins.join(",") === "salt,warp_cell", "share query reads item and pins");
