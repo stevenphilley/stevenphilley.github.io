@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>No Man's Sky tech tree — Steven Philley</title>
-<meta name="description" content="Tech tree moodboard for No Man's Sky. Scan minerals, gases, stellar metals, plants, and early crafted components. Click a tile for made-from and converts-to. Pin a few.">
+<title>No Man's Sky refine — Steven Philley</title>
+<meta name="description" content="Edge explorer for the No Man's Sky material graph. Pick an item and read what makes it and what it converts to. Portable, medium refiner, and inventory badges.">
 <link rel="canonical" href="https://stevenphilley.com/game/guides/no-mans-sky/refine/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="No Man's Sky tech tree">
-<meta property="og:description" content="A moodboard of materials and early craft components. Made from and converts to, with ratios. Pin a few. Miraheze ratios — a patch can change a recipe.">
+<meta property="og:title" content="No Man's Sky refine">
+<meta property="og:description" content="A focused edge explorer for the shared material graph. Made from and converts to, with refiner and inventory badges.">
 <meta property="og:url" content="https://stevenphilley.com/game/guides/no-mans-sky/refine/">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="No Man's Sky tech tree">
+<meta name="twitter:title" content="No Man's Sky refine">
 <meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,10 +22,11 @@
 <link rel="stylesheet" href="/style.css">
 <style>
 body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
-.e-wrap{max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,48px) 72px}
+.e-wrap{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,48px) 72px}
 .e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
 .e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
 .e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-nav{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .e-hero{padding:clamp(22px,4vw,36px) 0 12px;border-bottom:1px solid var(--line,#2c303a)}
 .e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
 .e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,8vw,80px);line-height:.88;margin:0}
@@ -49,52 +50,29 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .swatch{width:10px;height:10px;display:inline-block;flex:none}
 .swatch.cat-minerals{background:var(--accent,#c8b48a)}
 .swatch.cat-gases{background:var(--accent-2,#7fb0d6)}
-.swatch.cat-stellar{background:var(--ink,#e8e6e1)}
-.swatch.cat-components{background:var(--ink-soft,#9b9a96)}
 .swatch.cat-plants{background:transparent;border:1px dashed var(--accent,#c8b48a);box-sizing:border-box}
-.cats button[aria-pressed="true"] .swatch.cat-stellar{background:var(--base-2,#14161c)}
-.cats button[aria-pressed="true"] .swatch.cat-components{background:var(--base-2,#14161c)}
-.desk{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,0.82fr);gap:28px;margin-top:14px;align-items:start}
-.board-group{margin:0 0 22px}
-.board-group h2{display:flex;align-items:center;gap:10px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 10px}
-.board{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:10px}
-.cell{position:relative}
-.tile{appearance:none;width:100%;text-align:left;background:transparent;color:inherit;border:1px solid var(--line,#2c303a);border-top:3px solid var(--swatch,var(--line,#2c303a));padding:14px 12px 16px;min-height:124px;cursor:pointer}
-.tile[data-cat="minerals"]{--swatch:var(--accent,#c8b48a)}
-.tile[data-cat="gases"]{--swatch:var(--accent-2,#7fb0d6)}
-.tile[data-cat="stellar"]{--swatch:var(--ink,#e8e6e1)}
-.tile[data-cat="components"]{--swatch:var(--ink-soft,#9b9a96)}
-.tile[data-cat="plants"]{--swatch:var(--accent,#c8b48a);border-top-style:dashed}
-.tile:hover,.tile:focus-visible{border-color:var(--accent,#c8b48a);border-top-color:var(--swatch,var(--accent,#c8b48a));outline:none}
-.tile.is-near{border-color:var(--ink-soft,#6e727c)}
-.tile.is-on,.tile[aria-pressed="true"]{border-color:var(--accent,#c8b48a);border-top-color:var(--swatch,var(--accent,#c8b48a));background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
-.tile .sym{display:block;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--swatch,var(--accent,#c8b48a));padding-right:52px}
-.tile .nm{display:block;font-family:"Bebas Neue",Impact,sans-serif;font-size:28px;letter-spacing:.04em;line-height:.95;margin-top:12px}
-.tile .catlab{display:block;margin-top:8px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
-.pin{position:absolute;top:10px;right:8px;appearance:none;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:6px 8px;min-height:32px;cursor:pointer}
-.pin[aria-pressed="true"]{background:var(--accent,#c8b48a);color:var(--base-2,#14161c);border-color:var(--accent,#c8b48a)}
-.pin:focus-visible,.pin-lg:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
-.tray{position:sticky;top:0;z-index:4;background:var(--base-2,#14161c);padding:8px 0 10px;margin:0 0 12px;border-bottom:1px solid var(--line,#2c303a)}
-.tray-empty,.tray-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e);margin:0}
-.tray-label{color:var(--accent,#c8b48a);margin-right:4px}
-.tray-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.chip{display:inline-flex;border:1px solid var(--line,#2c303a)}
-.chip.is-on{border-color:var(--accent,#c8b48a)}
-.chip .go,.chip .x{appearance:none;background:transparent;border:0;color:inherit;font-family:"IBM Plex Mono",monospace;cursor:pointer}
-.chip .go{padding:8px 10px;min-height:40px;font-size:12px;letter-spacing:.02em}
-.chip .go .sym{color:var(--accent,#c8b48a);letter-spacing:.12em;text-transform:uppercase;font-size:10px;margin-right:6px}
-.chip .x{padding:0 10px;min-height:40px;color:var(--muted,#63666e);border-left:1px solid var(--line,#2c303a);font-size:16px}
-.chip .go:hover,.chip .x:hover,.chip .go:focus-visible,.chip .x:focus-visible{color:var(--accent,#c8b48a);outline:none}
+.swatch.cat-earth{background:var(--ink,#e8e6e1)}
+.swatch.cat-components{background:var(--ink-soft,#9b9a96)}
+.swatch.cat-products{background:transparent;border:1px solid var(--accent,#c8b48a);box-sizing:border-box}
+.swatch.cat-consumables{background:transparent;border:1px dashed var(--accent-2,#7fb0d6);box-sizing:border-box}
+.cats button[aria-pressed="true"] .swatch.cat-earth,.cats button[aria-pressed="true"] .swatch.cat-components{background:var(--base-2,#14161c)}
+.desk{display:grid;grid-template-columns:minmax(220px,280px) minmax(0,1fr);gap:28px;margin-top:14px;align-items:start}
+.list-group{margin:0 0 16px}
+.list-group h2{display:flex;align-items:center;gap:10px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.08em;margin:0 0 6px}
+.row{appearance:none;width:100%;text-align:left;background:transparent;color:inherit;border:0;border-top:1px solid var(--line,#2c303a);padding:10px 0;min-height:44px;cursor:pointer;display:flex;gap:12px;align-items:baseline}
+.list-group .row:last-child{border-bottom:1px solid var(--line,#2c303a)}
+.row .sym{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a);min-width:3.2em}
+.row .nm{font-family:"IBM Plex Mono",monospace;font-size:13px}
+.row.is-near .nm{color:var(--ink-soft,#9b9a96)}
+.row.is-on .nm,.row[aria-pressed="true"] .nm{color:var(--accent,#c8b48a)}
+.row:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
 .detail-col{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow:auto;padding-bottom:8px}
 .tiers{margin:0 0 14px}
 .kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
 .detail-title{display:flex;justify-content:space-between;gap:16px;align-items:flex-end;border-bottom:1px solid var(--line,#2c303a);padding-bottom:10px}
 .detail-title h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(36px,5vw,52px);line-height:.9;margin:0}
 .detail-title h2:focus{outline:none}
-.detail-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .sym-lg{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.16em;color:var(--accent,#c8b48a)}
-.pin-lg{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px 10px;min-height:36px;cursor:pointer}
-.pin-lg[aria-pressed="true"]{background:var(--accent,#c8b48a);color:var(--base-2,#14161c);border-color:var(--accent,#c8b48a)}
 .blurb{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:var(--ink-soft,#9b9a96);max-width:70ch}
 .split{display:grid;grid-template-columns:1fr;gap:8px;align-items:start}
 .pane{margin-top:8px}
@@ -113,6 +91,8 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .op{color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:12px}
 .arr{letter-spacing:0}
 .rx-note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--muted,#63666e);max-width:68ch}
+.rx-note a{color:var(--ink-soft,#9b9a96)}
+.rx-note a:hover{color:var(--accent,#c8b48a)}
 .empty{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.6;color:var(--muted,#63666e);margin:0}
 .status{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
 .graph-wrap{margin-top:28px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18);overflow-x:auto}
@@ -154,9 +134,6 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   .metric .unit{font-size:10px}
   .desk{grid-template-columns:1fr}
   .detail-col{position:static;max-height:none;overflow:visible;scroll-margin-top:12px}
-  .board{grid-template-columns:repeat(auto-fill,minmax(136px,1fr))}
-  .tile{min-height:112px}
-  .tile .nm{font-size:24px}
   .detail-title h2{font-size:40px}
 }
 @media (max-width:560px){
@@ -168,10 +145,12 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 <div class="e-wrap">
   <div class="e-top">
     <a href="/">Steven Philley</a>
-    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+    <div class="e-nav">
       <a href="/game/guides/">Guides</a>
-      <a href="/game/guides/no-mans-sky/">Base map</a>
-      <a href="/game/guides/no-mans-sky/refine/" aria-current="page">Tech tree</a>
+      <a href="/game/guides/no-mans-sky/">Bases</a>
+      <a href="/game/guides/no-mans-sky/refine/" aria-current="page">Refine</a>
+      <a href="/game/guides/no-mans-sky/moodboard/">Moodboard</a>
+      <a href="/game/guides/no-mans-sky/planner/">Planner</a>
       <a href="/games/">Games</a>
       <a href="/sitemap.html">Site contents</a>
       <div class="themes" role="group" aria-label="Color theme">
@@ -187,36 +166,31 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 
   <header class="e-hero">
     <p class="e-kicker">Vol. VI — Guides</p>
-    <h1>Tech tree</h1>
-    <p class="lede">A moodboard of materials and the early pieces crafted from them. Click a tile. Made from is what produces it. Converts to is what spends it. A badge marks the route: 1 Portable, 2 Medium+, or Craft. Pin a few — they stay in this browser, and the address can carry them. Type to search. Arrows move across the board. Ratios follow the Miraheze wiki. A later patch can change them.</p>
-    <p class="coming">Production planner coming. The pins are the list it can start from. The <a href="/game/guides/no-mans-sky/">base map</a> is the other desk.</p>
+    <h1>Refine</h1>
+    <p class="lede">An edge explorer for the shared material graph. Pick an item. Made from is what produces it. Converts to is what spends it, in a refiner or in the inventory. A badge marks the route: 1 Portable, 2 Medium+, or Inventory. The address carries the item. Ratios follow the Miraheze wiki. A later patch can change them.</p>
+    <p class="coming">The <a href="/game/guides/no-mans-sky/moodboard/">moodboard</a> is the selection surface. Pins live there, and the <a href="/game/guides/no-mans-sky/planner/">planner</a> can read them. The <a href="/game/guides/no-mans-sky/">base map</a> is the other desk.</p>
   </header>
 
   <div class="metrics" aria-live="polite">
-    <div class="metric"><div class="lab">Items</div><div class="num" id="m-mat">—</div><div class="unit">on the board</div></div>
-    <div class="metric"><div class="lab">Recipes</div><div class="num" id="m-rx">—</div><div class="unit">refine and craft</div></div>
+    <div class="metric"><div class="lab">Items</div><div class="num" id="m-mat">—</div><div class="unit">in the graph</div></div>
+    <div class="metric"><div class="lab">Edges</div><div class="num" id="m-rx">—</div><div class="unit">refine and craft</div></div>
     <div class="metric"><div class="lab">Made from</div><div class="num" id="m-from">—</div><div class="unit">ways to make this</div></div>
     <div class="metric"><div class="lab">To</div><div class="num" id="m-to">—</div><div class="unit">ways this is used</div></div>
   </div>
 
   <label class="field" for="q">Find an item
-    <input id="q" type="search" placeholder="Ferrite, salt, warp, Cu, jelly" autocomplete="off">
+    <input id="q" type="search" placeholder="Ferrite, salt, warp, Cu, coprite" autocomplete="off">
   </label>
   <div class="cats" id="cats" role="group" aria-label="Category"></div>
 
   <div class="desk">
-    <div class="board-col">
-      <div class="tray" id="tray" aria-live="polite">
-        <p class="tray-empty"><span class="tray-label">Pinned</span> Nothing pinned.</p>
-      </div>
-      <div id="board"><p class="empty">Loading the set.</p></div>
-    </div>
+    <div id="list"><p class="empty">Loading the set.</p></div>
     <div class="detail-col">
       <div class="tiers" id="tiers" role="group" aria-label="Recipe kind">
         <button type="button" data-tier="all" aria-pressed="true">All</button>
         <button type="button" data-tier="1">1 Portable</button>
         <button type="button" data-tier="2">2 Medium+</button>
-        <button type="button" data-tier="craft">Craft</button>
+        <button type="button" data-tier="inventory">Inventory</button>
       </div>
       <div id="detail" aria-live="polite">
         <p class="empty">Select an item.</p>
@@ -226,27 +200,28 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   <p class="status" id="status" aria-live="polite"></p>
 
   <div class="graph-wrap">
-    <svg id="graph" role="navigation" aria-label="Primary refine lines. Choose a node, or use the board."></svg>
+    <svg id="graph" role="navigation" aria-label="Primary refine lines. Choose a node, or use the list."></svg>
   </div>
-  <p class="caption" id="graph-caption">The ladders: ferrite, carbon, sodium, cobalt, the stellar metals into chromatic metal, salt into chlorine, and tritium into di-hydrogen. A double stroke means the pair converts both ways somewhere in this set. Gases, plants, and crafted components stay on the board. Oxygen rows marked Expansion multiply a stock. The panel carries the ratios.</p>
+  <p class="caption">The ladders: ferrite, carbon, sodium, cobalt, the stellar metals into chromatic metal, salt into chlorine, and tritium into di-hydrogen. A double stroke means the pair converts both ways somewhere in this set. Plants, earth elements, gases beyond oxygen, and crafted pieces stay in the list. Oxygen rows marked Expansion multiply a stock. The panel carries the ratios.</p>
 
   <section class="also" aria-labelledby="src-h">
     <h2 id="src-h">Sources</h2>
-    <p>Charging carbon, sodium, or oxygen into a suit or ship is fuel. It is not one of these rows. Basic mineral ratios follow the Waypoint and Endurance articles on the No Man's Sky Wiki (Miraheze). Salt, the atmospheric gases, di-hydrogen, the asteroid metals, the plant burns, and the craft blueprints follow those item pages, some as recent as Worlds Part II. Three-input large-refiner recipes are left out, including alloy lattices and the warp-cell bypass. Frost Crystal is left out: the Carbon article does not list it under Burn Plantlife. Cooking is left out. A later patch can change a recipe. Add an edge as another object in minerals.json.</p>
+    <p id="graph-note">Charging a technology is fuel. It is not a refiner recipe and it is not a craft row. Wiring loom is bought, not crafted, so it has no edge. A later patch can change a recipe. Three-input large-refiner rows are left out.</p>
     <ul class="sources" id="sources"></ul>
     <h2>Also</h2>
     <ul>
-      <li><a href="/game/guides/no-mans-sky/">No Man's Sky base map</a> — plot planetary bases from a local save. Nothing is uploaded.</li>
-      <li><a href="/game/guides/">Game guides</a> — this folder’s hub.</li>
+      <li><a href="/game/guides/no-mans-sky/moodboard/">Moodboard</a> — the dense grid. Mark several, pin a short list.</li>
+      <li><a href="/game/guides/no-mans-sky/planner/">Planner</a> — a stub that reads the pins. The production planner comes later.</li>
+      <li><a href="/game/guides/no-mans-sky/">Base map</a> — plot planetary bases from a local save. Nothing is uploaded.</li>
     </ul>
   </section>
 
   <footer class="e-foot">
-    <span><a href="/">Home</a> · <a href="/game/guides/">Guides</a> · <a href="/game/guides/no-mans-sky/">Base map</a> · <a href="/whats-new/">What’s new</a></span>
+    <span><a href="/">Home</a> · <a href="/game/guides/">Guides</a> · <a href="/game/guides/no-mans-sky/">Bases</a> · <a href="/whats-new/">What’s new</a></span>
     <span>Miraheze ratios — a patch can change a recipe</span>
   </footer>
 </div>
-<noscript><p style="max-width:62ch;margin:24px auto;font-family:IBM Plex Mono,monospace">This board needs JavaScript. The recipe file stays in the browser; nothing is uploaded.</p></noscript>
+<noscript><p style="max-width:62ch;margin:24px auto;font-family:IBM Plex Mono,monospace">This explorer needs JavaScript. The graph stays in the browser; nothing is uploaded.</p></noscript>
 <script>
 (function(){
   var KEY='sp-theme';

@@ -1,4 +1,4 @@
-/*! refine.js — refine and craft edges for the tech-tree moodboard. */
+/*! refine.js — shared refine and craft graph for the moodboard, explorer, and planner. */
 (function (root, factory) {
   var api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
@@ -6,17 +6,25 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
+  var PIN_KEY = "nms-graph-pins";
+  var PIN_KEY_LEGACY = "nms-tech-pins";
+
   var NODES = [
     "ferrite_dust", "pure_ferrite", "magnetised_ferrite", "rusted_metal",
     "carbon", "condensed_carbon", "sodium", "sodium_nitrate", "oxygen",
     "cobalt", "ionised_cobalt", "copper", "cadmium", "emeril", "indium",
     "chromatic_metal", "paraffinium",
     "salt", "chlorine", "di_hydrogen", "di_hydrogen_jelly", "tritium",
-    "nitrogen", "sulphurine", "radon", "silver", "gold", "platinum",
+    "nitrogen", "sulphurine", "radon",
     "metal_plating", "hermetic_seal", "carbon_nanotubes", "microprocessor",
-    "antimatter_housing", "antimatter", "portable_refiner", "ion_battery",
-    "life_support_gel", "starship_launch_fuel", "warp_cell",
-    "cactus_flesh", "fungal_mould", "gamma_root", "solanium", "star_bulb"
+    "antimatter_housing", "antimatter", "ion_battery",
+    "life_support_gel", "warp_cell",
+    "cactus_flesh", "fungal_mould", "gamma_root", "solanium", "star_bulb",
+    "frost_crystal", "kelp_sac", "faecium", "mordite",
+    "dioxite", "phosphorus", "uranium", "ammonia", "pyrite", "silicate_powder",
+    "glass", "lubricant", "heat_capacitor", "poly_fibre", "circuit_board",
+    "living_glass", "nitrogen_salt", "enriched_carbon", "thermic_condensate",
+    "unstable_plasma"
   ];
 
   function byId(list) {
@@ -87,7 +95,7 @@
 
   function slotLabel(edge) {
     if (!edge) return "";
-    if (edge.kind === "craft") return "Craft";
+    if (edge.kind === "craft") return "Inventory";
     if (edge.slots === 1) return "1 Portable";
     if (edge.slots === 2) return "2 Medium+";
     return edge.slots ? String(edge.slots) : "";
@@ -95,7 +103,7 @@
 
   function passesTier(edge, tier) {
     if (!tier || tier === "all") return true;
-    if (tier === "craft") return edge.kind === "craft";
+    if (tier === "craft" || tier === "inventory") return edge.kind === "craft";
     if (edge.kind === "craft") return false;
     return String(edge.slots) === String(tier);
   }
@@ -227,6 +235,8 @@
   }
 
   return {
+    PIN_KEY: PIN_KEY,
+    PIN_KEY_LEGACY: PIN_KEY_LEGACY,
     NODES: NODES,
     byId: byId,
     producing: producing,
