@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No Man's Sky base map — Steven Philley</title>
+<meta name="description" content="Plot No Man's Sky planetary bases from an exported save JSON on a schematic galaxy. Euclid Hub marks included. The file never leaves your browser.">
+<link rel="canonical" href="https://stevenphilley.com/game/guides/no-mans-sky/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="No Man's Sky base map">
+<meta property="og:description" content="Local galaxy map of your NMS bases. Load exported JSON — nothing is uploaded.">
+<meta property="og:url" content="https://stevenphilley.com/game/guides/no-mans-sky/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="No Man's Sky base map">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:1040px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.e-top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.e-top a:hover,.e-top a[aria-current="page"]{color:inherit}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:62ch;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:22px 0 8px;border-bottom:1px solid var(--line,#2c303a)}
+.metric{border-top:1px solid var(--line,#2c303a);padding-top:10px}
+.metric .lab{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.metric .num{font-family:"Bebas Neue",Impact,sans-serif;font-size:clamp(36px,6vw,64px);line-height:.9;margin:8px 0 4px}
+.metric .unit{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;color:var(--muted,#63666e)}
+.drop{margin-top:22px;padding:16px;border:1px dashed var(--line,#2c303a)}
+.drop.hot{border-color:var(--accent,#c8b48a)}
+.controls{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin-top:14px}
+.controls label.field{display:flex;flex-direction:column;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.controls select,.controls input[type="search"]{background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:0;text-transform:none;padding:10px 12px;min-height:44px;min-width:180px}
+.controls select:focus,.controls input:focus{outline:none;border-color:var(--accent,#c8b48a)}
+.checks{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--ink-soft,#9b9a96)}
+.checks label{display:inline-flex;gap:8px;align-items:center;min-height:44px;cursor:pointer}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.actions button,.actions label.file-btn{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:12px 16px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center}
+.actions button.primary,.actions label.file-btn.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.actions button:hover,.actions button:focus-visible,.actions label.file-btn:hover{border-color:var(--accent,#c8b48a);outline:none}
+.status{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
+.map-wrap{margin-top:18px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18)}
+#map{display:block;width:100%;height:min(560px,70vw);cursor:crosshair}
+.caption{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.legend{display:flex;flex-wrap:wrap;gap:14px 22px;list-style:none;margin:12px 0 0;padding:0;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft,#9b9a96)}
+.legend li{display:inline-flex;align-items:center;gap:8px}
+.swatch{width:10px;height:10px;display:inline-block}
+.swatch.dot{border-radius:50%;background:var(--accent,#c8b48a)}
+.swatch.hub{background:var(--accent-2,#00F0FF);transform:rotate(45deg)}
+.swatch.core{background:transparent;border:1px solid var(--ink,#e8e6e1);width:12px;height:12px}
+.columns{display:grid;grid-template-columns:1.4fr .8fr;gap:28px;margin-top:8px}
+.col h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.rows{list-style:none;margin:0;padding:0}
+.rows li{border-top:1px solid var(--line,#2c303a)}
+.rows li:last-child{border-bottom:1px solid var(--line,#2c303a)}
+.rows button,.rows li{width:100%;text-align:left;background:transparent;color:inherit;border-left:0;border-right:0;border-bottom:0}
+.rows button{appearance:none;border-top:0;padding:12px 0;cursor:pointer;font:inherit}
+.rows button[aria-pressed="true"] .nm{color:var(--accent,#c8b48a)}
+.rows .nm{display:block;font-family:"Bebas Neue",Impact,sans-serif;font-size:26px;letter-spacing:.04em;line-height:1}
+.rows .meta,.rows .glyphs,.rows .empty{display:block;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-soft,#9b9a96);margin-top:4px}
+.rows .glyphs{color:var(--muted,#63666e);letter-spacing:.06em}
+.rows .empty{padding:12px 0}
+.refs{margin-top:8px}
+.refs li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);list-style:none}
+.refs{list-style:none;margin:0;padding:0}
+.refs li:last-child{border-bottom:1px solid var(--line,#2c303a)}
+.refs strong{color:var(--ink,#e8e6e1);font-weight:500}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
+.also p,.also li{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0}
+.also a{color:inherit}
+.also a:hover{color:var(--accent,#c8b48a)}
+.e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.e-foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;gap:0;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+@media (max-width:800px){
+  .metrics,.columns{grid-template-columns:1fr 1fr}
+  .columns{grid-template-columns:1fr}
+  .actions{flex-direction:column}
+  .actions button,.actions label.file-btn{width:100%;justify-content:center}
+  .controls select,.controls input[type="search"]{width:100%}
+}
+@media (max-width:560px){
+  .metrics{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="e-wrap">
+  <div class="e-top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/game/guides/">Guides</a>
+      <a href="/game/guides/no-mans-sky/" aria-current="page">No Man's Sky</a>
+      <a href="/games/">Games</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. VI — Guides</p>
+    <h1>No Man's Sky</h1>
+    <p class="lede">A schematic galaxy for your bases. Load a save JSON exported from NomNom or NMS Save Editor. Planetary bases are plotted; freighter bases are listed and left off the map. The file is read in this browser and is never uploaded.</p>
+  </header>
+
+  <div class="metrics" aria-live="polite">
+    <div class="metric"><div class="lab">On map</div><div class="num" id="m-bases">0</div><div class="unit">planetary, this galaxy</div></div>
+    <div class="metric"><div class="lab">Freighters</div><div class="num" id="m-skip">0</div><div class="unit">listed, not plotted</div></div>
+    <div class="metric"><div class="lab">Galaxies</div><div class="num" id="m-gal">1</div><div class="unit">in this file</div></div>
+    <div class="metric"><div class="lab">From center</div><div class="num" id="m-center">—</div><div class="unit">selected base, ly</div></div>
+  </div>
+
+  <div class="drop" id="drop">
+    <div class="actions" role="toolbar" aria-label="Save file">
+      <label class="file-btn primary">Load save JSON<input type="file" id="file" accept=".json,.hg,.txt,application/json,application/octet-stream" hidden></label>
+      <button type="button" id="btn-clear">Clear</button>
+    </div>
+    <div class="controls">
+      <label class="field">Galaxy
+        <select id="galaxy" aria-label="Galaxy"><option value="0">Euclid</option></select>
+      </label>
+      <label class="field">Filter
+        <input id="filter" type="search" placeholder="Name, glyphs, coords" autocomplete="off">
+      </label>
+      <div class="checks">
+        <label><input type="checkbox" id="show-center" checked> Galactic center</label>
+        <label><input type="checkbox" id="show-hubs" checked> Euclid Hub marks</label>
+      </div>
+    </div>
+  </div>
+  <p class="status" id="status" aria-live="polite">Ready — Euclid schematic with Hub marks. Load an exported JSON save. Nothing is uploaded.</p>
+
+  <div class="map-wrap">
+    <canvas id="map" role="img" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy with base and Hub markers"></canvas>
+  </div>
+  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. The cross is the galactic center.</p>
+  <ul class="legend">
+    <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
+    <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
+    <li><i class="swatch core" aria-hidden="true"></i> Galactic center</li>
+  </ul>
+
+  <div class="columns">
+    <section class="col" aria-labelledby="bases-h">
+      <h2 id="bases-h">Planetary bases</h2>
+      <ul class="rows" id="base-list"><li class="empty">Load a save to list bases. Euclid Hub marks are already on the map.</li></ul>
+    </section>
+    <section class="col" aria-labelledby="freight-h">
+      <h2 id="freight-h">Freighters</h2>
+      <ul class="rows" id="freighter-list"><li class="empty">No freighter bases in this galaxy.</li></ul>
+    </section>
+  </div>
+
+  <section class="col" id="problem-wrap" hidden>
+    <h2>Could not read</h2>
+    <ul class="rows" id="problem-list"></ul>
+  </section>
+
+  <section class="also" aria-labelledby="refs-h">
+    <h2 id="refs-h">Euclid Hub marks</h2>
+    <ul class="refs">
+      <li><strong>Hub legacy capital</strong> — glyphs 2052F9557C30 — coords 042F:0078:0D56:001B</li>
+      <li><strong>Hub port Arhu</strong> — glyphs 5074CF589C1E — coords 041D:004E:0D88:0074</li>
+    </ul>
+    <h2>How an address is read</h2>
+    <p>Each base’s packed GalacticAddress is turned into hex in the form 0xAAAAZZBBBBCCCC. The galaxy index is the middle byte ZZ (00 is Euclid, 09 is Eissentam). Dropping that byte leaves twelve portal glyphs, P-SSS-YY-ZZZ-XXX. Signal-booster coordinates add the usual offsets: X and Z +0x7FF, Y +0x7F. Distance uses 400 light-years per voxel, measured from the center. A raw or encrypted .hg file is not parsed — export JSON with NomNom or NMS Save Editor.</p>
+    <h2>Also</h2>
+    <ul>
+      <li><a href="/game/guides/">Game guides</a> — this folder’s hub. More guides can land here.</li>
+      <li><a href="/games/">Games</a> — playable browser games, separate from these guides.</li>
+    </ul>
+  </section>
+
+  <footer class="e-foot">
+    <span><a href="/">Home</a> · <a href="/game/guides/">Guides</a> · <a href="/whats-new/">What’s new</a></span>
+    <span>Local only — the save never leaves this browser</span>
+  </footer>
+</div>
+<noscript><p style="max-width:62ch;margin:24px auto;font-family:IBM Plex Mono,monospace">This map needs JavaScript. The save stays in your browser; it is not uploaded.</p></noscript>
+<script>
+(function(){
+  var KEY='sp-theme';
+  var root=document.documentElement;
+  var buttons=[].slice.call(document.querySelectorAll('[data-set-theme]'));
+  function paint(){var c=root.getAttribute('data-theme')||'neon';buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.setTheme===c));});}
+  buttons.forEach(function(b){b.addEventListener('click',function(){root.setAttribute('data-theme',b.dataset.setTheme);try{localStorage.setItem(KEY,b.dataset.setTheme);}catch(e){}paint();});});
+  paint();
+})();
+</script>
+<script src="nms-map.js"></script>
+<script src="/js/sp-share.js" defer></script>
+</body>
+</html>
