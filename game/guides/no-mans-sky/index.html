@@ -72,6 +72,11 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .swatch.dot{border-radius:50%;background:var(--accent,#c8b48a)}
 .swatch.hub{background:var(--accent-2,#00F0FF);transform:rotate(45deg)}
 .swatch.core{background:transparent;border:1px solid var(--ink,#e8e6e1);width:12px;height:12px}
+.swatch.ref{width:12px;height:12px;background:var(--ink,#e8e6e1);clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%)}
+#ref-list li{padding:0}
+#ref-list button{appearance:none;display:block;width:100%;background:transparent;border:0;color:inherit;font:inherit;text-align:left;padding:12px 0;cursor:pointer}
+#ref-list button[aria-pressed="true"] strong{color:var(--accent,#c8b48a)}
+#ref-list .q{letter-spacing:.08em;text-transform:uppercase;font-size:11px;color:var(--muted,#63666e)}
 .columns{display:grid;grid-template-columns:1.4fr .8fr;gap:28px;margin-top:8px}
 .col h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:28px 0 8px}
 .rows{list-style:none;margin:0;padding:0}
@@ -183,10 +188,11 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
       <div class="checks">
         <label><input type="checkbox" id="show-center" checked> Galactic center</label>
         <label><input type="checkbox" id="show-hubs" checked> Euclid Hub marks</label>
+        <label><input type="checkbox" id="show-refs" checked> Quadrant references</label>
       </div>
     </div>
   </div>
-  <p class="status" id="status" aria-live="polite">Ready — Euclid schematic with Hub marks. Choose exported JSON or a Steam save. Nothing is uploaded.</p>
+  <p class="status" id="status" aria-live="polite">Ready — Euclid schematic with Hub marks and quadrant references. Choose exported JSON or a Steam save. Nothing is uploaded.</p>
 
   <div class="map-wrap">
     <div class="zoom-bar" role="toolbar" aria-label="Map zoom">
@@ -196,17 +202,18 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     </div>
     <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan. Zoom buttons follow the base under the pointer, or the selected base."></canvas>
   </div>
-  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
+  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
+    <li><i class="swatch ref" aria-hidden="true"></i> Quadrant reference</li>
     <li><i class="swatch core" aria-hidden="true"></i> Galactic center</li>
   </ul>
 
   <div class="columns">
     <section class="col" aria-labelledby="bases-h">
       <h2 id="bases-h">Planetary bases</h2>
-      <ul class="rows" id="base-list"><li class="empty">Load a save to list bases. Euclid Hub marks are already on the map.</li></ul>
+      <ul class="rows" id="base-list"><li class="empty">Load a save to list bases. Euclid Hub marks and quadrant references are already on the map.</li></ul>
     </section>
     <section class="col" aria-labelledby="freight-h">
       <h2 id="freight-h">Freighters</h2>
@@ -226,6 +233,10 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
       <li><strong>HUB1 core</strong> — Sea of Xionahui — glyphs 1001CF589C1E — coords 041D:004E:0D88:0001</li>
       <li><strong>Former Hub</strong> — Pre-2025 capital — glyphs 2052F9557C30 — coords 042F:0078:0D56:001B</li>
     </ul>
+    <h2 id="quad-refs-h">Quadrant references</h2>
+    <p>About five community landmarks in each Euclid quadrant, plus the four Polaris systems at the Fade. Stars, not the Hub diamonds. The Hub capital, HUB1, and the former capital stay on the Hub layer, so they are not drawn again here. Gamma’s civilization core is those Hub marks. AGT is the extra Gamma hub in Yihelli; its embassy (SSI 005F) sits in the same region as the Firstfall address below.</p>
+    <ul class="refs" id="ref-list"></ul>
+    <p>Coordinates and civilizations are from the <a href="https://nomanssky.fandom.com/wiki/NMS_Hub">NMS Hub</a> and <a href="https://nomanssky.fandom.com/wiki/Civilized_space">Civilized space</a> pages on the No Man's Sky Wiki, the Polaris articles linked from <a href="https://nomanssky.fandom.com/wiki/The_Fade">The Fade</a>, and the <a href="https://nmsgalactichub.miraheze.org/wiki/Galactic_Hub_Project">Galactic Hub Project</a> page on Miraheze. These are community landmarks. Capitals move, and a directory row can be older than the civilization page. Wiki “:PC” on a Polaris address is plotted as system 0001. Glyphs use planet index 1, so the first glyph can differ from a wiki address that names another planet in the same system. The map position does not. This disk is a schematic, not a catalog.</p>
     <h2>How an address is read</h2>
     <p>Each base’s packed GalacticAddress is a 48-bit portal code. Extra high bits are ignored. The bits are planet, system, and voxel Y, Z, and X — the twelve portal glyphs, P-SSS-YY-ZZZ-XXX. This map does not invent a galaxy index from that integer. When the save includes a separate RealityIndex, the galaxy menu uses that. Signal-booster coordinates add the usual offsets: X and Z +0x7FF, Y +0x7F. Distance uses 400 light-years per voxel, measured from the center. Exported JSON is read as-is. A Steam .hg save is decompressed here, so that file does not need NomNom first. Obfuscated keys are renamed with a local key map. Nothing is uploaded.</p>
     <h2>Also</h2>
