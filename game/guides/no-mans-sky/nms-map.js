@@ -264,20 +264,48 @@
     return out;
   }
 
+  function detectSaveFormat(bytes) {
+    if (!bytes || !bytes.length) return "unknown";
+    var i = 0;
+    if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) i = 3;
+    var j = i;
+    while (j < bytes.length && (bytes[j] === 9 || bytes[j] === 10 || bytes[j] === 13 || bytes[j] === 32)) j++;
+    if (j < bytes.length && bytes[j] === 0x7B) return "json";
+    if (bytes.length >= 4) {
+      var magic = ((bytes[0]) | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24)) >>> 0;
+      if (magic === HG_MAGIC) return "hg";
+    }
+    return "unknown";
+  }
+
   function bytesToSaveText(bytes) {
-    var buf = bytes;
-    if (buf.length >= 3 && buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF) buf = buf.subarray(3);
-    if (buf.length && buf[0] === 0x7B) {
-      return { text: new TextDecoder("utf-8", { fatal: false }).decode(stripTrailingNulls(buf)), fromHg: false };
+    var format = detectSaveFormat(bytes);
+    if (format === "json") {
+      var buf = bytes;
+      if (buf.length >= 3 && buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF) buf = buf.subarray(3);
+      return {
+        text: new TextDecoder("utf-8", { fatal: false }).decode(stripTrailingNulls(buf)),
+        format: "json",
+        fromHg: false
+      };
     }
-    try {
-      var raw = decompressHg(buf);
-      return { text: new TextDecoder("utf-8", { fatal: false }).decode(stripTrailingNulls(raw)), fromHg: true };
-    } catch (hgErr) {
-      var fallback = new TextDecoder("utf-8", { fatal: false }).decode(buf).replace(/^\uFEFF/, "").trim();
-      if (fallback.charAt(0) !== "{") throw hgErr;
-      return { text: fallback, fromHg: false };
+    if (format === "hg") {
+      try {
+        var raw = decompressHg(bytes);
+        return {
+          text: new TextDecoder("utf-8", { fatal: false }).decode(stripTrailingNulls(raw)),
+          format: "hg",
+          fromHg: true
+        };
+      } catch (hgErr) {
+        var broken = new Error("hg");
+        broken.code = "hg";
+        throw broken;
+      }
     }
+    var unknown = new Error("unknown");
+    unknown.code = "unknown";
+    throw unknown;
   }
 
   function mappingFromJson(data) {
@@ -506,7 +534,8 @@
       selected: null,
       hover: null,
       filter: "",
-      fileName: ""
+      fileName: "",
+      source: ""
     };
     var hits = [];
     var starCache = null;
@@ -870,12 +899,13 @@
 
     function summarize() {
       if (!state.fileName) {
-        setStatus("Ready — Euclid schematic with Hub marks. Load a .hg save or exported JSON. Nothing is uploaded.");
+        setStatus("Ready — Euclid schematic with Hub marks. Choose exported JSON or a Steam save. Nothing is uploaded.");
         return;
       }
       var here = visibleBases().length;
       var freightHere = state.freighters.filter(function (b) { return galaxyKey(b) === state.galaxy; }).length;
-      var msg = state.fileName + " — " + here + " planetary base" + (here === 1 ? "" : "s") +
+      var via = state.source === "hg" ? "Steam save" : (state.source === "json" ? "exported JSON" : "");
+      var msg = state.fileName + (via ? " — " + via : "") + " — " + here + " planetary base" + (here === 1 ? "" : "s") +
         " on this map, " + freightHere + " freighter" + (freightHere === 1 ? "" : "s") + " listed aside.";
       if (state.problems.length) msg += " " + state.problems.length + " entr" + (state.problems.length === 1 ? "y" : "ies") + " could not be read.";
       setStatus(msg);
@@ -888,8 +918,9 @@
       summarize();
     }
 
-    function applyParsed(parsed, name) {
-      state.fileName = name || "save.json";
+    function applyParsed(parsed, name, source) {
+      state.fileName = name || (source === "hg" ? "save.hg" : "save.json");
+      state.source = source || "";
       state.planetary = parsed.planetary;
       state.freighters = parsed.freighters;
       state.problems = parsed.problems;
@@ -916,10 +947,13 @@
       state.problems = [];
       state.selected = null;
       state.fileName = "";
+      state.source = "";
       state.galaxy = 0;
       refresh();
-      if (code === "binary") {
-        setStatus("This file is not a .hg save or JSON. .hg saves are decompressed in this browser; a file that starts with { is read as JSON. Nothing is uploaded.");
+      if (code === "unknown" || code === "binary") {
+        setStatus("This file is neither exported JSON nor a Steam .hg save. JSON starts with {. A Steam save (save.hg, save2.hg, …) starts with the game’s LZ4 header. Nothing was uploaded.");
+      } else if (code === "hg") {
+        setStatus("That file has a Steam .hg header, but it could not be decompressed. Choose save.hg or save2.hg from the Hello Games folder, not a zip or accountdata.hg. Nothing was uploaded.");
       } else if (code === "missing") {
         setStatus("No PlayerStateData in this file. Bases live under BaseContext.PlayerStateData, or under PlayerStateData at the top level. Nothing was uploaded.");
       } else if (code === "empty") {
@@ -933,7 +967,7 @@
 
     var loadGen = 0;
 
-    function consumeSave(data, name, unmapped) {
+    function consumeSave(data, name, unmapped, source) {
       var parsed = extractBases(data);
       if (parsed.error) {
         fail(parsed.error);
@@ -942,7 +976,7 @@
         }
         return;
       }
-      applyParsed(parsed, name);
+      applyParsed(parsed, name, source);
     }
 
     function handleBytes(buf, name) {
@@ -952,7 +986,7 @@
         decoded = bytesToSaveText(buf);
       } catch (err) {
         if (token !== loadGen) return;
-        fail("binary");
+        fail(err && err.code === "hg" ? "hg" : "unknown");
         return;
       }
       var trimmed = String(decoded.text || "").replace(/^\uFEFF/, "").trim();
@@ -968,20 +1002,20 @@
       } catch (err) {
         if (token !== loadGen) return;
         fail("json");
-        setStatus(decoded.fromHg
-          ? "Decompressed the .hg save, but it was not valid JSON. Nothing was uploaded."
-          : "Could not parse that file as JSON. Nothing was uploaded.");
+        setStatus(decoded.format === "hg"
+          ? "The Steam save opened, but its contents were not readable JSON. Nothing was uploaded."
+          : "That file starts like JSON, but it could not be parsed. Export it again from NomNom or NMS Save Editor. Nothing was uploaded.");
         return;
       }
       if (token !== loadGen) return;
       if (!needsUnmap(data)) {
-        consumeSave(data, name, false);
+        consumeSave(data, name, false, decoded.format);
         return;
       }
       setStatus("Reading the local key map… The save stays in this browser.");
       ensureMapping().then(function (table) {
         if (token !== loadGen) return;
-        consumeSave(unmapTree(data, table), name, true);
+        consumeSave(unmapTree(data, table), name, true, decoded.format);
       }).catch(function () {
         if (token !== loadGen) return;
         fail("map");
@@ -1118,6 +1152,7 @@
       state.hover = null;
       state.filter = "";
       state.fileName = "";
+      state.source = "";
       state.galaxy = 0;
       if (filterInput) filterInput.value = "";
       if (fileInput) fileInput.value = "";
@@ -1151,6 +1186,7 @@
     hubMarks: hubMarks,
     lz4BlockDecompress: lz4BlockDecompress,
     decompressHg: decompressHg,
+    detectSaveFormat: detectSaveFormat,
     bytesToSaveText: bytesToSaveText,
     stripTrailingNulls: stripTrailingNulls,
     mappingFromJson: mappingFromJson,

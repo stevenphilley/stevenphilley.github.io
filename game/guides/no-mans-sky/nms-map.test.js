@@ -152,15 +152,25 @@ eq(fromHg.freighters[0].glyphs, "1001CF589C1E", "decompressed freighter glyphs")
 
 var jsonBytes = Buffer.from('{"PlayerStateData":{"PersistentPlayerBases":[]}}');
 var asJson = api.bytesToSaveText(jsonBytes);
-assert(!asJson.fromHg, "a file starting with { skips decompress");
+assert(!asJson.fromHg && asJson.format === "json", "a file starting with { skips decompress");
 
 var spaced = Buffer.from('\n{"PlayerStateData":{"PersistentPlayerBases":[]}}');
+eq(api.detectSaveFormat(spaced), "json", "whitespace then { is still JSON");
 var asSpaced = api.bytesToSaveText(spaced);
 assert(asSpaced.text.trim().charAt(0) === "{", "leading whitespace still yields JSON");
+assert(asSpaced.format === "json", "pretty JSON is not sent through LZ4");
+
+eq(api.detectSaveFormat(Buffer.from('{"a":1}')), "json", "brace detects JSON");
+eq(api.detectSaveFormat(hg), "hg", "LZ4 magic detects a Steam save");
+eq(api.detectSaveFormat(Buffer.from("not a save")), "unknown", "other bytes are neither path");
 
 var bad = false;
 try { api.decompressHg(Buffer.from("not a save")); } catch (err) { bad = true; }
-assert(bad, "non-hg bytes are rejected");
+assert(bad, "non-hg bytes are rejected by the decompressor");
+
+var unknown = false;
+try { api.bytesToSaveText(Buffer.from("not a save")); } catch (err) { unknown = err.code === "unknown"; }
+assert(unknown, "unknown files are not forced through the Steam path");
 
 if (failed) {
   console.error(failed + " failed");
