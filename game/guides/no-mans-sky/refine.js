@@ -1,4 +1,4 @@
-/*! refine.js — both directions of the basic-mineral edge list. */
+/*! refine.js — refine and craft edges for the tech-tree moodboard. */
 (function (root, factory) {
   var api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
@@ -10,7 +10,13 @@
     "ferrite_dust", "pure_ferrite", "magnetised_ferrite", "rusted_metal",
     "carbon", "condensed_carbon", "sodium", "sodium_nitrate", "oxygen",
     "cobalt", "ionised_cobalt", "copper", "cadmium", "emeril", "indium",
-    "chromatic_metal", "paraffinium"
+    "chromatic_metal", "paraffinium",
+    "salt", "chlorine", "di_hydrogen", "di_hydrogen_jelly", "tritium",
+    "nitrogen", "sulphurine", "radon", "silver", "gold", "platinum",
+    "metal_plating", "hermetic_seal", "carbon_nanotubes", "microprocessor",
+    "antimatter_housing", "antimatter", "portable_refiner", "ion_battery",
+    "life_support_gel", "starship_launch_fuel", "warp_cell",
+    "cactus_flesh", "fungal_mould", "gamma_root", "solanium", "star_bulb"
   ];
 
   function byId(list) {
@@ -81,6 +87,7 @@
 
   function slotLabel(edge) {
     if (!edge) return "";
+    if (edge.kind === "craft") return "Craft";
     if (edge.slots === 1) return "1 Portable";
     if (edge.slots === 2) return "2 Medium+";
     return edge.slots ? String(edge.slots) : "";
@@ -88,7 +95,40 @@
 
   function passesTier(edge, tier) {
     if (!tier || tier === "all") return true;
+    if (tier === "craft") return edge.kind === "craft";
+    if (edge.kind === "craft") return false;
     return String(edge.slots) === String(tier);
+  }
+
+  function parseShare(search) {
+    var params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
+    var item = params.get("item") || "";
+    var pins = null;
+    if (params.has("pins")) {
+      pins = String(params.get("pins") || "").split(",").map(function (id) {
+        return id.trim();
+      }).filter(Boolean);
+    }
+    return { item: item, pins: pins };
+  }
+
+  function formatShare(item, pins) {
+    var parts = [];
+    if (item) parts.push("item=" + encodeURIComponent(item));
+    if (pins && pins.length) {
+      parts.push("pins=" + pins.map(function (id) {
+        return encodeURIComponent(id);
+      }).join(","));
+    }
+    return parts.length ? "?" + parts.join("&") : "";
+  }
+
+  function togglePin(pins, id) {
+    var next = (pins || []).slice();
+    var index = next.indexOf(id);
+    if (index === -1) next.push(id);
+    else next.splice(index, 1);
+    return next;
   }
 
   function sameInputs(edge, inputs) {
@@ -129,6 +169,7 @@
     if (!catalog || typeof catalog !== "object") return ["catalog missing"];
     var nodes = byId(catalog.nodes);
     var groups = byId(catalog.groups);
+    var categories = byId(catalog.categories);
     var seen = Object.create(null);
     (catalog.nodes || []).forEach(function (node) {
       if (!node.id) {
@@ -138,8 +179,10 @@
       if (seen[node.id]) errors.push("duplicate node " + node.id);
       seen[node.id] = true;
       if (!node.name) errors.push("node missing name " + node.id);
+      if (node.kind !== "resource" && node.kind !== "component") errors.push("bad kind on " + node.id);
+      if (!node.category || !categories[node.category]) errors.push("unknown category " + node.category + " on " + node.id);
       if (node.group && !groups[node.group]) errors.push("unknown group " + node.group + " on " + node.id);
-      if (/ionized|magnetized/i.test(node.name || "")) errors.push("American spelling on " + node.id);
+      if (/ionized|magnetized|sulfurine/i.test(node.name || "")) errors.push("American spelling on " + node.id);
     });
     NODES.forEach(function (id) {
       if (!nodes[id]) errors.push("missing node " + id);
@@ -147,7 +190,6 @@
     Object.keys(seen).forEach(function (id) {
       if (NODES.indexOf(id) === -1) errors.push("unexpected node " + id);
     });
-    if (nodes.silver) errors.push("silver node is out of v1");
     var seenE = Object.create(null);
     edges(catalog).forEach(function (edge) {
       if (!edge.id) {
@@ -157,18 +199,21 @@
       if (seenE[edge.id]) errors.push("duplicate edge " + edge.id);
       seenE[edge.id] = true;
       if (!edge.name) errors.push("edge missing name " + edge.id);
-      if (edge.slots !== 1 && edge.slots !== 2) errors.push("bad slots on " + edge.id);
+      if (edge.kind !== "refine" && edge.kind !== "craft") errors.push("bad edge kind on " + edge.id);
+      if (edge.kind === "refine") {
+        if (edge.slots !== 1 && edge.slots !== 2) errors.push("bad slots on " + edge.id);
+        if ((edge.inputs || []).length !== edge.slots) errors.push("slots do not match inputs on " + edge.id);
+      } else if (edge.slots != null) {
+        errors.push("craft edge has slots " + edge.id);
+      }
       var out = outOf(edge);
       if (!out || !nodes[out.id]) errors.push("bad out on " + edge.id);
       else if (!(out.qty > 0) || out.qty !== (out.qty | 0)) errors.push("bad out qty on " + edge.id);
       if (!edge.inputs || !edge.inputs.length) errors.push("no inputs on " + edge.id);
-      if ((edge.inputs || []).length !== edge.slots) errors.push("slots do not match inputs on " + edge.id);
       (edge.inputs || []).forEach(function (input) {
         if (!nodes[input.id]) errors.push("bad input " + (input && input.id) + " on " + edge.id);
-        if (input.id === "silver") errors.push("silver edge " + edge.id);
         if (!(input.qty > 0) || input.qty !== (input.qty | 0)) errors.push("bad input qty on " + edge.id);
       });
-      if (edge.name === "Mineral Alchemy") errors.push("mineral alchemy omitted " + edge.id);
     });
     (catalog.lines || []).forEach(function (line) {
       var ids = line.layout === "fan"
@@ -190,6 +235,9 @@
     sortEdges: sortEdges,
     slotLabel: slotLabel,
     passesTier: passesTier,
+    parseShare: parseShare,
+    formatShare: formatShare,
+    togglePin: togglePin,
     findEdges: findEdges,
     links: links,
     validate: validate

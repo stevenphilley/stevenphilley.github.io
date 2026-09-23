@@ -63,9 +63,9 @@ assert(loop.name === "Chromatic Expansion" && loop.slots === 2, "expansion is a 
 
 var names = catalog.edges.map(function (edge) { return edge.name; });
 assert(names[0] === "Extract Metallic Elements", "list opens on Extract Metallic Elements");
-assert(names[names.length - 1] === "Chromatic Expansion", "list closes on Chromatic Expansion");
-assert(names.indexOf("Mineral Alchemy") === -1, "silver mineral alchemy is omitted");
-assert(!catalog.nodes.some(function (node) { return node.id === "silver" || node.id === "salt" || node.id === "di_hydrogen"; }), "v1 nodes stay inside the mineral set");
+assert(names.indexOf("Chromatic Expansion") !== -1, "chromatic expansion stays in the set");
+var alchemy = has("paraffinium", 2, [{ id: "silver", qty: 1 }, { id: "oxygen", qty: 1 }], "silver mineral alchemy");
+assert(alchemy.name === "Mineral Alchemy" && alchemy.kind === "refine" && alchemy.slots === 2, "alchemy is a two-slot refine");
 
 var made = api.producing(catalog, "pure_ferrite").map(function (edge) { return edge.id; });
 assert(made.indexOf("extract_metallic_elements") !== -1 && made.indexOf("demagnetise_metal") !== -1, "pure ferrite is made from dust and magnetised ferrite");
@@ -74,8 +74,59 @@ assert(used.indexOf("magnetise_metal") !== -1, "pure ferrite converts to magneti
 
 var portable = catalog.edges.filter(function (edge) { return api.passesTier(edge, "1"); });
 var medium = catalog.edges.filter(function (edge) { return api.passesTier(edge, "2"); });
-assert(portable.length && medium.length && portable.length + medium.length === catalog.edges.length, "tier filter covers every edge");
-assert(portable.every(function (edge) { return edge.slots === 1; }), "portable filter is slot 1");
+var crafted = catalog.edges.filter(function (edge) { return api.passesTier(edge, "craft"); });
+assert(portable.length && medium.length && crafted.length && portable.length + medium.length + crafted.length === catalog.edges.length, "tier filter covers every edge");
+assert(portable.every(function (edge) { return edge.slots === 1 && edge.kind === "refine"; }), "portable filter is slot 1 refine");
+assert(crafted.every(function (edge) { return edge.kind === "craft" && api.slotLabel(edge) === "Craft"; }), "craft filter is the blueprint badge");
+
+has("chlorine", 1, [{ id: "salt", qty: 2 }], "Concentrate Salt");
+has("salt", 2, [{ id: "chlorine", qty: 1 }], "Salt Production");
+var saltOx = has("chlorine", 5, [{ id: "salt", qty: 2 }, { id: "oxygen", qty: 2 }], "Efficient Salt Evaporation");
+assert(saltOx.expansion === true && saltOx.slots === 2, "salt oxygen row is an expansion");
+var clOx = has("chlorine", 6, [{ id: "chlorine", qty: 1 }, { id: "oxygen", qty: 2 }], "Chlorine Expansion");
+assert(clOx.expansion === true, "chlorine oxygen row is an expansion");
+has("salt", 1, [{ id: "di_hydrogen", qty: 1 }, { id: "oxygen", qty: 1 }], "di-hydrogen and oxygen make salt");
+
+has("di_hydrogen_jelly", 1, [{ id: "di_hydrogen", qty: 30 }], "refiner condenses thirty di-hydrogen");
+has("di_hydrogen", 40, [{ id: "di_hydrogen_jelly", qty: 1 }], "jelly cycles back to forty di-hydrogen");
+has("di_hydrogen", 1, [{ id: "tritium", qty: 5 }], "Tritium Cycling");
+
+has("nitrogen", 1, [{ id: "radon", qty: 3 }], "three radon transfer to nitrogen");
+has("sulphurine", 1, [{ id: "nitrogen", qty: 1 }, { id: "oxygen", qty: 1 }], "oxygen transfers nitrogen to sulphurine");
+has("radon", 1, [{ id: "sulphurine", qty: 1 }, { id: "chromatic_metal", qty: 1 }], "chromatic metal catalyses sulphurine to radon");
+has("platinum", 1, [{ id: "silver", qty: 1 }, { id: "gold", qty: 1 }], "silver and gold transmute to platinum");
+has("carbon", 2, [{ id: "cactus_flesh", qty: 1 }], "cactus burns to carbon");
+has("carbon", 2, [{ id: "star_bulb", qty: 1 }], "star bulb burns to carbon");
+has("star_bulb", 2, [{ id: "star_bulb", qty: 1 }, { id: "paraffinium", qty: 1 }], "paraffinium expands star bulb");
+has("paraffinium", 1, [{ id: "star_bulb", qty: 2 }, { id: "salt", qty: 1 }], "star bulb titrates to paraffinium");
+
+var plating = has("metal_plating", 1, [{ id: "ferrite_dust", qty: 50 }], "Metal Plating");
+assert(plating.kind === "craft" && api.slotLabel(plating) === "Craft", "metal plating is a craft badge");
+has("hermetic_seal", 1, [{ id: "condensed_carbon", qty: 30 }], "Hermetic Seal");
+has("carbon_nanotubes", 1, [{ id: "carbon", qty: 50 }], "Carbon Nanotubes");
+has("microprocessor", 1, [{ id: "chromatic_metal", qty: 40 }, { id: "carbon_nanotubes", qty: 1 }], "Microprocessor");
+has("antimatter_housing", 1, [{ id: "oxygen", qty: 30 }, { id: "ferrite_dust", qty: 50 }], "Antimatter Housing");
+has("antimatter", 1, [{ id: "chromatic_metal", qty: 25 }, { id: "condensed_carbon", qty: 20 }], "Antimatter");
+has("portable_refiner", 1, [{ id: "metal_plating", qty: 1 }, { id: "oxygen", qty: 30 }], "Portable Refiner");
+has("ion_battery", 1, [{ id: "ferrite_dust", qty: 5 }, { id: "cobalt", qty: 10 }], "Ion Battery");
+has("life_support_gel", 1, [{ id: "di_hydrogen_jelly", qty: 1 }, { id: "carbon", qty: 20 }], "Life Support Gel");
+has("starship_launch_fuel", 1, [{ id: "di_hydrogen", qty: 40 }, { id: "metal_plating", qty: 1 }], "Starship Launch Fuel");
+has("warp_cell", 1, [{ id: "antimatter_housing", qty: 1 }, { id: "antimatter", qty: 1 }], "Warp Cell");
+var jellyCraft = has("di_hydrogen_jelly", 1, [{ id: "di_hydrogen", qty: 40 }], "blueprint jelly is forty");
+assert(jellyCraft.kind === "craft", "forty di-hydrogen is the blueprint, not the refiner");
+
+assert(catalog.nodes.every(function (node) { return node.category && node.kind; }), "every node has a category and a kind");
+assert(catalog.nodes.filter(function (node) { return node.kind === "component"; }).length === 11, "eleven crafted components");
+assert(!catalog.nodes.some(function (node) { return node.id === "frost_crystal"; }), "frost crystal stays out");
+
+var share = api.parseShare("?item=pure_ferrite&pins=salt,warp_cell");
+assert(share.item === "pure_ferrite" && share.pins.join(",") === "salt,warp_cell", "share query reads item and pins");
+assert(api.formatShare("pure_ferrite", ["salt", "warp_cell"]) === "?item=pure_ferrite&pins=salt,warp_cell", "share query writes item and pins");
+assert(api.formatShare("pure_ferrite", []) === "?item=pure_ferrite", "empty pins drop off the query");
+var pinned = api.togglePin(["salt"], "warp_cell");
+assert(pinned.join(",") === "salt,warp_cell", "pin appends");
+assert(api.togglePin(pinned, "salt").join(",") === "warp_cell", "pin removes");
+assert(api.parseShare("?item=gold").pins === null, "a missing pins param leaves local pins alone");
 
 if (failed) {
   console.error(failed + " failed");
