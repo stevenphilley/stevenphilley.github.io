@@ -119,8 +119,10 @@
       '<div class="detail-title"><h2 id="detail-h" tabindex="-1">' + esc(material.name) + "</h2>" +
       '<span class="sym-lg">' + esc(material.symbol || "") + "</span></div>" +
       '<p class="blurb">' + esc(material.blurb || "") + "</p>" +
+      '<div class="split">' +
       section("Converts from", "from-h", from, "Nothing in this set refines into " + material.name + ".", material.id) +
-      section("Converts to", "to-h", to, material.name + " is not an input in this set.", material.id);
+      section("Converts to", "to-h", to, material.name + " is not an input in this set.", material.id) +
+      "</div>";
     var countFrom = document.getElementById("m-from");
     var countTo = document.getElementById("m-to");
     if (countFrom) countFrom.textContent = String(from.length);
@@ -291,10 +293,10 @@
     }
     var mineral = event.target.closest("[data-id]");
     if (!mineral) return;
-    if (mineral.namespaceURI === "http://www.w3.org/2000/svg" || mineral.tagName === "a") {
+    if (mineral.namespaceURI === "http://www.w3.org/2000/svg" || String(mineral.tagName).toLowerCase() === "a") {
       event.preventDefault();
     }
-    select(mineral.getAttribute("data-id"), mineral.tagName !== "a" && mineral.namespaceURI !== "http://www.w3.org/2000/svg");
+    select(mineral.getAttribute("data-id"), true);
   }
 
   listEl.addEventListener("click", onClick);
