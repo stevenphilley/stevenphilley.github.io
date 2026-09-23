@@ -40,6 +40,7 @@
       var pins = [];
       var seen = Object.create(null);
       readPins().forEach(function (id) {
+        id = NmsRefine.canonId(id);
         if (!materials[id] || seen[id]) return;
         seen[id] = true;
         pins.push(id);

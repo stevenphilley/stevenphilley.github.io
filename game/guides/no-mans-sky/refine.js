@@ -10,22 +10,26 @@
   var PIN_KEY_LEGACY = "nms-tech-pins";
 
   var NODES = [
-    "ferrite_dust", "pure_ferrite", "magnetised_ferrite", "rusted_metal",
-    "carbon", "condensed_carbon", "sodium", "sodium_nitrate", "oxygen",
-    "cobalt", "ionised_cobalt", "copper", "cadmium", "emeril", "indium",
-    "chromatic_metal", "paraffinium",
-    "salt", "chlorine", "di_hydrogen", "di_hydrogen_jelly", "tritium",
+    "ferrite-dust", "pure-ferrite", "magnetised-ferrite", "rusted-metal",
+    "carbon", "condensed-carbon", "sodium", "sodium-nitrate", "oxygen",
+    "cobalt", "ionised-cobalt", "copper", "cadmium", "emeril", "indium",
+    "chromatic-metal", "paraffinium",
+    "salt", "chlorine", "di-hydrogen", "di-hydrogen-jelly", "tritium",
     "nitrogen", "sulphurine", "radon",
-    "metal_plating", "hermetic_seal", "carbon_nanotubes", "microprocessor",
-    "antimatter_housing", "antimatter", "ion_battery",
-    "life_support_gel", "warp_cell",
-    "cactus_flesh", "fungal_mould", "gamma_root", "solanium", "star_bulb",
-    "frost_crystal", "kelp_sac", "faecium", "mordite",
-    "dioxite", "phosphorus", "uranium", "ammonia", "pyrite", "silicate_powder",
-    "glass", "lubricant", "heat_capacitor", "poly_fibre", "circuit_board",
-    "living_glass", "nitrogen_salt", "enriched_carbon", "thermic_condensate",
-    "unstable_plasma"
+    "metal-plating", "hermetic-seal", "carbon-nanotubes", "microprocessor",
+    "antimatter-housing", "antimatter", "ion-battery",
+    "life-support-gel", "warp-cell",
+    "cactus-flesh", "fungal-mould", "gamma-root", "solanium", "star-bulb",
+    "frost-crystal", "kelp-sac", "faecium", "mordite",
+    "dioxite", "phosphorus", "uranium", "ammonia", "pyrite", "silicate-powder",
+    "glass", "lubricant", "heat-capacitor", "poly-fibre", "circuit-board",
+    "living-glass", "nitrogen-salt", "enriched-carbon", "thermic-condensate",
+    "unstable-plasma"
   ];
+
+  function canonId(id) {
+    return String(id || "").trim().replace(/_/g, "-");
+  }
 
   function byId(list) {
     var map = Object.create(null);
@@ -98,6 +102,7 @@
     if (edge.kind === "craft") return "Inventory";
     if (edge.slots === 1) return "1 Portable";
     if (edge.slots === 2) return "2 Medium+";
+    if (edge.slots === 3) return "3 Large";
     return edge.slots ? String(edge.slots) : "";
   }
 
@@ -110,11 +115,11 @@
 
   function parseShare(search) {
     var params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
-    var item = params.get("item") || "";
+    var item = canonId(params.get("item") || "");
     var pins = null;
     if (params.has("pins")) {
       pins = String(params.get("pins") || "").split(",").map(function (id) {
-        return id.trim();
+        return canonId(id);
       }).filter(Boolean);
     }
     return { item: item, pins: pins };
@@ -122,10 +127,11 @@
 
   function formatShare(item, pins) {
     var parts = [];
+    item = canonId(item);
     if (item) parts.push("item=" + encodeURIComponent(item));
     if (pins && pins.length) {
       parts.push("pins=" + pins.map(function (id) {
-        return encodeURIComponent(id);
+        return encodeURIComponent(canonId(id));
       }).join(","));
     }
     return parts.length ? "?" + parts.join("&") : "";
@@ -208,11 +214,13 @@
       seenE[edge.id] = true;
       if (!edge.name) errors.push("edge missing name " + edge.id);
       if (edge.kind !== "refine" && edge.kind !== "craft") errors.push("bad edge kind on " + edge.id);
+      if (/wiring[-_ ]?loom/i.test(edge.id + " " + (edge.name || ""))) errors.push("wiring loom edge " + edge.id);
       if (edge.kind === "refine") {
-        if (edge.slots !== 1 && edge.slots !== 2) errors.push("bad slots on " + edge.id);
+        if (edge.slots !== 1 && edge.slots !== 2 && edge.slots !== 3) errors.push("bad slots on " + edge.id);
         if ((edge.inputs || []).length !== edge.slots) errors.push("slots do not match inputs on " + edge.id);
-      } else if (edge.slots != null) {
-        errors.push("craft edge has slots " + edge.id);
+      } else {
+        if (edge.slots != null) errors.push("craft edge has slots " + edge.id);
+        if (edge.station !== "inventory") errors.push("craft edge is not inventory " + edge.id);
       }
       var out = outOf(edge);
       if (!out || !nodes[out.id]) errors.push("bad out on " + edge.id);
@@ -235,6 +243,7 @@
   }
 
   return {
+    canonId: canonId,
     PIN_KEY: PIN_KEY,
     PIN_KEY_LEGACY: PIN_KEY_LEGACY,
     NODES: NODES,

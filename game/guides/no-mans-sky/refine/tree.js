@@ -5,7 +5,7 @@
   var catalog = null;
   var materials = null;
   var categories = null;
-  var selected = "pure_ferrite";
+  var selected = "pure-ferrite";
   var query = "";
   var tier = "all";
   var category = "all";
@@ -40,7 +40,7 @@
       material.name,
       material.short,
       material.symbol,
-      material.id,
+      material.id.replace(/[_-]/g, " "),
       material.blurb,
       material.kind,
       material.category,
@@ -329,7 +329,7 @@
   }
 
   function select(id, focus) {
-    if (!materials[id]) id = "pure_ferrite";
+    if (!materials[id]) id = "pure-ferrite";
     selected = id;
     writeAddress();
     render(focus || false);
@@ -439,7 +439,7 @@
     var hash = (location.hash || "").replace(/^#/, "");
     if (materials[share.item]) selected = share.item;
     else if (materials[hash]) selected = hash;
-    else if (!materials[selected]) selected = "pure_ferrite";
+    else if (!materials[selected]) selected = "pure-ferrite";
     writeAddress();
     render(false);
   }
