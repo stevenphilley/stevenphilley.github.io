@@ -172,6 +172,44 @@ var unknown = false;
 try { api.bytesToSaveText(Buffer.from("not a save")); } catch (err) { unknown = err.code === "unknown"; }
 assert(unknown, "unknown files are not forced through the Steam path");
 
+var frame = api.frameOf(800, 500);
+var view = { zoom: 1, panX: 40, panY: -20 };
+var sx = 220;
+var sy = 140;
+var cx = 400;
+var cy = 250;
+var wx = (sx - cx - view.panX) / view.zoom;
+var wy = (sy - cy - view.panY) / view.zoom;
+var zoomed = api.zoomAbout(view, sx, sy, cx, cy, 2.5);
+var sx2 = cx + zoomed.panX + wx * zoomed.zoom;
+var sy2 = cy + zoomed.panY + wy * zoomed.zoom;
+assert(Math.abs(sx2 - sx) < 1e-6 && Math.abs(sy2 - sy) < 1e-6, "wheel zoom keeps the cursor point fixed");
+assert(zoomed.zoom === 2.5, "zoom multiplies the current scale");
+eq(api.zoomAbout({ zoom: 30, panX: 0, panY: 0 }, 10, 10, cx, cy, 2).zoom, 32, "zoom stops at 32");
+eq(api.clampZoom(0), 1, "a bad zoom falls back to 1");
+
+var cluster = api.fitView(
+  [{ x: -995, z: 1418 }, { x: -990, z: 1420 }],
+  frame,
+  { w: 800, h: 500 },
+  { padVoxels: 70, minZoom: 4, maxZoom: 18 }
+);
+assert(cluster.zoom >= 4 && cluster.zoom <= 18, "a tight cluster zooms in");
+var midX = ((-995 - 70) + (-990 + 70)) / 2;
+var midZ = ((1418 - 70) + (1420 + 70)) / 2;
+var fitX = cx + cluster.panX + (midX / 2048) * frame.rx * cluster.zoom;
+var fitY = cy + cluster.panY - (midZ / 2048) * frame.ry * cluster.zoom;
+assert(Math.abs(fitX - cx) < 0.01 && Math.abs(fitY - cy) < 0.01, "fit view centers the cluster");
+
+var fromBase = api.fitView([{ voxelX: -995, voxelZ: 1418 }], frame, { w: 800, h: 500 }, { padVoxels: 70, minZoom: 4, maxZoom: 18 });
+assert(isFinite(fromBase.panX) && isFinite(fromBase.panY) && fromBase.zoom >= 4, "a base record can be framed");
+var baseX = cx + fromBase.panX + (-995 / 2048) * frame.rx * fromBase.zoom;
+var baseY = cy + fromBase.panY - (1418 / 2048) * frame.ry * fromBase.zoom;
+assert(Math.abs(baseX - cx) < 0.01 && Math.abs(baseY - cy) < 0.01, "framing a base record centers its voxels");
+
+var disk = api.fitView([{ x: -2048, z: -2048 }, { x: 2048, z: 2048 }], frame, { w: 800, h: 500 }, { padVoxels: 0, maxZoom: 14 });
+assert(disk.zoom <= 1.2, "a full-disk fit does not zoom into one corner");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

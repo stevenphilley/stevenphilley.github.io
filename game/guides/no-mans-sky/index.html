@@ -58,8 +58,13 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .actions button.primary,.actions label.file-btn.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
 .actions button:hover,.actions button:focus-visible,.actions label.file-btn:hover{border-color:var(--accent,#c8b48a);outline:none}
 .status{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
-.map-wrap{margin-top:18px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18)}
-#map{display:block;width:100%;height:min(560px,70vw);cursor:crosshair}
+.map-wrap{position:relative;margin-top:18px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18)}
+.zoom-bar{position:absolute;z-index:2;top:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:calc(100% - 20px)}
+.zoom-bar button{appearance:none;background:rgba(0,0,0,.55);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;min-height:44px;cursor:pointer}
+.zoom-bar button:hover,.zoom-bar button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+#map{display:block;width:100%;height:min(560px,70vw);cursor:grab;touch-action:none}
+#map.panning{cursor:grabbing}
+#map:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:-2px}
 .caption{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
 .legend{display:flex;flex-wrap:wrap;gap:14px 22px;list-style:none;margin:12px 0 0;padding:0;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft,#9b9a96)}
 .legend li{display:inline-flex;align-items:center;gap:8px}
@@ -103,6 +108,8 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   .actions{flex-direction:column}
   .actions button,.actions label.file-btn{width:100%;justify-content:center}
   .controls select,.controls input[type="search"]{width:100%}
+  .zoom-bar{left:10px;right:10px}
+  .zoom-bar button{flex:1}
 }
 @media (max-width:560px){
   .metrics{grid-template-columns:1fr 1fr}
@@ -181,9 +188,14 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   <p class="status" id="status" aria-live="polite">Ready — Euclid schematic with Hub marks. Choose exported JSON or a Steam save. Nothing is uploaded.</p>
 
   <div class="map-wrap">
-    <canvas id="map" role="img" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy with base and Hub markers"></canvas>
+    <div class="zoom-bar" role="toolbar" aria-label="Map zoom">
+      <button type="button" id="zoom-in">Zoom in</button>
+      <button type="button" id="zoom-out">Zoom out</button>
+      <button type="button" id="zoom-reset">Reset view</button>
+    </div>
+    <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom, drag to pan."></canvas>
   </div>
-  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. The cross is the galactic center.</p>
+  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. The cross is the galactic center. Scroll or pinch to zoom toward the pointer, drag to pan, and use Reset view to fit your bases and the Hub marks. Double-click a base, or click it in the list, to move in on that cluster.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
