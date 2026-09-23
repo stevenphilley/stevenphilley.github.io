@@ -185,8 +185,49 @@ var sx2 = cx + zoomed.panX + wx * zoomed.zoom;
 var sy2 = cy + zoomed.panY + wy * zoomed.zoom;
 assert(Math.abs(sx2 - sx) < 1e-6 && Math.abs(sy2 - sy) < 1e-6, "wheel zoom keeps the cursor point fixed");
 assert(zoomed.zoom === 2.5, "zoom multiplies the current scale");
-eq(api.zoomAbout({ zoom: 30, panX: 0, panY: 0 }, 10, 10, cx, cy, 2).zoom, 32, "zoom stops at 32");
+eq(api.zoomAbout({ zoom: 30, panX: 0, panY: 0 }, 10, 10, cx, cy, 2).zoom, 60, "zoom passes the old cap of 32");
+eq(api.zoomAbout({ zoom: 100, panX: 0, panY: 0 }, 10, 10, cx, cy, 2).zoom, 128, "zoom stops at 128");
 eq(api.clampZoom(0), 1, "a bad zoom falls back to 1");
+eq(api.clampZoom(90), 90, "a system-scale zoom is allowed");
+
+var lowPair = (function () {
+  var a = api.clumpOffset(0, 8, 4);
+  var b = api.clumpOffset(1, 8, 4);
+  return { dist: Math.hypot(a.x - b.x, a.y - b.y), stacked: a.stacked, chord: a.chord };
+})();
+var highPair = (function () {
+  var a = api.clumpOffset(0, 8, 64);
+  var b = api.clumpOffset(1, 8, 64);
+  return { dist: Math.hypot(a.x - b.x, a.y - b.y), stacked: a.stacked, radius: a.radius };
+})();
+assert(lowPair.stacked && lowPair.dist < 18, "a low zoom keeps a same-voxel pile stacked");
+assert(!highPair.stacked && highPair.dist > 28 && highPair.radius > 28, "spread grows past the old 28px cap");
+assert(highPair.dist > lowPair.dist * 8, "neighbors move apart as zoom increases");
+var lockA = api.clumpOffset(2, 9, 8);
+var lockB = api.clumpOffset(2, 9, 80);
+assert(Math.abs(lockA.x / 8 - lockB.x / 80) < 1e-9 && Math.abs(lockA.y / 8 - lockB.y / 80) < 1e-9, "the ring scales linearly with zoom");
+var openZoom = api.clumpZoomForGap(36);
+assert(Math.abs(api.clumpOffset(0, 6, openZoom).chord - 36) < 1e-9, "opening a clump uses a continuous gap, not a zoom step");
+assert(openZoom > 16 && openZoom < 40, "that opening zoom sits inside the range");
+var big = api.clumpOffset(0, 24, 48);
+var bigNext = api.clumpOffset(1, 24, 48);
+assert(Math.hypot(big.x - bigNext.x, big.y - bigNext.y) > 28, "a large system still opens past the old cap");
+
+var fanIndex = 3;
+var fanCount = 8;
+var fanZoom = 20;
+var fanX = -995;
+var fanZ = 1418;
+var fanPan = api.panToMarker(fanX, fanZ, fanIndex, fanCount, fanZoom, frame, cx, cy);
+var fanOff = api.clumpOffset(fanIndex, fanCount, fanZoom);
+var fanMx = frame.cx + fanPan.panX + (fanX / 2048) * frame.rx * fanZoom + fanOff.x;
+var fanMy = frame.cy + fanPan.panY - (fanZ / 2048) * frame.ry * fanZoom + fanOff.y;
+assert(Math.abs(fanMx - cx) < 1e-6 && Math.abs(fanMy - cy) < 1e-6, "focus pan puts the fanned base on the focus");
+var fanNext = api.zoomAbout({ zoom: fanZoom, panX: fanPan.panX, panY: fanPan.panY }, fanMx, fanMy, cx, cy, 2.2);
+var fanOff2 = api.clumpOffset(fanIndex, fanCount, fanNext.zoom);
+var fanMx2 = frame.cx + fanNext.panX + (fanX / 2048) * frame.rx * fanNext.zoom + fanOff2.x;
+var fanMy2 = frame.cy + fanNext.panY - (fanZ / 2048) * frame.ry * fanNext.zoom + fanOff2.y;
+assert(Math.abs(fanMx2 - fanMx) < 1e-6 && Math.abs(fanMy2 - fanMy) < 1e-6, "zooming toward a fanned base keeps it planted");
 
 var cluster = api.fitView(
   [{ x: -995, z: 1418 }, { x: -990, z: 1420 }],

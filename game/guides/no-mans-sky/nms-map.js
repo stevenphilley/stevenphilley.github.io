@@ -507,11 +507,57 @@
   }
 
   var MIN_ZOOM = 0.8;
-  var MAX_ZOOM = 32;
+  var MAX_ZOOM = 128;
+  // Neighbor spacing (px) of a same-voxel ring when zoom === CLUMP_REF_ZOOM.
+  // Radius scales linearly with zoom, so the ring is fixed in the view transform
+  // and zoomAbout keeps a marker planted while the pile opens.
+  var CLUMP_GAP = 30;
+  var CLUMP_REF_ZOOM = 16;
+  var CLUMP_STACK_GAP = 18;
+  var LABEL_CHORD = 56;
+  var LABEL_ZOOM = 12;
 
   function clampZoom(z) {
     if (!isFinite(z) || z <= 0) return 1;
     return Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z));
+  }
+
+  function clumpZoomForGap(gapPx) {
+    var gap = gapPx > 0 && isFinite(gapPx) ? gapPx : CLUMP_GAP;
+    return clampZoom(gap * CLUMP_REF_ZOOM / CLUMP_GAP);
+  }
+
+  function clumpOffset(index, count, zoom) {
+    var n = count | 0;
+    var i = index | 0;
+    if (n < 2 || i < 0 || i >= n) {
+      return { x: 0, y: 0, radius: 0, chord: 0, stacked: false };
+    }
+    var z = zoom > 0 && isFinite(zoom) ? zoom : 1;
+    var chord = CLUMP_GAP * (z / CLUMP_REF_ZOOM);
+    var per = n > 12 ? 10 : n;
+    var ring = Math.floor(i / per);
+    var slot = i - ring * per;
+    var inRing = Math.min(per, n - ring * per);
+    var ang = (slot / inRing) * Math.PI * 2 - Math.PI / 2;
+    var baseRing = chord / (2 * Math.sin(Math.PI / per));
+    var radius = baseRing + ring * chord * 1.2;
+    return {
+      x: Math.cos(ang) * radius,
+      y: Math.sin(ang) * radius,
+      radius: radius,
+      chord: chord,
+      stacked: chord < CLUMP_STACK_GAP
+    };
+  }
+
+  function panToMarker(voxelX, voxelZ, index, count, zoom, frame, sx, sy) {
+    var off = clumpOffset(index, count, zoom);
+    var R = 2048;
+    return {
+      panX: sx - frame.cx - (voxelX / R) * frame.rx * zoom - off.x,
+      panY: sy - frame.cy + (voxelZ / R) * frame.ry * zoom - off.y
+    };
   }
 
   function frameOf(w, h) {
@@ -612,6 +658,7 @@
     var starCache = null;
     var view = { zoom: 1, panX: 0, panY: 0 };
     var lastSize = { w: 640, h: 480 };
+    var aim = null;
 
     function setStatus(msg) {
       if (statusEl) statusEl.textContent = msg || "";
@@ -692,6 +739,7 @@
       view.panX = next.panX;
       view.panY = next.panY;
       clampPan();
+      syncAim();
     }
 
     function applyFit(points, opts) {
@@ -705,6 +753,7 @@
     }
 
     function resetView() {
+      aim = null;
       var pts = [];
       visibleBases().forEach(function (b) { pts.push({ x: b.voxelX, z: b.voxelZ }); });
       if (!pts.length) {
@@ -724,12 +773,39 @@
       state.planetary.forEach(function (item) { if (item.id === id) b = item; });
       if (!b) return;
       state.selected = id;
-      var mates = visibleBases().filter(function (other) {
+      aim = null;
+      var bases = visibleBases();
+      var group = [];
+      var mates = [];
+      bases.forEach(function (other) {
+        if (other.voxelX === b.voxelX && other.voxelZ === b.voxelZ) group.push(other);
         var dx = other.voxelX - b.voxelX;
         var dz = other.voxelZ - b.voxelZ;
-        return dx * dx + dz * dz <= 80 * 80;
+        if (dx * dx + dz * dz <= 80 * 80) mates.push(other);
       });
-      applyFit(mates.length ? mates : [b], { padVoxels: 70, minZoom: 4, maxZoom: 18 });
+      if (!group.length) group = [b];
+      var idx = group.indexOf(b);
+      if (idx < 0) idx = 0;
+      var size = canvasSize();
+      lastSize = size;
+      var spreadOut = mates.some(function (m) {
+        return m.voxelX !== b.voxelX || m.voxelZ !== b.voxelZ;
+      });
+      if (spreadOut) {
+        applyFit(mates, { padVoxels: 70, minZoom: 4, maxZoom: 18 });
+      } else if (group.length > 1) {
+        view.zoom = clumpZoomForGap(80);
+      } else {
+        applyFit([b], { padVoxels: 70, minZoom: 4, maxZoom: 18 });
+      }
+      if (group.length > 1 && clumpOffset(idx, group.length, view.zoom).chord < LABEL_CHORD) {
+        view.zoom = clumpZoomForGap(80);
+      }
+      var framed = frameOf(lastSize.w, lastSize.h);
+      var pan = panToMarker(b.voxelX, b.voxelZ, idx, group.length, view.zoom, framed, lastSize.w / 2, lastSize.h / 2);
+      view.panX = pan.panX;
+      view.panY = pan.panY;
+      clampPan();
     }
 
     function ensureStars(w, h, c) {
@@ -797,6 +873,54 @@
       ctx.fillRect(x - 3, y - 8, w + 8, 16);
       ctx.fillStyle = color;
       ctx.fillText(text, x, y);
+    }
+
+    function paintName(ctx, text, x, y, off, color, base) {
+      var name = String(text || "");
+      if (name.length > 28) name = name.slice(0, 27) + "…";
+      ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+      ctx.textBaseline = "middle";
+      var tw = ctx.measureText(name).width;
+      var r = off && off.radius > 1 ? off.radius : 0;
+      var ux = r ? off.x / r : 1;
+      var uy = r ? off.y / r : -1;
+      var lx = x + ux * 14;
+      var ly = y + uy * 14;
+      if (ux < -0.15) ctx.textAlign = "right";
+      else if (Math.abs(ux) <= 0.15) {
+        ctx.textAlign = "center";
+        lx = x;
+        ly = y + (uy < 0 ? -16 : 16);
+      } else ctx.textAlign = "left";
+      var left = ctx.textAlign === "right" ? lx - tw : (ctx.textAlign === "center" ? lx - tw / 2 : lx);
+      ctx.fillStyle = withAlpha(base, 0.88);
+      ctx.fillRect(left - 3, ly - 8, tw + 8, 16);
+      ctx.fillStyle = color;
+      ctx.fillText(name, lx, ly);
+      ctx.textAlign = "left";
+    }
+
+    function paintBadge(ctx, count, x, y, fill, ink) {
+      var text = String(count);
+      ctx.save();
+      ctx.font = "10px 'IBM Plex Mono', ui-monospace, monospace";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      var rad = text.length > 2 ? 11 : 9;
+      ctx.beginPath();
+      ctx.fillStyle = fill;
+      ctx.arc(x + 10, y - 10, rad, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = ink;
+      ctx.stroke();
+      ctx.fillStyle = ink;
+      ctx.fillText(text, x + 10, y - 10);
+      ctx.restore();
+    }
+
+    function markerInView(x, y, w, h) {
+      return x >= -8 && y >= -8 && x <= w + 8 && y <= h + 8;
     }
 
     function knownGalaxy(b) {
@@ -887,43 +1011,63 @@
             ctx.strokeStyle = withAlpha(c.base, 0.9);
             ctx.strokeRect(p.x - 6, y - 6, 12, 12);
             paintLabel(ctx, hub.label, p.x + 14, y, c.accent2, c.base);
-            hits.push({ x: p.x, y: y, r: 11, kind: "hub", id: hub.id });
+            hits.push({ x: p.x, y: y, ax: p.x, ay: p.y, r: 11, kind: "hub", id: hub.id });
           });
         });
       }
 
       var bases = visibleBases();
       var groups = Object.create(null);
+      var groupKeys = [];
       bases.forEach(function (b) {
         var key = b.voxelX + ":" + b.voxelZ;
-        if (!groups[key]) groups[key] = [];
+        if (!groups[key]) {
+          groups[key] = [];
+          groupKeys.push(key);
+        }
         groups[key].push(b);
       });
-      bases.forEach(function (b) {
-        var key = b.voxelX + ":" + b.voxelZ;
+      var nameJobs = [];
+      var pickedJobs = [];
+      groupKeys.forEach(function (key) {
         var group = groups[key];
-        var idx = group.indexOf(b);
-        var p = project(b.voxelX, b.voxelZ, w, h);
-        var jx = 0;
-        var jy = 0;
-        if (group.length > 1) {
-          var ang = (idx / group.length) * Math.PI * 2;
-          var spread = Math.min(28, 7 * Math.sqrt(view.zoom));
-          jx = Math.cos(ang) * spread;
-          jy = Math.sin(ang) * spread;
+        var sample = clumpOffset(0, group.length, view.zoom);
+        var stacked = group.length > 1 && sample.stacked;
+        var showNames = group.length > 1 && !stacked && sample.chord >= LABEL_CHORD;
+        var anchor = project(group[0].voxelX, group[0].voxelZ, w, h);
+        var painted = group.map(function (b, i) { return { b: b, i: i }; });
+        painted.sort(function (a, b) {
+          function rank(item) {
+            if (state.selected === item.b.id) return 2;
+            if (state.hover === item.b.id) return 1;
+            return 0;
+          }
+          return rank(a) - rank(b);
+        });
+        painted.forEach(function (item) {
+          var b = item.b;
+          var off = clumpOffset(item.i, group.length, view.zoom);
+          var x = anchor.x + off.x;
+          var y = anchor.y + off.y;
+          var on = state.selected === b.id || state.hover === b.id;
+          ctx.beginPath();
+          ctx.fillStyle = c.accent;
+          ctx.arc(x, y, on ? 6 : 4.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.lineWidth = on ? 2 : 1;
+          ctx.strokeStyle = on ? c.ink : withAlpha(c.base, 0.85);
+          ctx.stroke();
+          hits.push({ x: x, y: y, r: stacked ? 18 : 14, kind: "base", id: b.id });
+          if (markerInView(x, y, w, h) && (on || showNames || (group.length === 1 && view.zoom >= LABEL_ZOOM))) {
+            (on ? pickedJobs : nameJobs).push({ text: b.name, x: x, y: y, off: off });
+          }
+        });
+        if (stacked && markerInView(anchor.x, anchor.y, w, h)) {
+          paintBadge(ctx, group.length, anchor.x, anchor.y, c.accent, c.base);
         }
-        var x = p.x + jx;
-        var y = p.y + jy;
-        var on = state.selected === b.id || state.hover === b.id;
-        ctx.beginPath();
-        ctx.fillStyle = c.accent;
-        ctx.arc(x, y, on ? 6 : 4.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.lineWidth = on ? 2 : 1;
-        ctx.strokeStyle = on ? c.ink : withAlpha(c.base, 0.85);
-        ctx.stroke();
-        if (on) paintLabel(ctx, b.name, x + 10, y - 12, c.accent, c.base);
-        hits.push({ x: x, y: y, r: 10, kind: "base", id: b.id });
+      });
+      nameJobs.concat(pickedJobs).forEach(function (job) {
+        paintName(ctx, job.text, job.x, job.y, job.off, c.accent, c.base);
       });
     }
 
@@ -1065,6 +1209,7 @@
       state.problems = parsed.problems;
       state.selected = null;
       state.hover = null;
+      aim = null;
       var counts = Object.create(null);
       parsed.planetary.forEach(function (b) {
         if (b.galaxy == null) return;
@@ -1086,6 +1231,8 @@
       state.freighters = [];
       state.problems = [];
       state.selected = null;
+      state.hover = null;
+      aim = null;
       state.fileName = "";
       state.source = "";
       state.galaxy = 0;
@@ -1174,6 +1321,38 @@
       reader.readAsArrayBuffer(file);
     }
 
+    function markerSpot(id, size) {
+      var bases = visibleBases();
+      var b = null;
+      var i;
+      for (i = 0; i < bases.length; i++) if (bases[i].id === id) { b = bases[i]; break; }
+      if (!b) return null;
+      var group = [];
+      for (i = 0; i < bases.length; i++) {
+        if (bases[i].voxelX === b.voxelX && bases[i].voxelZ === b.voxelZ) group.push(bases[i]);
+      }
+      var idx = group.indexOf(b);
+      var off = clumpOffset(idx < 0 ? 0 : idx, group.length, view.zoom);
+      var p = project(b.voxelX, b.voxelZ, size.w, size.h);
+      return { x: p.x + off.x, y: p.y + off.y };
+    }
+
+    function zoomAnchor() {
+      if (aim) return { x: aim.x, y: aim.y };
+      var size = lastSize.w ? lastSize : canvasSize();
+      if (state.selected) {
+        var spot = markerSpot(state.selected, size);
+        if (spot) return spot;
+      }
+      return { x: size.w / 2, y: size.h / 2 };
+    }
+
+    function syncAim() {
+      if (!aim || aim.kind !== "base" || !state.hover) return;
+      var spot = markerSpot(state.hover, lastSize.w ? lastSize : canvasSize());
+      if (spot) aim = { x: spot.x, y: spot.y, kind: "base", id: state.hover };
+    }
+
     function hitTest(ev) {
       var rect = canvas.getBoundingClientRect();
       var x = ev.clientX - rect.left;
@@ -1200,17 +1379,25 @@
       if (drag) return;
       var h = hitTest(ev);
       var next = h && h.kind === "base" ? h.id : null;
+      var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
       canvas.style.cursor = h ? "pointer" : "grab";
-      if (next === state.hover) return;
+      var sameHover = next === state.hover;
+      var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
+      if (sameHover && sameAim) return;
       state.hover = next;
+      aim = nextAim;
       draw();
     });
-    canvas.addEventListener("mouseleave", function () {
-      if (drag) return;
-      if (!state.hover) return;
-      state.hover = null;
-      draw();
-    });
+    var mapWrap = canvas.closest ? canvas.closest(".map-wrap") : canvas.parentElement;
+    if (mapWrap) {
+      mapWrap.addEventListener("mouseleave", function () {
+        if (drag) return;
+        if (!state.hover && !aim) return;
+        state.hover = null;
+        aim = null;
+        draw();
+      });
+    }
     canvas.addEventListener("click", function (ev) {
       if (suppressClick) {
         suppressClick = false;
@@ -1251,6 +1438,7 @@
       view.panX = next.panX;
       view.panY = next.panY;
       clampPan();
+      syncAim();
       draw();
     }, { passive: false });
     canvas.addEventListener("pointerdown", function (ev) {
@@ -1329,7 +1517,11 @@
       delete pointers[ev.pointerId];
       var ids = Object.keys(pointers);
       if (!ids.length) {
-        if (drag && drag.moved) suppressClick = true;
+        if (drag && drag.moved) {
+          suppressClick = true;
+          aim = null;
+          state.hover = null;
+        }
         drag = null;
         canvas.classList.remove("panning");
         canvas.style.cursor = "grab";
@@ -1342,8 +1534,8 @@
     canvas.addEventListener("pointercancel", endPointer);
     canvas.addEventListener("keydown", function (ev) {
       var key = ev.key;
-      if (key === "+" || key === "=") zoomBy(1.25, lastSize.w / 2, lastSize.h / 2);
-      else if (key === "-" || key === "_") zoomBy(1 / 1.25, lastSize.w / 2, lastSize.h / 2);
+      if (key === "+" || key === "=") { var zin = zoomAnchor(); zoomBy(1.25, zin.x, zin.y); }
+      else if (key === "-" || key === "_") { var zout = zoomAnchor(); zoomBy(1 / 1.25, zout.x, zout.y); }
       else if (key === "0" || key === "Home") resetView();
       else if (key === "ArrowLeft") view.panX += 40;
       else if (key === "ArrowRight") view.panX -= 40;
@@ -1374,8 +1566,14 @@
         draw();
       });
     }
-    bindZoom("zoom-in", function () { zoomBy(1.25, lastSize.w / 2, lastSize.h / 2); });
-    bindZoom("zoom-out", function () { zoomBy(1 / 1.25, lastSize.w / 2, lastSize.h / 2); });
+    bindZoom("zoom-in", function () {
+      var p = zoomAnchor();
+      zoomBy(1.25, p.x, p.y);
+    });
+    bindZoom("zoom-out", function () {
+      var p = zoomAnchor();
+      zoomBy(1 / 1.25, p.x, p.y);
+    });
     bindZoom("zoom-reset", function () { resetView(); });
 
     if (fileInput) {
@@ -1412,6 +1610,8 @@
           showHubs.disabled = state.galaxy !== 0;
         }
         state.selected = null;
+        state.hover = null;
+        aim = null;
         renderLists();
         draw();
         summarize();
@@ -1420,6 +1620,8 @@
     if (filterInput) {
       filterInput.addEventListener("input", function () {
         state.filter = filterInput.value || "";
+        state.hover = null;
+        aim = null;
         renderLists();
         draw();
       });
@@ -1443,6 +1645,7 @@
       state.problems = [];
       state.selected = null;
       state.hover = null;
+      aim = null;
       state.filter = "";
       state.fileName = "";
       state.source = "";
@@ -1492,6 +1695,9 @@
     zoomAbout: zoomAbout,
     fitView: fitView,
     frameOf: frameOf,
+    clumpOffset: clumpOffset,
+    clumpZoomForGap: clumpZoomForGap,
+    panToMarker: panToMarker,
     mount: mount
   };
 });
