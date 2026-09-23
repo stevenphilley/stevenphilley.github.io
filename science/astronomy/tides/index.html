@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tides — two bulges, spring and neap — Steven Philley</title>
+<meta name="description" content="Interactive tides desk: the Moon’s gravity raises two ocean bulges, Earth turns under them, and the Sun adds or partly cancels. Spring at new and full; neap at the quarters. Classroom schematic, not a tide table.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/tides/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Tides — two bulges, spring and neap">
+<meta property="og:description" content="Top-down Earth with exaggerated ocean bulges. Slide the Moon from new to full: spring when the Sun lines up, neap at a right angle. Schematic, not a harbor prediction.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/tides/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tides — two bulges, spring and neap">
+<meta name="twitter:description" content="Moon phase slider for spring and neap, plus a light spin that shows two highs per turn under fixed bulges.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.ocean{background:rgba(110,164,184,.75)}
+.swatch.moon{background:var(--accent,#c8b48a)}
+.swatch.sun{background:#ffe6b0}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;accent-color:var(--accent,#c8b48a);height:28px}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:7.5ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/" aria-current="page">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Bulges</p>
+  <h1>Tides<br>two a day</h1>
+  <p class="lede">The Moon’s gravity raises a pair of ocean bulges. Earth turns under them, so a coast on this cartoon meets a high about twice a spin. The Sun raises a smaller tide. When the Sun and Moon line up — new or full — the bulges add: a <strong>spring</strong> tide. At a right angle — the quarters — they partly cancel: a <strong>neap</strong> tide. Pair with the <a href="/science/astronomy/moon/">Moon phase dial</a>, with <a href="/science/astronomy/eclipses/">eclipses</a> (the same lineup, plus a node), with <a href="/science/gravity/">gravity</a> (the pull itself), and with <a href="/science/astronomy/seasons/">seasons</a>, which is Earth’s axis, not this angle.</p>
+  <p class="note-schematic">Educational schematic — not a tide prediction, not navigation, and not guidance for Campbell harbor or any other coast. Bulges are exaggerated, the Sun is drawn in close, and distance is held fixed. <a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides06_variations.html" rel="noopener" target="_blank">NOAA</a> notes the Moon’s distance varies by about 31,000 miles in a month, which changes the range; this slider does not. Real coasts have basins, resonance, Coriolis deflection, and a seafloor. This is geometry literacy.</p>
+
+  <p class="band">Interactive · Top-down</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">North-pole view · Moon moves counterclockwise · bulges stay put</p>
+      <canvas id="tides" width="880" height="560" role="img" aria-label="Top-down schematic of Earth with two exaggerated ocean bulges. New Moon, spring tide. Educational cartoon, not a tide table."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch ocean" aria-hidden="true"></span> Ocean bulges · exaggerated</li>
+        <li><span class="swatch moon" aria-hidden="true"></span> Moon · sets the strong axis</li>
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun · smaller tide</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="phase">Sun–Moon angle</label>
+          <input type="range" id="phase" min="0" max="360" step="1" value="0" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0" aria-valuetext="0 degrees, new Moon, spring tide">
+          <span class="date-val" id="phase-val">0° · New</span>
+        </div>
+        <div class="presets" role="group" aria-label="Moon phase presets">
+          <button type="button" data-phase="0" aria-pressed="true">New</button>
+          <button type="button" data-phase="90" aria-pressed="false">First quarter</button>
+          <button type="button" data-phase="180" aria-pressed="false">Full</button>
+          <button type="button" data-phase="270" aria-pressed="false">Last quarter</button>
+        </div>
+        <div class="slider-row">
+          <label for="spin">Earth rotation</label>
+          <input type="range" id="spin" min="0" max="359" step="1" value="0" aria-valuemin="0" aria-valuemax="359" aria-valuenow="0" aria-valuetext="0 degrees, coast under a bulge, high">
+          <span class="date-val" id="spin-val">0°</span>
+          <button type="button" class="play-btn" id="btn-spin" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout">
+      <p class="tier" id="r-tier">Spring · new Moon · schematic</p>
+      <h2 id="r-title">Spring tide</h2>
+      <p class="range" id="r-range">Sun and Moon aligned</p>
+      <ul class="stats">
+        <li><span class="k">Phase</span><span class="v" id="r-phase">New Moon</span></li>
+        <li><span class="k">Sun–Moon angle</span><span class="v" id="r-angle">0°</span></li>
+        <li><span class="k">Tide</span><span class="v" id="r-tide">Spring</span></li>
+        <li><span class="k">Highs per turn</span><span class="v">Two · schematic</span></li>
+        <li><span class="k">This coast</span><span class="v" id="r-coast">High</span></li>
+      </ul>
+      <p class="why" id="r-why">The Moon is new, on the same side of Earth as the Sun. The solar bulge and the lunar bulge share an axis and add. NOAA’s classroom figure: the Sun’s tide is about half the Moon’s. Added together, the range grows. That is a spring tide.</p>
+      <p class="cadence" id="r-cadence">NOAA’s lunar day is 24 hours and 50 minutes — the Moon keeps moving, so Earth needs about an extra 50 minutes to catch the same bulge. In that simple picture, highs fall about 12 hours and 25 minutes apart. Play here is one schematic spin under bulges that stay put. It is not that longer day, and it is not a clock.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Spring tide is not the season">
+    <p class="tag">Name · not the season</p>
+    <h2>Spring tide is not springtime</h2>
+    <p><a href="https://oceanservice.noaa.gov/facts/springtide.html" rel="noopener" target="_blank">NOAA</a> keeps the history straight: “spring” here is the tide springing forth, not the season on the <a href="/science/astronomy/seasons/">seasons</a> desk. Spring tides come twice each lunar month, all year, at new and full Moon. Neap tides come about seven days later, at the quarters, when the Sun and Moon are at right angles. From the South Bay you can watch the phase change and know which part of the month the range tends to be larger. You cannot read a Campbell, Alviso, or harbor height off this drawing. The Bay is a basin. NOAA’s pattern for the U.S. West Coast is mixed semidiurnal — two highs and two lows in a lunar day, and the two highs are not the same height. This page still names no local water level.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the bulges</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Tidal bulges</dt><dd>Two ocean bulges, opposite each other. <a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides08_othereffects.html" rel="noopener" target="_blank">NOAA</a>: on the near side the Moon’s gravity pulls the water toward it; on the far side, inertia dominates and a second bulge forms. <a href="https://science.nasa.gov/moon/tides/" rel="noopener" target="_blank">NASA Science</a> has Earth rotating through that pair, so most shorelines see two highs and two lows a day. One high-to-high cycle takes a little over 12 hours.</dd></div>
+    <div class="gloss"><dt>Lunar day</dt><dd>The time to come back under the Moon: <a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides05_lunarday.html" rel="noopener" target="_blank">24 hours and 50 minutes</a>, not a 24-hour solar day. The Moon orbits the same way Earth spins, so Earth has to catch up. NOAA puts high tides in this simple picture 12 hours and 25 minutes apart.</dd></div>
+    <div class="gloss"><dt>Spring tide</dt><dd>New or full Moon. Sun, Earth, and Moon nearly in a line, so the Sun’s tide adds to the Moon’s. Highs a little higher, lows a little lower. Twice each lunar month, in every season. <a href="https://science.nasa.gov/moon/tides/" rel="noopener" target="_blank">NASA</a> and <a href="https://oceanservice.noaa.gov/facts/springtide.html" rel="noopener" target="_blank">NOAA</a> use the same lineup.</dd></div>
+    <div class="gloss"><dt>Neap tide</dt><dd>First or last quarter. The Sun and Moon are at about a right angle, so the solar bulge partly cancels the lunar one. Moderate tides: highs a little lower, lows a little higher than at spring. About a week after a spring tide.</dd></div>
+    <div class="gloss"><dt>Syzygy</dt><dd>Sun, Earth, and Moon in a line — new or full. That alignment is a spring tide. An <a href="/science/astronomy/eclipses/">eclipse</a> needs the same lineup and a node, because the Moon’s orbit is tilted about 5°. This page does not draw that tilt. Most new and full Moons are spring tides and not eclipses.</dd></div>
+    <div class="gloss"><dt>Not a tide table</dt><dd><a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides07_cycles.html" rel="noopener" target="_blank">NOAA</a>: if Earth were a smooth ball with no continents, every shore would see two equal highs and lows each lunar day. Continents block the bulges. Each ocean basin sets its own pattern — semidiurnal, mixed, or diurnal (one high and one low, as in much of the Gulf of Mexico). Shoreline shape and funnel bays magnify the range; NOAA’s classroom example is the Bay of Fundy, over 15 meters. Wind and air pressure move water too. None of that is in the slider.</dd></div>
+    <div class="gloss gloss-wide"><dt>What this cartoon leaves out</dt><dd>Coriolis deflection, resonance in a basin, and bathymetry — the shape and depth of the seafloor. Also the lag <a href="https://science.nasa.gov/moon/tides/" rel="noopener" target="_blank">NASA</a> describes: real high-tide bulges sit a little ahead of the Moon, because Earth spins faster than the Moon orbits. The rock of Earth flexes too. <a href="https://spaceplace.nasa.gov/io-tides/en/" rel="noopener" target="_blank">NASA Space Place</a> puts those solid-Earth tides at less than 20 centimeters (about 8 inches). The oval on this page is the ocean lesson, drawn huge so a phone can see it.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA / NOAA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/moon/tides/" rel="noopener" target="_blank">NASA Science — Tides</a> — two bulges; most shorelines two highs and two lows a day; high to high a little over 12 hours; the bulges lead the Moon slightly; spring when Sun, Earth, and Moon line up (new or full); neap about a week later at a right angle (first and last quarter). Graphics not to scale.</li>
+      <li><a href="https://spaceplace.nasa.gov/what-is-gravity/en/" rel="noopener" target="_blank">NASA Space Place — What is gravity?</a> — the Moon’s pull draws the seas toward it and raises ocean tides. The pair of bulges, including the far-side one, is the longer account on the NASA Science and NOAA pages.</li>
+      <li><a href="https://spaceplace.nasa.gov/io-tides/en/" rel="noopener" target="_blank">NASA Space Place — High tide on Io</a> — the Moon pulls a little harder on the near side than the far side. Earth’s solid ground tides are less than 20 centimeters (about 8 inches). Io’s flexing is a different world; only the Earth comparison is used here.</li>
+      <li><a href="https://oceanservice.noaa.gov/facts/springtide.html" rel="noopener" target="_blank">NOAA — What are spring and neap tides?</a> — spring from “springing forth,” not the season; twice each lunar month at new and full, when the Sun’s pull is added; neap seven days later at the first and third quarter, when the bulges partly cancel.</li>
+      <li><a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides06_variations.html" rel="noopener" target="_blank">NOAA education — Tidal variations</a> — solar tides about half as large as lunar tides, a variation on the lunar pattern; spring adds, neap partly cancels; two of each per lunar month. The Moon’s distance varies by about 31,000 miles, so perigee and apogee change the range. This slider holds distance fixed.</li>
+      <li><a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides05_lunarday.html" rel="noopener" target="_blank">NOAA education — The lunar day</a> — a lunar day is 24 hours and 50 minutes; two highs and two lows in that span; highs 12 hours and 25 minutes apart in the bulge picture.</li>
+      <li><a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides07_cycles.html" rel="noopener" target="_blank">NOAA education — Types of tidal cycles</a> — continents block a free pair of bulges; semidiurnal, mixed semidiurnal, and diurnal patterns; the U.S. West Coast tends toward mixed semidiurnal tides.</li>
+      <li><a href="https://oceanservice.noaa.gov/education/tutorial_tides/tides08_othereffects.html" rel="noopener" target="_blank">NOAA education — What else affects tides?</a> — near-side gravity and far-side inertia; shoreline shape; funnel bays, with the Bay of Fundy cited over 15 meters; wind and air pressure. A schematic of the Sun and Moon does not include those.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of two bulges and a Sun–Moon angle. Not a tide table, not a navigation aid, and not a prediction for Campbell, the South Bay, or anywhere else. Kilometer, mile, hour, and Fundy figures are the ones NASA and NOAA publish on the pages above. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>Phase dial for the synodic month — the same new, quarters, and full this slider uses.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>Syzygy again, plus a node. New and full are spring tides even when the shadow misses.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Why the near side and the far side are not pulled the same. Tides are that difference.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits among the planets — day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Earth’s axis, about 23.4°, kept parallel. A different geometry from this Sun–Moon angle.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>What sits over Campbell. The tide page still will not time the water.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/gravity/">Gravity</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  var AM = 1;
+  var AS = 0.5;
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var canvas = document.getElementById("tides");
+  var ctx = canvas.getContext("2d");
+  var phaseSlider = document.getElementById("phase");
+  var spinSlider = document.getElementById("spin");
+  var phasePresets = [].slice.call(document.querySelectorAll("[data-phase]"));
+  var playBtn = document.getElementById("btn-spin");
+  var state = { phase: 0, spin: 0, playing: false };
+  var raf = 0;
+  var lastT = 0;
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function wrap360(d){
+    d = d % 360;
+    return d < 0 ? d + 360 : d;
+  }
+  function angDiff(a, b){
+    var d = Math.abs(wrap360(a) - wrap360(b));
+    return Math.min(d, 360 - d);
+  }
+  function pt(cx, cy, r, deg){
+    var a = deg * Math.PI / 180;
+    return { x: cx + Math.cos(a) * r, y: cy - Math.sin(a) * r };
+  }
+  function field(deg, phase){
+    var th = deg * Math.PI / 180;
+    var tm = phase * Math.PI / 180;
+    return AM * Math.cos(2 * (th - tm)) + AS * Math.cos(2 * th);
+  }
+  function tideAmp(phase){
+    var tm = phase * Math.PI / 180;
+    var P = Math.cos(2 * tm) + AS;
+    var Q = Math.sin(2 * tm);
+    return Math.sqrt(P * P + Q * Q);
+  }
+  function crestDeg(phase){
+    var tm = phase * Math.PI / 180;
+    var P = Math.cos(2 * tm) + AS;
+    var Q = Math.sin(2 * tm);
+    var deg = (Math.atan2(Q, P) * 180 / Math.PI) / 2;
+    return wrap360(deg);
+  }
+  function alignFactor(phase){
+    return Math.abs(Math.cos(phase * Math.PI / 180));
+  }
+  function kindFor(phase){
+    var a = alignFactor(phase);
+    if (a > 0.85) return "spring";
+    if (a < 0.35) return "neap";
+    return "between";
+  }
+  function namedPhase(phase){
+    var names = [
+      { angle: 0, name: "New Moon", short: "New" },
+      { angle: 90, name: "First quarter", short: "First quarter" },
+      { angle: 180, name: "Full Moon", short: "Full" },
+      { angle: 270, name: "Last quarter", short: "Last quarter" }
+    ];
+    var best = names[0];
+    var bestD = 999;
+    names.forEach(function(n){
+      var d = angDiff(phase, n.angle);
+      if (d < bestD){ bestD = d; best = n; }
+    });
+    return { name: best.name, short: best.short, dist: bestD, exact: bestD < 0.5 };
+  }
+  function phaseLabel(phase){
+    var n = namedPhase(phase);
+    var deg = Math.round(wrap360(phase));
+    if (n.dist <= 8) return deg + "° · " + n.short;
+    return deg + "°";
+  }
+  function coastWord(phase, spin){
+    var amp = tideAmp(phase) || 1;
+    var h = field(spin, phase) / amp;
+    var ahead = field(wrap360(spin + 4), phase) / amp;
+    if (h > 0.62) return "High";
+    if (h < -0.62) return "Low";
+    return ahead > h ? "Rising" : "Falling";
+  }
+  function copyFor(phase){
+    var kind = kindFor(phase);
+    var named = namedPhase(phase);
+    var deg = Math.round(wrap360(phase)) + "°";
+    var phaseName = named.dist <= 18 ? named.name : "Between named phases";
+    if (kind === "spring" && angDiff(phase, 0) <= angDiff(phase, 180)){
+      return {
+        tier: "Spring · new Moon · schematic",
+        title: "Spring tide",
+        range: "Sun and Moon aligned",
+        phase: phaseName,
+        angle: deg,
+        tide: "Spring",
+        why: "The Moon is new, on the same side of Earth as the Sun. The solar bulge and the lunar bulge share an axis and add. NOAA’s classroom figure: the Sun’s tide is about half the Moon’s. Added together, the range grows. That is a spring tide — the water springing forth, not the season of spring."
+      };
+    }
+    if (kind === "spring"){
+      return {
+        tier: "Spring · full Moon · schematic",
+        title: "Spring tide",
+        range: "Sun and Moon aligned",
+        phase: phaseName,
+        angle: deg,
+        tide: "Spring",
+        why: "Earth is between the Sun and the Moon. They are still on one line, so the solar bulge and the lunar bulge share an axis and add. Spring tide again, this time at full Moon. Same geometry, opposite sides."
+      };
+    }
+    if (kind === "neap"){
+      var q = angDiff(phase, 90) < angDiff(phase, 270) ? "First quarter" : "Last quarter";
+      return {
+        tier: "Neap · " + q.toLowerCase() + " · schematic",
+        title: "Neap tide",
+        range: "Sun and Moon at a right angle",
+        phase: named.dist <= 18 ? named.name : q,
+        angle: deg,
+        tide: "Neap",
+        why: "The Moon is near a quarter, about a right angle from the Sun. The Sun’s bulge pulls across the Moon’s bulge and partly cancels it. Highs run a little lower and lows a little higher than at the lineup. NOAA calls that a neap tide. The pair of bulges is still there — just less stretched."
+      };
+    }
+    return {
+      tier: "Between spring and neap · schematic",
+      title: "Between",
+      range: deg + " · bulges partly overlapping",
+      phase: phaseName,
+      angle: deg,
+      tide: "Between",
+      why: "The Sun–Moon angle is neither a line nor a right angle, so the tide sits between spring and neap. The bulges still come as a pair. Earth turning under them is still why this coast can meet two highs in one schematic spin."
+    };
+  }
+
+  function layout(w, h){
+    var pad = 18;
+    var sunR = clamp(Math.min(w, h) * 0.05, 13, 26);
+    var earthR = clamp(Math.min(w, h) * 0.155, 42, 86);
+    var sunX = w - pad - sunR;
+    var cx = Math.min(w * 0.40, sunX - earthR * 2.65);
+    cx = Math.max(cx, pad + earthR * 1.85);
+    var cy = h * 0.54;
+    var moonR = clamp(earthR * 0.2, 7, 16);
+    var moonOrbit = earthR * 2.02;
+    var maxOrbit = sunX - sunR - moonR - 12 - cx;
+    if (moonOrbit > maxOrbit) moonOrbit = Math.max(earthR * 1.62, maxOrbit);
+    return {
+      w: w, h: h, cx: cx, cy: cy, earthR: earthR, sunR: sunR,
+      sunX: sunX, sunY: cy, moonR: moonR, moonOrbit: moonOrbit,
+      narrow: w < 560
+    };
+  }
+
+  function text(str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+
+  function traceComponent(L, axisDeg, amp){
+    var i;
+    ctx.beginPath();
+    for (i = 0; i <= 180; i++){
+      var deg = i * 2;
+      var th = deg * Math.PI / 180;
+      var ax = axisDeg * Math.PI / 180;
+      var h = amp * Math.cos(2 * (th - ax));
+      var bulge = L.earthR * 0.36;
+      var rr = Math.max(6, L.earthR + bulge * (h / 1.5));
+      var p = pt(L.cx, L.cy, rr, deg);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+
+  function waterR(L, deg, phase){
+    var h = field(deg, phase);
+    var bulge = L.earthR * 0.36;
+    return L.earthR + bulge * (h / 1.5);
+  }
+
+  function traceOval(L, phase, scaleAmp){
+    var i;
+    ctx.beginPath();
+    for (i = 0; i <= 180; i++){
+      var deg = i * 2;
+      var h = field(deg, phase);
+      if (scaleAmp) h = h / tideAmp(phase) * scaleAmp;
+      var bulge = L.earthR * 0.36;
+      var rr = L.earthR + bulge * (h / 1.5);
+      var p = pt(L.cx, L.cy, rr, deg);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.closePath();
+  }
+
+  function draw(){
+    var cssW = canvas.clientWidth || 880;
+    var cssH = Math.round(clamp(cssW * 0.64, 300, 560));
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.style.height = cssH + "px";
+    if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)){
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    var L = layout(cssW, cssH);
+    var phase = state.phase;
+    var kind = kindFor(phase);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var crest = crestDeg(phase);
+    var landR = L.earthR * 0.62 - 4;
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, L.moonOrbit, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.save();
+    ctx.setLineDash([3, 5]);
+    ctx.globalAlpha = 0.45;
+    ctx.strokeStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.moveTo(L.cx - L.earthR * 1.15, L.cy);
+    ctx.lineTo(L.sunX - L.sunR - 6, L.cy);
+    ctx.stroke();
+    var moonPt = pt(L.cx, L.cy, L.moonOrbit, phase);
+    ctx.strokeStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(L.cx, L.cy);
+    ctx.lineTo(moonPt.x, moonPt.y);
+    ctx.stroke();
+    ctx.restore();
+
+    var glow = ctx.createRadialGradient(L.sunX, L.sunY, L.sunR * 0.2, L.sunX, L.sunY, L.sunR * 2.4);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.5, "rgba(240,195,106,0.35)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(L.sunX, L.sunY, L.sunR * 2.4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(L.sunX, L.sunY, L.sunR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff8e8";
+    ctx.beginPath();
+    ctx.arc(L.sunX - L.sunR * 0.2, L.sunY - L.sunR * 0.15, L.sunR * 0.45, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.save();
+    ctx.setLineDash([2, 3]);
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = 1.15;
+    traceComponent(L, phase, AM);
+    ctx.stroke();
+    ctx.setLineDash([1, 3]);
+    ctx.strokeStyle = "#ffe6b0";
+    ctx.globalAlpha = 0.55;
+    traceComponent(L, 0, AS);
+    ctx.stroke();
+    ctx.restore();
+
+    var ocean = ctx.createRadialGradient(L.cx, L.cy, landR, L.cx, L.cy, L.earthR * 1.35);
+    if (kind === "spring"){
+      ocean.addColorStop(0, "rgba(86,150,170,0.35)");
+      ocean.addColorStop(1, "rgba(150,198,210,0.78)");
+    } else if (kind === "neap"){
+      ocean.addColorStop(0, "rgba(70,110,128,0.28)");
+      ocean.addColorStop(1, "rgba(110,150,166,0.55)");
+    } else {
+      ocean.addColorStop(0, "rgba(78,130,148,0.32)");
+      ocean.addColorStop(1, "rgba(130,174,188,0.66)");
+    }
+    traceOval(L, phase, null);
+    ctx.fillStyle = ocean;
+    ctx.fill();
+    ctx.strokeStyle = "rgba(210,230,236,0.85)";
+    ctx.lineWidth = 1.4;
+    ctx.stroke();
+
+    ctx.fillStyle = "#243038";
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, Math.max(8, landR), 0, Math.PI * 2);
+    ctx.fill();
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, Math.max(8, landR), 0, Math.PI * 2);
+    ctx.clip();
+    ctx.fillStyle = "rgba(92,122,96,0.85)";
+    ctx.beginPath();
+    ctx.moveTo(L.cx, L.cy);
+    var wedge;
+    for (wedge = 0; wedge <= 8; wedge++){
+      var wd = state.spin - 24 + 48 * wedge / 8;
+      var wp = pt(L.cx, L.cy, landR, wd);
+      ctx.lineTo(wp.x, wp.y);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,225,0.45)";
+    ctx.lineWidth = 1;
+    var mer = pt(L.cx, L.cy, landR, state.spin);
+    ctx.beginPath();
+    ctx.moveTo(L.cx, L.cy);
+    ctx.lineTo(mer.x, mer.y);
+    ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, Math.max(8, landR), 0, Math.PI * 2);
+    ctx.stroke();
+
+    var coastR = waterR(L, state.spin, phase);
+    var coast = pt(L.cx, L.cy, coastR, state.spin);
+    var word = coastWord(phase, state.spin);
+    ctx.fillStyle = word === "High" ? accent : ink;
+    ctx.beginPath();
+    ctx.arc(coast.x, coast.y, L.narrow ? 4.5 : 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = "#d9d4c8";
+    ctx.beginPath();
+    ctx.arc(moonPt.x, moonPt.y, L.moonR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+
+    var badge = kind === "spring" ? "SPRING" : kind === "neap" ? "NEAP" : "BETWEEN";
+    text(badge, L.cx, L.narrow ? 16 : 22, {
+      size: L.narrow ? 13 : 16,
+      align: "center",
+      color: accent
+    });
+    text("SUN", L.sunX, L.sunY + L.sunR + 14, { size: 10, align: "center", color: "#ffe6b0" });
+
+    var aRad = phase * Math.PI / 180;
+    var lx = moonPt.x + Math.cos(aRad) * (L.moonR + 16);
+    var ly = moonPt.y - Math.sin(aRad) * (L.moonR + 16);
+    var moonName = namedPhase(phase);
+    var moonTag = moonName.dist <= 12 ? moonName.short.toUpperCase() : "MOON";
+    text(moonTag, lx, ly, { size: 10, align: "center", color: accent });
+
+    if (!L.narrow){
+      [crest, wrap360(crest + 180)].forEach(function(deg){
+        var rr = waterR(L, deg, phase) + 14;
+        var p = pt(L.cx, L.cy, rr, deg);
+        if (Math.hypot(p.x - moonPt.x, p.y - moonPt.y) < L.moonR + 8) return;
+        if (Math.hypot(p.x - L.sunX, p.y - L.sunY) < L.sunR + 24) return;
+        text("HIGH", p.x, p.y, { size: 9, align: "center", color: soft });
+      });
+    }
+
+    text("EARTH", L.cx, L.cy + 4, { size: L.narrow ? 9 : 10, align: "center", color: ink });
+  }
+
+  function syncControls(){
+    var view = copyFor(state.phase);
+    var coast = coastWord(state.phase, state.spin);
+    document.getElementById("r-tier").textContent = view.tier;
+    document.getElementById("r-title").textContent = view.title;
+    document.getElementById("r-range").textContent = view.range;
+    document.getElementById("r-phase").textContent = view.phase;
+    document.getElementById("r-angle").textContent = view.angle;
+    document.getElementById("r-tide").textContent = view.tide;
+    document.getElementById("r-coast").textContent = coast;
+    document.getElementById("r-why").textContent = view.why;
+    document.getElementById("phase-val").textContent = phaseLabel(state.phase);
+    document.getElementById("spin-val").textContent = Math.round(state.spin) + "°";
+    document.getElementById("orbit-hint").textContent = "North-pole view · " + view.tide.toLowerCase() + " · bulges fixed · coast is " + coast.toLowerCase();
+    phaseSlider.value = String(Math.round(state.phase));
+    phaseSlider.setAttribute("aria-valuenow", String(Math.round(wrap360(state.phase))));
+    phaseSlider.setAttribute("aria-valuetext", phaseLabel(state.phase) + ", " + view.tide.toLowerCase() + " tide");
+    spinSlider.value = String(Math.round(state.spin) % 360);
+    spinSlider.setAttribute("aria-valuenow", String(Math.round(state.spin) % 360));
+    spinSlider.setAttribute("aria-valuetext", Math.round(state.spin) + " degrees, coast " + coast.toLowerCase());
+    phasePresets.forEach(function(b){
+      b.setAttribute("aria-pressed", String(angDiff(parseFloat(b.dataset.phase), state.phase) < 0.5));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var aria = "Top-down tide schematic. " + view.title + ". " + view.phase + ", Sun–Moon angle " + view.angle + ". Coast is " + coast.toLowerCase() + ". Two exaggerated bulges. Educational cartoon, not a tide table.";
+    canvas.setAttribute("aria-label", aria);
+  }
+
+  function render(){
+    syncControls();
+    draw();
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+
+  function frame(t){
+    if (!state.playing) return;
+    if (!lastT) lastT = t;
+    var dt = Math.min(0.05, (t - lastT) / 1000);
+    lastT = t;
+    state.spin = wrap360(state.spin + dt * 52);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      draw();
+    });
+  });
+  phaseSlider.addEventListener("input", function(){
+    state.phase = clamp(parseFloat(phaseSlider.value) || 0, 0, 360);
+    if (state.phase >= 360) state.phase = 0;
+    render();
+  });
+  phasePresets.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.phase = clamp(parseFloat(b.dataset.phase) || 0, 0, 359);
+      render();
+    });
+  });
+  spinSlider.addEventListener("input", function(){
+    stopPlay();
+    state.spin = wrap360(parseFloat(spinSlider.value) || 0);
+    render();
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", draw);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ draw(); }).observe(canvas.parentElement || canvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
