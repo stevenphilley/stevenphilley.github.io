@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retrograde — Earth laps Mars — Steven Philley</title>
+<meta name="description" content="Interactive retrograde desk: Earth on a faster inner orbit catches Mars. The line of sight swings backward for a stretch. The orbit does not reverse. Classroom circles, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/retrograde/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Retrograde — Earth laps Mars">
+<meta property="og:description" content="Top-down Sun, Earth, and Mars. Play the passing and watch apparent ecliptic longitude zigzag westward, then east again. Schematic, not a telescope chart.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/retrograde/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Retrograde — Earth laps Mars">
+<meta name="twitter:description" content="Earth overtakes Mars. The backward loop is the line of sight, not a reversed orbit.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.earth{background:#6ea4b8}
+.swatch.mars{background:#c45c3e}
+.swatch.west{background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/retrograde/" aria-current="page">Retrograde</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Passing</p>
+  <h1>Retrograde<br>a line of sight</h1>
+  <p class="lede">Mars does not stop and turn around. Earth does the passing. We ride a smaller orbit, and we move faster, so every so often we catch the outer planet and look past it. For a stretch the line of sight swings backward against the stars. That apparent reversal is <strong>retrograde</strong>. The orbit arrows on this cartoon never flip. Pair it with the <a href="/science/astronomy/">solar map</a> (where the planets actually sit), with <a href="/science/astronomy/seasons/">seasons</a> (Earth’s axis, not this passing), and with <a href="/science/gravity/">gravity</a>, the pull that keeps both worlds on those tracks.</p>
+  <p class="note-schematic">Educational schematic — circular orbits, flattened onto one plane, disks exaggerated so a phone can see them. Circle radii use the semimajor-axis ratio on NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars Fact Sheet</a>, 1.524, as if both paths were circles. They are not. That sheet lists Mars’s eccentricity as 0.0935 and its orbit inclination as 1.848°. Not an ephemeris. Not a date. Not for pointing a telescope from Campbell or anywhere else.</p>
+
+  <p class="band">Interactive · Top-down</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">North up · both orbits counterclockwise · dashed ray is the line of sight</p>
+      <canvas id="orbit" width="880" height="640" role="img" aria-label="Top-down schematic. Sun at the center, Earth on the inner circle, Mars on the outer circle. At opposition, Earth sits between the Sun and Mars. Educational cartoon, not an ephemeris."></canvas>
+      <p class="hint strip-label" id="strip-hint">Apparent ecliptic longitude · the backward stretch is the dip</p>
+      <canvas id="lon" width="880" height="220" role="img" aria-label="Plot of schematic ecliptic longitude versus time. The curve rises eastward, turns down through retrograde, then rises eastward again."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch earth" aria-hidden="true"></span> Earth · inner, faster</li>
+        <li><span class="swatch mars" aria-hidden="true"></span> Mars · outer planet</li>
+        <li><span class="swatch west" aria-hidden="true"></span> Westward stretch · schematic</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="lap">Schematic lap</label>
+          <input type="range" id="lap" min="-390" max="390" step="0.5" value="0" aria-valuemin="-390" aria-valuemax="390" aria-valuenow="0" aria-valuetext="Opposition, retrograde, schematic day 0">
+          <span class="date-val" id="lap-val">0 d</span>
+        </div>
+        <div class="presets" role="group" aria-label="Phase presets">
+          <button type="button" id="btn-pro" data-jump="prograde" aria-pressed="false">Prograde</button>
+          <button type="button" id="btn-stat" data-jump="stationary" aria-pressed="false">Stationary</button>
+          <button type="button" id="btn-ret" data-jump="retrograde" aria-pressed="true">Retrograde</button>
+          <button type="button" id="btn-con" data-jump="conjunction" aria-pressed="false">Conjunction</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Retrograde · opposition · schematic</p>
+      <h2 id="r-title">Retrograde</h2>
+      <p class="range" id="r-range">Earth between Sun and Mars</p>
+      <ul class="stats">
+        <li><span class="k">Apparent motion</span><span class="v" id="r-phase">Retrograde</span></li>
+        <li><span class="k">Sky drift</span><span class="v" id="r-drift">Westward · schematic</span></li>
+        <li><span class="k">Lineup</span><span class="v" id="r-line">Opposition</span></li>
+        <li><span class="k">Orbits</span><span class="v">Both still forward</span></li>
+        <li><span class="k">This drawing</span><span class="v" id="r-day">Day 0 from opposition</span></li>
+      </ul>
+      <p class="why" id="r-why">Earth is passing Mars. Both arrows still run counterclockwise. For this stretch the line of sight swings westward — ecliptic longitude on the strip falls. That is retrograde. The orbit has not reversed.</p>
+      <p class="cadence" id="r-cadence">NASA’s Mars Fact Sheet lists mean orbital velocity as 29.78 km/s for Earth and 24.08 km/s for Mars. The inner orbit is the faster one. Play on this page is not those speeds, and it is not a clock of the next opposition.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Mars does not reverse its orbit">
+    <p class="tag">Orbit · not reversed</p>
+    <h2>Mars does not reverse its orbit</h2>
+    <p>The rust-colored light can stall, drift west against the stars, then set off east again. The path around the Sun does not flip. <a href="https://starchild.gsfc.nasa.gov/docs/StarChild/questions/question46.html" rel="noopener" target="_blank">NASA’s StarChild</a> says retrograde is an apparent change: the planet does not physically start moving backwards in its orbit. It appears to, because a faster planet catches a slower one. <a href="https://apod.nasa.gov/apod/ap250530.html" rel="noopener" target="_blank">APOD</a> puts the same correction on a photograph of a real Martian loop — Earth overtakes, on a closer, quicker orbit. From Campbell the useful habit is the one in <a href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/jan2025-night-sky-notes/" rel="noopener" target="_blank">NASA’s January 2025 Night Sky Notes</a>: sketch Mars against the stars every few clear nights. Those dates were that season. This desk will not aim a telescope over the South Bay. What sits overhead is the <a href="/science/astronomy/local-sky/">local sky</a> page, and that chart is still not an ephemeris.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the passing</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Prograde</dt><dd>The usual apparent drift: west to east through the stars, night to night. <a href="https://starchild.gsfc.nasa.gov/docs/StarChild/questions/question46.html" rel="noopener" target="_blank">StarChild</a> uses that name for the ordinary direction. On this cartoon it is the rising parts of the longitude strip. Both planets are also moving prograde around the Sun the whole time — counterclockwise here — including during the backward stretch.</dd></div>
+    <div class="gloss"><dt>Retrograde</dt><dd>An apparent east-to-west drift against the stars. It is not a reversal of the orbit. StarChild: it happens roughly when a faster moving planet catches up to and passes a slower one. For Mars, that faster planet is Earth. <a href="https://apod.nasa.gov/apod/ap250530.html" rel="noopener" target="_blank">APOD</a> says the same loop shows up each time Earth laps a planet orbiting farther from the Sun. Jupiter and Saturn do this too. This drawing uses Mars as the outer planet.</dd></div>
+    <div class="gloss"><dt>Stationary</dt><dd>The pause between those directions, when the line of sight almost stops changing ecliptic longitude. There is one as Earth closes in, and one as Earth pulls away. The orbit arrow does not stop. “Stationary” is about the sky, not about a planet hanging in space.</dd></div>
+    <div class="gloss"><dt>Opposition</dt><dd><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a>: Earth and the outer planet on the same side of the Sun, all three in a line. <a href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/jan2025-night-sky-notes/" rel="noopener" target="_blank">Night Sky Notes</a> says the same thing from the ground — the planet is directly opposite the Sun as seen from Earth. On this slider that lineup is the middle of the westward stretch. The space-flight chapter calls opposition a good time to observe, and says the planet is then nearest. Mars’s eccentricity on the fact sheet is 0.0935, so a real closest approach can miss that instant. These circles do not time it.</dd></div>
+    <div class="gloss"><dt>Superior conjunction</dt><dd>The far-side lineup. Basics of Space Flight: Mars is a superior planet because its orbit is farther from the Sun than Earth’s, and superior planets have only superior conjunctions with the Sun — Earth and Mars on opposite sides, nearly in a straight line, Sun between. That is not the backward loop. The Conjunction preset jumps there. The strip stays on the passing, so the playhead leaves the zigzag.</dd></div>
+    <div class="gloss"><dt>Synodic period</dt><dd>The repeat of the same Sun–Earth–Mars alignment. NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars Fact Sheet</a> lists the synodic period as 779.94 days. Sidereal orbit periods on that sheet are 365.256 days for Earth and 686.980 days for Mars. This slider can walk one schematic lap using those mean periods on circles. It is not a calendar of the next opposition.</dd></div>
+    <div class="gloss gloss-wide"><dt>Apparent motion</dt><dd>What the line of sight does against the stars, not what the orbit does. StarChild’s classroom picture: stand beside a friend, walk faster, and as you pass they appear to drift backward even though they never turned around. The longitude strip is that illusion, unwrapped. A real retrograde also wanders a little in latitude and draws a loop on the sky — APOD’s photograph is that loop. This page keeps the orbits coplanar, so you get the east–west zigzag and not a star chart.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://starchild.gsfc.nasa.gov/docs/StarChild/questions/question46.html" rel="noopener" target="_blank">NASA GSFC StarChild — What does it mean for Mercury to be in retrograde?</a> — retrograde is an apparent change, not a planet physically moving backwards in its orbit; prograde is west-to-east through the stars; retrograde is east-to-west; it occurs roughly when a faster planet catches a slower one; the Mars figure is Earth moving faster in its orbit than Mars.</li>
+      <li><a href="https://apod.nasa.gov/apod/ap250530.html" rel="noopener" target="_blank">Astronomy Picture of the Day — Mars in the Loop (2025 May 30)</a> — Mars did not reverse the direction of its orbit; the apparent backward motion against the stars reflects Earth’s own orbit; retrograde shows each time Earth overtakes and laps a planet farther from the Sun, Earth moving more rapidly on its closer-in orbit. The dates and the 96 million kilometers on that page are that one apparition, not this slider.</li>
+      <li><a href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/jan2025-night-sky-notes/" rel="noopener" target="_blank">NASA Science — January’s Night Sky Notes: The Red Planet</a> — Mars appears to change direction because Earth is passing the slower-moving Mars; opposition is when a planet is directly opposite the Sun as seen from Earth. The December 2024–February 2025 dates on that page belong to that season.</li>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA Science — Basics of Space Flight, Chapter 1</a> — outer planets are superior planets because their orbits are farther from the Sun than Earth’s; superior conjunction puts Earth and the planet on opposite sides of the Sun; opposition puts them on the same side, in a line. That chapter also calls opposition a nearest-point observing window. This cartoon does not use that as a distance forecast.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — semimajor-axis ratio 1.524; sidereal orbit periods 686.980 days (Mars) and 365.256 days (Earth); synodic period 779.94 days; mean orbital velocity 24.08 km/s (Mars) and 29.78 km/s (Earth); eccentricity 0.0935; inclination 1.848°. Those means set the circles. They are not a nightly position.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a faster inner orbit overtaking a slower outer one. Not an ephemeris, not a pointing aid, and not a Campbell observing plan. Days on the slider are a coordinate of these circles, counted from a schematic opposition. Speeds, periods, and the 779.94-day synodic figure are the ones NASA publishes on the pages above. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth and Mars sit among the planets — day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>A synodic month you can drag. A different clock from Mars’s 779.94-day lap.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>A lineup plus a node. Opposition here is a planet opposite the Sun, not a lunar eclipse.</p></a>
+    <a href="/science/astronomy/tides/"><p class="n">Bulges</p><h3>Tides</h3><p>The Moon’s gravity, two bulges. Not this passing of worlds.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Earth’s axis, about 23.4°, kept parallel. Distance is not the reason for July.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>What sits over Campbell. This page still will not place Mars in that chart.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Why the inner orbit is the quicker one, and why neither path reverses.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/gravity/">Gravity</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Circle model uses NASA Mars Fact Sheet mean elements (see sources).
+     Radii ratio 1.524; sidereal periods 365.256 d and 686.980 d; synodic 779.94 d.
+     Not an ephemeris. */
+  var RE = 1;
+  var RM = 1.524;
+  var TE = 365.256;
+  var TM = 686.980;
+  var TSYN = 779.94;
+  var HALF = TSYN / 2;
+  var WIN = 115;
+  var PLAY_DPD = 14;
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var orbitCanvas = document.getElementById("orbit");
+  var lonCanvas = document.getElementById("lon");
+  var octx = orbitCanvas.getContext("2d");
+  var lctx = lonCanvas.getContext("2d");
+  var slider = document.getElementById("lap");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-jump]"));
+  var state = { t: 0, playing: false };
+  var raf = 0;
+  var lastT = 0;
+  var pauses = { inn: -36.36, out: 36.36 };
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function helio(t){
+    return { te: 2 * Math.PI * t / TE, tm: 2 * Math.PI * t / TM };
+  }
+  function world(t){
+    var h = helio(t);
+    return {
+      te: h.te,
+      tm: h.tm,
+      e: { x: RE * Math.cos(h.te), y: RE * Math.sin(h.te) },
+      m: { x: RM * Math.cos(h.tm), y: RM * Math.sin(h.tm) }
+    };
+  }
+  function lon(t){
+    var w = world(t);
+    return Math.atan2(w.m.y - w.e.y, w.m.x - w.e.x);
+  }
+  function unwrap(d){
+    while (d > Math.PI) d -= 2 * Math.PI;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    return d;
+  }
+  function rate(t){
+    return unwrap(lon(t + 0.35) - lon(t - 0.35)) / 0.7;
+  }
+  function relDeg(t){
+    var h = helio(t);
+    var d = (h.te - h.tm) * 180 / Math.PI;
+    d = ((d % 360) + 360) % 360;
+    if (d > 180) d -= 360;
+    return d;
+  }
+  function findZero(a, b){
+    var i;
+    for (i = 0; i < 48; i++){
+      var m = (a + b) / 2;
+      if (rate(a) * rate(m) <= 0) b = m;
+      else a = m;
+    }
+    return (a + b) / 2;
+  }
+  pauses.inn = findZero(-80, -8);
+  pauses.out = findZero(8, 80);
+
+  function phaseOf(t){
+    var r = rate(t) * 180 / Math.PI;
+    if (Math.abs(r) < 0.055) return "stationary";
+    return r < 0 ? "retrograde" : "prograde";
+  }
+  function lineupOf(t){
+    var d = Math.abs(relDeg(t));
+    if (d < 10) return "opposition";
+    if (d > 168) return "conjunction";
+    return "between";
+  }
+  function dayLabel(t){
+    var n = Math.round(t);
+    if (n === 0) return "0 d";
+    return (n > 0 ? "+" : "−") + Math.abs(n) + " d";
+  }
+  function copyFor(t){
+    var phase = phaseOf(t);
+    var line = lineupOf(t);
+    var day = dayLabel(t);
+    var nDay = Math.round(t);
+    var dayLong = "Day " + (nDay === 0 ? "0" : (nDay > 0 ? "+" : "−") + Math.abs(nDay)) + " from opposition";
+    if (line === "conjunction"){
+      return {
+        tier: "Superior conjunction · prograde · schematic",
+        title: "Conjunction",
+        range: "Sun between Earth and Mars",
+        phase: "Prograde",
+        drift: "Eastward · schematic",
+        line: "Superior conjunction",
+        day: dayLong,
+        slider: day + " · conjunction",
+        why: "The Sun sits between Earth and Mars. NASA calls that a superior conjunction for an outer planet: opposite sides of the Sun, nearly in a line. The strip’s backward dip is elsewhere on the lap. Both orbits are still running the same way. This is the far-side lineup, not a reversed path."
+      };
+    }
+    if (phase === "retrograde"){
+      var atOpp = line === "opposition";
+      return {
+        tier: atOpp ? "Retrograde · opposition · schematic" : "Retrograde · passing · schematic",
+        title: "Retrograde",
+        range: atOpp ? "Earth between Sun and Mars" : "Line of sight swinging west",
+        phase: "Retrograde",
+        drift: "Westward · schematic",
+        line: atOpp ? "Opposition" : "Near the passing",
+        day: dayLong,
+        slider: day + " · retrograde",
+        why: atOpp
+          ? "Earth is between the Sun and Mars, the lineup NASA calls opposition: the outer planet opposite the Sun in Earth’s sky. You are also in the middle of the westward stretch. Both orbit arrows still run counterclockwise. The strip falls because the line of sight swings backward while Earth passes — not because Mars turned around."
+          : "Earth is still passing Mars on the inner track. Ecliptic longitude on this cartoon is falling, so the drift is westward: retrograde. The pauses on either side of this stretch are the stationary points. The orbit never reverses to make the dip."
+      };
+    }
+    if (phase === "stationary"){
+      var inbound = t < 0;
+      return {
+        tier: "Stationary · " + (inbound ? "closing in" : "pulling away") + " · schematic",
+        title: "Stationary",
+        range: inbound ? "Pause before the backward stretch" : "Pause after the backward stretch",
+        phase: "Stationary",
+        drift: "Lingering · schematic",
+        line: "Between lineups",
+        day: dayLong,
+        slider: day + " · stationary",
+        why: inbound
+          ? "The line of sight has nearly stopped drifting in longitude. Mars would seem to hang against the stars for a little while. Earth is about to pass. The orbit arrows have not stopped, and they have not flipped. Click Stationary again for the pause on the far side of the loop."
+          : "The westward stretch is ending. Longitude is about to climb east again. Mars still has not turned around — Earth has moved far enough past that the line of sight sweeps forward once more. The other pause is on the way in."
+      };
+    }
+    var before = t < 0;
+    return {
+      tier: "Prograde · " + (before ? "catching up" : "pulling ahead") + " · schematic",
+      title: "Prograde",
+      range: before ? "Usual eastward drift" : "Eastward again, after the pass",
+      phase: "Prograde",
+      drift: "Eastward · schematic",
+      line: "Between lineups",
+      day: dayLong,
+      slider: day + " · prograde",
+      why: before
+        ? "Earth is catching up on the faster inner orbit. Both worlds move counterclockwise. From Earth, the line of sight to Mars still sweeps eastward against the fixed ticks — prograde, the ordinary way. The backward stretch comes when we draw alongside."
+        : "Earth has pulled ahead. The line of sight is sweeping east again. That return to prograde is the end of the apparent reversal. Mars’s orbit did the same counterclockwise thing the whole time."
+    };
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+
+  function screen(L, ang, r){
+    return { x: L.cx + Math.cos(ang) * r, y: L.cy - Math.sin(ang) * r };
+  }
+
+  function drawOrbit(cssW){
+    var cssH = Math.round(clamp(cssW * 0.72, 280, 560));
+    var ctx = fitCanvas(orbitCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var pad = 16;
+    var starGap = cssW < 520 ? 26 : 34;
+    var marsOrbit = Math.min(cssW, cssH) * 0.5 - pad - starGap;
+    marsOrbit = Math.max(78, marsOrbit);
+    var earthOrbit = marsOrbit / RM;
+    var L = { cx: cssW * 0.5, cy: cssH * 0.52, earthOrbit: earthOrbit, marsOrbit: marsOrbit };
+    var t = state.t;
+    var w = world(t);
+    var phase = phaseOf(t);
+    var lineUp = lineupOf(t);
+    var sunR = clamp(Math.min(cssW, cssH) * 0.045, 14, 26);
+    var earthDisk = clamp(earthOrbit * 0.09, 9, 16);
+    var marsDisk = clamp(earthDisk * 0.78, 8, 13);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, earthOrbit, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, marsOrbit, 0, Math.PI * 2);
+    ctx.stroke();
+
+    var starR = marsOrbit + starGap * 0.72;
+    var s;
+    ctx.fillStyle = muted;
+    for (s = 0; s < 24; s++){
+      var sp = screen(L, s * Math.PI / 12, starR);
+      ctx.globalAlpha = 0.55;
+      ctx.beginPath();
+      ctx.arc(sp.x, sp.y, s % 2 === 0 ? 1.6 : 1.1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    function arrowOn(orbitR, ang){
+      var p = screen(L, ang, orbitR);
+      var tangent = ang + Math.PI / 2;
+      var tip = screen(L, ang, orbitR);
+      var len = 11;
+      var bx = Math.cos(tangent);
+      var by = -Math.sin(tangent);
+      ctx.beginPath();
+      ctx.moveTo(p.x + bx * len, p.y + by * len);
+      ctx.lineTo(p.x - by * 4.2, p.y - bx * 4.2);
+      ctx.lineTo(p.x + by * 4.2, p.y + bx * 4.2);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.fillStyle = "rgba(110,164,184,0.9)";
+    arrowOn(earthOrbit, Math.PI * 0.55);
+    ctx.fillStyle = "rgba(196,92,62,0.95)";
+    arrowOn(marsOrbit, Math.PI * 0.18);
+
+    var e = screen(L, w.te, earthOrbit);
+    var m = screen(L, w.tm, marsOrbit);
+    var losAng = Math.atan2(-(m.y - e.y), m.x - e.x);
+    var far = screen(L, losAng, starR + 8);
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = phase === "retrograde" ? accent : soft;
+    ctx.globalAlpha = 0.95;
+    ctx.lineWidth = phase === "retrograde" ? 1.6 : 1.15;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(far.x, far.y);
+    ctx.stroke();
+    ctx.restore();
+
+    var hit = screen(L, losAng, starR);
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(hit.x, hit.y, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    var glow = ctx.createRadialGradient(L.cx, L.cy, sunR * 0.2, L.cx, L.cy, sunR * 2.6);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR * 2.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#fff8e8";
+    ctx.beginPath();
+    ctx.arc(L.cx - sunR * 0.22, L.cy - sunR * 0.18, sunR * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#6ea4b8";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, earthDisk, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,225,0.65)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = "#c45c3e";
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, marsDisk, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,220,200,0.55)";
+    ctx.stroke();
+
+    var eLab = screen(L, w.te, earthOrbit + earthDisk + 14);
+    var mLab = screen(L, w.tm, marsOrbit + marsDisk + 14);
+    eLab.x = clamp(eLab.x, 36, cssW - 36);
+    eLab.y = clamp(eLab.y, 46, cssH - 14);
+    mLab.x = clamp(mLab.x, 36, cssW - 36);
+    mLab.y = clamp(mLab.y, 46, cssH - 14);
+    text(ctx, "Earth", eLab.x, eLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Mars", mLab.x, mLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Sun", L.cx, L.cy + sunR + 12, { size: 11, align: "center", color: ink });
+
+    var badge = phase === "retrograde" ? "Retrograde" : phase === "stationary" ? "Stationary" : "Prograde";
+    if (lineUp === "conjunction") badge = "Conjunction";
+    text(ctx, badge, cssW - 10, 16, { size: 11, align: "right", color: accent });
+    text(ctx, "arrows stay forward", cssW - 10, 32, { size: 10, align: "right", color: muted });
+
+    var aria = "Top-down schematic. Sun at the center, Earth inside, Mars outside. " + badge + ". Both orbits still counterclockwise. Educational cartoon, not an ephemeris.";
+    orbitCanvas.setAttribute("aria-label", aria);
+  }
+
+  function series(){
+    var pts = [];
+    var t0 = -WIN;
+    var prev = lon(t0);
+    var acc = 0;
+    var n = 240;
+    var i;
+    for (i = 0; i <= n; i++){
+      var t = -WIN + (2 * WIN) * i / n;
+      var l = lon(t);
+      if (i) acc += unwrap(l - prev);
+      prev = l;
+      pts.push({ t: t, deg: acc * 180 / Math.PI, phase: phaseOf(t) });
+    }
+    return pts;
+  }
+
+  function drawStrip(cssW){
+    var cssH = Math.round(clamp(cssW * 0.34, 150, 210));
+    var ctx = fitCanvas(lonCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var padL = 36;
+    var padR = 12;
+    var padT = 16;
+    var padB = 28;
+    var pts = series();
+    var minD = pts[0].deg;
+    var maxD = pts[0].deg;
+    var i;
+    for (i = 0; i < pts.length; i++){
+      if (pts[i].deg < minD) minD = pts[i].deg;
+      if (pts[i].deg > maxD) maxD = pts[i].deg;
+    }
+    var span = Math.max(8, maxD - minD);
+    minD -= span * 0.16;
+    maxD += span * 0.18;
+    function X(t){ return padL + (t + WIN) / (2 * WIN) * (cssW - padL - padR); }
+    function Y(deg){ return padT + (1 - (deg - minD) / (maxD - minD)) * (cssH - padT - padB); }
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, padT);
+    ctx.lineTo(padL, cssH - padB);
+    ctx.lineTo(cssW - padR, cssH - padB);
+    ctx.stroke();
+
+    var bandL = X(pauses.inn);
+    var bandR = X(pauses.out);
+    ctx.fillStyle = "rgba(200,180,138,0.10)";
+    ctx.fillRect(bandL, padT, bandR - bandL, cssH - padB - padT);
+
+    ctx.beginPath();
+    for (i = 0; i < pts.length; i++){
+      var x = X(pts[i].t);
+      var y = Y(pts[i].deg);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = soft;
+    ctx.lineWidth = 1.6;
+    ctx.stroke();
+
+    ctx.beginPath();
+    var pen = false;
+    for (i = 0; i < pts.length; i++){
+      if (pts[i].phase !== "retrograde"){
+        pen = false;
+        continue;
+      }
+      var xr = X(pts[i].t);
+      var yr = Y(pts[i].deg);
+      if (!pen){ ctx.moveTo(xr, yr); pen = true; }
+      else ctx.lineTo(xr, yr);
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    function tick(t, label, below){
+      var x = X(t);
+      ctx.strokeStyle = muted;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, cssH - padB);
+      ctx.lineTo(x, cssH - padB + 4);
+      ctx.stroke();
+      text(ctx, label, x, cssH - padB + (below ? 14 : 14), { size: 9, align: "center", color: muted });
+    }
+    tick(pauses.inn, "in", true);
+    tick(0, "0", true);
+    tick(pauses.out, "out", true);
+
+    var rise = pts[Math.floor(pts.length * 0.2)];
+    var again = pts[Math.floor(pts.length * 0.8)];
+    if (rise) text(ctx, "east", X(rise.t), Y(rise.deg) - 12, { size: 10, align: "center", color: soft });
+    var midT = (pauses.inn + pauses.out) / 2;
+    var midDeg = null;
+    for (i = 0; i < pts.length; i++){
+      if (pts[i].t >= midT){ midDeg = pts[i].deg; break; }
+    }
+    if (midDeg != null) text(ctx, "west", X(midT), Y(midDeg) + 14, { size: 10, align: "center", color: accent });
+    if (again) text(ctx, "east", X(again.t), Y(again.deg) - 12, { size: 10, align: "center", color: soft });
+
+    var inWin = state.t >= -WIN && state.t <= WIN;
+    var px = X(clamp(state.t, -WIN, WIN));
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1;
+    ctx.setLineDash(inWin ? [] : [2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(px, padT);
+    ctx.lineTo(px, cssH - padB);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (inWin){
+      var py = Y((function(){
+        var acc2 = 0;
+        var prev2 = lon(-WIN);
+        var steps = 80;
+        var k;
+        for (k = 1; k <= steps; k++){
+          var tt = -WIN + (state.t + WIN) * k / steps;
+          var ll = lon(tt);
+          acc2 += unwrap(ll - prev2);
+          prev2 = ll;
+        }
+        return acc2 * 180 / Math.PI;
+      })());
+      ctx.fillStyle = ink;
+      ctx.beginPath();
+      ctx.arc(px, py, 3.4, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      text(ctx, "outside this strip", px, padT + 8, { size: 9, align: state.t > 0 ? "right" : "left", color: muted });
+    }
+
+    text(ctx, "schematic longitude", 8, padT + 4, { size: 9, align: "left", color: muted });
+    var cap = inWin ? "days from opposition · schematic" : "playhead left the loop window";
+    text(ctx, cap, cssW - padR, cssH - 8, { size: 9, align: "right", color: muted });
+
+    var phase = phaseOf(state.t);
+    lonCanvas.setAttribute("aria-label",
+      "Schematic ecliptic longitude versus time. The curve rises, turns down through retrograde, then rises again. Marker is " +
+      (inWin ? "inside the backward-loop window" : "outside the loop window") +
+      ", phase " + phase + ".");
+  }
+
+  function render(){
+    state.t = clamp(state.t, -HALF, HALF);
+    var copy = copyFor(state.t);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("r-phase").textContent = copy.phase;
+    document.getElementById("r-drift").textContent = copy.drift;
+    document.getElementById("r-line").textContent = copy.line;
+    document.getElementById("r-day").textContent = copy.day;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("lap-val").textContent = dayLabel(state.t);
+    slider.min = String(-HALF);
+    slider.max = String(HALF);
+    slider.value = String(state.t);
+    slider.setAttribute("aria-valuemin", String(Math.round(-HALF)));
+    slider.setAttribute("aria-valuemax", String(Math.round(HALF)));
+    slider.setAttribute("aria-valuenow", String(Math.round(state.t)));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    var shown = lineupOf(state.t) === "conjunction" ? "conjunction" : phaseOf(state.t);
+    jumpBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.jump === shown));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = orbitCanvas.clientWidth || orbitCanvas.parentElement.clientWidth || 880;
+    drawOrbit(cssW);
+    drawStrip(cssW);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.t += dt * PLAY_DPD;
+    if (state.t >= HALF){
+      state.t = HALF;
+      stopPlay();
+    }
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.t = clamp(parseFloat(slider.value) || 0, -HALF, HALF);
+    render();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      var which = b.dataset.jump;
+      if (which === "retrograde") state.t = 0;
+      else if (which === "conjunction") state.t = HALF;
+      else if (which === "stationary"){
+        state.t = Math.abs(state.t - pauses.inn) < 1.2 ? pauses.out : pauses.inn;
+      } else {
+        state.t = Math.abs(state.t + 100) < 1.2 ? 100 : -100;
+      }
+      render();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
