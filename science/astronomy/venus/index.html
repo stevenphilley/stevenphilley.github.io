@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Venus — phases of an inner orbit — Steven Philley</title>
+<meta name="description" content="Interactive Venus phases desk: an orbit inside Earth’s, so we see crescent through gibbous. Inferior and superior conjunction, and the evening and morning elongations. Classroom circles, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/venus/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Venus — phases of an inner orbit">
+<meta property="og:description" content="Top-down Sun, Venus, and Earth. Play the inner orbit and watch the disk go from crescent to gibbous. Schematic, not a finder chart.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/venus/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Venus — phases of an inner orbit">
+<meta name="twitter:description" content="Venus shows crescent through gibbous because its orbit is inside Earth’s. Conjunctions and elongation, drawn as circles.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.earth{background:#6ea4b8}
+.swatch.venus{background:#f0d9a0}
+.swatch.lit{background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/venus/" aria-current="page">Venus</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Phases</p>
+  <h1>Venus<br>phases</h1>
+  <p class="lede">Venus orbits inside Earth’s orbit, so the sunlit half does not stay turned the way it does for Mars. From here the planet runs through phases — crescent, half, gibbous, and back — for a geometric reason that is not the Moon’s. <strong>Inferior conjunction</strong> puts Venus between Earth and the Sun, near “new,” and usually lost in the glare. <strong>Superior conjunction</strong> puts it on the far side, near “full,” and still near the Sun in the sky. The long evening and morning stretches are the greatest elongations, when Venus stands farthest in angle from the Sun. Pair it with the <a href="/science/astronomy/">solar map</a> (where Venus sits among the planets), with <a href="/science/astronomy/moon/">Moon phases</a> (the same words, a moon going around us), with <a href="/science/astronomy/retrograde/">retrograde</a> (Earth passing an outer planet, not this inner one), with <a href="/science/astronomy/seasons/">seasons</a> (Earth’s axis, not this angle), and with <a href="/science/gravity/">gravity</a>, the pull that keeps both worlds on their tracks.</p>
+  <p class="note-schematic">Educational schematic — circular orbits, flattened onto one plane, disks exaggerated so a phone can see them. The viewpoint holds Earth on the right so the phase is easy to read. Both worlds still orbit the same way. Circle radii use the semimajor-axis ratio on NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">Venus Fact Sheet</a>, 0.723. That sheet lists Venus’s eccentricity as 0.0068 and its orbit inclination as 3.395°, so a real inferior conjunction is usually a thin crescent in the glare, not a transit across the Sun. This coplanar cartoon goes dark at the lineup. Not an ephemeris. Not a date. Not for pointing a telescope from Campbell or anywhere else, and not a reason to look at the Sun.</p>
+
+  <p class="band">Interactive · Top-down</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">North up · Earth held on the right · Venus walks counterclockwise</p>
+      <canvas id="orbit" width="880" height="640" role="img" aria-label="Top-down schematic. Sun at the center, Venus on the inner circle, Earth held on the right. Greatest eastern elongation, evening. Educational cartoon, not an ephemeris."></canvas>
+      <p class="hint strip-label" id="phase-hint">As seen from Earth · bright limb faces the Sun · ghost ring is the largest size on these circles</p>
+      <canvas id="phase" width="880" height="280" role="img" aria-label="Venus disk at greatest eastern elongation. About half lit, bright limb toward the Sun, medium size on these circles."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch venus" aria-hidden="true"></span> Venus · inner, faster</li>
+        <li><span class="swatch earth" aria-hidden="true"></span> Earth · viewpoint held</li>
+        <li><span class="swatch lit" aria-hidden="true"></span> Line of sight</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="lap">From inferior conjunction</label>
+          <input type="range" id="lap" min="0" max="583.92" step="0.5" value="513" aria-valuemin="0" aria-valuemax="584" aria-valuenow="513" aria-valuetext="About day 513 after a schematic inferior conjunction, greatest eastern elongation">
+          <span class="date-val" id="lap-val">+513 d</span>
+        </div>
+        <div class="presets" role="group" aria-label="Conjunction and elongation presets">
+          <button type="button" id="btn-inf" data-jump="inferior" aria-pressed="false">Inferior</button>
+          <button type="button" id="btn-west" data-jump="west" aria-pressed="false">West elongation</button>
+          <button type="button" id="btn-sup" data-jump="superior" aria-pressed="false">Superior</button>
+          <button type="button" id="btn-east" data-jump="east" aria-pressed="true">East elongation</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Greatest eastern elongation · evening · schematic</p>
+      <h2 id="r-title">East elongation</h2>
+      <p class="range" id="r-range">Farthest east of the Sun on these circles</p>
+      <ul class="stats">
+        <li><span class="k">Phase</span><span class="v" id="r-phase">Half lit</span></li>
+        <li><span class="k">Sky</span><span class="v" id="r-sky">Evening star</span></li>
+        <li><span class="k">Regime</span><span class="v" id="r-line">Greatest eastern elongation</span></li>
+        <li><span class="k">Sun–Venus–Earth</span><span class="v" id="r-angle">90° · schematic</span></li>
+        <li><span class="k">Disk</span><span class="v" id="r-disk">In between</span></li>
+        <li><span class="k">This drawing</span><span class="v" id="r-day">Day +513 from inferior</span></li>
+      </ul>
+      <p class="why" id="r-why">On these circles the line of sight just grazes the inner orbit. That is as far east of the Sun as this drawing can place Venus — an evening star, which in the real sky follows the Sun down after sunset. The angle at Venus is a right angle here, so the disk is half lit. NASA’s name for the apparent angle from the Sun is elongation. The fact sheet does not publish one greatest-elongation degree for this slider, so the number above is the cartoon.</p>
+      <p class="cadence" id="r-cadence">NASA’s Venus Fact Sheet lists sidereal orbit periods of 224.701 days for Venus and 365.256 days for Earth, and a synodic period of 583.92 days. Mean orbital velocity is 35.02 km/s for Venus and 29.78 km/s for Earth. The inner orbit is the faster one. Play on this page is not those speeds, and it is not a clock of the next conjunction.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Full is not the bright show">
+    <p class="tag">Crescent · not the full disk</p>
+    <h2>Full is not the bright show</h2>
+    <p>The Moon is brightest when it is full. Venus is not. <a href="https://science.nasa.gov/solar-system/skywatching/whats-up-february-2025-skywatching-tips-from-nasa/" rel="noopener" target="_blank">NASA’s February 2025 sky notes</a> put it plainly: Venus shines most brilliantly as a thinner crescent, because that crescent is the close one. The near-full disk is the far side of the Sun, small in the sky. <a href="https://apod.nasa.gov/apod/ap200521.html" rel="noopener" target="_blank">APOD</a> shows the same tradeoff in a stack of evening images — larger, and narrower, as Venus approaches our line of sight to the Sun. This page does not invent a magnitude. The lower disk only changes size the way these circles change distance.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the phase</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Inferior planet</dt><dd><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a>: Mercury and Venus are inferior planets because their orbits are closer to the Sun than Earth’s, not because they matter less. They always appear near the Sun in the morning or evening sky. Mars, on the <a href="/science/astronomy/retrograde/">retrograde</a> desk, is a superior planet. Its orbit is outside ours, so it does not run through this crescent-to-full range.</dd></div>
+    <div class="gloss"><dt>Phase</dt><dd>The sunlit fraction we see. The same chapter: an inferior planet can show nearly the whole range, from the dark “new” phase, to a slim crescent, to a mostly lit gibbous, approximating full on the far side of the Sun. <a href="https://science.nasa.gov/asset/hubble/venus-cloud-tops/" rel="noopener" target="_blank">A NASA Hubble caption</a> says the same thing in one line — because Venus is closer to the Sun than Earth, it appears to go through phases, like the Moon. The Moon’s phases are a body going around us. These are a body going around the Sun inside our own orbit.</dd></div>
+    <div class="gloss"><dt>Inferior conjunction</dt><dd>Venus approximately between Earth and the Sun, the three nearly in a line. Basics of Space Flight uses that definition, and adds that an exact crossing of the Sun’s face is a transit. <a href="https://ntrs.nasa.gov/citations/19790012783" rel="noopener" target="_blank">A 1977 NASA Facts pamphlet</a> says this is also when Venus comes closest to Earth, then becomes a morning star. The fact sheet’s 3.395° inclination is why the usual case is a thin crescent in the glare. This slider’s zero is a schematic lineup, not a transit date.</dd></div>
+    <div class="gloss"><dt>Superior conjunction</dt><dd>Earth and Venus on opposite sides of the Sun, again nearly in a line. That is the far-side lineup. The phase is near full, the disk on these circles is as small as it gets, and Venus is still close to the Sun in the sky. <a href="https://science.nasa.gov/earth/earth-observatory/viewing-venus-from-the-space-station-145213/" rel="noopener" target="_blank">NASA’s Earth Observatory</a> describes the circuit as evening star, then lost near the Sun, then morning star, then passing behind the Sun — about 19 months in their wording. The day count on this slider is the fact sheet’s 583.92-day synodic period, not a conversion I invented from “19 months.”</dd></div>
+    <div class="gloss"><dt>Elongation</dt><dd>The apparent angle from the Sun, in NASA’s space-flight chapter. The <a href="https://ntrs.nasa.gov/citations/19790012783" rel="noopener" target="_blank">1977 pamphlet</a> splits it east and west: eastern elongation is the evening sky, after sunset; western elongation is the morning sky, before sunrise. <a href="https://science.nasa.gov/solar-system/skywatching/planetary-alignments-and-planet-parades/" rel="noopener" target="_blank">A NASA skywatching page</a> says Venus is visible for only a couple of months at a time around its greatest separation from the Sun, which that page calls elongation. Greatest eastern and greatest western on this desk are the tangent points of these circles — schematic positions, not an almanac.</dd></div>
+    <div class="gloss"><dt>Synodic period</dt><dd>The repeat of the same Sun–Earth–Venus alignment. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">Venus Fact Sheet</a> lists it as 583.92 days. Sidereal orbit periods on that sheet are 224.701 days for Venus and 365.256 days for Earth. The slider can walk one of those synodic laps. It does not name the next evening star over Campbell.</dd></div>
+    <div class="gloss gloss-wide"><dt>Crescent and distance</dt><dd>Closer on the inner orbit means a larger disk and a thinner crescent. Farther, toward superior conjunction, means a smaller disk and a fuller phase. APOD (21 May 2020) follows Venus as an evening star: it grows larger because it is approaching Earth, and the crescent narrows as it swings toward our line of sight to the Sun. The February 2025 notes add the brightness twist, without a magnitude this page will copy. The ghost ring on the lower panel is the largest size these circles allow. It is not a published arcsecond.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Venus Fact Sheet</a> — semimajor-axis ratio 0.723; sidereal orbit periods 224.701 days (Venus) and 365.256 days (Earth); synodic period 583.92 days; mean orbital velocity 35.02 km/s (Venus) and 29.78 km/s (Earth); eccentricity 0.0068; inclination 3.395°. Those means set the circles. They are not a nightly position. The sheet’s V(1,0) magnitude is a normalized brightness, not an apparent magnitude for this slider, so it is not used.</li>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA Science — Basics of Space Flight, Chapter 1</a> — inferior planets orbit closer to the Sun than Earth and stay near the Sun in the morning or evening sky; elongation is their apparent angle from the Sun; they show phases from dark “new,” through crescent, to gibbous, approximating full on the far side; inferior conjunction is the planet approximately between Earth and Sun (a transit if it crosses the Sun’s face); superior conjunction puts Earth and the planet on opposite sides of the Sun.</li>
+      <li><a href="https://apod.nasa.gov/apod/ap200521.html" rel="noopener" target="_blank">Astronomy Picture of the Day — Phases of Venus (2020 May 21)</a> — Venus’s sunlit hemisphere waxes and wanes like the Moon; in that evening-star sequence the disk grows larger as Venus approaches Earth and the crescent narrows toward the Sun; inferior conjunction follows, then Venus becomes a morning star. The dates and the half-degree offset on that page belong to 2020, not this slider.</li>
+      <li><a href="https://science.nasa.gov/solar-system/skywatching/whats-up-february-2025-skywatching-tips-from-nasa/" rel="noopener" target="_blank">NASA Science — What’s Up: February 2025</a> — through a telescope Venus becomes larger as it comes closer, and becomes a slimmer crescent; unlike the Moon, it is not brightest when full; the full phase is the far side of the Sun, and the closer crescent looks much larger. The February and March dates on that page are that season.</li>
+      <li><a href="https://science.nasa.gov/asset/hubble/venus-cloud-tops/" rel="noopener" target="_blank">NASA Science — Venus cloud tops (Hubble, 1995)</a> — because Venus is closer to the Sun than Earth, it appears to go through phases like the Moon; when it swings close, the disk grows and changes from a full disk to a crescent. The miles and kilometers in that caption are the distance of that exposure, not a distance this slider prints.</li>
+      <li><a href="https://science.nasa.gov/solar-system/skywatching/planetary-alignments-and-planet-parades/" rel="noopener" target="_blank">NASA Science — Planetary alignments and planet parades</a> — Venus is visible for only a couple of months at a time around its greatest separation from the Sun (that page calls the separation elongation), just after sunset or before sunrise.</li>
+      <li><a href="https://science.nasa.gov/earth/earth-observatory/viewing-venus-from-the-space-station-145213/" rel="noopener" target="_blank">NASA Earth Observatory — Viewing Venus from the Space Station</a> — evening star for a few months, then lost near the Sun, then morning star, then behind the Sun, a circuit that page calls 19 months. This slider counts the fact sheet’s 583.92 days instead of turning “19 months” into a new figure.</li>
+      <li><a href="https://ntrs.nasa.gov/citations/19790012783" rel="noopener" target="_blank">NASA Facts NF-86, The Planet Venus (1977), via NTRS</a> — eastern elongation is the evening sky; western elongation is the morning sky; Venus moves from superior conjunction east of the Sun as an evening star, through inferior conjunction, and then becomes a morning star; greatest elongation is marked on that orbit diagram. The pamphlet’s rounded period and surface temperature are not the numbers used here.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of an inner orbit and the phase it shows from Earth. Not an ephemeris, not a pointing aid, and not a Campbell observing plan. Days on the slider are a coordinate of these circles, counted from a schematic inferior conjunction. The angle is the Sun–Venus–Earth angle on the cartoon. Periods, the 0.723 ratio, and the inclination are the ones NASA publishes on the pages above. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Venus sits among the planets — day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>The same phase words, for a body going around Earth. A different geometry from this inner orbit.</p></a>
+    <a href="/science/astronomy/retrograde/"><p class="n">Passing</p><h3>Retrograde</h3><p>Earth laps Mars, an outer planet. The backward loop is a line of sight. Venus does not do that trick.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Earth’s axis, about 23.4°, kept parallel. Not the Sun–Venus–Earth angle on this desk.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>A new Moon near a node. Inferior conjunction is Venus near the Sun, not that shadow.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Why the inner orbit is the quicker one, and why both paths stay closed.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/gravity/">Gravity</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Circle model uses NASA Venus Fact Sheet mean elements (see sources).
+     Radii ratio 0.723; synodic period 583.92 d. Not an ephemeris.
+     Days are counted from a schematic inferior conjunction. */
+  var RV = 0.723;
+  var TSYN = 583.92;
+  var TAU = Math.PI * 2;
+  var GE = Math.acos(RV);
+  var PLAY_DPD = 12;
+  var PRE = {
+    inferior: 0,
+    west: GE / TAU * TSYN,
+    superior: TSYN / 2,
+    east: (TAU - GE) / TAU * TSYN
+  };
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var orbitCanvas = document.getElementById("orbit");
+  var phaseCanvas = document.getElementById("phase");
+  var slider = document.getElementById("lap");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-jump]"));
+  var state = { t: PRE.east, playing: false };
+  var hashDay = /(?:^|[?#&])day=([0-9.]+)/.exec(String(location.hash || "") + String(location.search || ""));
+  if (hashDay) state.t = clamp(parseFloat(hashDay[1]) || 0, 0, TSYN);
+  var raf = 0;
+  var lastT = 0;
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function len(x, y){ return Math.sqrt(x * x + y * y); }
+  function wrapDay(t){
+    var x = t % TSYN;
+    if (x < 0) x += TSYN;
+    return x;
+  }
+  function thetaOf(t){ return TAU * (wrapDay(t) / TSYN); }
+  function venus(theta){ return { x: RV * Math.cos(theta), y: RV * Math.sin(theta) }; }
+  function phaseAngle(theta){
+    var v = venus(theta);
+    var sx = -v.x, sy = -v.y;
+    var ex = 1 - v.x, ey = -v.y;
+    var m = len(sx, sy) * len(ex, ey);
+    if (m === 0) return 0;
+    var c = (sx * ex + sy * ey) / m;
+    return Math.acos(clamp(c, -1, 1));
+  }
+  function elongation(theta){
+    var v = venus(theta);
+    var lonV = Math.atan2(v.y, v.x - 1);
+    var lonS = Math.atan2(0, -1);
+    var d = lonV - lonS;
+    while (d > Math.PI) d -= TAU;
+    while (d < -Math.PI) d += TAU;
+    return d;
+  }
+  function distance(theta){
+    var v = venus(theta);
+    return len(v.x - 1, v.y);
+  }
+  function angDiff(a, b){
+    var d = Math.abs(a - b) % TAU;
+    if (d > Math.PI) d = TAU - d;
+    return d;
+  }
+  function dayNum(t){
+    var n = Math.round(wrapDay(t));
+    if (n >= Math.round(TSYN)) n = 0;
+    return n;
+  }
+  function dayLabel(t){
+    var n = dayNum(t);
+    if (n === 0) return "0 d";
+    return "+" + n + " d";
+  }
+  function nearPreset(t){
+    var w = wrapDay(t);
+    var best = "";
+    var bestD = 1e9;
+    var keys = ["inferior", "west", "superior", "east"];
+    var i;
+    for (i = 0; i < keys.length; i++){
+      var target = PRE[keys[i]];
+      var d = Math.abs(w - target);
+      if (keys[i] === "inferior") d = Math.min(d, Math.abs(w - TSYN));
+      if (d < bestD){ bestD = d; best = keys[i]; }
+    }
+    return bestD < 8 ? best : "";
+  }
+  function phaseName(ang){
+    var deg = ang * 180 / Math.PI;
+    if (deg >= 168) return "Near new";
+    if (deg >= 105) return "Crescent";
+    if (deg >= 75) return "Half lit";
+    if (deg >= 18) return "Gibbous";
+    return "Near full";
+  }
+  function diskWords(theta){
+    var d = distance(theta);
+    var dMin = 1 - RV;
+    var dMax = 1 + RV;
+    var u = (d - dMin) / (dMax - dMin);
+    if (u < 0.28) return "Larger · closer";
+    if (u > 0.72) return "Smaller · farther";
+    return "In between";
+  }
+  function skyWords(elong){
+    var deg = elong * 180 / Math.PI;
+    if (Math.abs(deg) < 8) return "In the glare";
+    return deg > 0 ? "Evening star" : "Morning star";
+  }
+  function copyFor(t){
+    var th = thetaOf(t);
+    var ang = phaseAngle(th);
+    var elong = elongation(th);
+    var deg = Math.round(ang * 180 / Math.PI);
+    var phase = phaseName(ang);
+    var sky = skyWords(elong);
+    var disk = diskWords(th);
+    var day = dayLabel(t);
+    var nDay = dayNum(t);
+    var dayLong = "Day " + (nDay === 0 ? "0" : "+" + nDay) + " from inferior";
+    var angleText = deg + "° · schematic";
+    var preset = nearPreset(t);
+    var evening = elong >= 0;
+    var base = {
+      phase: phase,
+      sky: sky,
+      disk: disk,
+      day: dayLong,
+      angle: angleText,
+      slider: day + " · " + phase.toLowerCase()
+    };
+    if (preset === "inferior"){
+      base.tier = "Inferior conjunction · near new · schematic";
+      base.title = "Inferior";
+      base.range = "Venus between Earth and the Sun";
+      base.line = "Inferior conjunction";
+      base.phase = "Near new";
+      base.sky = "In the glare";
+      base.disk = "Largest on these circles";
+      base.why = "Venus sits between Earth and the Sun. NASA calls that an inferior conjunction: the inner planet passes approximately between us and the Sun. The face turned toward Earth is the night side, so this coplanar cartoon goes dark. A real Venus usually misses the Sun’s face — the fact sheet inclination is 3.395° — and shows a thin crescent lost in the glare. The disk here is as large as these circles get. This is not a transit date, and it is not a reason to look at the Sun.";
+      return base;
+    }
+    if (preset === "superior"){
+      base.tier = "Superior conjunction · near full · schematic";
+      base.title = "Superior";
+      base.range = "Venus on the far side of the Sun";
+      base.line = "Superior conjunction";
+      base.phase = "Near full";
+      base.sky = "In the glare";
+      base.disk = "Smallest on these circles";
+      base.why = "Venus is on the far side of the Sun. NASA calls that a superior conjunction: Earth and Venus on opposite sides, nearly in a line. The lit face points toward Earth, so the phase is near full, and the disk is as small as these circles allow. It is also near the Sun in the sky. Fuller is not the bright show NASA describes. The dazzling crescent is the close part of the lap, not this far lineup.";
+      return base;
+    }
+    if (preset === "east"){
+      base.tier = "Greatest eastern elongation · evening · schematic";
+      base.title = "East elongation";
+      base.range = "Farthest east of the Sun on these circles";
+      base.line = "Greatest eastern elongation";
+      base.phase = "Half lit";
+      base.sky = "Evening star";
+      base.why = "On these circles the line of sight just grazes the inner orbit. That is as far east of the Sun as this drawing can place Venus — an evening star, which in the real sky follows the Sun down after sunset. The angle at Venus is a right angle here, so the disk is half lit. NASA’s name for the apparent angle from the Sun is elongation. The fact sheet does not publish one greatest-elongation degree for this slider, so the number above is the cartoon.";
+      return base;
+    }
+    if (preset === "west"){
+      base.tier = "Greatest western elongation · morning · schematic";
+      base.title = "West elongation";
+      base.range = "Farthest west of the Sun on these circles";
+      base.line = "Greatest western elongation";
+      base.phase = "Half lit";
+      base.sky = "Morning star";
+      base.why = "The same tangent, on the morning side. Venus is as far west of the Sun as these circles allow, so in the real sky it rises before the Sun. Half lit on this drawing, because the Sun–Venus–Earth angle is a right angle when the line of sight grazes the orbit. Still a schematic position, not an almanac, and still not a place to point a telescope from Campbell.";
+      return base;
+    }
+    if (phase === "Crescent"){
+      base.tier = (evening ? "Evening crescent" : "Morning crescent") + " · schematic";
+      base.title = evening ? "Evening crescent" : "Morning crescent";
+      base.range = evening ? "East of the Sun · closing or leaving" : "West of the Sun · closing or leaving";
+      base.line = evening ? "Evening · crescent" : "Morning · crescent";
+      base.why = evening
+        ? "Venus is east of the Sun, so it follows the Sun down: an evening star. The lit fraction is a crescent. Earth is looking mostly at the night side while Venus is relatively close on the inner orbit, so the disk is on the large side of these circles. NASA’s February 2025 sky notes put the surprise here: the planet shines most brilliantly as a thinner crescent, not when it is full. This page does not invent a magnitude."
+        : "Venus has come through inferior conjunction and sits west of the Sun. It rises before the Sun: a morning star. The phase is still a crescent, and the disk is still on the large side, because Venus is still relatively close. APOD’s 2020 sequence is the evening half of this same tradeoff — larger, and narrower, as Venus approaches our line of sight to the Sun.";
+      return base;
+    }
+    if (phase === "Gibbous"){
+      base.tier = (evening ? "Evening gibbous" : "Morning gibbous") + " · schematic";
+      base.title = evening ? "Evening gibbous" : "Morning gibbous";
+      base.range = evening ? "East of the Sun · far side of the orbit" : "West of the Sun · far side of the orbit";
+      base.line = evening ? "Evening · gibbous" : "Morning · gibbous";
+      base.why = evening
+        ? "Still east of the Sun, still an evening object, but Venus is on the far side of its orbit. Most of the face we see is lit — gibbous — and the disk is smaller because the planet is farther. The large crescent comes as Venus swings in toward inferior conjunction."
+        : "West of the Sun, morning sky, and mostly lit. Venus is heading out toward the far side. The disk shrinks as the phase fills in. Superior conjunction is the small, near-full end of that walk, and it is still lost near the Sun.";
+      return base;
+    }
+    if (phase === "Half lit"){
+      base.tier = (evening ? "Evening" : "Morning") + " · about half · schematic";
+      base.title = evening ? "Evening half" : "Morning half";
+      base.range = "Near the tangent on these circles";
+      base.line = evening ? "Near eastern elongation" : "Near western elongation";
+      base.why = "About half the disk is lit. On these circles the exact greatest elongation is the tangent, and that is a right angle at Venus. A little off that mark, the phase is already slipping toward crescent or gibbous. The preset buttons sit on the tangent itself.";
+      return base;
+    }
+    if (phase === "Near full"){
+      base.tier = "Near full · far side · schematic";
+      base.title = "Near full";
+      base.range = "Approaching the far side of the Sun";
+      base.line = "Near superior conjunction";
+      base.why = "Nearly the whole disk is lit. Venus is near the far side of the Sun, so the disk is small. Superior conjunction is the lineup itself. Nearby, the phase is still this full-looking gibbous, and Venus is still close to the Sun in the sky.";
+      return base;
+    }
+    base.tier = "Near new · inner lineup · schematic";
+    base.title = "Near new";
+    base.range = "Approaching the Earth–Sun line";
+    base.line = "Near inferior conjunction";
+    base.why = "Almost none of the lit face points at Earth. Venus is near the Earth–Sun line, and in the real sky it is lost in the glare. Inferior conjunction is the lineup in the middle of that stretch. The disk is large because Venus is close. Do not go looking for it beside the Sun with this page.";
+    return base;
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+
+  function screen(L, ang, r){
+    return { x: L.cx + Math.cos(ang) * r, y: L.cy - Math.sin(ang) * r };
+  }
+
+  function drawGlobe(ctx, x, y, R, sunX, sunY){
+    var ang = Math.atan2(sunY - y, sunX - x);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, R, 0, TAU);
+    ctx.fillStyle = "#3a322b";
+    ctx.fill();
+    ctx.clip();
+    ctx.fillStyle = "#f0d9a0";
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.arc(x, y, R + 0.5, ang - Math.PI / 2, ang + Math.PI / 2, false);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    ctx.beginPath();
+    ctx.arc(x, y, R, 0, TAU);
+    ctx.strokeStyle = "rgba(232,230,225,0.55)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function drawOrbit(cssW){
+    var cssH = Math.round(clamp(cssW * 0.72, 280, 520));
+    var ctx = fitCanvas(orbitCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var th = thetaOf(state.t);
+    var copy = copyFor(state.t);
+    var pad = 28;
+    var earthOrbit = Math.min(cssW, cssH) * 0.5 - pad - 18;
+    earthOrbit = Math.max(86, earthOrbit);
+    var venusOrbit = earthOrbit * RV;
+    var L = { cx: cssW * 0.46, cy: cssH * 0.52, earthOrbit: earthOrbit, venusOrbit: venusOrbit };
+    var sunR = clamp(Math.min(cssW, cssH) * 0.045, 12, 22);
+    var earthDisk = clamp(earthOrbit * 0.055, 8, 13);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, venusOrbit, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, earthOrbit, 0, TAU);
+    ctx.stroke();
+
+    function arrowOn(orbitR, ang, color){
+      var p = screen(L, ang, orbitR);
+      var tangent = ang + Math.PI / 2;
+      var bx = Math.cos(tangent);
+      var by = -Math.sin(tangent);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(p.x + bx * 11, p.y + by * 11);
+      ctx.lineTo(p.x - by * 4.2, p.y - bx * 4.2);
+      ctx.lineTo(p.x + by * 4.2, p.y + bx * 4.2);
+      ctx.closePath();
+      ctx.fill();
+    }
+    arrowOn(venusOrbit, th + 1.15, "rgba(240,217,160,0.95)");
+    arrowOn(earthOrbit, Math.PI * 0.55, "rgba(110,164,184,0.9)");
+
+    var e = screen(L, 0, earthOrbit);
+    var v = screen(L, th, venusOrbit);
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.35;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(v.x, v.y);
+    ctx.stroke();
+    ctx.strokeStyle = soft;
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(L.cx, L.cy);
+    ctx.stroke();
+    ctx.restore();
+
+    var glow = ctx.createRadialGradient(L.cx, L.cy, sunR * 0.2, L.cx, L.cy, sunR * 2.8);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR * 2.8, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#fff8e8";
+    ctx.beginPath();
+    ctx.arc(L.cx - sunR * 0.22, L.cy - sunR * 0.18, sunR * 0.42, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = "#6ea4b8";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, earthDisk, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,225,0.65)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    var vDisk = clamp(earthDisk * 0.92, 7, 12);
+    drawGlobe(ctx, v.x, v.y, vDisk, L.cx, L.cy);
+
+    var eLab = { x: e.x + earthDisk + 8, y: e.y - 16 };
+    var vLab = screen(L, th, venusOrbit + vDisk + 16);
+    eLab.x = clamp(eLab.x, 36, cssW - 28);
+    eLab.y = clamp(eLab.y, 16, cssH - 14);
+    vLab.x = clamp(vLab.x, 28, cssW - 28);
+    vLab.y = clamp(vLab.y, 16, cssH - 14);
+    if (len(vLab.x - eLab.x, vLab.y - eLab.y) < 46){
+      vLab = screen(L, th, venusOrbit - vDisk - 18);
+      vLab.x = clamp(vLab.x, 28, cssW - 28);
+      vLab.y = clamp(vLab.y, 16, cssH - 14);
+    }
+    text(ctx, "Earth", eLab.x, eLab.y, { size: 11, align: "left", color: ink });
+    text(ctx, "Venus", vLab.x, vLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Sun", L.cx, L.cy + sunR + 13, { size: 11, align: "center", color: ink });
+    text(ctx, copy.title, cssW - 10, 16, { size: 11, align: "right", color: accent });
+    text(ctx, "both still forward", cssW - 10, 32, { size: 10, align: "right", color: muted });
+
+    orbitCanvas.setAttribute("aria-label",
+      "Top-down schematic. Sun at the center, Venus on the inner circle, Earth held on the right. " +
+      copy.title + ". " + copy.line + ". Both orbits still counterclockwise. Educational cartoon, not an ephemeris.");
+  }
+
+  function drawPhase(cssW){
+    var cssH = Math.round(clamp(cssW * 0.38, 200, 280));
+    var ctx = fitCanvas(phaseCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var th = thetaOf(state.t);
+    var ang = phaseAngle(th);
+    var elong = elongation(th);
+    var copy = copyFor(state.t);
+    var sunRight = elong >= 0;
+    var dMin = 1 - RV;
+    var d = distance(th);
+    var cx = cssW * 0.5;
+    var cy = cssH * 0.46;
+    var Rmax = clamp(Math.min(cssW * 0.22, cssH * 0.34), 52, 100);
+    var R = Math.max(7, Rmax * dMin / d);
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, Rmax, 0, TAU);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var scale = 2;
+    var Rc = R * scale;
+    var w = Math.max(2, Math.ceil(Rc * 2 + 4));
+    var off = document.createElement("canvas");
+    off.width = w;
+    off.height = w;
+    var ictx = off.getContext("2d");
+    var img = ictx.createImageData(w, w);
+    var data = img.data;
+    var ocx = w / 2;
+    var ocy = w / 2;
+    var si = Math.sin(ang);
+    var co = Math.cos(ang);
+    var sign = sunRight ? 1 : -1;
+    var y, x, idx, dx, dy, r2, z, lit, edge, a, g;
+    for (y = 0; y < w; y++){
+      for (x = 0; x < w; x++){
+        dx = x + 0.5 - ocx;
+        dy = y + 0.5 - ocy;
+        r2 = dx * dx + dy * dy;
+        var rr = Math.sqrt(r2);
+        if (rr > Rc + 1) continue;
+        edge = rr <= Rc ? 1 : clamp(Rc + 1 - rr, 0, 1);
+        z = rr < Rc ? Math.sqrt(Rc * Rc - r2) : 0;
+        lit = (sign * dx) * si + z * co > 0;
+        idx = (y * w + x) * 4;
+        if (lit){
+          g = 0.78 + 0.22 * (z / Math.max(Rc, 1));
+          data[idx] = Math.round(243 * g);
+          data[idx + 1] = Math.round(224 * g);
+          data[idx + 2] = Math.round(168 * g);
+        } else {
+          data[idx] = 54;
+          data[idx + 1] = 46;
+          data[idx + 2] = 40;
+        }
+        a = edge;
+        if (rr > Rc - 1.2){
+          var rim = clamp((rr - (Rc - 1.2)) / 1.2, 0, 1);
+          data[idx] = Math.round(data[idx] * (1 - rim) + 232 * rim);
+          data[idx + 1] = Math.round(data[idx + 1] * (1 - rim) + 230 * rim);
+          data[idx + 2] = Math.round(data[idx + 2] * (1 - rim) + 225 * rim);
+        }
+        data[idx + 3] = Math.round(255 * a);
+      }
+    }
+    ictx.putImageData(img, 0, 0);
+    ctx.drawImage(off, cx - w / (2 * scale), cy - w / (2 * scale), w / scale, w / scale);
+
+    var sunSide = sunRight ? 1 : -1;
+    var sx = clamp(cx + sunSide * (Rmax + 34), 28, cssW - 28);
+    var sy = cy;
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(sx, sy, 7, 0, TAU);
+    ctx.fill();
+    text(ctx, "Sun", sx, sy + 16, { size: 10, align: "center", color: ink });
+    text(ctx, copy.phase, 12, 16, { size: 11, align: "left", color: accent });
+    text(ctx, copy.disk, cssW - 12, 16, { size: 10, align: "right", color: muted });
+    text(ctx, "west", 12, cssH - 14, { size: 10, align: "left", color: muted });
+    text(ctx, "east", cssW - 12, cssH - 14, { size: 10, align: "right", color: muted });
+    text(ctx, "northern sketch", cx, cssH - 14, { size: 10, align: "center", color: muted });
+
+    phaseCanvas.setAttribute("aria-label",
+      "Venus as seen from Earth. " + copy.phase + ". " + copy.sky + ". Bright limb faces the Sun. Disk is " +
+      copy.disk.toLowerCase() + ". Sun–Venus–Earth angle " + copy.angle + ". Educational cartoon, not a finder chart.");
+  }
+
+  function render(){
+    state.t = wrapDay(state.t);
+    var copy = copyFor(state.t);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("r-phase").textContent = copy.phase;
+    document.getElementById("r-sky").textContent = copy.sky;
+    document.getElementById("r-line").textContent = copy.line;
+    document.getElementById("r-angle").textContent = copy.angle;
+    document.getElementById("r-disk").textContent = copy.disk;
+    document.getElementById("r-day").textContent = copy.day;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("lap-val").textContent = dayLabel(state.t);
+    slider.min = "0";
+    slider.max = String(TSYN);
+    slider.value = String(state.t);
+    slider.setAttribute("aria-valuemin", "0");
+    slider.setAttribute("aria-valuemax", String(Math.round(TSYN)));
+    slider.setAttribute("aria-valuenow", String(dayNum(state.t)));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    var shown = nearPreset(state.t);
+    jumpBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.jump === shown));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = orbitCanvas.clientWidth || (orbitCanvas.parentElement && orbitCanvas.parentElement.clientWidth) || 880;
+    drawOrbit(cssW);
+    drawPhase(cssW);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.t = wrapDay(state.t + dt * PLAY_DPD);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.t = clamp(parseFloat(slider.value) || 0, 0, TSYN);
+    render();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      var which = b.dataset.jump;
+      if (PRE[which] != null) state.t = PRE[which];
+      render();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
