@@ -118,6 +118,7 @@
   aside{
     border-left:1px solid var(--hair);padding:1.6rem clamp(1rem,2vw,1.5rem);
     display:flex;flex-direction:column;gap:1rem;background:var(--panel);
+    max-height:calc(100vh - 4.6rem);overflow:auto;
   }
   .rail-date{font-family:var(--display);font-size:1.95rem;line-height:1.1;
     letter-spacing:var(--title-track);text-shadow:var(--glow)}
@@ -133,7 +134,6 @@
   .drop{background:none;border:none;color:var(--text-dim);cursor:pointer;padding:0 .1rem;font-size:1rem}
   .drop:hover{color:var(--accent-lit);box-shadow:none}
   .empty{font-size:.85rem;color:var(--text-dim);line-height:1.5;font-style:italic}
-  .compose{display:flex;gap:.5rem}
   input[type=text]{
     flex:1;background:var(--field);border:1px solid var(--hair);color:var(--text);
     font-family:var(--sans);font-size:.9rem;padding:.6rem .7rem;border-radius:3px;
@@ -166,6 +166,56 @@
   .backup-card p{font-size:.86rem;line-height:1.55;margin:0 0 .7rem;color:var(--text)}
   .backup-card .quiet{color:var(--text-dim);font-size:.8rem}
   .backup-actions{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.85rem}
+  .tz-line{font-family:var(--mono);font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--text-dim);margin-top:.45rem;line-height:1.5}
+  .nextup{display:flex;flex-direction:column;gap:.35rem}
+  .nextup-head{display:flex;justify-content:space-between;align-items:baseline;gap:.6rem}
+  .nextup-label{font-family:var(--mono);font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  .nextup-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.04em;color:var(--accent-lit);
+    text-align:right;line-height:1.35}
+  .next-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.3rem;
+    max-height:11rem;overflow:auto}
+  .next-list .empty{padding:.15rem 0}
+  .next-list button.next-row{
+    width:100%;text-align:left;border-radius:3px;display:flex;flex-direction:column;align-items:flex-start;gap:.12rem;
+    padding:.42rem .5rem;letter-spacing:0;text-transform:none;font-family:var(--sans);font-size:.84rem;
+    font-weight:400;color:var(--text);line-height:1.3;border-radius:3px;
+  }
+  .next-name{overflow-wrap:anywhere}
+  .next-when{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
+  .compose{display:flex;flex-direction:column;gap:.45rem}
+  .compose-line{display:flex;gap:.5rem;min-width:0}
+  .compose-line input{min-width:0}
+  .compose-meta{display:flex;flex-wrap:wrap;gap:.45rem .75rem;align-items:center}
+  .time-label,.check{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.66rem;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);cursor:pointer}
+  .check input{accent-color:var(--accent);width:1rem;height:1rem}
+  input[type=time], #alarmLead{
+    background:var(--field);border:1px solid var(--hair);color:var(--text);
+    font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;text-transform:none;
+    padding:.4rem .45rem;border-radius:3px;color-scheme:dark;max-width:100%;
+  }
+  input[type=time]:focus, #alarmLead:focus{outline:none;border-color:var(--accent);box-shadow:var(--glow)}
+  .entry-text{display:block;overflow-wrap:anywhere}
+  .entry-meta{display:block;margin-top:.16rem;font-family:var(--mono);font-size:.64rem;
+    letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+  .entry-actions{display:flex;gap:.05rem;flex:0 0 auto;align-items:center}
+  .drop.word{font-family:var(--mono);font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;padding:.1rem .2rem}
+  .remind{display:flex;flex-direction:column;gap:.45rem}
+  .due-alert{
+    position:fixed;left:50%;bottom:1.1rem;transform:translateX(-50%);z-index:40;
+    width:min(28rem,calc(100% - 1.5rem));display:none;gap:.8rem;align-items:center;justify-content:space-between;
+    background:var(--plate-2);border:1px solid var(--accent);color:var(--text);
+    padding:.9rem 1rem;border-radius:4px;box-shadow:0 16px 44px rgba(0,0,0,.55), var(--glow);
+  }
+  .due-alert.on{display:flex}
+  .due-kicker{font-family:var(--mono);font-size:.64rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
+  .due-title{font-family:var(--display);font-size:1.35rem;line-height:1.15;letter-spacing:var(--title-track);margin-top:.15rem}
+  .due-when{font-family:var(--mono);font-size:.68rem;letter-spacing:.06em;color:var(--text-dim);margin-top:.28rem}
+  @media (max-width:860px){
+    .due-alert{flex-wrap:wrap;bottom:.7rem}
+    .next-list{max-height:7.5rem}
+  }
 
   .tip{
     position:fixed;pointer-events:none;opacity:0;transform:translate(-50%,-140%);
@@ -184,7 +234,7 @@
 
   @media (max-width:860px){
     main{grid-template-columns:1fr}
-    aside{border-left:none;border-top:1px solid var(--hair)}
+    aside{border-left:none;border-top:1px solid var(--hair);max-height:none}
     .entries{max-height:9rem}
     svg{width:min(100%,86vw)}
   }
@@ -233,18 +283,57 @@
       <div>
         <div class="rail-date" id="railDate">—</div>
         <div class="rail-sub" id="railSub"></div>
+        <div class="tz-line" id="tzHint"></div>
+      </div>
+      <div class="nextup" id="nextUp">
+        <div class="nextup-head">
+          <span class="nextup-label">Next up</span>
+          <span class="nextup-count" id="nextCountdown"></span>
+        </div>
+        <ol class="next-list" id="nextList"></ol>
       </div>
       <div class="divider"></div>
       <ul class="entries" id="entries"></ul>
       <div class="compose">
-        <input type="text" id="entryText" placeholder="Add something to this day" aria-label="New entry">
-        <button id="addEntry">Add</button>
+        <div class="compose-line">
+          <input type="text" id="entryText" placeholder="Add something to this day" aria-label="New entry">
+          <button type="button" id="addEntry">Add</button>
+        </div>
+        <div class="compose-meta">
+          <label class="time-label" for="entryTime">Time
+            <input type="time" id="entryTime" step="60" aria-describedby="tzHint">
+          </label>
+          <label class="check" for="entryYearly">
+            <input type="checkbox" id="entryYearly"> Repeat yearly
+          </label>
+          <button type="button" id="cancelEdit" hidden>Cancel</button>
+        </div>
       </div>
       <div class="divider"></div>
       <div class="legend">
         <div><span class="swatch" style="background:var(--cell-now)"></span>today</div>
         <div><span class="swatch" style="background:var(--cell-ev)"></span>day with entries</div>
         <div><span class="swatch" style="background:var(--cell-we);outline:1px solid var(--hair)"></span>weekend</div>
+        <div><span class="swatch" style="background:var(--plate-2);outline:1px solid var(--text)"></span>time of day</div>
+      </div>
+      <div class="divider"></div>
+      <div class="remind">
+        <div class="compose-meta">
+          <label class="time-label" for="alarmLead">Calendar alarm
+            <select id="alarmLead" aria-label="Calendar alarm lead time">
+              <option value="PT0S">At the time</option>
+              <option value="-PT15M">15 min before</option>
+              <option value="-PT1H">1 hour before</option>
+              <option value="-P1D">1 day before</option>
+            </select>
+          </label>
+        </div>
+        <div class="backup-row">
+          <button type="button" id="saveIcsAll" title="Download an .ics of every timed mark">Add to calendar</button>
+          <button type="button" id="notifyOptIn" aria-pressed="false">Allow notifications</button>
+        </div>
+        <p class="backup-hint" id="remindHonest">This page can alert you only while it stays open. A static page cannot notify you after you close it. Add a mark to your calendar to be reminded there.</p>
+        <div class="backup-status" id="remindStatus" role="status" aria-live="polite"></div>
       </div>
       <div class="divider"></div>
       <div class="backup">
@@ -260,6 +349,14 @@
   </main>
 </div>
 <div class="tip" id="tip"></div>
+<div class="due-alert" id="dueAlert" role="alert" aria-hidden="true">
+  <div>
+    <div class="due-kicker">Due now</div>
+    <div class="due-title" id="dueTitle"></div>
+    <div class="due-when" id="dueWhen"></div>
+  </div>
+  <button type="button" id="dueDismiss">Dismiss</button>
+</div>
 <div class="backup-dialog" id="restoreDialog" hidden>
   <div class="backup-card" role="dialog" aria-modal="true" aria-labelledby="restoreTitle">
     <h4 id="restoreTitle">Restore day marks?</h4>
@@ -274,6 +371,8 @@
 </div>
 
 <script src="/js/annual-dial-backup.js"></script>
+<script src="/js/annual-dial-marks.js"></script>
+<script src="/js/annual-dial-ics.js"></script>
 <script>
 (() => {
   const SVG = "http://www.w3.org/2000/svg";
@@ -308,8 +407,18 @@
     if(parent) parent.appendChild(n);
     return n;
   }
+  const backup = window.annualDialBackup;
+  const marksApi = window.annualDialMarks;
+  const icsApi = window.annualDialIcs;
   const isNow = k => k === isoOf(new Date());
-  const hasEv = k => (state.events[k]||[]).length > 0;
+  const hasEv = k => marksApi ? marksApi.hasMarks(state.events, k) : (state.events[k]||[]).length > 0;
+  function localZone(){
+    try{ return Intl.DateTimeFormat().resolvedOptions().timeZone || 'local time'; }
+    catch(e){ return 'local time'; }
+  }
+  function timeDot(parent, cx, cy, r){
+    el('circle',{cx,cy,r,fill:'var(--plate-2)',stroke:'var(--text)','stroke-width':.8,'pointer-events':'none',class:'time-tick'},parent);
+  }
   const glowy = () => state.theme !== 'brass';
   const vapor = () => state.theme === 'vapor';
 
@@ -407,7 +516,14 @@
     try{ localStorage.setItem(key, value); }catch(e){}
   }
   async function loadAll(){
-    try{ const ev = await storageRead(K_EV); if(ev) state.events = JSON.parse(ev); }catch(e){}
+    try{
+      const ev = await storageRead(K_EV);
+      if(ev){
+        let parsed = JSON.parse(ev);
+        if(parsed && parsed.events && typeof parsed.events === 'object' && !Array.isArray(parsed.events)) parsed = parsed.events;
+        state.events = backup && backup.normalizeEvents ? backup.normalizeEvents(parsed) : parsed;
+      }
+    }catch(e){}
     try{ const th = await storageRead(K_TH); if(th) state.theme = normalizeTheme(th); }catch(e){}
   }
   async function saveEvents(){ try{ await storageWrite(K_EV, JSON.stringify(state.events)); }catch(e){} }
@@ -458,12 +574,23 @@
         if(hasEv(k)) fill = 'var(--cell-ev)';
         if(isNow(k)){ fill = 'var(--cell-now)'; cls += ' now'; }
         if(k===state.selected){ stroke='var(--accent-lit)'; sw=1.6; }
+        const dayMarks = marksApi ? marksApi.marksOnDate(state.events, k) : [];
+        const dayTimes = dayMarks.filter(r=>r.mark.time);
+        let aria = MONTHS[m]+' '+d+', '+state.year;
+        if(dayTimes.length) aria += ', '+dayTimes.map(r=>marksApi.formatTimeLabel(r.mark.time)).join(', ');
         const p = el('path',{d:arcSector(C,C,r0,r1,a0,a1),fill,stroke,'stroke-width':sw,
-          class:cls,tabindex:'0',role:'button','aria-label':MONTHS[m]+' '+d+', '+state.year}, cells);
+          class:cls,tabindex:'0',role:'button','aria-label':aria}, cells);
         p.addEventListener('click',()=>select(k));
         p.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();select(k);} });
-        p.addEventListener('pointerenter',e=>showTip(e, WD[wd].slice(0,3)+' · '+MONTHS[m]+' '+d));
+        let tipText = WD[wd].slice(0,3)+' · '+MONTHS[m]+' '+d;
+        if(dayTimes.length) tipText += ' · '+marksApi.formatTimeLabel(dayTimes[0].mark.time)+(dayTimes.length>1?' +':'');
+        p.addEventListener('pointerenter',e=>showTip(e, tipText));
         p.addEventListener('pointerleave',hideTip);
+        if(marksApi) marksApi.timeFractions(state.events, k).forEach(frac=>{
+          const ang = a0 + (a1-a0)*frac;
+          const [tx,ty] = pol(C,C,(r0+r1)/2, ang);
+          timeDot(cells, tx, ty, 2.5);
+        });
       }
       const [dx0,dy0]=pol(C,C,HUB,m*30), [dx1,dy1]=pol(C,C,R1+18,m*30);
       el('line',{x1:dx0,y1:dy0,x2:dx1,y2:dy1,stroke:'var(--sector)','stroke-width':.8},dial);
@@ -513,8 +640,11 @@
       if(isNow(k)){ fill='var(--cell-now)'; stroke='var(--cell-now)'; txt='var(--on-accent)'; cls+=' now'; }
       if(k===state.selected){ sw=2.4; stroke='var(--accent-lit)'; }
 
-      const grp = el('g',{class:cls,tabindex:'0',role:'button',
-        'aria-label':MONTHS[state.month]+' '+d+', '+state.year}, ring);
+      const dayMarks = marksApi ? marksApi.marksOnDate(state.events, k) : [];
+      const dayTimes = dayMarks.filter(r=>r.mark.time);
+      let aria = MONTHS[state.month]+' '+d+', '+state.year;
+      if(dayTimes.length) aria += ', '+dayTimes.map(r=>marksApi.formatTimeLabel(r.mark.time)).join(', ');
+      const grp = el('g',{class:cls,tabindex:'0',role:'button','aria-label':aria}, ring);
       el('circle',{cx:x,cy:y,r:node,fill,stroke,'stroke-width':sw},grp);
       el('text',{x,y:y+1,fill:txt,'font-family':'var(--mono)','font-size':node*.82,
         'text-anchor':'middle','dominant-baseline':'middle'},grp).textContent = d;
@@ -523,15 +653,21 @@
       el('text',{x:wx,y:wy,fill: weekend?'var(--second)':'var(--text-dim)','font-family':'var(--mono)',
         'font-size':'11','text-anchor':'middle','dominant-baseline':'middle'},grp).textContent = WD[wd][0];
 
-      const n = Math.min(3,(state.events[k]||[]).length);
+      const n = Math.min(3, dayMarks.length);
       for(let i=0;i<n;i++){
         const [px,py] = pol(C,C,R-node-14, a + (i-(n-1)/2)*1.6);
         el('circle',{cx:px,cy:py,r:2.8,fill:'var(--cell-ev)'},grp);
       }
+      if(marksApi) marksApi.timeFractions(state.events, k).forEach(frac=>{
+        const [qx,qy] = pol(x, y, Math.max(node-4.5, 8), frac*360);
+        timeDot(grp, qx, qy, 2.7);
+      });
       grp.addEventListener('click',()=>select(k));
       grp.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){e.preventDefault();select(k);} });
-      grp.addEventListener('pointerenter',e=>showTip(e, WD[wd]+' '+d +
-        ((state.events[k]||[]).length ? ' · '+state.events[k].length+' entries' : '')));
+      let tipText = WD[wd]+' '+d;
+      if(dayMarks.length) tipText += ' · '+dayMarks.length+(dayMarks.length===1?' entry':' entries');
+      if(dayTimes.length) tipText += ' · '+dayTimes.map(r=>marksApi.formatTimeLabel(r.mark.time)).join(', ');
+      grp.addEventListener('pointerenter',e=>showTip(e, tipText));
       grp.addEventListener('pointerleave',hideTip);
     }
 
@@ -603,39 +739,154 @@
   });
 
   /* ---------- rail ---------- */
+  function whenLabel(item){
+    const d = item.when;
+    const bits = [MONTHS[d.getMonth()].slice(0,3)+' '+d.getDate()];
+    bits.push(item.allDay ? 'all day' : marksApi.formatTimeLabel(item.time));
+    if(item.yearly) bits.push('yearly');
+    return bits.join(' · ');
+  }
+  function renderNext(){
+    const list = document.getElementById('nextList');
+    const count = document.getElementById('nextCountdown');
+    const hint = document.getElementById('tzHint');
+    if(hint) hint.textContent = 'Times use '+localZone();
+    if(!list || !marksApi) return;
+    const now = new Date();
+    const items = marksApi.upcoming(state.events, now, 8);
+    list.innerHTML = '';
+    if(!items.length){
+      count.textContent = '';
+      delete count.dataset.when;
+      const li = document.createElement('li');
+      li.className = 'empty';
+      li.textContent = 'Nothing coming up.';
+      list.appendChild(li);
+      return;
+    }
+    const headline = items.find(it => !it.allDay) || items[0];
+    count.dataset.when = String(headline.when.getTime());
+    count.dataset.allday = headline.allDay ? '1' : '0';
+    count.dataset.label = headline.text;
+    count.textContent = headline.text+' · '+marksApi.formatCountdown(headline.when.getTime(), now.getTime(), headline.allDay);
+    items.forEach(item => {
+      const li = document.createElement('li');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'next-row';
+      const name = document.createElement('span');
+      name.className = 'next-name';
+      name.textContent = item.text;
+      const meta = document.createElement('span');
+      meta.className = 'next-when';
+      meta.append(document.createTextNode(whenLabel(item)+' · '));
+      const cd = document.createElement('span');
+      cd.className = 'cd';
+      cd.dataset.when = String(item.when.getTime());
+      cd.dataset.allday = item.allDay ? '1' : '0';
+      cd.textContent = marksApi.formatCountdown(item.when.getTime(), now.getTime(), item.allDay);
+      meta.appendChild(cd);
+      btn.append(name, meta);
+      btn.addEventListener('click', () => select(item.occurrence));
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
+  }
+  function tickCountdowns(){
+    if(!marksApi) return;
+    const now = Date.now();
+    document.querySelectorAll('.cd[data-when]').forEach(el => {
+      el.textContent = marksApi.formatCountdown(+el.dataset.when, now, el.dataset.allday === '1');
+    });
+    const count = document.getElementById('nextCountdown');
+    if(count && count.dataset.when){
+      count.textContent = (count.dataset.label || '')+' · '+
+        marksApi.formatCountdown(+count.dataset.when, now, count.dataset.allday === '1');
+    }
+  }
   function renderRail(){
     const [y,m,d] = state.selected.split('-').map(Number);
     const date = new Date(y,m-1,d);
     document.getElementById('railDate').textContent = MONTHS[m-1]+' '+d;
     document.getElementById('railSub').textContent =
       WD[date.getDay()] + ' · ' + y + (isNow(state.selected) ? ' · today' : '');
+    const hint = document.getElementById('tzHint');
+    if(hint) hint.textContent = 'Times use '+localZone();
     const list = document.getElementById('entries');
     list.innerHTML = '';
-    const items = state.events[state.selected] || [];
-    if(!items.length){
+    const rows = marksApi ? marksApi.marksOnDate(state.events, state.selected) : [];
+    if(!rows.length){
       const li = document.createElement('li');
       li.className = 'empty';
-      li.textContent = 'Nothing marked. Type below to put something on this day.';
+      li.textContent = 'Nothing marked. Add a note below, and a time if you want a reminder.';
       list.appendChild(li);
+      renderNext();
       return;
     }
-    items.forEach((it,i)=>{
+    rows.forEach((row, i) => {
+      const mark = row.mark;
       const li = document.createElement('li');
-      const num = document.createElement('span'); num.className='tick';
+      const num = document.createElement('span'); num.className = 'tick';
       num.textContent = String(i+1).padStart(2,'0');
-      const tx = document.createElement('span'); tx.textContent = it;
-      const rm = document.createElement('button'); rm.className='drop'; rm.textContent='×';
-      rm.title='Remove'; rm.setAttribute('aria-label','Remove '+it);
-      rm.onclick = async ()=>{
-        state.events[state.selected].splice(i,1);
-        if(!state.events[state.selected].length) delete state.events[state.selected];
+      const tx = document.createElement('span');
+      const name = document.createElement('span');
+      name.className = 'entry-text';
+      name.textContent = mark.text;
+      const meta = document.createElement('span');
+      meta.className = 'entry-meta';
+      const bits = [mark.time && marksApi ? marksApi.formatTimeLabel(mark.time) : 'all day'];
+      if(mark.yearly) bits.push('every year');
+      meta.textContent = bits.join(' · ');
+      tx.append(name, meta);
+      const actions = document.createElement('span');
+      actions.className = 'entry-actions';
+      const ed = document.createElement('button');
+      ed.type = 'button';
+      ed.className = 'drop word';
+      ed.textContent = 'Edit';
+      ed.setAttribute('aria-label', 'Edit '+mark.text);
+      ed.addEventListener('click', () => startEdit(row.sourceDate, row.index));
+      actions.appendChild(ed);
+      if(mark.time){
+        const cal = document.createElement('button');
+        cal.type = 'button';
+        cal.className = 'drop word';
+        cal.textContent = '.ics';
+        cal.title = 'Add this mark to your calendar';
+        cal.setAttribute('aria-label', 'Add '+mark.text+' to your calendar');
+        cal.addEventListener('click', () => {
+          downloadIcs([{
+            date: row.sourceDate,
+            time: mark.time,
+            text: mark.text,
+            yearly: mark.yearly,
+          }], 'annual-dial-'+row.sourceDate+'-'+mark.time.replace(':','')+'.ics');
+        });
+        actions.appendChild(cal);
+      }
+      const rm = document.createElement('button');
+      rm.type = 'button';
+      rm.className = 'drop';
+      rm.textContent = '×';
+      rm.title = 'Remove';
+      rm.setAttribute('aria-label', 'Remove '+mark.text);
+      rm.addEventListener('click', async () => {
+        const arr = state.events[row.sourceDate];
+        if(!arr) return;
+        arr.splice(row.index, 1);
+        if(!arr.length) delete state.events[row.sourceDate];
+        if(editing && editing.source === row.sourceDate && editing.index === row.index) clearComposer();
         await saveEvents(); draw(); renderRail();
-      };
-      li.append(num,tx,rm); list.appendChild(li);
+      });
+      actions.appendChild(rm);
+      li.append(num, tx, actions);
+      list.appendChild(li);
     });
+    renderNext();
   }
 
   function select(k){
+    if(editing && k !== state.selected) clearComposer();
     state.selected = k;
     const [y,m] = k.split('-').map(Number);
     state.year = y; state.month = m-1;
@@ -836,19 +1087,57 @@
   document.getElementById('today').addEventListener('click', goToday);
 
   const input = document.getElementById('entryText');
+  const timeInput = document.getElementById('entryTime');
+  const yearlyInput = document.getElementById('entryYearly');
+  const addBtn = document.getElementById('addEntry');
+  const cancelBtn = document.getElementById('cancelEdit');
+  let editing = null;
+  function clearComposer(){
+    editing = null;
+    input.value = '';
+    if(timeInput) timeInput.value = '';
+    if(yearlyInput) yearlyInput.checked = false;
+    addBtn.textContent = 'Add';
+    if(cancelBtn) cancelBtn.hidden = true;
+  }
+  function startEdit(source, index){
+    const raw = (state.events[source] || [])[index];
+    const mark = backup && backup.asMark ? backup.asMark(raw) : null;
+    if(!mark) return;
+    editing = {source, index};
+    input.value = mark.text;
+    if(timeInput) timeInput.value = mark.time || '';
+    if(yearlyInput) yearlyInput.checked = !!mark.yearly;
+    addBtn.textContent = 'Save';
+    if(cancelBtn) cancelBtn.hidden = false;
+    input.focus();
+  }
   async function addEntry(){
     const v = input.value.trim();
-    if(!v) return;
-    if(!state.events[state.selected]) state.events[state.selected] = [];
-    state.events[state.selected].push(v);
-    input.value='';
+    if(!v || !backup) return;
+    const time = backup.normalizeTime(timeInput && timeInput.value);
+    const yearly = !!(yearlyInput && yearlyInput.checked);
+    const packed = backup.packMark({text:v, time:time, yearly:yearly});
+    if(packed == null) return;
+    if(editing){
+      const arr = state.events[editing.source];
+      if(!arr || arr[editing.index] == null){ clearComposer(); return; }
+      arr[editing.index] = packed;
+      clearComposer();
+    }else{
+      if(!state.events[state.selected]) state.events[state.selected] = [];
+      state.events[state.selected].push(packed);
+      input.value = '';
+      if(timeInput) timeInput.value = '';
+      if(yearlyInput) yearlyInput.checked = false;
+    }
     await saveEvents(); draw(); renderRail();
   }
-  document.getElementById('addEntry').addEventListener('click', addEntry);
+  addBtn.addEventListener('click', addEntry);
   input.addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
+  if(cancelBtn) cancelBtn.addEventListener('click', ()=>{ clearComposer(); });
 
   /* ---------- local text-file backup (no upload) ---------- */
-  const backup = window.annualDialBackup;
   const restoreInput = document.getElementById('restoreFile');
   const restoreDialog = document.getElementById('restoreDialog');
   const backupStatus = document.getElementById('backupStatus');
@@ -869,19 +1158,22 @@
     const days = backup.countDays(parsed.events);
     const current = backup.countNotes(state.events);
     const themeBit = parsed.theme ? ' Theme in file: '+parsed.theme+'.' : '';
+    const zoneBit = (parsed.timezone && parsed.timezone !== localZone())
+      ? ' Times are wall-clock times from '+parsed.timezone+'. This browser is '+localZone()+', so they are not converted.'
+      : '';
     document.getElementById('restoreSummary').textContent =
       (notes
         ? 'This file has '+notes+' '+(notes===1?'note':'notes')+' on '+days+' '+(days===1?'day':'days')+'.'
         : 'This file has no day marks. Replace will clear what is on the dial now.') +
       (current ? ' You currently have '+current+' '+(current===1?'note':'notes')+' saved in this browser.' : '') +
-      themeBit;
+      themeBit + zoneBit;
     restoreDialog.hidden = false;
     restoreDialog.classList.add('on');
     document.getElementById('restoreReplace').focus();
   }
   function downloadBackup(){
     if(!backup){ setBackupStatus('Backup helper failed to load.'); return; }
-    const text = backup.serializeBackup({events:state.events, theme:state.theme});
+    const text = backup.serializeBackup({events:state.events, theme:state.theme, timezone:localZone()});
     const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -906,9 +1198,12 @@
     else { draw(); }
     renderRail();
     const n = backup.countNotes(parsed.events);
-    setBackupStatus(mode==='merge'
+    const zoneBit = (parsed.timezone && parsed.timezone !== localZone())
+      ? ' Times stayed as written in '+parsed.timezone+' (this browser is '+localZone()+').'
+      : '';
+    setBackupStatus((mode==='merge'
       ? 'Merged '+n+' '+(n===1?'note':'notes')+' from the file. Still only on this device.'
-      : 'Replaced day marks with '+n+' '+(n===1?'note':'notes')+' from the file. Still only on this device.');
+      : 'Replaced day marks with '+n+' '+(n===1?'note':'notes')+' from the file. Still only on this device.') + zoneBit);
     closeRestoreDialog();
   }
   function handleBackupText(text){
@@ -1005,7 +1300,7 @@
   });
 
   document.addEventListener('keydown', e=>{
-    if(e.target.tagName==='INPUT') return;
+    if(e.target.tagName==='INPUT' || e.target.tagName==='SELECT' || e.target.tagName==='TEXTAREA') return;
     if(restoreDialog.classList.contains('on')) return;
     if(e.key==='ArrowLeft') shift(-1);
     if(e.key==='ArrowRight') shift(1);
@@ -1017,16 +1312,165 @@
     }
   });
 
+  /* ---------- reminders: in-page alert, opt-in notifications, .ics ---------- */
+  const FIRED_KEY = 'annual-dial-fired';
+  const NOTIFY_KEY = 'annual-dial-notify';
+  const ALARM_KEY = 'annual-dial-alarm';
+  const fired = new Set();
+  try{ JSON.parse(sessionStorage.getItem(FIRED_KEY) || '[]').forEach(id => fired.add(id)); }catch(e){}
+  function saveFired(){
+    try{ sessionStorage.setItem(FIRED_KEY, JSON.stringify(Array.from(fired).slice(-200))); }catch(e){}
+  }
+  const dueQueue = [];
+  let dueShowing = false;
+  function showDue(item){
+    dueShowing = true;
+    const box = document.getElementById('dueAlert');
+    document.getElementById('dueTitle').textContent = item.text;
+    document.getElementById('dueWhen').textContent =
+      (marksApi ? marksApi.formatTimeLabel(item.time) : item.time) + ' · ' + item.occurrence + ' · ' + localZone();
+    box.classList.add('on');
+    box.setAttribute('aria-hidden', 'false');
+  }
+  function queueDue(item){
+    dueQueue.push(item);
+    if(!dueShowing) showDue(dueQueue.shift());
+  }
+  function dismissDue(){
+    if(dueQueue.length){ showDue(dueQueue.shift()); return; }
+    dueShowing = false;
+    const box = document.getElementById('dueAlert');
+    box.classList.remove('on');
+    box.setAttribute('aria-hidden', 'true');
+  }
+  document.getElementById('dueDismiss').addEventListener('click', dismissDue);
+  function notifyItem(item){
+    let opted = false;
+    try{ opted = localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){}
+    if(!opted || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
+    try{
+      new Notification(item.text, {
+        body: (marksApi ? marksApi.formatTimeLabel(item.time) : item.time) + ' · Annual Dial',
+        tag: item.id,
+      });
+    }catch(e){}
+  }
+  function checkDue(){
+    if(!marksApi) return;
+    const due = marksApi.dueMarks(state.events, new Date(), 90000);
+    let hit = false;
+    due.forEach(item => {
+      if(fired.has(item.id)) return;
+      fired.add(item.id);
+      hit = true;
+      notifyItem(item);
+      queueDue(item);
+    });
+    if(hit){ saveFired(); renderNext(); }
+  }
+  function setRemindStatus(msg){
+    const el = document.getElementById('remindStatus');
+    if(el) el.textContent = msg || '';
+  }
+  function downloadBlob(filename, text, type){
+    const blob = new Blob([text], {type:type});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1500);
+  }
+  function alarmValue(){
+    const sel = document.getElementById('alarmLead');
+    return icsApi ? icsApi.normalizeAlarm(sel && sel.value) : 'PT0S';
+  }
+  function downloadIcs(list, filename){
+    if(!icsApi){ setRemindStatus('Calendar export failed to load.'); return; }
+    const timed = (list || []).filter(m => m && m.time && m.text && m.date);
+    if(!timed.length){
+      setRemindStatus('No timed marks yet. Add a time to a mark first. Date-only marks stay on the dial.');
+      return;
+    }
+    const text = icsApi.buildCalendar({
+      marks: timed,
+      timeZone: localZone(),
+      alarm: alarmValue(),
+      now: new Date(),
+    });
+    downloadBlob(filename, text, 'text/calendar;charset=utf-8');
+    setRemindStatus('Downloaded '+filename+'. Open it in your calendar — the alarm fires there, not from this page.');
+  }
+  document.getElementById('saveIcsAll').addEventListener('click', () => {
+    const list = marksApi ? marksApi.timedMarks(state.events) : [];
+    downloadIcs(list, 'annual-dial-reminders.ics');
+  });
+  const alarmLead = document.getElementById('alarmLead');
+  const ALARM_OK = ['PT0S','-PT15M','-PT1H','-P1D'];
+  try{
+    const savedAlarm = localStorage.getItem(ALARM_KEY);
+    if(savedAlarm && ALARM_OK.indexOf(savedAlarm) !== -1) alarmLead.value = savedAlarm;
+  }catch(e){}
+  alarmLead.addEventListener('change', () => {
+    if(ALARM_OK.indexOf(alarmLead.value) === -1) return;
+    try{ localStorage.setItem(ALARM_KEY, alarmLead.value); }catch(e){}
+  });
+  if(timeInput) timeInput.addEventListener('keydown', e=>{ if(e.key==='Enter') addEntry(); });
+  function syncNotifyButton(){
+    const btn = document.getElementById('notifyOptIn');
+    let opted = false;
+    try{ opted = localStorage.getItem(NOTIFY_KEY) === '1'; }catch(e){}
+    let perm = 'unsupported';
+    try{ if(typeof Notification !== 'undefined') perm = Notification.permission; }catch(e){}
+    if(opted && perm === 'granted'){
+      btn.textContent = 'Notifications on';
+      btn.setAttribute('aria-pressed', 'true');
+      return;
+    }
+    if(perm === 'denied'){
+      btn.textContent = 'Notifications blocked';
+      btn.setAttribute('aria-pressed', 'false');
+      return;
+    }
+    btn.textContent = 'Allow notifications';
+    btn.setAttribute('aria-pressed', 'false');
+  }
+  document.getElementById('notifyOptIn').addEventListener('click', async () => {
+    if(typeof Notification === 'undefined'){
+      setRemindStatus('This browser has no notifications. In-page alerts still work while the page is open.');
+      return;
+    }
+    let perm = Notification.permission;
+    if(perm === 'default'){
+      try{ perm = await Notification.requestPermission(); }
+      catch(e){ perm = 'denied'; }
+    }
+    if(perm !== 'granted'){
+      try{ localStorage.removeItem(NOTIFY_KEY); }catch(e){}
+      setRemindStatus('Notifications stay off. In-page alerts still work while this page is open.');
+      syncNotifyButton();
+      return;
+    }
+    try{ localStorage.setItem(NOTIFY_KEY, '1'); }catch(e){}
+    setRemindStatus('Notifications are on while this page is open. Closing the page stops them.');
+    syncNotifyButton();
+  });
+
   setInterval(()=>{
-    if(state.view!=='month') return;
-    const t = new Date();
-    const set = (id,a,len)=>{
-      const n = document.getElementById(id); if(!n) return;
-      const [x,y] = pol(C,C,len,a); n.setAttribute('x2',x); n.setAttribute('y2',y);
-    };
-    set('hh',(t.getHours()%12)*30+t.getMinutes()*.5, HUB*.42);
-    set('mm',t.getMinutes()*6+t.getSeconds()*.1,     HUB*.62);
-    set('ss',t.getSeconds()*6,                       HUB*.68);
+    if(state.view==='month'){
+      const t = new Date();
+      const set = (id,a,len)=>{
+        const n = document.getElementById(id); if(!n) return;
+        const [x,y] = pol(C,C,len,a); n.setAttribute('x2',x); n.setAttribute('y2',y);
+      };
+      set('hh',(t.getHours()%12)*30+t.getMinutes()*.5, HUB*.42);
+      set('mm',t.getMinutes()*6+t.getSeconds()*.1,     HUB*.62);
+      set('ss',t.getSeconds()*6,                       HUB*.68);
+    }
+    tickCountdowns();
+    checkDue();
   },1000);
 
   (async ()=>{
@@ -1035,6 +1479,8 @@
     if(fromQ){ applyTheme(fromQ, true); }
     else { applyTheme(state.theme, false); }
     renderRail();
+    syncNotifyButton();
+    checkDue();
   })();
 })();
 </script>
