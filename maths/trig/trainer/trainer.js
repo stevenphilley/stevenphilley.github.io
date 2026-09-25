@@ -351,8 +351,7 @@
     els.feedback.innerHTML = visual;
     els.live.textContent = spoken;
     if (visual) {
-      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      els.feedback.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+      els.feedback.scrollIntoView({ block: "nearest", behavior: "auto" });
     }
   }
 
@@ -588,7 +587,7 @@
       finishRound();
       return;
     }
-    var delay = ok ? 750 : (timed ? 2400 : 0);
+    var delay = ok ? 1100 : (timed ? 2400 : 0);
     if (delay) {
       advanceTimer = window.setTimeout(function () {
         if (timed && Date.now() >= endsAt) finishRound();
