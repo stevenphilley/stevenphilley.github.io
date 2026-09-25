@@ -10,13 +10,13 @@
   }
 
   function visibleSearch() {
-    var narrow = window.matchMedia("(max-width: 1080px)").matches;
+    var narrow = window.matchMedia("(max-width: 1240px)").matches;
     if (narrow) return document.getElementById("sp-q-mobile");
     return document.getElementById("sp-q");
   }
 
   function focusSearch() {
-    var narrow = window.matchMedia("(max-width: 1080px)").matches;
+    var narrow = window.matchMedia("(max-width: 1240px)").matches;
     var box = document.getElementById("sp-search-open");
     var pin = document.querySelector(".sp-search-pin");
     if (narrow && box) {
@@ -130,7 +130,7 @@
       menu.addEventListener("click", function (ev) {
         var link = ev.target.closest && ev.target.closest("a");
         if (!link || !menuBox) return;
-        if (window.matchMedia("(max-width: 1080px)").matches) {
+        if (window.matchMedia("(max-width: 1240px)").matches) {
           menuBox.checked = false;
           if (menuLabel) menuLabel.setAttribute("aria-expanded", "false");
         }
