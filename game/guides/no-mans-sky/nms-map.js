@@ -2126,7 +2126,18 @@
       placeBody.innerHTML = html;
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
-      if (placeTitle) placeTitle.focus();
+      revealDetail(sys.id);
+    }
+
+    function revealDetail(key) {
+      if (!placePanel || placePanel.hidden) return;
+      if (key != null && revealDetail.last === key) return;
+      revealDetail.last = key == null ? null : key;
+      if (placeTitle) {
+        try { placeTitle.focus({ preventScroll: true }); }
+        catch (err) { placeTitle.focus(); }
+      }
+      placePanel.scrollIntoView({ block: "start", inline: "nearest" });
     }
 
     function renderDiscoveryAggregate(systems) {
@@ -2149,13 +2160,14 @@
       placeBody.innerHTML = html;
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
-      if (placeTitle) placeTitle.focus();
+      revealDetail("agg:" + systems.map(function (sys) { return sys.id; }).join(","));
     }
 
     function renderSelection() {
       var parts = splitSelection(state.selection);
       if (!state.selection.length) {
         openDiscoveryId = null;
+        revealDetail.last = null;
         renderPlacePanel(null);
         return;
       }
@@ -2172,10 +2184,11 @@
         var one = parts.bases[0];
         placeMode = "base";
         renderPlacePanel(placeOf(one), one.name || "");
-        if (placePanel && !placePanel.hidden && placeTitle) placeTitle.focus();
+        revealDetail("base:" + one.id);
         return;
       }
       renderAggregate();
+      revealDetail("mix:" + state.selection.join(","));
     }
 
     function colors() {
@@ -2414,22 +2427,64 @@
       ctx.restore();
     }
 
-    function paintLabel(ctx, text, x, y, color, base) {
+    var labelSlots = [];
+
+    function labelFont(ctx) {
       ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
-      ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      var w = ctx.measureText(text).width;
+    }
+
+    function labelRect(ctx, text, x, y, align) {
+      labelFont(ctx);
+      var tw = ctx.measureText(String(text || "")).width;
+      var left = align === "right" ? x - tw : (align === "center" ? x - tw / 2 : x);
+      return { l: left - 4, t: y - 10, r: left + tw + 6, b: y + 10, w: tw };
+    }
+
+    function labelBlocked(rect) {
+      for (var i = 0; i < labelSlots.length; i++) {
+        var slot = labelSlots[i];
+        if (rect.l < slot.r && rect.r > slot.l && rect.t < slot.b && rect.b > slot.t) return true;
+      }
+      return false;
+    }
+
+    function paintLabel(ctx, text, x, y, color, base) {
+      var rect = labelRect(ctx, text, x, y, "left");
+      labelSlots.push(rect);
+      ctx.textAlign = "left";
       ctx.fillStyle = withAlpha(base, 0.88);
-      ctx.fillRect(x - 3, y - 8, w + 8, 16);
+      ctx.fillRect(x - 3, y - 8, rect.w + 8, 16);
       ctx.fillStyle = color;
       ctx.fillText(text, x, y);
+    }
+
+    function paintLabelClear(ctx, text, x, y, color, base) {
+      var spots = [
+        { x: x, y: y },
+        { x: x, y: y - 18 },
+        { x: x, y: y + 18 },
+        { x: x - 12, y: y - 16 }
+      ];
+      var i;
+      for (i = 0; i < spots.length; i++) {
+        var rect = labelRect(ctx, text, spots[i].x, spots[i].y, "left");
+        if (labelBlocked(rect)) continue;
+        labelSlots.push(rect);
+        ctx.textAlign = "left";
+        ctx.fillStyle = withAlpha(base, 0.88);
+        ctx.fillRect(spots[i].x - 3, spots[i].y - 8, rect.w + 8, 16);
+        ctx.fillStyle = color;
+        ctx.fillText(text, spots[i].x, spots[i].y);
+        return true;
+      }
+      return false;
     }
 
     function paintName(ctx, text, x, y, off, color, base) {
       var name = String(text || "");
       if (name.length > 28) name = name.slice(0, 27) + "…";
-      ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
-      ctx.textBaseline = "middle";
+      labelFont(ctx);
       var tw = ctx.measureText(name).width;
       var r = off && off.radius > 1 ? off.radius : 0;
       var ux = r ? off.x / r : 1;
@@ -2447,6 +2502,8 @@
       ctx.fillRect(left - 3, ly - 8, tw + 8, 16);
       ctx.fillStyle = color;
       ctx.fillText(name, lx, ly);
+      var align = ctx.textAlign;
+      labelSlots.push(labelRect(ctx, name, lx, ly, align));
       ctx.textAlign = "left";
     }
 
@@ -2497,29 +2554,36 @@
       });
     }
 
-    function paintDiscoveryMarker(ctx, x, y, sys, c, on) {
+    function discoveryRingRadius(zoom, clustered) {
+      if (clustered) return zoom < 2 ? 14 : 16;
+      if (zoom < 1.6) return 9;
+      if (zoom < 4) return 11;
+      return 12;
+    }
+
+    function paintDiscoveryRing(ctx, x, y, radius, c, on) {
       ctx.beginPath();
-      ctx.lineWidth = on ? 2 : 1.25;
-      ctx.strokeStyle = on ? c.accent : c.soft;
-      ctx.arc(x, y, on ? 4.5 : 3, 0, Math.PI * 2);
+      ctx.lineWidth = on ? 2.75 : 2.25;
+      ctx.strokeStyle = on ? c.accent : c.ink;
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
       ctx.stroke();
       if (!on) return;
-      var s = 8;
+      var s = radius + 5;
       ctx.beginPath();
       ctx.lineWidth = 1.5;
-      ctx.strokeStyle = c.ink;
-      ctx.moveTo(x - s, y - s + 3);
+      ctx.strokeStyle = c.accent;
+      ctx.moveTo(x - s, y - s + 4);
       ctx.lineTo(x - s, y - s);
-      ctx.lineTo(x - s + 3, y - s);
-      ctx.moveTo(x + s, y - s + 3);
+      ctx.lineTo(x - s + 4, y - s);
+      ctx.moveTo(x + s, y - s + 4);
       ctx.lineTo(x + s, y - s);
-      ctx.lineTo(x + s - 3, y - s);
-      ctx.moveTo(x - s, y + s - 3);
+      ctx.lineTo(x + s - 4, y - s);
+      ctx.moveTo(x - s, y + s - 4);
       ctx.lineTo(x - s, y + s);
-      ctx.lineTo(x - s + 3, y + s);
-      ctx.moveTo(x + s, y + s - 3);
+      ctx.lineTo(x - s + 4, y + s);
+      ctx.moveTo(x + s, y + s - 4);
       ctx.lineTo(x + s, y + s);
-      ctx.lineTo(x + s - 3, y + s);
+      ctx.lineTo(x + s - 4, y + s);
       ctx.stroke();
     }
 
@@ -2534,65 +2598,59 @@
         projected.push({ sys: sys, x: p.x, y: p.y, id: sys.id });
       });
       var nodes = DiscoveryLib.clusterScreenMarkers(projected, cell);
-      var idle = [];
       var labels = [];
+      var hitStart = hits.length;
       nodes.forEach(function (node) {
-        node.items.forEach(function (marker) {
-          hits.push({ x: marker.x, y: marker.y, r: 11, kind: "discovery", id: marker.id });
-        });
         if (node.clustered) {
+          node.items.forEach(function (marker) {
+            hits.push({ x: marker.x, y: marker.y, r: 10, kind: "discovery", id: marker.id });
+          });
           var cid = "cluster:" + node.items.map(function (marker) { return marker.id; }).join(",");
           var hot = state.hoverDiscovery === cid || node.items.some(function (marker) { return isSelected(marker.id); });
-          ctx.beginPath();
-          ctx.lineWidth = hot ? 2 : 1.25;
-          ctx.strokeStyle = hot ? c.accent : c.soft;
-          ctx.arc(node.x, node.y, 8, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(node.x, node.y, 3.5, 0, Math.PI * 2);
-          ctx.stroke();
-          paintBadge(ctx, node.items.length, node.x, node.y, c.soft, c.base);
+          var radius = discoveryRingRadius(view.zoom, true);
+          paintDiscoveryRing(ctx, node.x, node.y, radius, c, hot);
+          paintBadge(ctx, node.items.length, node.x, node.y, c.ink, c.base);
           hits.push({
             x: node.x,
             y: node.y,
-            r: 14,
+            r: radius + 8,
             kind: "discovery-cluster",
             id: cid,
             members: node.items.map(function (marker) { return marker.sys; })
           });
-          if (hot) labels.push({ text: node.items.length + " systems", x: node.x + 12, y: node.y - 14, color: c.soft });
+          if (hot) labels.push({ text: node.items.length + " systems", x: node.x + radius + 8, y: node.y - radius, color: c.ink, priority: true });
           return;
         }
         var marker = node.items[0];
         var sys = marker.sys;
         var on = isSelected(sys.id) || state.hoverDiscovery === sys.id;
-        if (on) paintDiscoveryMarker(ctx, marker.x, marker.y, sys, c, true);
-        else idle.push(marker);
-        if (sys.planetCount > 1 && markerInView(marker.x, marker.y, w, h)) {
-          paintBadge(ctx, sys.planetCount, marker.x, marker.y, c.soft, c.base);
+        var radius = discoveryRingRadius(view.zoom, false);
+        paintDiscoveryRing(ctx, marker.x, marker.y, radius, c, on);
+        hits.push({ x: marker.x, y: marker.y, r: radius + 6, kind: "discovery", id: marker.id });
+        if (sys.planetCount > 1 && view.zoom >= 6 && markerInView(marker.x, marker.y, w, h)) {
+          paintBadge(ctx, sys.planetCount, marker.x + radius - 8, marker.y - radius + 4, c.ink, c.base);
         }
-        if (on || (projected.length <= 24 && view.zoom >= 8)) {
+        if (on || view.zoom >= 8) {
           labels.push({
-            text: sys.systemName || sys.glyphs,
-            x: marker.x + 10,
-            y: marker.y - 12,
-            color: on ? c.accent : c.soft
+            text: DiscoveryLib.discoveryMarkerLabel(sys),
+            x: marker.x + radius + 6,
+            y: marker.y,
+            color: on ? c.accent : c.ink,
+            priority: on
           });
         }
       });
-      if (idle.length) {
-        ctx.beginPath();
-        ctx.lineWidth = 1.25;
-        ctx.strokeStyle = c.soft;
-        idle.forEach(function (marker) {
-          ctx.moveTo(marker.x + 3, marker.y);
-          ctx.arc(marker.x, marker.y, 3, 0, Math.PI * 2);
-        });
-        ctx.stroke();
-      }
+      labels.sort(function (a, b) { return (b.priority ? 1 : 0) - (a.priority ? 1 : 0); });
       labels.forEach(function (job) {
-        paintLabel(ctx, job.text, job.x, job.y, job.color, c.base);
+        paintLabelClear(ctx, job.text, job.x, job.y, job.color, c.base);
       });
+      if (hitStart < hits.length) {
+        var head = hits.splice(hitStart);
+        var tail = hits.splice(0, hits.length);
+        var hi;
+        for (hi = 0; hi < head.length; hi++) hits.push(head[hi]);
+        for (hi = 0; hi < tail.length; hi++) hits.push(tail[hi]);
+      }
     }
 
     function draw() {
@@ -2616,6 +2674,7 @@
       ctx.drawImage(ensureStars(w, h, c), 0, 0, w, h);
       ctx.restore();
       hits = [];
+      labelSlots = [];
 
       if (!showCenter || showCenter.checked) {
         var core = project(0, 0, w, h);
@@ -2675,8 +2734,6 @@
           if (on) refLabels.push({ text: ref.label, x: p.x + 12, y: p.y - 12 });
         });
       }
-
-      paintDiscoveries(ctx, c, w, h);
 
       var bases = visibleBases();
       var groups = Object.create(null);
@@ -2815,6 +2872,7 @@
       nameJobs.concat(pickedJobs).forEach(function (job) {
         paintName(ctx, job.text, job.x, job.y, job.off, c.accent, c.base);
       });
+      paintDiscoveries(ctx, c, w, h);
       refLabels.forEach(function (job) {
         paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
       });

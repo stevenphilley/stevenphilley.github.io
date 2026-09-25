@@ -643,6 +643,16 @@ function buildSystem(rows, galaxy) {
     return "0x" + body;
   }
 
+  function discoveryMarkerLabel(sys) {
+    if (!sys) return "Discovered system";
+    var name = textOf(sys.systemName);
+    if (name) return name;
+    var n = sys.planetCount || 0;
+    if (n === 1) return "1 planet";
+    if (n > 1) return n + " planets";
+    return "Discovered system";
+  }
+
   function syntheticDiscoveryDocument(opts) {
     opts = opts || {};
     var systems = opts.systems == null ? 8 : opts.systems;
@@ -652,17 +662,30 @@ function buildSystem(rows, galaxy) {
     var enqueued = [];
     var t0 = 1700000000;
     var baseGlyphs = "";
+    // Three systems sit a short hop apart so a wide view clusters them.
+    // The rest are hundreds of voxels away, one in another galaxy.
+    var layouts = [
+      { x: 480, z: -800, name: "Amber Reach" },
+      { x: 590, z: -750, name: "Amber Watch" },
+      { x: 530, z: -680, name: "Amber Drift" },
+      { x: -1380, z: 860, name: "Northwater" },
+      { x: 1240, z: 980, name: "Red Shore" },
+      { x: -820, z: -1460, name: "Glass Expanse" },
+      { x: 1620, z: -240, name: "Bright Rim" },
+      { x: 300, z: 1100, name: "Far Elkupalos", galaxy: 10 }
+    ];
     var s;
     for (s = 0; s < systems; s++) {
-      var galaxy = s === systems - 1 && systems > 1 ? 10 : 0;
-      var vx = s < systems - 1 ? 80 + (s % 3) * 30 : 900;
-      var vz = s < systems - 1 ? -40 + Math.floor(s / 3) * 36 : -700;
+      var layout = layouts[s] || { x: 200 + s * 90, z: -200 - s * 40, name: "Synthetic System " + s };
+      var galaxy = layout.galaxy != null ? layout.galaxy : (s === systems - 1 && systems > 1 ? 10 : 0);
+      var vx = layout.x;
+      var vz = layout.z;
       var vy = (s % 5) - 2;
       var ssi = 0x120 + s;
       function pack(planet) { return packAddress(planet, ssi, vx, vy, vz, galaxy); }
       records.push({
         DD: { UA: pack(0), DT: "SolarSystem", VP: [] },
-        DM: { CN: s % 2 ? "Synthetic System " + s : "" },
+        DM: { CN: layout.name || "" },
         OWS: { USN: "Traveller", UID: "0", TS: t0 + s, PTK: "ST", LID: "" },
         FL: { U: 1, C: 1 },
         RID: "synthetic-system-" + s
@@ -670,7 +693,7 @@ function buildSystem(rows, galaxy) {
       var p;
       for (p = 1; p <= planetsEach; p++) {
         var planetUa = pack(p);
-        if (!baseGlyphs && galaxy === 0 && p === 1) baseGlyphs = planetUa.slice(2);
+        if (!baseGlyphs && galaxy === 0 && s === 3 && p === 1) baseGlyphs = planetUa.slice(2);
         records.push({
           DD: { UA: planetUa, DT: "Planet", VP: ["0x11", (p + s) % 16] },
           DM: { CN: p === 1 ? "Synthetic Planet " + s : "" },
@@ -744,6 +767,7 @@ function buildSystem(rows, galaxy) {
     clusterScreenMarkers: clusterScreenMarkers,
     formatDiscoveryTime: formatDiscoveryTime,
     uploadLabel: uploadLabel,
+    discoveryMarkerLabel: discoveryMarkerLabel,
     packAddress: packAddress,
     syntheticDiscoveryDocument: syntheticDiscoveryDocument
   };

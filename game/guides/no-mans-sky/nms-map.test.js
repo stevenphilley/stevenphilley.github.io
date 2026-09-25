@@ -624,6 +624,22 @@ eq(syntheticParsed.systems.length, 8, "the default synthetic save has eight syst
 var placed = disc.placeDiscoveryGalaxies(syntheticParsed.systems, [{ galaxy: null }]);
 eq(placed.filter(function (sys) { return sys.galaxy === 0; }).length, 7, "systems without a high byte land in Euclid");
 eq(placed.filter(function (sys) { return sys.galaxy === 10; }).length, 1, "the last synthetic system keeps galaxy 10");
+var euclidSystems = placed.filter(function (sys) { return sys.galaxy === 0; });
+var closePairs = 0;
+var farPairs = 0;
+euclidSystems.forEach(function (a, i) {
+  euclidSystems.forEach(function (b, j) {
+    if (j <= i) return;
+    var d = Math.hypot(a.voxelX - b.voxelX, a.voxelZ - b.voxelZ);
+    if (d > 0 && d < 180) closePairs += 1;
+    if (d > 800) farPairs += 1;
+  });
+});
+assert(closePairs >= 1, "some synthetic systems sit close enough to cluster");
+assert(farPairs >= 1, "some synthetic systems are hundreds of voxels apart");
+eq(disc.discoveryMarkerLabel({ systemName: "Amber Reach", glyphs: "0120FEFD8050", planetCount: 4 }), "Amber Reach", "a typed system name is the map label");
+eq(disc.discoveryMarkerLabel({ systemName: "", glyphs: "0120FEFD8050", planetCount: 4 }), "4 planets", "without a typed name the label is the planet count");
+assert(disc.discoveryMarkerLabel({ systemName: "", glyphs: "0120FEFD8050", planetCount: 0 }).indexOf("0120") === -1, "the portal code is not the map label");
 assert(placed.every(function (sys) { return sys.planetList.some(function (p) { return p.biome; }); }), "each synthetic system has a biome read from VP");
 assert(!fs.existsSync(path.join(__dirname, "fixture-player.hg")), "no real save file is part of the test");
 
