@@ -248,7 +248,7 @@
       '<button type="button" class="mark-lg" data-mark="' + esc(material.id) + '" aria-pressed="' + (marked ? "true" : "false") + '">' +
       (marked ? "Marked" : "Mark") + "</button></div></div>" +
       '<p class="blurb">' + esc(material.blurb || "") + "</p>" +
-      '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(material.id) + '">Open in the edge explorer</a></p>' +
+      '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(material.id) + '">Open in the edge explorer</a> · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '#plan">Plan the build cost</a></p>' +
       '<div class="split">' +
       section("Made from", "from-h", made, "Nothing in this set makes " + material.name + ".", material.id) +
       section("Converts to", "to-h", converts, material.name + " is not spent in a refiner in this set.", material.id) +
