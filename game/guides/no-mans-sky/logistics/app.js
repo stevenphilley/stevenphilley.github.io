@@ -4,6 +4,9 @@
 
   var store = NmsLogistics.loadStore(localStorage);
   var catalog = null;
+  var sourceGraph = null;
+  var techCatalog = null;
+  var rawSeeded = false;
   var index = null;
   var sortKey = "item";
   var sortDir = "asc";
@@ -294,7 +297,9 @@
         var target = NmsLogistics.findLocation(store, demand.locationId);
         var moves = NmsLogistics.suggestTransfers(store, demand);
         var path = "";
-        if (report.shortfall > 0 && catalog) {
+        if (report.shortfall > 0 && demand.note === "Raw bill") {
+          path = "<p>Already the raw bill. Still short " + esc(report.shortfall) + ".</p>";
+        } else if (report.shortfall > 0 && catalog) {
           var expanded = NmsLogistics.expandRecipe(catalog, demand.itemId, report.shortfall, NmsLogistics.stockMap(store));
           var steps = (expanded.steps || []).map(function (step) {
             var inputs = step.inputs.map(function (input) { return input.qty + " " + nodeName(input.id); }).join(" + ");
@@ -714,6 +719,37 @@
     setStatus(seeded.edge ? "Added the direct build cost for " + nodeName(itemId) + "." : "That item has no recipe in this graph, so the demand is the item itself.");
   });
 
+  function addRawBill() {
+    if (!techCatalog || !sourceGraph) {
+      setStatus("The technology catalog has not loaded.");
+      return;
+    }
+    var itemId = document.getElementById("recipe-item").value;
+    var qty = Number(document.getElementById("recipe-qty").value);
+    if (!NmsLogistics.posInt(qty) || !itemId) {
+      setStatus("Choose an item and a quantity.");
+      return;
+    }
+    var held = NmsLogistics.ensureUnassigned(store);
+    store = held.store;
+    var locationId = document.getElementById("recipe-loc").value || held.locationId;
+    var name = document.getElementById("recipe-project").value.trim() || nodeName(itemId);
+    var expanded = NmsCraft.expand(techCatalog, sourceGraph, itemId, qty);
+    var seeded = NmsLogistics.seedRawBill(store, expanded.raw, locationId, name, itemId);
+    if (!seeded.project) {
+      setStatus("That item has no raw bill.");
+      return;
+    }
+    store = seeded.store;
+    persist();
+    render();
+    showTab("plan");
+    setStatus("Added the raw bill for " + nodeName(itemId) + ".");
+  }
+
+  var rawButton = document.getElementById("recipe-raw");
+  if (rawButton) rawButton.addEventListener("click", addRawBill);
+
   document.getElementById("form-pins").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var locationId = document.getElementById("pin-target").value;
@@ -834,9 +870,14 @@
       showTab("plan");
       var recipeItem = document.getElementById("recipe-item");
       var recipeProject = document.getElementById("recipe-project");
-      if (recipeItem) recipeItem.value = NmsRefine.canonId(recipe);
-      if (recipeProject) recipeProject.value = nodeName(NmsRefine.canonId(recipe));
+      var recipeId = NmsRefine.canonId(recipe);
+      if (recipeItem) recipeItem.value = recipeId;
+      if (recipeProject) recipeProject.value = nodeName(recipeId);
       if (params.get("qty") && document.getElementById("recipe-qty")) document.getElementById("recipe-qty").value = params.get("qty");
+      if (params.get("bill") === "raw" && !rawSeeded) {
+        rawSeeded = true;
+        addRawBill();
+      }
     }
     if (window.location.hash === "#plan") showTab("plan");
     selectionGlyphs = NmsLogistics.parseSelectionQuery(window.location.search);
@@ -854,13 +895,21 @@
     }
   }
 
-  fetch("../data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
-    if (!res.ok) throw new Error("graph");
-    return res.json();
-  }).then(function (data) {
-    var problems = NmsRefine.validate(data);
+  Promise.all([
+    fetch("../data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
+      if (!res.ok) throw new Error("graph");
+      return res.json();
+    }),
+    fetch("../data/technology.json", { credentials: "same-origin" }).then(function (res) {
+      if (!res.ok) throw new Error("technology");
+      return res.json();
+    })
+  ]).then(function (pair) {
+    var problems = NmsRefine.validate(pair[0]);
     if (problems.length) throw new Error(problems[0]);
-    catalog = data;
+    sourceGraph = pair[0];
+    techCatalog = pair[1];
+    catalog = (typeof NmsCraft !== "undefined") ? NmsCraft.mergeCatalog(sourceGraph, techCatalog) : sourceGraph;
     index = NmsLogistics.buildIndex(catalog);
     render();
     applyQuery();

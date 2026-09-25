@@ -1474,6 +1474,53 @@
     return { store: store, project: project, edge: edge, error: null };
   }
 
+  function ensureUnassigned(store) {
+    store = normalize(store);
+    var target = null;
+    store.locations.forEach(function (loc) {
+      if (loc.id === "manual:unassigned") target = loc;
+    });
+    if (!target) {
+      target = {
+        id: "manual:unassigned",
+        source: "manual",
+        kind: "custom",
+        category: "custom",
+        name: "Unassigned",
+        items: [],
+        note: "Plans land here until you move each demand onto a real hold."
+      };
+      store.locations.push(target);
+    }
+    return { store: store, locationId: target.id };
+  }
+
+  function seedRawBill(store, raw, locationId, projectName, recipeFor) {
+    store = normalize(store);
+    if (!locationId) return { store: store, project: null, error: "missing" };
+    var project = {
+      id: uid("prj"),
+      name: projectName || recipeFor || "Raw bill",
+      recipeFor: recipeFor || "",
+      demands: []
+    };
+    Object.keys(raw || {}).sort().forEach(function (id) {
+      var qty = posInt(raw[id]);
+      if (!qty) return;
+      project.demands.push({
+        id: uid("dmd"),
+        locationId: locationId,
+        itemId: id,
+        qty: qty,
+        note: "Raw bill",
+        doneTransfers: []
+      });
+    });
+    if (!project.demands.length) return { store: store, project: null, error: "empty" };
+    store.projects.push(project);
+    return { store: store, project: project, error: null };
+  }
+
   function seedPins(store, pinIds, locationId, projectName) {
     store = normalize(store);
     var name = projectName || "Moodboard pins";
@@ -1794,6 +1841,8 @@
     expandRecipe: expandRecipe,
     chooseRecipe: chooseRecipe,
     seedRecipe: seedRecipe,
+    ensureUnassigned: ensureUnassigned,
+    seedRawBill: seedRawBill,
     seedPins: seedPins,
     addressMatches: addressMatches,
     locationsAtPlace: locationsAtPlace,

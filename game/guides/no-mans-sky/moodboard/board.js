@@ -111,11 +111,18 @@
     } catch (e) {}
   }
 
+  function currentView() {
+    return new URLSearchParams(location.search).get("view") || "";
+  }
+
   function writeAddress() {
     if (!history.replaceState) return;
+    if (currentView() === "tech") return;
     var params = new URLSearchParams(location.search);
+    var requested = NmsRefine.canonId(params.get("item") || "");
+    if (requested && !materials[requested]) return;
     var extra = [];
-    ["theme", "sp_theme"].forEach(function (key) {
+    ["theme", "sp_theme", "view"].forEach(function (key) {
       if (params.has(key)) extra.push(key + "=" + encodeURIComponent(params.get(key)));
     });
     var next = NmsRefine.formatShare(focusId, null);
@@ -511,8 +518,9 @@
   function applyLocation(write) {
     var share = NmsRefine.parseShare(location.search);
     var hash = (location.hash || "").replace(/^#/, "");
-    if (materials[share.item]) focusId = share.item;
-    else if (materials[hash]) focusId = hash;
+    var ownsItem = currentView() !== "tech";
+    if (ownsItem && materials[share.item]) focusId = share.item;
+    else if (ownsItem && materials[hash]) focusId = hash;
     else if (!materials[focusId]) focusId = "pure-ferrite";
     anchorId = focusId;
     if (share.pins) pins = cleanIds(share.pins);
@@ -521,7 +529,7 @@
     var stored = readSelected();
     if (stored.length) selected = stored;
     if (selected.indexOf(focusId) === -1) selected = [focusId].concat(selected);
-    if (write) {
+    if (write && ownsItem) {
       writeAddress();
       writeSelected();
     }
@@ -530,6 +538,7 @@
 
   window.addEventListener("popstate", function () {
     if (!materials) return;
+    if (currentView() === "tech") return;
     var share = NmsRefine.parseShare(location.search);
     if (materials[share.item]) {
       focusId = share.item;
