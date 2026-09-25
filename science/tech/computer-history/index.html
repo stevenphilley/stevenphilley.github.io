@@ -1,0 +1,119 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Computer history timeline — Science — Steven Philley</title>
+<meta name="description" content="Interactive timeline of computing, from the abacus and the Antikythera mechanism through ENIAC, the Z80, Unix, the Web, and modern AI. Pan, zoom, filter, and open sourced milestones.">
+<link rel="canonical" href="https://stevenphilley.com/science/tech/computer-history/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Computer history timeline">
+<meta property="og:description" content="A zoomable timeline of computing, antiquity to now, with sources on every milestone.">
+<meta property="og:url" content="https://stevenphilley.com/science/tech/computer-history/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Computer history timeline">
+<meta name="twitter:description" content="Pan, zoom, and filter a sourced timeline of computing.">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/science/tech/computer-history/timeline.css">
+</head>
+<body>
+{% include nav.html %}
+
+<div class="ch-wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/tech/computer-history/" aria-current="page">Computer history</a>
+      <a href="/science/graphics-3d/">3D graphics</a>
+      <a href="/electronics/">Electronics</a>
+      <a href="/electronics/z80/">Z80</a>
+      <a href="/bbs/">BBS</a>
+    </div>
+  </div>
+
+  <p class="ch-kicker">Vol. Science · Tech · Timeline</p>
+  <h1>Computer<br>history</h1>
+  <p class="ch-lede">A sourced line from counting boards to large language models. Drag to pan, scroll or pinch to zoom, and open any mark for its sources. Related desks on this site: the <a href="/electronics/z80/">Z80</a>, the <a href="/bbs/sysopmanual/sysop-bible/">sysop bible</a>, the <a href="/bbs/">BBS pages</a>, <a href="/electronics/">electronics</a>, <a href="/science/graphics-3d/">3D graphics</a>, and the <a href="/games/">browser games</a>.</p>
+
+  <div id="ch-app" class="ch-app">
+    <div class="ch-toolbar">
+      <form class="ch-search" role="search" action="#" onsubmit="return false">
+        <label for="ch-q">Search</label>
+        <input id="ch-q" type="search" autocomplete="off" spellcheck="false" placeholder="ENIAC, Unix, Z80" aria-controls="ch-viewport ch-list">
+      </form>
+      <form class="ch-go" id="ch-go">
+        <label for="ch-year">Year</label>
+        <input id="ch-year" inputmode="numeric" aria-label="Center on year">
+        <button type="submit">Go</button>
+      </form>
+      <button type="button" class="ch-tool ch-fit" id="ch-age">Computer age</button>
+      <button type="button" class="ch-tool ch-fit" id="ch-all">All eras</button>
+      <button type="button" class="ch-tool ch-fit" id="ch-out" aria-label="Zoom out">−</button>
+      <button type="button" class="ch-tool ch-fit" id="ch-in" aria-label="Zoom in">+</button>
+      <button type="button" class="ch-tool" id="ch-compare" aria-pressed="false">Compare</button>
+      <button type="button" class="ch-tool" id="ch-list-toggle" aria-pressed="false">List</button>
+      <div class="ch-helpwrap">
+        <button type="button" class="ch-help" id="ch-help" aria-expanded="false" aria-controls="ch-help-panel" title="How to use this timeline">?</button>
+        <div id="ch-help-panel" class="ch-help-panel" hidden role="region" aria-label="How to use this timeline">
+          <p>Drag the timeline to pan. The wheel zooms at the pointer. A horizontal swipe pans. Pinch to zoom on a trackpad or phone. Arrow keys step through the visible events. Enter opens one. Escape closes the card. Home and End jump to the ends. Plus and minus zoom. Zero fits the computer age. Category chips filter. Compare lays Hardware, Software, Networks, and AI in parallel rows. On a small screen the same events are a vertical list. A link such as ?e=eniac opens that event. ?t=1971 centers that year.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ch-chips" id="ch-chips" role="group" aria-label="Categories"></div>
+    <div class="ch-legend" id="ch-legend" aria-hidden="true"></div>
+    <p class="ch-meta"><span><strong id="ch-count">…</strong> milestones</span><span id="ch-center">Centered on —</span></p>
+
+    <div class="ch-stage">
+      <div id="ch-viewport" class="ch-viewport" role="application" aria-roledescription="timeline" aria-label="Computer history timeline" aria-describedby="ch-help-panel" tabindex="0">
+        <div id="ch-world" class="ch-world"></div>
+      </div>
+    </div>
+    <p id="ch-empty" class="ch-empty" hidden>No milestones match.</p>
+    <ol id="ch-list" class="ch-list" aria-label="Milestones"></ol>
+    <p id="ch-live" class="ch-vh" aria-live="polite"></p>
+
+    <dialog id="ch-dialog" class="ch-dialog" aria-labelledby="ch-dialog-title">
+      <article>
+        <p class="when" id="ch-dialog-date"></p>
+        <h2 id="ch-dialog-title"></h2>
+        <p id="ch-dialog-summary"></p>
+        <p class="note" id="ch-dialog-note" hidden></p>
+        <ul class="ch-tags" id="ch-dialog-tags"></ul>
+        <h3>Sources</h3>
+        <ul id="ch-dialog-sources"></ul>
+        <div id="ch-dialog-site"></div>
+        <div class="ch-pager">
+          <button type="button" id="ch-prev">Previous</button>
+          <button type="button" id="ch-next">Next</button>
+          <button type="button" id="ch-close">Close</button>
+        </div>
+      </article>
+    </dialog>
+  </div>
+
+  <p class="ch-note">Era bands are a reading guide for the dominant story of a stretch of years. An event keeps its own date, so the transistor, the ARPANET, and early AI sit where they happened, not only inside the band that shares their name. Dates that historians still argue about are marked in the card. Figures in the text are the ones the cited page states.</p>
+
+  <nav class="ch-related" aria-label="Related desks">
+    <a href="/electronics/z80/"><p class="n">Electronics</p><h2>Z80</h2></a>
+    <a href="/bbs/sysopmanual/sysop-bible/"><p class="n">BBS</p><h2>Sysop bible</h2></a>
+    <a href="/bbs/"><p class="n">BBS</p><h2>Bulletin boards</h2></a>
+    <a href="/science/graphics-3d/"><p class="n">Science</p><h2>3D graphics</h2></a>
+    <a href="/electronics/"><p class="n">Electronics</p><h2>Circuits</h2></a>
+    <a href="/games/"><p class="n">Games</p><h2>Play</h2></a>
+  </nav>
+
+  {% include footer.html %}
+</div>
+<script src="/science/tech/computer-history/timeline.js" defer></script>
+</body>
+</html>
