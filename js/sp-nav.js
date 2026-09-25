@@ -10,13 +10,13 @@
   }
 
   function visibleSearch() {
-    var narrow = window.matchMedia("(max-width: 1240px)").matches;
+    var narrow = window.matchMedia("(max-width: 1400px)").matches;
     if (narrow) return document.getElementById("sp-q-mobile");
     return document.getElementById("sp-q");
   }
 
   function focusSearch() {
-    var narrow = window.matchMedia("(max-width: 1240px)").matches;
+    var narrow = window.matchMedia("(max-width: 1400px)").matches;
     var box = document.getElementById("sp-search-open");
     var pin = document.querySelector(".sp-search-pin");
     if (narrow && box) {
@@ -130,13 +130,76 @@
       menu.addEventListener("click", function (ev) {
         var link = ev.target.closest && ev.target.closest("a");
         if (!link || !menuBox) return;
-        if (window.matchMedia("(max-width: 1240px)").matches) {
+        if (window.matchMedia("(max-width: 1400px)").matches) {
           menuBox.checked = false;
           if (menuLabel) menuLabel.setAttribute("aria-expanded", "false");
         }
       });
     }
+
+    setupLayoutWidth();
   });
+
+  function layoutMode() {
+    return document.documentElement.classList.contains("layout-fill") ? "fill" : "std";
+  }
+
+  function paintLayout(mode) {
+    var fill = mode === "fill";
+    document.documentElement.classList.toggle("layout-fill", fill);
+    var buttons = document.querySelectorAll("[data-sp-layout]");
+    Array.prototype.forEach.call(buttons, function (btn) {
+      var on = btn.getAttribute("data-sp-layout") === (fill ? "fill" : "std");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.tabIndex = on ? 0 : -1;
+    });
+  }
+
+  function chooseLayout(mode, track) {
+    if (mode !== "std" && mode !== "fill") return;
+    var changed = mode !== layoutMode();
+    paintLayout(mode);
+    try {
+      localStorage.setItem("sp-layout", mode);
+    } catch (e) {}
+    if (track && changed && typeof window.gtag === "function") {
+      window.gtag("event", "layout_width", { mode: mode });
+    }
+    if (changed) {
+      requestAnimationFrame(function () {
+        window.dispatchEvent(new Event("resize"));
+      });
+    }
+  }
+
+  function setupLayoutWidth() {
+    paintLayout(layoutMode());
+    var groups = document.querySelectorAll(".sp-width");
+    Array.prototype.forEach.call(groups, function (group) {
+      var buttons = group.querySelectorAll("[data-sp-layout]");
+      Array.prototype.forEach.call(buttons, function (btn) {
+        btn.addEventListener("click", function () {
+          chooseLayout(btn.getAttribute("data-sp-layout"), true);
+          btn.focus();
+        });
+      });
+      group.addEventListener("keydown", function (ev) {
+        var key = ev.key;
+        if (key !== "ArrowLeft" && key !== "ArrowRight" && key !== "ArrowUp" && key !== "ArrowDown" && key !== "Home" && key !== "End") return;
+        var list = Array.prototype.slice.call(buttons);
+        if (!list.length) return;
+        ev.preventDefault();
+        var index = list.indexOf(document.activeElement);
+        if (index < 0) index = list.findIndex(function (b) { return b.getAttribute("aria-pressed") === "true"; });
+        if (index < 0) index = 0;
+        var next = index;
+        if (key === "Home" || key === "ArrowLeft" || key === "ArrowUp") next = key === "Home" ? 0 : (index + list.length - 1) % list.length;
+        if (key === "End" || key === "ArrowRight" || key === "ArrowDown") next = key === "End" ? list.length - 1 : (index + 1) % list.length;
+        chooseLayout(list[next].getAttribute("data-sp-layout"), true);
+        list[next].focus();
+      });
+    });
+  }
 
   document.addEventListener(
     "keydown",

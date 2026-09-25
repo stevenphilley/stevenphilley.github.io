@@ -12,6 +12,9 @@
     {% include nav.html %}
 
   Put {% include footer.html %} just before </body>.
+  In <head>, before the stylesheets, also add {% include head-layout.html %}
+  so the saved page width (Std or Fill) is on <html> before first paint.
+  _layouts/default.html already includes both. See README, "Adding a page".
   This include loads css/sp-nav.css, js/sp-nav.js, js/sp-theme-ui.js,
   js/sp-share.js, and the Google tag (G-2QSEBDSWKL). Do not add those again.
   A page under /science/, /tools/, /wallpapers/, and the other section
@@ -117,8 +120,17 @@
         </div>
         {%- endif -%}
         <button type="button" class="sp-share-btn" data-sp-share aria-label="Share this page with current theme" title="Share link with current theme">Share</button>
+        <div class="sp-width sp-width--menu" role="group" aria-label="Page width">
+          <button type="button" class="sp-width-btn" data-sp-layout="std" aria-pressed="true" title="Standard width">Std</button>
+          <button type="button" class="sp-width-btn" data-sp-layout="fill" aria-pressed="false" title="Fill the viewport">Fill</button>
+        </div>
       </div>
     </nav>
+    <div class="sp-end">
+      <div class="sp-width" role="group" aria-label="Page width">
+        <button type="button" class="sp-width-btn" data-sp-layout="std" aria-pressed="true" title="Standard width">Std</button>
+        <button type="button" class="sp-width-btn" data-sp-layout="fill" aria-pressed="false" title="Fill the viewport">Fill</button>
+      </div>
     <form class="sp-search" action="/search/" method="get" role="search">
       <label class="sp-vh" for="sp-q">Search this site</label>
       <button type="submit" class="sp-search-go" aria-label="Search">
@@ -127,6 +139,7 @@
       <input id="sp-q" class="sp-q" type="search" name="q" placeholder="Search" autocomplete="off" spellcheck="false" enterkeyhint="search">
       <kbd class="sp-kbd" aria-hidden="true">/</kbd>
     </form>
+    </div>
     <label for="sp-search-open" class="sp-search-pin" aria-label="Search" aria-controls="sp-search-panel" aria-expanded="false">
       <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.2 15.2 L20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </label>
