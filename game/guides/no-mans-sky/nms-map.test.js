@@ -406,6 +406,47 @@ var ordered = api.orderBases([campPlace, uthmiPlace], summaries, "mining", "all"
 eq(ordered.map(function (row) { return row.name; }), ["Uthmi", "Camp"], "mining output sort puts the rated mine first");
 eq(api.orderBases([campPlace, uthmiPlace], summaries, "crops", "farming").map(function (row) { return row.id; }), ["b0"], "the farming filter keeps the crop base, in crop order");
 eq(api.rangeIds(api.orderBases([campPlace, uthmiPlace], summaries, "name", "all").map(function (row) { return row.id; }), "b1", "b0"), ["b1", "b0"], "range select follows the current sort");
+var alphaPlace = { id: "b2", glyphs: "000000000001", name: "Alpha", type: "PlanetBase" };
+var threeSummaries = {
+  b0: uthmiGlance,
+  b1: campGlance,
+  b2: { units: 0, miningCount: 0, miningRate: 0, cropCount: 0, hasQuery: false }
+};
+var byName = api.orderBases([uthmiPlace, campPlace, alphaPlace], threeSummaries, "name", "all");
+eq(byName.map(function (row) { return row.id; }), ["b2", "b1", "b0"], "name sort is alphabetical before pinning");
+var pinnedName = api.pinSelectedBases(byName, ["b0", "b2"], true);
+eq(pinnedName.bases.map(function (row) { return row.id; }), ["b2", "b0", "b1"], "selected bases come first and keep name order");
+eq(pinnedName.splitAfter, 2, "the divider counts selected bases still in the list");
+var byMining = api.orderBases([alphaPlace, campPlace, uthmiPlace], threeSummaries, "mining", "all");
+var pinnedMining = api.pinSelectedBases(byMining, ["b2", "b1"], true);
+eq(pinnedMining.bases.map(function (row) { return row.id; }), ["b1", "b2", "b0"], "mining order stays inside the selected group and the rest");
+eq(api.pinSelectedBases(byMining, ["b2"], false).bases.map(function (row) { return row.id; }), ["b0", "b1", "b2"], "an unchecked preference leaves the sort alone");
+eq(api.pinSelectedBases(byMining, ["b2"], false).splitAfter, 0, "an unchecked preference draws no divider");
+var farmed = api.pinSelectedBases(api.orderBases([alphaPlace, campPlace, uthmiPlace], threeSummaries, "crops", "farming"), ["b1", "b0"], true);
+eq(farmed.bases.map(function (row) { return row.id; }), ["b0"], "selected on top still obeys the farming filter");
+eq(api.pinSelectedBases(byName, ["freighter", "b1"], true).bases.map(function (row) { return row.id; }), ["b1", "b2", "b0"], "a selected id outside the list does not invent a row");
+eq(api.pinSelectedBases(byName, [], true).splitAfter, 0, "nothing selected leaves the list unsplit");
+eq(api.pinSelectedBases(byName, ["b2", "b1", "b0"], true).splitAfter, 3, "every visible base selected is one group");
+var namesBeforePin = byName.map(function (row) { return row.id; });
+api.pinSelectedBases(byName, ["b0"], true);
+eq(byName.map(function (row) { return row.id; }), namesBeforePin, "pinning does not rewrite the sorted list");
+eq(api.rangeIds(pinnedName.bases.map(function (row) { return row.id; }), "b2", "b1"), ["b2", "b0", "b1"], "range select follows the list after selected bases move up");
+eq(api.SELECTED_ON_TOP_KEY, "nms-map-selected-on-top", "the preference uses its own localStorage key");
+assert(api.readSelectedOnTop(null) === false, "a missing store leaves selected on top off");
+var memory = {};
+var store = {
+  getItem: function (key) { return Object.prototype.hasOwnProperty.call(memory, key) ? memory[key] : null; },
+  setItem: function (key, value) { memory[key] = String(value); }
+};
+assert(api.readSelectedOnTop(store) === false, "an empty store leaves selected on top off");
+api.writeSelectedOnTop(store, true);
+eq(memory[api.SELECTED_ON_TOP_KEY], "1", "checking the box stores 1");
+assert(api.readSelectedOnTop(store) === true, "a stored 1 turns selected on top on");
+api.writeSelectedOnTop(store, false);
+eq(memory[api.SELECTED_ON_TOP_KEY], "0", "clearing the box stores 0");
+assert(api.readSelectedOnTop(store) === false, "a stored 0 turns selected on top off");
+assert(api.readSelectedOnTop({ getItem: function () { throw new Error("blocked"); } }) === false, "a blocked read stays off");
+api.writeSelectedOnTop({ setItem: function () { throw new Error("blocked"); } }, true);
 eq(logistics.selectionQuery([uthmiPlace, { glyphs: "2205d058ac1d" }, campPlace]), "?places=2205D058AC1D,1001CF589C1E", "the logistics link lists each glyph once");
 eq(logistics.parseSelectionQuery("?places=2205D058AC1D,nope,1001CF589C1E"), ["2205D058AC1D", "1001CF589C1E"], "the logistics page reads the same glyph list");
 var radius = api.screenRadiusLy(selFrame.rx * 4, selFrame, 4);

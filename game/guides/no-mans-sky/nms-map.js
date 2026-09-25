@@ -1328,6 +1328,36 @@
     });
   }
 
+  var SELECTED_ON_TOP_KEY = "nms-map-selected-on-top";
+
+  function readSelectedOnTop(storage) {
+    if (!storage || typeof storage.getItem !== "function") return false;
+    try { return storage.getItem(SELECTED_ON_TOP_KEY) === "1"; }
+    catch (err) { return false; }
+  }
+
+  function writeSelectedOnTop(storage, on) {
+    if (!storage || typeof storage.setItem !== "function") return;
+    try { storage.setItem(SELECTED_ON_TOP_KEY, on ? "1" : "0"); }
+    catch (err) { /* private mode can refuse the write */ }
+  }
+
+  function pinSelectedBases(ordered, selectedIds, enabled) {
+    var list = (ordered || []).slice();
+    if (!enabled) return { bases: list, splitAfter: 0 };
+    var seen = Object.create(null);
+    (selectedIds || []).forEach(function (id) {
+      if (id != null && id !== "") seen[id] = true;
+    });
+    var top = [];
+    var rest = [];
+    list.forEach(function (base) {
+      if (base && seen[base.id]) top.push(base);
+      else rest.push(base);
+    });
+    return { bases: top.concat(rest), splitAfter: top.length };
+  }
+
   function commandKeyName(platform) {
     return /Mac|iPhone|iPad|iPod/.test(String(platform || "")) ? "Cmd" : "Ctrl";
   }
@@ -1467,6 +1497,7 @@
       anchorId: null,
       listSort: "name",
       listFilter: "all",
+      selectedOnTop: readSelectedOnTop(typeof window !== "undefined" ? window.localStorage : null),
       expanded: {},
       selectedRef: null,
       hover: null,
@@ -2542,7 +2573,13 @@
       }
       if (!baseList) return;
       var summaries = summariesFor(bases);
-      var ordered = orderBases(bases, summaries, state.listSort, state.listFilter);
+      var pinned = pinSelectedBases(
+        orderBases(bases, summaries, state.listSort, state.listFilter),
+        state.selection,
+        state.selectedOnTop
+      );
+      var ordered = pinned.bases;
+      var showSplit = state.selectedOnTop && pinned.splitAfter > 0 && pinned.splitAfter < ordered.length;
       listOrder = ordered.map(function (b) { return b.id; });
       if (!bases.length) {
         baseList.innerHTML = '<li class="empty">' + (state.fileName
@@ -2555,13 +2592,16 @@
       } else {
         var api = logisticsApi();
         var store = api ? (logisticsStore || api.emptyStore()) : null;
-        baseList.innerHTML = ordered.map(function (b) {
+        baseList.innerHTML = ordered.map(function (b, i) {
           var on = isSelected(b.id);
           var open = !!state.expanded[b.id];
           var detailId = "base-detail-" + b.id;
           var detail = "";
           if (open && api && store) detail = placeSectionsHtml(api, store, placeOf(b), "base");
-          return '<li class="base-row">' +
+          var split = (showSplit && i === pinned.splitAfter)
+            ? '<li class="list-split">' + pinned.splitAfter + " selected</li>"
+            : "";
+          return split + '<li class="base-row">' +
             '<div class="base-head"><button type="button" data-base="' + esc(b.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
             '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(b.name) + "</span>" +
             '<span class="meta">' + esc(b.type) + " · " + esc(galaxyLabel(b.galaxy)) + " · " + esc(b.coords) +
@@ -3235,6 +3275,7 @@
     });
     var listSort = document.getElementById("list-sort");
     var listFilter = document.getElementById("list-filter");
+    var selectedOnTopInput = document.getElementById("selected-on-top");
     if (listSort) listSort.addEventListener("change", function () {
       state.listSort = listSort.value || "name";
       renderLists();
@@ -3243,6 +3284,14 @@
       state.listFilter = listFilter.value || "all";
       renderLists();
     });
+    if (selectedOnTopInput) {
+      selectedOnTopInput.checked = !!state.selectedOnTop;
+      selectedOnTopInput.addEventListener("change", function () {
+        state.selectedOnTop = !!selectedOnTopInput.checked;
+        writeSelectedOnTop(window.localStorage, state.selectedOnTop);
+        renderLists();
+      });
+    }
     paintSelectTools();
 
     if (fileInput) {
@@ -3554,6 +3603,10 @@
     inventoryChipText: inventoryChipText,
     aggregatePlaces: aggregatePlaces,
     orderBases: orderBases,
+    SELECTED_ON_TOP_KEY: SELECTED_ON_TOP_KEY,
+    readSelectedOnTop: readSelectedOnTop,
+    writeSelectedOnTop: writeSelectedOnTop,
+    pinSelectedBases: pinSelectedBases,
     formatQty: formatQty,
     commandKeyName: commandKeyName,
     bindHelpDialogs: bindHelpDialogs,
