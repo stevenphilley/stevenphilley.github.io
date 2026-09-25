@@ -456,6 +456,177 @@ eq(api.commandKeyName("iPhone"), "Cmd", "an iPhone shows Cmd");
 eq(api.commandKeyName("Win32"), "Ctrl", "Windows shows Ctrl");
 eq(api.commandKeyName("Linux x86_64"), "Ctrl", "Linux shows Ctrl");
 
+var disc = require("./discoveries.js");
+var portalMask = (1n << 48n) - 1n;
+function discDeps() {
+  return {
+    decodeAddressField: api.decodeAddressField,
+    toBigInt: function (raw) {
+      if (typeof raw === "bigint") return raw;
+      if (typeof raw === "number") return BigInt(Math.trunc(raw));
+      var s = String(raw == null ? "" : raw).trim();
+      if (/^-?0x[0-9a-f]+$/i.test(s) || /^-?\d+$/.test(s)) return BigInt(s);
+      if (/^[0-9a-f]+$/i.test(s) && /[a-f]/i.test(s)) return BigInt("0x" + s);
+      throw new Error("bad address");
+    },
+    portalMask: portalMask,
+    lyBetween: function (a, b) {
+      var dx = a.voxelX - b.voxelX;
+      var dy = a.voxelY - b.voxelY;
+      var dz = a.voxelZ - b.voxelZ;
+      return Math.round(Math.sqrt(dx * dx + dy * dy + dz * dz) * 400);
+    }
+  };
+}
+
+var packedCapital = disc.decodeDiscoveryAddress("0x2205D058AC1D", discDeps());
+eq(packedCapital.glyphs, "2205D058AC1D", "a discovery UA keeps the 48-bit glyphs");
+assert(packedCapital.galaxy == null, "a 48-bit discovery UA does not invent a galaxy");
+
+var packedGalaxy = disc.decodeDiscoveryAddress(disc.packAddress(2, 0x205, -995, -48, 1418, 0x0A), discDeps());
+eq(packedGalaxy.glyphs, "2205D058AC1D", "bits 48–55 do not change discovery glyphs");
+eq(packedGalaxy.galaxy, 10, "a non-zero high byte is a galaxy candidate");
+eq(packedGalaxy.galaxySource, "ua", "the high byte is marked as coming from the UA");
+
+var realityWins = disc.decodeDiscoveryAddress({
+  UA: disc.packAddress(2, 0x205, -995, -48, 1418, 0x0A),
+  RealityIndex: 2
+}, discDeps());
+eq(realityWins.glyphs, "2205D058AC1D", "an address object still decodes the portal code");
+eq(realityWins.galaxy, 2, "RealityIndex wins over the packed high byte");
+eq(realityWins.galaxySource, "reality", "an explicit reality is labeled as such");
+
+var quotedUa = api.quoteGalacticAddresses('{"UA":37469948428061,"5L6":37469948428061,"Units":12}');
+assert(quotedUa.indexOf('"UA":"37469948428061"') !== -1, "quotes discovery UA integers");
+assert(quotedUa.indexOf('"5L6":"37469948428061"') !== -1, "quotes the obfuscated UA key");
+assert(quotedUa.indexOf('"Units":12') !== -1, "a discovery quote pass still leaves other integers numeric");
+
+var fixtureUa = disc.packAddress(3, 0x11, 100, -2, -40, 0);
+var fixture = {
+  Version: 4720,
+  DiscoveryManagerData: {
+    "DiscoveryData-v1": {
+      Store: {
+        Record: [
+          {
+            DD: { UA: fixtureUa, DT: "SolarSystem", VP: [] },
+            DM: { CN: "Fixture System" },
+            OWS: { USN: "Traveller", UID: "0", TS: 1700000100 },
+            FL: { U: 1 },
+            RID: "fixture-system"
+          },
+          {
+            DD: { UA: disc.packAddress(1, 0x11, 100, -2, -40, 0), DT: "Planet", VP: ["0x1", 1] },
+            DM: { CN: "Fixture World" },
+            OWS: { USN: "", UID: "4242", TS: 1700000200 },
+            FL: { U: 1 },
+            RID: "fixture-planet"
+          },
+          {
+            DD: { UA: disc.packAddress(1, 0x11, 100, -2, -40, 0), DT: "Flora", VP: ["0x20"] },
+            DM: {},
+            OWS: { TS: 1700000300 },
+            FL: { U: 0 }
+          },
+          {
+            DD: { UA: disc.packAddress(1, 0x11, 100, -2, -40, 0), DT: "Animal", VP: ["0x21"] },
+            DM: { CustomName: "Fixture Beast" },
+            OWS: { TS: 1700000400 },
+            FL: { U: 0 }
+          },
+          {
+            DD: { UA: disc.packAddress(2, 0x11, 100, -2, -40, 0), DT: "Mineral", VP: ["0x22"] },
+            DM: {},
+            OWS: {},
+            FL: {}
+          }
+        ]
+      }
+    }
+  }
+};
+var parsedFixture = api.extractDiscoveries(fixture);
+eq(parsedFixture.problems, [], "the synthetic fixture has no parse problems");
+eq(parsedFixture.systems.length, 1, "planet, system, flora, fauna, and mineral share one system");
+eq(parsedFixture.systems[0].systemName, "Fixture System", "the solar-system custom name is kept");
+eq(parsedFixture.systems[0].planetCount, 1, "only the planet record counts as a discovered planet");
+eq(parsedFixture.systems[0].flora, 1, "flora increments the system");
+eq(parsedFixture.systems[0].fauna, 1, "an Animal record counts as fauna");
+eq(parsedFixture.systems[0].minerals, 1, "a mineral record counts even without a planet record");
+var fixturePlanet = parsedFixture.systems[0].planetList.filter(function (p) { return p.index === 1; })[0];
+eq(fixturePlanet.name, "Fixture World", "the planet custom name is kept");
+eq(fixturePlanet.biome, "Toxic", "planet VP low bits are a biome index");
+eq(fixturePlanet.uploaded, true, "FL.U above zero means uploaded");
+eq(fixturePlanet.timestamp, 1700000200, "the ownership timestamp is kept");
+eq(fixturePlanet.owner, "", "an empty username stays empty");
+eq(fixturePlanet.ownerId, "4242", "the ownership id is kept when there is no username");
+assert(fixturePlanet.named.indexOf("fauna · Fixture Beast") !== -1, "a typed creature name is kept on its planet");
+eq(disc.discoveryTotals(parsedFixture.systems).planets, 1, "totals count planets, not every record");
+
+var older = {
+  DiscoveryData: {
+    Available: { Record: [{ DD: { UA: fixtureUa, DT: "SolarSystem" }, FL: { U: 0 }, OWS: { TS: 10 } }] },
+    Enqueued: { Record: [{ DD: { UA: disc.packAddress(4, 0x11, 100, -2, -40, 0), DT: "Planet" }, DM: { CN: "Queued" }, FL: { U: 1 }, OWS: { TS: 11 } }] }
+  }
+};
+var olderParsed = api.extractDiscoveries(older);
+eq(olderParsed.systems.length, 1, "Available and Enqueued and the older DiscoveryData key still group");
+eq(olderParsed.systems[0].planetCount, 1, "an enqueued planet is still a planet");
+eq(olderParsed.systems[0].planetList[0].name, "Queued", "an enqueued custom name is kept");
+
+var table = api.mappingFromJson(JSON.parse(fs.readFileSync(path.join(__dirname, "mapping.json"), "utf8")));
+var obfuscated = api.unmapTree({
+  fDu: {
+    ETO: {
+      OsQ: {
+        "?fB": [{
+          "8P3": { "5L6": "0x2205D058AC1D", "<Dn": "Planet", bEr: ["1", 0] },
+          q9a: { q5u: "Obfuscated World" },
+          ksu: { "V?:": "Traveller", K7E: "0", "3I1": 1700000000 },
+          "=wD": { tiH: 1 }
+        }]
+      }
+    }
+  }
+}, table);
+var obfuscatedParsed = api.extractDiscoveries(obfuscated);
+eq(obfuscatedParsed.systems.length, 1, "obfuscated discovery keys unmap before parsing");
+eq(obfuscatedParsed.systems[0].planetList[0].name, "Obfuscated World", "the obfuscated custom name unmaps");
+eq(obfuscatedParsed.systems[0].planetList[0].glyphs, "2205D058AC1D", "the obfuscated UA decodes to portal glyphs");
+eq(obfuscatedParsed.systems[0].planetList[0].biome, "Lush", "biome index 0 is Lush");
+
+var baseDoc = {
+  PlayerStateData: { PersistentPlayerBases: [{ Name: "Camp", GalacticAddress: "2205D058AC1D" }] },
+  DiscoveryManagerData: { "DiscoveryData-v1": { Store: { Record: [{ DD: { UA: fixtureUa, DT: "Planet" }, RID: "a" }] } } }
+};
+var extraDoc = {
+  DiscoveryManagerData: { "DiscoveryData-v1": { Store: { Record: [
+    { DD: { UA: fixtureUa, DT: "Planet" }, RID: "a" },
+    { DD: { UA: disc.packAddress(5, 0x22, 200, 1, 20, 0), DT: "Planet" }, RID: "b" }
+  ] } } }
+};
+var merged = api.mergeSaveDocuments([extraDoc, baseDoc]);
+eq(merged.PlayerStateData.PersistentPlayerBases.length, 1, "the merge keeps the document that has the bases");
+eq(api.extractDiscoveries(merged).systems.length, 2, "the merge unions discovery records and drops a duplicate RID");
+
+var close = disc.clusterScreenMarkers([{ x: 0, y: 0, id: "a" }, { x: 10, y: 0, id: "b" }], 48);
+eq(close.length, 1, "markers ten pixels apart share a cluster cell");
+assert(close[0].clustered && close[0].items.length === 2, "a shared cell is one cluster of both systems");
+var apart = disc.clusterScreenMarkers([{ x: 0, y: 0, id: "a" }, { x: 100, y: 0, id: "b" }], 48);
+eq(apart.length, 2, "markers a hundred pixels apart stay separate");
+eq(disc.discoveryCellSize(1), 48, "a wide zoom uses the larger cluster cell");
+eq(disc.discoveryCellSize(8), 0, "zoom 8 stops clustering");
+
+var synthetic = disc.syntheticDiscoveryDocument();
+var syntheticParsed = api.extractDiscoveries(synthetic);
+assert(syntheticParsed.records.length >= 400, "the default synthetic save has several hundred discovery records");
+eq(syntheticParsed.systems.length, 8, "the default synthetic save has eight systems");
+var placed = disc.placeDiscoveryGalaxies(syntheticParsed.systems, [{ galaxy: null }]);
+eq(placed.filter(function (sys) { return sys.galaxy === 0; }).length, 7, "systems without a high byte land in Euclid");
+eq(placed.filter(function (sys) { return sys.galaxy === 10; }).length, 1, "the last synthetic system keeps galaxy 10");
+assert(placed.every(function (sys) { return sys.planetList.some(function (p) { return p.biome; }); }), "each synthetic system has a biome read from VP");
+assert(!fs.existsSync(path.join(__dirname, "fixture-player.hg")), "no real save file is part of the test");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

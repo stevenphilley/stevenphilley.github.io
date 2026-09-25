@@ -7,12 +7,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>No Man's Sky base map — Steven Philley</title>
-<meta name="description" content="Plot No Man's Sky planetary bases from exported JSON or a Steam save.hg. Euclid Hub capital is Uthmi Beta. The file never leaves your browser.">
+<meta name="description" content="Plot No Man's Sky planetary bases and discovered planets from exported JSON or a Steam save.hg. Euclid Hub capital is Uthmi Beta. The file never leaves your browser.">
 <link rel="canonical" href="https://stevenphilley.com/game/guides/no-mans-sky/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="No Man's Sky base map">
-<meta property="og:description" content="Local galaxy map of your NMS bases. Load exported JSON or a Steam save.hg — nothing is uploaded.">
+<meta property="og:description" content="Local galaxy map of your NMS bases and discoveries. Load exported JSON or a Steam save.hg — nothing is uploaded.">
 <meta property="og:url" content="https://stevenphilley.com/game/guides/no-mans-sky/">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -169,8 +169,11 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .place-prod strong{color:inherit;font-weight:500}
 .swatch.prod{background:var(--accent-2,#00F0FF);border-radius:2px}
 .swatch.demand{background:transparent;border:1px dashed var(--accent-2,#00F0FF);border-radius:50%}
+.swatch.disc{width:9px;height:9px;border-radius:50%;background:transparent;border:1.5px solid var(--ink-soft,#9b9a96);box-sizing:border-box}
+.disc-metrics{grid-template-columns:repeat(5,1fr)}
+#discovery-wrap{margin-top:8px}
 @media (max-width:800px){
-  .metrics,.columns{grid-template-columns:1fr 1fr}
+  .metrics,.columns,.disc-metrics{grid-template-columns:1fr 1fr}
   .columns{grid-template-columns:1fr}
   .choices{grid-template-columns:1fr}
   .actions{flex-direction:column}
@@ -211,7 +214,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   <header class="e-hero">
     <p class="e-kicker">Vol. VI — Guides</p>
     <h1>No Man's Sky</h1>
-    <p class="lede">A schematic galaxy for your bases. Load exported JSON, or open a Steam save.hg directly. Planetary bases are plotted; freighter bases are listed and left off the map. Click a base, a freighter, or a system mark to read the inventory pinned there. Middle-drag selects an area. The file is read in this browser and is never uploaded. The same inventory is shared with the logistics planner.</p>
+    <p class="lede">A schematic galaxy for your bases and the planets you have discovered. Load exported JSON, or open a Steam save.hg directly. You can add a second file when discoveries were exported on their own. Planetary bases are plotted; freighter bases are listed and left off the map. Discovered systems are smaller rings, and planets in one system share a marker. Click a base, a freighter, or a system mark to read what is pinned there. Middle-drag selects an area. The file is read in this browser and is never uploaded. The same inventory is shared with the logistics planner.</p>
   </header>
 
   <div class="metrics" aria-live="polite">
@@ -219,6 +222,13 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <div class="metric"><div class="lab">Freighters</div><div class="num" id="m-skip">0</div><div class="unit">listed, not plotted</div></div>
     <div class="metric"><div class="lab">Galaxies</div><div class="num" id="m-gal">1</div><div class="unit">in this file</div></div>
     <div class="metric"><div class="lab">From center</div><div class="num" id="m-center">—</div><div class="unit">selected base, ly</div></div>
+  </div>
+  <div class="metrics disc-metrics" id="disc-metrics" hidden>
+    <div class="metric"><div class="lab">Systems</div><div class="num" id="m-dsys">0</div><div class="unit">discovered, this galaxy</div></div>
+    <div class="metric"><div class="lab">Planets</div><div class="num" id="m-dplanets">0</div><div class="unit">discovered</div></div>
+    <div class="metric"><div class="lab">Flora</div><div class="num" id="m-dflora">0</div><div class="unit">optional layer</div></div>
+    <div class="metric"><div class="lab">Fauna</div><div class="num" id="m-dfauna">0</div><div class="unit">optional layer</div></div>
+    <div class="metric"><div class="lab">Minerals</div><div class="num" id="m-dminerals">0</div><div class="unit">optional layer</div></div>
   </div>
 
   <div class="drop" id="drop">
@@ -232,14 +242,14 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <span class="d">save.hg, save2.hg, and the other slot files. No export step.</span>
       </label>
     </div>
-    <input type="file" id="file" accept=".json,.hg,.txt,application/json,application/octet-stream" hidden>
-    <p class="drop-note">Both open the same picker, and a drop on this box works too. A file that starts with { is JSON. A Steam save starts with the game’s LZ4 header. Nothing is uploaded.</p>
+    <input type="file" id="file" accept=".json,.hg,.txt,application/json,application/octet-stream" multiple hidden>
+    <p class="drop-note">Both open the same picker, and a drop on this box works too. Choose more than one file if a tool wrote discoveries into their own JSON. A file that starts with { is JSON. A Steam save starts with the game’s LZ4 header. Nothing is uploaded.</p>
     <details class="paths">
       <summary>Where a Steam save lives</summary>
       <p><strong>Windows</strong> — <code>%APPDATA%\HelloGames\NMS\st_&lt;SteamID&gt;\</code></p>
       <p><strong>macOS</strong> — <code>~/Library/Application Support/HelloGames/NMS/st_&lt;SteamID&gt;/</code></p>
       <p><strong>Linux</strong> — <code>~/.local/share/Steam/steamapps/compatdata/275850/pfx/drive_c/users/steamuser/AppData/Roaming/HelloGames/NMS/st_&lt;SteamID&gt;/</code></p>
-      <p>Choose <code>save.hg</code>, <code>save2.hg</code>, or another <code>save</code> slot in that folder. Skip <code>accountdata.hg</code>. The file stays in this browser.</p>
+      <p>Choose <code>save.hg</code>, <code>save2.hg</code>, or another <code>save</code> slot in that folder. Skip <code>accountdata.hg</code> and <code>mf_save.hg</code>. Discoveries are inside the save, under Discovery Manager Data. The file stays in this browser.</p>
     </details>
     <div class="actions" role="toolbar" aria-label="Save file">
       <button type="button" id="btn-clear">Clear</button>
@@ -260,6 +270,14 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <label><input type="checkbox" id="show-refs" checked> Quadrant references</label>
         <label><input type="checkbox" id="show-stock"> Inventory badges</label>
         <label><input type="checkbox" id="show-production"> Mining and farms</label>
+        <label><input type="checkbox" id="show-discoveries" checked> Discoveries</label>
+      </div>
+      <div class="checks" id="disc-filters">
+        <label><input type="checkbox" id="disc-planets" checked> Planets</label>
+        <label><input type="checkbox" id="disc-systems" checked> Systems</label>
+        <label><input type="checkbox" id="disc-flora"> Flora</label>
+        <label><input type="checkbox" id="disc-fauna"> Fauna</label>
+        <label><input type="checkbox" id="disc-minerals"> Minerals</label>
       </div>
     </div>
   </div>
@@ -277,7 +295,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
       </div>
       <button type="button" class="help-q" id="map-help" aria-haspopup="dialog" aria-controls="map-help-dialog" aria-expanded="false" aria-label="Map controls">?</button>
     </div>
-    <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan, middle-drag to select bases. The question mark lists every control. Press question mark while this map is focused."></canvas>
+    <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan, middle-drag to select bases and discovered systems. The question mark lists every control. Press question mark while this map is focused."></canvas>
   </div>
   <div id="map-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="map-help-title" data-help-hotkey="map" hidden>
     <div class="help-card">
@@ -292,7 +310,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <tbody>
           <tr><th scope="row">Left-drag</th><td>Pan. One finger pans on a touch screen, unless Select is on.</td></tr>
           <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
-          <tr><th scope="row">Reset view</th><td>Fit your bases and the Hub marks.</td></tr>
+          <tr><th scope="row">Reset view</th><td>Fit your bases, discovered systems, and the Hub marks.</td></tr>
         </tbody>
       </table>
       <h3>Select</h3>
@@ -333,11 +351,23 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
           <tr><th scope="row">Item names</th><td>Stacks use the English in-game name, including craftable technology such as the Jetpack or Gravitino Coil. A procedural id keeps the base name, including the class when the game names one. An id that is not in the list is reworded, and the save id stays beside it and in the tooltip.</td></tr>
         </tbody>
       </table>
+      <h3>Discoveries</h3>
+      <table>
+        <caption>Discoveries</caption>
+        <tbody>
+          <tr><th scope="row">Layer</th><td>Discoveries draws one ring per star system. Planets in the same system share that ring, and a count shows when there is more than one. At a wide view, nearby systems bunch into one ring. Click that bunch to zoom in. Turn the layer off to hide the rings. The totals stay.</td></tr>
+          <tr><th scope="row">Filters</th><td>Planets and systems are on. Flora, fauna, and minerals are off until you check them. A system appears when any checked type has a record there.</td></tr>
+          <tr><th scope="row">Click a ring</th><td>Portal glyphs, each planet’s index and any name you typed, counts by type, and whether it was uploaded. A time is shown when the save stored one.</td></tr>
+          <tr><th scope="row">Select</th><td>Box, circle, and modifier clicks include discovery rings. Combined totals add their planets, flora, fauna, and minerals. Shift-click in the discovered-systems list selects a range.</td></tr>
+          <tr><th scope="row">Galaxy</th><td>The menu lists galaxies that have bases or discoveries. The map opens on the galaxy of your bases, or on Euclid when the save does not name one.</td></tr>
+          <tr><th scope="row">Names</th><td>The save stores a name only when you typed one. Procedural planet, creature, and plant names are not in the file.</td></tr>
+        </tbody>
+      </table>
       <div class="help-foot"></div>
     </div>
   </div>
   <p id="select-live" class="vh" aria-live="polite"></p>
-  <p class="caption" id="map-caption">The ? at the top right lists every control. Press ? while the map is focused. Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Middle-drag a box, or Alt and middle-drag a circle, to select several. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
+  <p class="caption" id="map-caption">The ? at the top right lists every control. Press ? while the map is focused. Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Click a hollow discovery ring to open that system’s portal glyphs, planets, and upload times. Middle-drag a box, or Alt and middle-drag a circle, to select several bases and discovery rings. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list or the discovered-systems list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Hollow rings are discovered systems; a number on the ring is the planet count, or the number of systems bunched at this zoom. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases, discovered systems, and the Hub marks. Double-click a base or a discovery ring, or click it in the list, to bring it to the middle.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
@@ -346,6 +376,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <li><i class="swatch dot" aria-hidden="true"></i> Badge — stacks at that place, or the searched item</li>
     <li><i class="swatch demand" aria-hidden="true"></i> Open plan demand</li>
     <li><i class="swatch prod" aria-hidden="true"></i> M mining · F crops. A search also marks a base that produces the item.</li>
+    <li><i class="swatch disc" aria-hidden="true"></i> Discovered system</li>
   </ul>
 
   <section id="place-panel" class="place-panel" hidden aria-labelledby="place-h">
@@ -383,7 +414,11 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     </section>
   </div>
 
-  <section class="col" id="problem-wrap" hidden>
+    <section class="col" id="discovery-wrap" hidden aria-labelledby="disc-h">
+      <h2 id="disc-h">Discovered systems</h2>
+      <ul class="rows" id="discovery-list"></ul>
+    </section>
+    <section class="col" id="problem-wrap" hidden>
     <h2>Could not read</h2>
     <ul class="rows" id="problem-list"></ul>
   </section>
@@ -400,7 +435,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <ul class="refs" id="ref-list"></ul>
     <p>Coordinates and civilizations are from the <a href="https://nomanssky.fandom.com/wiki/NMS_Hub">NMS Hub</a> and <a href="https://nomanssky.fandom.com/wiki/Civilized_space">Civilized space</a> pages on the No Man's Sky Wiki, the Polaris articles linked from <a href="https://nomanssky.fandom.com/wiki/The_Fade">The Fade</a>, and the <a href="https://nmsgalactichub.miraheze.org/wiki/Galactic_Hub_Project">Galactic Hub Project</a> page on Miraheze. These are community landmarks. Capitals move, and a directory row can be older than the civilization page. Wiki “:PC” on a Polaris address is plotted as system 0001. Glyphs use planet index 1, so the first glyph can differ from a wiki address that names another planet in the same system. The map position does not. This disk is a schematic, not a catalog.</p>
     <h2>How an address is read</h2>
-    <p>Each base’s packed GalacticAddress is a 48-bit portal code. Extra high bits are ignored. The bits are planet, system, and voxel Y, Z, and X — the twelve portal glyphs, P-SSS-YY-ZZZ-XXX. This map does not invent a galaxy index from that integer. When the save includes a separate RealityIndex, the galaxy menu uses that. Signal-booster coordinates add the usual offsets: X and Z +0x7FF, Y +0x7F. Distance uses 400 light-years per voxel, measured from the center. Exported JSON is read as-is. A Steam .hg save is decompressed here, so that file does not need NomNom first. Obfuscated keys are renamed with a local key map. Nothing is uploaded.</p>
+    <p>Each base’s packed GalacticAddress is a 48-bit portal code. Extra high bits are ignored. The bits are planet, system, and voxel Y, Z, and X — the twelve portal glyphs, P-SSS-YY-ZZZ-XXX. This map does not invent a galaxy index from that integer. When the save includes a separate RealityIndex, the galaxy menu uses that. A discovery record uses the same 48-bit code in its UA field. If that integer has bits above the portal code, those eight bits are treated as a galaxy candidate and the status line says so. A discovery with no galaxy of its own is placed with your bases, or in Euclid. Signal-booster coordinates add the usual offsets: X and Z +0x7FF, Y +0x7F. Distance uses 400 light-years per voxel, measured from the center. Exported JSON is read as-is. A Steam .hg save is decompressed here, so that file does not need NomNom first. Obfuscated keys are renamed with a local key map. Nothing is uploaded. The field notes are in <a href="data/discovery-notes.md">discovery-notes.md</a>.</p>
     <h2>Also</h2>
     <ul>
       <li><a href="/game/guides/no-mans-sky/moodboard/">Moodboard</a> — materials, and the craftable technology tree. Pin a short list.</li>
@@ -427,6 +462,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 </script>
 <script src="craft.js"></script>
 <script src="logistics.js"></script>
+<script src="discoveries.js"></script>
 <script src="nms-map.js"></script>
 
 </body>
