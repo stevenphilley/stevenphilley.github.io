@@ -8,6 +8,7 @@
   var sortKey = "item";
   var sortDir = "asc";
   var editing = null;
+  var selectionGlyphs = [];
 
   var statusEl = document.getElementById("status");
   var rowsEl = document.getElementById("rows");
@@ -181,6 +182,11 @@
         });
       }
     }
+    if (selectionGlyphs.length) {
+      rows = rows.filter(function (row) {
+        return NmsLogistics.geoInSelection(row.location.geo, selectionGlyphs);
+      });
+    }
     return NmsLogistics.sortRows(rows, sortKey, sortDir);
   }
 
@@ -278,7 +284,12 @@
       return;
     }
     checklistEl.innerHTML = store.projects.map(function (project) {
-      var body = project.demands.map(function (demand) {
+      var demands = project.demands.filter(function (demand) {
+        if (!selectionGlyphs.length) return true;
+        var target = NmsLogistics.findLocation(store, demand.locationId);
+        return !!(target && NmsLogistics.geoInSelection(target.geo, selectionGlyphs));
+      });
+      var body = demands.map(function (demand) {
         var report = NmsLogistics.shortfallFor(store, demand);
         var target = NmsLogistics.findLocation(store, demand.locationId);
         var moves = NmsLogistics.suggestTransfers(store, demand);
@@ -348,7 +359,9 @@
   function renderProduction() {
     var mount = document.getElementById("production");
     if (!mount) return;
-    var sites = store.production || [];
+    var sites = (store.production || []).filter(function (site) {
+      return NmsLogistics.geoInSelection(site.geo, selectionGlyphs);
+    });
     if (!sites.length) {
       mount.innerHTML = "<p>No extractors or crops yet. Import a save that includes base objects, or the sample.</p>";
       return;
@@ -400,8 +413,32 @@
     }).join("");
   }
 
+  function renderSelectionNote() {
+    var note = document.getElementById("selection-note");
+    if (!note) return;
+    if (!selectionGlyphs.length) {
+      note.hidden = true;
+      note.innerHTML = "";
+      return;
+    }
+    note.hidden = false;
+    note.innerHTML = "Showing holds, mining, and plan demands at " + selectionGlyphs.length +
+      " place" + (selectionGlyphs.length === 1 ? "" : "s") + " selected on the map. " +
+      '<button type="button" id="clear-place-selection">Show every hold</button>';
+    var clear = document.getElementById("clear-place-selection");
+    if (clear) clear.addEventListener("click", function () {
+      selectionGlyphs = [];
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", window.location.pathname);
+      }
+      render();
+      setStatus("Showing every hold. Nothing was uploaded.");
+    });
+  }
+
   function render() {
     fillControls();
+    renderSelectionNote();
     renderMetrics();
     renderTable();
     renderProduction();
@@ -802,6 +839,7 @@
       if (params.get("qty") && document.getElementById("recipe-qty")) document.getElementById("recipe-qty").value = params.get("qty");
     }
     if (window.location.hash === "#plan") showTab("plan");
+    selectionGlyphs = NmsLogistics.parseSelectionQuery(window.location.search);
     var place = NmsLogistics.parsePlaceQuery(window.location.search);
     if (place.glyphs || place.base) {
       var match = null;
