@@ -991,7 +991,9 @@
 
     function need(id, qtyNeeded, isRoot) {
       if (!(qtyNeeded > 0)) return;
-      var have = pool[id] || 0;
+      // The root quantity is already a shortfall. Stock of that same item
+      // is a transfer, not a reason to craft less. Inputs still use the pool.
+      var have = isRoot ? 0 : (pool[id] || 0);
       var use = Math.min(have, qtyNeeded);
       if (use > 0) pool[id] = have - use;
       var left = qtyNeeded - use;
@@ -1295,6 +1297,9 @@
       scope: "base",
       strictBase: true
     });
+    if (/not pinned to a base/i.test(loc.note || "")) {
+      loc.note = "Numbered containers are shared by every base. Pinned to " + (base.name || "this place") + ".";
+    }
     return loc;
   }
 

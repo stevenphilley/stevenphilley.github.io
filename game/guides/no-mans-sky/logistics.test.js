@@ -106,6 +106,9 @@ eq(chroma.raw, { cadmium: 6 }, "three chromatic metal with no stock is six cadmi
 var fromCopper = logistics.expandRecipe(catalog, "chromatic-metal", 3, { copper: 4 });
 eq(fromCopper.steps[0].edgeId, "chromatic-copper", "stocked copper is the refine path");
 eq(fromCopper.raw, { copper: 2 }, "copper on hand is subtracted from the raw total");
+var alreadyHeld = logistics.expandRecipe(catalog, "chromatic-metal", 260, { "chromatic-metal": 240 });
+eq(alreadyHeld.raw, { cadmium: 520 }, "stock of the item being built does not shrink a shortfall");
+eq(alreadyHeld.steps[0].outQty, 260, "the shortfall is the amount to refine");
 assert(!fromCopper.steps.some(function (step) { return step.edgeId === "expand-copper"; }), "chromatic expansion is not used to make metal");
 
 var seeded = logistics.seedRecipe(logistics.emptyStore(), catalog, "warp-cell", 2, "freighter", "Freighter base build");
@@ -202,6 +205,9 @@ var pinned = logistics.normalize({
 });
 logistics.pinLocation(pinned, "box", { glyphs: "2205D058AC1D", planet: 2, name: "Uthmi", type: "PlanetBase", voxelX: -995, voxelZ: 1418 });
 assert(logistics.locationsAtPlace(pinned, uthmi, "base").length === 1, "a manual hold can be pinned to a base");
+var chest = logistics.normalize({ locations: [{ id: "c0", name: "Storage Container 0", category: "container", items: [], note: "Numbered containers are shared by every base. This one is not pinned to a base until you choose one." }] });
+logistics.pinLocation(chest, "c0", uthmi);
+assert(chest.locations[0].note.indexOf("Pinned to Uthmi") !== -1, "pinning a container replaces the unpinned note");
 assert(logistics.locationsAtPlace(pinned, outpost, "base").length === 0, "a strict pin does not follow a different base name");
 var otherPlanet = { glyphs: "1205D058AC1D", planet: 1, name: "Moon", type: "PlanetBase" };
 assert(logistics.locationsAtPlace(pinned, otherPlanet, "system").length === 1, "system scope matches the address without the planet digit");
