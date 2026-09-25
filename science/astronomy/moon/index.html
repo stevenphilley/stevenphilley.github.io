@@ -1,15 +1,17 @@
+---
+---
 <!DOCTYPE html>
 <html lang="en" data-theme="neon">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Moon — phases &amp; observing — Steven Philley</title>
-<meta name="description" content="Interactive Moon phase dial, synodic month basics, Earth–Moon scale notes, and Bay Area observing tips (when moonlight washes the deep sky). Educational schematic.">
+<meta name="description" content="Moon phase for any date and time: dial, illumination, age, and phase name, with a Now button for your local clock. Educational schematic, cited to Meeus and NASA.">
 <link rel="canonical" href="https://stevenphilley.com/science/astronomy/moon/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Moon — phases &amp; observing">
-<meta property="og:description" content="Drag the phase dial: illumination, names, and when the Moon crowds out faint galaxies from Campbell skies.">
+<meta property="og:description" content="Set a date and a clock, or press Now, and read the Moon’s phase: illumination, age, and when it crowds out faint galaxies.">
 <meta property="og:url" content="https://stevenphilley.com/science/astronomy/moon/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
@@ -80,22 +82,52 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
 .dial-link svg{width:14px;height:14px;display:block}
 .top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:70ch}
+.credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.credit a,.refs a{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.when{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px 16px 14px;margin:0 0 12px}
+.when-clock{margin:0;font-family:"IBM Plex Mono",monospace;font-size:clamp(28px,6vw,42px);font-weight:400;letter-spacing:.03em;line-height:1;color:var(--ink,#e8e6e1);font-variant-numeric:tabular-nums}
+.when-long{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.45;color:var(--ink-soft,#9b9a96)}
+.when-zone{margin:6px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.06em;line-height:1.5;color:var(--muted,#63666e)}
+.when-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-top:14px}
+.when-controls label{display:flex;flex-direction:column;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);min-width:0}
+.when input[type=date],.when input[type=time]{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.03em;padding:8px 10px;min-height:38px;border-radius:0}
+html[data-theme="sage"] .when input,html[data-theme="sand"] .when input{color-scheme:light}
+html:not([data-theme="sage"]):not([data-theme="sand"]) .when input{color-scheme:dark}
+.when-actions{display:flex;align-items:flex-end}
+.when button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;min-height:38px;cursor:pointer}
+.when button:hover,.when button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.when button[aria-pressed="true"]{background:color-mix(in srgb,var(--accent,#c8b48a) 16%,transparent)}
+#when-now{letter-spacing:.16em;padding:8px 18px;color:var(--ink,#e8e6e1);border-color:color-mix(in srgb,var(--accent,#c8b48a) 50%,var(--line,#2c303a))}
+.when-steps{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.when input:focus-visible,.when button:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
 @media (max-width:860px){
   .stage,.facts,.more{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .when-controls label{flex:1 1 100%}
+  .when input[type=date],.when input[type=time]{width:100%}
+  .when-actions,#when-now{width:100%}
+  .when-steps button{flex:1 1 calc(50% - 8px)}
 }
 </style>
 </head>
 <body>
+{% include nav.html %}
+
 <div class="wrap">
-  <div class="top">
-    <a href="/">Steven Philley</a>
+  <div class="sp-subnav">
+    
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
       <a href="/science/">Science</a>
       <a href="/science/astronomy/">Astronomy</a>
       <a href="/science/light-pollution/">Light pollution</a>
       <a href="/science/light-pollution/salesforce-tower/">Salesforce Tower</a>
-      <a href="/sitemap.html">Site contents</a>
+      
       <div class="top-tools">
       <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -103,14 +135,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
           <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <div class="themes" role="group" aria-label="Color theme">
-        <button type="button" data-set-theme="neon">Neon</button>
-        <button type="button" data-set-theme="emerald">Emerald</button>
-        <button type="button" data-set-theme="dusk">Dusk</button>
-        <button type="button" data-set-theme="sage">Sage</button>
-        <button type="button" data-set-theme="tide">Tide</button>
-        <button type="button" data-set-theme="sand">Sand</button>
-      </div>
+      
       </div>
     </div>
   </div>
@@ -134,14 +159,36 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 
   <p class="kicker">Vol. Science · Astronomy · Luna</p>
   <h1>Moon<br>phases</h1>
-  <p class="lede">Drag the dial (or use presets) to walk a <strong>synodic month</strong> — new through full and back. Illumination here is a simple geometric cartoon for learning names and sky brightness, not a precision ephemeris. Pair with <a href="/science/astronomy/tides/">tides</a> (new and full line up with spring tides; the quarters are neap), the <a href="/science/astronomy/local-sky/">Campbell / Bay Area local sky</a>, and the <a href="/science/light-pollution/">light pollution</a> desk when planning faint-object nights.</p>
-  <p class="note-schematic">Phase angle ≈ age / 29.53 × 360°. The real Moon also librates, and its orbit is tilted about 5° — so a new or full Moon is not an eclipse. That geometry has its own desk: <a href="/science/astronomy/eclipses/">Eclipses</a>. Figures round NASA educational orders of magnitude.</p>
+  <p class="lede">Set a date and a clock, drag the dial, or press <strong>Now</strong>. The desk shows the Moon’s phase at that moment — name, age, and the geometric fraction of the disk in sunlight. Pair with <a href="/science/astronomy/tides/">tides</a> (new and full line up with spring tides; the quarters are neap), the <a href="/science/astronomy/local-sky/">Campbell / Bay Area local sky</a>, and the <a href="/science/light-pollution/">light pollution</a> desk when planning faint-object nights.</p>
+  <p class="note-schematic">Phase instants follow Jean Meeus, <em>Astronomical Algorithms</em> (2nd ed., ch. 49). The mean synodic month for the year 2000 is 29.530588 days (Fred Espenak, NASA GSFC). The real Moon also librates, and its orbit is tilted about 5° — so a new or full Moon is not an eclipse. That geometry has its own desk: <a href="/science/astronomy/eclipses/">Eclipses</a>.</p>
 
-  <p class="band">Interactive · Phase dial</p>
+  <p class="band">Interactive · Phase at a moment</p>
+  <section class="when" aria-label="Date and time">
+    <p class="when-clock" id="when-clock">—</p>
+    <p class="when-long" id="when-long"></p>
+    <p class="when-zone" id="when-zone"></p>
+    <div class="when-controls">
+      <label for="when-date">Date
+        <input type="date" id="when-date" min="1000-01-01" max="2500-12-31" autocomplete="off">
+      </label>
+      <label for="when-time">Time
+        <input type="time" id="when-time" step="60" autocomplete="off">
+      </label>
+      <div class="when-actions">
+        <button type="button" id="when-now" aria-pressed="true">Now</button>
+      </div>
+    </div>
+    <div class="when-steps" role="group" aria-label="Step the clock">
+      <button type="button" data-step="-86400000">−1 day</button>
+      <button type="button" data-step="-3600000">−1 hour</button>
+      <button type="button" data-step="3600000">+1 hour</button>
+      <button type="button" data-step="86400000">+1 day</button>
+    </div>
+  </section>
   <div class="stage">
     <div class="diagram">
       <p class="hint">Drag around the Moon · Sun light from the right</p>
-      <canvas id="moon" width="640" height="640" role="img" aria-label="Interactive Moon phase diagram"></canvas>
+      <canvas id="moon" width="640" height="640" role="img" aria-label="Moon phase diagram for the selected date and time"></canvas>
       <div class="slider-row">
         <label for="age">Age in synodic month (days)</label>
         <input type="range" id="age" min="0" max="29.53" step="0.01" value="7.4">
@@ -149,26 +196,26 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     </div>
     <aside class="detail" aria-live="polite">
       <p class="tier">Phase</p>
-      <h2 id="ph-name">First quarter</h2>
-      <p class="range" id="ph-range">~50% illuminated · waxing</p>
+      <h2 id="ph-name">Moon</h2>
+      <p class="range" id="ph-range"></p>
       <p id="ph-body">Half the near side lit. Good for crater shadows along the terminator — the line between day and night on the Moon.</p>
       <p id="ph-obs" style="color:var(--muted,#63666e);font-size:12px"></p>
       <div class="presets" role="group" aria-label="Named phases">
-        <button type="button" data-age="0">New</button>
-        <button type="button" data-age="3.69">Wax crescent</button>
-        <button type="button" data-age="7.38" aria-pressed="true">First Q</button>
-        <button type="button" data-age="11.07">Wax gibbous</button>
-        <button type="button" data-age="14.77">Full</button>
-        <button type="button" data-age="18.46">Wan gibbous</button>
-        <button type="button" data-age="22.15">Last Q</button>
-        <button type="button" data-age="25.84">Wan crescent</button>
+        <button type="button" data-frac="0">New</button>
+        <button type="button" data-frac="0.125">Wax crescent</button>
+        <button type="button" data-frac="0.25">First Q</button>
+        <button type="button" data-frac="0.375">Wax gibbous</button>
+        <button type="button" data-frac="0.5">Full</button>
+        <button type="button" data-frac="0.625">Wan gibbous</button>
+        <button type="button" data-frac="0.75">Last Q</button>
+        <button type="button" data-frac="0.875">Wan crescent</button>
       </div>
     </aside>
   </div>
 
   <p class="band">Handy numbers</p>
   <dl class="facts">
-    <div class="fact"><dt>Synodic month</dt><dd>~29.53 days — new Moon to new Moon as seen from Earth (phase cycle).</dd></div>
+    <div class="fact"><dt>Synodic month</dt><dd>29.530588 days in the year 2000 — new Moon to new Moon. One month can run about 29.26 to 29.80 days.</dd></div>
     <div class="fact"><dt>Sidereal month</dt><dd>~27.3 days — one orbit relative to the stars; shorter than the phase cycle.</dd></div>
     <div class="fact"><dt>Mean distance</dt><dd>~384,400 km · about 30 Earth diameters · light travel ~1.3 s.</dd></div>
     <div class="fact"><dt>Diameter</dt><dd>~3,475 km · roughly 1/4 Earth’s · gravity ~1/6 g on the surface.</dd></div>
@@ -200,18 +247,19 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     <a href="/science/light-pollution/salesforce-tower/"><p class="n">07</p><h3>Day for Night</h3><p>Salesforce Tower’s crown — public art and South Bay skyglow glance.</p></a>
   </div>
 
-  <p class="credit">Educational schematic. Phase names follow common Northern-hemisphere naming. Distances and periods round public NASA / USGS educational figures — not for navigation or eclipse prediction. Earthrise preview image: NASA / Bill Anders (public domain).</p>
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://eclipse.gsfc.nasa.gov/phase/phase2001mst.html" rel="noopener" target="_blank">Fred Espenak, NASA GSFC — Phases of the Moon, 2001 to 2025</a> — for the year 2000 the mean synodic month is 29.530588 days (29d 12h 44m 03s). Any one synodic month can run from about 29.26 to 29.80 days.</li>
+      <li>Jean Meeus, <em>Astronomical Algorithms</em>, 2nd ed. (Willmann-Bell, 1998), chapter 49 — times of new moon, first quarter, full moon, and last quarter. Those instants are Terrestrial Time. This page converts them with the ΔT polynomials Espenak published for the Five Millennium Canon: <a href="https://eclipse.gsfc.nasa.gov/SEhelp/deltatpoly2004.html" rel="noopener" target="_blank">Polynomial Expressions for Delta T</a>.</li>
+      <li><a href="https://aa.usno.navy.mil/data/MoonPhases" rel="noopener" target="_blank">U.S. Naval Observatory — Dates of Primary Phases of the Moon</a> — the check. On sample new and full moons in 1969, 2000, 2024, and 2026, the Meeus instant falls within two minutes of the USNO minute.</li>
+      <li>Jean Meeus, same book, chapter 48 — illuminated fraction of the disk, (1 + cos i) / 2, with the phase angle measured from full. Here that is (1 − cos φ) / 2 with φ measured from new. Between the four phase instants, φ is interpolated in time. Not a libration portrait, and not a rise or set time.</li>
+    </ul>
+  </div>
+  <p class="credit">Educational schematic. The clock is your local civil time; the zone name is the one the browser reports. Phase names follow common Northern-hemisphere naming (waxing lit on the right). Distances elsewhere on the page round public NASA / USGS educational figures. Not for navigation or eclipse prediction. Earthrise preview image: NASA / Bill Anders (public domain).</p>
 
-  <footer class="foot">
-    <a href="/science/">Science</a>
-    <a href="/science/astronomy/">Astronomy</a>
-    <a href="/science/astronomy/local-sky/">Local sky</a>
-    <a href="/science/astronomy/stars/">Stars</a>
-    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
-    <a href="/science/light-pollution/">Light pollution</a>
-    <a href="/science/light-pollution/salesforce-tower/">Salesforce Tower</a>
-    <a href="/sitemap.html">Site contents</a>
-  </footer>
+  {% include footer.html %}
 </div>
 <script>
 (function(){
@@ -225,18 +273,29 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 </script>
 <script>
 (function(){
-  var SYN=29.53059;
-  var age=7.38;
-  var canvas=document.getElementById('moon');
-  var ctx=canvas.getContext('2d');
-  var slider=document.getElementById('age');
-  var elName=document.getElementById('ph-name');
-  var elRange=document.getElementById('ph-range');
-  var elBody=document.getElementById('ph-body');
-  var elObs=document.getElementById('ph-obs');
-  var dragging=false;
+  /* Phase instants: Jean Meeus, Astronomical Algorithms, 2nd ed., ch. 49.
+     TT→UT: Fred Espenak, NASA, Polynomial Expressions for Delta T
+     (eclipse.gsfc.nasa.gov/SEhelp/deltatpoly2004.html).
+     Mean month 29.530588 d: Espenak, NASA GSFC, Phases of the Moon. */
+  var canvas = document.getElementById('moon');
+  var ctx = canvas.getContext('2d');
+  var slider = document.getElementById('age');
+  var elName = document.getElementById('ph-name');
+  var elRange = document.getElementById('ph-range');
+  var elBody = document.getElementById('ph-body');
+  var elObs = document.getElementById('ph-obs');
+  var dateEl = document.getElementById('when-date');
+  var timeEl = document.getElementById('when-time');
+  var nowBtn = document.getElementById('when-now');
+  var clockEl = document.getElementById('when-clock');
+  var longEl = document.getElementById('when-long');
+  var zoneEl = document.getElementById('when-zone');
+  var dragging = false;
+  var instant = Date.now();
+  var live = true;
+  var timer = null;
 
-  var copy={
+  var copy = {
     new:{name:'New Moon',body:'Near side faces Earth in shadow. Best for deep-sky if the thin crescent has set — sky is darkest.',obs:'Deep-sky friendly (if haze/lights allow).'},
     wxc:{name:'Waxing crescent',body:'A thin lit edge grows after sunset in the west. Earthshine can show on the dark disk.',obs:'Mild skybrightening after dusk.'},
     fq:{name:'First quarter',body:'Half lit. Terminator shadows make craters pop in binoculars or a small scope.',obs:'Moderate wash — still workable for brighter clusters.'},
@@ -247,190 +306,524 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     wnc:{name:'Waning crescent',body:'Thin morning crescent. Nights before dawn brighten; evenings stay relatively dark.',obs:'Evening deep-sky window opens again.'}
   };
 
-  function phaseInfo(a){
-    var t=((a%SYN)+SYN)%SYN;
-    var ill=0.5*(1-Math.cos(2*Math.PI*t/SYN));
-    var key;
-    if(t<1.0||t>SYN-1.0) key='new';
-    else if(t<6.0) key='wxc';
-    else if(t<9.0) key='fq';
-    else if(t<13.5) key='wxg';
-    else if(t<16.0) key='full';
-    else if(t<20.5) key='wng';
-    else if(t<23.5) key='lq';
-    else key='wnc';
-    var waxing=t<SYN/2;
-    return {t:t,ill:ill,key:key,waxing:waxing,info:copy[key]};
+  var clockFmt = new Intl.DateTimeFormat('en-US', {hour:'numeric', minute:'2-digit', second:'2-digit'});
+  var longFmt = new Intl.DateTimeFormat('en-US', {weekday:'long', month:'long', day:'numeric', year:'numeric'});
+
+  function sinD(d){
+    d = ((d % 360) + 360) % 360;
+    return Math.sin(d * Math.PI / 180);
+  }
+  function cosD(d){
+    d = ((d % 360) + 360) % 360;
+    return Math.cos(d * Math.PI / 180);
+  }
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function msToJd(ms){ return ms / 86400000 + 2440587.5; }
+  function jdToMs(jd){ return (jd - 2440587.5) * 86400000; }
+
+  function deltaTSeconds(year, month){
+    var y = year + (month - 0.5) / 12;
+    var u, t;
+    if (y < -500){
+      u = (year - 1820) / 100;
+      return -20 + 32 * u * u;
+    }
+    if (y < 500){
+      u = y / 100;
+      return 10583.6 - 1014.41 * u + 33.78311 * u * u - 5.952053 * u * u * u
+        - 0.1798452 * u * u * u * u + 0.022174192 * Math.pow(u, 5) + 0.0090316521 * Math.pow(u, 6);
+    }
+    if (y < 1600){
+      u = (y - 1000) / 100;
+      return 1574.2 - 556.01 * u + 71.23472 * u * u + 0.319781 * u * u * u
+        - 0.8503463 * Math.pow(u, 4) - 0.005050998 * Math.pow(u, 5) + 0.0083572073 * Math.pow(u, 6);
+    }
+    if (y < 1700){
+      t = y - 1600;
+      return 120 - 0.9808 * t - 0.01532 * t * t + t * t * t / 7129;
+    }
+    if (y < 1800){
+      t = y - 1700;
+      return 8.83 + 0.1603 * t - 0.0059285 * t * t + 0.00013336 * t * t * t - Math.pow(t, 4) / 1174000;
+    }
+    if (y < 1860){
+      t = y - 1800;
+      return 13.72 - 0.332447 * t + 0.0068612 * t * t + 0.0041116 * t * t * t - 0.00037436 * Math.pow(t, 4)
+        + 0.0000121272 * Math.pow(t, 5) - 0.0000001699 * Math.pow(t, 6) + 0.000000000875 * Math.pow(t, 7);
+    }
+    if (y < 1900){
+      t = y - 1860;
+      return 7.62 + 0.5737 * t - 0.251754 * t * t + 0.01680668 * t * t * t
+        - 0.0004473624 * Math.pow(t, 4) + Math.pow(t, 5) / 233174;
+    }
+    if (y < 1920){
+      t = y - 1900;
+      return -2.79 + 1.494119 * t - 0.0598939 * t * t + 0.0061966 * t * t * t - 0.000197 * Math.pow(t, 4);
+    }
+    if (y < 1941){
+      t = y - 1920;
+      return 21.20 + 0.84493 * t - 0.076100 * t * t + 0.0020936 * t * t * t;
+    }
+    if (y < 1961){
+      t = y - 1950;
+      return 29.07 + 0.407 * t - t * t / 233 + t * t * t / 2547;
+    }
+    if (y < 1986){
+      t = y - 1975;
+      return 45.45 + 1.067 * t - t * t / 260 - t * t * t / 718;
+    }
+    if (y < 2005){
+      t = y - 2000;
+      return 63.86 + 0.3345 * t - 0.060374 * t * t + 0.0017275 * t * t * t + 0.000651814 * Math.pow(t, 4)
+        + 0.00002373599 * Math.pow(t, 5);
+    }
+    if (y < 2050){
+      t = y - 2000;
+      return 62.92 + 0.32217 * t + 0.005589 * t * t;
+    }
+    if (y < 2150) return -20 + 32 * Math.pow((y - 1820) / 100, 2) - 0.5628 * (2150 - y);
+    u = (year - 1820) / 100;
+    return -20 + 32 * u * u;
+  }
+
+  function phaseFrac(k){
+    var f = k % 1;
+    if (f < 0) f += 1;
+    return f;
+  }
+
+  function phaseUT(k){
+    var T = k / 1236.85;
+    var T2 = T * T, T3 = T2 * T, T4 = T2 * T2;
+    var jde = 2451550.09766 + 29.530588861 * k + 0.00015437 * T2 - 0.000000150 * T3 + 0.00000000073 * T4;
+    var E = 1 - 0.002516 * T - 0.0000074 * T2;
+    var M = 2.5534 + 29.10535670 * k - 0.0000014 * T2 - 0.00000011 * T3;
+    var Mp = 201.5643 + 385.81693528 * k + 0.0107582 * T2 + 0.00001238 * T3 - 0.000000058 * T4;
+    var F = 160.7108 + 390.67050284 * k - 0.0016118 * T2 - 0.00000227 * T3 + 0.000000011 * T4;
+    var Om = 124.7746 - 1.56375588 * k + 0.0020672 * T2 + 0.00000215 * T3;
+    var E2 = E * E;
+    var corr = 0;
+    var f = phaseFrac(k);
+    var isQuarter = Math.abs(f - 0.25) < 1e-6 || Math.abs(f - 0.75) < 1e-6;
+    if (!isQuarter){
+      var isNew = f < 1e-6 || f > 1 - 1e-6;
+      var args = [Mp, M, 2*Mp, 2*F, Mp-M, Mp+M, 2*M, Mp-2*F, Mp+2*F, 2*Mp+M, 3*Mp, M+2*F, M-2*F, 2*Mp-M, Om, Mp+2*M, 2*Mp-2*F, 3*M, Mp+M-2*F, 2*Mp+2*F, Mp+M+2*F, Mp-M+2*F, Mp-M-2*F, 3*Mp+M, 4*Mp];
+      var coef = [
+        isNew ? -0.40720 : -0.40614,
+        (isNew ? 0.17241 : 0.17302) * E,
+        isNew ? 0.01608 : 0.01614,
+        isNew ? 0.01039 : 0.01043,
+        (isNew ? 0.00739 : 0.00734) * E,
+        (isNew ? -0.00514 : -0.00515) * E,
+        (isNew ? 0.00208 : 0.00209) * E2,
+        -0.00111, -0.00057, 0.00056 * E, -0.00042, 0.00042 * E, 0.00038 * E, -0.00024 * E, -0.00017,
+        -0.00007, 0.00004, 0.00004, 0.00003, 0.00003, -0.00003, 0.00003, -0.00002, -0.00002, 0.00002
+      ];
+      for (var i = 0; i < args.length; i++) corr += coef[i] * sinD(args[i]);
+    } else {
+      var argsQ = [Mp, M, Mp+M, 2*Mp, 2*F, Mp-M, 2*M, Mp-2*F, Mp+2*F, 3*Mp, 2*Mp-M, M+2*F, M-2*F, Mp+2*M, 2*Mp+M, Om, Mp-M-2*F, 2*Mp+2*F, Mp+M+2*F, Mp-2*M, Mp+M-2*F, 3*M, 2*Mp-2*F, Mp-M+2*F, 3*Mp+M];
+      var coefQ = [-0.62801, 0.17172*E, -0.01183*E, 0.00862, 0.00804, 0.00454*E, 0.00204*E2, -0.00180, -0.00070, 0.00040, -0.00034*E, 0.00032*E, 0.00032*E, -0.00028*E2, 0.00027*E, -0.00017, -0.00005, 0.00004, -0.00004, 0.00004, 0.00003, 0.00003, 0.00002, 0.00002, -0.00002];
+      for (var j = 0; j < argsQ.length; j++) corr += coefQ[j] * sinD(argsQ[j]);
+      var W = 0.00306 - 0.00038 * E * cosD(M) + 0.00026 * cosD(Mp) - 0.00002 * cosD(Mp - M) + 0.00002 * cosD(Mp + M) + 0.00002 * cosD(2 * F);
+      corr += (Math.abs(f - 0.25) < 1e-6) ? W : -W;
+    }
+    var A = [
+      [299.77 + 0.107408 * k - 0.009173 * T2, 0.000325],
+      [251.88 + 0.016321 * k, 0.000165],
+      [251.83 + 26.651886 * k, 0.000164],
+      [349.42 + 36.412478 * k, 0.000126],
+      [84.66 + 18.206239 * k, 0.000110],
+      [141.74 + 53.303771 * k, 0.000062],
+      [207.14 + 2.453732 * k, 0.000060],
+      [154.84 + 7.306860 * k, 0.000056],
+      [34.52 + 27.261239 * k, 0.000047],
+      [207.19 + 0.121824 * k, 0.000042],
+      [291.34 + 1.844379 * k, 0.000040],
+      [161.72 + 24.198154 * k, 0.000037],
+      [239.56 + 25.513099 * k, 0.000035],
+      [331.55 + 3.592518 * k, 0.000023]
+    ];
+    for (var a = 0; a < A.length; a++) corr += A[a][1] * sinD(A[a][0]);
+    jde += corr;
+    var rough = new Date(jdToMs(jde));
+    var dt = deltaTSeconds(rough.getUTCFullYear(), rough.getUTCMonth() + 1);
+    return jde - dt / 86400;
+  }
+
+  function phaseKey(age, lun){
+    if (age < 1 || age > lun - 1) return 'new';
+    if (age < 6) return 'wxc';
+    if (age < 9) return 'fq';
+    if (age < 13.5) return 'wxg';
+    if (age < 16) return 'full';
+    if (age < 20.5) return 'wng';
+    if (age < 23.5) return 'lq';
+    return 'wnc';
+  }
+
+  function moonAt(ms){
+    var jd = msToJd(ms);
+    var kApprox = Math.floor((jd - 2451550.09766) / 29.530588861);
+    var new0 = null, knew = kApprox;
+    var eps = 0.5 / 86400;
+    for (var i = kApprox - 2; i <= kApprox + 2; i++){
+      var p = phaseUT(i);
+      if (p <= jd + eps && (new0 === null || p > new0)){ new0 = p; knew = i; }
+    }
+    if (new0 === null){ new0 = phaseUT(kApprox); knew = kApprox; }
+    var fq = phaseUT(knew + 0.25);
+    var full = phaseUT(knew + 0.5);
+    var lq = phaseUT(knew + 0.75);
+    var new1 = phaseUT(knew + 1);
+    var marks = [
+      {jd:new0, ang:0},
+      {jd:fq, ang:Math.PI / 2},
+      {jd:full, ang:Math.PI},
+      {jd:lq, ang:3 * Math.PI / 2},
+      {jd:new1, ang:Math.PI * 2}
+    ];
+    var ang = 0;
+    for (var s = 0; s < 4; s++){
+      if (jd <= marks[s + 1].jd || s === 3){
+        var span = marks[s + 1].jd - marks[s].jd;
+        var u = span > 0 ? (jd - marks[s].jd) / span : 0;
+        if (u < 0) u = 0;
+        if (u > 1) u = 1;
+        ang = marks[s].ang + u * (marks[s + 1].ang - marks[s].ang);
+        break;
+      }
+    }
+    var lun = new1 - new0;
+    var age = jd - new0;
+    if (age < 0) age = 0;
+    if (age > lun) age = lun;
+    var ill = 0.5 * (1 - Math.cos(ang));
+    var key = phaseKey(age, lun);
+    return {
+      jd:jd, age:age, lun:lun, ang:ang, ill:ill, key:key,
+      waxing: ang < Math.PI,
+      new0:new0, new1:new1, fq:fq, full:full, lq:lq,
+      info: copy[key]
+    };
   }
 
   function accent(){
-    return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#c8b48a';
-  }
-  function ink(){
-    return getComputedStyle(document.documentElement).getPropertyValue('--ink').trim()||'#e8e6e1';
+    return getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#c8b48a';
   }
   function line(){
-    return getComputedStyle(document.documentElement).getPropertyValue('--line').trim()||'#2c303a';
+    return getComputedStyle(document.documentElement).getPropertyValue('--line').trim() || '#2c303a';
   }
 
-  function draw(){
-    var dpr=window.devicePixelRatio||1;
-    var css=Math.min(640, canvas.clientWidth||640);
-    canvas.width=Math.floor(css*dpr);
-    canvas.height=Math.floor(css*dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    var W=css,H=css;
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle='rgba(0,0,0,0.35)';
-    ctx.fillRect(0,0,W,H);
-
-    var cx=W*0.5, cy=H*0.52, R=Math.min(W,H)*0.28;
-    var info=phaseInfo(age);
-    var ang=2*Math.PI*info.t/SYN; // 0=new
-
-    // orbit ring + sun direction
-    ctx.strokeStyle=line();
-    ctx.lineWidth=1;
+  function paintDisk(ctx, cx, cy, r, turns){
     ctx.beginPath();
-    ctx.arc(cx,cy,R*1.55,0,Math.PI*2);
-    ctx.stroke();
-
-    // Sun indicator (right)
-    ctx.fillStyle=accent();
-    ctx.beginPath();
-    ctx.arc(W*0.92, cy, 10, 0, Math.PI*2);
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#14161c';
     ctx.fill();
-    ctx.fillStyle=ink();
-    ctx.font='10px "IBM Plex Mono", monospace';
-    ctx.textAlign='center';
-    ctx.fillText('SUN', W*0.92, cy+24);
-
-    // Earth
+    var k = Math.cos(turns * Math.PI * 2);
+    var waxing = turns <= 0.5;
+    var steps = Math.max(48, Math.round(r * 2));
     ctx.beginPath();
-    ctx.arc(cx,cy,R*0.22,0,Math.PI*2);
-    ctx.fillStyle='#3a5a7a';
-    ctx.fill();
-    ctx.strokeStyle=accent();
-    ctx.stroke();
-    ctx.fillStyle=ink();
-    ctx.font='9px "IBM Plex Mono", monospace';
-    ctx.fillText('EARTH', cx, cy+R*0.22+14);
-
-    // Moon position on ring (new at left/opposite sun → put new at left)
-    var mx=cx+Math.cos(Math.PI-ang)*R*1.55;
-    var my=cy+Math.sin(Math.PI-ang)*R*1.55;
-
-    // Moon disk with phase (lit from right)
-    var mR=R*0.34;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(mx,my,mR,0,Math.PI*2);
-    ctx.clip();
-    ctx.fillStyle='#1a1c22';
-    ctx.fillRect(mx-mR,my-mR,mR*2,mR*2);
-    // illuminated portion using phase
-    // Simple: draw lit semicircle offset by phase
-    var k=Math.cos(ang); // 1 at full? ang=0 new → cos0=1; we want dark at new
-    // At new (ang=0) fully dark; at full (pi) fully lit. Light from +x.
-    ctx.fillStyle='#d8d2c4';
-    ctx.beginPath();
-    ctx.arc(mx,my,mR,0,Math.PI*2);
-    ctx.fill();
-    // shadow ellipse
-    var shadowOffset=Math.cos(ang)*mR; // at new cos0=mR covers all; at full cos pi=-mR
-    ctx.fillStyle='#12141a';
-    ctx.beginPath();
-    ctx.ellipse(mx+shadowOffset, my, Math.abs(Math.cos(ang))*mR+0.01, mR, 0, 0, Math.PI*2);
-    // Actually classic approach:
-    ctx.restore();
-
-    // redraw moon properly
-    ctx.beginPath();
-    ctx.arc(mx,my,mR,0,Math.PI*2);
-    ctx.fillStyle='#12141a';
-    ctx.fill();
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(mx,my,mR,0,Math.PI*2);
-    ctx.clip();
-    // lit half from the right (sun)
-    var phase=ang; // 0 new, pi full
-    // Use terminator as vertical offset of ellipse
-    ctx.fillStyle='#e4dfd2';
-    ctx.fillRect(mx, my-mR, mR+1, mR*2); // right half base
-    // For waxing/waning, cover with ellipse
-    var t=Math.cos(phase);
-    ctx.fillStyle=t>0?'#12141a':'#e4dfd2';
-    ctx.beginPath();
-    ctx.ellipse(mx, my, Math.abs(t)*mR, mR, 0, 0, Math.PI*2);
-    ctx.fill();
-    if(t<=0){
-      // gibbous/full: ensure right stays lit
-      ctx.fillStyle='#e4dfd2';
-      ctx.fillRect(mx, my-mR, mR+1, mR*2);
-      ctx.fillStyle='#12141a';
-      ctx.beginPath();
-      ctx.ellipse(mx, my, Math.abs(t)*mR, mR, 0, 0, Math.PI*2);
-      ctx.fill();
-      // left dark remainder for waning? handled by ellipse
+    ctx.moveTo(cx, cy - r);
+    var i, a, y, x, root;
+    if (waxing){
+      for (i = 1; i <= steps; i++){
+        a = -Math.PI / 2 + (Math.PI * i) / steps;
+        ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      }
+      for (i = steps; i >= 0; i--){
+        y = -r + (2 * r * i) / steps;
+        root = Math.sqrt(Math.max(0, r * r - y * y));
+        x = k * root;
+        ctx.lineTo(cx + x, cy + y);
+      }
+    } else {
+      for (i = 1; i <= steps; i++){
+        a = -Math.PI / 2 - (Math.PI * i) / steps;
+        ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+      }
+      for (i = steps; i >= 0; i--){
+        y = -r + (2 * r * i) / steps;
+        root = Math.sqrt(Math.max(0, r * r - y * y));
+        x = -k * root;
+        ctx.lineTo(cx + x, cy + y);
+      }
     }
-    ctx.restore();
-    ctx.strokeStyle=accent();
-    ctx.lineWidth=1.5;
+    ctx.closePath();
+    ctx.fillStyle = '#e4dfd2';
+    ctx.fill();
+  }
+
+  function targetAge(info, frac){
+    if (frac === 0) return 0;
+    if (Math.abs(frac - 0.25) < 1e-9) return info.fq - info.new0;
+    if (Math.abs(frac - 0.5) < 1e-9) return info.full - info.new0;
+    if (Math.abs(frac - 0.75) < 1e-9) return info.lq - info.new0;
+    return frac * (info.new1 - info.new0);
+  }
+
+  function draw(info){
+    if (!info) info = moonAt(instant);
+    var dpr = window.devicePixelRatio || 1;
+    var css = Math.min(640, canvas.clientWidth || 640);
+    canvas.width = Math.floor(css * dpr);
+    canvas.height = Math.floor(css * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var W = css, H = css;
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, 0, W, H);
+
+    var cx = W * 0.5, cy = H * 0.52, R = Math.min(W, H) * 0.28;
+    var ang = info.ang;
+    var paper = '#e8e6e1';
+
+    ctx.strokeStyle = line();
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(mx,my,mR,0,Math.PI*2);
+    ctx.arc(cx, cy, R * 1.55, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.fillStyle=ink();
-    ctx.font='10px "IBM Plex Mono", monospace';
-    ctx.textAlign='center';
-    ctx.fillText('MOON', mx, my+mR+16);
+    ctx.fillStyle = accent();
+    ctx.beginPath();
+    ctx.arc(W * 0.92, cy, 10, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = paper;
+    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SUN', W * 0.92, cy + 24);
 
-    // labels
-    elName.textContent=info.info.name;
-    elRange.textContent=(info.ill*100).toFixed(0)+'% illuminated · '+(info.waxing?'waxing':'waning')+' · day '+info.t.toFixed(1);
-    elBody.textContent=info.info.body;
-    elObs.textContent='South Bay tip: '+info.info.obs;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R * 0.22, 0, Math.PI * 2);
+    ctx.fillStyle = '#3a5a7a';
+    ctx.fill();
+    ctx.strokeStyle = accent();
+    ctx.stroke();
+    ctx.fillStyle = paper;
+    ctx.font = '9px "IBM Plex Mono", monospace';
+    ctx.fillText('EARTH', cx, cy + R * 0.22 + 14);
 
-    document.querySelectorAll('.presets [data-age]').forEach(function(b){
-      var da=+b.getAttribute('data-age');
-      b.setAttribute('aria-pressed', String(Math.abs(da-info.t)<0.6||(da===0&&(info.t<0.6||info.t>SYN-0.6))));
+    var mx = cx + Math.cos(Math.PI - ang) * R * 1.55;
+    var my = cy + Math.sin(Math.PI - ang) * R * 1.55;
+    var mR = R * 0.34;
+    var turns = ang / (Math.PI * 2);
+    if (turns < 0) turns = 0;
+    if (turns > 1) turns = 1;
+    paintDisk(ctx, mx, my, mR, turns);
+    ctx.strokeStyle = accent();
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(mx, my, mR, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = paper;
+    ctx.font = '10px "IBM Plex Mono", monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('MOON', mx, my + mR + 16);
+
+    elName.textContent = info.info.name;
+    var pct = Math.round(info.ill * 100);
+    var dir = (info.key === 'new' || info.key === 'full') ? '' : (' · ' + (info.waxing ? 'waxing' : 'waning'));
+    elRange.textContent = pct + '% illuminated' + dir + ' · age ' + info.age.toFixed(1) + ' d';
+    elBody.textContent = info.info.body;
+    elObs.textContent = 'South Bay tip: ' + info.info.obs;
+
+    document.querySelectorAll('.presets [data-frac]').forEach(function(b){
+      var frac = +b.getAttribute('data-frac');
+      var target = targetAge(info, frac);
+      var diff = Math.abs(info.age - target);
+      if (frac === 0) diff = Math.min(diff, Math.abs(info.age - info.lun));
+      b.setAttribute('aria-pressed', String(diff < 0.6));
     });
+    return info;
   }
 
-  function setAge(a, fromSlider){
-    age=((a%SYN)+SYN)%SYN;
-    if(!fromSlider) slider.value=String(age.toFixed(2));
-    draw();
+  function zoneLine(date){
+    var tz = 'local';
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'local'; } catch (e) {}
+    var name = '';
+    try {
+      var parts = new Intl.DateTimeFormat('en-US', {timeZoneName:'long', hour:'numeric'}).formatToParts(date);
+      for (var i = 0; i < parts.length; i++){
+        if (parts[i].type === 'timeZoneName') name = parts[i].value;
+      }
+    } catch (e2) {}
+    var state = live ? 'Ticking' : 'Held';
+    if (name && name !== tz) return state + ' · ' + name + ' · ' + tz;
+    return state + ' · ' + tz;
   }
 
-  slider.addEventListener('input', function(){ setAge(+slider.value, true); age=+slider.value; draw(); });
-  document.querySelectorAll('.presets [data-age]').forEach(function(b){
-    b.addEventListener('click', function(){ setAge(+b.getAttribute('data-age')); });
+  function writeClock(ms){
+    var d = new Date(ms);
+    clockEl.textContent = clockFmt.format(d);
+    longEl.textContent = longFmt.format(d);
+    zoneEl.textContent = zoneLine(d);
+  }
+
+  function writeInputs(ms){
+    var d = new Date(ms);
+    var ds = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+    var ts = pad(d.getHours()) + ':' + pad(d.getMinutes());
+    if (document.activeElement !== dateEl && dateEl.value !== ds) dateEl.value = ds;
+    if (document.activeElement !== timeEl && timeEl.value.slice(0, 5) !== ts) timeEl.value = ts;
+  }
+
+  function readInputs(){
+    var dm = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateEl.value || '');
+    if (!dm) return null;
+    var tm = /^(\d{2}):(\d{2})/.exec(timeEl.value || '');
+    var hh = tm ? +tm[1] : 0;
+    var mm = tm ? +tm[2] : 0;
+    var d = new Date(+dm[1], +dm[2] - 1, +dm[3], hh, mm, 0, 0);
+    if (isNaN(d.getTime())) return null;
+    return d.getTime();
+  }
+
+  function isoStamp(ms){
+    return new Date(ms).toISOString().replace(/\.\d{3}Z$/, 'Z');
+  }
+
+  function syncUrl(){
+    try {
+      var url = new URL(location.href);
+      if (live) url.searchParams.delete('at');
+      else url.searchParams.set('at', isoStamp(instant));
+      var next = url.pathname + url.search + url.hash;
+      var cur = location.pathname + location.search + location.hash;
+      if (next !== cur) history.replaceState(null, '', next);
+    } catch (e) {}
+  }
+
+  function setInstant(ms, opts){
+    opts = opts || {};
+    if (!isFinite(ms)) return;
+    if (!opts.keepLive){
+      live = false;
+      if (timer){ clearInterval(timer); timer = null; }
+    }
+    instant = ms;
+    var info = moonAt(instant);
+    if (!opts.fromSlider){
+      var max = Math.max(0.05, info.lun - 0.0001);
+      slider.max = String(max);
+      var shown = Math.min(Math.max(info.age, 0), max);
+      slider.value = String(shown);
+    }
+    if (!opts.fromInputs) writeInputs(instant);
+    writeClock(instant);
+    draw(info);
+    nowBtn.setAttribute('aria-pressed', live ? 'true' : 'false');
+    if (!opts.fromLive) syncUrl();
+  }
+
+  function goNow(){
+    live = true;
+    if (timer) clearInterval(timer);
+    setInstant(Date.now(), {keepLive:true, fromLive:true});
+    syncUrl();
+    timer = setInterval(function(){
+      if (!live) return;
+      setInstant(Date.now(), {keepLive:true, fromLive:true});
+    }, 1000);
+  }
+
+  function onClockInput(){
+    var ms = readInputs();
+    if (ms == null) return;
+    setInstant(ms, {fromInputs:true});
+  }
+
+  slider.addEventListener('input', function(){
+    var info = moonAt(instant);
+    var age = +slider.value;
+    setInstant(jdToMs(info.new0 + age), {fromSlider:true});
   });
 
-  function pointerAngle(ev){
-    var rect=canvas.getBoundingClientRect();
-    var x=(ev.clientX-rect.left)/rect.width;
-    var y=(ev.clientY-rect.top)/rect.height;
-    var cx=0.5, cy=0.52;
-    var ang=Math.atan2(y-cy, x-cx); // -pi..pi, 0 to the right
-    // Map: sun on right; new moon on left → phase 0 when moon at left (ang=pi)
-    var phase=Math.PI-ang;
-    if(phase<0) phase+=Math.PI*2;
-    return (phase/(Math.PI*2))*SYN;
-  }
-  canvas.addEventListener('pointerdown', function(ev){ dragging=true; canvas.setPointerCapture(ev.pointerId); setAge(pointerAngle(ev)); });
-  canvas.addEventListener('pointermove', function(ev){ if(dragging) setAge(pointerAngle(ev)); });
-  canvas.addEventListener('pointerup', function(){ dragging=false; });
-  canvas.addEventListener('pointercancel', function(){ dragging=false; });
+  document.querySelectorAll('.presets [data-frac]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var frac = +b.getAttribute('data-frac');
+      var info = moonAt(instant);
+      var jd;
+      if (frac === 0) jd = info.new0;
+      else if (Math.abs(frac - 0.25) < 1e-9) jd = info.fq;
+      else if (Math.abs(frac - 0.5) < 1e-9) jd = info.full;
+      else if (Math.abs(frac - 0.75) < 1e-9) jd = info.lq;
+      else jd = info.new0 + frac * (info.new1 - info.new0);
+      setInstant(jdToMs(jd));
+    });
+  });
 
-  window.addEventListener('resize', draw);
-  // theme changes
-  new MutationObserver(draw).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
-  setAge(7.38);
+  document.querySelectorAll('.when-steps [data-step]').forEach(function(b){
+    b.addEventListener('click', function(){
+      setInstant(instant + (+b.getAttribute('data-step')));
+    });
+  });
+  nowBtn.addEventListener('click', goNow);
+  dateEl.addEventListener('input', onClockInput);
+  dateEl.addEventListener('change', onClockInput);
+  timeEl.addEventListener('input', onClockInput);
+  timeEl.addEventListener('change', onClockInput);
+
+  function pointerJd(ev){
+    var info = moonAt(instant);
+    var rect = canvas.getBoundingClientRect();
+    var x = (ev.clientX - rect.left) / rect.width;
+    var y = (ev.clientY - rect.top) / rect.height;
+    var pointer = Math.atan2(y - 0.52, x - 0.5);
+    var phase = Math.PI - pointer;
+    if (phase < 0) phase += Math.PI * 2;
+    if (phase >= Math.PI * 2) phase -= Math.PI * 2;
+    var frac = phase / (Math.PI * 2);
+    var age = frac * info.lun;
+    if (age > info.lun - 0.0001) age = info.lun - 0.0001;
+    return info.new0 + age;
+  }
+  canvas.addEventListener('pointerdown', function(ev){
+    dragging = true;
+    canvas.setPointerCapture(ev.pointerId);
+    setInstant(jdToMs(pointerJd(ev)));
+  });
+  canvas.addEventListener('pointermove', function(ev){
+    if (dragging) setInstant(jdToMs(pointerJd(ev)));
+  });
+  canvas.addEventListener('pointerup', function(){ dragging = false; });
+  canvas.addEventListener('pointercancel', function(){ dragging = false; });
+
+  window.addEventListener('resize', function(){ draw(); });
+  new MutationObserver(function(){ draw(); }).observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+
+  window.spShare = window.spShare || {};
+  window.spShare.decorate = function(url){
+    if (!url || !url.searchParams) return;
+    try {
+      if (!/\/science\/astronomy\/moon(\/|\/index\.html)?$/i.test(url.pathname || '')) return;
+    } catch (e) { return; }
+    url.searchParams.delete('at');
+    url.searchParams.set('at', isoStamp(instant));
+  };
+
+  function parseAt(raw){
+    var s = String(raw || '').trim();
+    if (!s || s.toLowerCase() === 'now') return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)){
+      var p = s.split('-');
+      var local = new Date(+p[0], +p[1] - 1, +p[2], 0, 0, 0, 0);
+      return isNaN(local.getTime()) ? null : local.getTime();
+    }
+    var ms = Date.parse(s);
+    return isNaN(ms) ? null : ms;
+  }
+
+  var queryAt = null;
+  try { queryAt = new URLSearchParams(location.search).get('at'); } catch (e) {}
+  var held = queryAt ? parseAt(queryAt) : null;
+  if (held != null){
+    live = false;
+    setInstant(held);
+  } else {
+    goNow();
+  }
 })();
 </script>
-<script src="/js/sp-share.js" defer></script>
+
+
 </body>
 </html>

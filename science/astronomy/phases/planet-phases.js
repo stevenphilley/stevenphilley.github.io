@@ -664,6 +664,10 @@
           if (root.SPPlanetPhases && root.SPPlanetPhases._rerender) root.SPPlanetPhases._rerender();
         });
       });
+      document.addEventListener("themechange", function () {
+        paint();
+        if (root.SPPlanetPhases && root.SPPlanetPhases._rerender) root.SPPlanetPhases._rerender();
+      });
     }
     paint();
   }

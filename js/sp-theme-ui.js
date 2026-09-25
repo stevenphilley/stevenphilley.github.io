@@ -60,7 +60,7 @@
   }
 
   function syncAllOrders(order) {
-    Array.prototype.forEach.call(document.querySelectorAll(".themes"), function (group) {
+    Array.prototype.forEach.call(document.querySelectorAll(".themes, .sp-themes"), function (group) {
       if (!group.querySelector(".swatch[data-set]")) return;
       applyOrder(group, order);
     });
@@ -258,7 +258,7 @@
 
   function init() {
     syncAllOrders(readOrder());
-    Array.prototype.forEach.call(document.querySelectorAll(".themes"), function (group) {
+    Array.prototype.forEach.call(document.querySelectorAll(".themes, .sp-themes"), function (group) {
       if (group.querySelector(".swatch[data-set]")) wireGroup(group);
     });
     setTheme(root.getAttribute("data-theme") || "neon", false);
