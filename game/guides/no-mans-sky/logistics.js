@@ -12,8 +12,9 @@
 
   var STORE_KEY = "nms-logistics";
 
-  // Reality-table ids that have stayed stable in the game files. Anything
-  // not in this list, and not in the material graph, stays as the raw id.
+  // Reality-table ids that have stayed stable in the game files. These
+  // point at the material graph. Display names for every other id come
+  // from data/nms-item-names.json, loaded with setItemNames.
   var SAVE_IDS = {
     FUEL1: "carbon",
     FUEL2: "condensed-carbon",
@@ -56,6 +57,30 @@
     JELLY: "di-hydrogen-jelly",
     GLASS: "glass"
   };
+
+  // Installed technologies use YOURSHIP_ / YOURSUIT_ / YOURMULTI_ /
+  // YOURFREIG_ / YOURVEHIC_ aliases that are not rows in the technology
+  // table. The irregular ones are the alias list from nmstoolkit
+  // (icon_provider.py, same catalogue as nms-item-names.json).
+  var YOUR_SPECIAL = {
+    YOURSHIP_LAUNCH: "LAUNCHER",
+    YOURSHIP_PULSEDRIVE: "SHIPJUMP1",
+    YOURSHIP_PHOTON: "SHIPGUN1",
+    YOURSHIP_PHASE: "SHIPLAS1",
+    YOURSHIP_ROCKET: "SHIPROCKETS",
+    YOURSHIP_SHIELD: "SHIPSHIELD",
+    YOURSHIP_SHOTGUN: "SHIPSHOTGUN",
+    YOURSHIP_MINIGUN: "SHIPMINIGUN",
+    YOURSHIP_PLASMA: "SHIPPLASMA",
+    YOURSHIP_TELEPORT: "SHIP_TELEPORT",
+    YOURSUIT_SHIELD: "PROTECT",
+    YOURFREIG_LAUNCH: "LAUNCHER",
+    YOURVEHIC_LASER: "VEHICLEGUN",
+    YOURVEHIC_GUN: "VEHICLELAS",
+    YOURVEHIC_BOOST: "VEHICLEBOOST"
+  };
+  var YOUR_PREFIXES = ["YOURSHIP_", "YOURSUIT_", "YOURMULTI_", "YOURFREIG_", "YOURVEHIC_"];
+  var ITEM_BY_ID = Object.create(null);
 
   var CATEGORIES = {
     exosuit: "Exosuit",
@@ -129,6 +154,65 @@
     return n;
   }
 
+  function setItemNames(doc) {
+    ITEM_BY_ID = Object.create(null);
+    var items = doc && doc.items && typeof doc.items === "object" ? doc.items : null;
+    if (!items) return ITEM_BY_ID;
+    Object.keys(items).forEach(function (key) {
+      var row = items[key];
+      if (!row || typeof row !== "object" || !row.name) return;
+      var id = String(key).replace(/^\^/, "").split("#")[0].toUpperCase();
+      if (!id) return;
+      ITEM_BY_ID[id] = row;
+    });
+    return ITEM_BY_ID;
+  }
+
+  function splitItemId(raw) {
+    var original = text(raw);
+    var base = original;
+    if (base.charAt(0) === "^") base = base.slice(1);
+    var hash = base.indexOf("#");
+    var seed = "";
+    if (hash !== -1) {
+      seed = base.slice(hash + 1);
+      base = base.slice(0, hash);
+    }
+    return { original: original, base: base, seed: seed };
+  }
+
+  function namedRecord(id) {
+    if (!id) return null;
+    var key = String(id).replace(/^\^/, "").split("#")[0].toUpperCase();
+    return ITEM_BY_ID[key] || null;
+  }
+
+  function aliasBase(base) {
+    var upper = String(base || "").toUpperCase();
+    if (!upper) return "";
+    if (SAVE_IDS[upper] || namedRecord(upper)) return upper;
+    if (YOUR_SPECIAL[upper] && (SAVE_IDS[YOUR_SPECIAL[upper]] || namedRecord(YOUR_SPECIAL[upper]))) {
+      return YOUR_SPECIAL[upper];
+    }
+    var i;
+    for (i = 0; i < YOUR_PREFIXES.length; i++) {
+      var prefix = YOUR_PREFIXES[i];
+      if (upper.indexOf(prefix) !== 0) continue;
+      var rest = upper.slice(prefix.length);
+      if (SAVE_IDS[rest] || namedRecord(rest)) return rest;
+      if (SAVE_IDS[rest + "1"] || namedRecord(rest + "1")) return rest + "1";
+      return rest || upper;
+    }
+    return upper;
+  }
+
+  function humanizeId(raw) {
+    var base = splitItemId(raw).base || text(raw);
+    var words = base.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+    if (!words) return text(raw);
+    return words.replace(/\b([a-z])/g, function (ch) { return ch.toUpperCase(); });
+  }
+
   function buildIndex(catalog) {
     var byId = Object.create(null);
     var byKey = Object.create(null);
@@ -151,26 +235,111 @@
   }
 
   function resolveSaveId(raw, index) {
-    var id = text(raw);
+    var parts = splitItemId(raw);
+    var id = aliasBase(parts.base);
     if (!id) return null;
+    var rawId = parts.original || id;
     if (SAVE_IDS[id] && (!index || !index.byId || index.byId[SAVE_IDS[id]] || !index.byId)) {
-      return { id: SAVE_IDS[id], rawId: id, known: true };
+      return { id: SAVE_IDS[id], rawId: rawId, baseId: id, known: true };
     }
     var hyphen = id.toLowerCase().replace(/_/g, "-");
-    if (index && index.byId && index.byId[hyphen]) return { id: hyphen, rawId: id, known: true };
+    if (index && index.byId && index.byId[hyphen]) return { id: hyphen, rawId: rawId, baseId: id, known: true };
     var key = norm(id);
     if (index && index.byKey && index.byKey[key] && index.byKey[key].length === 1) {
-      return { id: index.byKey[key][0], rawId: id, known: true };
+      return { id: index.byKey[key][0], rawId: rawId, baseId: id, known: true };
     }
-    return { id: id, rawId: id, known: false };
+    return { id: id, rawId: rawId, baseId: id, known: !!namedRecord(id) };
+  }
+
+  function recordForItem(item) {
+    if (!item) return null;
+    var fromRaw = item.rawId ? namedRecord(aliasBase(splitItemId(item.rawId).base)) : null;
+    if (fromRaw) return fromRaw;
+    return namedRecord(item.id) || namedRecord(item.baseId) || null;
+  }
+
+  function catalogNode(item, index) {
+    if (!item || !index) return null;
+    if (index.byId && item.id && index.byId[item.id]) return index.byId[item.id];
+    if (!index.byKey || !index.byId) return null;
+    var keys = [];
+    [item.id, item.baseId, item.rawId].forEach(function (value) {
+      var base = aliasBase(splitItemId(value).base);
+      if (!base) return;
+      keys.push(norm(base));
+      keys.push(base.toLowerCase().replace(/_/g, "-"));
+    });
+    var i;
+    for (i = 0; i < keys.length; i++) {
+      var hits = index.byKey[keys[i]];
+      if (hits && hits.length === 1 && index.byId[hits[0]]) return index.byId[hits[0]];
+    }
+    return null;
+  }
+
+  // A catalog name that is only the save id, or the generated
+  // "Procedural module …" label, is not an in-game name.
+  function usableNodeName(node, item) {
+    if (!node || !node.name) return "";
+    var name = String(node.name).trim();
+    if (!name || /^procedural module\b/i.test(name)) return "";
+    var compact = name.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    var bases = [item && item.id, item && item.rawId, item && item.baseId];
+    var i;
+    for (i = 0; i < bases.length; i++) {
+      if (compact && compact === splitItemId(bases[i]).base.toUpperCase()) return "";
+    }
+    return name;
   }
 
   function itemLabel(item, index) {
     if (!item) return "";
     if (item.name) return item.name;
-    var node = index && index.byId && index.byId[item.id];
-    if (node && node.name) return node.name;
-    return item.rawId || item.id || "";
+    var direct = index && index.byId && index.byId[item.id];
+    var directName = usableNodeName(direct, item);
+    if (directName) return directName;
+    var rec = recordForItem(item);
+    if (rec && rec.name) return rec.name;
+    var aliasName = usableNodeName(catalogNode(item, index), item);
+    if (aliasName) return aliasName;
+    var raw = item.rawId || item.id || "";
+    if (!raw) return "";
+    return humanizeId(raw);
+  }
+
+  function itemMeta(item, index) {
+    var label = itemLabel(item, index);
+    var rec = recordForItem(item);
+    var node = catalogNode(item, index);
+    var known = !!(item && item.name) || !!rec || !!usableNodeName(node, item);
+    var category = rec && rec.category ? rec.category : "";
+    var group = rec && rec.group ? rec.group : "";
+    var className = rec && rec["class"] ? rec["class"] : "";
+    var raw = item && (item.rawId || item.id) || "";
+    var bits = [];
+    if (category) bits.push(category);
+    if (group && group.toLowerCase() !== category) bits.push(group);
+    if (className) bits.push("class " + className);
+    if (!known) bits.push("not in the item list");
+    if (raw) bits.push(raw);
+    return {
+      label: label,
+      category: category,
+      group: group,
+      className: className,
+      known: known,
+      raw: raw,
+      title: bits.join(" · ")
+    };
+  }
+
+  function itemSearchText(item, index) {
+    var meta = itemMeta(item, index);
+    var parts = splitItemId(item && (item.rawId || item.id));
+    return loose([
+      meta.label, item && item.id, item && item.rawId, parts.base, parts.seed,
+      meta.category, meta.group, meta.className
+    ].filter(Boolean).join(" "));
   }
 
   function readContainer(node) {
@@ -945,11 +1114,14 @@
     var mining = MINING_PARTS[site.objectId];
     var product = siteProductId(site);
     var node = index && index.byId ? index.byId[product] : null;
+    var productItem = { id: product, rawId: product };
     var hay = loose([
       site.objectId, site.label, site.kind, product,
       crop && crop.name, crop && crop.productName,
       mining && mining.name,
-      node && node.name
+      node && node.name,
+      itemLabel(productItem, index),
+      itemMeta(productItem, index).category
     ].filter(Boolean).join(" "));
     return hay.indexOf(q) !== -1;
   }
@@ -983,7 +1155,7 @@
       site: site,
       name: (site && site.label) || (crop && crop.name) || (mining && mining.name) || (box && box.name) || (site && site.objectId) || "",
       product: product,
-      productName: (node && node.name) || (crop && crop.productName) || product,
+      productName: (node && node.name) || (crop && crop.productName) || itemLabel({ id: product, rawId: product }, index) || product,
       rate: rateOf(site),
       storage: storageOf(site),
       crop: crop,
@@ -1188,7 +1360,15 @@
   }
 
   function exportDocument(store) {
-    return JSON.stringify(normalize(store), null, 2);
+    var doc = normalize(store);
+    (doc.locations || []).forEach(function (loc) {
+      (loc.items || []).forEach(function (item) {
+        var meta = itemMeta(item, null);
+        item.displayName = meta.label;
+        if (meta.category) item.itemCategory = meta.category;
+      });
+    });
+    return JSON.stringify(doc, null, 2);
   }
 
   function importDocument(textValue) {
@@ -1616,7 +1796,7 @@
         lines += 1;
         units += item.qty;
         if (!q) return;
-        var hay = loose(itemLabel(item, index)) + " " + loose(item.id) + " " + loose(item.rawId);
+        var hay = itemSearchText(item, index);
         if (hay.indexOf(q) !== -1) matchQty += item.qty;
       });
     });
@@ -1666,7 +1846,7 @@
       (loc.items || []).forEach(function (item) {
         var label = itemLabel(item, index);
         if (q) {
-          var hay = loose(label) + " " + loose(item.id) + " " + loose(item.rawId) + " " + loose(loc.name);
+          var hay = itemSearchText(item, index) + " " + loose(loc.name);
           if (hay.indexOf(q) === -1) return;
         }
         rows.push({ location: loc, item: item, label: label });
@@ -1822,8 +2002,12 @@
     emptyStore: emptyStore,
     uid: uid,
     buildIndex: buildIndex,
+    setItemNames: setItemNames,
+    splitItemId: splitItemId,
     resolveSaveId: resolveSaveId,
     itemLabel: itemLabel,
+    itemMeta: itemMeta,
+    itemSearchText: itemSearchText,
     readContainer: readContainer,
     extractInventories: extractInventories,
     importSave: importSave,

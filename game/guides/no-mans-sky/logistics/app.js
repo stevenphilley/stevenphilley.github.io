@@ -41,8 +41,16 @@
   }
 
   function nodeName(id) {
-    var node = index && index.byId[id];
-    return node && node.name ? node.name : id;
+    return NmsLogistics.itemLabel({ id: id, rawId: id }, index);
+  }
+
+  function itemHtml(item) {
+    var meta = NmsLogistics.itemMeta(item, index);
+    var bits = "<span title=\"" + esc(meta.title) + "\">" + esc(meta.label) + "</span>";
+    if (meta.category) bits += " <span class=\"note\">" + esc(meta.category) + "</span>";
+    if (!meta.known && meta.raw) bits += " <span class=\"note\">" + esc(meta.raw) + "</span>";
+    else if (item.rawId && item.rawId !== item.id && item.rawId !== meta.label) bits += " <span class=\"note\">" + esc(item.rawId) + "</span>";
+    return bits;
   }
 
   function readPins() {
@@ -260,7 +268,7 @@
       var cap = row.location.slotCapacity ? (row.location.slotApproximate ? "~" : "") + row.location.slotCapacity + " slots" : "";
       var href = mapHref(row.location);
       var indexInLoc = row.location.items.indexOf(row.item);
-      return "<tr><td>" + esc(row.label) + (row.item.rawId && row.item.rawId !== row.item.id ? " <span class=\"note\">" + esc(row.item.rawId) + "</span>" : "") + "</td><td>" +
+      return "<tr><td>" + itemHtml(row.item) + "</td><td>" +
         esc(row.item.qty) + "</td><td>" + esc(row.location.name) + (cap ? " · " + esc(cap) : "") +
         (href ? ' · <a href="' + esc(href) + '">Show on map</a>' : "") + "</td><td>" +
         esc(NmsLogistics.CATEGORIES[row.location.category] || row.location.category) + "</td><td>" + esc(stack) +
@@ -356,7 +364,7 @@
       html += '<option value="' + esc(pair[0]) + '"' + (pair[0] === current ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
     });
     if (current && !NmsLogistics.RESOURCE_CHOICES.some(function (pair) { return pair[0] === current; })) {
-      html += '<option value="' + esc(current) + '" selected>' + esc(current) + "</option>";
+      html += '<option value="' + esc(current) + '" selected>' + esc(NmsLogistics.itemLabel({ id: current, rawId: current }, index)) + "</option>";
     }
     return html;
   }
@@ -894,6 +902,14 @@
       if (match && placeFilter) placeFilter.value = match.id;
     }
   }
+
+  fetch("../data/nms-item-names.json", { credentials: "same-origin" }).then(function (res) {
+    if (!res.ok) throw new Error("names");
+    return res.json();
+  }).then(function (data) {
+    NmsLogistics.setItemNames(data);
+    render();
+  }).catch(function () { /* unknown ids stay humanized, with the save id beside them */ });
 
   Promise.all([
     fetch("../data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
