@@ -47,11 +47,13 @@ Filenames are not dates. Any name in this folder is fine, for example `2026-09-2
 | `thumb` | no | Filename only. The archive uses it when present, otherwise the full image. |
 | `width` | no | Pixel width. Omit, or use `0`, when unknown. The page reads the file. Current images are 1792×1008. |
 | `height` | no | Pixel height. Same as `width`. |
-| `category` | no | `nature` or `sci-fi`. Omit when the image is not in a collection. |
+| `category` | no | Optional slug. Known chips: `nature`, `sci-fi`, `swimwear`, `fedora`. Any other slug of letters, numbers, and hyphens still gets a title-cased chip when the archive has at least one image in it. Omit when the image is not in a collection. |
 | `daily` | no | `true` or `false`. Omit or use `false` for collection images. |
 
 The archive sorts newest `date` first. Images with the same date keep the order they appear in `items`.
 
-Today's wallpaper is the newest item with `daily` set to `true`. If none is marked daily, the newest item is shown there instead. The rest of the list is the archive, with All / Daily / Nature / Sci-fi filters.
+Today's wallpaper is the newest item with `daily` set to `true`. If none is marked daily, the newest item is shown there instead. The rest of the list is the archive. Chips are All, Daily, then Nature, Sci-fi, Swimwear, and Fedora when those categories have archive images, then any other category present in the list. A category with no images stays hidden. The address keeps the choice, for example `?c=fedora`.
+
+An item with category `fedora` also shows this line in its detail: "Fedora-inspired, not official Fedora Project artwork. Fedora is a trademark of Red Hat, Inc."
 
 Do not commit placeholder images.

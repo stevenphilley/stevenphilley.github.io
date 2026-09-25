@@ -48,6 +48,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .credit{font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--ink-soft,#9b9a96);margin:0 0 10px}
 .credit strong{color:var(--ink,#e8e6e1);font-weight:500}
 .note{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);margin:0 0 14px;padding:10px 12px;border:1px solid var(--line,#2c303a);background:rgba(200,180,138,.06)}
+.disclaimer{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;color:var(--muted,#63666e);margin:0 0 12px}
 .sizes{display:flex;flex-wrap:wrap;gap:8px;padding:4px 20px 18px}
 .sizes button,.custom button,.dlb-close{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;min-height:44px}
 .sizes button.primary,.custom button.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
@@ -76,6 +77,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .filters button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;min-height:44px;cursor:pointer}
 .filters button[aria-pressed="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
 .filters button:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.filters button[hidden]{display:none}
 .filters .count{margin-left:6px;letter-spacing:0}
 .filter-count{margin:12px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
 .e-foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;color:var(--muted,#63666e);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -136,8 +138,10 @@ body.lb-lock{overflow:hidden}
     <div class="filters" role="group" aria-label="Filter the archive">
       <button type="button" data-filter="all" aria-pressed="true">All <span class="count" data-count="all"></span></button>
       <button type="button" data-filter="daily" aria-pressed="false">Daily <span class="count" data-count="daily"></span></button>
-      <button type="button" data-filter="nature" aria-pressed="false">Nature <span class="count" data-count="nature"></span></button>
-      <button type="button" data-filter="sci-fi" aria-pressed="false">Sci-fi <span class="count" data-count="sci-fi"></span></button>
+      <button type="button" data-filter="nature" aria-pressed="false" hidden>Nature <span class="count" data-count="nature"></span></button>
+      <button type="button" data-filter="sci-fi" aria-pressed="false" hidden>Sci-fi <span class="count" data-count="sci-fi"></span></button>
+      <button type="button" data-filter="swimwear" aria-pressed="false" hidden>Swimwear <span class="count" data-count="swimwear"></span></button>
+      <button type="button" data-filter="fedora" aria-pressed="false" hidden>Fedora <span class="count" data-count="fedora"></span></button>
     </div>
     <p class="filter-count" id="archive-count" aria-live="polite"></p>
     <p class="empty" id="archive-empty" hidden>No earlier images yet.</p>
@@ -203,11 +207,20 @@ body.lb-lock{overflow:hidden}
     { w: 2880, h: 1800, label: "2880×1800" }
   ];
 
+  var KNOWN_CATEGORIES = [
+    { id: "nature", label: "Nature" },
+    { id: "sci-fi", label: "Sci-fi" },
+    { id: "swimwear", label: "Swimwear" },
+    { id: "fedora", label: "Fedora" }
+  ];
+  var FEDORA_LINE = "Fedora-inspired, not official Fedora Project artwork. Fedora is a trademark of Red Hat, Inc.";
+
   var todaySlot = document.getElementById("today-slot");
   var archiveSection = document.getElementById("archive-section");
   var archiveGrid = document.getElementById("archive-grid");
   var archiveEmpty = document.getElementById("archive-empty");
   var archiveCount = document.getElementById("archive-count");
+  var filtersEl = document.querySelector(".filters");
   var activeFilter = "all";
   var dlb = document.getElementById("dlb");
   var dlbBody = document.getElementById("dlb-body");
@@ -265,14 +278,24 @@ body.lb-lock{overflow:hidden}
   function categoryOf(value) {
     if (typeof value !== "string") return "";
     var c = value.trim().toLowerCase();
-    return c === "nature" || c === "sci-fi" ? c : "";
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(c)) return "";
+    return c;
+  }
+
+  function categoryLabel(id) {
+    var i;
+    for (i = 0; i < KNOWN_CATEGORIES.length; i++) {
+      if (KNOWN_CATEGORIES[i].id === id) return KNOWN_CATEGORIES[i].label;
+    }
+    return String(id).split("-").map(function (part) {
+      return part ? part.charAt(0).toUpperCase() + part.slice(1) : "";
+    }).join(" ");
   }
 
   function marks(item) {
     var parts = [];
     if (item.daily) parts.push("Daily");
-    if (item.category === "nature") parts.push("Nature");
-    else if (item.category === "sci-fi") parts.push("Sci-fi");
+    if (item.category) parts.push(categoryLabel(item.category));
     return parts;
   }
 
@@ -345,6 +368,9 @@ body.lb-lock{overflow:hidden}
     var dims = item.width && item.height ? ' width="' + item.width + '" height="' + item.height + '"' : "";
     var nativeText = item.width && item.height ? item.width + "×" + item.height : "…";
     var desc = item.description ? '<p class="desc">' + esc(item.description) + "</p>" : "";
+    var fedoraLine = item.category === "fedora"
+      ? '<p class="disclaimer">' + esc(FEDORA_LINE) + "</p>"
+      : "";
     var article = document.createElement("article");
     article.className = "card";
     article.innerHTML =
@@ -358,6 +384,7 @@ body.lb-lock{overflow:hidden}
         "<h3" + titleId + ">" + esc(item.title) + "</h3>" +
         desc +
         '<p class="credit"><strong>' + esc(creditSentence(item)) + "</strong> Not a Steven Philley photograph. Native size <span data-native>" + esc(nativeText) + "</span>. Sizes larger than native are labeled Upscale; smaller are Downscale.</p>" +
+        fedoraLine +
         '<p class="note">Downloads use cover crop (fill the target frame, crop overflow). Upscales enlarge the master with the browser canvas — fine for a desktop backdrop, not a print master.</p>' +
       "</div>" +
       '<div class="sizes" role="group" aria-label="' + esc("Common wallpaper sizes for " + item.title) + '"></div>' +
@@ -407,9 +434,77 @@ body.lb-lock{overflow:hidden}
   }
 
   function tileMatches(tile, filter) {
+    if (!filter || filter === "all") return true;
     if (filter === "daily") return tile.getAttribute("data-daily") === "1";
-    if (filter === "nature" || filter === "sci-fi") return tile.getAttribute("data-category") === filter;
-    return true;
+    return tile.getAttribute("data-category") === filter;
+  }
+
+  function findFilterButton(id) {
+    if (!filtersEl) return null;
+    var buttons = filtersEl.querySelectorAll("[data-filter]");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      if (buttons[i].getAttribute("data-filter") === id) return buttons[i];
+    }
+    return null;
+  }
+
+  function readFilterParam() {
+    var raw = "";
+    try {
+      raw = new URLSearchParams(window.location.search).get("c") || "";
+    } catch (err) {
+      raw = "";
+    }
+    raw = String(raw).trim().toLowerCase();
+    if (!raw || raw === "all") return "all";
+    if (raw === "daily") return "daily";
+    return categoryOf(raw) || "all";
+  }
+
+  function writeFilterUrl(filter, mode) {
+    var url;
+    try { url = new URL(window.location.href); }
+    catch (err) { return; }
+    if (!filter || filter === "all") url.searchParams.delete("c");
+    else url.searchParams.set("c", filter);
+    var next = url.pathname + url.search + url.hash;
+    var now = window.location.pathname + window.location.search + window.location.hash;
+    if (next === now) return;
+    var state = { wallpaperFilter: filter || "all" };
+    if (mode === "push") history.pushState(state, "", next);
+    else history.replaceState(state, "", next);
+  }
+
+  function syncCategoryChips(counts, extras) {
+    var i;
+    for (i = 0; i < KNOWN_CATEGORIES.length; i++) {
+      var id = KNOWN_CATEGORIES[i].id;
+      var knownBtn = findFilterButton(id);
+      var n = counts[id] || 0;
+      if (knownBtn) knownBtn.hidden = n === 0;
+      setFilterCount(id, n);
+    }
+    if (!filtersEl) return;
+    Array.prototype.forEach.call(filtersEl.querySelectorAll("[data-extra-filter]"), function (btn) {
+      btn.remove();
+    });
+    extras.forEach(function (id) {
+      var count = counts[id] || 0;
+      if (!count) return;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("data-filter", id);
+      btn.setAttribute("data-extra-filter", "true");
+      btn.setAttribute("aria-pressed", "false");
+      btn.appendChild(document.createTextNode(categoryLabel(id) + " "));
+      var span = document.createElement("span");
+      span.className = "count";
+      span.setAttribute("data-count", id);
+      span.textContent = String(count);
+      btn.appendChild(span);
+      filtersEl.appendChild(btn);
+    });
   }
 
   function setFilterCount(id, n) {
@@ -417,8 +512,12 @@ body.lb-lock{overflow:hidden}
     if (el) el.textContent = String(n);
   }
 
-  function applyFilter(filter) {
+  function applyFilter(filter, historyMode) {
     activeFilter = filter || "all";
+    if (activeFilter !== "all" && activeFilter !== "daily") {
+      var chosen = findFilterButton(activeFilter);
+      if (!chosen || chosen.hidden) activeFilter = "all";
+    }
     var shown = 0;
     var tiles = archiveGrid.querySelectorAll(".tile");
     Array.prototype.forEach.call(tiles, function (tile) {
@@ -438,6 +537,7 @@ body.lb-lock{overflow:hidden}
     if (archiveCount) {
       archiveCount.textContent = shown === 1 ? "1 image" : shown + " images";
     }
+    if (historyMode) writeFilterUrl(activeFilter, historyMode);
   }
 
   function renderDaily(items) {
@@ -452,23 +552,44 @@ body.lb-lock{overflow:hidden}
     }
     var heroAt = heroIndexOf(items);
     mountItem(items[heroAt], todaySlot, { eager: true });
-    archiveSection.hidden = false;
-    var counts = { all: 0, daily: 0, nature: 0, "sci-fi": 0 };
+    var counts = { all: 0, daily: 0 };
+    var extras = [];
+    var seenExtra = {};
+    KNOWN_CATEGORIES.forEach(function (cat) { counts[cat.id] = 0; });
     var frag = document.createDocumentFragment();
     items.forEach(function (item, index) {
       if (index === heroAt) return;
       counts.all++;
       if (item.daily) counts.daily++;
-      if (item.category === "nature") counts.nature++;
-      if (item.category === "sci-fi") counts["sci-fi"]++;
+      if (item.category) {
+        if (!Object.prototype.hasOwnProperty.call(counts, item.category)) counts[item.category] = 0;
+        counts[item.category]++;
+        var known = false;
+        var k;
+        for (k = 0; k < KNOWN_CATEGORIES.length; k++) {
+          if (KNOWN_CATEGORIES[k].id === item.category) known = true;
+        }
+        if (!known && !seenExtra[item.category]) {
+          seenExtra[item.category] = true;
+          extras.push(item.category);
+        }
+      }
       frag.appendChild(renderArchiveTile(item, index));
     });
     archiveGrid.appendChild(frag);
     setFilterCount("all", counts.all);
     setFilterCount("daily", counts.daily);
-    setFilterCount("nature", counts.nature);
-    setFilterCount("sci-fi", counts["sci-fi"]);
-    applyFilter("all");
+    syncCategoryChips(counts, extras);
+    var requested = readFilterParam();
+    var hadParam = false;
+    try { hadParam = new URLSearchParams(window.location.search).has("c"); }
+    catch (err) { hadParam = false; }
+    var requestedBtn = findFilterButton(requested);
+    var initial = (requested === "all" || (requestedBtn && !requestedBtn.hidden)) ? requested : "all";
+    var historyMode = "";
+    if (initial !== requested || (initial === "all" && hadParam)) historyMode = "replace";
+    applyFilter(initial, historyMode);
+    archiveSection.hidden = false;
   }
 
   function openItem(index, opener) {
@@ -507,10 +628,21 @@ body.lb-lock{overflow:hidden}
     img.src = full;
   }, true);
 
-  document.querySelectorAll("[data-filter]").forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      applyFilter(btn.getAttribute("data-filter"));
+  if (filtersEl) {
+    filtersEl.addEventListener("click", function (e) {
+      var btn = e.target && e.target.closest ? e.target.closest("[data-filter]") : null;
+      if (!btn || !filtersEl.contains(btn) || btn.hidden) return;
+      var next = btn.getAttribute("data-filter");
+      if (next === activeFilter) return;
+      applyFilter(next, "push");
     });
+  }
+
+  window.addEventListener("popstate", function () {
+    var requested = readFilterParam();
+    var btn = findFilterButton(requested);
+    var next = (requested === "all" || (btn && !btn.hidden)) ? requested : "all";
+    applyFilter(next);
   });
 
   dlb.addEventListener("click", function (e) {
