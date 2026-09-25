@@ -9,7 +9,9 @@
  *  (X/Z + 0x7FF, Y + 0x7F).
  *  A .hg save is a run of LZ4 blocks (magic 0xFEEDA1E5). A file that starts
  *  with { is JSON and is not decompressed. Obfuscated 3-character keys are
- *  renamed with the bundled MBINCompiler mapping.json. Nothing is uploaded.
+ *  renamed with the bundled MBINCompiler mapping.json. Discovery records
+ *  live under DiscoveryManagerData and use the same portal code.
+ *  Nothing is uploaded.
  */
 (function (root, factory) {
   var api = factory();
@@ -25,6 +27,12 @@
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
+
+  var DiscoveryLib = null;
+  if (typeof require === "function") {
+    try { DiscoveryLib = require("./discoveries.js"); } catch (err) { DiscoveryLib = null; }
+  }
+  if (!DiscoveryLib && typeof NmsDiscoveries !== "undefined") DiscoveryLib = NmsDiscoveries;
 
   var GALAXY_NAMES = {
     0: "Euclid",
@@ -383,7 +391,7 @@
   }
 
   function quoteGalacticAddresses(text) {
-    return String(text).replace(/("(?:GalacticAddress|galacticAddress|oZw|UniverseAddress|FreighterUniverseAddress|Location|yhJ|RB7|YTa)"\s*:\s*)(-?\d+)/g, '$1"$2"');
+    return String(text).replace(/("(?:GalacticAddress|galacticAddress|oZw|UniverseAddress|FreighterUniverseAddress|Location|yhJ|RB7|YTa|UA|5L6)"\s*:\s*)(-?\d+)/g, '$1"$2"');
   }
 
   function stripTrailingNulls(bytes) {
@@ -738,6 +746,27 @@
     return { planetary: planetary, freighters: freighters, problems: problems };
   }
 
+  function discoveryDeps() {
+    return {
+      decodeAddressField: decodeAddressField,
+      toBigInt: toBigInt,
+      portalMask: PORTAL_MASK,
+      lyBetween: lyBetween
+    };
+  }
+
+  function extractDiscoveries(data) {
+    if (!DiscoveryLib) {
+      return { records: [], systems: [], problems: [{ name: "Discoveries", detail: "Discovery parser did not load." }] };
+    }
+    return DiscoveryLib.extractDiscoveries(data, discoveryDeps());
+  }
+
+  function mergeSaveDocuments(docs) {
+    if (!DiscoveryLib) return (docs && docs[0]) || {};
+    return DiscoveryLib.mergeSaveDocuments(docs, discoveryDeps());
+  }
+
   function hubMarks() {
     return HUBS.map(function (h) {
       var info = analyzeGlyphs(h.glyphs);
@@ -906,7 +935,7 @@
   // Screen-space selection. Marker hits are canvas pixels after pan and zoom.
   // Map voxels are a different space: the disk is elliptical, so a screen
   // circle is not a circle in voxels.
-  var SELECTABLE_KINDS = { base: true, system: true, freighter: true, settlement: true };
+  var SELECTABLE_KINDS = { base: true, system: true, freighter: true, settlement: true, discovery: true };
 
   function pointInRect(x, y, rect) {
     if (!rect || !isFinite(x) || !isFinite(y)) return false;
@@ -1478,6 +1507,20 @@
     var showRefs = document.getElementById("show-refs");
     var showStock = document.getElementById("show-stock");
     var showProduction = document.getElementById("show-production");
+    var showDiscoveries = document.getElementById("show-discoveries");
+    var discPlanets = document.getElementById("disc-planets");
+    var discSystems = document.getElementById("disc-systems");
+    var discFlora = document.getElementById("disc-flora");
+    var discFauna = document.getElementById("disc-fauna");
+    var discMinerals = document.getElementById("disc-minerals");
+    var discoveryList = document.getElementById("discovery-list");
+    var discoveryWrap = document.getElementById("discovery-wrap");
+    var discMetrics = document.getElementById("disc-metrics");
+    var mDsys = document.getElementById("m-dsys");
+    var mDplanets = document.getElementById("m-dplanets");
+    var mDflora = document.getElementById("m-dflora");
+    var mDfauna = document.getElementById("m-dfauna");
+    var mDminerals = document.getElementById("m-dminerals");
     var itemFilter = document.getElementById("item-filter");
     var placePanel = document.getElementById("place-panel");
     var placeBody = document.getElementById("place-body");
@@ -1505,9 +1548,15 @@
       filter: "",
       fileName: "",
       source: "",
-      selectedFreight: null
+      selectedFreight: null,
+      discoveries: [],
+      discoveryProblems: [],
+      hoverDiscovery: null
     };
     var listOrder = [];
+    var discoveryOrder = [];
+    var openDiscoveryId = null;
+    var DISCOVERY_KEY = "nms-map-discoveries";
     var freightOrder = [];
     var selectMode = false;
     var selectShape = "box";
@@ -1755,8 +1804,7 @@
           var patch = {};
           patch[el.getAttribute("data-prod")] = el.value;
           writeLogistics(api.setProduction(readLogistics() || api.emptyStore(), el.getAttribute("data-id"), patch));
-          if (state.selection.length > 1) renderAggregate();
-          else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+          renderSelection();
           renderLists();
           draw();
         });
@@ -1768,8 +1816,8 @@
       if (!live) return;
       if (!state.selection.length) live.textContent = "Selection cleared.";
       else if (state.selection.length === 1) {
-        var one = baseById(state.selection[0]) || freightById(state.selection[0]);
-        live.textContent = "Selected " + (one ? one.name : "one place") + ".";
+        var one = baseById(state.selection[0]) || freightById(state.selection[0]) || discoveryById(state.selection[0]);
+        live.textContent = "Selected " + (one ? (one.name || one.glyphs || "one place") : "one place") + ".";
       } else live.textContent = state.selection.length + " places selected.";
     }
 
@@ -1778,7 +1826,7 @@
       var seen = Object.create(null);
       (ids || []).forEach(function (id) {
         if (!id || seen[id]) return;
-        if (!baseById(id) && !freightById(id)) return;
+        if (!baseById(id) && !freightById(id) && !discoveryById(id)) return;
         seen[id] = true;
         next.push(id);
       });
@@ -1792,13 +1840,7 @@
       renderLists();
       renderRefList();
       draw();
-      if (next.length > 1) renderAggregate();
-      else if (next.length === 1) {
-        var one = baseById(next[0]) || freightById(next[0]);
-        placeMode = "base";
-        renderPlacePanel(placeOf(one), one ? one.name : "");
-        if (placePanel && !placePanel.hidden && placeTitle) placeTitle.focus();
-      } else renderPlacePanel(null);
+      renderSelection();
     }
 
     function selectedPlaces() {
@@ -1812,15 +1854,17 @@
 
     function renderAggregate() {
       if (!placePanel || !placeBody) return;
-      var places = selectedPlaces();
+      var parts = splitSelection(state.selection);
+      var places = parts.bases.map(placeOf);
       openPlace = null;
-      if (places.length < 2) {
+      openDiscoveryId = null;
+      if (places.length + parts.discs.length < 2) {
         placePanel.hidden = true;
         placeBody.innerHTML = "";
         return;
       }
       placePanel.hidden = false;
-      if (placeTitle) placeTitle.textContent = places.length + " places";
+      if (placeTitle) placeTitle.textContent = (places.length + parts.discs.length) + " places";
       var api = logisticsApi();
       if (!api) {
         placeBody.innerHTML = '<p class="empty">The logistics planner did not load.</p>';
@@ -1830,7 +1874,7 @@
       var store = logisticsStore || api.emptyStore();
       var agg = aggregatePlaces(places, store, api, catalogIndex);
       var href = "/game/guides/no-mans-sky/logistics/" + api.selectionQuery(places);
-      var html = '<p class="place-meta">' + agg.count + " places selected.</p>";
+      var html = '<p class="place-meta">' + (places.length + parts.discs.length) + " places selected.</p>";
       html += '<p class="place-actions"><a href="' + esc(href) + '">Open these places in the logistics planner</a>';
       html += ' <button type="button" id="place-close">Clear selection</button></p>';
       html += "<h3 class=\"place-sub\">Inventory</h3>";
@@ -1877,6 +1921,7 @@
         });
         html += "</ul>";
       }
+      html += discoveryBlockHtml(parts.discs);
       placeBody.innerHTML = html;
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
@@ -1885,7 +1930,9 @@
     function renderPlacePanel(place, heading) {
       if (!placePanel || !placeBody) return;
       openPlace = place;
+      if (place) openDiscoveryId = null;
       if (!place) {
+        openDiscoveryId = null;
         placePanel.hidden = true;
         placeBody.innerHTML = "";
         return;
@@ -1927,6 +1974,221 @@
         state.selectedRef = null;
         commitSelection([]);
       });
+    }
+
+    function ownerSuffix(owner, ownerId) {
+      var name = owner ? String(owner) : "";
+      var id = ownerId && String(ownerId) !== "0" ? String(ownerId) : "";
+      var who = name && id ? name + " · " + id : (name || id);
+      return who ? " · " + esc(who) : "";
+    }
+
+    function discoveryById(id) {
+      var found = null;
+      state.discoveries.forEach(function (sys) { if (sys.id === id) found = sys; });
+      return found;
+    }
+
+    function discFilters() {
+      return {
+        planets: !discPlanets || discPlanets.checked,
+        systems: !discSystems || discSystems.checked,
+        flora: !!(discFlora && discFlora.checked),
+        fauna: !!(discFauna && discFauna.checked),
+        minerals: !!(discMinerals && discMinerals.checked)
+      };
+    }
+
+    function filteredDiscoveries() {
+      if (!DiscoveryLib) return [];
+      return DiscoveryLib.filterDiscoverySystems(state.discoveries, {
+        galaxy: state.galaxy,
+        query: state.filter,
+        filters: discFilters()
+      });
+    }
+
+    function visibleDiscoveries() {
+      if (showDiscoveries && !showDiscoveries.checked) return [];
+      return filteredDiscoveries();
+    }
+
+    function splitSelection(ids) {
+      var bases = [];
+      var discs = [];
+      (ids || []).forEach(function (id) {
+        var disc = discoveryById(id);
+        if (disc) discs.push(disc);
+        else {
+          var row = baseById(id) || freightById(id);
+          if (row) bases.push(row);
+        }
+      });
+      return { bases: bases, discs: discs };
+    }
+
+    function saveDiscoveryCache() {
+      try {
+        if (!state.discoveries.length) {
+          localStorage.removeItem(DISCOVERY_KEY);
+          return;
+        }
+        localStorage.setItem(DISCOVERY_KEY, JSON.stringify({
+          v: 1,
+          fileName: state.fileName || "",
+          systems: state.discoveries
+        }));
+      } catch (err) { /* private mode */ }
+    }
+
+    function loadDiscoveryCache() {
+      try {
+        var raw = localStorage.getItem(DISCOVERY_KEY);
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        if (!data || data.v !== 1 || !Array.isArray(data.systems)) return;
+        state.discoveries = data.systems;
+        if (!state.fileName && data.fileName) {
+          state.fileName = data.fileName;
+          state.source = state.source || "browser";
+        }
+      } catch (err) { /* ignore a bad cache */ }
+    }
+
+    function discoveryLink(systems) {
+      var list = systems || [];
+      if (!list.length) return "";
+      var params = new URLSearchParams();
+      if (list.length === 1) params.set("place", list[0].glyphs);
+      else params.set("places", list.map(function (sys) { return sys.glyphs; }).join(","));
+      params.set("layer", "discovery");
+      if (list[0].galaxy != null) params.set("galaxy", String(list[0].galaxy));
+      return "?" + params.toString();
+    }
+
+    function discoveryBlockHtml(systems) {
+      if (!DiscoveryLib || !systems || !systems.length) return "";
+      var totals = DiscoveryLib.discoveryTotals(systems);
+      var html = "<h3 class=\"place-sub\">Discoveries</h3>";
+      html += '<p class="place-meta">' + totals.systems + " system" + (totals.systems === 1 ? "" : "s") +
+        " · " + totals.planets + " planet" + (totals.planets === 1 ? "" : "s") +
+        " · " + totals.flora + " flora · " + totals.fauna + " fauna · " + totals.minerals + " mineral" +
+        (totals.minerals === 1 ? "" : "s") + "</p>";
+      html += '<ul class="place-demands">';
+      systems.forEach(function (sys) {
+        var title = sys.systemName || "System";
+        html += "<li><span>" + esc(title) + " · " + esc(sys.glyphs) + "</span><span>" +
+          esc(sys.planetCount) + " planets</span></li>";
+      });
+      html += "</ul>";
+      return html;
+    }
+
+    function renderDiscoveryPanel(sys) {
+      if (!placePanel || !placeBody || !sys) return;
+      openPlace = null;
+      openDiscoveryId = sys.id;
+      placePanel.hidden = false;
+      var title = sys.systemName || "Discovered system";
+      if (placeTitle) placeTitle.textContent = title;
+      var html = '<p class="place-meta">' + esc(sys.glyphs) + " · " + esc(sys.coords) +
+        " · " + esc(galaxyLabel(sys.galaxy)) + " · " + esc(formatLy(sys.lyCenter)) + " from center</p>";
+      html += '<p class="place-actions"><a href="' + esc(discoveryLink([sys])) + '">Show on map</a>';
+      html += ' <button type="button" id="place-close">Close</button></p>';
+      if (sys.systemName) html += '<p class="place-meta">Custom name · ' + esc(sys.systemName) + "</p>";
+      html += '<p class="place-meta">System record · ' + (sys.hasSystem ? DiscoveryLib.uploadLabel(sys.systemUploaded, sys.systemTimestamp) : "No solar-system record") +
+        ownerSuffix(sys.systemOwner, sys.systemOwnerId) + "</p>";
+      var totals = DiscoveryLib.discoveryTotals([sys]);
+      html += '<p class="place-meta">' + totals.planets + " planet" + (totals.planets === 1 ? "" : "s") +
+        " · " + totals.flora + " flora · " + totals.fauna + " fauna · " + totals.minerals + " mineral" +
+        (totals.minerals === 1 ? "" : "s") +
+        (totals.sectors ? " · " + totals.sectors + " sector" + (totals.sectors === 1 ? "" : "s") : "") + "</p>";
+      html += "<h3 class=\"place-sub\">Planets</h3>";
+      if (!sys.planetList || !sys.planetList.length) {
+        html += '<p class="empty">No planet, flora, fauna, or mineral records share this system address.</p>';
+      } else {
+        html += '<ul class="place-demands">';
+        sys.planetList.forEach(function (planet) {
+          var name = planet.name || ("Planet " + planet.index);
+          var bits = "index " + planet.index;
+          if (!planet.hasPlanetRecord) bits += " · no planet record";
+          if (planet.biome) bits += " · " + planet.biome + (planet.infested ? ", infested" : "");
+          bits += " · " + planet.flora + " flora · " + planet.fauna + " fauna · " + planet.minerals + " minerals";
+          if (planet.named && planet.named.length) bits += " · " + planet.named.join(", ");
+          if (planet.hidden) bits += " · hidden";
+          html += "<li><span><strong>" + esc(name) + "</strong><br><span class=\"place-meta\">" + esc(planet.glyphs) +
+            " · " + esc(bits) + "<br>" + esc(DiscoveryLib.uploadLabel(planet.uploaded, planet.timestamp)) +
+            ownerSuffix(planet.owner, planet.ownerId) + "</span></span></li>";
+        });
+        html += "</ul>";
+      }
+      html += '<p class="place-meta">Procedural names are not stored in the save. A name here is one you typed in game.</p>';
+      placeBody.innerHTML = html;
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
+      revealDetail(sys.id);
+    }
+
+    function revealDetail(key) {
+      if (!placePanel || placePanel.hidden) return;
+      if (key != null && revealDetail.last === key) return;
+      revealDetail.last = key == null ? null : key;
+      if (placeTitle) {
+        try { placeTitle.focus({ preventScroll: true }); }
+        catch (err) { placeTitle.focus(); }
+      }
+      placePanel.scrollIntoView({ block: "start", inline: "nearest" });
+    }
+
+    function renderDiscoveryAggregate(systems) {
+      if (!placePanel || !placeBody) return;
+      openPlace = null;
+      openDiscoveryId = null;
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = systems.length + " systems";
+      var totals = DiscoveryLib.discoveryTotals(systems);
+      var html = '<p class="place-meta">' + totals.systems + " systems · " + totals.planets + " planets · " +
+        totals.flora + " flora · " + totals.fauna + " fauna · " + totals.minerals + " minerals</p>";
+      html += '<p class="place-actions"><a href="' + esc(discoveryLink(systems)) + '">Show on map</a>';
+      html += ' <button type="button" id="place-close">Clear selection</button></p>';
+      html += '<ul class="place-demands">';
+      systems.forEach(function (sys) {
+        html += "<li><span>" + esc(sys.systemName || sys.glyphs) + " · " + esc(sys.glyphs) + "</span><span>" +
+          esc(sys.planetCount) + " planets · " + esc(sys.flora) + " flora</span></li>";
+      });
+      html += "</ul>";
+      placeBody.innerHTML = html;
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
+      revealDetail("agg:" + systems.map(function (sys) { return sys.id; }).join(","));
+    }
+
+    function renderSelection() {
+      var parts = splitSelection(state.selection);
+      if (!state.selection.length) {
+        openDiscoveryId = null;
+        revealDetail.last = null;
+        renderPlacePanel(null);
+        return;
+      }
+      if (!parts.bases.length && parts.discs.length === 1) {
+        renderDiscoveryPanel(parts.discs[0]);
+        return;
+      }
+      if (!parts.bases.length && parts.discs.length > 1) {
+        renderDiscoveryAggregate(parts.discs);
+        return;
+      }
+      if (parts.bases.length === 1 && !parts.discs.length) {
+        openDiscoveryId = null;
+        var one = parts.bases[0];
+        placeMode = "base";
+        renderPlacePanel(placeOf(one), one.name || "");
+        revealDetail("base:" + one.id);
+        return;
+      }
+      renderAggregate();
+      revealDetail("mix:" + state.selection.join(","));
     }
 
     function colors() {
@@ -2021,6 +2283,7 @@
       aim = null;
       var pts = [];
       visibleBases().forEach(function (b) { pts.push({ x: b.voxelX, z: b.voxelZ }); });
+      visibleDiscoveries().forEach(function (sys) { pts.push({ x: sys.voxelX, z: sys.voxelZ }); });
       if (!pts.length) {
         view.zoom = 1;
         view.panX = 0;
@@ -2068,6 +2331,19 @@
       }
       var framed = frameOf(lastSize.w, lastSize.h);
       var pan = panToMarker(b.voxelX, b.voxelZ, idx, group.length, view.zoom, framed, lastSize.w / 2, lastSize.h / 2);
+      view.panX = pan.panX;
+      view.panY = pan.panY;
+      clampPan();
+    }
+
+    function focusDiscovery(id) {
+      var sys = discoveryById(id);
+      if (!sys) return;
+      var size = canvasSize();
+      lastSize = size;
+      applyFit([{ x: sys.voxelX, z: sys.voxelZ }], { padVoxels: 40, minZoom: 8, maxZoom: 22 });
+      var framed = frameOf(lastSize.w, lastSize.h);
+      var pan = panToMarker(sys.voxelX, sys.voxelZ, 0, 1, view.zoom, framed, lastSize.w / 2, lastSize.h / 2);
       view.panX = pan.panX;
       view.panY = pan.panY;
       clampPan();
@@ -2151,22 +2427,64 @@
       ctx.restore();
     }
 
-    function paintLabel(ctx, text, x, y, color, base) {
+    var labelSlots = [];
+
+    function labelFont(ctx) {
       ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
-      ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      var w = ctx.measureText(text).width;
+    }
+
+    function labelRect(ctx, text, x, y, align) {
+      labelFont(ctx);
+      var tw = ctx.measureText(String(text || "")).width;
+      var left = align === "right" ? x - tw : (align === "center" ? x - tw / 2 : x);
+      return { l: left - 4, t: y - 10, r: left + tw + 6, b: y + 10, w: tw };
+    }
+
+    function labelBlocked(rect) {
+      for (var i = 0; i < labelSlots.length; i++) {
+        var slot = labelSlots[i];
+        if (rect.l < slot.r && rect.r > slot.l && rect.t < slot.b && rect.b > slot.t) return true;
+      }
+      return false;
+    }
+
+    function paintLabel(ctx, text, x, y, color, base) {
+      var rect = labelRect(ctx, text, x, y, "left");
+      labelSlots.push(rect);
+      ctx.textAlign = "left";
       ctx.fillStyle = withAlpha(base, 0.88);
-      ctx.fillRect(x - 3, y - 8, w + 8, 16);
+      ctx.fillRect(x - 3, y - 8, rect.w + 8, 16);
       ctx.fillStyle = color;
       ctx.fillText(text, x, y);
+    }
+
+    function paintLabelClear(ctx, text, x, y, color, base) {
+      var spots = [
+        { x: x, y: y },
+        { x: x, y: y - 18 },
+        { x: x, y: y + 18 },
+        { x: x - 12, y: y - 16 }
+      ];
+      var i;
+      for (i = 0; i < spots.length; i++) {
+        var rect = labelRect(ctx, text, spots[i].x, spots[i].y, "left");
+        if (labelBlocked(rect)) continue;
+        labelSlots.push(rect);
+        ctx.textAlign = "left";
+        ctx.fillStyle = withAlpha(base, 0.88);
+        ctx.fillRect(spots[i].x - 3, spots[i].y - 8, rect.w + 8, 16);
+        ctx.fillStyle = color;
+        ctx.fillText(text, spots[i].x, spots[i].y);
+        return true;
+      }
+      return false;
     }
 
     function paintName(ctx, text, x, y, off, color, base) {
       var name = String(text || "");
       if (name.length > 28) name = name.slice(0, 27) + "…";
-      ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
-      ctx.textBaseline = "middle";
+      labelFont(ctx);
       var tw = ctx.measureText(name).width;
       var r = off && off.radius > 1 ? off.radius : 0;
       var ux = r ? off.x / r : 1;
@@ -2184,6 +2502,8 @@
       ctx.fillRect(left - 3, ly - 8, tw + 8, 16);
       ctx.fillStyle = color;
       ctx.fillText(name, lx, ly);
+      var align = ctx.textAlign;
+      labelSlots.push(labelRect(ctx, name, lx, ly, align));
       ctx.textAlign = "left";
     }
 
@@ -2234,6 +2554,105 @@
       });
     }
 
+    function discoveryRingRadius(zoom, clustered) {
+      if (clustered) return zoom < 2 ? 14 : 16;
+      if (zoom < 1.6) return 9;
+      if (zoom < 4) return 11;
+      return 12;
+    }
+
+    function paintDiscoveryRing(ctx, x, y, radius, c, on) {
+      ctx.beginPath();
+      ctx.lineWidth = on ? 2.75 : 2.25;
+      ctx.strokeStyle = on ? c.accent : c.ink;
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.stroke();
+      if (!on) return;
+      var s = radius + 5;
+      ctx.beginPath();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = c.accent;
+      ctx.moveTo(x - s, y - s + 4);
+      ctx.lineTo(x - s, y - s);
+      ctx.lineTo(x - s + 4, y - s);
+      ctx.moveTo(x + s, y - s + 4);
+      ctx.lineTo(x + s, y - s);
+      ctx.lineTo(x + s - 4, y - s);
+      ctx.moveTo(x - s, y + s - 4);
+      ctx.lineTo(x - s, y + s);
+      ctx.lineTo(x - s + 4, y + s);
+      ctx.moveTo(x + s, y + s - 4);
+      ctx.lineTo(x + s, y + s);
+      ctx.lineTo(x + s - 4, y + s);
+      ctx.stroke();
+    }
+
+    function paintDiscoveries(ctx, c, w, h) {
+      if (!DiscoveryLib) return;
+      var systems = visibleDiscoveries();
+      var cell = DiscoveryLib.discoveryCellSize(view.zoom);
+      var projected = [];
+      systems.forEach(function (sys) {
+        var p = project(sys.voxelX, sys.voxelZ, w, h);
+        if (p.x < -96 || p.y < -96 || p.x > w + 96 || p.y > h + 96) return;
+        projected.push({ sys: sys, x: p.x, y: p.y, id: sys.id });
+      });
+      var nodes = DiscoveryLib.clusterScreenMarkers(projected, cell);
+      var labels = [];
+      var hitStart = hits.length;
+      nodes.forEach(function (node) {
+        if (node.clustered) {
+          node.items.forEach(function (marker) {
+            hits.push({ x: marker.x, y: marker.y, r: 10, kind: "discovery", id: marker.id });
+          });
+          var cid = "cluster:" + node.items.map(function (marker) { return marker.id; }).join(",");
+          var hot = state.hoverDiscovery === cid || node.items.some(function (marker) { return isSelected(marker.id); });
+          var radius = discoveryRingRadius(view.zoom, true);
+          paintDiscoveryRing(ctx, node.x, node.y, radius, c, hot);
+          paintBadge(ctx, node.items.length, node.x, node.y, c.ink, c.base);
+          hits.push({
+            x: node.x,
+            y: node.y,
+            r: radius + 8,
+            kind: "discovery-cluster",
+            id: cid,
+            members: node.items.map(function (marker) { return marker.sys; })
+          });
+          if (hot) labels.push({ text: node.items.length + " systems", x: node.x + radius + 8, y: node.y - radius, color: c.ink, priority: true });
+          return;
+        }
+        var marker = node.items[0];
+        var sys = marker.sys;
+        var on = isSelected(sys.id) || state.hoverDiscovery === sys.id;
+        var radius = discoveryRingRadius(view.zoom, false);
+        paintDiscoveryRing(ctx, marker.x, marker.y, radius, c, on);
+        hits.push({ x: marker.x, y: marker.y, r: radius + 6, kind: "discovery", id: marker.id });
+        if (sys.planetCount > 1 && view.zoom >= 6 && markerInView(marker.x, marker.y, w, h)) {
+          paintBadge(ctx, sys.planetCount, marker.x + radius - 8, marker.y - radius + 4, c.ink, c.base);
+        }
+        if (on || view.zoom >= 8) {
+          labels.push({
+            text: DiscoveryLib.discoveryMarkerLabel(sys),
+            x: marker.x + radius + 6,
+            y: marker.y,
+            color: on ? c.accent : c.ink,
+            priority: on
+          });
+        }
+      });
+      labels.sort(function (a, b) { return (b.priority ? 1 : 0) - (a.priority ? 1 : 0); });
+      labels.forEach(function (job) {
+        paintLabelClear(ctx, job.text, job.x, job.y, job.color, c.base);
+      });
+      if (hitStart < hits.length) {
+        var head = hits.splice(hitStart);
+        var tail = hits.splice(0, hits.length);
+        var hi;
+        for (hi = 0; hi < head.length; hi++) hits.push(head[hi]);
+        for (hi = 0; hi < tail.length; hi++) hits.push(tail[hi]);
+      }
+    }
+
     function draw() {
       var size = canvasSize();
       var w = size.w;
@@ -2255,6 +2674,7 @@
       ctx.drawImage(ensureStars(w, h, c), 0, 0, w, h);
       ctx.restore();
       hits = [];
+      labelSlots = [];
 
       if (!showCenter || showCenter.checked) {
         var core = project(0, 0, w, h);
@@ -2452,6 +2872,7 @@
       nameJobs.concat(pickedJobs).forEach(function (job) {
         paintName(ctx, job.text, job.x, job.y, job.off, c.accent, c.base);
       });
+      paintDiscoveries(ctx, c, w, h);
       refLabels.forEach(function (job) {
         paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
       });
@@ -2564,12 +2985,51 @@
       var gset = {};
       state.planetary.forEach(function (b) { if (b.galaxy != null) gset[b.galaxy] = 1; });
       state.freighters.forEach(function (b) { if (b.galaxy != null) gset[b.galaxy] = 1; });
+      state.discoveries.forEach(function (sys) { if (sys.galaxy != null) gset[sys.galaxy] = 1; });
       var gcount = Object.keys(gset).length;
       if (mGal) mGal.textContent = state.fileName ? String(gcount || 1) : "1";
       var selected = null;
       state.planetary.forEach(function (b) { if (b.id === state.selected) selected = b; });
       if (mCenter) {
         mCenter.textContent = selected ? formatLy(selected.lyCenter).replace(" ly", "") : "—";
+      }
+      var discShown = filteredDiscoveries();
+      var discTotals = DiscoveryLib ? DiscoveryLib.discoveryTotals(discShown) : null;
+      if (discMetrics) discMetrics.hidden = !state.discoveries.length;
+      if (discTotals) {
+        if (mDsys) mDsys.textContent = String(discTotals.systems);
+        if (mDplanets) mDplanets.textContent = String(discTotals.planets);
+        if (mDflora) mDflora.textContent = String(discTotals.flora);
+        if (mDfauna) mDfauna.textContent = String(discTotals.fauna);
+        if (mDminerals) mDminerals.textContent = String(discTotals.minerals);
+      }
+      if (discoveryWrap && discoveryList) {
+        discoveryWrap.hidden = !state.discoveries.length;
+        var orderedDisc = discShown.slice().sort(function (a, b) {
+          if (b.planetCount !== a.planetCount) return b.planetCount - a.planetCount;
+          return String(a.glyphs).localeCompare(String(b.glyphs));
+        });
+        discoveryOrder = orderedDisc.map(function (sys) { return sys.id; });
+        var cap = 120;
+        var shownDisc = orderedDisc.slice(0, cap);
+        if (!state.discoveries.length) {
+          discoveryList.innerHTML = "";
+        } else if (!orderedDisc.length) {
+          discoveryList.innerHTML = '<li class="empty">No discovered systems in this galaxy match the filters.</li>';
+        } else {
+          discoveryList.innerHTML = shownDisc.map(function (sys) {
+            var on = isSelected(sys.id);
+            var title = sys.systemName || sys.glyphs;
+            return '<li><button type="button" data-discovery="' + esc(sys.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+              '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(title) + "</span>" +
+              '<span class="meta">' + esc(sys.planetCount) + " planet" + (sys.planetCount === 1 ? "" : "s") +
+              " · " + esc(sys.flora) + " flora · " + esc(sys.fauna) + " fauna · " + esc(sys.minerals) + " minerals · " +
+              esc(galaxyLabel(sys.galaxy)) + "</span>" +
+              '<span class="glyphs">' + esc(sys.glyphs) + " · " + esc(sys.coords) + "</span></button></li>";
+          }).join("") + (orderedDisc.length > cap
+            ? '<li class="empty">Showing ' + cap + " of " + orderedDisc.length + " systems. Filter by glyphs or a planet name to narrow the list. The map still draws every system.</li>"
+            : "");
+        }
       }
       if (!baseList) return;
       var summaries = summariesFor(bases);
@@ -2645,22 +3105,35 @@
 
     function fillGalaxies() {
       if (!galaxySel) return;
-      var counts = Object.create(null);
+      var baseCounts = Object.create(null);
+      var discCounts = Object.create(null);
       state.planetary.concat(state.freighters).forEach(function (b) {
         var key = galaxyKey(b);
-        counts[key] = (counts[key] || 0) + 1;
+        baseCounts[key] = (baseCounts[key] || 0) + 1;
       });
-      if (!Object.keys(counts).length) counts[0] = 0;
-      var known = anyKnownGalaxy();
-      var ids = Object.keys(counts).map(function (k) { return Number(k); }).sort(function (a, b) { return a - b; });
-      if (state.fileName && counts[state.galaxy] == null) {
-        state.galaxy = ids.slice().sort(function (a, b) { return counts[b] - counts[a]; })[0];
+      state.discoveries.forEach(function (sys) {
+        var key = sys.galaxy == null ? 0 : sys.galaxy;
+        discCounts[key] = (discCounts[key] || 0) + 1;
+      });
+      if (!Object.keys(baseCounts).length && !Object.keys(discCounts).length) baseCounts[0] = 0;
+      var known = anyKnownGalaxy() || state.discoveries.some(function (sys) { return sys.galaxySource === "reality" || sys.galaxySource === "ua"; });
+      var idMap = Object.create(null);
+      Object.keys(baseCounts).forEach(function (k) { idMap[k] = true; });
+      Object.keys(discCounts).forEach(function (k) { idMap[k] = true; });
+      var ids = Object.keys(idMap).map(function (k) { return Number(k); }).sort(function (a, b) { return a - b; });
+      if (state.fileName && !idMap[state.galaxy]) {
+        state.galaxy = ids.slice().sort(function (a, b) {
+          return ((baseCounts[b] || 0) + (discCounts[b] || 0)) - ((baseCounts[a] || 0) + (discCounts[a] || 0));
+        })[0];
       }
       galaxySel.innerHTML = ids.map(function (id) {
         var name = (!known && id === 0)
           ? (state.fileName ? "Euclid frame" : "Euclid")
           : (id === -1 ? "Galaxy unknown" : galaxyLabel(id));
-        var label = name + (counts[id] ? " · " + counts[id] : "");
+        var bits = [];
+        if (baseCounts[id]) bits.push(baseCounts[id] + (baseCounts[id] === 1 ? " base" : " bases"));
+        if (discCounts[id]) bits.push(discCounts[id] + (discCounts[id] === 1 ? " system" : " systems"));
+        var label = name + (bits.length ? " · " + bits.join(" · ") : "");
         return '<option value="' + id + '">' + esc(label) + "</option>";
       }).join("");
       galaxySel.value = String(state.galaxy);
@@ -2684,7 +3157,24 @@
       var via = state.source === "hg" ? "Steam save" : (state.source === "json" ? "exported JSON" : (state.source === "browser" ? "this browser" : ""));
       var msg = state.fileName + (via ? " — " + via : "") + " — " + here + " planetary base" + (here === 1 ? "" : "s") +
         " on this map, " + freightHere + " freighter" + (freightHere === 1 ? "" : "s") + " listed aside.";
+      if (DiscoveryLib && state.discoveries.length) {
+        var shown = filteredDiscoveries();
+        var totals = DiscoveryLib.discoveryTotals(shown);
+        msg += " Discoveries here: " + totals.systems + " system" + (totals.systems === 1 ? "" : "s") +
+          ", " + totals.planets + " planet" + (totals.planets === 1 ? "" : "s") +
+          ", " + totals.flora + " flora, " + totals.fauna + " fauna, " + totals.minerals + " minerals.";
+        var elsewhere = DiscoveryLib.galaxyBreakdown(state.discoveries).filter(function (row) {
+          return row.galaxy !== state.galaxy;
+        });
+        if (elsewhere.length) {
+          msg += " Other galaxies: " + elsewhere.map(function (row) {
+            return galaxyLabel(row.galaxy) + " (" + row.systems + " system" + (row.systems === 1 ? "" : "s") +
+              ", " + row.planets + " planet" + (row.planets === 1 ? "" : "s") + ")";
+          }).join(", ") + ".";
+        }
+      }
       if (state.problems.length) msg += " " + state.problems.length + " entr" + (state.problems.length === 1 ? "y" : "ies") + " could not be read.";
+      msg += " Nothing was uploaded.";
       setStatus(msg);
     }
 
@@ -2696,12 +3186,24 @@
       summarize();
     }
 
-    function applyParsed(parsed, name, source) {
+    function applyParsed(parsed, discovered, name, source) {
       state.fileName = name || (source === "hg" ? "save.hg" : "save.json");
       state.source = source || "";
-      state.planetary = parsed.planetary;
-      state.freighters = parsed.freighters;
-      state.problems = parsed.problems;
+      state.planetary = parsed.planetary || [];
+      state.freighters = parsed.freighters || [];
+      state.problems = (parsed.problems || []).slice();
+      state.discoveries = (discovered && discovered.systems) || [];
+      state.discoveryProblems = (discovered && discovered.problems) || [];
+      if (DiscoveryLib) DiscoveryLib.placeDiscoveryGalaxies(state.discoveries, state.planetary.concat(state.freighters));
+      state.discoveryProblems.slice(0, 8).forEach(function (p) {
+        state.problems.push({ name: p.name || "Discovery", detail: p.detail });
+      });
+      if (state.discoveryProblems.length > 8) {
+        state.problems.push({
+          name: "Discoveries",
+          detail: (state.discoveryProblems.length - 8) + " more discovery records could not be read."
+        });
+      }
       state.selected = null;
       state.selection = [];
       state.anchorId = null;
@@ -2710,21 +3212,24 @@
       state.selectedRef = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverDiscovery = null;
       aim = null;
+      openDiscoveryId = null;
       renderPlacePanel(null);
-      var counts = Object.create(null);
-      parsed.planetary.forEach(function (b) {
-        if (b.galaxy == null) return;
-        counts[b.galaxy] = (counts[b.galaxy] || 0) + 1;
-      });
-      var ids = Object.keys(counts);
-      if (!ids.length) state.galaxy = 0;
-      else state.galaxy = Number(ids.sort(function (a, b) { return counts[b] - counts[a]; })[0]);
+      var baseGalaxy = DiscoveryLib ? DiscoveryLib.dominantBaseGalaxy(state.planetary.concat(state.freighters)) : null;
+      if (baseGalaxy != null) state.galaxy = baseGalaxy;
+      else if (state.discoveries.length && DiscoveryLib) {
+        var ranked = DiscoveryLib.galaxyBreakdown(state.discoveries).slice().sort(function (a, b) {
+          return b.systems - a.systems;
+        });
+        state.galaxy = ranked.length ? ranked[0].galaxy : 0;
+      } else state.galaxy = 0;
       if (showHubs) showHubs.checked = state.galaxy === 0;
       if (showRefs) showRefs.checked = state.galaxy === 0;
       resetView();
+      saveDiscoveryCache();
       refresh();
-      if (!parsed.planetary.length && parsed.freighters.length) {
+      if (!parsed.planetary.length && parsed.freighters.length && !state.discoveries.length) {
         setStatus("Only freighter bases were found. They stay off the map and are listed separately. Nothing was uploaded.");
       }
     }
@@ -2733,6 +3238,9 @@
       state.planetary = [];
       state.freighters = [];
       state.problems = [];
+      state.discoveries = [];
+      state.discoveryProblems = [];
+      saveDiscoveryCache();
       state.selected = null;
       state.selection = [];
       state.anchorId = null;
@@ -2764,14 +3272,21 @@
 
     function consumeSave(data, name, unmapped, source) {
       var parsed = extractBases(data);
-      if (parsed.error) {
+      var discovered = { records: [], systems: [], problems: [] };
+      try {
+        discovered = extractDiscoveries(data);
+      } catch (err) {
+        discovered = { records: [], systems: [], problems: [{ name: "Discoveries", detail: "Discovery records could not be read." }] };
+      }
+      if (parsed.error && !(discovered.systems && discovered.systems.length)) {
         fail(parsed.error);
         if (parsed.error === "missing" && unmapped) {
           setStatus("The local key map was applied, but no PlayerStateData was found under BaseContext or at the top level. Nothing was uploaded.");
         }
         return;
       }
-      applyParsed(parsed, name, source);
+      if (parsed.error) parsed = { planetary: [], freighters: [], problems: [] };
+      applyParsed(parsed, discovered, name, source);
       var api = logisticsApi();
       if (!api) return;
       var next = api.importSave(readLogistics() || api.emptyStore(), playerStateOf(data), {
@@ -2791,7 +3306,66 @@
         " Shared with the logistics planner in this browser. Nothing was uploaded.");
       renderLists();
       draw();
-      if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      renderSelection();
+    }
+
+    function readFiles(fileList) {
+      var files = Array.prototype.slice.call(fileList || []).filter(Boolean);
+      if (!files.length) return;
+      var tooBig = files.some(function (file) { return file.size > 48 * 1024 * 1024; });
+      if (tooBig) {
+        fail("big");
+        return;
+      }
+      var token = ++loadGen;
+      Promise.all(files.map(function (file) {
+        return new Promise(function (resolve) {
+          var reader = new FileReader();
+          reader.onload = function () { resolve({ name: file.name, buf: new Uint8Array(reader.result) }); };
+          reader.onerror = function () { resolve({ name: file.name, error: { code: "unknown" } }); };
+          reader.readAsArrayBuffer(file);
+        });
+      })).then(function (loaded) {
+        if (token !== loadGen) return null;
+        return Promise.all(loaded.map(function (item) {
+          if (!item || item.error || !item.buf) return Promise.resolve({ name: item && item.name, error: { code: "unknown" } });
+          return readSaveDocument(item.buf).then(function (opened) {
+            return { name: item.name, opened: opened };
+          }).catch(function (err) {
+            return { name: item.name, error: err || { code: "unknown" } };
+          });
+        }));
+      }).then(function (opened) {
+        if (!opened || token !== loadGen) return;
+        var good = opened.filter(function (item) { return item && item.opened; });
+        var bad = opened.filter(function (item) { return !item || !item.opened; });
+        if (!good.length) {
+          var err = (bad[0] && bad[0].error) || {};
+          var code = err.code;
+          if (code === "json") {
+            fail("json");
+            setStatus(err.format === "hg"
+              ? "The Steam save opened, but its contents were not readable JSON. Nothing was uploaded."
+              : "That file starts like JSON, but it could not be parsed. Export it again from NomNom or NMS Save Editor. Nothing was uploaded.");
+            return;
+          }
+          fail(code === "hg" || code === "binary" || code === "map" || code === "unknown" ? code : "unknown");
+          return;
+        }
+        var docs = good.map(function (item) { return item.opened.data; });
+        var data = docs.length === 1 ? docs[0] : mergeSaveDocuments(docs);
+        var label = good.map(function (item) { return item.name; }).join(" + ");
+        var unmapped = good.some(function (item) { return item.opened.unmapped; });
+        var source = good.some(function (item) { return item.opened.format === "hg"; }) ? "hg" : "json";
+        consumeSave(data, label, unmapped, source);
+        if (bad.length) {
+          setStatus((statusEl && statusEl.textContent ? statusEl.textContent + " " : "") +
+            bad.map(function (item) { return item.name || "A file"; }).join(", ") + " could not be read.");
+        }
+      }).catch(function () {
+        if (token !== loadGen) return;
+        fail("unknown");
+      });
     }
 
     function handleBytes(buf, name) {
@@ -2815,14 +3389,7 @@
 
     function readFile(file) {
       if (!file) return;
-      if (file.size > 48 * 1024 * 1024) {
-        fail("big");
-        return;
-      }
-      var reader = new FileReader();
-      reader.onload = function () { handleBytes(new Uint8Array(reader.result), file.name); };
-      reader.onerror = function () { setStatus("Could not read that file. Nothing was uploaded."); };
-      reader.readAsArrayBuffer(file);
+      readFiles([file]);
     }
 
     function markerSpot(id, size) {
@@ -2884,13 +3451,15 @@
       var h = hitTest(ev);
       var next = h && h.kind === "base" ? h.id : null;
       var nextRef = h && h.kind === "ref" ? h.id : null;
+      var nextDisc = h && (h.kind === "discovery" || h.kind === "discovery-cluster") ? h.id : null;
       var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
       canvas.style.cursor = h ? "pointer" : (selectMode ? "crosshair" : "grab");
-      var sameHover = next === state.hover && nextRef === state.hoverRef;
+      var sameHover = next === state.hover && nextRef === state.hoverRef && nextDisc === state.hoverDiscovery;
       var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
       if (sameHover && sameAim) return;
       state.hover = next;
       state.hoverRef = nextRef;
+      state.hoverDiscovery = nextDisc;
       aim = nextAim;
       draw();
     });
@@ -2898,9 +3467,10 @@
     if (mapWrap) {
       mapWrap.addEventListener("mouseleave", function () {
         if (drag) return;
-        if (!state.hover && !state.hoverRef && !aim) return;
+        if (!state.hover && !state.hoverRef && !state.hoverDiscovery && !aim) return;
         state.hover = null;
         state.hoverRef = null;
+        state.hoverDiscovery = null;
         aim = null;
         draw();
       });
@@ -2963,6 +3533,22 @@
         renderRefList();
         return;
       }
+      if (h.kind === "discovery-cluster") {
+        var members = h.members || [];
+        if (members.length === 1) {
+          chooseMarker(members[0].id, ev, discoveryOrder);
+          return;
+        }
+        var pts = members.map(function (sys) { return { x: sys.voxelX, z: sys.voxelZ }; });
+        applyFit(pts, { padVoxels: 24, minZoom: 8, maxZoom: 24 });
+        draw();
+        setStatus(members.length + " discovered systems. Zoomed in so each system can be selected. Nothing was uploaded.");
+        return;
+      }
+      if (h.kind === "discovery") {
+        chooseMarker(h.id, ev, discoveryOrder);
+        return;
+      }
       if (h.kind === "base" || h.kind === "freighter" || h.kind === "settlement" || h.kind === "system") {
         chooseMarker(h.id, ev, h.kind === "freighter" ? freightOrder : listOrder);
         return;
@@ -2996,8 +3582,16 @@
     });
     canvas.addEventListener("dblclick", function (ev) {
       var h = hitTest(ev);
-      if (!h || h.kind !== "base") return;
+      if (!h || (h.kind !== "base" && h.kind !== "discovery")) return;
       ev.preventDefault();
+      if (h.kind === "discovery") {
+        focusDiscovery(h.id);
+        renderLists();
+        draw();
+        var dbtn = discoveryList && discoveryList.querySelector('[data-discovery="' + h.id + '"]');
+        if (dbtn) dbtn.scrollIntoView({ block: "nearest" });
+        return;
+      }
       focusCluster(h.id);
       renderLists();
       draw();
@@ -3296,8 +3890,7 @@
 
     if (fileInput) {
       fileInput.addEventListener("change", function () {
-        var f = fileInput.files && fileInput.files[0];
-        if (f) readFile(f);
+        if (fileInput.files && fileInput.files.length) readFiles(fileInput.files);
       });
     }
 
@@ -3315,8 +3908,8 @@
         });
       });
       drop.addEventListener("drop", function (ev) {
-        var f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
-        if (f) readFile(f);
+        var files = ev.dataTransfer && ev.dataTransfer.files;
+        if (files && files.length) readFiles(files);
       });
     }
 
@@ -3334,6 +3927,7 @@
         state.selectedRef = null;
         state.hover = null;
         state.hoverRef = null;
+        state.hoverDiscovery = null;
         aim = null;
         renderPlacePanel(null);
         renderLists();
@@ -3347,6 +3941,7 @@
         state.filter = filterInput.value || "";
         state.hover = null;
         state.hoverRef = null;
+        state.hoverDiscovery = null;
         aim = null;
         renderLists();
         draw();
@@ -3436,12 +4031,15 @@
       state.planetary = [];
       state.freighters = [];
       state.problems = [];
+      state.discoveries = [];
+      state.discoveryProblems = [];
       state.selected = null;
       state.selection = [];
       state.anchorId = null;
       state.selectedRef = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverDiscovery = null;
       aim = null;
       state.filter = "";
       state.fileName = "";
@@ -3454,7 +4052,14 @@
       if (showCenter) showCenter.checked = true;
       if (showStock) showStock.checked = false;
       if (showProduction) showProduction.checked = false;
+      if (showDiscoveries) showDiscoveries.checked = true;
+      if (discPlanets) discPlanets.checked = true;
+      if (discSystems) discSystems.checked = true;
+      if (discFlora) discFlora.checked = false;
+      if (discFauna) discFauna.checked = false;
+      if (discMinerals) discMinerals.checked = false;
       if (itemFilter) itemFilter.value = "";
+      saveDiscoveryCache();
       view.zoom = 1;
       view.panX = 0;
       view.panY = 0;
@@ -3469,11 +4074,35 @@
 
     if (showStock) showStock.addEventListener("change", draw);
     if (showProduction) showProduction.addEventListener("change", draw);
+    [showDiscoveries, discPlanets, discSystems, discFlora, discFauna, discMinerals].forEach(function (box) {
+      if (!box) return;
+      box.addEventListener("change", function () {
+        renderLists();
+        draw();
+        summarize();
+      });
+    });
+    if (discoveryList) {
+      discoveryList.addEventListener("click", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-discovery]") : null;
+        if (!btn) return;
+        var id = btn.getAttribute("data-discovery");
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) {
+          commitSelection(rangeIds(discoveryOrder, state.anchorId, id));
+          return;
+        }
+        if (ev.ctrlKey || ev.metaKey) {
+          commitSelection(toggleId(state.selection, id), id);
+          return;
+        }
+        focusDiscovery(id);
+        commitSelection([id], id);
+      });
+    }
     if (itemFilter) itemFilter.addEventListener("input", function () {
       renderLists();
       draw();
-      if (state.selection.length > 1) renderAggregate();
-      else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      renderSelection();
     });
 
     window.addEventListener("resize", draw);
@@ -3496,22 +4125,74 @@
       if (showStock) showStock.checked = true;
     }
     if (showProduction && restored && restored.production && restored.production.length) showProduction.checked = true;
+    loadDiscoveryCache();
     refresh();
     if (state.source === "browser") {
       setStatus("Restored bases and inventory from this browser. Nothing was uploaded.");
     }
-    function openFromQuery() {
-      var api = logisticsApi();
-      if (!api) return;
-      var q = api.parsePlaceQuery(window.location.search);
-      if (!q.glyphs && !q.base) return;
-      var match = null;
-      state.planetary.concat(state.freighters).forEach(function (b) {
-        if (match) return;
-        if (q.glyphs && String(b.glyphs || "").toUpperCase() !== q.glyphs) return;
-        if (q.base && b.name !== q.base) return;
-        match = b;
+    function findDiscovery(q) {
+      if (!q || !q.glyphs) return null;
+      var g = String(q.glyphs).toUpperCase();
+      var exact = null;
+      var loose = null;
+      state.discoveries.forEach(function (sys) {
+        if (q.galaxy != null && Number(sys.galaxy) !== Number(q.galaxy)) return;
+        var glyphs = String(sys.glyphs || "").toUpperCase();
+        if (glyphs === g) exact = sys;
+        else if (g.length === 12 && glyphs.slice(1) === g.slice(1)) {
+          if (q.planet == null || (sys.planetList || []).some(function (planet) { return planet.index === q.planet; })) {
+            loose = loose || sys;
+          }
+        }
       });
+      return exact || loose;
+    }
+
+    function showDiscovery(sys, ids) {
+      if (!sys) return;
+      state.galaxy = sys.galaxy == null ? 0 : sys.galaxy;
+      if (galaxySel) galaxySel.value = String(state.galaxy);
+      if (showHubs) showHubs.disabled = state.galaxy !== 0;
+      if (showDiscoveries) showDiscoveries.checked = true;
+      focusDiscovery(sys.id);
+      commitSelection(ids || [sys.id], sys.id);
+    }
+
+    function openFromQuery() {
+      var params = new URLSearchParams(window.location.search);
+      var layer = params.get("layer") || "";
+      var api = logisticsApi();
+      var q = api ? api.parsePlaceQuery(window.location.search) : {
+        glyphs: String(params.get("place") || "").toUpperCase(),
+        planet: null,
+        galaxy: params.get("galaxy"),
+        base: params.get("base") || ""
+      };
+      if (q.galaxy != null && q.galaxy !== "" && isFinite(Number(q.galaxy))) q.galaxy = Number(q.galaxy);
+      else q.galaxy = null;
+      if (layer === "discovery" && params.get("places")) {
+        var ids = [];
+        String(params.get("places")).split(",").forEach(function (part) {
+          var hit = findDiscovery({ glyphs: part.trim().toUpperCase(), planet: null, galaxy: q.galaxy });
+          if (hit && ids.indexOf(hit.id) === -1) ids.push(hit.id);
+        });
+        if (ids.length) showDiscovery(discoveryById(ids[0]), ids);
+        return;
+      }
+      var match = null;
+      if (q.glyphs || q.base) {
+        state.planetary.concat(state.freighters).forEach(function (b) {
+          if (match) return;
+          if (q.glyphs && String(b.glyphs || "").toUpperCase() !== q.glyphs) return;
+          if (q.base && b.name !== q.base) return;
+          match = b;
+        });
+      }
+      var disc = findDiscovery(q);
+      if (disc && (layer === "discovery" || !match)) {
+        showDiscovery(disc);
+        return;
+      }
       if (!match) return;
       var freight = state.freighters.some(function (b) { return b.id === match.id; });
       if (match.galaxy != null) {
@@ -3533,8 +4214,7 @@
         logisticsApi().setItemNames(data);
         renderLists();
         draw();
-        if (state.selection.length > 1) renderAggregate();
-        else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+        renderSelection();
       }).catch(function () { /* unknown ids stay humanized */ });
       Promise.all([
         fetch("data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
@@ -3551,8 +4231,7 @@
         catalogIndex = logisticsApi().buildIndex(catalog);
         renderLists();
         draw();
-        if (state.selection.length > 1) renderAggregate();
-        else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+        renderSelection();
       }).catch(function () { /* names fall back to ids */ });
     }
   }
@@ -3567,6 +4246,8 @@
     decodeAddressField: decodeAddressField,
     quoteGalacticAddresses: quoteGalacticAddresses,
     extractBases: extractBases,
+    extractDiscoveries: extractDiscoveries,
+    mergeSaveDocuments: mergeSaveDocuments,
     playerStateOf: playerStateOf,
     looksBinary: looksBinary,
     hubMarks: hubMarks,
