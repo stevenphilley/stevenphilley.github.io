@@ -435,6 +435,20 @@
   }
 
   function nearestDeg(box, event) {
+    var dots = [].slice.call(box.querySelectorAll(".dot"));
+    var best = null;
+    var bestPx = 36;
+    dots.forEach(function (dot) {
+      var rect = dot.getBoundingClientRect();
+      var dx = event.clientX - (rect.left + rect.width / 2);
+      var dy = event.clientY - (rect.top + rect.height / 2);
+      var dist = Math.hypot(dx, dy);
+      if (dist <= bestPx) {
+        bestPx = dist;
+        best = Number(dot.getAttribute("data-deg"));
+      }
+    });
+    if (best != null) return best;
     var svg = box.querySelector("svg");
     var rect = svg.getBoundingClientRect();
     if (!rect.width || !rect.height) return null;
@@ -443,12 +457,11 @@
     var dx = x - CX;
     var dy = CY - y;
     var dist = Math.hypot(dx, dy);
-    if (dist < R * 0.48 || dist > R * 1.58) return null;
+    if (dist < R * 0.55 || dist > R * 1.45) return null;
     var ang = Math.atan2(dy, dx);
     if (ang < 0) ang += Math.PI * 2;
-    var best = null;
-    var bestDiff = 22 * Math.PI / 180;
-    [].slice.call(box.querySelectorAll(".dot")).forEach(function (dot) {
+    var bestDiff = 16 * Math.PI / 180;
+    dots.forEach(function (dot) {
       var deg = Number(dot.getAttribute("data-deg"));
       var diff = Math.abs(Math.atan2(Math.sin(ang - deg * Math.PI / 180), Math.cos(ang - deg * Math.PI / 180)));
       if (diff < bestDiff) {
