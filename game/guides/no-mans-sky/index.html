@@ -121,6 +121,10 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .place-loc ul,.place-demands{list-style:none;margin:0;padding:0}
 .place-loc li,.place-demands li{display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--line,#2c303a);padding:8px 0;font-family:"IBM Plex Mono",monospace;font-size:13px}
 .place-panel .empty{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted,#63666e)}
+.place-panel select,.place-panel input[type="text"]{font-family:"IBM Plex Mono",monospace;font-size:12px;color:inherit;background:transparent;border:1px solid var(--line,#2c303a);padding:4px 6px;max-width:100%}
+.place-prod{border-top:1px solid var(--line,#2c303a);padding:10px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.place-prod strong{color:inherit;font-weight:500}
+.swatch.prod{background:var(--accent-2,#00F0FF);border-radius:2px}
 .swatch.demand{background:transparent;border:1px dashed var(--accent-2,#00F0FF);border-radius:50%}
 @media (max-width:800px){
   .metrics,.columns{grid-template-columns:1fr 1fr}
@@ -200,13 +204,14 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <input id="filter" type="search" placeholder="Name, glyphs, coords" autocomplete="off">
       </label>
       <label class="field">Item
-        <input id="item-filter" type="search" placeholder="Chromatic Metal" autocomplete="off" aria-label="Highlight places that hold this item">
+        <input id="item-filter" type="search" placeholder="Chromatic Metal" autocomplete="off" aria-label="Highlight places that hold or produce this item">
       </label>
       <div class="checks">
         <label><input type="checkbox" id="show-center" checked> Galactic center</label>
         <label><input type="checkbox" id="show-hubs" checked> Euclid Hub marks</label>
         <label><input type="checkbox" id="show-refs" checked> Quadrant references</label>
         <label><input type="checkbox" id="show-stock"> Inventory badges</label>
+        <label><input type="checkbox" id="show-production"> Mining and farms</label>
       </div>
     </div>
   </div>
@@ -220,7 +225,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     </div>
     <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan. Zoom buttons follow the base under the pointer, or the selected base."></canvas>
   </div>
-  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory pinned there. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
+  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Pink circles are your planetary bases. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
@@ -228,6 +233,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <li><i class="swatch core" aria-hidden="true"></i> Galactic center</li>
     <li><i class="swatch dot" aria-hidden="true"></i> Badge — stacks at that place, or the searched item</li>
     <li><i class="swatch demand" aria-hidden="true"></i> Open plan demand</li>
+    <li><i class="swatch prod" aria-hidden="true"></i> M mining · F crops. A search also marks a base that produces the item.</li>
   </ul>
 
   <section id="place-panel" class="place-panel" hidden aria-labelledby="place-h">

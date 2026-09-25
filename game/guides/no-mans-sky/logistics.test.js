@@ -247,6 +247,78 @@ var badBackup = false;
 try { logistics.importDocument("{}"); } catch (err) { badBackup = true; }
 assert(badBackup, "a foreign JSON file is rejected");
 
+var produced = logistics.extractProduction(player, { decodeAddress: map.decodeAddressField });
+function site(id) {
+  var found = null;
+  produced.sites.forEach(function (row) { if (row.objectId === id) found = row; });
+  return found;
+}
+eq(site("U_EXTRACTOR_S").count, 2, "two mineral extractors are counted");
+eq(site("U_EXTRACTOR_S").resourceId, "", "an extractor resource is not invented");
+assert(logistics.rateOf(site("U_EXTRACTOR_S")) == null, "an extractor without a hotspot class has no rate");
+eq(site("U_SILO_S").count, 3, "supply depots are counted");
+eq(logistics.storageOf(site("U_SILO_S")).capacity, 3000, "depots add 1000 of capacity each");
+assert(!logistics.storageOf(site("U_SILO_S")).approximate, "depot capacity is the documented size");
+eq(site("U_PIPELINE").count, 2, "supply pipes are counted");
+assert(logistics.rateOf(site("U_PIPELINE")) == null, "a pipe has no rate");
+assert(logistics.rateOf(site("BUILDHARVESTER")) == null, "an AMU rate waits until the resource is named");
+eq(site("SNOWPLANT").count, 4, "frostwort plants are counted");
+eq(site("SNOWPLANT").resourceId, "frost-crystal", "frostwort produces frost crystal");
+eq(logistics.rateOf(site("SNOWPLANT")).perCycle, 200, "four frostwort yield about 200 per cycle");
+assert(logistics.rateOf(site("SNOWPLANT")).approximate, "a yield above 1 is approximate");
+eq(logistics.rateOf(site("SNOWPLANT")).perHour, 200, "frostwort is about 200 an hour");
+eq(site("PLANTER").kind, "tray", "a hydroponic tray is a container, not a crop");
+eq(site("BIOROOM").kind, "biodome", "a bio-dome is counted as a container");
+eq(site("WEIRDPLANT").known, false, "an unknown plant id stays raw");
+eq(site("WEIRDPLANT").resourceId, "", "an unknown plant is not given a crop");
+assert(!site("WALL"), "a wall is not production");
+assert(produced.skipped.some(function (row) { return row.id === "base-objects"; }), "a base without an Objects list is flagged");
+
+var withClass = logistics.setProduction({ production: [site("U_EXTRACTOR_S")], locations: [], projects: [] }, site("U_EXTRACTOR_S").id, {
+  resourceId: "copper",
+  hotspotClass: "S"
+});
+var copperMine = withClass.production[0];
+eq(copperMine.resourceId, "copper", "the user can name the extractor resource");
+assert(copperMine.resourceUser, "a named resource is marked user-entered");
+eq(logistics.rateOf(copperMine).perHour, 1250, "class S is an approximate ceiling of 625 per extractor");
+assert(logistics.rateOf(copperMine).approximate, "a hotspot ceiling is approximate");
+var hours = logistics.coverHours(2500, logistics.rateOf(copperMine).perHour);
+eq(hours, 2, "two hours of that ceiling covers 2500");
+assert(logistics.coverHours(10, null) == null, "a missing rate does not invent a time");
+
+var amu = logistics.setProduction({ production: [site("BUILDHARVESTER")], locations: [], projects: [] }, site("BUILDHARVESTER").id, { resourceId: "cobalt" });
+eq(logistics.rateOf(amu.production[0]).perHour, 250, "a named AMU uses the documented maximum");
+assert(logistics.rateOf(amu.production[0]).approximate, "the AMU maximum is approximate");
+
+var labeled = logistics.setProduction({ production: [site("WEIRDPLANT")], locations: [], projects: [] }, site("WEIRDPLANT").id, {
+  label: "Kelp",
+  resourceId: "kelp-sac"
+});
+eq(labeled.production[0].label, "Kelp", "an unknown plant can be labeled");
+eq(logistics.siteProductId(labeled.production[0]), "kelp-sac", "a label can name the harvest");
+
+var again = logistics.importSave(withClass, player, { decodeAddress: map.decodeAddressField });
+var keptMine = null;
+again.production.forEach(function (row) { if (row.objectId === "U_EXTRACTOR_S") keptMine = row; });
+eq(keptMine.resourceId, "copper", "re-import keeps the resource the user entered");
+eq(keptMine.hotspotClass, "S", "re-import keeps the hotspot class");
+eq(keptMine.count, 2, "re-import refreshes the extractor count from the save");
+
+var frostPlace = { glyphs: "2205D058AC1D", planet: 2, name: "Uthmi", type: "PlanetBase" };
+var frostMark = logistics.markerState({ locations: [], production: produced.sites, projects: [] }, frostPlace, "Frost Crystal", null);
+assert(frostMark.produces, "a search highlights a base that grows the item");
+assert(frostMark.hasQueryMatch, "production counts as a match even with no stock");
+eq(frostMark.produceCount, 4, "the frostwort count is the produce badge");
+assert(frostMark.farming, "frostwort marks the base as a farm");
+assert(frostMark.mining, "extractors mark the base as mining");
+assert(!logistics.markerState({ locations: [], production: produced.sites, projects: [] }, frostPlace, "glass", null).produces, "a crop the base does not grow is not a match");
+
+var makers = logistics.producersOf(again, "frost-crystal");
+eq(makers.length, 1, "the plan can see which base grows frost crystal");
+eq(makers[0].perCycle, 200, "the plan uses the harvest per cycle");
+eq(logistics.formatCover(logistics.coverHours(500, makers[0].perHour)), "2.5 h", "the shortfall names an approximate cover time");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

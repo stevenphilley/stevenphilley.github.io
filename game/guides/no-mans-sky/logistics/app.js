@@ -301,9 +301,31 @@
           var from = NmsLogistics.findLocation(store, move.fromId);
           return '<p class="done">Moved ' + esc(move.qty) + " from " + esc(from ? from.name : move.fromId) + "</p>";
         }).join("");
+        var growers = "";
+        if (report.shortfall > 0) {
+          var makers = NmsLogistics.producersOf(store, demand.itemId);
+          if (makers.length) {
+            growers = '<ul class="path">' + makers.map(function (row) {
+              var described = NmsLogistics.describeSite(row.site, index);
+              var where = (row.site.geo && row.site.geo.baseName) || "A base";
+              if (row.perHour) {
+                var cover = NmsLogistics.coverHours(report.shortfall, row.perHour);
+                var cycle = row.perCycle ? " · ~" + row.perCycle + " per harvest" : "";
+                return "<li>" + esc(where) + " · " + esc(described.name) + " × " + esc(row.site.count) +
+                  " · ~" + esc(Math.round(row.perHour)) + "/hr" + cycle +
+                  (cover != null ? " · about " + esc(NmsLogistics.formatCover(cover)) + " to cover the shortfall" : "") +
+                  (row.approximate ? " · approximate" : "") + "</li>";
+              }
+              var missing = (row.site.kind === "mineral" || row.site.kind === "gas")
+                ? "Set a hotspot class to estimate the time."
+                : "No documented rate for this part.";
+              return "<li>" + esc(where) + " · " + esc(described.name) + " × " + esc(row.site.count) + " · " + esc(missing) + "</li>";
+            }).join("") + "</ul>";
+          }
+        }
         return '<div class="check"><h3>' + esc(nodeName(demand.itemId)) + " · " + esc(demand.qty) + " → " + esc(target ? target.name : "missing hold") +
           "</h3><p>At target " + esc(report.atTarget) + " · elsewhere " + esc(report.elsewhere) + " · short " + esc(report.shortfall) + ".</p>" +
-          pending + done + path +
+          pending + done + growers + path +
           '<p><button type="button" data-drop-demand="' + esc(project.id) + '" data-demand="' + esc(demand.id) + '">Remove demand</button></p></div>';
       }).join("");
       return '<section class="check"><h2>' + esc(project.name) + (project.recipeFor ? " · " + esc(nodeName(project.recipeFor)) : "") +
@@ -312,10 +334,77 @@
     }).join("");
   }
 
+  function choiceOptions(current) {
+    var html = '<option value="">Not in the save</option>';
+    NmsLogistics.RESOURCE_CHOICES.forEach(function (pair) {
+      html += '<option value="' + esc(pair[0]) + '"' + (pair[0] === current ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
+    });
+    if (current && !NmsLogistics.RESOURCE_CHOICES.some(function (pair) { return pair[0] === current; })) {
+      html += '<option value="' + esc(current) + '" selected>' + esc(current) + "</option>";
+    }
+    return html;
+  }
+
+  function renderProduction() {
+    var mount = document.getElementById("production");
+    if (!mount) return;
+    var sites = store.production || [];
+    if (!sites.length) {
+      mount.innerHTML = "<p>No extractors or crops yet. Import a save that includes base objects, or the sample.</p>";
+      return;
+    }
+    var groups = {};
+    var order = [];
+    sites.forEach(function (site) {
+      var key = (site.geo && (site.geo.baseName || site.geo.glyphs)) || "Not on the map";
+      if (!groups[key]) { groups[key] = []; order.push(key); }
+      groups[key].push(site);
+    });
+    mount.innerHTML = order.map(function (key) {
+      var body = groups[key].map(function (site) {
+        var row = NmsLogistics.describeSite(site, index);
+        var bits = "<h3>" + esc(row.name) + "</h3><p>" + esc(site.count) + " · " + esc(site.objectId) + (site.known ? "" : " · raw id") + "</p>";
+        if (site.kind === "mineral" || site.kind === "gas" || site.kind === "amu" || !site.known) {
+          bits += '<p><label class="field">Resource<select data-prod="resourceId" data-id="' + esc(site.id) + '">' + choiceOptions(site.resourceId) + "</select></label> " +
+            (site.resourceUser ? "user-entered" : "not in the save") + "</p>";
+        } else if (row.productName) {
+          bits += "<p>" + esc(row.productName) + "</p>";
+        }
+        if (site.kind === "mineral" || site.kind === "gas") {
+          bits += '<p><label class="field">Hotspot<select data-prod="hotspotClass" data-id="' + esc(site.id) + '">' +
+            '<option value="">Class not in the save</option>' +
+            ["C", "B", "A", "S"].map(function (klass) {
+              return '<option value="' + klass + '"' + (site.hotspotClass === klass ? " selected" : "") + ">Class " + klass + "</option>";
+            }).join("") + "</select></label></p>";
+        }
+        if (site.kind === "crop") {
+          if (!site.known) {
+            bits += '<p><label class="field">Label<input data-prod="label" data-id="' + esc(site.id) + '" type="text" value="' + esc(site.label) + '" placeholder="Crop name"></label></p>';
+          }
+          bits += '<p><label class="field">Container<select data-prod="container" data-id="' + esc(site.id) + '">' +
+            [["", "Container not in the save"], ["tray", "Hydroponic Tray"], ["large-tray", "Large Hydroponic Tray"], ["biodome", "Bio-Dome"], ["standing", "Standing Planter"], ["outdoor", "Outdoor"]].map(function (pair) {
+              return '<option value="' + esc(pair[0]) + '"' + ((site.container || "") === pair[0] ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
+            }).join("") + "</select></label></p>";
+        }
+        if (row.rate) {
+          bits += "<p>~" + esc(Math.round(row.rate.perHour)) + "/hr" +
+            (row.rate.perCycle ? " · ~" + esc(row.rate.perCycle) + " per harvest" : "") +
+            " · approximate. " + esc(row.rate.note) + "</p>";
+        } else if (site.kind === "mineral" || site.kind === "gas") {
+          bits += "<p>No rate until a hotspot class is set.</p>";
+        }
+        if (row.storage) bits += "<p>Storage " + (row.storage.approximate ? "~" : "") + esc(row.storage.capacity) + ". " + esc(row.storage.note) + "</p>";
+        return "<article>" + bits + "</article>";
+      }).join("");
+      return "<article><h3>" + esc(key) + "</h3>" + body + "</article>";
+    }).join("");
+  }
+
   function render() {
     fillControls();
     renderMetrics();
     renderTable();
+    renderProduction();
     renderSkipped();
     renderPlan();
   }
@@ -604,6 +693,18 @@
     render();
     showTab("plan");
     setStatus("Pins are demands in Moodboard pins.");
+  });
+
+  var productionEl = document.getElementById("production");
+  if (productionEl) productionEl.addEventListener("change", function (ev) {
+    var el = ev.target;
+    if (!el || !el.getAttribute || !el.getAttribute("data-prod")) return;
+    var patch = {};
+    patch[el.getAttribute("data-prod")] = el.value;
+    store = NmsLogistics.setProduction(store, el.getAttribute("data-id"), patch);
+    persist();
+    render();
+    setStatus("Production updated in this browser. Nothing was uploaded.");
   });
 
   checklistEl.addEventListener("change", function (ev) {

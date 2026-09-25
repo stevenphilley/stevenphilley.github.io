@@ -79,6 +79,7 @@
       bases: { planetary: [], freighters: [], problems: [] },
       locations: [],
       projects: [],
+      production: [],
       skipped: []
     };
   }
@@ -614,13 +615,407 @@
     return out;
   }
 
+  // Placed parts use the product IDs from the No Man's Sky item list
+  // (nomanssky.fandom.com/wiki/Item_Id_List, mirrored on nomansskyresources.com):
+  //   U_EXTRACTOR_S Mineral Extractor, U_GASEXTRACTOR Gas Extractor,
+  //   BUILDHARVESTER Autonomous Mining Unit, U_SILO_S Supply Depot,
+  //   U_PIPELINE Supply Pipe, PLANTER / PLANTERMEGA hydroponic trays,
+  //   BIOROOM Bio-Dome, CARBONPLANTER Standing Planter,
+  //   SNOWPLANT, SCORCHEDPLANT, RADIOPLANT, TOXICPLANT, BARRENPLANT,
+  //   LUSHPLANT, CREATUREPLANT, POOPPLANT, NIPPLANT, GRAVPLANT,
+  //   SACVENOMPLANT, PEARLPLANT.
+  // Kelp Sac (PLANT_WATER) and Pugneum (ROBOT1) are substances, not planted
+  // part IDs, so they are not counted unless a raw part is labeled by hand.
+  //
+  // GcPersistentBaseEntry (MBINCompiler) stores ObjectID, Timestamp, UserData,
+  // Position, Up, At, and Message. UserData is a seed, not a substance id.
+  // The save does not record which hotspot resource an extractor pulls, the
+  // hotspot class, the live output, or which tray a plant sits in.
+  //
+  // Rates, cited and never applied unless the save or the user supplies the
+  // missing input:
+  //   Hotspot wiki (nomanssky.miraheze.org/wiki/Hotspot): at the center, a
+  //   mineral or gas extractor can at best do C 250, B 375, A 500, S 625
+  //   items per hour. Distance and per-network diminishing returns are not
+  //   in the object list, so a class only yields an approximate ceiling.
+  //   Mineral Extractor wiki: each extractor stores 250. The observed
+  //   outputs there (C about 225–250, B about 350–370, A 500, S about 610)
+  //   are why the ceiling stays approximate.
+  //   Supply Depot wiki: each depot adds 1000 storage. That is capacity,
+  //   not the amount currently inside.
+  //   Autonomous Mining Unit wiki: a fully charged unit harvests a maximum
+  //   of about 250 over roughly 60 minutes. Fuel and the deposit are not
+  //   in the save, so that rate is used only after the resource is named,
+  //   and it is marked approximate.
+  //   Farming wiki (nomanssky.miraheze.org/wiki/Farming, Orbital): grow time
+  //   and base yield. Yields above 1 vary by game mode, so they are approximate.
+  var HOTSPOT_MAX = { C: 250, B: 375, A: 500, S: 625 };
+  var EXTRACTOR_STORAGE = 250;
+  var DEPOT_STORAGE = 1000;
+  var AMU_MAX_PER_HOUR = 250;
+  var MINING_PARTS = {
+    U_EXTRACTOR_S: { kind: "mineral", name: "Mineral Extractor" },
+    U_GASEXTRACTOR: { kind: "gas", name: "Gas Extractor" },
+    BUILDHARVESTER: { kind: "amu", name: "Autonomous Mining Unit" },
+    U_SILO_S: { kind: "depot", name: "Supply Depot" },
+    U_PIPELINE: { kind: "pipe", name: "Supply Pipe" }
+  };
+  var CONTAINER_PARTS = {
+    PLANTER: { kind: "tray", name: "Hydroponic Tray" },
+    PLANTERMEGA: { kind: "large-tray", name: "Large Hydroponic Tray" },
+    BIOROOM: { kind: "biodome", name: "Bio-Dome" },
+    CARBONPLANTER: { kind: "standing", name: "Standing Planter" }
+  };
+  var CROP_PARTS = {
+    SNOWPLANT: { name: "Frostwort", product: "frost-crystal", productName: "Frost Crystal", growHours: 1, yield: 50 },
+    SCORCHEDPLANT: { name: "Solar Vine", product: "solanium", productName: "Solanium", growHours: 16, yield: 50 },
+    RADIOPLANT: { name: "Gamma Weed", product: "gamma-root", productName: "Gamma Root", growHours: 4, yield: 50 },
+    TOXICPLANT: { name: "Fungal Cluster", product: "fungal-mould", productName: "Fungal Mould", growHours: 4, yield: 50 },
+    BARRENPLANT: { name: "Echinocactus", product: "cactus-flesh", productName: "Cactus Flesh", growHours: 16, yield: 100 },
+    LUSHPLANT: { name: "Star Bramble", product: "star-bulb", productName: "Star Bulb", growHours: 4, yield: 25 },
+    CREATUREPLANT: { name: "Mordite Root", product: "mordite", productName: "Mordite", growHours: 8, yield: 25 },
+    POOPPLANT: { name: "Gutrot Flower", product: "faecium", productName: "Faecium", growHours: 4, yield: 25 },
+    NIPPLANT: { name: "NipNip", product: "nipnip-buds", productName: "NipNip Buds", growHours: 4, yield: 1 },
+    GRAVPLANT: { name: "Gravitino Host", product: "gravitino-ball", productName: "Gravitino Ball", growHours: 2, yield: 1 },
+    SACVENOMPLANT: { name: "Venom Urchin", product: "sac-venom", productName: "Sac Venom", growHours: 3.33, yield: 1 },
+    PEARLPLANT: { name: "Albumen Pearl Orb", product: "albumen-pearl", productName: "Albumen Pearl", growHours: 1.33, yield: 1 }
+  };
+  var RESOURCE_CHOICES = [
+    ["copper", "Copper"], ["activated-copper", "Activated Copper"],
+    ["cadmium", "Cadmium"], ["activated-cadmium", "Activated Cadmium"],
+    ["emeril", "Emeril"], ["activated-emeril", "Activated Emeril"],
+    ["indium", "Indium"], ["activated-indium", "Activated Indium"],
+    ["ammonia", "Ammonia"], ["basalt", "Basalt"], ["cobalt", "Cobalt"],
+    ["dioxite", "Dioxite"], ["gold", "Gold"], ["magnetised-ferrite", "Magnetised Ferrite"],
+    ["paraffinium", "Paraffinium"], ["phosphorus", "Phosphorus"], ["pyrite", "Pyrite"],
+    ["rusted-metal", "Rusted Metal"], ["salt", "Salt"], ["silver", "Silver"],
+    ["sodium", "Sodium"], ["uranium", "Uranium"],
+    ["oxygen", "Oxygen"], ["nitrogen", "Nitrogen"], ["radon", "Radon"], ["sulphurine", "Sulphurine"],
+    ["frost-crystal", "Frost Crystal"], ["solanium", "Solanium"], ["gamma-root", "Gamma Root"],
+    ["fungal-mould", "Fungal Mould"], ["cactus-flesh", "Cactus Flesh"], ["star-bulb", "Star Bulb"],
+    ["mordite", "Mordite"], ["faecium", "Faecium"], ["kelp-sac", "Kelp Sac"], ["pugneum", "Pugneum"]
+  ];
+
+  function objectIdOf(entry) {
+    if (!entry || typeof entry !== "object") return "";
+    var raw = entry.ObjectID != null ? entry.ObjectID : entry.objectId;
+    if (raw && typeof raw === "object") raw = raw.Value || raw.value || "";
+    return text(raw).toUpperCase();
+  }
+
+  function productionId(glyphs, baseName, objectId, index) {
+    var where = glyphs ? glyphs + ":" + norm(baseName || "") : "nogeo:" + index;
+    return "prod:" + where + ":" + objectId;
+  }
+
+  function extractProduction(player, options) {
+    options = options || {};
+    var decode = options.decodeAddress;
+    var sites = [];
+    var skipped = [];
+    var bases = Array.isArray(player && player.PersistentPlayerBases) ? player.PersistentPlayerBases : [];
+    var missingObjects = 0;
+    bases.forEach(function (base, index) {
+      if (!base || typeof base !== "object") return;
+      var list = base.Objects || base.objects;
+      if (!Array.isArray(list)) {
+        missingObjects += 1;
+        return;
+      }
+      var baseName = text(base.Name) || ("Base " + (index + 1));
+      var addr = base.GalacticAddress != null ? base.GalacticAddress : base.galacticAddress;
+      var geo = geoFromAddress(addr, decode, {
+        baseName: baseName,
+        baseType: text(base.BaseType && base.BaseType.PersistentBaseTypes) || "",
+        scope: "base",
+        strictBase: true
+      });
+      var counts = Object.create(null);
+      list.forEach(function (entry) {
+        var id = objectIdOf(entry);
+        if (!id || id.indexOf("BASE_") === 0) return;
+        var part = MINING_PARTS[id] || CONTAINER_PARTS[id] || CROP_PARTS[id];
+        var unknownCrop = !part && /PLANT$/.test(id) && id !== "WATERPLANT";
+        if (!part && !unknownCrop) return;
+        counts[id] = (counts[id] || 0) + 1;
+      });
+      Object.keys(counts).forEach(function (id) {
+        var mining = MINING_PARTS[id];
+        var container = CONTAINER_PARTS[id];
+        var crop = CROP_PARTS[id];
+        var kind = mining ? mining.kind : (container ? container.kind : "crop");
+        sites.push({
+          id: productionId(geo && geo.glyphs, baseName, id, index),
+          source: "save",
+          objectId: id,
+          kind: kind,
+          count: counts[id],
+          geo: geo,
+          resourceId: crop ? crop.product : "",
+          resourceUser: false,
+          hotspotClass: "",
+          container: "",
+          containerUser: false,
+          label: "",
+          labelUser: false,
+          known: !!crop || !!mining || !!container
+        });
+      });
+    });
+    if (missingObjects && bases.length) {
+      skipped.push({
+        id: "base-objects",
+        label: "Extractors and crops",
+        reason: missingObjects === bases.length
+          ? "No base included an Objects list. Placed extractors and crops are counted from that list when a save export has it. Nothing was invented."
+          : missingObjects + " base" + (missingObjects === 1 ? "" : "s") + " had no Objects list, so extractors and crops there were not read."
+      });
+    }
+    return { sites: sites, skipped: skipped };
+  }
+
+  function keepProductionEdits(previous, next) {
+    var prior = Object.create(null);
+    (previous || []).forEach(function (site) { if (site && site.id) prior[site.id] = site; });
+    return next.map(function (site) {
+      var old = prior[site.id];
+      if (!old) return site;
+      if (old.resourceUser && text(old.resourceId)) {
+        site.resourceId = text(old.resourceId);
+        site.resourceUser = true;
+      }
+      if (HOTSPOT_MAX[old.hotspotClass]) site.hotspotClass = old.hotspotClass;
+      if (old.labelUser) {
+        site.label = text(old.label);
+        site.labelUser = true;
+      }
+      if (old.containerUser && text(old.container)) {
+        site.container = text(old.container);
+        site.containerUser = true;
+      }
+      return site;
+    });
+  }
+
+  function cropSpec(objectId) {
+    return CROP_PARTS[text(objectId).toUpperCase()] || null;
+  }
+
+  function siteProductId(site) {
+    if (!site) return "";
+    if (text(site.resourceId)) return text(site.resourceId);
+    var crop = cropSpec(site.objectId);
+    return crop ? crop.product : "";
+  }
+
+  function rateOf(site) {
+    if (!site || !(site.count > 0)) return null;
+    var count = site.count;
+    if (site.kind === "mineral" || site.kind === "gas") {
+      var ceiling = HOTSPOT_MAX[site.hotspotClass];
+      if (!ceiling) return null;
+      return {
+        perHour: ceiling * count,
+        perCycle: null,
+        growHours: null,
+        approximate: true,
+        note: "Approximate ceiling of " + ceiling + "/hr per extractor at a class " + site.hotspotClass + " hotspot center. The save has no density and no pipe network, so the real rate can be lower."
+      };
+    }
+    if (site.kind === "amu") {
+      if (!text(site.resourceId)) return null;
+      return {
+        perHour: AMU_MAX_PER_HOUR * count,
+        perCycle: null,
+        growHours: null,
+        approximate: true,
+        note: "Approximate maximum for a fully charged Autonomous Mining Unit, about 250 in an hour. The save does not say if it is fueled or running."
+      };
+    }
+    var crop = cropSpec(site.objectId);
+    if (site.kind === "crop" && crop && crop.yield > 0 && crop.growHours > 0) {
+      return {
+        perHour: (crop.yield / crop.growHours) * count,
+        perCycle: crop.yield * count,
+        growHours: crop.growHours,
+        approximate: crop.yield > 1,
+        note: crop.name + " takes " + crop.growHours + " h and yields " + (crop.yield > 1 ? "about " : "") + crop.yield + " per plant. Yields above 1 vary by game mode."
+      };
+    }
+    return null;
+  }
+
+  function storageOf(site) {
+    if (!site || !(site.count > 0)) return null;
+    if (site.kind === "mineral" || site.kind === "gas") {
+      return { capacity: EXTRACTOR_STORAGE * site.count, approximate: false, note: "Extractor capacity. Not the amount sitting in it." };
+    }
+    if (site.kind === "depot") {
+      return { capacity: DEPOT_STORAGE * site.count, approximate: false, note: "Supply Depot capacity. Not the amount sitting in it." };
+    }
+    if (site.kind === "amu") {
+      return { capacity: AMU_MAX_PER_HOUR * site.count, approximate: true, note: "Documented full harvest of about 250. Not a live reading." };
+    }
+    return null;
+  }
+
+  function normalizeSite(site) {
+    if (!site || typeof site !== "object") return null;
+    var objectId = text(site.objectId).toUpperCase();
+    var id = text(site.id);
+    var count = posInt(site.count);
+    var kind = text(site.kind);
+    if (!id || !objectId || !count || !kind) return null;
+    var klass = text(site.hotspotClass).toUpperCase();
+    if (!HOTSPOT_MAX[klass]) klass = "";
+    var containers = { tray: 1, "large-tray": 1, biodome: 1, standing: 1, outdoor: 1 };
+    var container = text(site.container);
+    if (!containers[container]) container = "";
+    return {
+      id: id,
+      source: site.source === "manual" ? "manual" : "save",
+      objectId: objectId,
+      kind: kind,
+      count: count,
+      geo: site.geo && site.geo.glyphs ? site.geo : null,
+      resourceId: text(site.resourceId),
+      resourceUser: !!site.resourceUser,
+      hotspotClass: klass,
+      container: container,
+      containerUser: !!site.containerUser,
+      label: text(site.label),
+      labelUser: !!site.labelUser,
+      known: site.known !== false
+    };
+  }
+
+  function findSite(store, id) {
+    var found = null;
+    ((store && store.production) || []).forEach(function (site) { if (site.id === id) found = site; });
+    return found;
+  }
+
+  function setProduction(store, id, patch) {
+    store = normalize(store);
+    var site = findSite(store, id);
+    if (!site || !patch) return store;
+    if (Object.prototype.hasOwnProperty.call(patch, "resourceId")) {
+      site.resourceId = text(patch.resourceId);
+      site.resourceUser = true;
+    }
+    if (Object.prototype.hasOwnProperty.call(patch, "hotspotClass")) {
+      var klass = text(patch.hotspotClass).toUpperCase();
+      site.hotspotClass = HOTSPOT_MAX[klass] ? klass : "";
+    }
+    if (Object.prototype.hasOwnProperty.call(patch, "label")) {
+      site.label = text(patch.label);
+      site.labelUser = true;
+    }
+    if (Object.prototype.hasOwnProperty.call(patch, "container")) {
+      var containers = { "": 1, tray: 1, "large-tray": 1, biodome: 1, standing: 1, outdoor: 1 };
+      var container = text(patch.container);
+      if (containers[container] || container === "") {
+        site.container = container;
+        site.containerUser = true;
+      }
+    }
+    return store;
+  }
+
+  function sitesAtPlace(store, place, mode) {
+    return ((store && store.production) || []).filter(function (site) {
+      if (!site || !site.geo) return false;
+      if (mode === "planet") {
+        var geo = {
+          glyphs: site.geo.glyphs,
+          baseName: site.geo.baseName,
+          baseType: site.geo.baseType,
+          strictBase: false
+        };
+        return addressMatches(geo, place, "base");
+      }
+      return addressMatches(site.geo, place, mode || "base");
+    });
+  }
+
+  function siteMatchesQuery(site, query, index) {
+    var q = loose(query || "");
+    if (!q || !site) return false;
+    var crop = cropSpec(site.objectId);
+    var mining = MINING_PARTS[site.objectId];
+    var product = siteProductId(site);
+    var node = index && index.byId ? index.byId[product] : null;
+    var hay = loose([
+      site.objectId, site.label, site.kind, product,
+      crop && crop.name, crop && crop.productName,
+      mining && mining.name,
+      node && node.name
+    ].filter(Boolean).join(" "));
+    return hay.indexOf(q) !== -1;
+  }
+
+  function producersOf(store, itemId) {
+    var id = text(itemId);
+    var rows = [];
+    ((store && store.production) || []).forEach(function (site) {
+      if (!site || site.kind === "depot" || site.kind === "pipe" || site.kind === "tray" || site.kind === "large-tray" || site.kind === "biodome" || site.kind === "standing") return;
+      if (siteProductId(site) !== id) return;
+      var rate = rateOf(site);
+      rows.push({
+        site: site,
+        perHour: rate ? rate.perHour : null,
+        perCycle: rate ? rate.perCycle : null,
+        growHours: rate ? rate.growHours : null,
+        approximate: rate ? rate.approximate : false,
+        note: rate ? rate.note : ""
+      });
+    });
+    return rows;
+  }
+
+  function describeSite(site, index) {
+    var crop = cropSpec(site && site.objectId);
+    var mining = MINING_PARTS[site && site.objectId];
+    var box = CONTAINER_PARTS[site && site.objectId];
+    var product = siteProductId(site);
+    var node = index && index.byId ? index.byId[product] : null;
+    return {
+      site: site,
+      name: (site && site.label) || (crop && crop.name) || (mining && mining.name) || (box && box.name) || (site && site.objectId) || "",
+      product: product,
+      productName: (node && node.name) || (crop && crop.productName) || product,
+      rate: rateOf(site),
+      storage: storageOf(site),
+      crop: crop,
+      mining: mining,
+      box: box
+    };
+  }
+
+  function coverHours(shortfall, perHour) {
+    var need = Number(shortfall);
+    var rate = Number(perHour);
+    if (!(need > 0) || !(rate > 0) || !isFinite(need) || !isFinite(rate)) return null;
+    return need / rate;
+  }
+
+  function formatCover(hours) {
+    if (hours == null || !isFinite(hours)) return "";
+    if (hours < 1) return Math.max(1, Math.round(hours * 60)) + " min";
+    var rounded = Math.round(hours * 10) / 10;
+    return rounded + " h";
+  }
+
   function importSave(store, player, options) {
     store = normalize(store || emptyStore());
     options = options || {};
     var extracted = extractInventories(player, options);
+    var produced = extractProduction(player, options);
     var kept = store.locations.filter(function (loc) { return loc.source !== "save"; });
+    var manualSites = (store.production || []).filter(function (site) { return site.source === "manual"; });
     store.locations = extracted.locations.concat(kept);
-    store.skipped = extracted.skipped;
+    store.production = keepProductionEdits(store.production, produced.sites).concat(manualSites);
+    store.skipped = extracted.skipped.concat(produced.skipped);
     if (options.bases) {
       store.bases = {
         planetary: options.bases.planetary || [],
@@ -766,6 +1161,10 @@
     (Array.isArray(store.skipped) ? store.skipped : []).forEach(function (row) {
       if (!row || !row.reason) return;
       base.skipped.push({ id: text(row.id) || uid("skip"), label: text(row.label) || "Skipped", reason: text(row.reason) });
+    });
+    (Array.isArray(store.production) ? store.production : []).forEach(function (site) {
+      var next = normalizeSite(site);
+      if (next) base.production.push(next);
     });
     return base;
   }
@@ -1175,12 +1574,29 @@
       });
     });
     var open = demandsAtPlace(store, place, "base").some(function (row) { return row.report.need > 0; });
+    var sites = sitesAtPlace(store, place, "base");
+    var mining = false;
+    var farming = false;
+    var produces = false;
+    var produceCount = 0;
+    sites.forEach(function (site) {
+      if (site.kind === "mineral" || site.kind === "gas" || site.kind === "amu") mining = true;
+      if (site.kind === "crop") farming = true;
+      if (q && siteMatchesQuery(site, q, index)) {
+        produces = true;
+        produceCount += site.count;
+      }
+    });
     return {
       locations: locs.length,
       lines: lines,
       units: units,
       matchQty: q ? matchQty : null,
-      hasQueryMatch: q ? matchQty > 0 : null,
+      hasQueryMatch: q ? (matchQty > 0 || produces) : null,
+      produces: q ? produces : null,
+      produceCount: q ? produceCount : 0,
+      mining: mining,
+      farming: farming,
       unmet: open
     };
   }
@@ -1306,6 +1722,7 @@
   function clearImported(store) {
     store = normalize(store);
     store.locations = store.locations.filter(function (loc) { return loc.source !== "save"; });
+    store.production = (store.production || []).filter(function (site) { return site.source !== "save"; });
     store.bases = { planetary: [], freighters: [], problems: [] };
     store.skipped = [];
     store.source = null;
@@ -1351,6 +1768,22 @@
     demandsAtPlace: demandsAtPlace,
     markerState: markerState,
     formatBadge: formatBadge,
+    HOTSPOT_MAX: HOTSPOT_MAX,
+    CROP_PARTS: CROP_PARTS,
+    MINING_PARTS: MINING_PARTS,
+    RESOURCE_CHOICES: RESOURCE_CHOICES,
+    extractProduction: extractProduction,
+    rateOf: rateOf,
+    storageOf: storageOf,
+    setProduction: setProduction,
+    sitesAtPlace: sitesAtPlace,
+    siteProductId: siteProductId,
+    siteMatchesQuery: siteMatchesQuery,
+    producersOf: producersOf,
+    coverHours: coverHours,
+    formatCover: formatCover,
+    cropSpec: cropSpec,
+    describeSite: describeSite,
     searchStock: searchStock,
     summarizeSearch: summarizeSearch,
     sortRows: sortRows,

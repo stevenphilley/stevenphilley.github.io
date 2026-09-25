@@ -920,6 +920,7 @@
     var showHubs = document.getElementById("show-hubs");
     var showRefs = document.getElementById("show-refs");
     var showStock = document.getElementById("show-stock");
+    var showProduction = document.getElementById("show-production");
     var itemFilter = document.getElementById("item-filter");
     var placePanel = document.getElementById("place-panel");
     var placeBody = document.getElementById("place-body");
@@ -1013,6 +1014,122 @@
       return found;
     }
 
+    function resourceOptions(current) {
+      var api = logisticsApi();
+      var html = '<option value="">Not in the save</option>';
+      if (!api) return html;
+      api.RESOURCE_CHOICES.forEach(function (pair) {
+        html += '<option value="' + esc(pair[0]) + '"' + (pair[0] === current ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
+      });
+      if (current && !api.RESOURCE_CHOICES.some(function (pair) { return pair[0] === current; })) {
+        html += '<option value="' + esc(current) + '" selected>' + esc(current) + "</option>";
+      }
+      return html;
+    }
+
+    function classOptions(current) {
+      var html = '<option value="">Class not in the save</option>';
+      ["C", "B", "A", "S"].forEach(function (klass) {
+        html += '<option value="' + klass + '"' + (klass === current ? " selected" : "") + ">Class " + klass + "</option>";
+      });
+      return html;
+    }
+
+    function containerOptions(current) {
+      var choices = [
+        ["", "Container not in the save"],
+        ["tray", "Hydroponic Tray"],
+        ["large-tray", "Large Hydroponic Tray"],
+        ["biodome", "Bio-Dome"],
+        ["standing", "Standing Planter"],
+        ["outdoor", "Outdoor"]
+      ];
+      return choices.map(function (pair) {
+        return '<option value="' + esc(pair[0]) + '"' + (pair[0] === (current || "") ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
+      }).join("");
+    }
+
+    function productionHtml(api, store, place, catalogIdx) {
+      var mode = placeMode === "system" ? "system" : "base";
+      var sites = api.sitesAtPlace(store, place, mode);
+      var planet = mode === "base" ? api.sitesAtPlace(store, place, "planet") : sites;
+      function tally(list, kind) {
+        var n = 0;
+        list.forEach(function (site) { if (site.kind === kind) n += site.count; });
+        return n;
+      }
+      var html = '<h3 class="place-sub">Mining</h3>';
+      var mining = sites.filter(function (site) {
+        return site.kind === "mineral" || site.kind === "gas" || site.kind === "amu" || site.kind === "depot" || site.kind === "pipe";
+      });
+      if (!mining.length) {
+        html += '<p class="empty">No extractors, depots, or pipes were in this place’s object list.</p>';
+      }
+      mining.forEach(function (site) {
+        var row = api.describeSite(site, catalogIdx);
+        var where = site.geo && site.geo.baseName ? site.geo.baseName + " · " : "";
+        html += '<div class="place-prod"><strong>' + esc(where + row.name) + "</strong> · " + esc(site.count);
+        if (site.kind === "mineral" || site.kind === "gas" || site.kind === "amu") {
+          html += '<div><label>Resource <select data-prod="resourceId" data-id="' + esc(site.id) + '">' + resourceOptions(site.resourceId) + "</select></label>";
+          if (site.resourceUser) html += " · user-entered";
+          else html += " · not in the save";
+          html += "</div>";
+        }
+        if (site.kind === "mineral" || site.kind === "gas") {
+          html += '<div><label>Hotspot <select data-prod="hotspotClass" data-id="' + esc(site.id) + '">' + classOptions(site.hotspotClass) + "</select></label></div>";
+        }
+        if (row.rate) html += "<div>~" + esc(Math.round(row.rate.perHour)) + "/hr · approximate. " + esc(row.rate.note) + "</div>";
+        else if (site.kind === "mineral" || site.kind === "gas") html += "<div>No rate until a hotspot class is set. The save does not include one.</div>";
+        else if (site.kind === "amu") html += "<div>No rate until the resource is named. A fueled unit’s maximum is about 250 an hour.</div>";
+        if (row.storage) html += "<div>Storage " + (row.storage.approximate ? "~" : "") + esc(row.storage.capacity) + ". " + esc(row.storage.note) + "</div>";
+        html += "</div>";
+      });
+      html += '<h3 class="place-sub">Crops</h3>';
+      var crops = sites.filter(function (site) { return site.kind === "crop"; });
+      var boxes = sites.filter(function (site) {
+        return site.kind === "tray" || site.kind === "large-tray" || site.kind === "biodome" || site.kind === "standing";
+      });
+      if (!crops.length && !boxes.length) {
+        html += '<p class="empty">No planted crops or planters were in this place’s object list.</p>';
+      }
+      if (boxes.length) {
+        html += '<p class="place-meta">' + boxes.map(function (site) {
+          var row = api.describeSite(site, catalogIdx);
+          return esc(row.name) + " · " + esc(site.count);
+        }).join(" · ") + ". The save does not say which crop is in which container.</p>";
+      }
+      crops.forEach(function (site) {
+        var row = api.describeSite(site, catalogIdx);
+        var where = site.geo && site.geo.baseName ? site.geo.baseName + " · " : "";
+        html += '<div class="place-prod"><strong>' + esc(where + (site.known ? row.name : site.objectId)) + "</strong> · " + esc(site.count);
+        if (!site.known) {
+          html += '<div><label>Label <input type="text" data-prod="label" data-id="' + esc(site.id) + '" value="' + esc(site.label) + '" placeholder="Crop name"></label></div>';
+          html += '<div><label>Harvest <select data-prod="resourceId" data-id="' + esc(site.id) + '">' + resourceOptions(site.resourceId) + "</select></label>";
+          html += site.resourceUser ? " · user-entered" : " · not in the save";
+          html += "</div>";
+        } else {
+          html += "<div>" + esc(row.productName || row.product);
+          if (row.crop) html += " · " + esc(row.crop.growHours) + " h · " + (row.crop.yield > 1 ? "about " : "") + esc(row.crop.yield) + " each";
+          html += "</div>";
+        }
+        html += '<div><label>Container <select data-prod="container" data-id="' + esc(site.id) + '">' + containerOptions(site.container) + "</select></label>";
+        if (site.containerUser) html += " · user-entered";
+        html += "</div>";
+        if (row.rate && row.rate.perCycle) {
+          html += "<div>~" + esc(row.rate.perCycle) + " per harvest" + (row.rate.approximate ? " · approximate" : "") + " · ~" + esc(Math.round(row.rate.perHour)) + "/hr</div>";
+        }
+        html += "</div>";
+      });
+      if (planet.length > sites.length) {
+        html += '<p class="place-meta">Planet total · ' + tally(planet, "mineral") + " mineral extractors · " +
+          tally(planet, "gas") + " gas extractors · " + tally(planet, "crop") + " crops, across every base at this address.</p>";
+      } else if (mode === "system") {
+        html += '<p class="place-meta">System total · ' + tally(sites, "mineral") + " mineral extractors · " +
+          tally(sites, "gas") + " gas extractors · " + tally(sites, "crop") + " crops.</p>";
+      }
+      return html;
+    }
+
     function renderPlacePanel(place, heading) {
       if (!placePanel || !placeBody) return;
       openPlace = place;
@@ -1081,11 +1198,21 @@
       } else {
         html += '<p class="place-meta">No open demands for this ' + (placeMode === "system" ? "system" : "place") + ".</p>";
       }
+      html += productionHtml(api, store, place, catalogIndex);
       placeBody.innerHTML = html;
       var scopeBtn = document.getElementById("place-scope");
       if (scopeBtn) scopeBtn.addEventListener("click", function () {
         placeMode = placeMode === "system" ? "base" : "system";
         renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      });
+      placeBody.querySelectorAll("[data-prod]").forEach(function (el) {
+        el.addEventListener("change", function () {
+          var patch = {};
+          patch[el.getAttribute("data-prod")] = el.value;
+          writeLogistics(api.setProduction(readLogistics() || api.emptyStore(), el.getAttribute("data-id"), patch));
+          renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+          draw();
+        });
       });
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () {
@@ -1520,7 +1647,8 @@
           var on = state.selected === b.id || state.hover === b.id;
           var query = itemFilter ? String(itemFilter.value || "").trim() : "";
           var shade = !!(showStock && showStock.checked);
-          var mark = (shade || query) ? stockMark(b) : null;
+          var showProd = !!(showProduction && showProduction.checked);
+          var mark = (shade || query || showProd) ? stockMark(b) : null;
           ctx.save();
           if (query && mark && mark.hasQueryMatch === false) ctx.globalAlpha = 0.35;
           ctx.beginPath();
@@ -1551,6 +1679,13 @@
             var badge = query ? formatStockBadge(mark.matchQty || 0) : formatStockBadge(mark.lines);
             if (badge && badge !== "0") paintBadge(ctx, badge, x - 18, y, mark.unmet ? c.accent2 : c.accent, c.base);
           }
+          if (query && mark && mark.produces && !(mark.matchQty > 0) && !stacked && markerInView(x, y, w, h)) {
+            var grown = formatStockBadge(mark.produceCount || 0);
+            if (grown && grown !== "0") paintBadge(ctx, grown, x - 18, y, c.accent2, c.base);
+          }
+          if (showProd && mark && !query && (mark.mining || mark.farming) && !stacked && markerInView(x, y, w, h)) {
+            paintBadge(ctx, (mark.mining ? "M" : "") + (mark.farming ? "F" : ""), x + 8, y, c.accent2, c.base);
+          }
           hits.push({ x: x, y: y, r: stacked ? 18 : 14, kind: "base", id: b.id });
           if (markerInView(x, y, w, h) && (on || showNames || (group.length === 1 && view.zoom >= LABEL_ZOOM))) {
             (on ? pickedJobs : nameJobs).push({ text: b.name, x: x, y: y, off: off });
@@ -1572,6 +1707,18 @@
             });
             var pileBadge = pileQuery ? formatStockBadge(pileMatch) : formatStockBadge(pileLines);
             if (pileBadge && pileBadge !== "0") paintBadge(ctx, pileBadge, anchor.x - 22, anchor.y + 8, pileUnmet ? c.accent2 : c.accent, c.base);
+            if (showProduction && showProduction.checked && !pileQuery) {
+              var pileMine = false;
+              var pileFarm = false;
+              group.forEach(function (member) {
+                var pile = stockMark(member);
+                if (!pile) return;
+                if (pile.mining) pileMine = true;
+                if (pile.farming) pileFarm = true;
+              });
+              var pileTag = (pileMine ? "M" : "") + (pileFarm ? "F" : "");
+              if (pileTag) paintBadge(ctx, pileTag, anchor.x + 16, anchor.y + 8, c.accent2, c.base);
+            }
           }
         }
       });
@@ -1807,6 +1954,7 @@
       });
       writeLogistics(next);
       if (showStock && next.locations.length) showStock.checked = true;
+      if (showProduction && next.production && next.production.length) showProduction.checked = true;
       var held = next.locations.length;
       var flagged = next.skipped.length;
       setStatus((statusEl && statusEl.textContent ? statusEl.textContent + " " : "") +
@@ -2297,6 +2445,7 @@
       if (showRefs) { showRefs.checked = true; showRefs.disabled = false; }
       if (showCenter) showCenter.checked = true;
       if (showStock) showStock.checked = false;
+      if (showProduction) showProduction.checked = false;
       if (itemFilter) itemFilter.value = "";
       view.zoom = 1;
       view.panX = 0;
@@ -2311,6 +2460,7 @@
     });
 
     if (showStock) showStock.addEventListener("change", draw);
+    if (showProduction) showProduction.addEventListener("change", draw);
     if (itemFilter) itemFilter.addEventListener("input", function () {
       draw();
       if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
@@ -2335,6 +2485,7 @@
       state.source = "browser";
       if (showStock) showStock.checked = true;
     }
+    if (showProduction && restored && restored.production && restored.production.length) showProduction.checked = true;
     refresh();
     if (state.source === "browser") {
       setStatus("Restored bases and inventory from this browser. Nothing was uploaded.");
