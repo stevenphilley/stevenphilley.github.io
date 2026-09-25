@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Opposition — an outer planet opposite the Sun — Steven Philley</title>
+<meta name="description" content="Interactive opposition desk: Earth between the Sun and Mars, so an outer planet stands opposite the Sun. Conjunction hides it near the Sun. Quadrature is the right angle. Classroom circles, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/opposition/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Opposition — an outer planet opposite the Sun">
+<meta property="og:description" content="Top-down Sun, Earth, and Mars. Play one schematic synodic lap: opposition, quadrature, conjunction. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/opposition/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Opposition — an outer planet opposite the Sun">
+<meta name="twitter:description" content="Why an outer planet is opposite the Sun at opposition, and lost near the Sun at conjunction. Schematic circles.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.earth{background:#6ea4b8}
+.swatch.mars{background:#c45c3e}
+.swatch.lit{background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.6;color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a href="/">Steven Philley</a>
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <a href="/sitemap.html">Site contents</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <div class="themes" role="group" aria-label="Color theme">
+        <button type="button" data-set-theme="neon">Neon</button>
+        <button type="button" data-set-theme="emerald">Emerald</button>
+        <button type="button" data-set-theme="dusk">Dusk</button>
+        <button type="button" data-set-theme="sage">Sage</button>
+        <button type="button" data-set-theme="tide">Tide</button>
+        <button type="button" data-set-theme="sand">Sand</button>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/" aria-current="page">Opposition</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Lineup</p>
+  <h1>Opposition<br>opposite the Sun</h1>
+  <p class="lede">Mars orbits outside Earth’s orbit, so it is a <strong>superior</strong> planet. The lesson is not a crescent. It is where Mars sits relative to the Sun. <strong>Opposition</strong> puts Earth in the middle — Sun, Earth, Mars in a line — so Mars is opposite the Sun in the sky. On a classroom cartoon that means it rises around sunset and stands highest near midnight. <strong>Conjunction</strong> puts the Sun in the middle: Mars is on the far side, near the Sun, and hard to see. <strong>Quadrature</strong> is the right angle at Earth, east or west, midway in angle between those lineups. Venus does not do this. Venus is an inferior planet; its extremes are elongations, on the <a href="/science/astronomy/venus/">Venus</a> desk. The backward loop around opposition is Earth lapping Mars, on the <a href="/science/astronomy/retrograde/">retrograde</a> desk — the orbit does not reverse. Pair it with the <a href="/science/astronomy/">solar map</a> (where the planets sit) and with <a href="/science/gravity/">gravity</a>, the pull that keeps both worlds on their tracks.</p>
+  <p class="note-schematic">Educational schematic — circular orbits, flattened onto one plane, disks exaggerated so a phone can see them. Earth is held on the right so the angle at Earth is easy to read. The Mars marker walks clockwise on that frozen view because Earth is the faster world; the orbit arrows stay counterclockwise. Circle radii use the semimajor-axis ratio on NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars Fact Sheet</a>, 1.524. That sheet lists Mars’s eccentricity as 0.0935 and its orbit inclination as 1.848°. Not an ephemeris. Not a date of the next Mars opposition. Not for pointing a telescope from Campbell or anywhere else. This cartoon does not print magnitudes.</p>
+
+  <p class="band">Interactive · Top-down</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">North up · Earth held on the right · orbit arrows still counterclockwise</p>
+      <canvas id="orbit" width="880" height="720" role="img" aria-label="Top-down schematic. Sun at the center, Earth held on the right, Mars on the outer circle. Opposition: Earth between the Sun and Mars. Educational cartoon, not an ephemeris."></canvas>
+      <p class="hint strip-label" id="sky-hint">As seen from Earth · toward the Sun, or opposite it · cartoon, not a chart</p>
+      <canvas id="sky" width="880" height="200" role="img" aria-label="Sky strip. Mars is opposite the Sun. Classroom cartoon, not a finder chart."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch earth" aria-hidden="true"></span> Earth · inner, faster</li>
+        <li><span class="swatch mars" aria-hidden="true"></span> Mars · outer / superior</li>
+        <li><span class="swatch lit" aria-hidden="true"></span> Angle at Earth</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="lap">From opposition</label>
+          <input type="range" id="lap" min="0" max="779.94" step="0.5" value="0" aria-valuemin="0" aria-valuemax="780" aria-valuenow="0" aria-valuetext="Opposition, schematic day 0">
+          <span class="date-val" id="lap-val">0 d</span>
+        </div>
+        <div class="presets" role="group" aria-label="Opposition, quadrature, and conjunction presets">
+          <button type="button" id="btn-opp" data-jump="opposition" aria-pressed="true">Opposition</button>
+          <button type="button" id="btn-east" data-jump="east" aria-pressed="false">Quadrature (east)</button>
+          <button type="button" id="btn-con" data-jump="conjunction" aria-pressed="false">Conjunction</button>
+          <button type="button" id="btn-west" data-jump="west" aria-pressed="false">Quadrature (west)</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Opposition · opposite the Sun · schematic</p>
+      <h2 id="r-title">Opposition</h2>
+      <p class="range" id="r-range">Earth between the Sun and Mars</p>
+      <ul class="stats">
+        <li><span class="k">Sky</span><span class="v" id="r-sky">Opposite the Sun · rises ~sunset</span></li>
+        <li><span class="k">Angle at Earth</span><span class="v" id="r-angle">180° · schematic</span></li>
+        <li><span class="k">Separation</span><span class="v" id="r-dist">0.524 × Earth circle</span></li>
+        <li><span class="k">Regime</span><span class="v" id="r-line">Opposition</span></li>
+        <li><span class="k">This drawing</span><span class="v" id="r-day">Day 0 from opposition</span></li>
+      </ul>
+      <p class="why" id="r-why">Sun, Earth, and Mars are in a line, with Earth in the middle. From here Mars is opposite the Sun. On a classroom cartoon it rises around sunset and stands highest near midnight. The separation on these circles is as small as the lap gets. This is not a magnitude, and it is not a date.</p>
+      <p class="cadence" id="r-cadence">NASA’s Mars Fact Sheet lists a synodic period of 779.94 days, and sidereal orbit periods of 686.980 days for Mars and 365.256 days for Earth. Mean orbital velocity is 24.08 km/s for Mars and 29.78 km/s for Earth. The inner orbit is the faster one. One slider lap is that 779.94-day count. Play is not those speeds, and it is not a clock of the next opposition.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Opposition is geometry, not a tug on Earth">
+    <p class="tag">Geometry · not astrology</p>
+    <h2>Not a tug on Earth</h2>
+    <p>Opposition is not planets lining up to push weather, moods, or a week. It is a way of seeing. Earth sits between the Sun and an outer planet, so that planet stands opposite the Sun. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a> calls it a good time to observe an outer planet, because it is then nearest and in its fullest phase. Nothing in that chapter says the lineup acts on Earth. The same word, for the Moon, is simply full Moon — Earth approximately between the Moon and the Sun. The backward loop near this moment is <a href="/science/astronomy/retrograde/">retrograde</a>: Earth lapping Mars. The orbit still does not reverse.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the lineup</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Opposition</dt><dd><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a>: Earth and the outer planet on the same side of the Sun, all three in a line. The Moon, when full, is in opposition to the Sun; Earth is then approximately between them. The chapter calls opposition a good time to observe, because the planet is nearest and in its fullest phase. <a href="https://www.nasa.gov/blogs/watch-the-skies/2020/10/09/its-all-about-mars-in-october/" rel="noopener" target="_blank">A 2020 NASA sky note</a> describes that lineup from the ground: Mars rises at sunset and is high around midnight, and looks larger and brighter because it is closer. The miles, “third brightest,” and the 2035 date on that page belong to October 2020. This slider does not print a magnitude. Mars’s eccentricity on the fact sheet is 0.0935, so a real closest approach can miss the instant. These circles do not time it. The loop around the passing is the <a href="/science/astronomy/retrograde/">retrograde</a> desk.</dd></div>
+    <div class="gloss"><dt>Conjunction</dt><dd>For a superior planet, only a superior conjunction. Basics of Space Flight: Earth and the planet on opposite sides of the Sun, nearly in a straight line, Sun between. The planet passes closest to the Sun as seen from Earth. The 2020 note’s contrast is the far one: Mars and Earth are far apart, so Mars appears small and faint. That is not Venus’s inferior conjunction, where the planet sits between Earth and the Sun. Venus never reaches opposition in this sense. Its desk is <a href="/science/astronomy/venus/">elongations</a>.</dd></div>
+    <div class="gloss"><dt>Quadrature</dt><dd>The right-angle case. <a href="https://eclipse.gsfc.nasa.gov/TYPE/preface.html" rel="noopener" target="_blank">A NASA GSFC ephemeris preface</a> maps solar elongation like this: 0° is solar conjunction, 90° east is eastern quadrature, 180° is opposition, and 90° west is western quadrature. Eastern elongations place the planet in the evening sky; western elongations place it in the morning sky. On these circles the Sun–Earth–Mars angle is 90° at those two presets. The degree on the panel is the cartoon, drawn from the 1.524 ratio. The space-flight chapter names opposition and conjunction; it does not use the word quadrature, so this desk does not pretend that it does.</dd></div>
+    <div class="gloss"><dt>Synodic period</dt><dd>The repeat of the same Sun–Earth–Mars alignment. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars Fact Sheet</a> lists it as 779.94 days. Sidereal orbit periods on that sheet are 686.980 days for Mars and 365.256 days for Earth. The 2020 sky note says oppositions happen about every two years and two months. This slider counts 779.94 days instead of turning that phrase into a new figure. It does not name the next opposition over Campbell.</dd></div>
+    <div class="gloss"><dt>Superior planet</dt><dd>Basics of Space Flight: Mars, Jupiter, Saturn, Uranus, and Neptune are superior planets because their orbits are farther from the Sun than Earth’s, not because they rank higher. They usually appear gibbous, and full at opposition; at superior conjunction the chapter says the outer planet appears near its fully illuminated phase, still lost near the Sun. Inferior planets — Mercury and Venus — can never be at opposition from Earth’s point of view. Their apparent angle from the Sun is an elongation. That lesson is the <a href="/science/astronomy/venus/">Venus</a> desk. This drawing uses Mars as the outer planet. The same lineup words apply to the other superior planets; the circle ratio here is Mars’s.</dd></div>
+    <div class="gloss gloss-wide"><dt>Bright, on a cartoon</dt><dd>Closer on these circles is opposition. Farther is conjunction. The 2020 NASA note says the near pass looks larger and brighter, and the far lineup looks small and faint. <a href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/jan2025-night-sky-notes/" rel="noopener" target="_blank">NASA’s January 2025 Night Sky Notes</a> say Mars increases in brightness as it reaches opposition, and that opposition is when a planet is directly opposite the Sun. The fact sheet also lists an apparent visual magnitude and a maximum apparent visual magnitude. Those are not a position on this slider, so they are not printed. No magnitude, no arcseconds, and no “next opposition” date.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-2/" rel="noopener" target="_blank">NASA Science — Basics of Space Flight, Chapter 1</a> — Mercury and Venus are inferior planets because their orbits are closer to the Sun than Earth’s; Mars through Neptune are superior planets because their orbits are farther out. Superior planets usually appear gibbous and appear full at opposition. They have only superior conjunctions: Earth and the planet on opposite sides of the Sun. At superior conjunction the outer planet appears near its fully illuminated phase. Opposition puts Earth and the outer planet on the same side of the Sun, all three in a line — the same word as a full Moon, with Earth approximately between. Opposition is a good time to observe because the planet is nearest and in its fullest phase. Inferior planets can never be at opposition from Earth’s point of view.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — semimajor-axis ratio 1.524; sidereal orbit periods 686.980 days (Mars) and 365.256 days (Earth); synodic period 779.94 days; mean orbital velocity 24.08 km/s (Mars) and 29.78 km/s (Earth); eccentricity 0.0935; inclination 1.848°. Those means set the circles. They are not a nightly position. The sheet’s apparent visual magnitude, maximum apparent visual magnitude, and apparent diameter are not printed on this slider.</li>
+      <li><a href="https://eclipse.gsfc.nasa.gov/TYPE/preface.html" rel="noopener" target="_blank">NASA GSFC — Twelve Year Planetary Ephemeris, preface</a> — solar elongation runs from 0° to 180°, east or west of the Sun. Eastern elongations place the planet in the evening sky; western elongations place it in the morning sky. Elongations of 0°, 90° east, 180°, and 90° west correspond to solar conjunction, eastern quadrature, opposition, and western quadrature.</li>
+      <li><a href="https://www.nasa.gov/blogs/watch-the-skies/2020/10/09/its-all-about-mars-in-october/" rel="noopener" target="_blank">NASA — It’s All About Mars in October (2020)</a> — at opposition Earth passes near Mars, which is easily visible and bright; at conjunction Mars and Earth are far apart, so Mars appears small and faint. Because the Sun, Earth, and Mars are lined up, Mars rises at sunset and is high overhead at midnight, and proximity makes it appear larger and brighter. The miles, the “third brightest” ranking, and the September 2035 date on that page are that season, not this slider. The page’s “about every two years and two months” is not converted into a day count here.</li>
+      <li><a href="https://science.nasa.gov/solar-system/skywatching/night-sky-network/jan2025-night-sky-notes/" rel="noopener" target="_blank">NASA Science — January’s Night Sky Notes: The Red Planet</a> — opposition is when a planet is directly opposite the Sun as seen from Earth; Mars increases in brightness approaching that opposition, and it is also when Mars is closest to Earth. The December 2024–February 2025 dates on that page belong to that season.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of an outer planet opposite the Sun, then lost near it. Not an ephemeris, not a pointing aid, and not a Campbell observing plan. Days on the slider are a coordinate of these circles, counted from a schematic opposition. The angle is the Sun–Earth–Mars angle on the cartoon. Separation is the distance between the circle points, in Earth-circle units, from the fact sheet’s 1.524 ratio — not a published range to Mars. Periods and that ratio are the ones NASA publishes on the pages above. This cartoon does not print magnitudes. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth and Mars sit among the planets — day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/retrograde/"><p class="n">Passing</p><h3>Retrograde</h3><p>The backward loop around this opposition. Earth laps Mars. The orbit arrows do not flip.</p></a>
+    <a href="/science/astronomy/venus/"><p class="n">Inner orbit</p><h3>Venus</h3><p>Elongations, not opposition. Venus stays inside Earth’s orbit and runs through phases.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Earth’s axis, about 23.4°, kept parallel. Not the Sun–Earth–Mars angle on this desk.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>A full Moon is a lunar opposition, plus a node. This desk is a planet, not that shadow.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Why the inner orbit is the quicker one, and why the lineup comes back around.</p></a>
+  </div>
+
+  <footer class="foot">
+    <a href="/science/astronomy/">Astronomy</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/gravity/">Gravity</a>
+    <a href="/science/">Science</a>
+    <a href="/sitemap.html">Site contents</a>
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Circle model uses NASA Mars Fact Sheet mean elements (see sources).
+     Radii ratio 1.524; synodic period 779.94 d.
+     Sidereal periods 686.980 d (Mars) and 365.256 d (Earth) are cited, not a second clock.
+     Days are counted from a schematic opposition. Not an ephemeris. */
+  var RM = 1.524;
+  var TSYN = 779.94;
+  var TAU = Math.PI * 2;
+  var QDAY = Math.acos(1 / RM) / TAU * TSYN;
+  var PLAY_DPD = 16;
+  var PRE = {
+    opposition: 0,
+    east: QDAY,
+    conjunction: TSYN / 2,
+    west: TSYN - QDAY
+  };
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var orbitCanvas = document.getElementById("orbit");
+  var skyCanvas = document.getElementById("sky");
+  var slider = document.getElementById("lap");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-jump]"));
+  var state = { t: PRE.opposition, playing: false };
+  var hashDay = /(?:^|[?#&])day=([0-9.]+)/.exec(String(location.hash || "") + String(location.search || ""));
+  if (hashDay) state.t = clamp(parseFloat(hashDay[1]) || 0, 0, TSYN);
+  var raf = 0;
+  var lastT = 0;
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function len(x, y){ return Math.sqrt(x * x + y * y); }
+  function wrapDay(t){
+    var x = t % TSYN;
+    if (x < 0) x += TSYN;
+    return x;
+  }
+  function marsOf(t){
+    var alpha = TAU * (wrapDay(t) / TSYN);
+    var th = -alpha;
+    return { x: RM * Math.cos(th), y: RM * Math.sin(th), th: th };
+  }
+  function geom(t){
+    var m = marsOf(t);
+    var toSunX = -1, toSunY = 0;
+    var toMX = m.x - 1, toMY = m.y;
+    var dMars = len(toMX, toMY);
+    var cos = dMars === 0 ? 1 : (toSunX * toMX + toSunY * toMY) / dMars;
+    var ang = Math.acos(clamp(cos, -1, 1));
+    var lonM = Math.atan2(toMY, toMX);
+    var lonS = Math.PI;
+    var elong = lonM - lonS;
+    while (elong > Math.PI) elong -= TAU;
+    while (elong <= -Math.PI) elong += TAU;
+    return { ang: ang, elong: elong, dist: dMars, lonM: lonM, lonS: lonS, m: m };
+  }
+  function dayNum(t){
+    var n = Math.round(wrapDay(t));
+    if (n >= Math.round(TSYN)) n = 0;
+    return n;
+  }
+  function dayLabel(t){
+    var n = dayNum(t);
+    if (n === 0) return "0 d";
+    return "+" + n + " d";
+  }
+  function nearPreset(t){
+    var w = wrapDay(t);
+    var best = "";
+    var bestD = 1e9;
+    var keys = ["opposition", "east", "conjunction", "west"];
+    var i;
+    for (i = 0; i < keys.length; i++){
+      var target = PRE[keys[i]];
+      var d = Math.abs(w - target);
+      if (keys[i] === "opposition") d = Math.min(d, Math.abs(w - TSYN));
+      if (d < bestD){ bestD = d; best = keys[i]; }
+    }
+    return bestD < 12 ? best : "";
+  }
+  function distText(d){
+    return d.toFixed(3) + " × Earth circle";
+  }
+  function distWords(d){
+    var dMin = RM - 1;
+    var dMax = RM + 1;
+    var u = (d - dMin) / (dMax - dMin);
+    if (u < 0.18) return "Closest on these circles";
+    if (u > 0.82) return "Farthest on these circles";
+    return "In between on these circles";
+  }
+  function skyWords(g, preset){
+    if (preset === "opposition" || g.ang > 2.85) return "Opposite the Sun · rises ~sunset";
+    if (preset === "conjunction" || g.ang < 0.22) return "Near the Sun";
+    if (preset === "east" || (Math.abs(g.ang - Math.PI / 2) < 0.12 && g.elong > 0)) return "~90° east of the Sun";
+    if (preset === "west" || (Math.abs(g.ang - Math.PI / 2) < 0.12 && g.elong < 0)) return "~90° west of the Sun";
+    return g.elong >= 0 ? "East of the Sun · evening side" : "West of the Sun · morning side";
+  }
+  function copyFor(t){
+    var g = geom(t);
+    var deg = Math.round(g.ang * 180 / Math.PI);
+    var preset = nearPreset(t);
+    var day = dayLabel(t);
+    var nDay = dayNum(t);
+    var dayLong = "Day " + (nDay === 0 ? "0" : "+" + nDay) + " from opposition";
+    var sky = skyWords(g, preset);
+    var base = {
+      sky: sky,
+      angle: deg + "° · schematic",
+      dist: distText(g.dist),
+      day: dayLong,
+      slider: day + " · " + deg + "° at Earth"
+    };
+    if (preset === "opposition"){
+      base.tier = "Opposition · opposite the Sun · schematic";
+      base.title = "Opposition";
+      base.range = "Earth between the Sun and Mars";
+      base.line = "Opposition";
+      base.sky = "Opposite the Sun · rises ~sunset";
+      base.angle = "180° · schematic";
+      base.dist = distText(RM - 1);
+      base.why = "Sun, Earth, and Mars are in a line, with Earth in the middle. NASA calls that opposition: the outer planet and Earth on the same side of the Sun. From the ground Mars is opposite the Sun. A 2020 NASA sky note describes that lineup as rising at sunset and high around midnight, and as larger and brighter because Mars is closer. The miles and the ranking on that page were October 2020. This cartoon does not print a magnitude. The separation here is as small as these circles get. The backward loop around this passing is the retrograde desk — Earth lapping Mars — not a reversed orbit.";
+      return base;
+    }
+    if (preset === "conjunction"){
+      base.tier = "Superior conjunction · near the Sun · schematic";
+      base.title = "Conjunction";
+      base.range = "Sun between Earth and Mars";
+      base.line = "Superior conjunction";
+      base.sky = "Near the Sun";
+      base.angle = "0° · schematic";
+      base.dist = distText(RM + 1);
+      base.why = "Mars is on the far side of the Sun. NASA’s space-flight chapter: a superior planet has only a superior conjunction, Earth and the planet on opposite sides, nearly in a line. Mars is then near the Sun in the sky and hard to see. The 2020 note calls that far geometry small and faint. This page does not print a magnitude, and the separation is as large as these circles get. It is not Venus’s inferior conjunction. Venus sits between Earth and the Sun and never reaches this kind of opposition.";
+      return base;
+    }
+    if (preset === "east"){
+      base.tier = "Eastern quadrature · evening · schematic";
+      base.title = "East quadrature";
+      base.range = "Right angle at Earth · evening side";
+      base.line = "Eastern quadrature";
+      base.sky = "~90° east of the Sun";
+      base.angle = "90° · schematic";
+      base.why = "The Sun–Earth–Mars angle on these circles is a right angle, on the evening side of the lap. NASA’s GSFC ephemeris preface names a 90° eastern elongation eastern quadrature, and says eastern elongations place the planet in the evening sky. It is the midway case between opposite the Sun and lost near the Sun. Still a schematic angle, not an almanac, and still not a place to point a telescope from Campbell.";
+      return base;
+    }
+    if (preset === "west"){
+      base.tier = "Western quadrature · morning · schematic";
+      base.title = "West quadrature";
+      base.range = "Right angle at Earth · morning side";
+      base.line = "Western quadrature";
+      base.sky = "~90° west of the Sun";
+      base.angle = "90° · schematic";
+      base.why = "The same right angle, on the morning side. NASA’s GSFC preface calls 90° west of the Sun western quadrature, and says western elongations place the planet in the morning sky. On the slider this comes after conjunction and before the next opposition. The orbit has not changed direction. Earth is still the faster world; this view only holds Earth still so the angle is easy to read.";
+      return base;
+    }
+    var east = g.elong >= 0 && g.ang < 2.85;
+    if (g.ang > 2.85){
+      base.tier = "Near opposition · schematic";
+      base.title = "Near opposition";
+      base.range = distWords(g.dist);
+      base.line = "Near opposition";
+      base.why = "Mars is nearly opposite the Sun. Earth is nearly between the two. A little off the exact lineup, the sky note is still the classroom one: opposite the Sun, up most of the night. The Opposition preset sits on the line itself. The retrograde loop lives in this neighborhood, on the other desk.";
+      return base;
+    }
+    if (g.ang < 0.22){
+      base.tier = "Near conjunction · schematic";
+      base.title = "Near conjunction";
+      base.range = distWords(g.dist);
+      base.line = "Near superior conjunction";
+      base.why = "Mars is nearly on the far side of the Sun, so in the sky it sits near the Sun. Superior conjunction is the lineup in the middle of that glare. Do not go looking for it beside the Sun with this page.";
+      return base;
+    }
+    if (Math.abs(g.ang - Math.PI / 2) < 0.14){
+      base.tier = (east ? "Near eastern quadrature" : "Near western quadrature") + " · schematic";
+      base.title = east ? "Near east quadrature" : "Near west quadrature";
+      base.range = "Near a right angle at Earth";
+      base.line = east ? "Near eastern quadrature" : "Near western quadrature";
+      base.why = east
+        ? "About 90° east of the Sun on this cartoon — the evening side. The Quadrature (east) preset is the exact right angle. A little off that mark, Mars is still well clear of the Sun and still well short of opposition."
+        : "About 90° west of the Sun on this cartoon — the morning side. The Quadrature (west) preset is the exact right angle. Morning side here means before the next opposition on this lap, not a clock for Campbell.";
+      return base;
+    }
+    if (east){
+      base.tier = "Evening side · east of the Sun · schematic";
+      base.title = "Evening side";
+      base.range = distWords(g.dist);
+      base.line = "East of the Sun";
+      base.why = "Mars is east of the Sun, so on a classroom sky it is an evening object: up after sunset, not opposite the Sun yet and not lost in the glare. Eastern quadrature is the right angle on this side. Opposition was the start of the lap. Conjunction is the far-side end.";
+      return base;
+    }
+    base.tier = "Morning side · west of the Sun · schematic";
+    base.title = "Morning side";
+    base.range = distWords(g.dist);
+    base.line = "West of the Sun";
+    base.why = "Mars has come through conjunction and sits west of the Sun. On a classroom sky that is the morning side, climbing back toward opposition. Western quadrature is the right angle on the way. Venus would be doing a crescent here. Mars, outside our orbit, does not.";
+    return base;
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+
+  function screen(L, ang, r){
+    return { x: L.cx + Math.cos(ang) * r, y: L.cy - Math.sin(ang) * r };
+  }
+
+  function drawOrbit(cssW){
+    var cssH = Math.round(clamp(cssW * 0.92, 300, 560));
+    var ctx = fitCanvas(orbitCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var g = geom(state.t);
+    var copy = copyFor(state.t);
+    var pad = 36;
+    var marsOrbit = Math.min(cssW, cssH) * 0.5 - pad;
+    marsOrbit = Math.max(108, marsOrbit);
+    var earthOrbit = marsOrbit / RM;
+    var L = { cx: cssW * 0.5, cy: cssH * 0.5, earthOrbit: earthOrbit, marsOrbit: marsOrbit };
+    var sunR = clamp(Math.min(cssW, cssH) * 0.04, 11, 20);
+    var earthDisk = clamp(earthOrbit * 0.07, 7, 12);
+    var marsDisk = clamp(earthDisk * 0.72, 6, 10);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, earthOrbit, 0, TAU);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, marsOrbit, 0, TAU);
+    ctx.stroke();
+
+    function arrowOn(orbitR, ang, color){
+      var p = screen(L, ang, orbitR);
+      var tangent = ang + Math.PI / 2;
+      var bx = Math.cos(tangent);
+      var by = -Math.sin(tangent);
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(p.x + bx * 11, p.y + by * 11);
+      ctx.lineTo(p.x - by * 4.2, p.y - bx * 4.2);
+      ctx.lineTo(p.x + by * 4.2, p.y + bx * 4.2);
+      ctx.closePath();
+      ctx.fill();
+    }
+    arrowOn(earthOrbit, Math.PI * 0.72, "rgba(110,164,184,0.9)");
+    arrowOn(marsOrbit, Math.PI * 1.15, "rgba(196,92,62,0.95)");
+
+    var e = screen(L, 0, earthOrbit);
+    var m = screen(L, g.m.th, marsOrbit);
+
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = soft;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 1.15;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(L.cx, L.cy);
+    ctx.stroke();
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.95;
+    ctx.lineWidth = 1.35;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(m.x, m.y);
+    ctx.stroke();
+    ctx.restore();
+
+    var sweep = g.elong;
+    if (Math.abs(Math.abs(sweep) - Math.PI) < 1e-6) sweep = Math.PI;
+    var arcR = clamp(earthDisk + 16, 22, 34);
+    ctx.beginPath();
+    var steps = 24;
+    var i;
+    for (i = 0; i <= steps; i++){
+      var a = g.lonS + sweep * (i / steps);
+      var p = { x: e.x + Math.cos(a) * arcR, y: e.y - Math.sin(a) * arcR };
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+
+    if (Math.abs(g.ang - Math.PI / 2) < 0.05){
+      var s = 9;
+      var ux = Math.cos(g.lonS), uy = -Math.sin(g.lonS);
+      var vx = Math.cos(g.lonM), vy = -Math.sin(g.lonM);
+      var ox = e.x + ux * s + vx * s;
+      var oy = e.y + uy * s + vy * s;
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.15;
+      ctx.beginPath();
+      ctx.moveTo(e.x + ux * s, e.y + uy * s);
+      ctx.lineTo(ox, oy);
+      ctx.lineTo(e.x + vx * s, e.y + vy * s);
+      ctx.stroke();
+    }
+
+    var glow = ctx.createRadialGradient(L.cx, L.cy, sunR * 0.2, L.cx, L.cy, sunR * 2.8);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR * 2.8, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(L.cx, L.cy, sunR, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#fff8e8";
+    ctx.beginPath();
+    ctx.arc(L.cx - sunR * 0.22, L.cy - sunR * 0.18, sunR * 0.42, 0, TAU);
+    ctx.fill();
+
+    ctx.fillStyle = "#6ea4b8";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, earthDisk, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,225,0.65)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    ctx.fillStyle = "#c45c3e";
+    ctx.beginPath();
+    ctx.arc(m.x, m.y, marsDisk, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,220,200,0.55)";
+    ctx.stroke();
+
+    var eLab = { x: e.x, y: e.y - earthDisk - 12 };
+    var mLab = screen(L, g.m.th, marsOrbit + marsDisk + 14);
+    eLab.x = clamp(eLab.x, 36, cssW - 36);
+    eLab.y = clamp(eLab.y, 16, cssH - 14);
+    mLab.x = clamp(mLab.x, 28, cssW - 28);
+    mLab.y = clamp(mLab.y, 16, cssH - 14);
+    if (len(mLab.x - eLab.x, mLab.y - eLab.y) < 42){
+      mLab = screen(L, g.m.th, marsOrbit - marsDisk - 16);
+      mLab.x = clamp(mLab.x, 28, cssW - 28);
+      mLab.y = clamp(mLab.y, 16, cssH - 14);
+    }
+    text(ctx, "Earth", eLab.x, eLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Mars", mLab.x, mLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Sun", L.cx, L.cy + sunR + 13, { size: 11, align: "center", color: ink });
+    text(ctx, copy.title, cssW - 10, 16, { size: 11, align: "right", color: accent });
+    text(ctx, "arrows stay forward", cssW - 10, 32, { size: 10, align: "right", color: muted });
+
+    orbitCanvas.setAttribute("aria-label",
+      "Top-down schematic. Sun at the center, Earth held on the right, Mars on the outer circle. " +
+      copy.title + ". " + copy.sky + ". Sun–Earth–Mars angle " + copy.angle + ". Orbit arrows still counterclockwise. Educational cartoon, not an ephemeris.");
+  }
+
+  function drawSky(cssW){
+    var cssH = Math.round(clamp(cssW * 0.28, 150, 200));
+    var ctx = fitCanvas(skyCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var g = geom(state.t);
+    var copy = copyFor(state.t);
+    var y = cssH * 0.52;
+    var x0 = 36;
+    var x1 = cssW - 36;
+    var u = g.ang / Math.PI;
+    var mx = x0 + u * (x1 - x0);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(x1, y);
+    ctx.stroke();
+
+    var tick = x0 + 0.5 * (x1 - x0);
+    ctx.strokeStyle = line;
+    ctx.beginPath();
+    ctx.moveTo(tick, y - 7);
+    ctx.lineTo(tick, y + 7);
+    ctx.stroke();
+    text(ctx, "90°", tick, y + 18, { size: 10, align: "center", color: muted });
+
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(x0, y, 7, 0, TAU);
+    ctx.fill();
+    text(ctx, "Sun", x0, y - 18, { size: 10, align: "center", color: ink });
+
+    ctx.fillStyle = "#c45c3e";
+    ctx.beginPath();
+    ctx.arc(mx, y - 16, 6, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(mx, y - 10);
+    ctx.lineTo(mx, y);
+    ctx.stroke();
+
+    text(ctx, "Toward the Sun", x0, cssH - 16, { size: 10, align: "left", color: muted });
+    text(ctx, "Opposite the Sun", x1, cssH - 16, { size: 10, align: "right", color: muted });
+    text(ctx, copy.sky, cssW * 0.5, 16, { size: 11, align: "center", color: accent });
+
+    skyCanvas.setAttribute("aria-label",
+      "As seen from Earth, a cartoon strip. " + copy.sky + ". Angle at Earth " + copy.angle +
+      ". Left end is toward the Sun. Right end is opposite the Sun. Not a finder chart.");
+  }
+
+  function render(){
+    state.t = wrapDay(state.t);
+    var copy = copyFor(state.t);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("r-sky").textContent = copy.sky;
+    document.getElementById("r-angle").textContent = copy.angle;
+    document.getElementById("r-dist").textContent = copy.dist;
+    document.getElementById("r-line").textContent = copy.line;
+    document.getElementById("r-day").textContent = copy.day;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("lap-val").textContent = dayLabel(state.t);
+    slider.min = "0";
+    slider.max = String(TSYN);
+    slider.value = String(state.t);
+    slider.setAttribute("aria-valuemin", "0");
+    slider.setAttribute("aria-valuemax", String(Math.round(TSYN)));
+    slider.setAttribute("aria-valuenow", String(dayNum(state.t)));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    var shown = nearPreset(state.t);
+    jumpBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.jump === shown));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = orbitCanvas.clientWidth || (orbitCanvas.parentElement && orbitCanvas.parentElement.clientWidth) || 640;
+    drawOrbit(cssW);
+    drawSky(cssW);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.t = wrapDay(state.t + dt * PLAY_DPD);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.t = clamp(parseFloat(slider.value) || 0, 0, TSYN);
+    render();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      var which = b.dataset.jump;
+      if (PRE[which] != null) state.t = PRE[which];
+      render();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
