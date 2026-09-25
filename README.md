@@ -117,7 +117,7 @@ Start the file with front matter, even if the front matter is empty. Without tha
 </html>
 ```
 
-`nav.html` loads the nav stylesheet, the nav script, the theme swatches, and Share/Suggest. Do not add `sp-nav.js`, `sp-theme-ui.js`, or `sp-share.js` again.
+`nav.html` loads the nav stylesheet, the nav script, the theme swatches, Share/Suggest, and the Google tag for measurement ID `G-2QSEBDSWKL`. Do not add `sp-nav.js`, `sp-theme-ui.js`, `sp-share.js`, or another gtag snippet.
 
 The current section is chosen from the URL. A page under `/science/` (including new planet pages), `/tools/`, or `/wallpapers/` highlights Science & Tech, Tools & Games, or Photography on its own. Change `_includes/nav.html` only when the six top-level items change.
 

@@ -328,18 +328,34 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
   }
 
   var timer = null;
+  var trackTimer = null;
+  var trackedTerm = "";
+  function trackSearch(term) {
+    var q = String(term || "").replace(/\s+/g, " ").trim();
+    if (!q || q === trackedTerm) return;
+    trackedTerm = q;
+    if (typeof window.gtag === "function") {
+      window.gtag("event", "search", { search_term: q });
+    }
+  }
   function onInput() {
     var q = qEl.value;
     clearTimeout(timer);
+    clearTimeout(trackTimer);
     timer = setTimeout(function () {
       pushQuery(q.trim());
       render(q);
     }, 60);
+    trackTimer = setTimeout(function () {
+      trackSearch(q);
+    }, 400);
   }
 
   qEl.addEventListener("input", onInput);
   clearEl.addEventListener("click", function () {
     qEl.value = "";
+    clearTimeout(trackTimer);
+    trackedTerm = "";
     pushQuery("");
     render("");
     qEl.focus();
@@ -357,6 +373,8 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
     if (e.key === "Escape" && document.activeElement === qEl) {
       if (qEl.value) {
         qEl.value = "";
+        clearTimeout(trackTimer);
+        trackedTerm = "";
         pushQuery("");
         render("");
       } else {
@@ -393,6 +411,7 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
     .then(function (data) {
       pages = Array.isArray(data.pages) ? data.pages : Array.isArray(data) ? data : [];
       render(qEl.value);
+      if ((qEl.value || "").trim()) trackSearch(qEl.value);
       // Autofocus on wide screens only (avoid mobile keyboard jump)
       if (window.matchMedia && window.matchMedia("(min-width: 720px)").matches) {
         qEl.focus();
