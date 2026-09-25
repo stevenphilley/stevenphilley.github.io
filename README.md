@@ -104,6 +104,7 @@ Start the file with front matter, even if the front matter is empty. Without tha
 <!DOCTYPE html>
 <html lang="en">
 <head>
+{% include head-layout.html %}
   <!-- title, theme boot, and page styles, as on the other pages -->
 </head>
 <body>
@@ -118,6 +119,8 @@ Start the file with front matter, even if the front matter is empty. Without tha
 ```
 
 `nav.html` loads the nav stylesheet, the nav script, the theme swatches, Share/Suggest, and the Google tag for measurement ID `G-2QSEBDSWKL`. Do not add `sp-nav.js`, `sp-theme-ui.js`, `sp-share.js`, or another gtag snippet.
+
+`_includes/head-layout.html` is the other shared include. Put it at the top of `<head>`, before stylesheets. It reads `localStorage` key `sp-layout` and, when the value is `fill`, adds class `layout-fill` to `<html>` before first paint. Std is the default. The Std | Fill control in the header writes that key. A new page does not keep the saved width (and will flash if the reader last chose Fill) until it includes `head-layout.html` the same way it includes `nav.html`. The homepage layout already includes both. Do not paste the boot script a second time.
 
 The current section is chosen from the URL. A page under `/science/` (including new planet pages), `/tools/`, or `/wallpapers/` highlights Science & Tech, Tools & Games, or Photography on its own. Change `_includes/nav.html` only when the six top-level items change.
 

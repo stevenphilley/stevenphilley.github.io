@@ -1,0 +1,113 @@
+/* Fill page width. Std is the unmarked default (each page's own max-width).
+   html.layout-fill is set from <head> before first paint.
+   Side inset is 28px: shell margin, not a second padding on top of
+   the old clamp() gutters. Prose that already has a ch cap keeps it.
+   Bitmaps stay at natural size. */
+
+html.layout-fill {
+  --gutter: 28px;
+}
+
+html.layout-fill body {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+html.layout-fill body > :is(
+  .page-wrap,
+  .l-wrap,
+  .e-wrap,
+  .f-wrap,
+  .w-wrap,
+  .s-wrap,
+  .wn-wrap,
+  .p-wrap,
+  .m-wrap,
+  .q-wrap,
+  .wrap,
+  .shell,
+  .rd-shell,
+  .sheet,
+  .stage,
+  .sp-miss
+) {
+  max-width: none;
+  width: auto;
+  align-self: stretch;
+  margin-left: 28px;
+  margin-right: 28px;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
+
+html.layout-fill .sp-bar {
+  max-width: none;
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+html.layout-fill .sp-site-footer-inner,
+html.layout-fill .sp-subnav {
+  max-width: none;
+}
+
+html.layout-fill .sp-subnav {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+html.layout-fill body > .sp-site-footer .sp-site-footer-inner {
+  padding-left: 28px;
+  padding-right: 28px;
+}
+
+/* Homepage frames hug the file. A caption outside the frame can stay wide. */
+html.layout-fill .photo-frame {
+  width: fit-content;
+  max-width: 100%;
+}
+
+html.layout-fill .photo-frame img,
+html.layout-fill figure.hero img,
+html.layout-fill figure.photo img {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+html.layout-fill figure.hero,
+html.layout-fill figure.photo {
+  width: fit-content;
+  max-width: 100%;
+}
+
+html.layout-fill figure.hero :is(.cap, figcaption),
+html.layout-fill figure.photo figcaption {
+  max-width: 66ch;
+}
+
+/* Gallery tiles may grow with the page, but the bitmap must not. */
+html.layout-fill :is(.frame, .tile, .card, .bucket-card) img,
+html.layout-fill img.thumb {
+  object-fit: scale-down;
+  object-position: center;
+}
+
+html.layout-fill img,
+html.layout-fill video {
+  max-width: 100%;
+}
+
+html.layout-fill .diagram canvas {
+  max-width: 100%;
+  max-height: none;
+}
+
+html.layout-fill :is(.map-wrap, .table-wrap, .diagram, .archive-grid, pre) {
+  max-width: 100%;
+}
+
+html.layout-fill :is(.table-wrap, pre) {
+  overflow-x: auto;
+}
