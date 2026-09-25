@@ -152,6 +152,25 @@
     );
   }
 
+  function units(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  function treeNode(node, depth) {
+    var label = node.qty + " " + materialName(node.id);
+    if (!node.children || !node.children.length) {
+      var tail = node.cycle ? "cycle" : "raw";
+      return '<li class="tree-leaf"><button type="button" class="jump" data-go="' + esc(node.id) + '">' + esc(label) + "</button> <span class=\"tag\">" + tail + "</span></li>";
+    }
+    var open = depth < 2;
+    var tag = node.refine ? "Refiner" : "Craft";
+    if (node.batches) tag += " · " + node.batches + "×" + node.outQty;
+    return '<li><button type="button" class="twig" aria-expanded="' + (open ? "true" : "false") + '"><span>' + esc(label) + '</span> <span class="tag">' + esc(tag) + "</span></button>" +
+      '<ul' + (open ? "" : " hidden") + ">" + node.children.map(function (child) {
+        return treeNode(child, depth + 1);
+      }).join("") + "</ul></li>";
+  }
+
   function section(title, id, recipes, empty, currentId) {
     var body = recipes.length
       ? recipes.map(function (recipe) { return recipeCard(recipe, currentId); }).join("")
@@ -246,6 +265,23 @@
     var cat = categories[material.category];
     var pinned = pins.indexOf(material.id) !== -1;
     var marked = selected.indexOf(material.id) !== -1;
+    var expanded = NmsRefine.expandBill(catalog, material.id, 1);
+    var hasTree = expanded.tree && expanded.tree.children && expanded.tree.children.length;
+    var rawKeys = Object.keys(expanded.raw || {}).sort(function (a, b) {
+      if (materialName(a) < materialName(b)) return -1;
+      if (materialName(a) > materialName(b)) return 1;
+      return 0;
+    });
+    var worth = material.value ? '<p class="blurb">Base value ' + esc(units(material.value)) + " units.</p>" : "";
+    var treeHtml = hasTree
+      ? '<section class="pane"><h2>Crafting tree</h2><ul class="tree">' + treeNode(expanded.tree, 0) + "</ul></section>" +
+        '<section class="pane"><h2>Raw bill</h2><ul class="bill">' + rawKeys.map(function (id) {
+          return '<li><button type="button" class="jump" data-go="' + esc(id) + '">' + esc(expanded.raw[id] + " " + materialName(id)) + "</button></li>";
+        }).join("") + "</ul></section>"
+      : "";
+    var rawLink = hasTree
+      ? ' · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '&amp;bill=raw&amp;qty=1#plan">Add the raw bill to a plan</a>'
+      : "";
     detailEl.innerHTML =
       '<p class="kicker">' + esc(cat ? cat.label : "") + (selected.length > 1 ? " · " + selected.length + " marked" : "") + "</p>" +
       '<div class="detail-title"><h2 id="detail-h" tabindex="-1">' + esc(material.name) + "</h2>" +
@@ -255,7 +291,9 @@
       '<button type="button" class="mark-lg" data-mark="' + esc(material.id) + '" aria-pressed="' + (marked ? "true" : "false") + '">' +
       (marked ? "Marked" : "Mark") + "</button></div></div>" +
       '<p class="blurb">' + esc(material.blurb || "") + "</p>" +
-      '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(material.id) + '">Open in the edge explorer</a> · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '#plan">Plan the build cost</a></p>' +
+      worth +
+      '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(material.id) + '">Open in the edge explorer</a> · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '#plan">Plan the build cost</a>' + rawLink + "</p>" +
+      treeHtml +
       '<div class="split">' +
       section("Made from", "from-h", made, "Nothing in this set makes " + material.name + ".", material.id) +
       section("Converts to", "to-h", converts, material.name + " is not spent in a refiner in this set.", material.id) +
@@ -388,6 +426,14 @@
     var markBtn = event.target.closest("[data-mark]");
     if (markBtn) {
       toggleMark(markBtn.getAttribute("data-mark"));
+      return;
+    }
+    var twig = event.target.closest(".twig");
+    if (twig) {
+      var list = twig.nextElementSibling;
+      var open = twig.getAttribute("aria-expanded") === "true";
+      twig.setAttribute("aria-expanded", open ? "false" : "true");
+      if (list) list.hidden = open;
       return;
     }
     var go = event.target.closest("[data-go]");

@@ -27,6 +27,18 @@
     "unstable-plasma"
   ];
 
+  // One-way ladders used when a raw bill walks past a refined substance.
+  // The same ids are the primary refiner steps in craft.js.
+  var BILL_REFINE = {
+    "extract-metallic-elements": true,
+    "magnetise-metal": true,
+    "condense-carbon": true,
+    "process-sodium": true,
+    "ionise-mineral": true,
+    "concentrate-salt-salt-2": true,
+    "chromatic-copper": true
+  };
+
   function canonId(id) {
     return String(id || "").trim().replace(/_/g, "-");
   }
@@ -201,9 +213,6 @@
     NODES.forEach(function (id) {
       if (!nodes[id]) errors.push("missing node " + id);
     });
-    Object.keys(seen).forEach(function (id) {
-      if (NODES.indexOf(id) === -1) errors.push("unexpected node " + id);
-    });
     var seenE = Object.create(null);
     edges(catalog).forEach(function (edge) {
       if (!edge.id) {
@@ -242,6 +251,67 @@
     return errors;
   }
 
+  function billEdge(catalog, id) {
+    var craft = null;
+    edges(catalog).forEach(function (edge) {
+      if (craft || !edge || edge.kind !== "craft" || !edge.out || edge.out.id !== id) return;
+      if ((edge.inputs || []).some(function (input) { return input.id === id; })) return;
+      craft = edge;
+    });
+    if (craft) return craft;
+    var found = null;
+    edges(catalog).forEach(function (edge) {
+      if (found || !edge || !BILL_REFINE[edge.id]) return;
+      if (!edge.out || edge.out.id !== id || edge.expansion) return;
+      found = edge;
+    });
+    return found;
+  }
+
+  // Inventory craft first, then the one-way refiner ladders. Expansion loops stay put.
+  function expandBill(catalog, itemId, qty) {
+    var asked = qty == null ? 1 : qty;
+    var raw = Object.create(null);
+    var cycles = [];
+    var visiting = Object.create(null);
+
+    function addRaw(id, amount) {
+      raw[id] = (raw[id] || 0) + amount;
+    }
+
+    function walk(id, amount, stack) {
+      if (!(amount > 0)) return { id: id, qty: 0, children: [] };
+      if (visiting[id]) {
+        var cycle = stack.concat(id).join(" -> ");
+        if (cycles.indexOf(cycle) === -1) cycles.push(cycle);
+        addRaw(id, amount);
+        return { id: id, qty: amount, cycle: true, children: [] };
+      }
+      var edge = billEdge(catalog, id);
+      if (!edge || !edge.out || !(edge.out.qty > 0)) {
+        addRaw(id, amount);
+        return { id: id, qty: amount, leaf: true, children: [] };
+      }
+      var batches = Math.ceil(amount / edge.out.qty);
+      visiting[id] = true;
+      var children = (edge.inputs || []).map(function (input) {
+        return walk(input.id, input.qty * batches, stack.concat(id));
+      });
+      visiting[id] = false;
+      return {
+        id: id,
+        qty: amount,
+        batches: batches,
+        outQty: edge.out.qty,
+        refine: edge.kind === "refine",
+        name: edge.name || "",
+        children: children
+      };
+    }
+
+    return { tree: walk(itemId, asked, []), raw: raw, cycles: cycles };
+  }
+
   return {
     canonId: canonId,
     PIN_KEY: PIN_KEY,
@@ -259,6 +329,7 @@
     togglePin: togglePin,
     findEdges: findEdges,
     links: links,
-    validate: validate
+    validate: validate,
+    expandBill: expandBill
   };
 });

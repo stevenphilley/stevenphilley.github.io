@@ -64,7 +64,12 @@ assert(loop.name === "Chromatic Expansion" && loop.slots === 2, "expansion is a 
 var names = catalog.edges.map(function (edge) { return edge.name; });
 assert(names[0] === "Extract Metallic Elements", "list opens on Extract Metallic Elements");
 assert(names.indexOf("Chromatic Expansion") !== -1, "chromatic expansion stays in the set");
-assert(!catalog.nodes.some(function (node) { return node.id === "silver" || node.id === "gold" || node.id === "platinum"; }), "asteroid metals stay out");
+assert(catalog.nodes.some(function (node) { return node.id === "gold" && node.kind === "resource" && node.value === 353; }), "gold is a gathered input");
+assert(catalog.nodes.some(function (node) { return node.id === "silver" && node.kind === "resource"; }), "silver is a gathered input");
+assert(!catalog.nodes.some(function (node) { return node.id === "platinum"; }), "platinum stays out");
+assert(!catalog.edges.some(function (edge) {
+  return edge.kind === "refine" && (edge.inputs || []).some(function (input) { return input.id === "gold" || input.id === "silver"; });
+}), "gold and silver have no refiner rows");
 
 var made = api.producing(catalog, "pure-ferrite").map(function (edge) { return edge.id; });
 assert(made.indexOf("extract-metallic-elements") !== -1 && made.indexOf("demagnetise-metal") !== -1, "pure ferrite is made from dust and magnetised ferrite");
@@ -134,7 +139,7 @@ has("unstable-plasma", 1, [{ id: "oxygen", qty: 50 }, { id: "metal-plating", qty
 assert(catalog.nodes.every(function (node) { return node.category && node.kind && node.id.indexOf("_") === -1; }), "every node has a hyphen id, a category, and a kind");
 var dustNode = catalog.nodes.filter(function (node) { return node.id === "ferrite-dust"; })[0];
 assert(dustNode && (dustNode.aliases || []).indexOf("ferrite_dust") !== -1, "ferrite dust keeps the underscore alias");
-assert(catalog.nodes.filter(function (node) { return node.kind === "component"; }).length === 20, "twenty crafted components");
+assert(catalog.nodes.filter(function (node) { return node.kind === "component"; }).length === 54, "crafted components include the profit tree");
 var faecium = catalog.nodes.filter(function (node) { return node.id === "faecium"; })[0];
 assert(faecium && (faecium.aliases || []).indexOf("coprite") !== -1, "faecium answers to coprite");
 assert(!catalog.nodes.some(function (node) { return node.id === "wiring_loom" || node.id === "starship_launch_fuel" || node.id === "portable_refiner"; }), "loom, launch fuel, and the portable refiner stay out");
@@ -151,6 +156,51 @@ var pinned = api.togglePin(["salt"], "warp-cell");
 assert(pinned.join(",") === "salt,warp-cell", "pin appends");
 assert(api.togglePin(pinned, "salt").join(",") === "warp-cell", "pin removes");
 assert(api.parseShare("?item=gold").pins === null, "a missing pins param leaves local pins alone");
+
+has("stasis-device", 1, [
+  { id: "quantum-processor", qty: 1 },
+  { id: "cryogenic-chamber", qty: 1 },
+  { id: "iridesite", qty: 1 }
+], "Stasis Device");
+has("quantum-processor", 1, [
+  { id: "circuit-board", qty: 1 },
+  { id: "superconductor", qty: 1 }
+], "Quantum Processor");
+has("cryogenic-chamber", 1, [
+  { id: "living-glass", qty: 1 },
+  { id: "cryo-pump", qty: 1 }
+], "Cryogenic Chamber");
+var stasisNode = catalog.nodes.filter(function (node) { return node.id === "stasis-device"; })[0];
+assert(stasisNode && stasisNode.name === "Stasis Device" && stasisNode.value === 15600000, "Stasis Device base value is 15600000");
+assert((stasisNode.aliases || []).indexOf("ULTRAPROD2") !== -1, "Stasis Device keeps the save id");
+
+// Inventory blueprint from the Feb 2026 crafting table, then the one-way ladders:
+// 300 condensed carbon → 600 carbon (2 each), 150 ionised cobalt → 300 cobalt (2 each).
+var stasisBill = api.expandBill(catalog, "stasis-device", 1);
+var stasisRaw = {
+  "cactus-flesh": 100,
+  carbon: 600,
+  cobalt: 300,
+  dioxite: 50,
+  faecium: 50,
+  "frost-crystal": 300,
+  "gamma-root": 400,
+  nitrogen: 500,
+  paraffinium: 50,
+  phosphorus: 50,
+  radon: 500,
+  solanium: 200,
+  "star-bulb": 200,
+  sulphurine: 500
+};
+assert(stasisBill.cycles.length === 0, "stasis bill has no cycle");
+Object.keys(stasisRaw).forEach(function (id) {
+  assert(stasisBill.raw[id] === stasisRaw[id], "stasis raw " + id + " is " + stasisRaw[id] + " got " + stasisBill.raw[id]);
+});
+Object.keys(stasisBill.raw).forEach(function (id) {
+  assert(stasisRaw[id] === stasisBill.raw[id], "stasis raw has no extra " + id);
+});
+assert(!stasisBill.raw["condensed-carbon"] && !stasisBill.raw["ionised-cobalt"] && !stasisBill.raw["quantum-processor"], "stasis intermediates are expanded");
 
 if (failed) {
   console.error(failed + " failed");

@@ -88,6 +88,59 @@ assert(held.locationId === "manual:unassigned" && held.store.locations.length ==
 var again = logistics.ensureUnassigned(held.store);
 assert(again.store.locations.length === 1, "unassigned hold is not duplicated");
 
+var stasis = recipe("ULTRAPROD2");
+assert(stasis.name === "Stasis Device" && stasis.value === 15600000, "stasis device name and base value");
+assert(stasis.recipe.inputs.length === 3, "stasis device has three inputs");
+function qtyOf(item, id) {
+  var found = 0;
+  item.recipe.inputs.forEach(function (input) {
+    if (input.id === id) found = input.qty;
+  });
+  return found;
+}
+assert(qtyOf(stasis, "quantum-processor") === 1 && qtyOf(stasis, "cryogenic-chamber") === 1 && qtyOf(stasis, "iridesite") === 1, "stasis device is 1 + 1 + 1");
+var quantum = recipe("MEGAPROD2");
+assert(quantum.value === 4400000 && qtyOf(quantum, "circuit-board") === 1 && qtyOf(quantum, "superconductor") === 1, "quantum processor is circuit board and superconductor");
+var chamber = recipe("MEGAPROD3");
+assert(chamber.value === 3800000 && qtyOf(chamber, "living-glass") === 1 && qtyOf(chamber, "cryo-pump") === 1, "cryogenic chamber is living glass and cryo-pump");
+
+var stasisBill = craft.expand(tech, graph, stasis.id, 1);
+var stasisRaw = {
+  "cactus-flesh": 100,
+  carbon: 600,
+  cobalt: 300,
+  dioxite: 50,
+  faecium: 50,
+  "frost-crystal": 300,
+  "gamma-root": 400,
+  nitrogen: 500,
+  paraffinium: 50,
+  phosphorus: 50,
+  radon: 500,
+  solanium: 200,
+  "star-bulb": 200,
+  sulphurine: 500
+};
+assert(stasisBill.cycles.length === 0, "stasis tree has no cycle");
+Object.keys(stasisRaw).forEach(function (id) {
+  assert(stasisBill.raw[id] === stasisRaw[id], "stasis raw " + id + " is " + stasisRaw[id] + " got " + stasisBill.raw[id]);
+});
+Object.keys(stasisBill.raw).forEach(function (id) {
+  assert(Object.prototype.hasOwnProperty.call(stasisRaw, id), "stasis raw has no extra " + id + " " + stasisBill.raw[id]);
+});
+assert(!stasisBill.raw["condensed-carbon"] && !stasisBill.raw["ionised-cobalt"], "stasis refined inputs are expanded to carbon and cobalt");
+
+var usedIri = craft.usedIn(tech, "iridesite").map(function (item) { return item.gameId; });
+assert(usedIri.indexOf("ULTRAPROD2") !== -1, "iridesite is used in stasis device");
+
+var stasisSeed = logistics.seedRawBill(logistics.emptyStore(), stasisBill.raw, "manual:unassigned", "Stasis Device", stasis.id);
+assert(stasisSeed.project && stasisSeed.project.demands.length === 14, "stasis raw bill seeds fourteen demands");
+var frost = stasisSeed.project.demands.filter(function (row) { return row.itemId === "frost-crystal"; })[0];
+assert(frost && frost.qty === 300 && frost.note === "Raw bill", "seeded frost crystal is 300");
+var direct = logistics.seedRecipe(logistics.emptyStore(), graph, "stasis-device", 1, "manual:unassigned", "Stasis Device");
+assert(direct.edge && direct.project.demands.length === 3, "stasis direct recipe seeds three inputs");
+assert(direct.project.demands.every(function (row) { return row.qty === 1; }), "stasis direct inputs are one each");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

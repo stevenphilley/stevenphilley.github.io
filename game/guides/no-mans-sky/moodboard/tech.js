@@ -237,6 +237,7 @@
     var refine = item.graphId
       ? '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(item.graphId) + '">Other refiner paths</a></p>'
       : "";
+    var worth = item.value ? '<p class="blurb">Base value ' + esc(String(item.value).replace(/\B(?=(\d{3})+(?!\d))/g, ",")) + " units.</p>" : "";
     var kind = item.kind === "upgrade" ? "Craftable upgrade" : (item.kind === "procedural" ? "Procedural module" : item.slotLabel);
     detailEl.innerHTML =
       '<p class="kicker">' + esc(kind) + (item.subcategory ? " · " + esc(item.subcategory) : "") + "</p>" +
@@ -245,6 +246,7 @@
       '<button type="button" class="pin-lg" data-pin="' + esc(item.id) + '" aria-pressed="' + (pinned ? "true" : "false") + '">' +
       (pinned ? "Pinned" : "Pin") + "</button></div></div>" +
       '<p class="blurb">' + esc(item.blurb || "") + "</p>" +
+      worth +
       blueprint + repair + plan + refine +
       '<section class="pane"><h2>Crafting tree</h2><ul class="tree">' + treeNode(expanded.tree, 0) + "</ul></section>" +
       '<section class="pane"><h2>Raw bill</h2><ul class="bill">' + rawHtml + "</ul></section>" +
