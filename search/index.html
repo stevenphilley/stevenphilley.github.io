@@ -1,3 +1,5 @@
+---
+---
 <!DOCTYPE html>
 <html lang="en" data-theme="neon">
 <head>
@@ -84,21 +86,16 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
 </style>
 </head>
 <body>
+{% include nav.html %}
+
 <div class="s-wrap">
-  <div class="e-top">
-    <a href="/">Steven Philley</a>
+  <div class="sp-subnav">
+    
     <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
       <a href="/search/" aria-current="page">Search</a>
       <a href="/whats-new/">What’s new</a>
-      <a href="/sitemap.html">Site contents</a>
-      <div class="themes" role="group" aria-label="Color theme">
-        <button type="button" data-set-theme="neon">Neon</button>
-        <button type="button" data-set-theme="emerald">Emerald</button>
-        <button type="button" data-set-theme="dusk">Dusk</button>
-        <button type="button" data-set-theme="sage">Sage</button>
-        <button type="button" data-set-theme="tide">Tide</button>
-        <button type="button" data-set-theme="sand">Sand</button>
-      </div>
+      
+      
     </div>
   </div>
 
@@ -120,11 +117,7 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
 
   <div class="s-results" id="results" role="listbox" aria-label="Search results"></div>
 
-  <footer class="e-foot">
-    <a href="/">Photography</a>
-    <a href="/sitemap.html">Full site contents</a>
-    <a href="/whats-new/">What’s new</a>
-  </footer>
+  {% include footer.html %}
 </div>
 
 <script>
@@ -173,8 +166,14 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
       .filter(Boolean);
   }
 
+  function keywordText(kw) {
+    if (Array.isArray(kw)) return kw.join(" ");
+    if (kw == null) return "";
+    return String(kw);
+  }
+
   function haystack(p) {
-    var kw = Array.isArray(p.keywords) ? p.keywords.join(" ") : "";
+    var kw = keywordText(p.keywords);
     return (
       (p.title || "") + " " +
       (p.url || "") + " " +
@@ -290,7 +289,7 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
     }
 
     if (!list.length) {
-      resultsEl.innerHTML = '<p class="s-empty">No pages match “' + esc(q) + '”. Try fewer words, or browse <a href="/sitemap.html" style="color:inherit">site contents</a>.</p>';
+      resultsEl.innerHTML = '<p class="s-empty">No pages match “' + esc(q) + '”. Try fewer words, or browse <a href="/sitemap.html" style="color:inherit">All pages</a>.</p>';
       return;
     }
 
@@ -347,6 +346,7 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
   });
 
   document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented) return;
     var tag = (e.target && e.target.tagName) || "";
     if (e.key === "/" && tag !== "INPUT" && tag !== "TEXTAREA") {
       e.preventDefault();
@@ -392,10 +392,6 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
     })
     .then(function (data) {
       pages = Array.isArray(data.pages) ? data.pages : Array.isArray(data) ? data : [];
-      // Prefer NOT indexing /extra/
-      pages = pages.filter(function (p) {
-        return !String(p.url || "").startsWith("/extra/");
-      });
       render(qEl.value);
       // Autofocus on wide screens only (avoid mobile keyboard jump)
       if (window.matchMedia && window.matchMedia("(min-width: 720px)").matches) {
@@ -404,10 +400,10 @@ mark{background:transparent;color:var(--accent,#c8b48a);font-weight:500}
     })
     .catch(function () {
       metaEl.textContent = "Could not load search index.";
-      resultsEl.innerHTML = '<p class="s-empty">Search index failed to load. Try the <a href="/sitemap.html" style="color:inherit">site contents</a> page.</p>';
+      resultsEl.innerHTML = '<p class="s-empty">Search index failed to load. Try the <a href="/sitemap.html" style="color:inherit">All pages</a> page.</p>';
     });
 })();
 </script>
-<script src="/js/sp-share.js" defer></script>
+
 </body>
 </html>

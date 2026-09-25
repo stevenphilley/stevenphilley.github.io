@@ -92,6 +92,18 @@ www   CNAME   YOUR_USERNAME.github.io
 ### Step 6 — Enforce HTTPS
 Once DNS propagates (up to 48h), go back to **Settings → Pages** and check **Enforce HTTPS**.
 
+## Search index and sitemap
+
+`search/index.json` and `sitemap.xml` are generated from the HTML pages in this repository. GitHub Pages serves those committed files; it does not run a generator at deploy time.
+
+```bash
+python3 scripts/build-search-index.py
+```
+
+The script skips redirect stubs, pages marked `noindex`, and `404.html`. It keeps keyword lists already stored in `search/index.json`, including keywords that were a single string, then writes both files. Run it after adding or renaming a page, and commit the results.
+
+Primary navigation for every page is `_includes/nav.html`.
+
 ## Adding images later
 1. Add the file to `images/` with the next number (e.g. `10.jpg`)
 2. Copy any `<figure>` block in `index.html` and update `src`, `alt`, and caption text
