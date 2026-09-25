@@ -81,6 +81,7 @@ var seeded = logistics.seedRawBill(logistics.emptyStore(), bill.raw, "manual:una
 assert(seeded.project && seeded.project.demands.length === 2, "raw bill seeds two demands");
 var copper = seeded.project.demands.filter(function (row) { return row.itemId === "copper"; })[0];
 assert(copper && copper.qty === 650, "seeded copper quantity");
+assert(seeded.project.demands.every(function (row) { return row.note === "Raw bill"; }), "raw bill demands are marked so the plan does not refine them further");
 
 var held = logistics.ensureUnassigned(logistics.emptyStore());
 assert(held.locationId === "manual:unassigned" && held.store.locations.length === 1, "unassigned hold is created once");

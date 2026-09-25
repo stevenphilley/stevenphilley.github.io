@@ -297,7 +297,9 @@
         var target = NmsLogistics.findLocation(store, demand.locationId);
         var moves = NmsLogistics.suggestTransfers(store, demand);
         var path = "";
-        if (report.shortfall > 0 && catalog) {
+        if (report.shortfall > 0 && demand.note === "Raw bill") {
+          path = "<p>Already the raw bill. Still short " + esc(report.shortfall) + ".</p>";
+        } else if (report.shortfall > 0 && catalog) {
           var expanded = NmsLogistics.expandRecipe(catalog, demand.itemId, report.shortfall, NmsLogistics.stockMap(store));
           var steps = (expanded.steps || []).map(function (step) {
             var inputs = step.inputs.map(function (input) { return input.qty + " " + nodeName(input.id); }).join(" + ");
