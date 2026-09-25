@@ -69,7 +69,7 @@
     text-transform:uppercase;color:var(--text-dim);margin-top:.35rem}
   .spacer{flex:1}
 
-  .controls{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+  .controls{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;min-width:0;max-width:100%}
   button{
     font-family:var(--mono);font-size:.72rem;letter-spacing:var(--ui-track);text-transform:uppercase;
     color:var(--accent);background:transparent;border:1px solid var(--hair);
@@ -81,14 +81,15 @@
     text-shadow:none;box-shadow:var(--glow)}
   button:focus-visible{outline:2px solid var(--accent-lit);outline-offset:2px}
   .step{width:2.1rem;padding:.5rem 0;text-align:center;font-size:.9rem;letter-spacing:0}
-  .themes{display:flex;gap:.3rem;margin-left:.4rem;padding-left:.7rem;border-left:1px solid var(--hair)}
+  .themes{display:flex;flex-wrap:wrap;gap:.3rem;margin-left:.4rem;padding-left:.7rem;border-left:1px solid var(--hair);min-width:0;max-width:100%}
 
   .helpwrap{position:relative}
   .help{width:1.9rem;height:1.9rem;padding:0;border-radius:50%;font-size:.72rem;letter-spacing:0;
     opacity:.5;line-height:1}
   .help:hover,.help[aria-expanded="true"]{opacity:1}
   .note{
-    position:absolute;top:calc(100% + .65rem);right:0;width:23rem;max-width:calc(100vw - 2rem);
+    position:absolute;top:calc(100% + .65rem);right:0;width:min(23rem,calc(100vw - 2rem));max-width:calc(100vw - 2rem);
+    overflow-wrap:anywhere;
     background:var(--plate-2);border:1px solid var(--hair);border-radius:4px;padding:1.05rem 1.15rem;
     z-index:20;box-shadow:0 16px 44px rgba(0,0,0,.55);
     opacity:0;visibility:hidden;transform:translateY(-4px);
@@ -237,7 +238,10 @@
     main{grid-template-columns:1fr}
     aside{border-left:none;border-top:1px solid var(--hair);max-height:none}
     .entries{max-height:9rem}
-    svg{width:min(100%,86vw)}
+    svg{width:min(100%,100%)}
+    .note{
+      position:fixed;top:5.2rem;left:1rem;right:1rem;width:auto;max-width:none;
+    }
   }
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
