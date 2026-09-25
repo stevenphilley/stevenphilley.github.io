@@ -92,17 +92,48 @@ www   CNAME   YOUR_USERNAME.github.io
 ### Step 6 — Enforce HTTPS
 Once DNS propagates (up to 48h), go back to **Settings → Pages** and check **Enforce HTTPS**.
 
+## Adding a page
+
+Primary nav and the search field live in `_includes/nav.html`. GitHub Pages inlines that file. A new page does not get the bar until it includes it.
+
+Start the file with front matter, even if the front matter is empty. Without that, GitHub Pages copies the include tag through as text.
+
+```html
+---
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- title, theme boot, and page styles, as on the other pages -->
+</head>
+<body>
+{% include nav.html %}
+
+  <!-- page content. A long in-section link list can stay here,
+       under the primary nav, not instead of it. -->
+
+{% include footer.html %}
+</body>
+</html>
+```
+
+`nav.html` loads the nav stylesheet, the nav script, the theme swatches, and Share/Suggest. Do not add `sp-nav.js`, `sp-theme-ui.js`, or `sp-share.js` again.
+
+The current section is chosen from the URL. A page under `/science/` (including new planet pages), `/tools/`, or `/wallpapers/` highlights Science & Tech, Tools & Games, or Photography on its own. Change `_includes/nav.html` only when the six top-level items change.
+
+The homepage is the exception: `index.html` uses `layout: default`, and that layout already includes the nav and the footer.
+
 ## Search index and sitemap
 
-`search/index.json` and `sitemap.xml` are generated from the HTML pages in this repository. GitHub Pages serves those committed files; it does not run a generator at deploy time.
+`search/index.json` and `sitemap.xml` are generated. GitHub Pages serves the committed files; it does not run a generator at deploy time. After adding, removing, or retitling a page:
 
 ```bash
 python3 scripts/build-search-index.py
 ```
 
-The script skips redirect stubs, pages marked `noindex`, and `404.html`. It keeps keyword lists already stored in `search/index.json`, including keywords that were a single string, then writes both files. Run it after adding or renaming a page, and commit the results.
+Commit the two files the script writes. Do not hand-edit them, and do not restore `search/search-index.json` (nothing references it).
 
-Primary navigation for every page is `_includes/nav.html`.
+The script skips redirect stubs, pages marked `noindex`, and `404.html`. It keeps keyword lists already stored in `search/index.json`, including keywords that were a single string. `sitemap.html` and `whats-new/entries.json` are hand-written; the script does not touch them.
 
 ## Adding images later
 1. Add the file to `images/` with the next number (e.g. `10.jpg`)
