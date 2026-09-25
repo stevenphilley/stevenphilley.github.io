@@ -902,6 +902,428 @@
     };
   }
 
+  // Screen-space selection. Marker hits are canvas pixels after pan and zoom.
+  // Map voxels are a different space: the disk is elliptical, so a screen
+  // circle is not a circle in voxels.
+  var SELECTABLE_KINDS = { base: true, system: true, freighter: true, settlement: true };
+
+  function pointInRect(x, y, rect) {
+    if (!rect || !isFinite(x) || !isFinite(y)) return false;
+    var x0 = Number(rect.x0);
+    var y0 = Number(rect.y0);
+    var x1 = Number(rect.x1);
+    var y1 = Number(rect.y1);
+    if (![x0, y0, x1, y1].every(isFinite)) return false;
+    var left = Math.min(x0, x1);
+    var right = Math.max(x0, x1);
+    var top = Math.min(y0, y1);
+    var bottom = Math.max(y0, y1);
+    return x >= left && x <= right && y >= top && y <= bottom;
+  }
+
+  function pointInCircle(x, y, circle) {
+    if (!circle || !isFinite(x) || !isFinite(y)) return false;
+    var cx = Number(circle.cx);
+    var cy = Number(circle.cy);
+    var r = Number(circle.r);
+    if (![cx, cy, r].every(isFinite) || r < 0) return false;
+    var dx = x - cx;
+    var dy = y - cy;
+    return dx * dx + dy * dy <= r * r + 1e-9;
+  }
+
+  function mapToScreen(voxelX, voxelZ, view, frame) {
+    var zoom = view && view.zoom > 0 && isFinite(view.zoom) ? view.zoom : 1;
+    var panX = view && isFinite(view.panX) ? view.panX : 0;
+    var panY = view && isFinite(view.panY) ? view.panY : 0;
+    var R = 2048;
+    return {
+      x: frame.cx + panX + (voxelX / R) * frame.rx * zoom,
+      y: frame.cy + panY - (voxelZ / R) * frame.ry * zoom
+    };
+  }
+
+  function screenToMap(x, y, view, frame) {
+    var zoom = view && view.zoom > 0 && isFinite(view.zoom) ? view.zoom : 1;
+    var panX = view && isFinite(view.panX) ? view.panX : 0;
+    var panY = view && isFinite(view.panY) ? view.panY : 0;
+    var R = 2048;
+    return {
+      voxelX: ((x - frame.cx - panX) / (frame.rx * zoom)) * R,
+      voxelZ: -((y - frame.cy - panY) / (frame.ry * zoom)) * R
+    };
+  }
+
+  function screenRadiusLy(radiusPx, frame, zoom) {
+    var z = zoom > 0 && isFinite(zoom) ? zoom : 0;
+    var rx = frame && frame.rx > 0 ? frame.rx : 0;
+    if (!(radiusPx >= 0) || !isFinite(radiusPx) || !z || !rx) return null;
+    return (radiusPx / (rx * z)) * 2048 * 400;
+  }
+
+  function markersInside(markers, shape) {
+    var hits = [];
+    (markers || []).forEach(function (marker) {
+      if (!marker || !isFinite(marker.x) || !isFinite(marker.y)) return;
+      if (marker.kind && !SELECTABLE_KINDS[marker.kind]) return;
+      var ok = false;
+      if (shape && shape.type === "circle") ok = pointInCircle(marker.x, marker.y, shape);
+      else if (shape) ok = pointInRect(marker.x, marker.y, shape);
+      if (ok) hits.push(marker);
+    });
+    return hits;
+  }
+
+  function selectionGesture(keys, toolbarMode) {
+    keys = keys || {};
+    var ctrl = !!(keys.ctrl || keys.meta);
+    var alt = !!keys.alt;
+    var shift = !!keys.shift;
+    var op = "replace";
+    if ((ctrl && shift) || (alt && ctrl)) op = "subtract";
+    else if (ctrl) op = "add";
+    var shape = (toolbarMode === "circle" || (alt && !ctrl)) ? "circle" : "box";
+    return { op: op, shape: shape };
+  }
+
+  function toggleId(ids, id) {
+    var next = (ids || []).slice();
+    var at = next.indexOf(id);
+    if (at === -1) next.push(id);
+    else next.splice(at, 1);
+    return next;
+  }
+
+  function applySelectionOp(current, hitIds, op) {
+    var hits = [];
+    var seenHit = Object.create(null);
+    (hitIds || []).forEach(function (id) {
+      if (id == null || seenHit[id]) return;
+      seenHit[id] = true;
+      hits.push(id);
+    });
+    if (op === "add") {
+      var next = (current || []).slice();
+      var have = Object.create(null);
+      next.forEach(function (id) { have[id] = true; });
+      hits.forEach(function (id) {
+        if (!have[id]) {
+          have[id] = true;
+          next.push(id);
+        }
+      });
+      return next;
+    }
+    if (op === "subtract") return (current || []).filter(function (id) { return !seenHit[id]; });
+    return hits;
+  }
+
+  function rangeIds(orderedIds, anchorId, targetId) {
+    var order = orderedIds || [];
+    if (targetId == null) return [];
+    var b = order.indexOf(targetId);
+    if (b < 0) return [targetId];
+    var a = order.indexOf(anchorId);
+    if (a < 0) return [targetId];
+    var lo = Math.min(a, b);
+    var hi = Math.max(a, b);
+    return order.slice(lo, hi + 1);
+  }
+
+  function formatQty(n) {
+    var v = Math.round(Number(n) || 0);
+    try { return v.toLocaleString("en-US"); }
+    catch (err) { return String(v); }
+  }
+
+  function resourceName(id, api, index) {
+    if (!id) return "";
+    var node = index && index.byId && index.byId[id];
+    if (node && node.name) return node.name;
+    var choices = (api && api.RESOURCE_CHOICES) || [];
+    for (var i = 0; i < choices.length; i++) {
+      if (choices[i][0] === id) return choices[i][1];
+    }
+    return id;
+  }
+
+  var MINING_KIND_LABEL = { mineral: "Mineral", gas: "Gas", amu: "AMU" };
+
+  function miningRowsFor(sites, api, index) {
+    var groups = Object.create(null);
+    var order = [];
+    (sites || []).forEach(function (site) {
+      if (!site || (site.kind !== "mineral" && site.kind !== "gas" && site.kind !== "amu")) return;
+      var described = api && api.describeSite ? api.describeSite(site, index) : { rate: null };
+      var resourceId = api && api.siteProductId ? api.siteProductId(site) : (site.resourceId || "");
+      var unset = !resourceId;
+      var key = unset ? ("unset:" + site.kind) : ("res:" + resourceId);
+      if (!groups[key]) {
+        groups[key] = {
+          key: key,
+          label: unset ? (MINING_KIND_LABEL[site.kind] || site.kind) : resourceName(resourceId, api, index),
+          count: 0,
+          rate: 0,
+          approximate: false,
+          unset: unset,
+          kind: site.kind,
+          places: []
+        };
+        order.push(key);
+      }
+      var row = groups[key];
+      row.count += site.count || 0;
+      if (!unset && described.rate && described.rate.perHour > 0) {
+        row.rate += described.rate.perHour;
+        row.approximate = !!described.rate.approximate;
+      }
+    });
+    return order.map(function (key) { return groups[key]; });
+  }
+
+  function miningChipText(row) {
+    if (!row) return "";
+    var text = row.label + " ×" + formatQty(row.count);
+    if (row.unset) return text + " (unset)";
+    if (row.rate > 0) return text + " · ~" + formatQty(row.rate) + "/h";
+    return text;
+  }
+
+  function cropRowsFor(sites, api, index) {
+    var groups = Object.create(null);
+    var order = [];
+    (sites || []).forEach(function (site) {
+      if (!site || site.kind !== "crop") return;
+      var described = api && api.describeSite ? api.describeSite(site, index) : { name: site.objectId };
+      var label = (site.known === false && site.label) ? site.label : (described.name || site.objectId || "Crop");
+      if (!groups[label]) {
+        groups[label] = { label: label, count: 0, places: [] };
+        order.push(label);
+      }
+      groups[label].count += site.count || 0;
+    });
+    return order.map(function (key) { return groups[key]; });
+  }
+
+  function cropChipText(row) {
+    if (!row) return "";
+    return row.label + " ×" + formatQty(row.count);
+  }
+
+  function storeHasLogistics(store) {
+    if (!store) return false;
+    if (store.source && (store.source.fileName || store.source.importedAt)) return true;
+    if (store.locations && store.locations.length) return true;
+    if (store.production && store.production.length) return true;
+    return false;
+  }
+
+  function summarizeBase(place, store, api, index, query) {
+    var empty = {
+      loaded: false,
+      message: "No inventory loaded, import a save",
+      stacks: 0,
+      units: 0,
+      topItems: [],
+      moreItems: 0,
+      mining: [],
+      crops: [],
+      miningCount: 0,
+      miningRate: 0,
+      cropCount: 0,
+      unmet: false,
+      hasQuery: false
+    };
+    if (!place || !api || !storeHasLogistics(store)) return empty;
+    var locs = api.locationsAtPlace(store, place, "base") || [];
+    var sites = api.sitesAtPlace(store, place, "base") || [];
+    var mining = miningRowsFor(sites, api, index);
+    var crops = cropRowsFor(sites, api, index);
+    var byItem = Object.create(null);
+    var itemOrder = [];
+    var stacks = 0;
+    var units = 0;
+    locs.forEach(function (loc) {
+      (loc.items || []).forEach(function (item) {
+        stacks += 1;
+        units += item.qty || 0;
+        var key = item.id;
+        if (!byItem[key]) {
+          byItem[key] = { id: key, label: api.itemLabel(item, index), qty: 0 };
+          itemOrder.push(key);
+        }
+        byItem[key].qty += item.qty || 0;
+      });
+    });
+    var ranked = itemOrder.map(function (key) { return byItem[key]; });
+    ranked.sort(function (a, b) {
+      if (b.qty !== a.qty) return b.qty - a.qty;
+      if (a.label < b.label) return -1;
+      if (a.label > b.label) return 1;
+      return 0;
+    });
+    var miningCount = 0;
+    var miningRate = 0;
+    mining.forEach(function (row) {
+      miningCount += row.count;
+      miningRate += row.rate || 0;
+    });
+    var cropCount = 0;
+    crops.forEach(function (row) { cropCount += row.count; });
+    var demands = api.demandsAtPlace(store, place, "base") || [];
+    var unmet = demands.some(function (row) { return row.report && row.report.need > 0; });
+    var q = query && String(query).trim();
+    var hasQuery = false;
+    if (q && api.markerState) {
+      var mark = api.markerState(store, place, q, index);
+      hasQuery = !!(mark && mark.hasQueryMatch);
+    }
+    if (!(stacks > 0 || miningCount > 0 || cropCount > 0)) {
+      empty.loaded = true;
+      empty.hasQuery = hasQuery;
+      empty.unmet = unmet;
+      return empty;
+    }
+    return {
+      loaded: true,
+      message: "",
+      stacks: stacks,
+      units: units,
+      topItems: ranked.slice(0, 3),
+      moreItems: Math.max(0, ranked.length - 3),
+      mining: mining,
+      crops: crops,
+      miningCount: miningCount,
+      miningRate: miningRate,
+      cropCount: cropCount,
+      unmet: unmet,
+      hasQuery: hasQuery
+    };
+  }
+
+  function inventoryChipText(summary) {
+    if (!summary || !summary.stacks) return "";
+    var parts = [formatQty(summary.stacks) + (summary.stacks === 1 ? " stack" : " stacks")];
+    (summary.topItems || []).forEach(function (item) {
+      parts.push((item.label || item.id) + " " + formatQty(item.qty));
+    });
+    if (summary.moreItems > 0) parts.push("+" + summary.moreItems + " more");
+    return parts.join(" · ");
+  }
+
+  function aggregatePlaces(places, store, api, index) {
+    var itemMap = Object.create(null);
+    var itemOrder = [];
+    var mineMap = Object.create(null);
+    var mineOrder = [];
+    var cropMap = Object.create(null);
+    var cropOrder = [];
+    var shortfalls = [];
+    var count = 0;
+    (places || []).forEach(function (place) {
+      if (!place) return;
+      count += 1;
+      var name = place.name || place.glyphs || "Place";
+      if (!api || !store) return;
+      (api.locationsAtPlace(store, place, "base") || []).forEach(function (loc) {
+        (loc.items || []).forEach(function (item) {
+          var key = item.id;
+          if (!itemMap[key]) {
+            itemMap[key] = { id: key, label: api.itemLabel(item, index), total: 0, places: [] };
+            itemOrder.push(key);
+          }
+          itemMap[key].total += item.qty || 0;
+          var slot = null;
+          itemMap[key].places.forEach(function (entry) { if (entry.name === name) slot = entry; });
+          if (!slot) itemMap[key].places.push({ name: name, qty: item.qty || 0 });
+          else slot.qty += item.qty || 0;
+        });
+      });
+      miningRowsFor(api.sitesAtPlace(store, place, "base") || [], api, index).forEach(function (row) {
+        if (!mineMap[row.key]) {
+          mineMap[row.key] = {
+            key: row.key,
+            label: row.label,
+            count: 0,
+            rate: 0,
+            approximate: false,
+            unset: row.unset,
+            kind: row.kind,
+            places: []
+          };
+          mineOrder.push(row.key);
+        }
+        var dest = mineMap[row.key];
+        dest.count += row.count;
+        dest.rate += row.rate || 0;
+        if (row.rate > 0) dest.approximate = true;
+        dest.places.push({ name: name, count: row.count, rate: row.rate || 0 });
+      });
+      cropRowsFor(api.sitesAtPlace(store, place, "base") || [], api, index).forEach(function (row) {
+        if (!cropMap[row.label]) {
+          cropMap[row.label] = { label: row.label, count: 0, places: [] };
+          cropOrder.push(row.label);
+        }
+        cropMap[row.label].count += row.count;
+        cropMap[row.label].places.push({ name: name, count: row.count });
+      });
+      (api.demandsAtPlace(store, place, "base") || []).forEach(function (row) {
+        if (!row.report || !(row.report.shortfall > 0)) return;
+        var itemId = row.demand && row.demand.itemId;
+        var label = (index && index.byId && index.byId[itemId] && index.byId[itemId].name) || itemId;
+        shortfalls.push({
+          place: name,
+          project: row.project && row.project.name || "",
+          item: label,
+          itemId: itemId,
+          need: row.demand.qty,
+          atTarget: row.report.atTarget,
+          elsewhere: row.report.elsewhere,
+          shortfall: row.report.shortfall
+        });
+      });
+    });
+    var inventory = itemOrder.map(function (key) { return itemMap[key]; });
+    inventory.sort(function (a, b) {
+      if (b.total !== a.total) return b.total - a.total;
+      if (a.label < b.label) return -1;
+      if (a.label > b.label) return 1;
+      return 0;
+    });
+    return {
+      count: count,
+      inventory: inventory,
+      mining: mineOrder.map(function (key) { return mineMap[key]; }),
+      crops: cropOrder.map(function (key) { return cropMap[key]; }),
+      shortfalls: shortfalls
+    };
+  }
+
+  function orderBases(bases, summaries, sort, filter) {
+    var list = (bases || []).filter(function (base) {
+      var summary = summaries && summaries[base.id];
+      if (filter === "mining") return !!(summary && summary.miningCount > 0);
+      if (filter === "farming") return !!(summary && summary.cropCount > 0);
+      if (filter === "item") return !!(summary && summary.hasQuery);
+      return true;
+    });
+    return list.slice().sort(function (a, b) {
+      var sa = (summaries && summaries[a.id]) || {};
+      var sb = (summaries && summaries[b.id]) || {};
+      if (sort === "inventory" && (sb.units || 0) !== (sa.units || 0)) return (sb.units || 0) - (sa.units || 0);
+      if (sort === "mining") {
+        if ((sb.miningRate || 0) !== (sa.miningRate || 0)) return (sb.miningRate || 0) - (sa.miningRate || 0);
+        if ((sb.miningCount || 0) !== (sa.miningCount || 0)) return (sb.miningCount || 0) - (sa.miningCount || 0);
+      }
+      if (sort === "crops" && (sb.cropCount || 0) !== (sa.cropCount || 0)) return (sb.cropCount || 0) - (sa.cropCount || 0);
+      var an = String(a.name || "").toLowerCase();
+      var bn = String(b.name || "").toLowerCase();
+      if (an < bn) return -1;
+      if (an > bn) return 1;
+      return String(a.id || "").localeCompare(String(b.id || ""));
+    });
+  }
+
   function mount() {
     var canvas = document.getElementById("map");
     var fileInput = document.getElementById("file");
@@ -936,6 +1358,11 @@
       problems: [],
       galaxy: 0,
       selected: null,
+      selection: [],
+      anchorId: null,
+      listSort: "name",
+      listFilter: "all",
+      expanded: {},
       selectedRef: null,
       hover: null,
       hoverRef: null,
@@ -944,6 +1371,11 @@
       source: "",
       selectedFreight: null
     };
+    var listOrder = [];
+    var freightOrder = [];
+    var selectMode = false;
+    var selectShape = "box";
+    var marquee = null;
     var logisticsStore = null;
     var catalogIndex = null;
     var placeMode = "base";
@@ -1002,6 +1434,10 @@
       return api ? api.formatBadge(n) : String(n || "");
     }
 
+    function isSelected(id) {
+      return state.selection.indexOf(id) !== -1;
+    }
+
     function baseById(id) {
       var found = null;
       state.planetary.forEach(function (b) { if (b.id === id) found = b; });
@@ -1049,8 +1485,8 @@
       }).join("");
     }
 
-    function productionHtml(api, store, place, catalogIdx) {
-      var mode = placeMode === "system" ? "system" : "base";
+    function productionHtml(api, store, place, catalogIdx, mode) {
+      mode = mode === "system" ? "system" : "base";
       var sites = api.sitesAtPlace(store, place, mode);
       var planet = mode === "base" ? api.sitesAtPlace(store, place, "planet") : sites;
       function tally(list, kind) {
@@ -1130,48 +1566,17 @@
       return html;
     }
 
-    function renderPlacePanel(place, heading) {
-      if (!placePanel || !placeBody) return;
-      openPlace = place;
-      if (!place) {
-        placePanel.hidden = true;
-        placeBody.innerHTML = "";
-        return;
-      }
-      placePanel.hidden = false;
-      if (placeTitle) placeTitle.textContent = heading || place.name || "This place";
-      var api = logisticsApi();
-      if (!api) {
-        placeBody.innerHTML = '<p class="empty">The logistics planner did not load.</p>';
-        return;
-      }
-      readLogistics();
-      var store = logisticsStore || api.emptyStore();
-      var locs = api.locationsAtPlace(store, place, placeMode);
-      var demands = api.demandsAtPlace(store, place, placeMode);
-      var href = "/game/guides/no-mans-sky/logistics/" + api.placeQuery({
-        glyphs: place.glyphs,
-        planet: place.planet,
-        galaxy: place.galaxy,
-        name: place.name
-      });
+    function placeSectionsHtml(api, store, place, mode) {
+      var locs = api.locationsAtPlace(store, place, mode);
+      var demands = api.demandsAtPlace(store, place, mode);
       var units = 0;
       var lines = 0;
       locs.forEach(function (loc) {
         (loc.items || []).forEach(function (item) { units += item.qty; lines += 1; });
       });
-      var html = '<p class="place-meta">' + esc(place.glyphs || "No portal address") +
-        (place.coords ? " · " + esc(place.coords) : "") +
-        (place.planet != null ? " · planet " + esc(place.planet) : "") +
-        " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
-      html += '<p class="place-actions"><a href="' + esc(href) + '">Open in the logistics planner</a>';
-      if (place.glyphs) {
-        html += ' <button type="button" id="place-scope">' + (placeMode === "system" ? "Show this place only" : "Show this system") + "</button>";
-      }
-      html += ' <button type="button" id="place-close">Close</button></p>';
-      html += '<p class="place-meta">' + locs.length + " location" + (locs.length === 1 ? "" : "s") + " · " + lines + " stacks · " + units + " units</p>";
+      var html = '<p class="place-meta">' + locs.length + " location" + (locs.length === 1 ? "" : "s") + " · " + lines + " stacks · " + units + " units</p>";
       if (!locs.length) {
-        html += '<p class="empty">No inventory is pinned to this ' + (placeMode === "system" ? "system" : "place") + '. Carried holds, such as the exosuit, stay off the map until you pin them. Nothing was uploaded.</p>';
+        html += '<p class="empty">No inventory is pinned to this ' + (mode === "system" ? "system" : "place") + '. Carried holds, such as the exosuit, stay off the map until you pin them. Nothing was uploaded.</p>';
       } else {
         html += locs.map(function (loc) {
           var rows = (loc.items || []).map(function (item) {
@@ -1196,32 +1601,191 @@
         });
         html += "</ul>";
       } else {
-        html += '<p class="place-meta">No open demands for this ' + (placeMode === "system" ? "system" : "place") + ".</p>";
+        html += '<p class="place-meta">No open demands for this ' + (mode === "system" ? "system" : "place") + ".</p>";
       }
-      html += productionHtml(api, store, place, catalogIndex);
+      html += productionHtml(api, store, place, catalogIndex, mode);
+      return html;
+    }
+
+    function bindProduction(root) {
+      if (!root) return;
+      var api = logisticsApi();
+      if (!api) return;
+      root.querySelectorAll("[data-prod]").forEach(function (el) {
+        el.addEventListener("change", function () {
+          var patch = {};
+          patch[el.getAttribute("data-prod")] = el.value;
+          writeLogistics(api.setProduction(readLogistics() || api.emptyStore(), el.getAttribute("data-id"), patch));
+          if (state.selection.length > 1) renderAggregate();
+          else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+          renderLists();
+          draw();
+        });
+      });
+    }
+
+    function announceSelection() {
+      var live = document.getElementById("select-live");
+      if (!live) return;
+      if (!state.selection.length) live.textContent = "Selection cleared.";
+      else if (state.selection.length === 1) {
+        var one = baseById(state.selection[0]) || freightById(state.selection[0]);
+        live.textContent = "Selected " + (one ? one.name : "one place") + ".";
+      } else live.textContent = state.selection.length + " places selected.";
+    }
+
+    function commitSelection(ids, anchor) {
+      var next = [];
+      var seen = Object.create(null);
+      (ids || []).forEach(function (id) {
+        if (!id || seen[id]) return;
+        if (!baseById(id) && !freightById(id)) return;
+        seen[id] = true;
+        next.push(id);
+      });
+      state.selection = next;
+      if (arguments.length > 1) state.anchorId = anchor;
+      var only = next.length === 1 ? next[0] : null;
+      state.selected = only && baseById(only) ? only : null;
+      state.selectedFreight = only && freightById(only) ? only : null;
+      if (next.length) state.selectedRef = null;
+      announceSelection();
+      renderLists();
+      renderRefList();
+      draw();
+      if (next.length > 1) renderAggregate();
+      else if (next.length === 1) {
+        var one = baseById(next[0]) || freightById(next[0]);
+        placeMode = "base";
+        renderPlacePanel(placeOf(one), one ? one.name : "");
+        if (placePanel && !placePanel.hidden && placeTitle) placeTitle.focus();
+      } else renderPlacePanel(null);
+    }
+
+    function selectedPlaces() {
+      var places = [];
+      state.selection.forEach(function (id) {
+        var row = baseById(id) || freightById(id);
+        if (row) places.push(placeOf(row));
+      });
+      return places;
+    }
+
+    function renderAggregate() {
+      if (!placePanel || !placeBody) return;
+      var places = selectedPlaces();
+      openPlace = null;
+      if (places.length < 2) {
+        placePanel.hidden = true;
+        placeBody.innerHTML = "";
+        return;
+      }
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = places.length + " places";
+      var api = logisticsApi();
+      if (!api) {
+        placeBody.innerHTML = '<p class="empty">The logistics planner did not load.</p>';
+        return;
+      }
+      readLogistics();
+      var store = logisticsStore || api.emptyStore();
+      var agg = aggregatePlaces(places, store, api, catalogIndex);
+      var href = "/game/guides/no-mans-sky/logistics/" + api.selectionQuery(places);
+      var html = '<p class="place-meta">' + agg.count + " places selected.</p>";
+      html += '<p class="place-actions"><a href="' + esc(href) + '">Open these places in the logistics planner</a>';
+      html += ' <button type="button" id="place-close">Clear selection</button></p>';
+      html += "<h3 class=\"place-sub\">Inventory</h3>";
+      if (!agg.inventory.length) {
+        html += '<p class="empty">No inventory is pinned to these places.</p>';
+      } else {
+        html += agg.inventory.map(function (item) {
+          var breakdown = (item.places || []).map(function (entry) {
+            return "<li><span>" + esc(entry.name) + "</span><span>" + esc(formatQty(entry.qty)) + "</span></li>";
+          }).join("");
+          return "<details class=\"place-loc\"><summary><span>" + esc(item.label) + "</span><span>" + esc(formatQty(item.total)) + "</span></summary><ul>" + breakdown + "</ul></details>";
+        }).join("");
+      }
+      html += "<h3 class=\"place-sub\">Mining</h3>";
+      if (!agg.mining.length) html += '<p class="empty">No extractors at these places.</p>';
+      else {
+        html += agg.mining.map(function (row) {
+          var breakdown = (row.places || []).map(function (entry) {
+            var rate = entry.rate > 0 ? " · ~" + formatQty(entry.rate) + "/h" : "";
+            return "<li><span>" + esc(entry.name) + "</span><span>×" + esc(formatQty(entry.count)) + esc(rate) + "</span></li>";
+          }).join("");
+          return "<details class=\"place-loc\"><summary><span>" + esc(miningChipText(row)) + "</span></summary><ul>" + breakdown + "</ul></details>";
+        }).join("");
+      }
+      html += "<h3 class=\"place-sub\">Crops</h3>";
+      if (!agg.crops.length) html += '<p class="empty">No crops at these places.</p>';
+      else {
+        html += agg.crops.map(function (row) {
+          var breakdown = (row.places || []).map(function (entry) {
+            return "<li><span>" + esc(entry.name) + "</span><span>×" + esc(formatQty(entry.count)) + "</span></li>";
+          }).join("");
+          return "<details class=\"place-loc\"><summary><span>" + esc(cropChipText(row)) + "</span></summary><ul>" + breakdown + "</ul></details>";
+        }).join("");
+      }
+      html += "<h3 class=\"place-sub\">Open shortfalls</h3>";
+      if (!agg.shortfalls.length) html += '<p class="place-meta">No open shortfalls at these places.</p>';
+      else {
+        html += '<ul class="place-demands">';
+        agg.shortfalls.forEach(function (row) {
+          html += "<li><strong>" + esc(row.project) + "</strong> · " + esc(row.place) + " · " + esc(row.item) +
+            " · need " + esc(row.need) + " · here " + esc(row.atTarget) + " · elsewhere " + esc(row.elsewhere) +
+            " · short " + esc(row.shortfall) + "</li>";
+        });
+        html += "</ul>";
+      }
+      placeBody.innerHTML = html;
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
+    }
+
+    function renderPlacePanel(place, heading) {
+      if (!placePanel || !placeBody) return;
+      openPlace = place;
+      if (!place) {
+        placePanel.hidden = true;
+        placeBody.innerHTML = "";
+        return;
+      }
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = heading || place.name || "This place";
+      var api = logisticsApi();
+      if (!api) {
+        placeBody.innerHTML = '<p class="empty">The logistics planner did not load.</p>';
+        return;
+      }
+      readLogistics();
+      var store = logisticsStore || api.emptyStore();
+      var href = "/game/guides/no-mans-sky/logistics/" + api.placeQuery({
+        glyphs: place.glyphs,
+        planet: place.planet,
+        galaxy: place.galaxy,
+        name: place.name
+      });
+      var html = '<p class="place-meta">' + esc(place.glyphs || "No portal address") +
+        (place.coords ? " · " + esc(place.coords) : "") +
+        (place.planet != null ? " · planet " + esc(place.planet) : "") +
+        " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
+      html += '<p class="place-actions"><a href="' + esc(href) + '">Open in the logistics planner</a>';
+      if (place.glyphs) {
+        html += ' <button type="button" id="place-scope">' + (placeMode === "system" ? "Show this place only" : "Show this system") + "</button>";
+      }
+      html += ' <button type="button" id="place-close">Close</button></p>';
+      html += placeSectionsHtml(api, store, place, placeMode);
       placeBody.innerHTML = html;
       var scopeBtn = document.getElementById("place-scope");
       if (scopeBtn) scopeBtn.addEventListener("click", function () {
         placeMode = placeMode === "system" ? "base" : "system";
         renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
       });
-      placeBody.querySelectorAll("[data-prod]").forEach(function (el) {
-        el.addEventListener("change", function () {
-          var patch = {};
-          patch[el.getAttribute("data-prod")] = el.value;
-          writeLogistics(api.setProduction(readLogistics() || api.emptyStore(), el.getAttribute("data-id"), patch));
-          renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
-          draw();
-        });
-      });
+      bindProduction(placeBody);
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () {
-        state.selected = null;
-        state.selectedFreight = null;
         state.selectedRef = null;
-        renderPlacePanel(null);
-        renderLists();
-        draw();
+        commitSelection([]);
       });
     }
 
@@ -1633,7 +2197,7 @@
         var painted = group.map(function (b, i) { return { b: b, i: i }; });
         painted.sort(function (a, b) {
           function rank(item) {
-            if (state.selected === item.b.id) return 2;
+            if (isSelected(item.b.id)) return 2;
             if (state.hover === item.b.id) return 1;
             return 0;
           }
@@ -1644,7 +2208,8 @@
           var off = clumpOffset(item.i, group.length, view.zoom);
           var x = anchor.x + off.x;
           var y = anchor.y + off.y;
-          var on = state.selected === b.id || state.hover === b.id;
+          var on = isSelected(b.id) || state.hover === b.id;
+          var picked = isSelected(b.id);
           var query = itemFilter ? String(itemFilter.value || "").trim() : "";
           var shade = !!(showStock && showStock.checked);
           var showProd = !!(showProduction && showProduction.checked);
@@ -1658,6 +2223,28 @@
           ctx.lineWidth = on ? 2 : 1;
           ctx.strokeStyle = on ? c.ink : withAlpha(c.base, 0.85);
           ctx.stroke();
+          if (picked) {
+            var s = 10;
+            ctx.beginPath();
+            ctx.lineWidth = 1.75;
+            ctx.strokeStyle = c.ink;
+            ctx.moveTo(x - s, y - s + 4);
+            ctx.lineTo(x - s, y - s);
+            ctx.lineTo(x - s + 4, y - s);
+            ctx.moveTo(x + s, y - s + 4);
+            ctx.lineTo(x + s, y - s);
+            ctx.lineTo(x + s - 4, y - s);
+            ctx.moveTo(x - s, y + s - 4);
+            ctx.lineTo(x - s, y + s);
+            ctx.lineTo(x - s + 4, y + s);
+            ctx.moveTo(x + s, y + s - 4);
+            ctx.lineTo(x + s, y + s);
+            ctx.lineTo(x + s - 4, y + s);
+            ctx.moveTo(x + 3, y - 12);
+            ctx.lineTo(x + 6, y - 8);
+            ctx.lineTo(x + 13, y - 16);
+            ctx.stroke();
+          }
           if (query && mark && mark.hasQueryMatch) {
             ctx.beginPath();
             ctx.lineWidth = 2;
@@ -1728,6 +2315,33 @@
       refLabels.forEach(function (job) {
         paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
       });
+      if (marquee) {
+        var mx0 = marquee.x0;
+        var my0 = marquee.y0;
+        var mx1 = marquee.x1;
+        var my1 = marquee.y1;
+        ctx.save();
+        ctx.strokeStyle = c.ink;
+        ctx.fillStyle = withAlpha(c.accent, 0.16);
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 1.5;
+        if (marquee.shape === "circle") {
+          var radius = Math.hypot(mx1 - mx0, my1 - my0);
+          ctx.beginPath();
+          ctx.arc(mx0, my0, radius, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.setLineDash([]);
+          var ly = screenRadiusLy(radius, frame, view.zoom);
+          if (ly != null && radius > 8) paintLabel(ctx, "~" + formatLy(ly) + " radius", mx1 + 10, my1, c.ink, c.base);
+        } else {
+          var rx0 = Math.min(mx0, mx1);
+          var ry0 = Math.min(my0, my1);
+          ctx.fillRect(rx0, ry0, Math.abs(mx1 - mx0), Math.abs(my1 - my0));
+          ctx.strokeRect(rx0, ry0, Math.abs(mx1 - mx0), Math.abs(my1 - my0));
+        }
+        ctx.restore();
+      }
     }
 
     function esc(s) {
@@ -1764,6 +2378,42 @@
       return " · ~" + formatLy(bestD) + " from " + best.label;
     }
 
+    function glanceHtml(summary) {
+      if (!summary || summary.message) {
+        return '<span class="base-empty">' + esc((summary && summary.message) || "No inventory loaded, import a save") + "</span>";
+      }
+      var html = '<span class="base-chips">';
+      (summary.mining || []).forEach(function (row) {
+        html += '<span class="chip"><span class="chip-k">Mining</span> ' + esc(miningChipText(row)) + "</span>";
+      });
+      (summary.crops || []).forEach(function (row) {
+        html += '<span class="chip"><span class="chip-k">Harvest</span> ' + esc(cropChipText(row)) + "</span>";
+      });
+      var inv = inventoryChipText(summary);
+      if (inv) html += '<span class="chip"><span class="chip-k">Inventory</span> ' + esc(inv) + "</span>";
+      else html += '<span class="chip"><span class="chip-k">Inventory</span> No stacks pinned here</span>';
+      if (summary.unmet) html += '<span class="chip chip-need">Open demand</span>';
+      html += "</span>";
+      return html;
+    }
+
+    function summariesFor(rows) {
+      var map = Object.create(null);
+      var api = logisticsApi();
+      var store = null;
+      if (api) {
+        readLogistics();
+        store = logisticsStore || api.emptyStore();
+      }
+      var query = itemFilter ? itemFilter.value : "";
+      (rows || []).forEach(function (row) {
+        map[row.id] = api
+          ? summarizeBase(placeOf(row), store, api, catalogIndex, query)
+          : { message: "No inventory loaded, import a save", units: 0, miningCount: 0, miningRate: 0, cropCount: 0, hasQuery: false };
+      });
+      return map;
+    }
+
     function renderLists() {
       var bases = visibleBases();
       if (mBases) mBases.textContent = String(bases.length);
@@ -1782,29 +2432,50 @@
         mCenter.textContent = selected ? formatLy(selected.lyCenter).replace(" ly", "") : "—";
       }
       if (!baseList) return;
+      var summaries = summariesFor(bases);
+      var ordered = orderBases(bases, summaries, state.listSort, state.listFilter);
+      listOrder = ordered.map(function (b) { return b.id; });
       if (!bases.length) {
         baseList.innerHTML = '<li class="empty">' + (state.fileName
           ? "No planetary bases in this galaxy" + (state.filter ? " match the filter." : ".")
           : "Load a save to list bases. Euclid Hub marks and quadrant references are already on the map.") + "</li>";
+      } else if (!ordered.length) {
+        baseList.innerHTML = '<li class="empty">' + (state.listFilter === "item"
+          ? "No bases match the item search. Type an item above, such as Chromatic Metal."
+          : "No planetary bases match this list.") + "</li>";
       } else {
-        baseList.innerHTML = bases.map(function (b) {
-          var on = state.selected === b.id ? "true" : "false";
-          return '<li><button type="button" data-base="' + esc(b.id) + '" aria-pressed="' + on + '">' +
-            '<span class="nm">' + esc(b.name) + "</span>" +
+        var api = logisticsApi();
+        var store = api ? (logisticsStore || api.emptyStore()) : null;
+        baseList.innerHTML = ordered.map(function (b) {
+          var on = isSelected(b.id);
+          var open = !!state.expanded[b.id];
+          var detailId = "base-detail-" + b.id;
+          var detail = "";
+          if (open && api && store) detail = placeSectionsHtml(api, store, placeOf(b), "base");
+          return '<li class="base-row">' +
+            '<div class="base-head"><button type="button" data-base="' + esc(b.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+            '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(b.name) + "</span>" +
             '<span class="meta">' + esc(b.type) + " · " + esc(galaxyLabel(b.galaxy)) + " · " + esc(b.coords) +
             " · " + esc(formatLy(b.lyCenter)) + " from center" + esc(nearestHubLy(b)) + "</span>" +
-            '<span class="glyphs">' + esc(b.glyphs) + "</span></button></li>";
+            '<span class="glyphs">' + esc(b.glyphs) + "</span>" +
+            glanceHtml(summaries[b.id]) +
+            "</button>" +
+            '<button type="button" class="base-expand" data-expand="' + esc(b.id) + '" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="' + esc(detailId) + '">' +
+            (open ? "Hide" : "Details") + "</button></div>" +
+            '<div id="' + esc(detailId) + '" class="base-detail"' + (open ? "" : " hidden") + ">" + detail + "</div></li>";
         }).join("");
+        bindProduction(baseList);
       }
       if (freightList) {
         var fr = state.freighters.filter(function (b) {
           return galaxyKey(b) === state.galaxy;
         });
+        freightOrder = fr.map(function (b) { return b.id; });
         freightList.innerHTML = fr.length
           ? fr.map(function (b) {
-            var on = state.selectedFreight === b.id ? "true" : "false";
-            return '<li><button type="button" data-freight="' + esc(b.id) + '" aria-pressed="' + on + '">' +
-              '<span class="nm">' + esc(b.name) + "</span><span class=\"meta\">" +
+            var on = isSelected(b.id);
+            return '<li><button type="button" data-freight="' + esc(b.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+              '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(b.name) + "</span><span class=\"meta\">" +
               esc(b.type) + " · " + esc(galaxyLabel(b.galaxy)) + " · " + esc(b.glyphs) +
               '</span><span class="glyphs">Not plotted · inventory</span></button></li>';
           }).join("")
@@ -1883,10 +2554,15 @@
       state.freighters = parsed.freighters;
       state.problems = parsed.problems;
       state.selected = null;
+      state.selection = [];
+      state.anchorId = null;
+      state.selectedFreight = null;
+      state.expanded = {};
       state.selectedRef = null;
       state.hover = null;
       state.hoverRef = null;
       aim = null;
+      renderPlacePanel(null);
       var counts = Object.create(null);
       parsed.planetary.forEach(function (b) {
         if (b.galaxy == null) return;
@@ -1909,6 +2585,9 @@
       state.freighters = [];
       state.problems = [];
       state.selected = null;
+      state.selection = [];
+      state.anchorId = null;
+      state.selectedFreight = null;
       state.selectedRef = null;
       state.hover = null;
       state.hoverRef = null;
@@ -1961,6 +2640,8 @@
         "Inventory: " + held + " hold" + (held === 1 ? "" : "s") +
         (flagged ? ", " + flagged + " section" + (flagged === 1 ? "" : "s") + " flagged." : ".") +
         " Shared with the logistics planner in this browser. Nothing was uploaded.");
+      renderLists();
+      draw();
       if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
     }
 
@@ -2055,7 +2736,7 @@
       var next = h && h.kind === "base" ? h.id : null;
       var nextRef = h && h.kind === "ref" ? h.id : null;
       var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
-      canvas.style.cursor = h ? "pointer" : "grab";
+      canvas.style.cursor = h ? "pointer" : (selectMode ? "crosshair" : "grab");
       var sameHover = next === state.hover && nextRef === state.hoverRef;
       var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
       if (sameHover && sameAim) return;
@@ -2075,30 +2756,73 @@
         draw();
       });
     }
+    function gestureFromEvent(ev) {
+      return selectionGesture({
+        alt: !!ev.altKey,
+        ctrl: !!ev.ctrlKey,
+        meta: !!ev.metaKey,
+        shift: !!ev.shiftKey
+      }, selectShape);
+    }
+
+    function marqueeActive(ev) {
+      if (ev.pointerType === "mouse" && ev.button === 1) return true;
+      if (ev.pointerType === "mouse" && ev.button !== 0) return false;
+      return !!selectMode;
+    }
+
+    function applyMarquee(shapeDrag, op) {
+      var shape;
+      if (!shapeDrag) return;
+      if (shapeDrag.shape === "circle") {
+        shape = {
+          type: "circle",
+          cx: shapeDrag.x0,
+          cy: shapeDrag.y0,
+          r: Math.hypot(shapeDrag.x1 - shapeDrag.x0, shapeDrag.y1 - shapeDrag.y0)
+        };
+      } else {
+        shape = { type: "rect", x0: shapeDrag.x0, y0: shapeDrag.y0, x1: shapeDrag.x1, y1: shapeDrag.y1 };
+      }
+      var ids = markersInside(hits, shape).map(function (hit) { return hit.id; });
+      commitSelection(applySelectionOp(state.selection, ids, op || "replace"));
+    }
+
+    function chooseMarker(id, ev, ordered) {
+      if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) commitSelection(rangeIds(ordered, state.anchorId, id));
+      else if (ev.ctrlKey || ev.metaKey) commitSelection(toggleId(state.selection, id), id);
+      else commitSelection([id], id);
+    }
+
+    function forgetPlaces() {
+      state.selection = [];
+      state.selected = null;
+      state.selectedFreight = null;
+      state.anchorId = null;
+    }
+
     canvas.addEventListener("click", function (ev) {
+      if (ev.button !== 0) return;
       if (suppressClick) {
         suppressClick = false;
         return;
       }
       var h = hitTest(ev);
-      if (!h) return;
-      if (h.kind === "base") {
-        state.selected = state.selected === h.id ? null : h.id;
-        state.selectedFreight = null;
-        if (state.selected) state.selectedRef = null;
-        placeMode = "base";
-        renderLists();
+      if (!h) {
+        state.selectedRef = null;
+        commitSelection([]);
         renderRefList();
-        draw();
-        renderPlacePanel(state.selected ? placeOf(baseById(state.selected)) : null, state.selected ? (baseById(state.selected) || {}).name : "");
-        var btn = baseList && baseList.querySelector('[data-base="' + h.id + '"]');
-        if (btn) btn.focus();
-        if (placePanel && !placePanel.hidden && placeTitle) placeTitle.focus();
-      } else if (h.kind === "ref") {
+        return;
+      }
+      if (h.kind === "base" || h.kind === "freighter" || h.kind === "settlement" || h.kind === "system") {
+        chooseMarker(h.id, ev, h.kind === "freighter" ? freightOrder : listOrder);
+        return;
+      }
+      if (h.kind === "ref") {
         var ref = refById(h.id);
-        state.selectedRef = state.selectedRef === h.id ? null : h.id;
-        if (state.selectedRef) state.selected = null;
-        state.selectedFreight = null;
+        var was = state.selectedRef === h.id;
+        forgetPlaces();
+        state.selectedRef = was ? null : h.id;
         renderLists();
         renderRefList();
         draw();
@@ -2110,8 +2834,10 @@
       } else if (h.kind === "hub") {
         var hub = hubById(h.id);
         if (hub) {
+          forgetPlaces();
           placeMode = "system";
-          state.selectedFreight = null;
+          renderLists();
+          draw();
           setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
           renderPlacePanel({ glyphs: hub.glyphs, planet: null, galaxy: 0, name: hub.label, type: "Hub", coords: hub.coords }, hub.label);
         }
@@ -2142,18 +2868,29 @@
       syncAim();
       draw();
     }, { passive: false });
+    function blockMiddle(ev) {
+      if (ev.button === 1) ev.preventDefault();
+    }
+    canvas.addEventListener("mousedown", blockMiddle, true);
+    if (mapWrap) mapWrap.addEventListener("mousedown", blockMiddle, true);
+    canvas.addEventListener("auxclick", function (ev) {
+      if (ev.button === 1) ev.preventDefault();
+    });
     canvas.addEventListener("pointerdown", function (ev) {
-      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      if (ev.pointerType === "mouse" && ev.button !== 0 && ev.button !== 1) return;
+      if (ev.button === 1) ev.preventDefault();
       if (canvas.setPointerCapture) {
         try { canvas.setPointerCapture(ev.pointerId); } catch (err) { /* synthetic pointers */ }
       }
       pointers[ev.pointerId] = localPoint(ev);
       var ids = Object.keys(pointers);
       if (ids.length >= 2) {
+        marquee = null;
         var a = pointers[ids[0]];
         var b = pointers[ids[1]];
         drag = {
           pinch: true,
+          marquee: false,
           moved: true,
           dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
           zoom: view.zoom,
@@ -2162,9 +2899,15 @@
           midX: (a.x + b.x) / 2,
           midY: (a.y + b.y) / 2
         };
+      } else if (marqueeActive(ev)) {
+        var start = pointers[ids[0]];
+        var gesture = gestureFromEvent(ev);
+        drag = { marquee: true, pinch: false, moved: false, x: start.x, y: start.y, shape: gesture.shape, op: gesture.op };
+        marquee = { shape: gesture.shape, x0: start.x, y0: start.y, x1: start.x, y1: start.y };
       } else {
+        marquee = null;
         var p = pointers[ids[0]];
-        drag = { pinch: false, moved: false, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
+        drag = { pinch: false, marquee: false, moved: false, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
       }
     });
     canvas.addEventListener("pointermove", function (ev) {
@@ -2172,11 +2915,13 @@
       pointers[ev.pointerId] = localPoint(ev);
       var ids = Object.keys(pointers);
       if (ids.length >= 2) {
+        marquee = null;
         var a = pointers[ids[0]];
         var b = pointers[ids[1]];
         if (!drag || !drag.pinch) {
           drag = {
             pinch: true,
+            marquee: false,
             moved: true,
             dist: Math.max(1, Math.hypot(a.x - b.x, a.y - b.y)),
             zoom: view.zoom,
@@ -2206,6 +2951,14 @@
       var dx = p.x - drag.x;
       var dy = p.y - drag.y;
       if (dx * dx + dy * dy > 16) drag.moved = true;
+      if (drag.marquee) {
+        var gesture = gestureFromEvent(ev);
+        drag.shape = gesture.shape;
+        drag.op = gesture.op;
+        marquee = { shape: drag.shape, x0: drag.x, y0: drag.y, x1: p.x, y1: p.y };
+        if (drag.moved) draw();
+        return;
+      }
       if (!drag.moved) return;
       view.panX = drag.panX + dx;
       view.panY = drag.panY + dy;
@@ -2218,18 +2971,26 @@
       delete pointers[ev.pointerId];
       var ids = Object.keys(pointers);
       if (!ids.length) {
-        if (drag && drag.moved) {
+        var finished = drag && drag.marquee && drag.moved ? marquee : null;
+        var op = finished ? gestureFromEvent(ev).op : "replace";
+        if (drag && drag.moved && !finished) {
           suppressClick = true;
           aim = null;
           state.hover = null;
         }
         drag = null;
+        marquee = null;
         canvas.classList.remove("panning");
-        canvas.style.cursor = "grab";
+        canvas.style.cursor = selectMode ? "crosshair" : "grab";
+        if (finished) {
+          suppressClick = true;
+          applyMarquee(finished, op);
+        } else draw();
         return;
       }
+      marquee = null;
       var p = pointers[ids[0]];
-      drag = { pinch: false, moved: true, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
+      drag = { pinch: false, marquee: false, moved: true, x: p.x, y: p.y, panX: view.panX, panY: view.panY };
     }
     canvas.addEventListener("pointerup", endPointer);
     canvas.addEventListener("pointercancel", endPointer);
@@ -2250,15 +3011,37 @@
 
     if (baseList) {
       baseList.addEventListener("click", function (ev) {
+        var expand = ev.target.closest ? ev.target.closest("[data-expand]") : null;
+        if (expand) {
+          var xid = expand.getAttribute("data-expand");
+          state.expanded[xid] = !state.expanded[xid];
+          renderLists();
+          var again = baseList.querySelector('[data-expand="' + xid + '"]');
+          if (again) again.focus();
+          return;
+        }
         var btn = ev.target.closest ? ev.target.closest("[data-base]") : null;
         if (!btn) return;
         var id = btn.getAttribute("data-base");
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) {
+          commitSelection(rangeIds(listOrder, state.anchorId, id));
+          return;
+        }
+        if (ev.ctrlKey || ev.metaKey) {
+          commitSelection(toggleId(state.selection, id), id);
+          return;
+        }
         focusCluster(id);
-        state.selectedFreight = null;
-        placeMode = "base";
-        renderLists();
-        draw();
-        renderPlacePanel(placeOf(baseById(id)), (baseById(id) || {}).name || "");
+        commitSelection([id], id);
+      });
+      baseList.addEventListener("keydown", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-base]") : null;
+        if (!btn || (ev.key !== "Enter" && ev.key !== " ")) return;
+        if (!ev.shiftKey && !ev.ctrlKey && !ev.metaKey) return;
+        ev.preventDefault();
+        var id = btn.getAttribute("data-base");
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) commitSelection(rangeIds(listOrder, state.anchorId, id));
+        else commitSelection(toggleId(state.selection, id), id);
       });
     }
 
@@ -2267,14 +3050,25 @@
         var btn = ev.target.closest ? ev.target.closest("[data-freight]") : null;
         if (!btn) return;
         var id = btn.getAttribute("data-freight");
-        var ship = freightById(id);
-        state.selected = null;
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) {
+          commitSelection(rangeIds(freightOrder, state.anchorId, id));
+          return;
+        }
+        if (ev.ctrlKey || ev.metaKey) {
+          commitSelection(toggleId(state.selection, id), id);
+          return;
+        }
         state.selectedRef = null;
-        state.selectedFreight = state.selectedFreight === id ? null : id;
-        placeMode = "base";
-        renderLists();
-        draw();
-        renderPlacePanel(state.selectedFreight && ship ? placeOf(ship) : null, ship ? ship.name : "");
+        commitSelection([id], id);
+      });
+      freightList.addEventListener("keydown", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-freight]") : null;
+        if (!btn || (ev.key !== "Enter" && ev.key !== " ")) return;
+        if (!ev.shiftKey && !ev.ctrlKey && !ev.metaKey) return;
+        ev.preventDefault();
+        var id = btn.getAttribute("data-freight");
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) commitSelection(rangeIds(freightOrder, state.anchorId, id));
+        else commitSelection(toggleId(state.selection, id), id);
       });
     }
 
@@ -2295,6 +3089,77 @@
       zoomBy(1 / 1.25, p.x, p.y);
     });
     bindZoom("zoom-reset", function () { resetView(); });
+
+    function paintSelectTools() {
+      var modeBtn = document.getElementById("select-mode");
+      var boxBtn = document.getElementById("select-box");
+      var circleBtn = document.getElementById("select-circle");
+      if (modeBtn) {
+        modeBtn.setAttribute("aria-pressed", selectMode ? "true" : "false");
+        modeBtn.textContent = selectMode ? "Selecting" : "Select";
+      }
+      if (boxBtn) boxBtn.setAttribute("aria-pressed", selectShape === "box" ? "true" : "false");
+      if (circleBtn) circleBtn.setAttribute("aria-pressed", selectShape === "circle" ? "true" : "false");
+      canvas.classList.toggle("selecting", !!selectMode);
+      if (!drag) canvas.style.cursor = selectMode ? "crosshair" : "grab";
+    }
+    function bindPress(id, fn) {
+      var btn = document.getElementById(id);
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        fn();
+        paintSelectTools();
+      });
+    }
+    bindPress("select-mode", function () { selectMode = !selectMode; });
+    bindPress("select-box", function () { selectShape = "box"; });
+    bindPress("select-circle", function () { selectShape = "circle"; });
+    var helpBtn = document.getElementById("select-help");
+    var helpPop = document.getElementById("select-help-pop");
+    if (helpBtn && helpPop) {
+      helpBtn.addEventListener("click", function () {
+        var open = helpPop.hidden;
+        helpPop.hidden = !open;
+        helpBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        if (open) {
+          var close = helpPop.querySelector("button");
+          if (close) close.focus();
+        }
+      });
+      var helpClose = document.getElementById("select-help-close");
+      if (helpClose) helpClose.addEventListener("click", function () {
+        helpPop.hidden = true;
+        helpBtn.setAttribute("aria-expanded", "false");
+        helpBtn.focus();
+      });
+    }
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key !== "Escape") return;
+      if (helpPop && !helpPop.hidden) {
+        helpPop.hidden = true;
+        if (helpBtn) {
+          helpBtn.setAttribute("aria-expanded", "false");
+          helpBtn.focus();
+        }
+        return;
+      }
+      var tag = ev.target && ev.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (!state.selection.length && !state.selectedRef) return;
+      state.selectedRef = null;
+      commitSelection([]);
+    });
+    var listSort = document.getElementById("list-sort");
+    var listFilter = document.getElementById("list-filter");
+    if (listSort) listSort.addEventListener("change", function () {
+      state.listSort = listSort.value || "name";
+      renderLists();
+    });
+    if (listFilter) listFilter.addEventListener("change", function () {
+      state.listFilter = listFilter.value || "all";
+      renderLists();
+    });
+    paintSelectTools();
 
     if (fileInput) {
       fileInput.addEventListener("change", function () {
@@ -2330,10 +3195,14 @@
           showHubs.disabled = state.galaxy !== 0;
         }
         state.selected = null;
+        state.selection = [];
+        state.anchorId = null;
+        state.selectedFreight = null;
         state.selectedRef = null;
         state.hover = null;
         state.hoverRef = null;
         aim = null;
+        renderPlacePanel(null);
         renderLists();
         renderRefList();
         draw();
@@ -2371,9 +3240,13 @@
         if (showRefs) { showRefs.disabled = false; showRefs.checked = true; }
       }
       state.selectedRef = id;
+      state.selection = [];
+      state.anchorId = null;
       state.selected = null;
+      state.selectedFreight = null;
       state.hover = null;
       state.hoverRef = null;
+      renderPlacePanel(null);
       var size = canvasSize();
       lastSize = size;
       var framed = frameOf(size.w, size.h);
@@ -2431,6 +3304,8 @@
       state.freighters = [];
       state.problems = [];
       state.selected = null;
+      state.selection = [];
+      state.anchorId = null;
       state.selectedRef = null;
       state.hover = null;
       state.hoverRef = null;
@@ -2462,8 +3337,10 @@
     if (showStock) showStock.addEventListener("change", draw);
     if (showProduction) showProduction.addEventListener("change", draw);
     if (itemFilter) itemFilter.addEventListener("input", function () {
+      renderLists();
       draw();
-      if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      if (state.selection.length > 1) renderAggregate();
+      else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
     });
 
     window.addEventListener("resize", draw);
@@ -2510,18 +3387,8 @@
         if (showHubs) showHubs.disabled = state.galaxy !== 0;
       }
       placeMode = "base";
-      if (freight) {
-        state.selected = null;
-        state.selectedFreight = match.id;
-        renderLists();
-        draw();
-      } else {
-        state.selectedFreight = null;
-        focusCluster(match.id);
-        renderLists();
-        draw();
-      }
-      renderPlacePanel(placeOf(match), match.name);
+      if (!freight) focusCluster(match.id);
+      commitSelection([match.id], match.id);
     }
     openFromQuery();
     window.addEventListener("load", openFromQuery);
@@ -2531,8 +3398,10 @@
         return res.json();
       }).then(function (catalog) {
         catalogIndex = logisticsApi().buildIndex(catalog);
+        renderLists();
         draw();
-        if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+        if (state.selection.length > 1) renderAggregate();
+        else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
       }).catch(function () { /* names fall back to ids */ });
     }
   }
@@ -2567,6 +3436,23 @@
     clumpOffset: clumpOffset,
     clumpZoomForGap: clumpZoomForGap,
     panToMarker: panToMarker,
+    pointInRect: pointInRect,
+    pointInCircle: pointInCircle,
+    mapToScreen: mapToScreen,
+    screenToMap: screenToMap,
+    screenRadiusLy: screenRadiusLy,
+    markersInside: markersInside,
+    selectionGesture: selectionGesture,
+    toggleId: toggleId,
+    applySelectionOp: applySelectionOp,
+    rangeIds: rangeIds,
+    miningChipText: miningChipText,
+    cropChipText: cropChipText,
+    summarizeBase: summarizeBase,
+    inventoryChipText: inventoryChipText,
+    aggregatePlaces: aggregatePlaces,
+    orderBases: orderBases,
+    formatQty: formatQty,
     mount: mount
   };
 });

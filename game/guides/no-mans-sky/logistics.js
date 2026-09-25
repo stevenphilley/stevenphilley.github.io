@@ -1696,6 +1696,38 @@
     return q ? "?" + q : "";
   }
 
+  function selectionGlyphs(places) {
+    var out = [];
+    (places || []).forEach(function (place) {
+      var glyphs = text(place && place.glyphs).toUpperCase();
+      if (/^[0-9A-F]{12}$/.test(glyphs) && out.indexOf(glyphs) === -1) out.push(glyphs);
+    });
+    return out;
+  }
+
+  function selectionQuery(places) {
+    var glyphs = selectionGlyphs(places);
+    if (!glyphs.length) return "";
+    return "?places=" + glyphs.join(",");
+  }
+
+  function parseSelectionQuery(search) {
+    var params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
+    var raw = params.get("places") || "";
+    var out = [];
+    raw.split(",").forEach(function (part) {
+      var glyphs = text(part).toUpperCase();
+      if (/^[0-9A-F]{12}$/.test(glyphs) && out.indexOf(glyphs) === -1) out.push(glyphs);
+    });
+    return out;
+  }
+
+  function geoInSelection(geo, glyphs) {
+    if (!glyphs || !glyphs.length) return true;
+    if (!geo || !geo.glyphs) return false;
+    return glyphs.indexOf(String(geo.glyphs).toUpperCase()) !== -1;
+  }
+
   function pinLocation(store, locationId, base) {
     var loc = findLocation(store, locationId);
     if (!loc || !base) return null;
@@ -1790,6 +1822,10 @@
     stockMap: stockMap,
     parsePlaceQuery: parsePlaceQuery,
     placeQuery: placeQuery,
+    selectionGlyphs: selectionGlyphs,
+    selectionQuery: selectionQuery,
+    parseSelectionQuery: parseSelectionQuery,
+    geoInSelection: geoInSelection,
     pinLocation: pinLocation,
     clearImported: clearImported,
     knownBases: knownBases,

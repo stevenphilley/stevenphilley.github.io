@@ -292,6 +292,125 @@ refs.forEach(function (r) {
 assert(api.hubMarks().length === 3, "Hub capital, HUB1, and Former Hub stay");
 eq(api.hubMarks().map(function (h) { return h.id; }), ["capital", "hub1", "former"], "Hub mark ids are unchanged");
 
+var logistics = require("./logistics.js");
+
+assert(api.pointInRect(10, 10, { x0: 0, y0: 0, x1: 20, y1: 20 }), "a point inside a rectangle is a hit");
+assert(api.pointInRect(0, 20, { x0: 20, y0: 0, x1: 0, y1: 20 }), "a rectangle is hit even when the drag runs up and left");
+assert(!api.pointInRect(21, 10, { x0: 0, y0: 0, x1: 20, y1: 20 }), "a point outside a rectangle is a miss");
+assert(api.pointInCircle(3, 4, { cx: 0, cy: 0, r: 5 }), "a point on the circle edge is inside");
+assert(!api.pointInCircle(4, 4, { cx: 0, cy: 0, r: 5 }), "a point outside the circle is a miss");
+
+var selFrame = api.frameOf(800, 500);
+var selView = { zoom: 4, panX: 120, panY: -80 };
+var screenA = api.mapToScreen(-995, 1418, selView, selFrame);
+var backA = api.screenToMap(screenA.x, screenA.y, selView, selFrame);
+assert(Math.abs(backA.voxelX + 995) < 1e-6 && Math.abs(backA.voxelZ - 1418) < 1e-6, "screen and map coordinates round-trip after zoom and pan");
+var screenB = api.mapToScreen(-900, 1418, selView, selFrame);
+assert(Math.abs(screenA.x - screenB.x) > 5, "a different voxel is a different screen point");
+assert(!api.pointInRect(-995, 1418, { x0: screenA.x - 4, y0: screenA.y - 4, x1: screenA.x + 4, y1: screenA.y + 4 }), "map coordinates are not tested as screen pixels");
+var inside = api.markersInside([
+  { id: "a", kind: "base", x: screenA.x, y: screenA.y },
+  { id: "b", kind: "base", x: screenB.x, y: screenB.y },
+  { id: "star", kind: "ref", x: screenA.x, y: screenA.y }
+], { type: "rect", x0: screenA.x - 4, y0: screenA.y - 4, x1: screenA.x + 4, y1: screenA.y + 4 });
+eq(inside.map(function (hit) { return hit.id; }), ["a"], "box select uses screen pixels and skips reference stars");
+var circled = api.markersInside([
+  { id: "a", kind: "base", x: screenA.x, y: screenA.y },
+  { id: "camp", kind: "settlement", x: screenA.x + 3, y: screenA.y },
+  { id: "far", kind: "freighter", x: screenA.x + 30, y: screenA.y }
+], { type: "circle", cx: screenA.x, cy: screenA.y, r: 10 });
+eq(circled.map(function (hit) { return hit.id; }), ["a", "camp"], "circle select includes a settlement inside and skips one outside");
+var zoomedView = api.zoomAbout(selView, screenA.x, screenA.y, selFrame.cx, selFrame.cy, 2);
+var planted = api.mapToScreen(-995, 1418, zoomedView, selFrame);
+assert(Math.abs(planted.x - screenA.x) < 1e-6 && Math.abs(planted.y - screenA.y) < 1e-6, "the selected screen point stays put when zoom changes");
+var moved = api.mapToScreen(-900, 1418, zoomedView, selFrame);
+assert(Math.abs(moved.x - screenB.x) > 1, "a neighbor moves on screen when the view zooms");
+
+eq(api.selectionGesture({}, "box"), { op: "replace", shape: "box" }, "a plain drag replaces with a box");
+eq(api.selectionGesture({ alt: true }, "box"), { op: "replace", shape: "circle" }, "alt switches the drag to a circle");
+eq(api.selectionGesture({}, "circle"), { op: "replace", shape: "circle" }, "circle mode draws a circle without alt");
+eq(api.selectionGesture({ ctrl: true }, "box").op, "add", "ctrl adds");
+eq(api.selectionGesture({ meta: true }, "circle").op, "add", "cmd adds");
+eq(api.selectionGesture({ ctrl: true, shift: true }, "box"), { op: "subtract", shape: "box" }, "ctrl+shift subtracts in the toolbar shape");
+eq(api.selectionGesture({ alt: true, ctrl: true }, "box"), { op: "subtract", shape: "box" }, "alt+ctrl subtracts and keeps the box");
+eq(api.toggleId(["a", "b"], "b"), ["a"], "toggle removes a selected id");
+eq(api.toggleId(["a"], "c"), ["a", "c"], "toggle adds a new id");
+eq(api.applySelectionOp(["a"], ["b", "a"], "add"), ["a", "b"], "add keeps the current order and appends");
+eq(api.applySelectionOp(["a", "b", "c"], ["b"], "subtract"), ["a", "c"], "subtract drops the covered ids");
+eq(api.applySelectionOp(["a", "b"], ["c"], "replace"), ["c"], "replace drops the previous selection");
+eq(api.rangeIds(["a", "b", "c", "d"], "c", "a"), ["a", "b", "c"], "shift range follows list order in either direction");
+eq(api.rangeIds(["a", "b", "c"], "missing", "b"), ["b"], "a range with no anchor selects the clicked id");
+
+var aggStore = logistics.normalize({
+  version: 1,
+  source: { fileName: "sample.json", format: "json" },
+  locations: [
+    {
+      id: "l1",
+      name: "Uthmi chest",
+      category: "base",
+      geo: { glyphs: "2205D058AC1D", baseName: "Uthmi", strictBase: true },
+      items: [
+        { id: "chromatic-metal", name: "Chromatic Metal", qty: 9999 },
+        { id: "carbon", name: "Carbon", qty: 4200 },
+        { id: "ferrite-dust", name: "Ferrite Dust", qty: 10 },
+        { id: "oxygen", name: "Oxygen", qty: 4 }
+      ]
+    },
+    {
+      id: "l2",
+      name: "Camp chest",
+      category: "base",
+      geo: { glyphs: "1001CF589C1E", baseName: "Camp", strictBase: true },
+      items: [{ id: "chromatic-metal", name: "Chromatic Metal", qty: 5 }]
+    }
+  ],
+  production: [
+    { id: "p1", objectId: "U_EXTRACTOR_S", kind: "mineral", count: 4, geo: { glyphs: "2205D058AC1D", baseName: "Uthmi", strictBase: true }, resourceId: "copper", resourceUser: true, hotspotClass: "S", known: true },
+    { id: "p2", objectId: "U_GASEXTRACTOR", kind: "gas", count: 2, geo: { glyphs: "1001CF589C1E", baseName: "Camp", strictBase: true }, resourceId: "", known: true },
+    { id: "p3", objectId: "SNOWPLANT", kind: "crop", count: 24, geo: { glyphs: "2205D058AC1D", baseName: "Uthmi", strictBase: true }, resourceId: "frost-crystal", known: true },
+    { id: "p4", objectId: "SCORCHEDPLANT", kind: "crop", count: 12, geo: { glyphs: "2205D058AC1D", baseName: "Uthmi", strictBase: true }, resourceId: "solanium", known: true }
+  ],
+  projects: [{
+    id: "proj",
+    name: "Build",
+    demands: [{ id: "d", locationId: "l1", itemId: "chromatic-metal", qty: 20000, doneTransfers: [] }]
+  }]
+});
+var uthmiPlace = { id: "b0", glyphs: "2205D058AC1D", name: "Uthmi", type: "PlanetBase" };
+var campPlace = { id: "b1", glyphs: "1001CF589C1E", name: "Camp", type: "PlanetBase" };
+var uthmiGlance = api.summarizeBase(uthmiPlace, aggStore, logistics, null, "");
+eq(api.miningChipText(uthmiGlance.mining[0]), "Copper ×4 · ~2,500/h", "a named class S mine shows an approximate rate");
+eq(api.cropChipText(uthmiGlance.crops[0]), "Frostwort ×24", "crop chips use the plant count");
+eq(api.cropChipText(uthmiGlance.crops[1]), "Solar Vine ×12", "a second crop is its own chip");
+assert(api.inventoryChipText(uthmiGlance).indexOf("4 stacks") === 0, "inventory starts with the stack count");
+assert(api.inventoryChipText(uthmiGlance).indexOf("Chromatic Metal 9,999") !== -1, "the largest stack is listed");
+assert(api.inventoryChipText(uthmiGlance).indexOf("+1 more") !== -1, "items past the first three are counted");
+assert(uthmiGlance.unmet, "an open demand badges the base");
+var campGlance = api.summarizeBase(campPlace, aggStore, logistics, null, "");
+eq(api.miningChipText(campGlance.mining[0]), "Gas ×2 (unset)", "an extractor with no resource stays unset");
+eq(api.summarizeBase({ glyphs: "AAAAAAAAAAAAAAAA", name: "Bare" }, aggStore, logistics, null, "").message, "No inventory loaded, import a save", "a base with no logistics data does not show zeros");
+eq(api.summarizeBase(uthmiPlace, null, logistics, null, "").message, "No inventory loaded, import a save", "an empty store asks for a save");
+var agg = api.aggregatePlaces([uthmiPlace, campPlace], aggStore, logistics, null);
+eq(agg.count, 2, "aggregate counts the selected places");
+eq(agg.inventory[0].label, "Chromatic Metal", "combined inventory sorts by quantity");
+eq(agg.inventory[0].total, 10004, "combined inventory adds the same item");
+eq(agg.inventory[0].places.map(function (row) { return row.qty; }), [9999, 5], "the item breaks down by place");
+eq(agg.mining.map(function (row) { return api.miningChipText(row); }), ["Copper ×4 · ~2,500/h", "Gas ×2 (unset)"], "mining totals keep rates and unset extractors");
+eq(agg.crops.map(function (row) { return row.count; }), [24, 12], "crops add up by plant");
+eq(agg.shortfalls.length, 1, "an open shortfall is included");
+eq(agg.shortfalls[0].place, "Uthmi", "the shortfall names its place");
+assert(agg.shortfalls[0].shortfall > 0, "the shortfall is the amount still missing");
+var summaries = { b0: uthmiGlance, b1: campGlance };
+var ordered = api.orderBases([campPlace, uthmiPlace], summaries, "mining", "all");
+eq(ordered.map(function (row) { return row.name; }), ["Uthmi", "Camp"], "mining output sort puts the rated mine first");
+eq(api.orderBases([campPlace, uthmiPlace], summaries, "crops", "farming").map(function (row) { return row.id; }), ["b0"], "the farming filter keeps the crop base, in crop order");
+eq(api.rangeIds(api.orderBases([campPlace, uthmiPlace], summaries, "name", "all").map(function (row) { return row.id; }), "b1", "b0"), ["b1", "b0"], "range select follows the current sort");
+eq(logistics.selectionQuery([uthmiPlace, { glyphs: "2205d058ac1d" }, campPlace]), "?places=2205D058AC1D,1001CF589C1E", "the logistics link lists each glyph once");
+eq(logistics.parseSelectionQuery("?places=2205D058AC1D,nope,1001CF589C1E"), ["2205D058AC1D", "1001CF589C1E"], "the logistics page reads the same glyph list");
+var radius = api.screenRadiusLy(selFrame.rx * 4, selFrame, 4);
+eq(radius, 2048 * 400, "a screen radius that spans one disk radius is 2048 voxels in light-years");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);
