@@ -2100,8 +2100,9 @@
         ownerSuffix(sys.systemOwner, sys.systemOwnerId) + "</p>";
       var totals = DiscoveryLib.discoveryTotals([sys]);
       html += '<p class="place-meta">' + totals.planets + " planet" + (totals.planets === 1 ? "" : "s") +
-        " · " + totals.flora + " flora · " + totals.fauna + " fauna · " + totals.minerals + " minerals" +
-        (totals.sectors ? " · " + totals.sectors + " sectors" : "") + "</p>";
+        " · " + totals.flora + " flora · " + totals.fauna + " fauna · " + totals.minerals + " mineral" +
+        (totals.minerals === 1 ? "" : "s") +
+        (totals.sectors ? " · " + totals.sectors + " sector" + (totals.sectors === 1 ? "" : "s") : "") + "</p>";
       html += "<h3 class=\"place-sub\">Planets</h3>";
       if (!sys.planetList || !sys.planetList.length) {
         html += '<p class="empty">No planet, flora, fauna, or mineral records share this system address.</p>';
@@ -3109,7 +3110,8 @@
         });
         if (elsewhere.length) {
           msg += " Other galaxies: " + elsewhere.map(function (row) {
-            return galaxyLabel(row.galaxy) + " (" + row.systems + " systems, " + row.planets + " planets)";
+            return galaxyLabel(row.galaxy) + " (" + row.systems + " system" + (row.systems === 1 ? "" : "s") +
+              ", " + row.planets + " planet" + (row.planets === 1 ? "" : "s") + ")";
           }).join(", ") + ".";
         }
       }
