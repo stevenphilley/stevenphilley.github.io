@@ -16,11 +16,12 @@
   if (typeof module === "object" && module.exports) module.exports = api;
   root.NmsMap = api;
   if (typeof document !== "undefined") {
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", function () { api.mount(); });
-    } else {
+    var boot = function () {
       api.mount();
-    }
+      api.bindHelpDialogs();
+    };
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+    else boot();
   }
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
@@ -1322,6 +1323,107 @@
       if (an > bn) return 1;
       return String(a.id || "").localeCompare(String(b.id || ""));
     });
+  }
+
+  function commandKeyName(platform) {
+    return /Mac|iPhone|iPad|iPod/.test(String(platform || "")) ? "Cmd" : "Ctrl";
+  }
+
+  function isTextField(el) {
+    if (!el || !el.tagName) return false;
+    var tag = el.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return true;
+    return !!el.isContentEditable;
+  }
+
+  function helpFocusables(dialog) {
+    return Array.prototype.filter.call(
+      dialog.querySelectorAll("button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])"),
+      function (el) { return el.tabIndex !== -1; }
+    );
+  }
+
+  function bindHelpDialogs() {
+    if (typeof document === "undefined") return;
+    var mod = commandKeyName((navigator && (navigator.platform || navigator.userAgent)) || "");
+    var dialogs = document.querySelectorAll(".help-dialog[role='dialog']");
+    var bound = [];
+    Array.prototype.forEach.call(dialogs, function (dialog) {
+      dialog.querySelectorAll("[data-mod]").forEach(function (el) { el.textContent = mod; });
+      if (dialog.getAttribute("tabindex") == null) dialog.setAttribute("tabindex", "-1");
+      var opener = dialog.id ? document.querySelector('[aria-controls="' + dialog.id + '"]') : null;
+      var previously = null;
+      var scrollLock = "";
+      function open() {
+        if (!dialog.hidden) return;
+        previously = document.activeElement;
+        dialog.hidden = false;
+        if (opener) opener.setAttribute("aria-expanded", "true");
+        scrollLock = document.body.style.overflow;
+        document.body.style.overflow = "hidden";
+        dialog.focus();
+      }
+      function close() {
+        if (dialog.hidden) return;
+        dialog.hidden = true;
+        if (opener) opener.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = scrollLock;
+        var back = previously;
+        previously = null;
+        if (back && typeof back.focus === "function") back.focus();
+      }
+      if (opener) opener.addEventListener("click", function () { open(); });
+      dialog.addEventListener("click", function (ev) {
+        if (ev.target === dialog) close();
+      });
+      var closer = dialog.querySelector("[data-help-close]");
+      if (closer) closer.addEventListener("click", function () { close(); });
+      bound.push({ dialog: dialog, open: open, close: close });
+    });
+    if (!bound.length) return;
+    document.addEventListener("keydown", function (ev) {
+      var current = null;
+      bound.forEach(function (row) { if (!row.dialog.hidden) current = row; });
+      if (current) {
+        if (ev.key === "Escape") {
+          ev.preventDefault();
+          ev.stopPropagation();
+          current.close();
+          return;
+        }
+        if (ev.key !== "Tab") return;
+        var list = helpFocusables(current.dialog);
+        if (!list.length) {
+          ev.preventDefault();
+          return;
+        }
+        var first = list[0];
+        var last = list[list.length - 1];
+        var active = document.activeElement;
+        if (ev.shiftKey) {
+          if (active === first || active === current.dialog || !current.dialog.contains(active)) {
+            ev.preventDefault();
+            last.focus();
+          }
+        } else if (active === last) {
+          ev.preventDefault();
+          first.focus();
+        }
+        return;
+      }
+      var hotkey = ev.key === "?" || (ev.key === "/" && ev.shiftKey);
+      if (!hotkey || ev.altKey || ev.ctrlKey || ev.metaKey) return;
+      if (isTextField(ev.target) || isTextField(document.activeElement)) return;
+      var map = document.getElementById("map");
+      if (!map || document.activeElement !== map) return;
+      var row = null;
+      bound.forEach(function (item) {
+        if (item.dialog.getAttribute("data-help-hotkey") === "map") row = item;
+      });
+      if (!row) return;
+      ev.preventDefault();
+      row.open();
+    }, true);
   }
 
   function mount() {
@@ -3114,35 +3216,10 @@
     bindPress("select-mode", function () { selectMode = !selectMode; });
     bindPress("select-box", function () { selectShape = "box"; });
     bindPress("select-circle", function () { selectShape = "circle"; });
-    var helpBtn = document.getElementById("select-help");
-    var helpPop = document.getElementById("select-help-pop");
-    if (helpBtn && helpPop) {
-      helpBtn.addEventListener("click", function () {
-        var open = helpPop.hidden;
-        helpPop.hidden = !open;
-        helpBtn.setAttribute("aria-expanded", open ? "true" : "false");
-        if (open) {
-          var close = helpPop.querySelector("button");
-          if (close) close.focus();
-        }
-      });
-      var helpClose = document.getElementById("select-help-close");
-      if (helpClose) helpClose.addEventListener("click", function () {
-        helpPop.hidden = true;
-        helpBtn.setAttribute("aria-expanded", "false");
-        helpBtn.focus();
-      });
-    }
     document.addEventListener("keydown", function (ev) {
       if (ev.key !== "Escape") return;
-      if (helpPop && !helpPop.hidden) {
-        helpPop.hidden = true;
-        if (helpBtn) {
-          helpBtn.setAttribute("aria-expanded", "false");
-          helpBtn.focus();
-        }
-        return;
-      }
+      var helpOpen = document.querySelector(".help-dialog[role='dialog']:not([hidden])");
+      if (helpOpen) return;
       var tag = ev.target && ev.target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if (!state.selection.length && !state.selectedRef) return;
@@ -3453,6 +3530,8 @@
     aggregatePlaces: aggregatePlaces,
     orderBases: orderBases,
     formatQty: formatQty,
+    commandKeyName: commandKeyName,
+    bindHelpDialogs: bindHelpDialogs,
     mount: mount
   };
 });

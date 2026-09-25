@@ -410,6 +410,10 @@ eq(logistics.selectionQuery([uthmiPlace, { glyphs: "2205d058ac1d" }, campPlace])
 eq(logistics.parseSelectionQuery("?places=2205D058AC1D,nope,1001CF589C1E"), ["2205D058AC1D", "1001CF589C1E"], "the logistics page reads the same glyph list");
 var radius = api.screenRadiusLy(selFrame.rx * 4, selFrame, 4);
 eq(radius, 2048 * 400, "a screen radius that spans one disk radius is 2048 voxels in light-years");
+eq(api.commandKeyName("MacIntel"), "Cmd", "a Mac shows Cmd in the help table");
+eq(api.commandKeyName("iPhone"), "Cmd", "an iPhone shows Cmd");
+eq(api.commandKeyName("Win32"), "Ctrl", "Windows shows Ctrl");
+eq(api.commandKeyName("Linux x86_64"), "Ctrl", "Linux shows Ctrl");
 
 if (failed) {
   console.error(failed + " failed");

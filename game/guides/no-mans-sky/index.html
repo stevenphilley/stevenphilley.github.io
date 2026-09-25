@@ -61,17 +61,31 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .actions button:hover,.actions button:focus-visible,.actions label.file-btn:hover{border-color:var(--accent,#c8b48a);outline:none}
 .status{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96);min-height:1.6em}
 .map-wrap{position:relative;margin-top:18px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.18)}
-.zoom-bar{position:absolute;z-index:2;top:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;max-width:calc(100% - 20px)}
+.zoom-bar{position:absolute;z-index:2;top:10px;right:10px;display:flex;flex-wrap:nowrap;gap:6px;justify-content:flex-end;align-items:flex-start;max-width:calc(100% - 20px)}
+.zoom-tools{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}
 .zoom-bar button{appearance:none;background:rgba(0,0,0,.55);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 12px;min-height:44px;cursor:pointer}
 .zoom-bar button:hover,.zoom-bar button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
 .zoom-bar button[aria-pressed="true"]{box-shadow:inset 0 -3px 0 var(--ink,#e8e6e1)}
+.zoom-bar .help-q{flex:0 0 44px;width:44px;padding:0;font-size:22px;line-height:1;letter-spacing:0;text-transform:none;border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a);background:rgba(0,0,0,.72)}
 #select-box[aria-pressed="true"]::after,#select-circle[aria-pressed="true"]::after{content:" on"}
 #map{display:block;width:100%;height:min(560px,70vw);cursor:grab;touch-action:none}
 #map.panning{cursor:grabbing}
 #map.selecting{cursor:crosshair}
-.help-pop{position:absolute;z-index:3;top:62px;right:10px;left:auto;width:min(420px,calc(100% - 20px));background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);padding:12px 14px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
-.help-pop p{margin:0 0 8px}
-.help-pop button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font:inherit;letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;min-height:44px;cursor:pointer}
+.help-dialog{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0}
+.help-head button,.help-foot button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;min-height:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible,.help-foot button:hover,.help-foot button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45;font-weight:400}
+.help-card th{width:38%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{padding:12px 14px}
 .list-tools{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0 4px}
 .list-tools select{background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:0;text-transform:none;padding:8px 10px;min-height:44px}
 .base-head{display:flex;gap:8px;align-items:flex-start}
@@ -159,10 +173,12 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   .actions button,.actions label.file-btn{width:100%;justify-content:center}
   .controls select,.controls input[type="search"]{width:100%}
   .zoom-bar{left:10px;right:10px}
-  .zoom-bar button{flex:1}
+  .zoom-tools{flex:1}
+  .zoom-tools button{flex:1}
+  .zoom-bar .help-q{flex:0 0 44px}
   .base-head{flex-direction:column}
   .base-expand{margin-top:0;width:100%}
-  .help-pop{left:10px;right:10px;width:auto}
+  .help-card th{width:46%}
 }
 @media (max-width:560px){
   .metrics{grid-template-columns:1fr 1fr}
@@ -247,25 +263,75 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 
   <div class="map-wrap">
     <div class="zoom-bar" role="toolbar" aria-label="Map zoom and selection">
-      <button type="button" id="select-mode" aria-pressed="false">Select</button>
-      <button type="button" id="select-box" aria-pressed="true">Box</button>
-      <button type="button" id="select-circle" aria-pressed="false">Circle</button>
-      <button type="button" id="select-help" aria-expanded="false" aria-controls="select-help-pop">Help</button>
-      <button type="button" id="zoom-in">Zoom in</button>
-      <button type="button" id="zoom-out">Zoom out</button>
-      <button type="button" id="zoom-reset">Reset view</button>
+      <div class="zoom-tools">
+        <button type="button" id="select-mode" aria-pressed="false">Select</button>
+        <button type="button" id="select-box" aria-pressed="true">Box</button>
+        <button type="button" id="select-circle" aria-pressed="false">Circle</button>
+        <button type="button" id="zoom-in">Zoom in</button>
+        <button type="button" id="zoom-out">Zoom out</button>
+        <button type="button" id="zoom-reset">Reset view</button>
+      </div>
+      <button type="button" class="help-q" id="map-help" aria-haspopup="dialog" aria-controls="map-help-dialog" aria-expanded="false" aria-label="Map controls">?</button>
     </div>
-    <div id="select-help-pop" class="help-pop" role="dialog" aria-label="How to select" hidden>
-      <p>Middle-drag draws a box and selects the bases inside it. Alt and middle-drag draws a circle from where you press. The label is the radius along the map’s horizontal scale, in light-years. Box and Circle up here choose the shape. Select lets a left-drag, or one finger, draw that shape.</p>
-      <p>A plain drag replaces the selection. Ctrl or Cmd adds. Ctrl+Shift removes what the shape covers. Alt+Ctrl removes as well, and keeps the Box or Circle choice. Alt alone, without Ctrl, switches that drag to a circle.</p>
-      <p>Click a base to select only that one. Ctrl or Cmd click toggles it. Shift click selects every base from the last one you clicked through this one, in the current list order. The same gestures work on the list. Click empty map, or press Esc, to clear.</p>
-      <p>A selected base has corner brackets and a check. Its row says Selected.</p>
-      <button type="button" id="select-help-close">Close</button>
+    <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan, middle-drag to select bases. The question mark lists every control. Press question mark while this map is focused."></canvas>
+  </div>
+  <div id="map-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="map-help-title" data-help-hotkey="map" hidden>
+    <div class="help-card">
+      <div class="help-head">
+        <h2 id="map-help-title">Map controls</h2>
+        <button type="button" data-help-close>Close</button>
+      </div>
+      <p class="help-lead">Press ? while the map is focused. On a Mac the modifier is Cmd. Everywhere else it is Ctrl.</p>
+      <h3>Navigate</h3>
+      <table>
+        <caption>Navigate</caption>
+        <tbody>
+          <tr><th scope="row">Left-drag</th><td>Pan. One finger pans on a touch screen, unless Select is on.</td></tr>
+          <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
+          <tr><th scope="row">Reset view</th><td>Fit your bases and the Hub marks.</td></tr>
+        </tbody>
+      </table>
+      <h3>Select</h3>
+      <table>
+        <caption>Select</caption>
+        <tbody>
+          <tr><th scope="row">Click</th><td>Select only that place. Tap a marker, or tap its row.</td></tr>
+          <tr><th scope="row"><span data-mod>Ctrl</span>+click</th><td>Toggle that place in or out. Same in the list.</td></tr>
+          <tr><th scope="row">Shift+click</th><td>Select from the last place through this one, in the current list order.</td></tr>
+          <tr><th scope="row">Middle-drag</th><td>Draw a box and select what is inside. With Select on, one finger or a left-drag draws it.</td></tr>
+          <tr><th scope="row">Alt+middle-drag</th><td>Draw a circle from where you press. On a touch screen, choose Circle, turn Select on, then drag.</td></tr>
+          <tr><th scope="row"><span data-mod>Ctrl</span>+drag</th><td>Add what the shape covers.</td></tr>
+          <tr><th scope="row"><span data-mod>Ctrl</span>+Shift+drag</th><td>Remove what the shape covers. Alt+<span data-mod>Ctrl</span> removes too, and keeps Box or Circle.</td></tr>
+          <tr><th scope="row">Esc, or click empty map</th><td>Clear the selection.</td></tr>
+          <tr><th scope="row">Select</th><td>Left-drag, or one finger, draws the current shape. For a trackpad or a touch screen.</td></tr>
+          <tr><th scope="row">Box / Circle</th><td>Choose the shape.</td></tr>
+        </tbody>
+      </table>
+      <h3>Panels and list</h3>
+      <table>
+        <caption>Panels and list</caption>
+        <tbody>
+          <tr><th scope="row">One place</th><td>The click panel shows inventory, mining, crops, and open demands.</td></tr>
+          <tr><th scope="row">Several places</th><td>Combined totals. Open a line to see each place.</td></tr>
+          <tr><th scope="row">Sort and filter</th><td>Name, inventory size, mining output, or crop count. All, mining, farming, or the searched item. Range select follows that order.</td></tr>
+          <tr><th scope="row">Details</th><td>The same breakdown as the click panel.</td></tr>
+          <tr><th scope="row">Item search</th><td>Highlights a place that holds or produces the item. Inventory badges, and the M and F marks, follow the checkboxes.</td></tr>
+        </tbody>
+      </table>
+      <h3>Data</h3>
+      <table>
+        <caption>Data</caption>
+        <tbody>
+          <tr><th scope="row">Import</th><td>Exported JSON or a Steam save.hg. The file stays in this browser. Nothing is uploaded.</td></tr>
+          <tr><th scope="row">Logistics</th><td>Open this place, or the whole selection, in the logistics planner.</td></tr>
+          <tr><th scope="row">Resource and class</th><td>You set these for an extractor. The row says user-entered. The rate is approximate and marked ~.</td></tr>
+        </tbody>
+      </table>
+      <div class="help-foot"></div>
     </div>
-    <canvas id="map" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Schematic No Man's Sky galaxy. Scroll or pinch to zoom toward the pointer, drag to pan, middle-drag to select bases. Zoom buttons follow the base under the pointer, or the selected base."></canvas>
   </div>
   <p id="select-live" class="vh" aria-live="polite"></p>
-  <p class="caption" id="map-caption">Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Middle-drag a box, or Alt and middle-drag a circle, to select several. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
+  <p class="caption" id="map-caption">The ? at the top right lists every control. Press ? while the map is focused. Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Middle-drag a box, or Alt and middle-drag a circle, to select several. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases and the Hub marks. Double-click a base, or click it in the list, to bring that base to the middle.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
