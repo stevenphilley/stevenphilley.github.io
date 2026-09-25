@@ -46,6 +46,31 @@
         pins.push(id);
       });
       if (countEl) countEl.textContent = String(pins.length);
+      var seed = document.getElementById("seed");
+      if (seed) seed.addEventListener("click", function () {
+        if (!pins.length) {
+          if (statusEl) statusEl.textContent = "No pins yet. Star an item on the moodboard first.";
+          return;
+        }
+        if (typeof NmsLogistics === "undefined") return;
+        var saved = NmsLogistics.loadStore(localStorage);
+        var target = null;
+        saved.locations.forEach(function (loc) { if (loc.id === "manual:unassigned") target = loc; });
+        if (!target) {
+          saved.locations.push({
+            id: "manual:unassigned",
+            source: "manual",
+            kind: "custom",
+            category: "custom",
+            name: "Unassigned",
+            items: [],
+            note: "Pins land here until you move each demand onto a real hold."
+          });
+        }
+        var seeded = NmsLogistics.seedPins(saved, pins, "manual:unassigned", "Moodboard pins");
+        NmsLogistics.saveStore(localStorage, seeded.store);
+        if (statusEl) statusEl.textContent = "Those pins are demands under Moodboard pins, aimed at Unassigned. Open logistics to move them.";
+      });
       if (!pins.length) {
         listEl.innerHTML = '<li class="empty">Nothing pinned. Star an item on the <a href="../moodboard/">moodboard</a>. The list stays in this browser.</li>';
         if (statusEl) statusEl.textContent = "No pins yet.";
@@ -56,7 +81,7 @@
         return '<li><a href="../moodboard/?item=' + encodeURIComponent(id) + '"><span class="sym">' +
           esc(material.symbol || "") + '</span> ' + esc(material.name) + "</a></li>";
       }).join("");
-      if (statusEl) statusEl.textContent = pins.length + " pinned. The production planner is not built yet. This list is the start.";
+      if (statusEl) statusEl.textContent = pins.length + " pinned. Use them as demands on the logistics page, or open a name to see it on the moodboard.";
     })
     .catch(function (err) {
       listEl.innerHTML = '<li class="empty">The graph file did not load.</li>';

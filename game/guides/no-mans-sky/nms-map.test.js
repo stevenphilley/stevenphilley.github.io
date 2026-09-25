@@ -78,6 +78,12 @@ assert(quoted.indexOf('"37469948428061"') !== -1, "quotes GalacticAddress intege
 assert(quoted.indexOf('"oZw":"37469948428061"') !== -1, "quotes obfuscated address key");
 assert(quoted.indexOf('"Units":12') !== -1, "leaves other integers numeric");
 
+var quotedHold = api.quoteGalacticAddresses('{"UniverseAddress":37469948428061,"FreighterUniverseAddress":37469948428061,"Location":37469948428061,"Units":3}');
+assert(quotedHold.indexOf('"UniverseAddress":"37469948428061"') !== -1, "quotes UniverseAddress");
+assert(quotedHold.indexOf('"FreighterUniverseAddress":"37469948428061"') !== -1, "quotes FreighterUniverseAddress");
+assert(quotedHold.indexOf('"Location":"37469948428061"') !== -1, "quotes a ship Location");
+assert(quotedHold.indexOf('"Units":3') !== -1, "ordinary integers stay numeric beside addresses");
+
 var top = api.extractBases({
   PlayerStateData: {
     PersistentPlayerBases: [

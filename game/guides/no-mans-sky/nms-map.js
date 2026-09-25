@@ -381,7 +381,7 @@
   }
 
   function quoteGalacticAddresses(text) {
-    return String(text).replace(/("(?:GalacticAddress|galacticAddress|oZw)"\s*:\s*)(-?\d+)/g, '$1"$2"');
+    return String(text).replace(/("(?:GalacticAddress|galacticAddress|oZw|UniverseAddress|FreighterUniverseAddress|Location|yhJ|RB7|YTa)"\s*:\s*)(-?\d+)/g, '$1"$2"');
   }
 
   function stripTrailingNulls(bytes) {
@@ -584,6 +584,43 @@
       return mappingTable;
     });
     return mappingPromise;
+  }
+
+  function readSaveDocument(buf) {
+    var decoded;
+    try {
+      decoded = bytesToSaveText(buf);
+    } catch (err) {
+      var broken = new Error(err && err.code === "hg" ? "hg" : "unknown");
+      broken.code = err && err.code === "hg" ? "hg" : "unknown";
+      return Promise.reject(broken);
+    }
+    var trimmed = String(decoded.text || "").replace(/^\uFEFF/, "").trim();
+    var head = trimmed.charAt(0);
+    if (head !== "{" && head !== "[") {
+      var binary = new Error("binary");
+      binary.code = "binary";
+      return Promise.reject(binary);
+    }
+    var data;
+    try {
+      data = JSON.parse(quoteGalacticAddresses(trimmed));
+    } catch (err) {
+      var bad = new Error("json");
+      bad.code = "json";
+      bad.format = decoded.format;
+      return Promise.reject(bad);
+    }
+    if (!needsUnmap(data)) {
+      return Promise.resolve({ data: data, format: decoded.format, fromHg: !!decoded.fromHg, unmapped: false });
+    }
+    return ensureMapping().then(function (table) {
+      return { data: unmapTree(data, table), format: decoded.format, fromHg: !!decoded.fromHg, unmapped: true };
+    }).catch(function () {
+      var missing = new Error("map");
+      missing.code = "map";
+      throw missing;
+    });
   }
 
   function looksBinary(bytes) {
@@ -881,6 +918,11 @@
     var showCenter = document.getElementById("show-center");
     var showHubs = document.getElementById("show-hubs");
     var showRefs = document.getElementById("show-refs");
+    var showStock = document.getElementById("show-stock");
+    var itemFilter = document.getElementById("item-filter");
+    var placePanel = document.getElementById("place-panel");
+    var placeBody = document.getElementById("place-body");
+    var placeTitle = document.getElementById("place-h");
     var drop = document.getElementById("drop");
     if (!canvas) return;
 
@@ -897,8 +939,13 @@
       hoverRef: null,
       filter: "",
       fileName: "",
-      source: ""
+      source: "",
+      selectedFreight: null
     };
+    var logisticsStore = null;
+    var catalogIndex = null;
+    var placeMode = "base";
+    var openPlace = null;
     var hits = [];
     var starCache = null;
     var view = { zoom: 1, panX: 0, panY: 0 };
@@ -907,6 +954,147 @@
 
     function setStatus(msg) {
       if (statusEl) statusEl.textContent = msg || "";
+    }
+
+    function logisticsApi() {
+      return typeof NmsLogistics !== "undefined" ? NmsLogistics : null;
+    }
+
+    function readLogistics() {
+      var api = logisticsApi();
+      if (!api) return null;
+      try { logisticsStore = api.loadStore(window.localStorage); }
+      catch (err) { logisticsStore = null; }
+      return logisticsStore;
+    }
+
+    function writeLogistics(next) {
+      var api = logisticsApi();
+      if (!api) return null;
+      try { logisticsStore = api.saveStore(window.localStorage, next); }
+      catch (err) { logisticsStore = next; }
+      return logisticsStore;
+    }
+
+    function placeOf(marker) {
+      if (!marker) return null;
+      return {
+        glyphs: marker.glyphs,
+        planet: marker.planet,
+        galaxy: marker.galaxy,
+        name: marker.name || marker.label || "",
+        type: marker.type || marker.kind || "",
+        coords: marker.coords || "",
+        ssi: marker.ssi
+      };
+    }
+
+    function stockMark(marker) {
+      var api = logisticsApi();
+      if (!api || !logisticsStore || !marker) return null;
+      return api.markerState(logisticsStore, placeOf(marker), itemFilter ? itemFilter.value : "", catalogIndex);
+    }
+
+    function formatStockBadge(n) {
+      var api = logisticsApi();
+      return api ? api.formatBadge(n) : String(n || "");
+    }
+
+    function baseById(id) {
+      var found = null;
+      state.planetary.forEach(function (b) { if (b.id === id) found = b; });
+      return found;
+    }
+
+    function freightById(id) {
+      var found = null;
+      state.freighters.forEach(function (b) { if (b.id === id) found = b; });
+      return found;
+    }
+
+    function renderPlacePanel(place, heading) {
+      if (!placePanel || !placeBody) return;
+      openPlace = place;
+      if (!place) {
+        placePanel.hidden = true;
+        placeBody.innerHTML = "";
+        return;
+      }
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = heading || place.name || "This place";
+      var api = logisticsApi();
+      if (!api) {
+        placeBody.innerHTML = '<p class="empty">The logistics planner did not load.</p>';
+        return;
+      }
+      readLogistics();
+      var store = logisticsStore || api.emptyStore();
+      var locs = api.locationsAtPlace(store, place, placeMode);
+      var demands = api.demandsAtPlace(store, place, placeMode);
+      var href = "/game/guides/no-mans-sky/logistics/" + api.placeQuery({
+        glyphs: place.glyphs,
+        planet: place.planet,
+        galaxy: place.galaxy,
+        name: place.name
+      });
+      var units = 0;
+      var lines = 0;
+      locs.forEach(function (loc) {
+        (loc.items || []).forEach(function (item) { units += item.qty; lines += 1; });
+      });
+      var html = '<p class="place-meta">' + esc(place.glyphs || "No portal address") +
+        (place.coords ? " · " + esc(place.coords) : "") +
+        (place.planet != null ? " · planet " + esc(place.planet) : "") +
+        " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
+      html += '<p class="place-actions"><a href="' + esc(href) + '">Open in the logistics planner</a>';
+      if (place.glyphs) {
+        html += ' <button type="button" id="place-scope">' + (placeMode === "system" ? "Show this place only" : "Show this system") + "</button>";
+      }
+      html += ' <button type="button" id="place-close">Close</button></p>';
+      html += '<p class="place-meta">' + locs.length + " location" + (locs.length === 1 ? "" : "s") + " · " + lines + " stacks · " + units + " units</p>";
+      if (!locs.length) {
+        html += '<p class="empty">No inventory is pinned to this ' + (placeMode === "system" ? "system" : "place") + '. Carried holds, such as the exosuit, stay off the map until you pin them. Nothing was uploaded.</p>';
+      } else {
+        html += locs.map(function (loc) {
+          var rows = (loc.items || []).map(function (item) {
+            var label = api.itemLabel(item, catalogIndex);
+            var stack = item.maxStack ? (item.stackApproximate ? " ~" : " ") + "max " + item.maxStack : "";
+            return "<li><span>" + esc(label) + "</span><span>" + esc(item.qty) + esc(stack) + "</span></li>";
+          }).join("");
+          var cap = loc.slotCapacity ? (loc.slotApproximate ? "~" : "") + loc.slotCapacity + " slots" : "capacity not in the save";
+          return '<section class="place-loc"><h3>' + esc(loc.name) + '</h3><p class="place-meta">' + esc(api.CATEGORIES[loc.category] || loc.category) + " · " + esc(cap) + "</p>" +
+            (loc.note ? '<p class="place-meta">' + esc(loc.note) + "</p>" : "") +
+            (rows ? "<ul>" + rows + "</ul>" : '<p class="empty">Empty.</p>') + "</section>";
+        }).join("");
+      }
+      if (demands.length) {
+        html += '<h3 class="place-sub">Open demands</h3><ul class="place-demands">';
+        demands.forEach(function (row) {
+          var label = (catalogIndex && catalogIndex.byId[row.demand.itemId] && catalogIndex.byId[row.demand.itemId].name) || row.demand.itemId;
+          var report = row.report;
+          html += "<li><strong>" + esc(row.project.name) + "</strong> · " + esc(label) + " · need " + esc(row.demand.qty) +
+            " · here " + esc(report.atTarget) + " · elsewhere " + esc(report.elsewhere) +
+            " · short " + esc(report.shortfall) + "</li>";
+        });
+        html += "</ul>";
+      } else {
+        html += '<p class="place-meta">No open demands for this ' + (placeMode === "system" ? "system" : "place") + ".</p>";
+      }
+      placeBody.innerHTML = html;
+      var scopeBtn = document.getElementById("place-scope");
+      if (scopeBtn) scopeBtn.addEventListener("click", function () {
+        placeMode = placeMode === "system" ? "base" : "system";
+        renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      });
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () {
+        state.selected = null;
+        state.selectedFreight = null;
+        state.selectedRef = null;
+        renderPlacePanel(null);
+        renderLists();
+        draw();
+      });
     }
 
     function colors() {
@@ -1329,6 +1517,11 @@
           var x = anchor.x + off.x;
           var y = anchor.y + off.y;
           var on = state.selected === b.id || state.hover === b.id;
+          var query = itemFilter ? String(itemFilter.value || "").trim() : "";
+          var shade = !!(showStock && showStock.checked);
+          var mark = (shade || query) ? stockMark(b) : null;
+          ctx.save();
+          if (query && mark && mark.hasQueryMatch === false) ctx.globalAlpha = 0.35;
           ctx.beginPath();
           ctx.fillStyle = c.accent;
           ctx.arc(x, y, on ? 6 : 4.5, 0, Math.PI * 2);
@@ -1336,6 +1529,27 @@
           ctx.lineWidth = on ? 2 : 1;
           ctx.strokeStyle = on ? c.ink : withAlpha(c.base, 0.85);
           ctx.stroke();
+          if (query && mark && mark.hasQueryMatch) {
+            ctx.beginPath();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = c.ink;
+            ctx.arc(x, y, 9, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+          if (shade && mark && mark.unmet) {
+            ctx.beginPath();
+            ctx.setLineDash([3, 2]);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = c.accent2;
+            ctx.arc(x, y, 12, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+          }
+          ctx.restore();
+          if (shade && mark && !stacked && markerInView(x, y, w, h)) {
+            var badge = query ? formatStockBadge(mark.matchQty || 0) : formatStockBadge(mark.lines);
+            if (badge && badge !== "0") paintBadge(ctx, badge, x - 18, y, mark.unmet ? c.accent2 : c.accent, c.base);
+          }
           hits.push({ x: x, y: y, r: stacked ? 18 : 14, kind: "base", id: b.id });
           if (markerInView(x, y, w, h) && (on || showNames || (group.length === 1 && view.zoom >= LABEL_ZOOM))) {
             (on ? pickedJobs : nameJobs).push({ text: b.name, x: x, y: y, off: off });
@@ -1343,6 +1557,21 @@
         });
         if (stacked && markerInView(anchor.x, anchor.y, w, h)) {
           paintBadge(ctx, group.length, anchor.x, anchor.y, c.accent, c.base);
+          if (showStock && showStock.checked && typeof NmsLogistics !== "undefined") {
+            var pileLines = 0;
+            var pileMatch = 0;
+            var pileUnmet = false;
+            var pileQuery = itemFilter ? String(itemFilter.value || "").trim() : "";
+            group.forEach(function (member) {
+              var pile = stockMark(member);
+              if (!pile) return;
+              pileLines += pile.lines;
+              pileMatch += pile.matchQty || 0;
+              if (pile.unmet) pileUnmet = true;
+            });
+            var pileBadge = pileQuery ? formatStockBadge(pileMatch) : formatStockBadge(pileLines);
+            if (pileBadge && pileBadge !== "0") paintBadge(ctx, pileBadge, anchor.x - 22, anchor.y + 8, pileUnmet ? c.accent2 : c.accent, c.base);
+          }
         }
       });
       nameJobs.concat(pickedJobs).forEach(function (job) {
@@ -1425,9 +1654,11 @@
         });
         freightList.innerHTML = fr.length
           ? fr.map(function (b) {
-            return "<li><span class=\"nm\">" + esc(b.name) + "</span><span class=\"meta\">" +
+            var on = state.selectedFreight === b.id ? "true" : "false";
+            return '<li><button type="button" data-freight="' + esc(b.id) + '" aria-pressed="' + on + '">' +
+              '<span class="nm">' + esc(b.name) + "</span><span class=\"meta\">" +
               esc(b.type) + " · " + esc(galaxyLabel(b.galaxy)) + " · " + esc(b.glyphs) +
-              "</span><span class=\"glyphs\">Not plotted</span></li>";
+              '</span><span class="glyphs">Not plotted · inventory</span></button></li>';
           }).join("")
           : '<li class="empty">No freighter bases in this galaxy.</li>';
       }
@@ -1482,7 +1713,7 @@
       }
       var here = visibleBases().length;
       var freightHere = state.freighters.filter(function (b) { return galaxyKey(b) === state.galaxy; }).length;
-      var via = state.source === "hg" ? "Steam save" : (state.source === "json" ? "exported JSON" : "");
+      var via = state.source === "hg" ? "Steam save" : (state.source === "json" ? "exported JSON" : (state.source === "browser" ? "this browser" : ""));
       var msg = state.fileName + (via ? " — " + via : "") + " — " + here + " planetary base" + (here === 1 ? "" : "s") +
         " on this map, " + freightHere + " freighter" + (freightHere === 1 ? "" : "s") + " listed aside.";
       if (state.problems.length) msg += " " + state.problems.length + " entr" + (state.problems.length === 1 ? "y" : "ies") + " could not be read.";
@@ -1565,48 +1796,41 @@
         return;
       }
       applyParsed(parsed, name, source);
+      var api = logisticsApi();
+      if (!api) return;
+      var next = api.importSave(readLogistics() || api.emptyStore(), playerStateOf(data), {
+        decodeAddress: decodeAddressField,
+        bases: parsed,
+        fileName: state.fileName,
+        format: source || ""
+      });
+      writeLogistics(next);
+      if (showStock && next.locations.length) showStock.checked = true;
+      var held = next.locations.length;
+      var flagged = next.skipped.length;
+      setStatus((statusEl && statusEl.textContent ? statusEl.textContent + " " : "") +
+        "Inventory: " + held + " hold" + (held === 1 ? "" : "s") +
+        (flagged ? ", " + flagged + " section" + (flagged === 1 ? "" : "s") + " flagged." : ".") +
+        " Shared with the logistics planner in this browser. Nothing was uploaded.");
+      if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
     }
 
     function handleBytes(buf, name) {
       var token = ++loadGen;
-      var decoded;
-      try {
-        decoded = bytesToSaveText(buf);
-      } catch (err) {
+      readSaveDocument(buf).then(function (opened) {
         if (token !== loadGen) return;
-        fail(err && err.code === "hg" ? "hg" : "unknown");
-        return;
-      }
-      var trimmed = String(decoded.text || "").replace(/^\uFEFF/, "").trim();
-      var head = trimmed.charAt(0);
-      if (head !== "{" && head !== "[") {
+        consumeSave(opened.data, name, opened.unmapped, opened.format);
+      }).catch(function (err) {
         if (token !== loadGen) return;
-        fail("binary");
-        return;
-      }
-      var data;
-      try {
-        data = JSON.parse(quoteGalacticAddresses(trimmed));
-      } catch (err) {
-        if (token !== loadGen) return;
-        fail("json");
-        setStatus(decoded.format === "hg"
-          ? "The Steam save opened, but its contents were not readable JSON. Nothing was uploaded."
-          : "That file starts like JSON, but it could not be parsed. Export it again from NomNom or NMS Save Editor. Nothing was uploaded.");
-        return;
-      }
-      if (token !== loadGen) return;
-      if (!needsUnmap(data)) {
-        consumeSave(data, name, false, decoded.format);
-        return;
-      }
-      setStatus("Reading the local key map… The save stays in this browser.");
-      ensureMapping().then(function (table) {
-        if (token !== loadGen) return;
-        consumeSave(unmapTree(data, table), name, true, decoded.format);
-      }).catch(function () {
-        if (token !== loadGen) return;
-        fail("map");
+        var code = err && err.code;
+        if (code === "json") {
+          fail("json");
+          setStatus(err.format === "hg"
+            ? "The Steam save opened, but its contents were not readable JSON. Nothing was uploaded."
+            : "That file starts like JSON, but it could not be parsed. Export it again from NomNom or NMS Save Editor. Nothing was uploaded.");
+          return;
+        }
+        fail(code === "hg" || code === "binary" || code === "map" || code === "unknown" ? code : "unknown");
       });
     }
 
@@ -1711,25 +1935,37 @@
       if (!h) return;
       if (h.kind === "base") {
         state.selected = state.selected === h.id ? null : h.id;
+        state.selectedFreight = null;
         if (state.selected) state.selectedRef = null;
+        placeMode = "base";
         renderLists();
         renderRefList();
         draw();
+        renderPlacePanel(state.selected ? placeOf(baseById(state.selected)) : null, state.selected ? (baseById(state.selected) || {}).name : "");
         var btn = baseList && baseList.querySelector('[data-base="' + h.id + '"]');
         if (btn) btn.focus();
+        if (placePanel && !placePanel.hidden && placeTitle) placeTitle.focus();
       } else if (h.kind === "ref") {
         var ref = refById(h.id);
         state.selectedRef = state.selectedRef === h.id ? null : h.id;
         if (state.selectedRef) state.selected = null;
+        state.selectedFreight = null;
         renderLists();
         renderRefList();
         draw();
         if (ref && state.selectedRef) {
+          placeMode = "system";
           setStatus(ref.label + " — " + quadrantName(ref.quadrant) + " — " + (ref.note ? ref.note + " — " : "") + "glyphs " + ref.glyphs + " — " + ref.coords + ". Community landmark, not from your save.");
-        }
+          renderPlacePanel({ glyphs: ref.glyphs, planet: ref.planet, galaxy: 0, name: ref.label, type: "Reference", coords: ref.coords }, ref.label);
+        } else renderPlacePanel(null);
       } else if (h.kind === "hub") {
         var hub = hubById(h.id);
-        if (hub) setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
+        if (hub) {
+          placeMode = "system";
+          state.selectedFreight = null;
+          setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
+          renderPlacePanel({ glyphs: hub.glyphs, planet: null, galaxy: 0, name: hub.label, type: "Hub", coords: hub.coords }, hub.label);
+        }
       } else if (h.kind === "center") {
         setStatus("Galactic center — voxel 0, 0, 0 on this schematic. Not a catalog star.");
       }
@@ -1869,8 +2105,27 @@
         if (!btn) return;
         var id = btn.getAttribute("data-base");
         focusCluster(id);
+        state.selectedFreight = null;
+        placeMode = "base";
         renderLists();
         draw();
+        renderPlacePanel(placeOf(baseById(id)), (baseById(id) || {}).name || "");
+      });
+    }
+
+    if (freightList) {
+      freightList.addEventListener("click", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-freight]") : null;
+        if (!btn) return;
+        var id = btn.getAttribute("data-freight");
+        var ship = freightById(id);
+        state.selected = null;
+        state.selectedRef = null;
+        state.selectedFreight = state.selectedFreight === id ? null : id;
+        placeMode = "base";
+        renderLists();
+        draw();
+        renderPlacePanel(state.selectedFreight && ship ? placeOf(ship) : null, ship ? ship.name : "");
       });
     }
 
@@ -2040,11 +2295,24 @@
       if (showHubs) { showHubs.checked = true; showHubs.disabled = false; }
       if (showRefs) { showRefs.checked = true; showRefs.disabled = false; }
       if (showCenter) showCenter.checked = true;
+      if (showStock) showStock.checked = false;
+      if (itemFilter) itemFilter.value = "";
       view.zoom = 1;
       view.panX = 0;
       view.panY = 0;
+      state.selectedFreight = null;
+      placeMode = "base";
+      var api = logisticsApi();
+      if (api) writeLogistics(api.clearImported(readLogistics() || api.emptyStore()));
+      renderPlacePanel(null);
       refresh();
-      setStatus("Cleared. Euclid Hub marks and quadrant references stay on the map. Nothing was uploaded.");
+      setStatus("Cleared the map and the imported inventories. Manual locations and projects stay in this browser. Nothing was uploaded.");
+    });
+
+    if (showStock) showStock.addEventListener("change", draw);
+    if (itemFilter) itemFilter.addEventListener("input", function () {
+      draw();
+      if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
     });
 
     window.addEventListener("resize", draw);
@@ -2057,7 +2325,64 @@
     }
 
     renderRefList();
+    var restored = readLogistics();
+    if (restored && ((restored.bases.planetary && restored.bases.planetary.length) || (restored.bases.freighters && restored.bases.freighters.length))) {
+      state.planetary = restored.bases.planetary || [];
+      state.freighters = restored.bases.freighters || [];
+      state.problems = restored.bases.problems || [];
+      state.fileName = (restored.source && restored.source.fileName) || "this browser";
+      state.source = "browser";
+      if (showStock) showStock.checked = true;
+    }
     refresh();
+    if (state.source === "browser") {
+      setStatus("Restored bases and inventory from this browser. Nothing was uploaded.");
+    }
+    function openFromQuery() {
+      var api = logisticsApi();
+      if (!api) return;
+      var q = api.parsePlaceQuery(window.location.search);
+      if (!q.glyphs && !q.base) return;
+      var match = null;
+      state.planetary.concat(state.freighters).forEach(function (b) {
+        if (match) return;
+        if (q.glyphs && String(b.glyphs || "").toUpperCase() !== q.glyphs) return;
+        if (q.base && b.name !== q.base) return;
+        match = b;
+      });
+      if (!match) return;
+      var freight = state.freighters.some(function (b) { return b.id === match.id; });
+      if (match.galaxy != null) {
+        state.galaxy = match.galaxy;
+        if (galaxySel) galaxySel.value = String(state.galaxy);
+        if (showHubs) showHubs.disabled = state.galaxy !== 0;
+      }
+      placeMode = "base";
+      if (freight) {
+        state.selected = null;
+        state.selectedFreight = match.id;
+        renderLists();
+        draw();
+      } else {
+        state.selectedFreight = null;
+        focusCluster(match.id);
+        renderLists();
+        draw();
+      }
+      renderPlacePanel(placeOf(match), match.name);
+    }
+    openFromQuery();
+    window.addEventListener("load", openFromQuery);
+    if (logisticsApi()) {
+      fetch("data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
+        if (!res.ok) throw new Error("graph");
+        return res.json();
+      }).then(function (catalog) {
+        catalogIndex = logisticsApi().buildIndex(catalog);
+        draw();
+        if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      }).catch(function () { /* names fall back to ids */ });
+    }
   }
 
   return {
@@ -2078,6 +2403,7 @@
     decompressHg: decompressHg,
     detectSaveFormat: detectSaveFormat,
     bytesToSaveText: bytesToSaveText,
+    readSaveDocument: readSaveDocument,
     stripTrailingNulls: stripTrailingNulls,
     mappingFromJson: mappingFromJson,
     unmapTree: unmapTree,
