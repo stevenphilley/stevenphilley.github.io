@@ -1,0 +1,218 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit Circle Trainer — Trigonometry — Steven Philley</title>
+<meta name="description" content="Memory trainer for the 16 standard unit-circle angles. Exact sine, cosine, and tangent, degrees and radians, a quadrant I starter, and a 60-second round.">
+<link rel="canonical" href="https://stevenphilley.com/maths/trig/trainer/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Unit Circle Trainer — Trigonometry">
+<meta property="og:description" content="Drill the 16 standard angles: exact values, degrees and radians, and tap the circle. Quadrant I first.">
+<meta property="og:url" content="https://stevenphilley.com/maths/trig/trainer/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Unit Circle Trainer — Trigonometry">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:960px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 80px}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:18px 0 8px}
+.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(42px,9vw,84px);line-height:.9;margin:0}
+.lede{max-width:66ch;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1)}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.sp-theme-help-btn{width:28px;height:28px;font-size:14px}
+#help-tip{min-width:min(280px,70vw);max-width:min(420px,86vw);font-size:12px;line-height:1.55;text-transform:none;letter-spacing:.01em}
+#help-tip p{margin:0 0 8px}
+#help-tip p:last-child{margin:0}
+.toolbar{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.modes{display:flex;flex-wrap:wrap;gap:8px}
+.modes button,.text-btn{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;cursor:pointer;min-height:44px}
+.modes button[aria-checked="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.modes button:hover,.text-btn:hover{border-color:var(--accent,#c8b48a)}
+.field{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.field-label{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#63666e)}
+.stats strong{color:var(--ink,#e8e6e1);font-weight:500;letter-spacing:0;text-transform:none}
+.stats .clock{color:var(--accent,#c8b48a);font-variant-numeric:tabular-nums;letter-spacing:.08em}
+.play{margin-top:12px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:clamp(12px,2.4vw,18px)}
+.q-kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.prompt{font-family:"IBM Plex Mono",monospace;font-size:clamp(32px,7vw,52px);line-height:1.15;color:var(--ink,#e8e6e1);min-height:1.2em;display:flex;flex-wrap:wrap;align-items:center;gap:.25em}
+.prompt .fn{font-style:italic;letter-spacing:0}
+.prompt-note{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .12em;line-height:1;font-size:.72em;position:relative;top:-.04em}
+.frac .num{border-bottom:1px solid currentColor;padding:0 .18em .08em}
+.frac .den{padding:.08em .18em 0}
+.sgn{margin-right:.04em}
+.pair{display:inline-flex;align-items:center;gap:.2em}
+.stage{margin:16px 0 4px}
+.stage[hidden],.choices[hidden],.field[hidden],#clock[hidden],#round-score[hidden]{display:none}
+.circle-box{position:relative;width:min(100%,460px);margin:0 auto;touch-action:manipulation}
+.circle-box svg{display:block;width:100%;height:auto;background:var(--base,#1a1c24);border:1px solid var(--line,#2c303a)}
+.circle-box .ring{fill:none;stroke:var(--ink-soft,#9b9a96);stroke-width:1.6}
+.circle-box .axis{stroke:var(--line,#2c303a);stroke-width:1.2}
+.circle-box .tick{stroke:var(--muted,#63666e);stroke-width:1.5}
+.circle-box .clabel{fill:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:15px}
+.circle-box .clabel-rad{fill:var(--accent,#c8b48a);font-size:13px}
+.dot-layer{position:absolute;inset:0}
+.dot{position:absolute;width:44px;height:44px;margin:0;padding:0;border-radius:50%;border:0;background:transparent;transform:translate(-50%,-50%);cursor:pointer;pointer-events:none}
+.dot::after{content:"";position:absolute;left:50%;top:50%;width:18px;height:18px;border-radius:50%;transform:translate(-50%,-50%);background:var(--ink,#e8e6e1);box-shadow:0 0 0 7px rgba(0,0,0,.28)}
+.dot.is-hot::after{width:26px;height:26px;background:var(--accent,#c8b48a);box-shadow:0 0 0 8px rgba(200,180,138,.18)}
+.dot.is-right::after{background:var(--accent,#c8b48a);box-shadow:0 0 0 8px rgba(200,180,138,.28)}
+.dot.is-wrong::after{background:var(--accent-2,#d98b97);box-shadow:0 0 0 8px rgba(217,139,151,.25)}
+.dot.is-hidden::after{background:var(--muted,#63666e)}
+.dot:focus-visible{outline:none}
+.dot:focus-visible::after{box-shadow:0 0 0 3px var(--base,#1a1c24),0 0 0 6px var(--accent,#c8b48a)}
+.circle-box:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:3px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+@media(max-width:560px){.choices{grid-template-columns:1fr}}
+.choice{appearance:none;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:12px 14px;text-align:left;cursor:pointer;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:20px;line-height:1.2;touch-action:manipulation}
+.choice .key{flex:0 0 auto;font-size:11px;letter-spacing:.08em;color:var(--muted,#63666e);border:1px solid var(--line,#2c303a);min-width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+.choice:hover:not(:disabled){border-color:var(--accent,#c8b48a)}
+.choice:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.choice:disabled{cursor:default}
+.choice.is-right{border-color:var(--accent,#c8b48a);background:rgba(200,180,138,.12)}
+.choice.is-wrong{border-color:var(--accent-2,#d98b97);color:var(--accent-2,#d98b97)}
+.feedback{min-height:1.4em;margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96);max-width:70ch}
+.feedback.is-ok{color:var(--accent,#c8b48a)}
+.feedback.is-bad{color:var(--ink-soft,#9b9a96)}
+.feedback .frac{font-size:.85em}
+#next{margin-top:12px}
+.section{margin-top:32px;border-top:1px solid var(--line,#2c303a);padding-top:18px}
+.section h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:0 0 8px}
+.section p,.study-detail{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.7;color:var(--ink-soft,#9b9a96);max-width:68ch;margin:0 0 12px}
+.study-actions{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.study-detail{min-height:2.8em;color:var(--ink,#e8e6e1)}
+.astc{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch;margin:12px 0 0}
+.also{margin-top:36px}
+.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:26px;letter-spacing:.06em;margin:0 0 8px}
+.also a{display:block;border-top:1px solid var(--line,#2c303a);padding:11px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink,#e8e6e1);text-decoration:none}
+.also a:hover{color:var(--accent,#c8b48a)}
+.disclaimer{margin-top:28px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;color:var(--muted,#63666e);max-width:68ch}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+button:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="l-wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/maths/">Maths</a>
+      <a href="/maths/trig/">Trig</a>
+      <a href="/maths/trig/trainer/" aria-current="page">Trainer</a>
+      <a href="/maths/linear-algebra/">Linear algebra</a>
+      <a href="/maths/calculus/">Calculus</a>
+    </div>
+  </div>
+
+  <div class="head-row">
+    <div>
+      <p class="kicker">Maths · Trigonometry · Memory</p>
+      <h1>Unit circle trainer</h1>
+    </div>
+    <span class="sp-theme-help-wrap">
+      <button type="button" class="sp-theme-help-btn" id="help" aria-expanded="false" aria-controls="help-tip" aria-label="How this trainer works">?</button>
+      <div class="sp-theme-help-tip" id="help-tip" role="region" aria-label="Trainer guide">
+        <p><strong>Five drills.</strong> Angle to point: read the angle, choose (cos, sin). Point to angle: name the highlighted spot. Convert: degrees and radians, both ways. Function: exact sin, cos, or tan. Tap: click that spot on the circle.</p>
+        <p><strong>Keys 1–4</strong> pick an answer. On the circle, Tab or the arrow keys move between spots and Enter confirms.</p>
+        <p><strong>Quadrant I</strong> is 0°, 30°, 45°, 60°, 90°. All quadrants is the full 16.</p>
+        <p>A miss shows the reference angle, the quadrant sign — All Students Take Calculus: I all positive, II sine, III tangent, IV cosine — and the 1-2-3 pattern √1/2, √2/2, √3/2 for sine of 30°, 45°, 60°.</p>
+        <p>Cards you miss come back more often. Streak, accuracy, and the 60-second best stay in this browser.</p>
+      </div>
+    </span>
+  </div>
+  <p class="lede">Exact values only, for the sixteen standard angles. Start in quadrant I, then open the whole circle. The picture lives on the <a href="/maths/trig/">unit circle</a> page; this one is the drill. Pair it with the <a href="/maths/">maths hub</a>.</p>
+
+  <div class="toolbar">
+    <div class="modes" id="modes" role="radiogroup" aria-label="Drill">
+      <button type="button" role="radio" data-value="a2p" aria-checked="true">Angle to point</button>
+      <button type="button" role="radio" data-value="p2a" aria-checked="false">Point to angle</button>
+      <button type="button" role="radio" data-value="conv" aria-checked="false">Convert</button>
+      <button type="button" role="radio" data-value="fn" aria-checked="false">Function</button>
+      <button type="button" role="radio" data-value="tap" aria-checked="false">Tap the circle</button>
+    </div>
+    <div class="field">
+      <span class="field-label" id="scope-label">Set</span>
+      <div class="modes" id="scope" role="radiogroup" aria-labelledby="scope-label">
+        <button type="button" role="radio" data-value="q1" aria-checked="true">Quadrant I</button>
+        <button type="button" role="radio" data-value="all" aria-checked="false">All quadrants</button>
+      </div>
+    </div>
+    <div class="field" id="prompt-unit">
+      <span class="field-label" id="prompt-unit-label">Angle shown as</span>
+      <div class="modes" role="radiogroup" aria-labelledby="prompt-unit-label">
+        <button type="button" role="radio" data-value="deg" aria-checked="false">Degrees</button>
+        <button type="button" role="radio" data-value="rad" aria-checked="false">Radians</button>
+        <button type="button" role="radio" data-value="mix" aria-checked="true">Mix</button>
+      </div>
+    </div>
+    <div class="field" id="answer-unit" hidden>
+      <span class="field-label" id="answer-unit-label">Answer in</span>
+      <div class="modes" role="radiogroup" aria-labelledby="answer-unit-label">
+        <button type="button" role="radio" data-value="deg" aria-checked="true">Degrees</button>
+        <button type="button" role="radio" data-value="rad" aria-checked="false">Radians</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <span>Streak <strong id="streak">0</strong></span>
+    <span>Accuracy <strong id="acc">—</strong></span>
+    <span>Best 60s <strong id="best">—</strong></span>
+    <span id="round-score" hidden></span>
+    <span id="clock" class="clock" role="timer" aria-live="off" hidden>1:00</span>
+    <button type="button" class="text-btn" id="timed" aria-pressed="false">60-second round</button>
+    <button type="button" class="text-btn" id="reset">Reset progress</button>
+  </div>
+
+  <div class="play">
+    <p class="q-kicker" id="q-kicker">Angle to point</p>
+    <div class="prompt" id="prompt" aria-hidden="true"></div>
+    <p class="prompt-note" id="prompt-note"></p>
+    <p class="sr-only" id="prompt-live" aria-live="polite"></p>
+    <div class="stage" id="stage" hidden></div>
+    <div class="choices" id="choices" role="group" aria-label="Answers"></div>
+    <p class="feedback" id="feedback" aria-hidden="true"></p>
+    <div class="sr-only" id="live" role="status" aria-live="polite"></div>
+    <button type="button" class="text-btn" id="next" hidden>Next</button>
+  </div>
+
+  <section class="section" aria-labelledby="study-h">
+    <h2 id="study-h">Study the circle</h2>
+    <p>All sixteen angles, with the label on each spot. Hide them and bring a point back when you want the degree, the radian, and the exact coordinates.</p>
+    <div class="study-actions">
+      <button type="button" class="text-btn" id="study-show">Reveal all</button>
+      <button type="button" class="text-btn" id="study-hide">Hide all</button>
+    </div>
+    <div id="study"></div>
+    <p class="study-detail" id="study-detail">Click a point to hide or reveal it.</p>
+    <p class="astc">All Students Take Calculus. Quadrant I, all of sine, cosine, and tangent are positive. II, sine only. III, tangent only. IV, cosine only. Sine of 30°, 45°, 60° runs √1/2, √2/2, √3/2. Cosine runs that pattern backwards.</p>
+  </section>
+
+  <section class="also" aria-label="Related">
+    <h2>Nearby</h2>
+    <a href="/maths/trig/">Trigonometry — unit circle</a>
+    <a href="/maths/">Maths hub</a>
+    <a href="/maths/linear-algebra/">Linear algebra</a>
+    <a href="/maths/calculus/">Calculus</a>
+    <a href="/sitemap.html">All pages</a>
+  </section>
+  <p class="disclaimer">Educational drill for the standard unit-circle values. Not a substitute for a course or an exam-board syllabus.</p>
+  {% include footer.html %}
+</div>
+<script src="/maths/trig/trainer/values.js"></script>
+<script src="/maths/trig/trainer/trainer.js"></script>
+</body>
+</html>
