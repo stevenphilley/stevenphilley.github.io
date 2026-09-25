@@ -1045,6 +1045,7 @@
     for (var i = 0; i < choices.length; i++) {
       if (choices[i][0] === id) return choices[i][1];
     }
+    if (api && api.itemLabel) return api.itemLabel({ id: id, rawId: id }, index);
     return id;
   }
 
@@ -1150,7 +1151,8 @@
         units += item.qty || 0;
         var key = item.id;
         if (!byItem[key]) {
-          byItem[key] = { id: key, label: api.itemLabel(item, index), qty: 0 };
+          var meta = api.itemMeta ? api.itemMeta(item, index) : { label: api.itemLabel(item, index), title: "", category: "" };
+          byItem[key] = { id: key, label: meta.label, title: meta.title || "", category: meta.category || "", qty: 0 };
           itemOrder.push(key);
         }
         byItem[key].qty += item.qty || 0;
@@ -1230,7 +1232,8 @@
         (loc.items || []).forEach(function (item) {
           var key = item.id;
           if (!itemMap[key]) {
-            itemMap[key] = { id: key, label: api.itemLabel(item, index), total: 0, places: [] };
+            var meta = api.itemMeta ? api.itemMeta(item, index) : { label: api.itemLabel(item, index), title: "", category: "" };
+            itemMap[key] = { id: key, label: meta.label, title: meta.title || "", category: meta.category || "", total: 0, places: [] };
             itemOrder.push(key);
           }
           itemMap[key].total += item.qty || 0;
@@ -1271,7 +1274,7 @@
       (api.demandsAtPlace(store, place, "base") || []).forEach(function (row) {
         if (!row.report || !(row.report.shortfall > 0)) return;
         var itemId = row.demand && row.demand.itemId;
-        var label = (index && index.byId && index.byId[itemId] && index.byId[itemId].name) || itemId;
+        var label = api.itemLabel({ id: itemId, rawId: itemId }, index);
         shortfalls.push({
           place: name,
           project: row.project && row.project.name || "",
@@ -1560,7 +1563,7 @@
         html += '<option value="' + esc(pair[0]) + '"' + (pair[0] === current ? " selected" : "") + ">" + esc(pair[1]) + "</option>";
       });
       if (current && !api.RESOURCE_CHOICES.some(function (pair) { return pair[0] === current; })) {
-        html += '<option value="' + esc(current) + '" selected>' + esc(current) + "</option>";
+        html += '<option value="' + esc(current) + '" selected>' + esc(api.itemLabel({ id: current, rawId: current }, catalogIndex)) + "</option>";
       }
       return html;
     }
@@ -1682,9 +1685,12 @@
       } else {
         html += locs.map(function (loc) {
           var rows = (loc.items || []).map(function (item) {
-            var label = api.itemLabel(item, catalogIndex);
+            var meta = api.itemMeta ? api.itemMeta(item, catalogIndex) : { label: api.itemLabel(item, catalogIndex), title: "", category: "", known: true, raw: item.rawId || "" };
             var stack = item.maxStack ? (item.stackApproximate ? " ~" : " ") + "max " + item.maxStack : "";
-            return "<li><span>" + esc(label) + "</span><span>" + esc(item.qty) + esc(stack) + "</span></li>";
+            var extra = meta.category ? " <span class=\"place-meta\">" + esc(meta.category) + "</span>" : "";
+            if (!meta.known && meta.raw) extra += " <span class=\"place-meta\">" + esc(meta.raw) + "</span>";
+            else if (item.rawId && item.rawId !== item.id && item.rawId !== meta.label) extra += " <span class=\"place-meta\">" + esc(item.rawId) + "</span>";
+            return "<li title=\"" + esc(meta.title || "") + "\"><span>" + esc(meta.label) + extra + "</span><span>" + esc(item.qty) + esc(stack) + "</span></li>";
           }).join("");
           var cap = loc.slotCapacity ? (loc.slotApproximate ? "~" : "") + loc.slotCapacity + " slots" : "capacity not in the save";
           return '<section class="place-loc"><h3>' + esc(loc.name) + '</h3><p class="place-meta">' + esc(api.CATEGORIES[loc.category] || loc.category) + " · " + esc(cap) + "</p>" +
@@ -1695,7 +1701,7 @@
       if (demands.length) {
         html += '<h3 class="place-sub">Open demands</h3><ul class="place-demands">';
         demands.forEach(function (row) {
-          var label = (catalogIndex && catalogIndex.byId[row.demand.itemId] && catalogIndex.byId[row.demand.itemId].name) || row.demand.itemId;
+          var label = api.itemLabel({ id: row.demand.itemId, rawId: row.demand.itemId }, catalogIndex);
           var report = row.report;
           html += "<li><strong>" + esc(row.project.name) + "</strong> · " + esc(label) + " · need " + esc(row.demand.qty) +
             " · here " + esc(report.atTarget) + " · elsewhere " + esc(report.elsewhere) +
@@ -1804,7 +1810,8 @@
           var breakdown = (item.places || []).map(function (entry) {
             return "<li><span>" + esc(entry.name) + "</span><span>" + esc(formatQty(entry.qty)) + "</span></li>";
           }).join("");
-          return "<details class=\"place-loc\"><summary><span>" + esc(item.label) + "</span><span>" + esc(formatQty(item.total)) + "</span></summary><ul>" + breakdown + "</ul></details>";
+          var cat = item.category ? " <span class=\"place-meta\">" + esc(item.category) + "</span>" : "";
+          return "<details class=\"place-loc\" title=\"" + esc(item.title || "") + "\"><summary><span>" + esc(item.label) + cat + "</span><span>" + esc(formatQty(item.total)) + "</span></summary><ul>" + breakdown + "</ul></details>";
         }).join("");
       }
       html += "<h3 class=\"place-sub\">Mining</h3>";
@@ -3470,10 +3477,28 @@
     openFromQuery();
     window.addEventListener("load", openFromQuery);
     if (logisticsApi()) {
-      fetch("data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
-        if (!res.ok) throw new Error("graph");
+      fetch("data/nms-item-names.json", { credentials: "same-origin" }).then(function (res) {
+        if (!res.ok) throw new Error("names");
         return res.json();
-      }).then(function (catalog) {
+      }).then(function (data) {
+        logisticsApi().setItemNames(data);
+        renderLists();
+        draw();
+        if (state.selection.length > 1) renderAggregate();
+        else if (openPlace) renderPlacePanel(openPlace, placeTitle ? placeTitle.textContent : "");
+      }).catch(function () { /* unknown ids stay humanized */ });
+      Promise.all([
+        fetch("data/graph-v2.json", { credentials: "same-origin" }).then(function (res) {
+          if (!res.ok) throw new Error("graph");
+          return res.json();
+        }),
+        fetch("data/technology.json", { credentials: "same-origin" }).then(function (res) {
+          if (!res.ok) throw new Error("technology");
+          return res.json();
+        }).catch(function () { return null; })
+      ]).then(function (pair) {
+        var catalog = pair[0];
+        if (pair[1] && typeof NmsCraft !== "undefined" && NmsCraft.mergeCatalog) catalog = NmsCraft.mergeCatalog(catalog, pair[1]);
         catalogIndex = logisticsApi().buildIndex(catalog);
         renderLists();
         draw();

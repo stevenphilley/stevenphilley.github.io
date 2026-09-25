@@ -25,6 +25,8 @@ function eq(a, b, msg) {
 
 var catalog = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "graph-v2.json"), "utf8"));
 var index = logistics.buildIndex(catalog);
+var itemNames = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "nms-item-names.json"), "utf8"));
+logistics.setItemNames(itemNames);
 
 var store = logistics.emptyStore();
 store.locations = [
@@ -157,8 +159,9 @@ eq(loc("save:ship:0:general").geo.glyphs, "2205D058AC1D", "a ship Location porta
 
 assert(!extracted.locations.some(function (row) { return row.id === "save:multitool:active"; }), "the active multi-tool copy is not imported twice");
 eq(loc("save:multitool:0").name, "Bolt Caster", "multi-tool name comes from the save");
-eq(loc("save:multitool:0").items[0].rawId, "LASER", "an unknown technology id stays raw");
-eq(logistics.itemLabel(loc("save:multitool:0").items[0], index), "LASER", "an unknown id is shown as itself");
+eq(loc("save:multitool:0").items[0].rawId, "LASER", "a technology id stays raw");
+eq(logistics.itemLabel(loc("save:multitool:0").items[0], index), "Mining Beam", "a technology id uses the in-game name");
+eq(logistics.itemMeta(loc("save:multitool:0").items[0], index).category, "technology", "a technology id keeps its category");
 
 eq(loc("save:freighter:general").geo.glyphs, "1001CF589C1E", "freighter stock uses the freighter address");
 eq(loc("save:freighter:general").geo.baseName, "Haul", "freighter stock keeps the freighter name");
@@ -318,6 +321,132 @@ var makers = logistics.producersOf(again, "frost-crystal");
 eq(makers.length, 1, "the plan can see which base grows frost crystal");
 eq(makers[0].perCycle, 200, "the plan uses the harvest per cycle");
 eq(logistics.formatCover(logistics.coverHours(500, makers[0].perHour)), "2.5 h", "the shortfall names an approximate cover time");
+
+eq(Object.keys(itemNames.items).length, 4437, "the name file maps 4437 ids");
+eq(itemNames.counts.mapped, 4437, "the mapped count matches the file");
+eq(itemNames.unresolvedIds.length, 80, "80 ids were left unresolved");
+assert(itemNames.unresolvedIds.every(function (id) { return !itemNames.items[id]; }), "an unresolved id is not given a guessed name");
+eq(itemNames.items.ALLOY1.name, "Aronium", "Aronium is the English name for ALLOY1");
+eq(itemNames.items.LAND3.name, "Magnetised Ferrite", "the toolkit spelling is kept");
+eq(itemNames.items.EXO_REFINER.name, "Mineral Processing Rig", "the one AssistantNMS fill is Mineral Processing Rig");
+
+var fuelParts = logistics.splitItemId("^FUEL1#99");
+eq([fuelParts.base, fuelParts.seed], ["FUEL1", "99"], "a caret and a procedural suffix split off the base id");
+var fuel = logistics.resolveSaveId("^FUEL1#99", index);
+eq(fuel.id, "carbon", "a caret and a suffix still map onto the graph");
+eq(fuel.rawId, "^FUEL1#99", "the original save id is kept");
+eq(fuel.baseId, "FUEL1", "the base id is the reality-table id");
+
+var upgrade = logistics.resolveSaveId("^UP_LASER4#52847", index);
+eq(upgrade.id, "UP_LASER4", "a procedural upgrade keeps the base module id");
+eq(logistics.itemLabel({ id: upgrade.id, rawId: upgrade.rawId }, index), "S-Class Mining Beam Upgrade", "the procedural module uses the class in the English name");
+eq(logistics.itemMeta({ id: upgrade.id, rawId: upgrade.rawId }, index).className, "S", "class comes from the English name");
+
+eq(logistics.itemLabel({ id: "ALLOY1", rawId: "^ALLOY1" }, index), "Aronium", "a trade good uses its English name");
+eq(logistics.itemLabel({ id: "FRIG_TOKEN", rawId: "^FRIG_TOKEN" }, index), "Salvaged Frigate Module", "a curiosity uses its English name");
+eq(logistics.itemLabel({ id: "TECH_COMP", rawId: "^TECH_COMP" }, index), "Wiring Loom", "a component uses its English name");
+eq(logistics.itemLabel({ id: "SHIPJUMP1", rawId: "YOURSHIP_PULSEDRIVE" }, index), "Pulse Engine", "a YOURSHIP alias uses the technology name");
+var unknown = logistics.itemMeta({ id: "NOT_A_REAL_ITEM", rawId: "^NOT_A_REAL_ITEM" }, index);
+eq(unknown.label, "Not A Real Item", "an unknown id is reworded");
+assert(!unknown.known, "an unknown id is marked unknown");
+assert(unknown.title.indexOf("^NOT_A_REAL_ITEM") !== -1, "an unknown id keeps the save id in the tooltip");
+
+var cargo = loc("save:ship:0:cargo");
+eq(cargo.items.map(function (item) { return [item.id, logistics.itemLabel(item, index), item.rawId]; }), [
+  ["ALLOY1", "Aronium", "^ALLOY1"],
+  ["TECH_COMP", "Wiring Loom", "^TECH_COMP"],
+  ["UP_LASER4", "S-Class Mining Beam Upgrade", "^UP_LASER4#52847"],
+  ["FRIG_TOKEN", "Salvaged Frigate Module", "^FRIG_TOKEN"],
+  ["NOT_A_REAL_ITEM", "Not A Real Item", "^NOT_A_REAL_ITEM"]
+], "ship cargo shows English names and keeps the save id");
+
+var namedStore = logistics.normalize({ locations: extracted.locations, projects: [] });
+var byName = logistics.searchStock(namedStore, "aronium", index);
+eq(byName.map(function (row) { return row.item.rawId; }), ["^ALLOY1"], "search matches the English name");
+var byRaw = logistics.searchStock(namedStore, "^alloy1", index);
+eq(byRaw.length, 1, "search still matches the caret id");
+var byBase = logistics.searchStock(namedStore, "alloy1", index);
+eq(byBase.length, 1, "search matches the base id without the caret");
+var pulseMark = logistics.markerState(namedStore, uthmi, "s-class mining beam", index);
+assert(pulseMark.hasQueryMatch && pulseMark.matchQty === 1, "a place matches the procedural module’s English name");
+
+var exported = JSON.parse(logistics.exportDocument(namedStore));
+var exportedCargo = null;
+exported.locations.forEach(function (row) { if (row.id === "save:ship:0:cargo") exportedCargo = row; });
+eq(exportedCargo.items[0].displayName, "Aronium", "an export adds the English name");
+eq(exportedCargo.items[0].itemCategory, "trade good", "an export adds the category");
+var roundTrip = logistics.importDocument(JSON.stringify(exported));
+eq(roundTrip.locations.filter(function (row) { return row.id === "save:ship:0:cargo"; })[0].items[0].id, "ALLOY1", "a backup import keeps the item id");
+assert(!roundTrip.locations.filter(function (row) { return row.id === "save:ship:0:cargo"; })[0].items[0].displayName, "a backup import drops the display name");
+
+var SYNTHETIC = { WEIRD_PART: true, NOT_A_NUMBER: true, NOT_A_REAL_ITEM: true };
+function collectSaveIds(node, out) {
+  if (!node || typeof node !== "object") return;
+  if (Array.isArray(node)) {
+    node.forEach(function (row) { collectSaveIds(row, out); });
+    return;
+  }
+  Object.keys(node).forEach(function (key) {
+    if ((key === "Id" || key === "ElementId") && (typeof node[key] === "string" || typeof node[key] === "number")) {
+      out.push(String(node[key]));
+    } else {
+      collectSaveIds(node[key], out);
+    }
+  });
+}
+function findSaves(dir, out) {
+  fs.readdirSync(dir).forEach(function (name) {
+    var full = path.join(dir, name);
+    if (fs.statSync(full).isDirectory()) {
+      if (name === "data" || name === "node_modules") return;
+      findSaves(full, out);
+      return;
+    }
+    if (!/\.json$/i.test(name) || !/fixture|sample|save/i.test(name)) return;
+    out.push(full);
+  });
+}
+var saveFiles = [];
+findSaves(__dirname, saveFiles);
+assert(saveFiles.length > 0, "at least one fixture save is in the repo");
+var uncovered = [];
+saveFiles.forEach(function (file) {
+  var seen = [];
+  collectSaveIds(JSON.parse(fs.readFileSync(file, "utf8")), seen);
+  seen.forEach(function (raw) {
+    var base = logistics.splitItemId(raw).base.toUpperCase();
+    if (!base || SYNTHETIC[base] || itemNames.items[base]) return;
+    uncovered.push(path.basename(file) + ":" + raw);
+  });
+});
+eq(uncovered, [], "every item id in a fixture save is in the name list");
+
+var craft = require("./craft.js");
+var techCatalog = JSON.parse(fs.readFileSync(path.join(__dirname, "data", "technology.json"), "utf8"));
+var merged = logistics.buildIndex(craft.mergeCatalog(catalog, techCatalog));
+function techLabel(id) {
+  return logistics.itemLabel({ id: id, rawId: "^" + id }, merged);
+}
+eq(techLabel("GRAVITYGUN"), "Gravitino Coil", "a technology id missing from the name list uses the crafting catalog");
+eq(techLabel("VEHICLE_SCOPE"), "Cyclops Scope", "Cyclops Scope comes from the technology catalog");
+eq(techLabel("EXO_PLOUGH"), "Excavation Blade", "Excavation Blade comes from the technology catalog");
+eq(techLabel("T_SHIP_ATLAS"), "Aeron Starship Trail", "Aeron Starship Trail comes from the technology catalog");
+eq(techLabel("JET1"), "Jetpack", "a technology id in the name list stays the English name");
+eq(logistics.itemLabel({ id: "jetpack", rawId: "jetpack" }, merged), "Jetpack", "a crafting-tree slug uses the catalog name");
+eq(logistics.itemMeta({ id: "GRAVITYGUN", rawId: "^GRAVITYGUN" }, merged).category, "", "a catalog-only technology does not invent a category");
+eq(logistics.itemLabel({ id: "SPIDERBRAIN", rawId: "SPIDERBRAIN" }, merged), "Spiderbrain", "an id whose catalog name is the id itself is reworded");
+assert(!logistics.itemMeta({ id: "SPIDERBRAIN", rawId: "SPIDERBRAIN" }, merged).known, "SPIDERBRAIN stays unknown");
+assert(logistics.itemLabel({ id: "T_JET", rawId: "T_JET" }, merged).indexOf("Procedural module") === -1, "a generated procedural label is not shown as the item name");
+var gravStore = logistics.normalize({
+  locations: [{
+    id: "tool",
+    name: "Multi-tool",
+    category: "multitool",
+    items: [{ id: "GRAVITYGUN", rawId: "^GRAVITYGUN", qty: 1 }]
+  }]
+});
+eq(logistics.searchStock(gravStore, "gravitino", merged).length, 1, "search matches a technology catalog name");
+eq(logistics.searchStock(gravStore, "gravitygun", merged).length, 1, "search still matches the technology save id");
 
 if (failed) {
   console.error(failed + " failed");
