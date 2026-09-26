@@ -613,7 +613,7 @@
       '<label class="field">Item<select data-field="itemId">' + itemOptionsHtml(row.itemId, "") + "</select></label>" +
       '<label class="field">Target hold<select data-field="locationId">' + holdOptionsHtml(row.locationId) + "</select></label>" +
       '<label class="field">Quantity<input data-field="qty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(row.qty) + '"></label>' +
-      '<label class="field">Note<input data-field="note" type="text" value="' + esc(row.note || "") + '" placeholder="optional"></label>' +
+      '<label class="field">Note<textarea data-field="note" rows="2">' + esc(row.note || "") + "</textarea></label>" +
       '<button type="button" data-remove-draft="' + index + '">Remove demand</button>' +
       (moved ? '<div class="demand-moved">' + moved + "</div>" : "") +
       "</div>";
@@ -635,22 +635,22 @@
       (draft.error ? ' aria-describedby="project-edit-error"' : "") +
       "></label></div>" +
       (draft.error ? '<p class="form-error" id="project-edit-error" role="alert">' + esc(draft.error) + "</p>" : "") +
-      '<div class="form-grid"><label class="field">Recipe<select data-field="recipeFor">' +
+      '<div class="edit-grid"><label class="field">Recipe<select data-field="recipeFor">' +
       optionList(catalogOptions(""), draft.recipeFor, "None", nodeName) +
       "</select></label></div>" +
       "<h3>Demands</h3>" +
       (rows || '<p class="note">No demands in this project.</p>') +
       "<h3>Add a demand</h3>" +
-      '<div class="form-grid">' +
+      '<div class="edit-grid">' +
       '<label class="field">Find<input data-field="find" type="search" value="' + esc(draft.find || "") + '" placeholder="Stasis Device" autocomplete="off"></label>' +
       '<label class="field">Item<select data-field="addItem">' + itemOptionsHtml(draft.addItem, draft.find || "") + "</select></label>" +
       '<label class="field">Target hold<select data-field="addLoc">' + holdOptionsHtml(draft.addLoc) + "</select></label>" +
       '<label class="field">Quantity<input data-field="addQty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(draft.addQty || "1") + '"></label>' +
-      '<label class="field">Note<input data-field="addNote" type="text" value="' + esc(draft.addNote || "") + '" placeholder="optional"></label>' +
+      '<label class="field">Note<textarea data-field="addNote" rows="2" placeholder="optional">' + esc(draft.addNote || "") + "</textarea></label>" +
       "</div>" +
       '<p class="edit-actions"><button type="button" data-add-demand>Add demand</button></p>' +
       "<h3>Seed from a recipe</h3>" +
-      '<div class="form-grid">' +
+      '<div class="edit-grid">' +
       '<label class="field">How many<input data-field="seedQty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(draft.seedQty || "1") + '"></label>' +
       '<label class="field">Deliver to<select data-field="seedLoc">' + holdOptionsHtml(draft.seedLoc, "Deliver to") + "</select></label>" +
       "</div>" +

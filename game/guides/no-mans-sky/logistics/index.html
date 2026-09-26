@@ -42,7 +42,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .tabs button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:10px 16px;cursor:pointer}
 .tabs button:last-child{border-right:0}
 .tabs button[aria-selected="true"]{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c)}
-.tabs button:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.tabs button:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
 .panel{padding-top:16px}
 .toolbar,.filters,.form-grid{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:end}
 .toolbar{margin:8px 0 14px}
@@ -112,10 +112,23 @@ th button{border:0;padding:0;min-height:0;letter-spacing:.1em;text-transform:upp
 .project-edit h3{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);font-weight:400;margin:16px 0 8px}
 .project-name-field input{width:min(100%,360px)}
 .form-error{font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--accent,#c8b48a);margin:0 0 10px}
-.demand-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.2fr) 96px minmax(0,1fr) auto;gap:8px 10px;align-items:end;border-top:1px solid var(--line,#2c303a);padding:10px 0}
-.demand-row .field input,.demand-row .field select{width:100%}
+.demand-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1.2fr) minmax(96px,.6fr) minmax(0,1fr) auto;gap:12px 14px;align-items:start;border-top:1px solid var(--line,#2c303a);padding:10px 0}
+.demand-row > button{align-self:end}
+.demand-row .field input,.demand-row .field select,.demand-row .field textarea{width:100%;max-width:100%;min-width:0}
 .demand-moved{grid-column:1 / -1}
 .edit-actions{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 4px}
+.project-edit .field{display:flex;flex-direction:column;align-items:stretch;min-width:0;width:100%}
+.project-edit .field input,
+.project-edit .field select,
+.project-edit .field textarea{width:100%;max-width:100%;min-width:0;box-sizing:border-box;font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:0;text-transform:none;color:var(--ink,#e8e6e1);background-color:var(--base-2,#14161c);color-scheme:dark;border:1px solid var(--line,#2c303a);border-radius:0;padding:8px 10px;min-height:40px;appearance:none;-webkit-appearance:none}
+.project-edit .field select{padding-right:32px;background-image:linear-gradient(45deg,transparent 50%,var(--ink-soft,#9b9a96) 50%),linear-gradient(135deg,var(--ink-soft,#9b9a96) 50%,transparent 50%);background-position:calc(100% - 18px) calc(50% - 2px),calc(100% - 13px) calc(50% - 2px);background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.project-edit .field textarea{min-height:64px;line-height:1.45;resize:vertical}
+.project-edit .field input[type="number"]::-webkit-outer-spin-button,
+.project-edit .field input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.project-edit .field input[type="number"]{-moz-appearance:textfield}
+.project-edit .edit-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px 14px;align-items:start}
+.project-edit .edit-grid > .field:only-child{max-width:420px}
+.project-edit .project-name-field{flex:1 1 240px;width:auto;max-width:420px}
 @media (max-width:800px){
   .metrics{grid-template-columns:1fr 1fr}
   .forms{grid-template-columns:1fr}
@@ -124,6 +137,9 @@ th button{border:0;padding:0;min-height:0;letter-spacing:.1em;text-transform:upp
   .tabs button{flex:1}
   .help-card th{width:46%}
   .demand-row{grid-template-columns:1fr}
+  .project-edit .edit-grid{grid-template-columns:1fr}
+  .project-edit .edit-grid > .field:only-child{max-width:none}
+  .project-edit .project-name-field{max-width:none;flex-basis:100%}
   .project-select{flex-wrap:wrap}
   .project-name-field input{width:100%}
 }
