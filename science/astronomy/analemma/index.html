@@ -1,0 +1,661 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analemma — the Sun’s figure-8 — Steven Philley</title>
+<meta name="description" content="Interactive analemma desk: the Sun’s figure-8 of solar declination and the equation of time. Axial tilt plus an elliptical orbit. Classroom schematic, not a sundial or an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/analemma/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Analemma — the Sun’s figure-8">
+<meta property="og:description" content="Walk a year along a schematic analemma. Declination from Earth’s tilt, sideways drift from the equation of time. Not a sundial.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/analemma/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Analemma — the Sun’s figure-8">
+<meta name="twitter:description" content="Why the noon Sun traces a figure-8: tilt and the equation of time. A classroom schematic.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13.5px;line-height:1.7;color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.curve{background:var(--accent,#c8b48a)}
+.swatch.marker{background:var(--ink,#e8e6e1);border-radius:50%}
+.swatch.zero{background:transparent;border-style:dashed}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:"IBM Plex Mono",monospace;font-size:10.5px;line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.1em;display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/analemma/" aria-current="page">Analemma</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Noon Sun</p>
+  <h1>Analemma<br>the figure-8</h1>
+  <p class="lede">Mark the Sun at the same clock time each clear day and the marks draw a figure-8. That path is the <strong>analemma</strong>. Up and down is <strong>solar declination</strong>: Earth’s axis leans <strong>23.44°</strong> to its orbit, so the noon Sun climbs and falls through the year — the same lean as the <a href="/science/astronomy/seasons/">seasons</a> desk. Left and right is the <strong>equation of time</strong>: how many minutes the true Sun sits ahead of, or behind, mean solar time. Two things make that drift. The tilt again, because the Sun’s path along the ecliptic does not project evenly onto the celestial equator. And the orbit’s shape: eccentricity <strong>0.0167</strong>, so Earth moves faster near perihelion, in January, and slower near aphelion, in July. <a href="https://pwg.gsfc.nasa.gov/stargaze/Skepl2nd.htm" rel="noopener" target="_blank">Kepler’s second law</a> is that uneven speed — a line from the Sun to Earth sweeps equal areas in equal times. Solstices sit at the top and the bottom. Equinoxes sit near the middle of the figure, close to the crossing and not on it. Southern Hemisphere seasons are the flip of the Northern labels on this page. Pair it with the <a href="/science/astronomy/">solar map</a> and the <a href="/circular-calendar.html">Annual Dial</a>.</p>
+  <p class="note-schematic">Classroom schematic — an approximation for the shape of the lesson, not a USNO almanac, not a precision ephemeris, and not a tool for setting a sundial or aiming a telescope. Not a photograph series, not a weather forecast, and not astrology. Declination uses the relation NASA GISS writes as arcsin of (sin ε times sin of solar longitude), with ε = 23.44° from NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a>. Longitude on this page is a uniform mean sun plus the first term of the equation of the center, 2e sin M, with that sheet’s eccentricity 0.0167. The equation of time is four clock minutes per degree of (mean longitude minus right ascension), which is how NASA GISS defines it: true solar time minus mean solar time. The calendar is the non-leap classroom year on the seasons desk: about March 20, June 21, September 22, and December 21, with perihelion on day 4. NASA GISS publishes an Earth equation of time between −14.2 and +16.3 minutes. Those published bounds are not the readout on this slider. Minutes here are stretched sideways so the loop is readable; a real noon photograph is a tall, thin figure.</p>
+
+  <p class="band">Interactive · Declination and equation of time</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">North up · minutes stretched so the loop is readable · schematic</p>
+      <canvas id="analemma" width="880" height="720" role="img" aria-label="Schematic analemma. Solar declination vertical, equation of time horizontal. A marker walks the figure-8. Classroom approximation, not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch curve" aria-hidden="true"></span> Figure-8 · schematic</li>
+        <li><span class="swatch marker" aria-hidden="true"></span> This day</li>
+        <li><span class="swatch zero" aria-hidden="true"></span> Equator and zero minutes</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="doy">Day of year</label>
+          <input type="range" id="doy" min="1" max="365" step="1" value="355" aria-valuemin="1" aria-valuemax="365" aria-valuenow="355" aria-valuetext="December 21, Northern winter solstice">
+          <span class="date-val" id="date-val">Dec 21</span>
+        </div>
+        <div class="presets" role="group" aria-label="Northern Hemisphere solstice and equinox presets">
+          <button type="button" id="btn-winter" data-doy="355" aria-pressed="true">Winter solstice</button>
+          <button type="button" id="btn-spring" data-doy="79" aria-pressed="false">Spring equinox</button>
+          <button type="button" id="btn-summer" data-doy="172" aria-pressed="false">Summer solstice</button>
+          <button type="button" id="btn-autumn" data-doy="265" aria-pressed="false">Autumn equinox</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">December solstice · schematic</p>
+      <h2 id="r-title">December 21</h2>
+      <p class="range" id="r-range">Northern winter · Southern summer</p>
+      <ul class="stats">
+        <li><span class="k">Day of year</span><span class="v" id="r-day">355 · Dec 21</span></li>
+        <li><span class="k">Season</span><span class="v" id="r-season">Northern winter</span></li>
+        <li><span class="k">Declination</span><span class="v" id="r-dec">23.4° south · schematic</span></li>
+        <li><span class="k">Equation of time</span><span class="v" id="r-eot">1.2 min ahead · schematic</span></li>
+      </ul>
+      <p class="why" id="r-why">The Sun’s declination is as far south as this schematic year goes, so the marker sits at the bottom of the figure. That is the December solstice: Northern winter, and summer in the Southern Hemisphere. The small sideways offset is the equation of time.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="The figure-8 is declination and the equation of time">
+    <p class="tag">Geometry · not a sundial</p>
+    <h2>Not the orbit, drawn in the sky</h2>
+    <p>A same-time photograph is a record of where the Sun sat, not a sketch of Earth’s ellipse and not a horoscope. <a href="https://apod.nasa.gov/apod/ap260920.html" rel="noopener" target="_blank">NASA’s Astronomy Picture of the Day</a> names the two causes of every analemma: the tilt of Earth’s axis, and the ellipticity of Earth’s orbit. The tall direction is declination. The wide direction is the equation of time. On this schematic the lower loop — Sun south of the celestial equator — is the larger one, which is winter on a northern mid-latitude diagram. That same lower loop is summer south of the equator. The seasons flip. The curve does not. This page does not point a Campbell sundial, time a photograph, or aim a telescope.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the loop</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Analemma</dt><dd><a href="https://apod.nasa.gov/apod/ap071204.html" rel="noopener" target="_blank">A 2007 NASA Astronomy Picture of the Day</a> calls it the figure-8 you get by marking the Sun at the same time each day through the year. Solstices are the top and the bottom, the northernmost and southernmost places. <a href="https://apod.nasa.gov/apod/ap260920.html" rel="noopener" target="_blank">The 20 September 2026 picture</a> adds that equinoxes are middle points of the analemma, not the intersection point. <a href="https://www.giss.nasa.gov/tools/mars24/help/notes.html" rel="noopener" target="_blank">NASA GISS</a> defines the same curve as a plot of the equation of time against solar declination, and says Earth’s is a figure-8.</dd></div>
+    <div class="gloss"><dt>Solar declination</dt><dd>How far north or south of the celestial equator the Sun sits. NASA GISS writes it as arcsin of (sin ε times sin of the Sun’s seasonal longitude). ε is the obliquity. On the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> the obliquity to orbit is 23.44°. <a href="https://science.nasa.gov/earth/facts/" rel="noopener" target="_blank">NASA Science</a> rounds that lean to 23.4° and names it as the cause of the seasons. The up-and-down of this figure is that swing. The <a href="/science/astronomy/seasons/">seasons</a> desk walks the same tilt around the Sun.</dd></div>
+    <div class="gloss"><dt>Equation of time</dt><dd>True solar time minus mean solar time. NASA GISS says that difference, in angle, is the gap between the right ascension of a fictitious mean sun and the right ascension of the true Sun, and that for Earth it varies between −14.2 minutes and +16.3 minutes. A positive minute on this desk means the true Sun is ahead of mean solar time. The fact sheet lists the length of the day as 24.0000 hours — that is the mean solar day the clock averages. The equation of time is the leftover after the average is taken. This slider’s minutes are the classroom truncation in the note above, not the GISS bounds.</dd></div>
+    <div class="gloss"><dt>Obliquity</dt><dd>The tilt of Earth’s equator to its orbit. The Earth Fact Sheet lists obliquity to orbit as 23.44°. The same number is the inclination of the equator on that sheet. It sets the height of the analemma and the seasons. It is not the Moon’s 5° orbital tilt on the <a href="/science/astronomy/eclipses/">eclipses</a> desk.</dd></div>
+    <div class="gloss gloss-wide"><dt>Eccentricity and Kepler’s second law</dt><dd>The Earth Fact Sheet lists orbit eccentricity 0.0167, perihelion 147.095 million km, aphelion 152.100 million km, and orbital speed 30.29 km/s at the fast end, 29.78 km/s on average, and 29.29 km/s at the slow end. <a href="https://spaceplace.nasa.gov/seasons/en/" rel="noopener" target="_blank">NASA Space Place</a> puts perihelion in January at 91,400,000 miles and aphelion in July at 94,500,000 miles, and says the Northern Hemisphere is in winter at the closer distance. An archival <a href="https://pwg.gsfc.nasa.gov/stargaze/Skepl2nd.htm" rel="noopener" target="_blank">NASA GSFC lesson</a> states Kepler’s second law: the radius vector sweeps equal areas in equal times, so a planet moves fastest at perihelion. That January rush, lined up near the December solstice, is why the lower loop of this schematic is the wide one. The J2000 block on the fact sheet lists mean longitude 100.46435° and longitude of perihelion 102.94719°, so Earth was near perihelion at that epoch. This page does not integrate those elements.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://apod.nasa.gov/apod/ap260920.html" rel="noopener" target="_blank">NASA APOD — 20 September 2026, Analemma over the Callanish Stones</a> — if you photograph the Sun from the same spot at the same time through a year, the composite is an analemma. The causes of the figure-8 are the tilt of Earth’s axis and the ellipticity of Earth’s orbit. At the solstices the Sun is at the top or the bottom. Equinoxes correspond to middle points of the analemma, not the intersection point.</li>
+      <li><a href="https://apod.nasa.gov/apod/ap071204.html" rel="noopener" target="_blank">NASA APOD — 4 December 2007, Analemma Over New Jersey</a> — an analemma is the figure-8 from marking the Sun at the same time each day throughout the year. Solstices are the top and bottom, the northernmost and southernmost excursions. The tilt of Earth’s axis and the variation in speed as Earth moves around its orbit produce the curve.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — obliquity to orbit 23.44°; orbit eccentricity 0.0167; length of day 24.0000 hours; mean orbital velocity 29.78 km/s; maximum 30.29 km/s; minimum 29.29 km/s; perihelion 147.095 × 10<sup>6</sup> km; aphelion 152.100 × 10<sup>6</sup> km. J2000 mean orbital elements on the same page: eccentricity 0.01671022, mean longitude 100.46435°, longitude of perihelion 102.94719°. The schematic uses 23.44° and 0.0167. It does not propagate the J2000 elements.</li>
+      <li><a href="https://science.nasa.gov/earth/facts/" rel="noopener" target="_blank">NASA Science — Earth facts</a> — axis of rotation tilted 23.4° with respect to the plane of Earth’s orbit; that tilt causes the yearly cycle of seasons.</li>
+      <li><a href="https://www.giss.nasa.gov/tools/mars24/help/notes.html" rel="noopener" target="_blank">NASA GISS — Mars24 technical notes</a> — solar declination equals arcsin[(sin ε)(sin Ls)]. The equation of time is true solar time minus mean solar time, the difference between the right ascensions of the fictitious mean sun and the true Sun. For Earth that equation varies between −14.2 min and +16.3 min. The parametric plot of the equation of time against solar declination is the solar analemma; Earth’s is a figure-8. The Mars minute range on that page is not used here.</li>
+      <li><a href="https://pwg.gsfc.nasa.gov/stargaze/Skepl2nd.htm" rel="noopener" target="_blank">NASA GSFC — Kepler’s second law (archival ISTP lesson)</a> — the radius vector sweeps equal areas in equal times. A planet moves fastest at perihelion. The page is kept online for archival use and is no longer updated.</li>
+      <li><a href="https://spaceplace.nasa.gov/seasons/en/" rel="noopener" target="_blank">NASA Space Place — What causes the seasons?</a> — perihelion 91,400,000 miles in January; aphelion 94,500,000 miles in July; Northern Hemisphere winter occurs at the closer distance. The axis keeps pointing the same way through the year.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of declination against the equation of time. The curve is a first-order teaching truncation on a 365-day calendar: mean longitude measured from day 79, true longitude equal to that mean plus 2e sin M with e = 0.0167, declination from the GISS arcsin relation with ε = 23.44°, and the equation of time equal to four minutes per degree of (mean longitude minus right ascension). Perihelion is day 4, the early-January marker shared with the seasons desk. Not USNO, not a precision ephemeris, not a photograph, and not for setting a sundial or aiming a telescope. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>The 23.4° lean kept parallel around the Sun. This desk is what that lean does to the noon Sun’s height, plus the clock drift.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits among the planets — day and local time, still a schematic.</p></a>
+    <a href="/circular-calendar.html"><p class="n">Year circle</p><h3>Annual Dial</h3><p>The same 365 days as a clock you can mark. This page is why noon is not a fixed spot.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">Luna</p><h3>Moon</h3><p>A month of phases. A different clock from this yearly figure-8.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>Which constellations the tilted year puts overhead. This desk does not point them.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>The Moon’s orbit, tilted about 5°. A different angle from Earth’s 23.44° obliquity.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Classroom analemma. Constants read from NASA’s Earth Fact Sheet:
+     obliquity 23.44°, eccentricity 0.0167.
+     Declination: arcsin(sin ε sin λ), the relation NASA GISS states.
+     λ = L + 2e sin M, the first term of the equation of the center.
+     Equation of time in minutes = 4 × degrees of (L − α),
+     true solar time minus mean solar time, as NASA GISS defines it.
+     L is mean longitude from the day-79 March marker.
+     M is mean anomaly from day 4, the seasons desk’s early-January perihelion.
+     Not an ephemeris. Not the GISS minute bounds (−14.2 to +16.3). */
+  var EPS = 23.44 * Math.PI / 180;
+  var ECC = 0.0167;
+  var YEAR = 365;
+  var PERI = 4;
+  var EQ = 79;
+  var PLAY_DPD = 18;
+  var PRE = { winter: 355, spring: 79, summer: 172, autumn: 265 };
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var MDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var canvas = document.getElementById("analemma");
+  var slider = document.getElementById("doy");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-doy]"));
+  var state = { day: 355, playing: false };
+  var qDay = new URLSearchParams(location.search).get("doy");
+  if (qDay) state.day = clamp(parseInt(qDay, 10) || 355, 1, YEAR);
+  else state.day = dayOfYear(new Date());
+  var raf = 0;
+  var lastT = 0;
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function wrapPi(a){
+    var x = a;
+    while (x > Math.PI) x -= Math.PI * 2;
+    while (x <= -Math.PI) x += Math.PI * 2;
+    return x;
+  }
+  function wrapDay(t){
+    var x = ((t - 1) % YEAR) + 1;
+    if (x < 1) x += YEAR;
+    return x;
+  }
+  function dayOfYear(d){
+    var start = new Date(d.getFullYear(), 0, 0);
+    var n = Math.round((d - start) / 86400000);
+    if (n < 1) n = 1;
+    if (n > YEAR) n = YEAR;
+    return n;
+  }
+  function dayNum(t){
+    var n = Math.round(wrapDay(t));
+    if (n > YEAR) n = 1;
+    if (n < 1) n = 1;
+    return n;
+  }
+  function splitDay(day){
+    var d = day;
+    var m;
+    for (m = 0; m < 12; m++){
+      if (d <= MDAYS[m]) return { month: MONTHS[m], mon: MONTHS[m].slice(0, 3), date: d };
+      d -= MDAYS[m];
+    }
+    return { month: "December", mon: "Dec", date: 31 };
+  }
+  function sample(n){
+    var L = Math.PI * 2 * (n - EQ) / YEAR;
+    var M = Math.PI * 2 * (n - PERI) / YEAR;
+    var lam = L + 2 * ECC * Math.sin(M);
+    var s = Math.sin(EPS) * Math.sin(lam);
+    if (s > 1) s = 1;
+    if (s < -1) s = -1;
+    var dec = Math.asin(s) * 180 / Math.PI;
+    var alpha = Math.atan2(Math.cos(EPS) * Math.sin(lam), Math.cos(lam));
+    var eot = wrapPi(L - alpha) * (180 / Math.PI) * 4;
+    return { dec: dec, eot: eot };
+  }
+  function seasonNorth(day){
+    if (day >= 79 && day <= 171) return "Spring";
+    if (day >= 172 && day <= 264) return "Summer";
+    if (day >= 265 && day <= 354) return "Autumn";
+    return "Winter";
+  }
+  function opposite(name){
+    if (name === "Spring") return "Autumn";
+    if (name === "Summer") return "Winter";
+    if (name === "Autumn") return "Spring";
+    return "Summer";
+  }
+  function nearPreset(day){
+    var n = dayNum(day);
+    var keys = ["winter", "spring", "summer", "autumn"];
+    var i;
+    for (i = 0; i < keys.length; i++){
+      if (n === PRE[keys[i]]) return keys[i];
+    }
+    return "";
+  }
+  function decLabel(dec){
+    var a = Math.abs(dec);
+    if (a < 0.15) return "0° · equator · schematic";
+    var n = (Math.round(a * 10) / 10).toFixed(1);
+    return n + "° " + (dec > 0 ? "north" : "south") + " · schematic";
+  }
+  function eotLabel(min){
+    var a = Math.abs(min);
+    if (a < 0.15) return "0 min · schematic";
+    var n = (Math.round(a * 10) / 10).toFixed(1);
+    return n + " min " + (min > 0 ? "ahead" : "behind") + " · schematic";
+  }
+  function eotSpeech(min){
+    var a = Math.abs(min);
+    if (a < 0.15) return "about 0 minutes, with mean solar time, schematic";
+    var n = (Math.round(a * 10) / 10).toFixed(1);
+    return n + " minutes " + (min > 0 ? "ahead of" : "behind") + " mean solar time, schematic";
+  }
+  function copyFor(t){
+    var n = dayNum(t);
+    var parts = splitDay(n);
+    var g = sample(n);
+    var nh = seasonNorth(n);
+    var sh = opposite(nh);
+    var preset = nearPreset(n);
+    var base = {
+      tier: (preset ? presetName(preset) : "Classroom calendar") + " · schematic",
+      title: parts.month + " " + parts.date,
+      range: "Northern " + nh.toLowerCase() + " · Southern " + sh.toLowerCase(),
+      day: "Day " + n + " · " + parts.mon + " " + parts.date,
+      season: "Northern " + nh.toLowerCase(),
+      dec: decLabel(g.dec),
+      eot: eotLabel(g.eot),
+      slider: parts.month + " " + parts.date + ", Northern " + nh.toLowerCase() + ", declination " + decLabel(g.dec) + ", equation of time " + eotSpeech(g.eot)
+    };
+    if (preset === "winter"){
+      base.why = "Declination is as far south as this schematic year goes, so the marker sits at the bottom of the figure. That is the December solstice on the classroom calendar: Northern winter, and summer in the Southern Hemisphere. The sideways offset is the equation of time — mean solar time and the true Sun still disagree on the turning day of the tilt.";
+      return base;
+    }
+    if (preset === "summer"){
+      base.why = "Declination is as far north as this schematic year goes, so the marker sits at the top. Northern summer, Southern winter. This upper loop is the smaller one. Perihelion is early January, Northern winter, when Earth is moving fastest, and that fast stretch widens the lower loop.";
+      return base;
+    }
+    if (preset === "spring"){
+      base.why = "March equinox on this calendar. Declination is near zero, so the marker is in the middle band of the figure. NASA’s 20 September 2026 Astronomy Picture of the Day calls equinoxes analemma middle points, and says they are not the intersection point. On this schematic the crossing sits a little north of the celestial equator. Southern autumn is the same day.";
+      return base;
+    }
+    if (preset === "autumn"){
+      base.why = "September equinox on this calendar. Declination is near zero again, the other middle point. The figure’s crossing, where the loop passes itself and the equation of time is near zero, is a different pair of days, still north of the equator on this drawing. Southern spring is this same date.";
+      return base;
+    }
+    if (Math.abs(g.eot) < 1.6 && g.dec > 6 && g.dec < 14){
+      base.why = "Near the crossing of the figure-8. Declination is still north of the celestial equator here, so this is not an equinox. The spring and autumn buttons sit lower, where declination passes zero. The sideways minute is almost gone: the true Sun and the mean sun nearly agree.";
+      return base;
+    }
+    if (g.dec < -8 && Math.abs(g.eot) > 10){
+      base.why = "The wide part of the lower loop. Declination is south of the celestial equator: Northern " + nh.toLowerCase() + ", Southern " + sh.toLowerCase() + ". This half of the figure is the larger one because perihelion falls in January, beside Northern winter, when Earth moves fastest. The height is the tilt. The minute is the clock drift.";
+      return base;
+    }
+    if (g.dec > 12){
+      base.why = "High in the smaller, northern loop. The Sun is well north of the celestial equator: a long stretch of Northern summer and Southern winter. Aphelion falls in July, the slow end of the orbit, and the sideways drift stays tighter than the winter loop below.";
+      return base;
+    }
+    if (Math.abs(g.dec) < 3){
+      base.why = "Declination is near zero, the middle band. An equinox is the day that band is crossed. The intersection of the figure-8 is higher on this schematic, a little north of the celestial equator. " + (g.eot >= 0 ? "The Sun is ahead of mean solar time." : "The Sun is behind mean solar time.");
+      return base;
+    }
+    if (g.dec >= 0){
+      base.why = "The Sun is north of the celestial equator, so this day belongs to the upper loop: Northern " + nh.toLowerCase() + ", Southern " + sh.toLowerCase() + ". " + (g.eot >= 0 ? "A positive minute means the true Sun is ahead of mean solar time." : "A negative minute means the true Sun is behind mean solar time.") + " The height is the tilt. The minute is the equation of time.";
+      return base;
+    }
+    base.why = "The Sun is south of the celestial equator, on the larger lower loop. Northern " + nh.toLowerCase() + ", Southern " + sh.toLowerCase() + ". The lower loop is Northern winter when the Sun is farthest south, and Southern summer on that same date. " + (g.eot >= 0 ? "The Sun is ahead of mean solar time." : "The Sun is behind mean solar time.");
+    return base;
+  }
+  function presetName(key){
+    if (key === "winter") return "December solstice";
+    if (key === "spring") return "March equinox";
+    if (key === "summer") return "June solstice";
+    return "September equinox";
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+
+  function draw(cssW){
+    var cssH = Math.round(clamp(cssW * 1.02, 340, 620));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var g = sample(state.day);
+    var copy = copyFor(state.day);
+    var padL = 54;
+    var padR = 28;
+    var padT = 28;
+    var padB = 36;
+    var plotW = Math.max(40, cssW - padL - padR);
+    var plotH = Math.max(40, cssH - padT - padB);
+    var xMin = -20;
+    var xMax = 20;
+    var yMin = -28;
+    var yMax = 28;
+    function X(min){ return padL + (min - xMin) / (xMax - xMin) * plotW; }
+    function Y(deg){ return padT + (yMax - deg) / (yMax - yMin) * plotH; }
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL, padT, plotW, plotH);
+
+    ctx.save();
+    ctx.setLineDash([3, 4]);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.85;
+    ctx.beginPath();
+    ctx.moveTo(padL, Y(0));
+    ctx.lineTo(padL + plotW, Y(0));
+    ctx.moveTo(X(0), padT);
+    ctx.lineTo(X(0), padT + plotH);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.beginPath();
+    var steps = 366;
+    var i;
+    for (i = 0; i <= steps; i++){
+      var n = 1 + (i / steps) * (YEAR - 1);
+      var p = sample(n);
+      var x = X(p.eot);
+      var y = Y(p.dec);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.7;
+    ctx.stroke();
+
+    var marks = [
+      { day: PRE.winter, name: "DEC" },
+      { day: PRE.spring, name: "MAR" },
+      { day: PRE.summer, name: "JUN" },
+      { day: PRE.autumn, name: "SEP" }
+    ];
+    marks.forEach(function(m){
+      var p = sample(m.day);
+      var x = X(p.eot);
+      var y = Y(p.dec);
+      ctx.fillStyle = soft;
+      ctx.beginPath();
+      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      var dx = p.eot >= 0 ? 8 : -8;
+      var align = p.eot >= 0 ? "left" : "right";
+      text(ctx, m.name, x + dx, y, { size: 10, align: align, color: muted });
+    });
+
+    var mx = X(g.eot);
+    var my = Y(g.dec);
+    ctx.beginPath();
+    ctx.arc(mx, my, 7, 0, Math.PI * 2);
+    ctx.fillStyle = cssVar("--base-2", "#14161c");
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = ink;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(mx, my, 2.4, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+
+    ctx.fillStyle = muted;
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText("+23°", padL - 8, Y(23));
+    ctx.fillText("0°", padL - 8, Y(0));
+    ctx.fillText("−23°", padL - 8, Y(-23));
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("behind", X(-12), padT + plotH + 10);
+    ctx.fillText("0", X(0), padT + plotH + 10);
+    ctx.fillText("ahead", X(12), padT + plotH + 10);
+    text(ctx, "Sun south · larger loop", padL + 8, Y(-20), { size: 10, align: "left", color: muted });
+    text(ctx, "Sun north · smaller loop", padL + plotW - 8, Y(24), { size: 10, align: "right", color: muted });
+    text(ctx, copy.title, cssW - 12, 14, { size: 11, align: "right", color: accent });
+
+    canvas.setAttribute("aria-label",
+      "Schematic analemma for " + copy.title + ". " + copy.range + ". Declination " + copy.dec + ". Equation of time " + eotSpeech(g.eot) + ". North is up. The horizontal axis is minutes, stretched so the loop is readable. Classroom approximation, not an ephemeris.");
+  }
+
+  function syncUrl(){
+    var url = new URL(location.href);
+    url.searchParams.set("doy", String(dayNum(state.day)));
+    history.replaceState(null, "", url.pathname + url.search);
+  }
+
+  function render(){
+    state.day = wrapDay(state.day);
+    var copy = copyFor(state.day);
+    var n = dayNum(state.day);
+    var parts = splitDay(n);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("r-day").textContent = copy.day;
+    document.getElementById("r-season").textContent = copy.season;
+    document.getElementById("r-dec").textContent = copy.dec;
+    document.getElementById("r-eot").textContent = copy.eot;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("date-val").textContent = parts.mon + " " + parts.date;
+    slider.value = String(n);
+    slider.setAttribute("aria-valuenow", String(n));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    var shown = nearPreset(state.day);
+    jumpBtns.forEach(function(b){
+      var key = b.id.replace("btn-", "");
+      b.setAttribute("aria-pressed", String(key === shown));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = canvas.clientWidth || (canvas.parentElement && canvas.parentElement.clientWidth) || 640;
+    draw(cssW);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.day = wrapDay(state.day + dt * PLAY_DPD);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.day = clamp(parseInt(slider.value, 10) || 1, 1, YEAR);
+    render();
+    syncUrl();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      state.day = clamp(parseInt(b.dataset.doy, 10) || 1, 1, YEAR);
+      render();
+      syncUrl();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      syncUrl();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
