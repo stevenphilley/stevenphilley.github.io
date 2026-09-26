@@ -272,8 +272,39 @@ assert(logistics.rateOf(site("SNOWPLANT")).approximate, "a yield above 1 is appr
 eq(logistics.rateOf(site("SNOWPLANT")).perHour, 200, "frostwort is about 200 an hour");
 eq(site("PLANTER").kind, "tray", "a hydroponic tray is a container, not a crop");
 eq(site("BIOROOM").kind, "biodome", "a bio-dome is counted as a container");
-eq(site("WEIRDPLANT").known, false, "an unknown plant id stays raw");
+eq(site("SNOWPLANT").rawObjectId, "^SNOWPLANT", "a planted crop keeps the caret id from the save");
+eq(site("TOXICPLANT").count, 2, "fungal clusters are counted from a caret object id");
+eq(site("TOXICPLANT").resourceId, "fungal-mould", "fungal cluster produces fungal mould");
+eq(logistics.describeSite(site("TOXICPLANT"), index).name, "Fungal Cluster", "a caret plant id uses the seed name");
+eq(logistics.describeSite(site("TOXICPLANT"), index).productName, "Fungal Mould", "the harvest name is the substance");
+eq(logistics.describeSite(site("GRAVPLANT"), index).name, "Gravitino Host", "gravitino host is the plantable seed");
+eq(logistics.describeSite(site("GRAVPLANT"), index).productName, "Gravitino Ball", "gravitino host yields gravitino balls");
+eq(site("WEIRDPLANT").known, false, "an unknown plant id is not treated as a known crop");
+eq(site("WEIRDPLANT").objectId, "WEIRDPLANT", "a caret on an object id is stripped before matching");
+eq(site("WEIRDPLANT").rawObjectId, "^WEIRDPLANT", "the original object id is kept for the tooltip");
+var weirdPlant = logistics.describeSite(site("WEIRDPLANT"), index);
+eq(weirdPlant.name, "Weirdplant", "an unknown plant id is reworded");
+assert(weirdPlant.name.indexOf("^") === -1, "an unknown plant name has no caret");
+assert(weirdPlant.title.indexOf("^WEIRDPLANT") !== -1, "the raw object id stays in the tooltip");
 eq(site("WEIRDPLANT").resourceId, "", "an unknown plant is not given a crop");
+var cropStore = logistics.normalize({
+  source: { fileName: "fixture-save.json", format: "json" },
+  locations: extracted.locations,
+  production: produced.sites
+});
+var cropGlance = map.summarizeBase(uthmi, cropStore, logistics, index, "");
+var harvestNames = cropGlance.crops.map(function (row) { return row.label; });
+assert(harvestNames.indexOf("Frostwort") !== -1, "the harvest column names frostwort");
+assert(harvestNames.indexOf("Fungal Cluster") !== -1, "the harvest column names fungal cluster");
+assert(harvestNames.indexOf("Gravitino Host") !== -1, "the harvest column names gravitino host");
+assert(harvestNames.indexOf("Weirdplant") !== -1, "an unknown plant is reworded in the harvest column");
+cropGlance.crops.forEach(function (row) {
+  assert(row.label.indexOf("^") === -1, "a harvest chip has no caret: " + row.label);
+  assert((row.title || "").indexOf("^") !== -1, "a harvest chip keeps the save id in the title");
+});
+assert(map.inventoryChipText(cropGlance).indexOf("^") === -1, "the inventory chip has no caret");
+var mouldHeld = logistics.searchStock(cropStore, "fungal mould", index);
+eq(mouldHeld.map(function (row) { return row.item.rawId; }), ["^PLANT_TOXIC"], "search matches the harvest name");
 assert(!site("WALL"), "a wall is not production");
 assert(produced.skipped.some(function (row) { return row.id === "base-objects"; }), "a base without an Objects list is flagged");
 
@@ -357,8 +388,59 @@ eq(cargo.items.map(function (item) { return [item.id, logistics.itemLabel(item, 
   ["TECH_COMP", "Wiring Loom", "^TECH_COMP"],
   ["UP_LASER4", "S-Class Mining Beam Upgrade", "^UP_LASER4#52847"],
   ["FRIG_TOKEN", "Salvaged Frigate Module", "^FRIG_TOKEN"],
-  ["NOT_A_REAL_ITEM", "Not A Real Item", "^NOT_A_REAL_ITEM"]
+  ["NOT_A_REAL_ITEM", "Not A Real Item", "^NOT_A_REAL_ITEM"],
+  ["fungal-mould", "Fungal Mould", "^PLANT_TOXIC"],
+  ["frost-crystal", "Frost Crystal", "^PLANT_SNOW"],
+  ["solanium", "Solanium", "^PLANT_HOT"],
+  ["cactus-flesh", "Cactus Flesh", "^PLANT_DUST"],
+  ["star-bulb", "Star Bulb", "^PLANT_LUSH"],
+  ["gamma-root", "Gamma Root", "^PLANT_RADIO"],
+  ["faecium", "Faecium", "^PLANT_POOP"],
+  ["kelp-sac", "Kelp Sac", "^PLANT_WATER"],
+  ["PLANT_CAVE", "Marrow Bulb", "^PLANT_CAVE"],
+  ["GRAVBALL", "Gravitino Ball", "^GRAVBALL"],
+  ["NIPNIPBUDS", "NipNip Buds", "^NIPNIPBUDS"],
+  ["SNOWPLANT", "Frostwort", "^SNOWPLANT"],
+  ["GRAVPLANT", "Gravitino Host", "^GRAVPLANT"],
+  ["FOOD_P_LUSHWILD", "Impulse Beans", "^FOOD_P_LUSHWILD"],
+  ["NOT_A_CROP_9", "Not A Crop 9", "^NOT_A_CROP_9"]
 ], "ship cargo shows English names and keeps the save id");
+cargo.items.forEach(function (item) {
+  var label = logistics.itemLabel(item, index);
+  assert(label.indexOf("^") === -1, "a cargo label has no caret: " + label);
+  assert(logistics.itemMeta(item, index).title.indexOf(item.rawId) !== -1, "the tooltip keeps " + item.rawId);
+});
+var cropNames = {
+  PLANT_TOXIC: "Fungal Mould",
+  PLANT_SNOW: "Frost Crystal",
+  PLANT_HOT: "Solanium",
+  PLANT_DUST: "Cactus Flesh",
+  PLANT_LUSH: "Star Bulb",
+  PLANT_RADIO: "Gamma Root",
+  PLANT_POOP: "Faecium",
+  PLANT_WATER: "Kelp Sac",
+  PLANT_CAVE: "Marrow Bulb",
+  GRAVBALL: "Gravitino Ball",
+  GRAVPLANT: "Gravitino Host",
+  NIPNIPBUDS: "NipNip Buds",
+  NIPPLANT: "NipNip",
+  ALBUMENPEARL: "Albumen Pearl",
+  PEARLPLANT: "Albumen Pearl Orb",
+  SACVENOM: "Sac Venom",
+  SACVENOMPLANT: "Venom Urchin",
+  SNOWPLANT: "Frostwort",
+  TOXICPLANT: "Fungal Cluster",
+  FOOD_P_LUSHFARM: "Pilgrimberry",
+  FOOD_P_CAVE: "Marrow Flesh",
+  CREATURE1: "Mordite"
+};
+Object.keys(cropNames).forEach(function (id) {
+  eq(logistics.itemLabel({ id: id, rawId: "^" + id }, index), cropNames[id], id + " uses its English name");
+});
+eq(logistics.itemLabel({ id: "PLANT_GRAV", rawId: "^PLANT_GRAV" }, index), "Plant Grav", "PLANT_GRAV is not a substance id, so it is reworded");
+assert(logistics.itemMeta({ id: "PLANT_GRAV", rawId: "^PLANT_GRAV" }, index).title.indexOf("^PLANT_GRAV") !== -1, "an unmapped crop id stays in the tooltip");
+eq(logistics.resolveSaveId("^PLANT_TOXIC", index).id, "fungal-mould", "fungal mould joins the material graph");
+eq(logistics.resolveSaveId("^PLANT_SNOW#4", index).id, "frost-crystal", "a harvest id with a suffix still maps");
 
 var namedStore = logistics.normalize({ locations: extracted.locations, projects: [] });
 var byName = logistics.searchStock(namedStore, "aronium", index);
@@ -379,7 +461,7 @@ var roundTrip = logistics.importDocument(JSON.stringify(exported));
 eq(roundTrip.locations.filter(function (row) { return row.id === "save:ship:0:cargo"; })[0].items[0].id, "ALLOY1", "a backup import keeps the item id");
 assert(!roundTrip.locations.filter(function (row) { return row.id === "save:ship:0:cargo"; })[0].items[0].displayName, "a backup import drops the display name");
 
-var SYNTHETIC = { WEIRD_PART: true, NOT_A_NUMBER: true, NOT_A_REAL_ITEM: true };
+var SYNTHETIC = { WEIRD_PART: true, NOT_A_NUMBER: true, NOT_A_REAL_ITEM: true, NOT_A_CROP_9: true };
 function collectSaveIds(node, out) {
   if (!node || typeof node !== "object") return;
   if (Array.isArray(node)) {
