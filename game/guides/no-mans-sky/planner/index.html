@@ -7,12 +7,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>No Man's Sky planner — Steven Philley</title>
-<meta name="description" content="Hands moodboard pins to the No Man's Sky logistics planner. Pins stay in this browser. Nothing is uploaded.">
+<meta name="description" content="Search Stasis Device and the other crafted trade goods, then read the full raw bill. Pins stay in this browser. Nothing is uploaded.">
 <link rel="canonical" href="https://stevenphilley.com/game/guides/no-mans-sky/planner/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="No Man's Sky planner">
-<meta property="og:description" content="Moodboard pins, ready to seed the logistics planner. Nothing is uploaded.">
+<meta property="og:description" content="Search Stasis Device and plan its raw bill. Nothing is uploaded.">
 <meta property="og:url" content="https://stevenphilley.com/game/guides/no-mans-sky/planner/">
 <meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -47,6 +47,21 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .pins .sym{color:var(--accent,#c8b48a);letter-spacing:.12em;text-transform:uppercase;font-size:11px;margin-right:10px}
 .pins .empty{color:var(--muted,#63666e)}
 .pins .empty a{display:inline;padding:0;color:var(--ink-soft,#9b9a96)}
+.plan{margin-top:22px}
+.plan h2,.plan h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;letter-spacing:.06em;margin:0}
+.plan h2{font-size:32px}
+.plan h3{font-size:26px;margin-top:16px}
+.find{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-top:12px}
+.field{display:flex;flex-direction:column;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent,#c8b48a)}
+.field input{font-family:"IBM Plex Mono",monospace;font-size:14px;letter-spacing:0;text-transform:none;color:var(--ink,#e8e6e1);background:transparent;border:1px solid var(--line,#2c303a);padding:8px 10px;min-width:min(100%,16rem)}
+.matches{list-style:none;margin:12px 0 0;padding:0;max-height:240px;overflow:auto;border-top:1px solid var(--line,#2c303a)}
+.matches li{border-bottom:1px solid var(--line,#2c303a)}
+.matches button{appearance:none;width:100%;text-align:left;background:transparent;border:0;color:inherit;font-family:"IBM Plex Mono",monospace;font-size:14px;line-height:1.5;padding:10px 0;cursor:pointer}
+.matches button:hover,.matches button[aria-pressed="true"]{color:var(--accent,#c8b48a)}
+.bill{list-style:none;margin:8px 0 0;padding:0}
+.bill li{border-top:1px solid var(--line,#2c303a);padding:8px 0;font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.5}
+.bill li:last-child{border-bottom:1px solid var(--line,#2c303a)}
+.worth{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--ink-soft,#9b9a96)}
 .status{margin:16px 0 0;font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.6;color:var(--ink-soft,#9b9a96)}
 .also{margin-top:28px}
 .also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.08em;margin:0 0 8px}
@@ -85,7 +100,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   <header class="e-hero">
     <p class="e-kicker">Vol. VI — Guides</p>
     <h1>Planner</h1>
-    <p class="lede">The planner lives on the logistics page. This list is still the moodboard pins, and they can seed a project there. Pins stay in this browser. Nothing is uploaded.</p>
+    <p class="lede">Search a crafted item, including Stasis Device, and read the raw bill down to gathered resources. That bill can become demands on the logistics page. Pins from the moodboard are listed below. Everything stays in this browser. Nothing is uploaded.</p>
   </header>
 
   <div class="metrics" aria-live="polite">
@@ -93,14 +108,32 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <div class="metric"><div class="lab">Status</div><div class="num">Live</div><div class="unit"><a href="/game/guides/no-mans-sky/logistics/">logistics</a></div></div>
   </div>
 
-  <ul class="pins" id="pins"><li class="empty">Reading pins.</li></ul>
-  <p class="status" id="status" aria-live="polite"></p>
-  <p class="status"><button type="button" id="seed">Use these pins as demands</button> <a href="/game/guides/no-mans-sky/logistics/#plan">Open logistics</a></p>
+  <section class="plan" id="craft">
+    <h2>Plan a craft</h2>
+    <form class="find" id="find-form">
+      <label class="field">Item
+        <input id="find" type="search" placeholder="Stasis Device" autocomplete="off" enterkeyhint="search">
+      </label>
+      <label class="field">How many
+        <input id="qty" type="number" min="1" step="1" value="1">
+      </label>
+    </form>
+    <ul class="matches" id="matches"><li class="empty">Reading the graph.</li></ul>
+    <div id="bill"></div>
+    <p class="status"><button type="button" id="use-bill">Use this raw bill as demands</button></p>
+  </section>
+
+  <section class="plan">
+    <h2>Pins</h2>
+    <ul class="pins" id="pins"><li class="empty">Reading pins.</li></ul>
+    <p class="status" id="status" aria-live="polite"></p>
+    <p class="status"><button type="button" id="seed">Use these pins as demands</button> <a href="/game/guides/no-mans-sky/logistics/#plan">Open logistics</a></p>
+  </section>
 
   <section class="also">
     <h2>Also</h2>
     <ul>
-      <li><a href="/game/guides/no-mans-sky/logistics/">Logistics</a> — inventory and the production plan. Pins from this page can seed a project.</li>
+      <li><a href="/game/guides/no-mans-sky/logistics/">Logistics</a> — inventory, and the same raw bill as demands against what you hold.</li>
       <li><a href="/game/guides/no-mans-sky/moodboard/">Moodboard</a> — star the items this list should hold.</li>
       <li><a href="/game/guides/no-mans-sky/refine/">Refine</a> — the edge explorer for one item at a time.</li>
       <li><a href="/game/guides/no-mans-sky/">Bases</a> — the galaxy map.</li>

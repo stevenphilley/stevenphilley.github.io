@@ -280,7 +280,8 @@
         }).join("") + "</ul></section>"
       : "";
     var rawLink = hasTree
-      ? ' · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '&amp;bill=raw&amp;qty=1#plan">Add the raw bill to a plan</a>'
+      ? ' · <a href="../planner/?item=' + encodeURIComponent(material.id) + '">Plan the raw bill</a>' +
+        ' · <a href="../logistics/?recipe=' + encodeURIComponent(material.id) + '&amp;bill=raw&amp;qty=1#plan">Add the raw bill to logistics</a>'
       : "";
     detailEl.innerHTML =
       '<p class="kicker">' + esc(cat ? cat.label : "") + (selected.length > 1 ? " · " + selected.length + " marked" : "") + "</p>" +

@@ -87,14 +87,26 @@
   }
 
   function itemOptions() {
-    var nodes = (catalog && catalog.nodes) || [];
-    return nodes.map(function (node) {
+    return optionsFrom(catalog && catalog.nodes);
+  }
+
+  function optionsFrom(nodes) {
+    return (nodes || []).map(function (node) {
       return { value: node.id, label: node.name };
     }).sort(function (a, b) {
       if (a.label < b.label) return -1;
       if (a.label > b.label) return 1;
       return 0;
     });
+  }
+
+  function recipeItemOptions() {
+    var find = document.getElementById("recipe-find");
+    var query = find ? find.value : "";
+    var nodes = (typeof NmsRefine !== "undefined" && NmsRefine.searchItems)
+      ? NmsRefine.searchItems(catalog, query)
+      : ((catalog && catalog.nodes) || []);
+    return optionsFrom(nodes);
   }
 
   function baseOptions() {
@@ -137,10 +149,14 @@
     if (locCat && !locCat.options.length) fillSelect(locCat, categoryOptions(), "");
     if (catalog) {
       var items = itemOptions();
-      ["item-id", "demand-item", "recipe-item"].forEach(function (id) {
+      ["item-id", "demand-item"].forEach(function (id) {
         var select = document.getElementById(id);
         if (select && select.options.length <= 1) fillSelect(select, items, "Choose");
       });
+      var recipeSelect = document.getElementById("recipe-item");
+      if (recipeSelect && (recipeSelect.options.length <= 1 || (document.getElementById("recipe-find") && document.getElementById("recipe-find").value))) {
+        fillSelect(recipeSelect, recipeItemOptions(), "Choose");
+      }
     }
     var projects = store.projects.map(function (project) {
       return { value: project.id, label: project.name };
@@ -757,6 +773,22 @@
 
   var rawButton = document.getElementById("recipe-raw");
   if (rawButton) rawButton.addEventListener("click", addRawBill);
+
+  var recipeFind = document.getElementById("recipe-find");
+  if (recipeFind) recipeFind.addEventListener("input", function () {
+    var select = document.getElementById("recipe-item");
+    if (!select || !catalog) return;
+    var previous = select.value;
+    fillSelect(select, recipeItemOptions(), "Choose");
+    var hits = NmsRefine.searchItems(catalog, recipeFind.value);
+    if (recipeFind.value.trim() && hits.length === 1) {
+      select.value = hits[0].id;
+      var project = document.getElementById("recipe-project");
+      if (project && !project.value.trim()) project.value = hits[0].name;
+    } else if (previous && Array.prototype.some.call(select.options, function (opt) { return opt.value === previous; })) {
+      select.value = previous;
+    }
+  });
 
   document.getElementById("form-pins").addEventListener("submit", function (ev) {
     ev.preventDefault();

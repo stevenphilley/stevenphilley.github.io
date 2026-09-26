@@ -312,6 +312,45 @@
     return { tree: walk(itemId, asked, []), raw: raw, cycles: cycles };
   }
 
+  function itemHaystack(node) {
+    return [
+      node.name,
+      node.short,
+      node.symbol,
+      String(node.id || "").replace(/[_-]/g, " "),
+      node.blurb,
+      node.category
+    ].concat(node.aliases || []).join(" ").toLowerCase();
+  }
+
+  function searchItems(catalog, query) {
+    var nodes = ((catalog && catalog.nodes) || []).slice();
+    var words = String(query || "").trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) return nodes;
+    return nodes.filter(function (node) {
+      if (!node) return false;
+      var hay = itemHaystack(node);
+      return words.every(function (word) { return hay.indexOf(word) !== -1; });
+    });
+  }
+
+  // Crafted products and the one-way refined substances a raw bill can ask for.
+  function craftableItems(catalog) {
+    var ids = Object.create(null);
+    edges(catalog).forEach(function (edge) {
+      if (!edge || !edge.out || !edge.out.id) return;
+      if (edge.kind === "craft") {
+        var loops = (edge.inputs || []).some(function (input) { return input.id === edge.out.id; });
+        if (!loops) ids[edge.out.id] = true;
+      } else if (BILL_REFINE[edge.id] && !edge.expansion) {
+        ids[edge.out.id] = true;
+      }
+    });
+    return ((catalog && catalog.nodes) || []).filter(function (node) {
+      return node && ids[node.id];
+    });
+  }
+
   return {
     canonId: canonId,
     PIN_KEY: PIN_KEY,
@@ -330,6 +369,8 @@
     findEdges: findEdges,
     links: links,
     validate: validate,
-    expandBill: expandBill
+    expandBill: expandBill,
+    searchItems: searchItems,
+    craftableItems: craftableItems
   };
 });

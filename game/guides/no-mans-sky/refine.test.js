@@ -202,6 +202,15 @@ Object.keys(stasisBill.raw).forEach(function (id) {
 });
 assert(!stasisBill.raw["condensed-carbon"] && !stasisBill.raw["ionised-cobalt"] && !stasisBill.raw["quantum-processor"], "stasis intermediates are expanded");
 
+var stasisHits = api.searchItems(catalog, "stasis");
+assert(stasisHits.length === 1 && stasisHits[0].id === "stasis-device", "searching stasis finds Stasis Device");
+assert(api.searchItems(catalog, "ULTRAPROD2").some(function (node) { return node.id === "stasis-device"; }), "searching the save id finds Stasis Device");
+var picker = api.craftableItems(catalog);
+["stasis-device", "fusion-ignitor", "quantum-processor", "cryogenic-chamber", "explosive-drones"].forEach(function (id) {
+  assert(picker.some(function (node) { return node.id === id; }), id + " is in the planner picker");
+});
+assert(!picker.some(function (node) { return node.id === "cactus-flesh"; }), "a gathered plant is not in the craft picker");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

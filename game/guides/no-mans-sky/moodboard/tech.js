@@ -231,9 +231,10 @@
     var repair = '<p class="rx-note">Repair cost is not a separate list in the technology table. The install recipe above is the Requirements list.</p>';
     if (item.kind === "procedural") repair = '<p class="rx-note">Procedural S/A/B/C modules are bought or found. They are not crafted from a blueprint.</p>';
     if (item.kind === "gathered" || item.kind === "resource" || item.kind === "product") repair = "";
-    var plan = item.recipe
-      ? '<p class="rx-note"><a href="../logistics/?recipe=' + encodeURIComponent(item.id) + '&amp;bill=raw&amp;qty=1#plan">Add the raw bill to a plan</a></p>'
-      : "";
+    var planBits = [];
+    if (item.graphId) planBits.push('<a href="../planner/?item=' + encodeURIComponent(item.graphId) + '">Plan the raw bill</a>');
+    if (item.recipe) planBits.push('<a href="../logistics/?recipe=' + encodeURIComponent(item.id) + '&amp;bill=raw&amp;qty=1#plan">Add the raw bill to logistics</a>');
+    var plan = planBits.length ? '<p class="rx-note">' + planBits.join(" · ") + "</p>" : "";
     var refine = item.graphId
       ? '<p class="rx-note"><a href="../refine/?item=' + encodeURIComponent(item.graphId) + '">Other refiner paths</a></p>'
       : "";
