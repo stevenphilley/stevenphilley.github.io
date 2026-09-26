@@ -660,6 +660,132 @@ assert(disc.discoveryMarkerLabel({ systemName: "", glyphs: "0120FEFD8050", plane
 assert(placed.every(function (sys) { return sys.planetList.some(function (p) { return p.biome; }); }), "each synthetic system has a biome read from VP");
 assert(!fs.existsSync(path.join(__dirname, "fixture-player.hg")), "no real save file is part of the test");
 
+var teleFixture = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "teleporters-save.json"), "utf8"));
+var teleports = api.extractTeleportEndpoints(teleFixture);
+eq(teleports.endpoints.length, 11, "the synthetic fixture has eleven endpoints");
+var hubStation = teleports.endpoints[0];
+eq(hubStation.name, "Synthetic Hub Station", "a plain station name is kept");
+eq(hubStation.type, "Spacestation", "Spacestation is the type");
+eq(hubStation.group, "stations", "a space station is in the stations group");
+eq(hubStation.glyphs, "0205D058AC1D", "nested voxels become the portal glyphs");
+eq(hubStation.galaxy, 0, "RealityIndex is the galaxy");
+eq(hubStation.coords, "041C:004F:0D89:0205", "the station shares the Hub capital system");
+assert(hubStation.favourite === true && hubStation.featured === false && hubStation.calcWarpOffset === false, "flags are read when present");
+eq(hubStation.position, { x: 12.5, y: 80, z: -4 }, "Position array is kept");
+eq(hubStation.facing, { x: 0, y: 0, z: 1 }, "Facing object is kept");
+eq(teleports.endpoints[1].glyphs, "0001CF589C1E", "a packed GalacticAddress inside UniverseAddress decodes");
+eq(teleports.endpoints[1].position, { x: 1, y: 2, z: 3 }, "lowercase position vector is kept");
+assert(teleports.endpoints[2].position == null && teleports.endpoints[2].facing == null, "missing Position and Facing stay empty");
+assert(teleports.endpoints[2].favourite === false && teleports.endpoints[2].calcWarpOffset == null, "a present false flag stays false and a missing flag stays empty");
+var named = api.extractTeleportEndpoints(teleFixture, {
+  resolveName: function (raw) {
+    if (raw === "^STATION_KEY") return "Station Override";
+    return "";
+  }
+});
+eq(named.endpoints[3].name, "Station Override", "a ^id uses the name map");
+eq(named.endpoints[3].rawName, "^STATION_KEY", "the raw id is kept beside the name");
+eq(named.endpoints[3].type, "Spacestation", "numeric TeleporterType 1 is Spacestation");
+eq(named.endpoints[3].galaxy, 2, "a different RealityIndex is another galaxy");
+eq(api.displayTeleportName("^STATION_KEY"), "Station Key", "without a name map a ^id is humanized");
+assert(api.displayTeleportName("^STATION_KEY").indexOf("^") === -1, "the humanized name has no caret");
+eq(named.endpoints[5].name, "Not A Real Dock", "an unknown ^id is humanized");
+assert(named.endpoints[5].name.indexOf("^") === -1, "the list never shows the raw caret id");
+eq(teleports.endpoints[6].group, "settlements", "Settlement is its own group");
+eq(teleports.endpoints[7].group, "freighters", "Freighter is its own group");
+eq(teleports.endpoints[8].type, "OnNexus", "OnNexus is the anomaly teleporter");
+eq(teleports.endpoints[8].typeLabel, "Nexus", "OnNexus is labeled Nexus");
+assert(teleports.endpoints[8].featured === true, "IsFeatured is read");
+assert(teleports.endpoints[9].plotted === false, "an endpoint with no UniverseAddress is not plotted");
+eq(teleports.problems.filter(function (p) { return p.name === "Unplaced Station"; }).length, 1, "a missing address is reported");
+eq(teleports.endpoints[10].type, "SpacestationFixPosition", "a wrapped enum still names the type");
+eq(teleports.endpoints[10].group, "stations", "a position-fix station counts as a station");
+var stationsOnly = api.filterTeleportEndpoints(teleports.endpoints, { type: "stations", galaxy: 0, anyKnown: false });
+eq(stationsOnly.map(function (row) { return row.name; }), [
+  "Synthetic Hub Station",
+  "Synthetic Core Station",
+  "Synthetic Rim Station",
+  "Unplaced Station",
+  "Synthetic Fix Station"
+], "stations in this galaxy are the default filter");
+var stationsKnown = api.filterTeleportEndpoints(teleports.endpoints, { type: "stations", galaxy: 0, anyKnown: true });
+assert(stationsKnown.every(function (row) { return row.galaxy === 0; }), "once a galaxy is known, an unplaced station leaves Euclid");
+assert(!stationsKnown.some(function (row) { return row.name === "Unplaced Station"; }), "an unplaced station is not filed under Euclid when galaxies are known");
+var searched = api.filterTeleportEndpoints(teleports.endpoints, { type: "all", galaxy: null, query: "rim" });
+eq(searched.length, 1, "text search matches a station name");
+var byGalaxy = api.sortTeleportEndpoints(teleports.endpoints, "galaxy");
+assert(byGalaxy[0].galaxy === 0 || byGalaxy[0].galaxy == null, "galaxy sort starts in Euclid");
+assert(byGalaxy[byGalaxy.length - 1].galaxy == null || byGalaxy[byGalaxy.length - 1].galaxy >= byGalaxy[0].galaxy, "unknown and later galaxies sort after Euclid");
+var camp = api.extractBases(teleFixture).planetary[0];
+var near = api.sortTeleportEndpoints(stationsOnly, "distance", camp);
+eq(near[0].name, "Synthetic Hub Station", "distance sort starts at the selected place");
+var same = api.basesInSameSystem(hubStation, api.extractBases(teleFixture).planetary.concat(api.extractBases(teleFixture).freighters));
+eq(same.map(function (row) { return row.name; }), ["Synthetic Camp"], "a station lists bases in the same system");
+assert(api.basesInSameSystem(teleports.endpoints[9], [camp]).length === 0, "an unplotted endpoint has no system mates");
+eq(api.canonicalTeleporterType("Nexus"), "Nexus", "Nexus is accepted as well as OnNexus");
+eq(api.canonicalTeleporterType("FutureDock"), "FutureDock", "an unknown type string is kept");
+eq(api.canonicalTeleporterType(6), "OnNexus", "enum index 6 is OnNexus");
+
+var mapping = api.mappingFromJson(JSON.parse(fs.readFileSync(path.join(__dirname, "mapping.json"), "utf8")));
+var obfuscatedTele = api.unmapTree({
+  "6f=": {
+    "nlG": [{
+      "yhJ": { "Iis": 0, "oZw": { "jsv": 0, "vby": 517, "dZj": -995, "IyE": -48, "uXE": 1418 } },
+      "wMC": [4, 5, 6],
+      "gk4": { ">Qh": 0, "XJ>": 0, "Tap": 1 },
+      "iAF": "Spacestation",
+      "NKm": "^STATION_KEY",
+      "a>;": true,
+      "HQj": false,
+      "tww": true
+    }]
+  }
+}, mapping);
+var fromObfuscated = api.extractTeleportEndpoints(obfuscatedTele, {
+  resolveName: function () { return "Station Override"; }
+});
+eq(fromObfuscated.endpoints.length, 1, "obfuscated TeleportEndpoints unmap before parsing");
+eq(fromObfuscated.endpoints[0].name, "Station Override", "the obfuscated name resolves");
+eq(fromObfuscated.endpoints[0].glyphs, "0205D058AC1D", "the obfuscated UniverseAddress decodes");
+eq(fromObfuscated.endpoints[0].position, { x: 4, y: 5, z: 6 }, "the obfuscated Position unmaps");
+eq(fromObfuscated.endpoints[0].facing, { x: 0, y: 0, z: 1 }, "the obfuscated Facing unmaps");
+assert(fromObfuscated.endpoints[0].calcWarpOffset === true && fromObfuscated.endpoints[0].featured === true, "obfuscated flags unmap");
+
+function lz4Literals(text) {
+  var src = Buffer.from(text, "utf8");
+  var n = src.length;
+  var parts = [Buffer.from([n < 15 ? (n << 4) : 0xF0])];
+  if (n >= 15) {
+    var left = n - 15;
+    var extras = [];
+    while (left >= 255) { extras.push(255); left -= 255; }
+    extras.push(left);
+    parts.push(Buffer.from(extras));
+  }
+  parts.push(src);
+  return Buffer.concat(parts);
+}
+var tiny = '{"PlayerStateData":{"TeleportEndpoints":[{"Name":"Hg Station","TeleporterType":"Spacestation","UniverseAddress":{"RealityIndex":0,"GalacticAddress":"0205D058AC1D"},"Position":[0,0,0],"Facing":[0,0,1]}]}}';
+var block = lz4Literals(tiny);
+var header = Buffer.alloc(16);
+header.writeUInt32LE(0xFEEDA1E5, 0);
+header.writeUInt32LE(block.length, 4);
+header.writeUInt32LE(Buffer.byteLength(tiny), 8);
+var hgTele = api.bytesToSaveText(Buffer.concat([header, block]));
+assert(hgTele.fromHg, "a synthetic Steam save is the hg path");
+var hgParsed = api.extractTeleportEndpoints(JSON.parse(api.quoteGalacticAddresses(hgTele.text)));
+eq(hgParsed.endpoints[0].name, "Hg Station", "a Steam .hg save yields the station name");
+eq(hgParsed.endpoints[0].glyphs, "0205D058AC1D", "a Steam .hg save yields the portal glyphs");
+var topLevel = api.extractTeleportEndpoints({
+  PlayerStateData: { TeleportEndpoints: [{ Name: "Top", TeleporterType: "Settlement", UniverseAddress: "0205D058AC1D" }] }
+});
+eq(topLevel.endpoints[0].group, "settlements", "top-level PlayerStateData is read the same way as BaseContext");
+var teleHit = api.markersInside([
+  { id: "t0", kind: "teleporter", x: 10, y: 10 },
+  { id: "b0", kind: "base", x: 40, y: 10 }
+], { type: "rect", x0: 0, y0: 0, x1: 20, y1: 20 });
+eq(teleHit.map(function (hit) { return hit.id; }), ["t0"], "box select includes a teleporter mark");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);

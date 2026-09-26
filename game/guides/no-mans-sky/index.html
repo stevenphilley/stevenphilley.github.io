@@ -88,7 +88,12 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .help-card td{color:var(--ink-soft,#9b9a96)}
 .help-foot{padding:12px 14px}
 .list-tools{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;margin:8px 0 4px}
-.list-tools select{background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:0;text-transform:none;padding:8px 10px;min-height:44px}
+.list-tools select,.list-tools input[type="search"]{background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:0;text-transform:none;padding:8px 10px;min-height:44px}
+.list-tools input[type="search"]{min-width:180px}
+.list-tools input:focus,.list-tools select:focus{outline:none;border-color:var(--accent,#c8b48a)}
+.tele-count{font-family:"IBM Plex Mono",monospace;font-size:13px;letter-spacing:.06em;color:var(--ink-soft,#9b9a96);margin-left:8px}
+.swatch.station{width:16px;height:7px;background:transparent;border:1.5px solid var(--accent-2,#00F0FF);box-sizing:border-box}
+.swatch.tele{width:8px;height:8px;background:transparent;border:1px solid var(--ink-soft,#9b9a96);box-sizing:border-box}
 .list-pin{display:inline-flex;gap:8px;align-items:center;min-height:44px;margin:0;cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.04em;text-transform:none;color:var(--ink-soft,#9b9a96)}
 .list-pin input{width:16px;height:16px;margin:0;accent-color:var(--accent,#c8b48a)}
 .rows li.list-split{padding:14px 0 4px;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e)}
@@ -271,6 +276,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <label><input type="checkbox" id="show-stock"> Inventory badges</label>
         <label><input type="checkbox" id="show-production"> Mining and farms</label>
         <label><input type="checkbox" id="show-discoveries" checked> Discoveries</label>
+        <label><input type="checkbox" id="show-teleporters" checked> Teleporters</label>
       </div>
       <div class="checks" id="disc-filters">
         <label><input type="checkbox" id="disc-planets" checked> Planets</label>
@@ -310,7 +316,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <tbody>
           <tr><th scope="row">Left-drag</th><td>Pan. One finger pans on a touch screen, unless Select is on.</td></tr>
           <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
-          <tr><th scope="row">Reset view</th><td>Fit your bases, discovered systems, and the Hub marks.</td></tr>
+          <tr><th scope="row">Reset view</th><td>Fit your bases, discovered systems, teleporters on the layer, and the Hub marks.</td></tr>
         </tbody>
       </table>
       <h3>Select</h3>
@@ -362,13 +368,14 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
           <tr><th scope="row">Select</th><td>Box, circle, and modifier clicks include discovery rings. Combined totals add their planets, flora, fauna, and minerals. Shift-click in the discovered-systems list selects a range.</td></tr>
           <tr><th scope="row">Galaxy</th><td>The menu lists galaxies that have bases or discoveries. The map opens on the galaxy of your bases, or on Euclid when the save does not name one.</td></tr>
           <tr><th scope="row">Names</th><td>The save stores a name only when you typed one. Procedural planet, creature, and plant names are not in the file.</td></tr>
+          <tr><th scope="row">Teleporters</th><td>The Teleporters layer plots PlayerStateData.TeleportEndpoints. A station mark is a space station. Bases and other types use a smaller square, and they stay off until Teleporter access includes that type. Stations start on. Point or click a mark for the name, type, galaxy, system, portal glyphs, and any of your bases in that system. The list filters by type and galaxy, searches, and sorts. Click a row to center it. A name stored as a ^id uses the in-game name, or a plain reading of the id.</td></tr>
         </tbody>
       </table>
       <div class="help-foot"></div>
     </div>
   </div>
   <p id="select-live" class="vh" aria-live="polite"></p>
-  <p class="caption" id="map-caption">The ? at the top right lists every control. Press ? while the map is focused. Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Click a hollow discovery ring to open that system’s portal glyphs, planets, and upload times. Middle-drag a box, or Alt and middle-drag a circle, to select several bases and discovery rings. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list or the discovered-systems list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Hollow rings are discovered systems; a number on the ring is the planet count, or the number of systems bunched at this zoom. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases, discovered systems, and the Hub marks. Double-click a base or a discovery ring, or click it in the list, to bring it to the middle.</p>
+  <p class="caption" id="map-caption">The ? at the top right lists every control. Press ? while the map is focused. Ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Click a hollow discovery ring to open that system’s portal glyphs, planets, and upload times. Middle-drag a box, or Alt and middle-drag a circle, to select several bases and discovery rings. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list or the discovered-systems list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Hollow rings are discovered systems; a number on the ring is the planet count, or the number of systems bunched at this zoom. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases, discovered systems, teleporters on the layer, and the Hub marks. Double-click a base or a discovery ring, or click it in the list, to bring it to the middle.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>
@@ -378,6 +385,8 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     <li><i class="swatch demand" aria-hidden="true"></i> Open plan demand</li>
     <li><i class="swatch prod" aria-hidden="true"></i> M mining · F crops. A search also marks a base that produces the item.</li>
     <li><i class="swatch disc" aria-hidden="true"></i> Discovered system</li>
+    <li><i class="swatch station" aria-hidden="true"></i> Space station</li>
+    <li><i class="swatch tele" aria-hidden="true"></i> Other teleporter</li>
   </ul>
 
   <section id="place-panel" class="place-panel" hidden aria-labelledby="place-h">
@@ -414,6 +423,40 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
       <ul class="rows" id="freighter-list"><li class="empty">No freighter bases in this galaxy.</li></ul>
     </section>
   </div>
+
+  <section class="col" id="teleport-wrap" hidden aria-labelledby="teleport-h">
+    <h2 id="teleport-h">Teleporter access <span class="tele-count" id="teleport-count"></span></h2>
+    <div class="list-tools">
+      <label class="field">Type
+        <select id="teleport-type" aria-label="Filter teleporters by type">
+          <option value="stations" selected>Stations</option>
+          <option value="all">All types</option>
+          <option value="bases">Bases</option>
+          <option value="settlements">Settlements</option>
+          <option value="freighters">Freighters</option>
+          <option value="nexus">Nexus</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label class="field">Galaxy
+        <select id="teleport-galaxy" aria-label="Filter teleporters by galaxy">
+          <option value="map" selected>This galaxy</option>
+          <option value="all">All galaxies</option>
+        </select>
+      </label>
+      <label class="field">Search
+        <input id="teleport-search" type="search" placeholder="Name, glyphs, system" autocomplete="off" aria-label="Search teleporter access">
+      </label>
+      <label class="field">Sort
+        <select id="teleport-sort" aria-label="Sort teleporter access">
+          <option value="name">Name</option>
+          <option value="galaxy">Galaxy</option>
+          <option value="distance">Distance from selected</option>
+        </select>
+      </label>
+    </div>
+    <ul class="rows" id="teleport-list"></ul>
+  </section>
 
     <section class="col" id="discovery-wrap" hidden aria-labelledby="disc-h">
       <h2 id="disc-h">Discovered systems</h2>
