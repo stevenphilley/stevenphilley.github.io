@@ -746,6 +746,287 @@
     return { planetary: planetary, freighters: freighters, problems: problems };
   }
 
+  // GcTeleportEndpoint (libMBIN): UniverseAddress, Position, Facing,
+  // TeleporterType, Name, CalcWarpOffset, IsFeatured, IsFavourite.
+  // TeleporterTypeEnum order is the numeric form used in some JSON exports.
+  // OnNexus is the anomaly; older notes also say Nexus.
+  var TELEPORTER_TYPE_INDEX = [
+    "Base",
+    "Spacestation",
+    "Atlas",
+    "PlanetAwayFromShip",
+    "ExternalBase",
+    "EmergencyGalaxyFix",
+    "OnNexus",
+    "SpacestationFixPosition",
+    "Settlement",
+    "Freighter",
+    "Frigate"
+  ];
+
+  var TELEPORTER_TYPE_INFO = {
+    Base: { label: "Base", group: "bases" },
+    Spacestation: { label: "Space station", group: "stations" },
+    Atlas: { label: "Atlas", group: "other" },
+    PlanetAwayFromShip: { label: "Planet, away from ship", group: "other" },
+    ExternalBase: { label: "External base", group: "bases" },
+    EmergencyGalaxyFix: { label: "Emergency galaxy fix", group: "other" },
+    OnNexus: { label: "Nexus", group: "nexus" },
+    Nexus: { label: "Nexus", group: "nexus" },
+    SpacestationFixPosition: { label: "Space station", group: "stations" },
+    Settlement: { label: "Settlement", group: "settlements" },
+    Freighter: { label: "Freighter", group: "freighters" },
+    Frigate: { label: "Frigate", group: "freighters" }
+  };
+
+  function stripNul(value) {
+    return String(value == null ? "" : value).replace(/\u0000/g, "").trim();
+  }
+
+  function humanizeSaveToken(raw) {
+    var base = stripNul(raw).replace(/^\^/, "").split("#")[0];
+    var words = base
+      .replace(/[_-]+/g, " ")
+      .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+    if (!words) return "";
+    return words.replace(/\b([a-z])/g, function (ch) { return ch.toUpperCase(); });
+  }
+
+  function looksLikeRawId(label, raw) {
+    var shown = stripNul(label);
+    if (!shown || shown.charAt(0) === "^") return true;
+    var compact = shown.replace(/^\^/, "").split("#")[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    var source = stripNul(raw).replace(/^\^/, "").split("#")[0].replace(/[^A-Za-z0-9]/g, "").toUpperCase();
+    return !!source && compact === source;
+  }
+
+  function displayTeleportName(raw, resolveName) {
+    var text = stripNul(raw);
+    if (!text) return "(unnamed)";
+    if (text.charAt(0) !== "^") return text;
+    var resolved = "";
+    if (typeof resolveName === "function") {
+      try { resolved = stripNul(resolveName(text)); }
+      catch (err) { resolved = ""; }
+    }
+    if (resolved && !looksLikeRawId(resolved, text)) return resolved;
+    return humanizeSaveToken(text) || "(unnamed)";
+  }
+
+  function canonicalTeleporterType(value) {
+    var raw = value;
+    if (raw && typeof raw === "object") {
+      var inner = raw.TeleporterType != null ? raw.TeleporterType : raw.teleporterType;
+      if (inner != null && inner !== raw) raw = inner;
+    }
+    if (typeof raw === "number" && isFinite(raw)) {
+      var idx = Math.trunc(raw);
+      return idx >= 0 && idx < TELEPORTER_TYPE_INDEX.length ? TELEPORTER_TYPE_INDEX[idx] : "";
+    }
+    var text = stripNul(raw);
+    if (!text) return "";
+    if (/^\d+$/.test(text)) return canonicalTeleporterType(Number(text));
+    var key = text.replace(/[\s_-]/g, "").toLowerCase();
+    var names = Object.keys(TELEPORTER_TYPE_INFO);
+    var i;
+    for (i = 0; i < names.length; i++) {
+      if (names[i].replace(/[\s_-]/g, "").toLowerCase() === key) return names[i];
+    }
+    return text;
+  }
+
+  function teleporterTypeInfo(canonical) {
+    if (canonical && TELEPORTER_TYPE_INFO[canonical]) return TELEPORTER_TYPE_INFO[canonical];
+    var human = humanizeSaveToken(canonical);
+    return { label: human || "Unknown", group: "other" };
+  }
+
+  function vector3(value) {
+    if (value == null) return null;
+    var x;
+    var y;
+    var z;
+    if (Array.isArray(value)) {
+      if (value.length < 3) return null;
+      x = value[0];
+      y = value[1];
+      z = value[2];
+    } else if (typeof value === "object") {
+      x = value.X != null ? value.X : value.x;
+      y = value.Y != null ? value.Y : value.y;
+      z = value.Z != null ? value.Z : value.z;
+    } else return null;
+    x = Number(x);
+    y = Number(y);
+    z = Number(z);
+    if (![x, y, z].every(function (n) { return isFinite(n); })) return null;
+    return { x: x, y: y, z: z };
+  }
+
+  function flagBool(value) {
+    if (value == null || value === "") return null;
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return isFinite(value) ? value !== 0 : null;
+    if (typeof value === "string") {
+      var s = value.trim().toLowerCase();
+      if (s === "true" || s === "1") return true;
+      if (s === "false" || s === "0") return false;
+    }
+    return null;
+  }
+
+  function decodeUniverseAddress(field) {
+    if (field == null || field === "") throw new Error("Missing UniverseAddress.");
+    if (typeof field !== "object") return decodeAddressField(field);
+    var reality = field.RealityIndex != null ? field.RealityIndex : field.realityIndex;
+    var hasVoxels = field.VoxelX != null || field.voxelX != null || field.VoxelZ != null || field.voxelZ != null;
+    var inner = field.GalacticAddress != null ? field.GalacticAddress
+      : (field.galacticAddress != null ? field.galacticAddress
+        : (field.UA != null ? field.UA : field.ua));
+    var info = (!hasVoxels && inner != null) ? decodeAddressField(inner) : decodeAddressField(field);
+    if (reality != null && isFinite(Number(reality))) info.galaxy = Number(reality) & 255;
+    return info;
+  }
+
+  function extractTeleportEndpoints(data, options) {
+    options = options || {};
+    var player = playerStateOf(data);
+    if (!player) return { error: "missing", endpoints: [], problems: [] };
+    var list = player.TeleportEndpoints != null ? player.TeleportEndpoints : player.teleportEndpoints;
+    if (list == null) return { endpoints: [], problems: [] };
+    if (!Array.isArray(list)) {
+      return {
+        endpoints: [],
+        problems: [{ name: "TeleportEndpoints", detail: "TeleportEndpoints was not a list." }]
+      };
+    }
+    var endpoints = [];
+    var problems = [];
+    list.forEach(function (row, i) {
+      var fallback = "Teleporter " + (i + 1);
+      if (!row || typeof row !== "object" || Array.isArray(row)) {
+        problems.push({ name: fallback, detail: "Entry was not an object." });
+        return;
+      }
+      var rawName = stripNul(row.Name != null ? row.Name : row.name);
+      var name = displayTeleportName(rawName, options.resolveName);
+      var type = canonicalTeleporterType(row.TeleporterType != null ? row.TeleporterType : row.teleporterType);
+      var info = teleporterTypeInfo(type);
+      var addr = row.UniverseAddress != null ? row.UniverseAddress : row.universeAddress;
+      var item = {
+        id: "t" + i,
+        name: name,
+        rawName: rawName,
+        type: type || "",
+        typeLabel: info.label,
+        group: info.group,
+        station: info.group === "stations",
+        galaxy: null,
+        glyphs: "",
+        coords: "",
+        planet: null,
+        ssi: null,
+        voxelX: null,
+        voxelY: null,
+        voxelZ: null,
+        lyCenter: null,
+        position: vector3(row.Position != null ? row.Position : row.position),
+        facing: vector3(row.Facing != null ? row.Facing : row.facing),
+        calcWarpOffset: flagBool(row.CalcWarpOffset != null ? row.CalcWarpOffset : row.calcWarpOffset),
+        favourite: flagBool(row.IsFavourite != null ? row.IsFavourite : row.isFavourite),
+        featured: flagBool(row.IsFeatured != null ? row.IsFeatured : row.isFeatured),
+        plotted: false
+      };
+      if (addr == null || addr === "") {
+        problems.push({ name: name, detail: "Missing UniverseAddress.", type: item.typeLabel });
+        endpoints.push(item);
+        return;
+      }
+      try {
+        var decoded = decodeUniverseAddress(addr);
+        item.galaxy = decoded.galaxy;
+        item.glyphs = decoded.glyphs;
+        item.coords = decoded.coords;
+        item.planet = decoded.planet;
+        item.ssi = decoded.ssi;
+        item.voxelX = decoded.voxelX;
+        item.voxelY = decoded.voxelY;
+        item.voxelZ = decoded.voxelZ;
+        item.lyCenter = lyBetween(item, { voxelX: 0, voxelY: 0, voxelZ: 0 });
+        item.plotted = true;
+      } catch (err) {
+        problems.push({ name: name, detail: (err && err.message) || "Could not read UniverseAddress.", type: item.typeLabel });
+      }
+      endpoints.push(item);
+    });
+    return { endpoints: endpoints, problems: problems };
+  }
+
+  function teleportGalaxyKey(endpoint, anyKnown) {
+    if (!endpoint) return anyKnown ? -1 : 0;
+    if (endpoint.galaxy != null && isFinite(Number(endpoint.galaxy))) return Number(endpoint.galaxy);
+    return anyKnown ? -1 : 0;
+  }
+
+  function filterTeleportEndpoints(list, opts) {
+    opts = opts || {};
+    var type = opts.type || "stations";
+    var query = String(opts.query || "").trim().toLowerCase();
+    var galaxy = opts.galaxy;
+    return (list || []).filter(function (row) {
+      if (!row) return false;
+      if (type !== "all" && row.group !== type) return false;
+      if (galaxy != null && galaxy !== "all" && teleportGalaxyKey(row, !!opts.anyKnown) !== Number(galaxy)) return false;
+      if (!query) return true;
+      var blob = [row.name, row.rawName, row.type, row.typeLabel, row.group, row.glyphs, row.coords].join(" ").toLowerCase();
+      return blob.indexOf(query) !== -1;
+    });
+  }
+
+  function teleportDistance(endpoint, origin) {
+    if (!endpoint || endpoint.plotted === false || endpoint.voxelX == null) return Infinity;
+    var from = origin && origin.voxelX != null ? origin : { voxelX: 0, voxelY: 0, voxelZ: 0 };
+    if (origin && origin.galaxy != null && endpoint.galaxy != null && Number(origin.galaxy) !== Number(endpoint.galaxy)) {
+      return Infinity;
+    }
+    return lyBetween(endpoint, from);
+  }
+
+  function sortTeleportEndpoints(list, sort, origin) {
+    var rows = (list || []).slice();
+    rows.sort(function (a, b) {
+      if (sort === "galaxy") {
+        var ag = a.galaxy == null || !isFinite(Number(a.galaxy)) ? 9999 : Number(a.galaxy);
+        var bg = b.galaxy == null || !isFinite(Number(b.galaxy)) ? 9999 : Number(b.galaxy);
+        if (ag !== bg) return ag - bg;
+      } else if (sort === "distance") {
+        var da = teleportDistance(a, origin);
+        var db = teleportDistance(b, origin);
+        if (da !== db) return da - db;
+      }
+      var an = String(a.name || "").toLowerCase();
+      var bn = String(b.name || "").toLowerCase();
+      if (an < bn) return -1;
+      if (an > bn) return 1;
+      return String(a.id || "").localeCompare(String(b.id || ""));
+    });
+    return rows;
+  }
+
+  function basesInSameSystem(endpoint, bases) {
+    if (!endpoint || endpoint.plotted === false || endpoint.ssi == null) return [];
+    return (bases || []).filter(function (base) {
+      if (!base || base.ssi == null) return false;
+      if (Number(base.ssi) !== Number(endpoint.ssi)) return false;
+      if (base.voxelX !== endpoint.voxelX || base.voxelY !== endpoint.voxelY || base.voxelZ !== endpoint.voxelZ) return false;
+      if (base.galaxy != null && endpoint.galaxy != null && Number(base.galaxy) !== Number(endpoint.galaxy)) return false;
+      return true;
+    });
+  }
+
   function discoveryDeps() {
     return {
       decodeAddressField: decodeAddressField,
@@ -935,7 +1216,7 @@
   // Screen-space selection. Marker hits are canvas pixels after pan and zoom.
   // Map voxels are a different space: the disk is elliptical, so a screen
   // circle is not a circle in voxels.
-  var SELECTABLE_KINDS = { base: true, system: true, freighter: true, settlement: true, discovery: true };
+  var SELECTABLE_KINDS = { base: true, system: true, freighter: true, settlement: true, discovery: true, teleporter: true };
 
   function pointInRect(x, y, rect) {
     if (!rect || !isFinite(x) || !isFinite(y)) return false;
@@ -1508,6 +1789,14 @@
     var showStock = document.getElementById("show-stock");
     var showProduction = document.getElementById("show-production");
     var showDiscoveries = document.getElementById("show-discoveries");
+    var showTeleporters = document.getElementById("show-teleporters");
+    var teleportList = document.getElementById("teleport-list");
+    var teleportWrap = document.getElementById("teleport-wrap");
+    var teleportCount = document.getElementById("teleport-count");
+    var teleportType = document.getElementById("teleport-type");
+    var teleportGalaxy = document.getElementById("teleport-galaxy");
+    var teleportSearch = document.getElementById("teleport-search");
+    var teleportSort = document.getElementById("teleport-sort");
     var discPlanets = document.getElementById("disc-planets");
     var discSystems = document.getElementById("disc-systems");
     var discFlora = document.getElementById("disc-flora");
@@ -1551,10 +1840,18 @@
       selectedFreight: null,
       discoveries: [],
       discoveryProblems: [],
-      hoverDiscovery: null
+      hoverDiscovery: null,
+      teleporters: [],
+      teleportProblems: [],
+      hoverTeleport: null,
+      teleportType: "stations",
+      teleportGalaxy: "map",
+      teleportQuery: "",
+      teleportSort: "name"
     };
     var listOrder = [];
     var discoveryOrder = [];
+    var teleportOrder = [];
     var openDiscoveryId = null;
     var DISCOVERY_KEY = "nms-map-discoveries";
     var freightOrder = [];
@@ -1814,7 +2111,7 @@
       if (!live) return;
       if (!state.selection.length) live.textContent = "Selection cleared.";
       else if (state.selection.length === 1) {
-        var one = baseById(state.selection[0]) || freightById(state.selection[0]) || discoveryById(state.selection[0]);
+        var one = baseById(state.selection[0]) || freightById(state.selection[0]) || discoveryById(state.selection[0]) || teleportById(state.selection[0]);
         live.textContent = "Selected " + (one ? (one.name || one.glyphs || "one place") : "one place") + ".";
       } else live.textContent = state.selection.length + " places selected.";
     }
@@ -1824,7 +2121,7 @@
       var seen = Object.create(null);
       (ids || []).forEach(function (id) {
         if (!id || seen[id]) return;
-        if (!baseById(id) && !freightById(id) && !discoveryById(id)) return;
+        if (!baseById(id) && !freightById(id) && !discoveryById(id) && !teleportById(id)) return;
         seen[id] = true;
         next.push(id);
       });
@@ -1856,7 +2153,7 @@
       var places = parts.bases.map(placeOf);
       openPlace = null;
       openDiscoveryId = null;
-      if (places.length + parts.discs.length < 2) {
+      if (places.length + parts.discs.length + (parts.teles ? parts.teles.length : 0) < 2) {
         placePanel.hidden = true;
         placeBody.innerHTML = "";
         return;
@@ -1920,6 +2217,13 @@
         html += "</ul>";
       }
       html += discoveryBlockHtml(parts.discs);
+      if (parts.teles && parts.teles.length) {
+        html += '<h3 class="place-sub">Teleporters</h3><ul class="place-demands">';
+        parts.teles.forEach(function (row) {
+          html += "<li><span>" + esc(row.name) + " · " + esc(row.typeLabel) + "</span><span>" + esc(row.glyphs || "—") + "</span></li>";
+        });
+        html += "</ul>";
+      }
       placeBody.innerHTML = html;
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
@@ -2011,18 +2315,166 @@
       return filteredDiscoveries();
     }
 
+    function teleportById(id) {
+      var found = null;
+      (state.teleporters || []).forEach(function (row) { if (row.id === id) found = row; });
+      return found;
+    }
+
+    function relabelTeleports() {
+      (state.teleporters || []).forEach(function (row) {
+        row.name = displayTeleportName(row.rawName, function (id) {
+          var api = logisticsApi();
+          if (!api || !api.itemLabel) return "";
+          var base = String(id).replace(/^\^/, "").split("#")[0];
+          return api.itemLabel({ rawId: id, id: base }, catalogIndex);
+        });
+      });
+    }
+
+    function teleportOrigin() {
+      var i;
+      var ids = state.selection || [];
+      for (i = 0; i < ids.length; i++) {
+        var row = teleportById(ids[i]) || baseById(ids[i]) || discoveryById(ids[i]) || freightById(ids[i]);
+        if (row && row.voxelX != null && row.plotted !== false) return row;
+      }
+      return null;
+    }
+
+    function listedTeleporters() {
+      relabelTeleports();
+      var galaxy = state.teleportGalaxy === "all" ? null : state.galaxy;
+      var anyKnown = anyKnownGalaxy() || (state.teleporters || []).some(function (row) {
+        return row && row.galaxy != null && isFinite(Number(row.galaxy));
+      });
+      return filterTeleportEndpoints(state.teleporters, {
+        type: state.teleportType || "stations",
+        galaxy: galaxy,
+        anyKnown: anyKnown,
+        query: state.teleportQuery
+      });
+    }
+
+    function visibleTeleporters() {
+      if (showTeleporters && !showTeleporters.checked) return [];
+      return listedTeleporters().filter(function (row) {
+        return row.plotted && teleportGalaxyKey(row, anyKnownGalaxy()) === state.galaxy;
+      });
+    }
+
     function splitSelection(ids) {
       var bases = [];
       var discs = [];
+      var teles = [];
       (ids || []).forEach(function (id) {
         var disc = discoveryById(id);
         if (disc) discs.push(disc);
         else {
-          var row = baseById(id) || freightById(id);
-          if (row) bases.push(row);
+          var tele = teleportById(id);
+          if (tele) teles.push(tele);
+          else {
+            var row = baseById(id) || freightById(id);
+            if (row) bases.push(row);
+          }
         }
       });
-      return { bases: bases, discs: discs };
+      return { bases: bases, discs: discs, teles: teles };
+    }
+
+    function systemTitleFor(row) {
+      var title = "";
+      (state.discoveries || []).forEach(function (sys) {
+        if (!sys || !sys.systemName || !row || row.plotted === false) return;
+        if (Number(sys.ssi) !== Number(row.ssi)) return;
+        if (sys.voxelX !== row.voxelX || sys.voxelY !== row.voxelY || sys.voxelZ !== row.voxelZ) return;
+        if (sys.galaxy != null && row.galaxy != null && Number(sys.galaxy) !== Number(row.galaxy)) return;
+        title = sys.systemName;
+      });
+      return title;
+    }
+
+    function teleportFactsHtml(row) {
+      var flags = [];
+      if (row.favourite) flags.push("Favourite");
+      if (row.featured) flags.push("Featured");
+      if (row.calcWarpOffset) flags.push("Warp offset");
+      var sysName = systemTitleFor(row);
+      var html = '<p class="place-meta">' + esc(row.typeLabel || "Unknown type");
+      if (flags.length) html += " · " + esc(flags.join(" · "));
+      html += "</p>";
+      html += '<p class="place-meta">' + esc(galaxyLabel(row.galaxy)) + "</p>";
+      html += '<p class="place-meta">System' + (sysName ? " · " + esc(sysName) : "") +
+        (row.coords ? " · " + esc(row.coords) : "") + "</p>";
+      html += '<p class="place-meta">' + esc(row.glyphs || "No portal address") + "</p>";
+      var mates = basesInSameSystem(row, state.planetary.concat(state.freighters));
+      html += '<h3 class="place-sub">Bases in this system</h3>';
+      if (!row.plotted) html += '<p class="empty">This endpoint has no usable address, so it is not on the map.</p>';
+      else if (!mates.length) html += '<p class="empty">No bases of yours in this system.</p>';
+      else {
+        html += '<ul class="place-demands">';
+        mates.forEach(function (base) {
+          html += '<li><button type="button" data-tele-base="' + esc(base.id) + '">' + esc(base.name) +
+            "</button><span>" + esc(base.type || "") + "</span></li>";
+        });
+        html += "</ul>";
+      }
+      return html;
+    }
+
+    function bindTeleportBases(root) {
+      if (!root) return;
+      root.querySelectorAll("[data-tele-base]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var id = btn.getAttribute("data-tele-base");
+          var freight = freightById(id);
+          var base = baseById(id);
+          var row = base || freight;
+          if (!row) return;
+          if (row.galaxy != null && isFinite(row.galaxy)) state.galaxy = row.galaxy;
+          else state.galaxy = galaxyKey(row);
+          if (galaxySel) galaxySel.value = String(state.galaxy);
+          if (!freight) focusCluster(id);
+          commitSelection([id], id);
+          var listBtn = baseList && baseList.querySelector('[data-base="' + id + '"]');
+          if (!listBtn && freightList) listBtn = freightList.querySelector('[data-freight="' + id + '"]');
+          if (listBtn) listBtn.scrollIntoView({ block: "nearest" });
+        });
+      });
+    }
+
+    function renderTeleportPanel(row) {
+      if (!placePanel || !placeBody || !row) return;
+      openPlace = null;
+      openDiscoveryId = null;
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = row.name || "Teleporter";
+      var html = teleportFactsHtml(row);
+      html += '<p class="place-actions"><button type="button" id="place-close">Close</button></p>';
+      placeBody.innerHTML = html;
+      bindTeleportBases(placeBody);
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
+      revealDetail("tele:" + row.id);
+    }
+
+    function renderTeleportAggregate(rows) {
+      if (!placePanel || !placeBody) return;
+      openPlace = null;
+      openDiscoveryId = null;
+      placePanel.hidden = false;
+      if (placeTitle) placeTitle.textContent = rows.length + " teleporters";
+      var html = '<p class="place-meta">' + rows.length + " teleporters selected.</p>";
+      html += '<p class="place-actions"><button type="button" id="place-close">Clear selection</button></p>';
+      html += '<ul class="place-demands">';
+      rows.forEach(function (row) {
+        html += "<li><span>" + esc(row.name) + " · " + esc(row.typeLabel) + "</span><span>" + esc(row.glyphs || "—") + "</span></li>";
+      });
+      html += "</ul>";
+      placeBody.innerHTML = html;
+      var closeBtn = document.getElementById("place-close");
+      if (closeBtn) closeBtn.addEventListener("click", function () { commitSelection([]); });
+      revealDetail("teles:" + rows.map(function (row) { return row.id; }).join(","));
     }
 
     function saveDiscoveryCache() {
@@ -2169,15 +2621,23 @@
         renderPlacePanel(null);
         return;
       }
-      if (!parts.bases.length && parts.discs.length === 1) {
+      if (!parts.bases.length && !parts.teles.length && parts.discs.length === 1) {
         renderDiscoveryPanel(parts.discs[0]);
         return;
       }
-      if (!parts.bases.length && parts.discs.length > 1) {
+      if (!parts.bases.length && !parts.teles.length && parts.discs.length > 1) {
         renderDiscoveryAggregate(parts.discs);
         return;
       }
-      if (parts.bases.length === 1 && !parts.discs.length) {
+      if (!parts.bases.length && !parts.discs.length && parts.teles.length === 1) {
+        renderTeleportPanel(parts.teles[0]);
+        return;
+      }
+      if (!parts.bases.length && !parts.discs.length && parts.teles.length > 1) {
+        renderTeleportAggregate(parts.teles);
+        return;
+      }
+      if (parts.bases.length === 1 && !parts.discs.length && !(parts.teles && parts.teles.length)) {
         openDiscoveryId = null;
         var one = parts.bases[0];
         placeMode = "base";
@@ -2282,6 +2742,9 @@
       var pts = [];
       visibleBases().forEach(function (b) { pts.push({ x: b.voxelX, z: b.voxelZ }); });
       visibleDiscoveries().forEach(function (sys) { pts.push({ x: sys.voxelX, z: sys.voxelZ }); });
+      visibleTeleporters().forEach(function (row) {
+        if (row.plotted) pts.push({ x: row.voxelX, z: row.voxelZ });
+      });
       if (!pts.length) {
         view.zoom = 1;
         view.panX = 0;
@@ -2342,6 +2805,33 @@
       applyFit([{ x: sys.voxelX, z: sys.voxelZ }], { padVoxels: 40, minZoom: 8, maxZoom: 22 });
       var framed = frameOf(lastSize.w, lastSize.h);
       var pan = panToMarker(sys.voxelX, sys.voxelZ, 0, 1, view.zoom, framed, lastSize.w / 2, lastSize.h / 2);
+      view.panX = pan.panX;
+      view.panY = pan.panY;
+      clampPan();
+    }
+
+    function focusTeleport(id) {
+      var row = teleportById(id);
+      if (!row || !row.plotted) return;
+      var key = teleportGalaxyKey(row, anyKnownGalaxy());
+      if (key !== state.galaxy) {
+        state.galaxy = key;
+        if (galaxySel) galaxySel.value = String(state.galaxy);
+        if (showHubs) {
+          showHubs.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showHubs.checked = false;
+        }
+        if (showRefs) {
+          showRefs.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showRefs.checked = false;
+        }
+      }
+      if (showTeleporters && !showTeleporters.checked) showTeleporters.checked = true;
+      var size = canvasSize();
+      lastSize = size;
+      applyFit([{ x: row.voxelX, z: row.voxelZ }], { padVoxels: 40, minZoom: 8, maxZoom: 22 });
+      var framed = frameOf(lastSize.w, lastSize.h);
+      var pan = panToMarker(row.voxelX, row.voxelZ, 0, 1, view.zoom, framed, lastSize.w / 2, lastSize.h / 2);
       view.panX = pan.panX;
       view.panY = pan.panY;
       clampPan();
@@ -2651,6 +3141,81 @@
       }
     }
 
+    function paintStationMark(ctx, x, y, on, c) {
+      var body = on ? 7 : 5.5;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.fillStyle = withAlpha(c.accent2, on ? 0.42 : 0.22);
+      ctx.strokeStyle = on ? c.ink : c.accent2;
+      ctx.lineWidth = on ? 2 : 1.5;
+      ctx.beginPath();
+      ctx.rect(-body, -body * 0.42, body * 2, body * 0.84);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-body, 0);
+      ctx.lineTo(-body - 5, -3.2);
+      ctx.moveTo(-body, 0);
+      ctx.lineTo(-body - 5, 3.2);
+      ctx.moveTo(body, 0);
+      ctx.lineTo(body + 5, -3.2);
+      ctx.moveTo(body, 0);
+      ctx.lineTo(body + 5, 3.2);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function paintOtherTeleport(ctx, x, y, on, c) {
+      var s = on ? 4.5 : 3.2;
+      ctx.save();
+      ctx.strokeStyle = on ? c.ink : withAlpha(c.soft, 0.95);
+      ctx.lineWidth = on ? 1.75 : 1.15;
+      ctx.strokeRect(x - s, y - s, s * 2, s * 2);
+      ctx.restore();
+    }
+
+    function paintTeleporters(ctx, c, w, h) {
+      var rows = visibleTeleporters();
+      var groups = Object.create(null);
+      var keys = [];
+      rows.forEach(function (row) {
+        if (!row.plotted) return;
+        var key = row.voxelX + ":" + row.voxelZ;
+        if (!groups[key]) {
+          groups[key] = [];
+          keys.push(key);
+        }
+        groups[key].push(row);
+      });
+      var labels = [];
+      keys.forEach(function (key) {
+        var group = groups[key];
+        var anchor = project(group[0].voxelX, group[0].voxelZ, w, h);
+        group.forEach(function (row, idx) {
+          var off = clumpOffset(idx, group.length, view.zoom);
+          var x = anchor.x + off.x;
+          var y = anchor.y + off.y - 18;
+          var on = isSelected(row.id) || state.hoverTeleport === row.id;
+          if (row.station) paintStationMark(ctx, x, y, on, c);
+          else paintOtherTeleport(ctx, x, y, on, c);
+          hits.push({ x: x, y: y, r: row.station ? 12 : 9, kind: "teleporter", id: row.id });
+          if (on || view.zoom >= 8) {
+            labels.push({
+              text: row.name + " · " + row.typeLabel,
+              x: x + 14,
+              y: y,
+              color: on ? (row.station ? c.accent2 : c.ink) : c.ink,
+              priority: on
+            });
+          }
+        });
+      });
+      labels.sort(function (a, b) { return (b.priority ? 1 : 0) - (a.priority ? 1 : 0); });
+      labels.forEach(function (job) {
+        paintLabelClear(ctx, job.text, job.x, job.y, job.color, c.base);
+      });
+    }
+
     function draw() {
       var size = canvasSize();
       var w = size.w;
@@ -2871,6 +3436,7 @@
         paintName(ctx, job.text, job.x, job.y, job.off, c.accent, c.base);
       });
       paintDiscoveries(ctx, c, w, h);
+      paintTeleporters(ctx, c, w, h);
       refLabels.forEach(function (job) {
         paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
       });
@@ -2984,6 +3550,7 @@
       state.planetary.forEach(function (b) { if (b.galaxy != null) gset[b.galaxy] = 1; });
       state.freighters.forEach(function (b) { if (b.galaxy != null) gset[b.galaxy] = 1; });
       state.discoveries.forEach(function (sys) { if (sys.galaxy != null) gset[sys.galaxy] = 1; });
+      (state.teleporters || []).forEach(function (row) { if (row.galaxy != null) gset[row.galaxy] = 1; });
       var gcount = Object.keys(gset).length;
       if (mGal) mGal.textContent = state.fileName ? String(gcount || 1) : "1";
       var selected = null;
@@ -3027,6 +3594,48 @@
           }).join("") + (orderedDisc.length > cap
             ? '<li class="empty">Showing ' + cap + " of " + orderedDisc.length + " systems. Filter by glyphs or a planet name to narrow the list. The map still draws every system.</li>"
             : "");
+        }
+      }
+      if (teleportWrap && teleportList) {
+        var allTele = state.teleporters || [];
+        teleportWrap.hidden = !allTele.length;
+        var listed = listedTeleporters();
+        var origin = state.teleportSort === "distance" ? teleportOrigin() : null;
+        var orderedTele = sortTeleportEndpoints(listed, state.teleportSort, origin);
+        var pinnedTele = pinSelectedBases(orderedTele, state.selection, state.selectedOnTop);
+        orderedTele = pinnedTele.bases;
+        var teleSplit = state.selectedOnTop && pinnedTele.splitAfter > 0 && pinnedTele.splitAfter < orderedTele.length;
+        teleportOrder = orderedTele.map(function (row) { return row.id; });
+        if (teleportCount) {
+          var shownCount = orderedTele.length;
+          var noun = state.teleportType === "stations"
+            ? (shownCount === 1 ? "station" : "stations")
+            : (shownCount === 1 ? "endpoint" : "endpoints");
+          teleportCount.textContent = shownCount === allTele.length
+            ? String(allTele.length)
+            : shownCount + " " + noun + " of " + allTele.length;
+        }
+        if (!allTele.length) {
+          teleportList.innerHTML = "";
+        } else if (!orderedTele.length) {
+          teleportList.innerHTML = '<li class="empty">No teleporters match this filter.</li>';
+        } else {
+          var distanceFrom = origin;
+          teleportList.innerHTML = orderedTele.map(function (row, i) {
+            var on = isSelected(row.id);
+            var dist = teleportDistance(row, distanceFrom);
+            var distLabel = row.plotted ? (distanceFrom ? formatLy(dist) + " away" : formatLy(row.lyCenter) + " from center") : "Not plotted";
+            if (row.plotted && distanceFrom && !isFinite(dist)) distLabel = "Other galaxy";
+            var split = (teleSplit && i === pinnedTele.splitAfter)
+              ? '<li class="list-split">' + pinnedTele.splitAfter + " selected</li>"
+              : "";
+            return split + '<li><button type="button" data-teleport="' + esc(row.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+              '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(row.name) + "</span>" +
+              '<span class="meta">' + esc(row.typeLabel) + " · " + esc(galaxyLabel(row.galaxy)) +
+              (row.coords ? " · " + esc(row.coords) : "") + " · " + esc(distLabel) +
+              (row.favourite ? " · Favourite" : "") + "</span>" +
+              '<span class="glyphs">' + esc(row.glyphs || "No portal address") + "</span></button></li>";
+          }).join("");
         }
       }
       if (!baseList) return;
@@ -3105,6 +3714,7 @@
       if (!galaxySel) return;
       var baseCounts = Object.create(null);
       var discCounts = Object.create(null);
+      var teleCounts = Object.create(null);
       state.planetary.concat(state.freighters).forEach(function (b) {
         var key = galaxyKey(b);
         baseCounts[key] = (baseCounts[key] || 0) + 1;
@@ -3113,15 +3723,22 @@
         var key = sys.galaxy == null ? 0 : sys.galaxy;
         discCounts[key] = (discCounts[key] || 0) + 1;
       });
-      if (!Object.keys(baseCounts).length && !Object.keys(discCounts).length) baseCounts[0] = 0;
-      var known = anyKnownGalaxy() || state.discoveries.some(function (sys) { return sys.galaxySource === "reality" || sys.galaxySource === "ua"; });
+      (state.teleporters || []).forEach(function (row) {
+        if (!row.plotted) return;
+        var key = teleportGalaxyKey(row, anyKnownGalaxy());
+        teleCounts[key] = (teleCounts[key] || 0) + 1;
+      });
+      if (!Object.keys(baseCounts).length && !Object.keys(discCounts).length && !Object.keys(teleCounts).length) baseCounts[0] = 0;
+      var known = anyKnownGalaxy() || state.discoveries.some(function (sys) { return sys.galaxySource === "reality" || sys.galaxySource === "ua"; }) ||
+        (state.teleporters || []).some(function (row) { return row.galaxy != null; });
       var idMap = Object.create(null);
       Object.keys(baseCounts).forEach(function (k) { idMap[k] = true; });
       Object.keys(discCounts).forEach(function (k) { idMap[k] = true; });
+      Object.keys(teleCounts).forEach(function (k) { idMap[k] = true; });
       var ids = Object.keys(idMap).map(function (k) { return Number(k); }).sort(function (a, b) { return a - b; });
-      if (state.fileName && !idMap[state.galaxy]) {
+        if (state.fileName && !idMap[state.galaxy]) {
         state.galaxy = ids.slice().sort(function (a, b) {
-          return ((baseCounts[b] || 0) + (discCounts[b] || 0)) - ((baseCounts[a] || 0) + (discCounts[a] || 0));
+          return ((baseCounts[b] || 0) + (discCounts[b] || 0) + (teleCounts[b] || 0)) - ((baseCounts[a] || 0) + (discCounts[a] || 0) + (teleCounts[a] || 0));
         })[0];
       }
       galaxySel.innerHTML = ids.map(function (id) {
@@ -3131,6 +3748,7 @@
         var bits = [];
         if (baseCounts[id]) bits.push(baseCounts[id] + (baseCounts[id] === 1 ? " base" : " bases"));
         if (discCounts[id]) bits.push(discCounts[id] + (discCounts[id] === 1 ? " system" : " systems"));
+        if (teleCounts[id]) bits.push(teleCounts[id] + (teleCounts[id] === 1 ? " teleporter" : " teleporters"));
         var label = name + (bits.length ? " · " + bits.join(" · ") : "");
         return '<option value="' + id + '">' + esc(label) + "</option>";
       }).join("");
@@ -3171,6 +3789,12 @@
           }).join(", ") + ".";
         }
       }
+      var teleHere = (state.teleporters || []).filter(function (row) {
+        return row.group === "stations" && row.plotted && teleportGalaxyKey(row, anyKnownGalaxy()) === state.galaxy;
+      }).length;
+      if (state.teleporters && state.teleporters.length) {
+        msg += " Teleporter access: " + teleHere + " space station" + (teleHere === 1 ? "" : "s") + " in this galaxy.";
+      }
       if (state.problems.length) msg += " " + state.problems.length + " entr" + (state.problems.length === 1 ? "y" : "ies") + " could not be read.";
       msg += " Nothing was uploaded.";
       setStatus(msg);
@@ -3184,7 +3808,7 @@
       summarize();
     }
 
-    function applyParsed(parsed, discovered, name, source) {
+    function applyParsed(parsed, discovered, name, source, teleported) {
       state.fileName = name || (source === "hg" ? "save.hg" : "save.json");
       state.source = source || "";
       state.planetary = parsed.planetary || [];
@@ -3192,6 +3816,8 @@
       state.problems = (parsed.problems || []).slice();
       state.discoveries = (discovered && discovered.systems) || [];
       state.discoveryProblems = (discovered && discovered.problems) || [];
+      state.teleporters = (teleported && teleported.endpoints) || [];
+      state.teleportProblems = (teleported && teleported.problems) || [];
       if (DiscoveryLib) DiscoveryLib.placeDiscoveryGalaxies(state.discoveries, state.planetary.concat(state.freighters));
       state.discoveryProblems.slice(0, 8).forEach(function (p) {
         state.problems.push({ name: p.name || "Discovery", detail: p.detail });
@@ -3200,6 +3826,15 @@
         state.problems.push({
           name: "Discoveries",
           detail: (state.discoveryProblems.length - 8) + " more discovery records could not be read."
+        });
+      }
+      state.teleportProblems.slice(0, 8).forEach(function (p) {
+        state.problems.push({ name: p.name || "Teleporter", detail: p.detail });
+      });
+      if (state.teleportProblems.length > 8) {
+        state.problems.push({
+          name: "Teleporters",
+          detail: (state.teleportProblems.length - 8) + " more teleporter entries could not be read."
         });
       }
       state.selected = null;
@@ -3211,6 +3846,7 @@
       state.hover = null;
       state.hoverRef = null;
       state.hoverDiscovery = null;
+      state.hoverTeleport = null;
       aim = null;
       openDiscoveryId = null;
       renderPlacePanel(null);
@@ -3238,6 +3874,8 @@
       state.problems = [];
       state.discoveries = [];
       state.discoveryProblems = [];
+      state.teleporters = [];
+      state.teleportProblems = [];
       saveDiscoveryCache();
       state.selected = null;
       state.selection = [];
@@ -3271,12 +3909,18 @@
     function consumeSave(data, name, unmapped, source) {
       var parsed = extractBases(data);
       var discovered = { records: [], systems: [], problems: [] };
+      var teleported = { endpoints: [], problems: [] };
       try {
         discovered = extractDiscoveries(data);
       } catch (err) {
         discovered = { records: [], systems: [], problems: [{ name: "Discoveries", detail: "Discovery records could not be read." }] };
       }
-      if (parsed.error && !(discovered.systems && discovered.systems.length)) {
+      try {
+        teleported = extractTeleportEndpoints(data);
+      } catch (err) {
+        teleported = { endpoints: [], problems: [{ name: "Teleporters", detail: "TeleportEndpoints could not be read." }] };
+      }
+      if (parsed.error && !(discovered.systems && discovered.systems.length) && !(teleported.endpoints && teleported.endpoints.length)) {
         fail(parsed.error);
         if (parsed.error === "missing" && unmapped) {
           setStatus("The local key map was applied, but no PlayerStateData was found under BaseContext or at the top level. Nothing was uploaded.");
@@ -3284,7 +3928,7 @@
         return;
       }
       if (parsed.error) parsed = { planetary: [], freighters: [], problems: [] };
-      applyParsed(parsed, discovered, name, source);
+      applyParsed(parsed, discovered, name, source, teleported);
       var api = logisticsApi();
       if (!api) return;
       var next = api.importSave(readLogistics() || api.emptyStore(), playerStateOf(data), {
@@ -3450,14 +4094,16 @@
       var next = h && h.kind === "base" ? h.id : null;
       var nextRef = h && h.kind === "ref" ? h.id : null;
       var nextDisc = h && (h.kind === "discovery" || h.kind === "discovery-cluster") ? h.id : null;
+      var nextTele = h && h.kind === "teleporter" ? h.id : null;
       var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
       canvas.style.cursor = h ? "pointer" : (selectMode ? "crosshair" : "grab");
-      var sameHover = next === state.hover && nextRef === state.hoverRef && nextDisc === state.hoverDiscovery;
+      var sameHover = next === state.hover && nextRef === state.hoverRef && nextDisc === state.hoverDiscovery && nextTele === state.hoverTeleport;
       var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
       if (sameHover && sameAim) return;
       state.hover = next;
       state.hoverRef = nextRef;
       state.hoverDiscovery = nextDisc;
+      state.hoverTeleport = nextTele;
       aim = nextAim;
       draw();
     });
@@ -3465,10 +4111,11 @@
     if (mapWrap) {
       mapWrap.addEventListener("mouseleave", function () {
         if (drag) return;
-        if (!state.hover && !state.hoverRef && !state.hoverDiscovery && !aim) return;
+        if (!state.hover && !state.hoverRef && !state.hoverDiscovery && !state.hoverTeleport && !aim) return;
         state.hover = null;
         state.hoverRef = null;
         state.hoverDiscovery = null;
+        state.hoverTeleport = null;
         aim = null;
         draw();
       });
@@ -3547,6 +4194,10 @@
         chooseMarker(h.id, ev, discoveryOrder);
         return;
       }
+      if (h.kind === "teleporter") {
+        chooseMarker(h.id, ev, teleportOrder);
+        return;
+      }
       if (h.kind === "base" || h.kind === "freighter" || h.kind === "settlement" || h.kind === "system") {
         chooseMarker(h.id, ev, h.kind === "freighter" ? freightOrder : listOrder);
         return;
@@ -3580,8 +4231,16 @@
     });
     canvas.addEventListener("dblclick", function (ev) {
       var h = hitTest(ev);
-      if (!h || (h.kind !== "base" && h.kind !== "discovery")) return;
+      if (!h || (h.kind !== "base" && h.kind !== "discovery" && h.kind !== "teleporter")) return;
       ev.preventDefault();
+      if (h.kind === "teleporter") {
+        focusTeleport(h.id);
+        renderLists();
+        draw();
+        var tbtn = teleportList && teleportList.querySelector('[data-teleport="' + h.id + '"]');
+        if (tbtn) tbtn.scrollIntoView({ block: "nearest" });
+        return;
+      }
       if (h.kind === "discovery") {
         focusDiscovery(h.id);
         renderLists();
@@ -3926,6 +4585,7 @@
         state.hover = null;
         state.hoverRef = null;
         state.hoverDiscovery = null;
+        state.hoverTeleport = null;
         aim = null;
         renderPlacePanel(null);
         renderLists();
@@ -4031,6 +4691,9 @@
       state.problems = [];
       state.discoveries = [];
       state.discoveryProblems = [];
+      state.teleporters = [];
+      state.teleportProblems = [];
+      state.hoverTeleport = null;
       state.selected = null;
       state.selection = [];
       state.anchorId = null;
@@ -4051,6 +4714,15 @@
       if (showStock) showStock.checked = false;
       if (showProduction) showProduction.checked = false;
       if (showDiscoveries) showDiscoveries.checked = true;
+      if (showTeleporters) showTeleporters.checked = true;
+      state.teleportType = "stations";
+      state.teleportGalaxy = "map";
+      state.teleportQuery = "";
+      state.teleportSort = "name";
+      if (teleportType) teleportType.value = "stations";
+      if (teleportGalaxy) teleportGalaxy.value = "map";
+      if (teleportSearch) teleportSearch.value = "";
+      if (teleportSort) teleportSort.value = "name";
       if (discPlanets) discPlanets.checked = true;
       if (discSystems) discSystems.checked = true;
       if (discFlora) discFlora.checked = false;
@@ -4072,7 +4744,7 @@
 
     if (showStock) showStock.addEventListener("change", draw);
     if (showProduction) showProduction.addEventListener("change", draw);
-    [showDiscoveries, discPlanets, discSystems, discFlora, discFauna, discMinerals].forEach(function (box) {
+    [showDiscoveries, discPlanets, discSystems, discFlora, discFauna, discMinerals, showTeleporters].forEach(function (box) {
       if (!box) return;
       box.addEventListener("change", function () {
         renderLists();
@@ -4080,6 +4752,43 @@
         summarize();
       });
     });
+    if (teleportType) teleportType.addEventListener("change", function () {
+      state.teleportType = teleportType.value || "stations";
+      renderLists();
+      draw();
+    });
+    if (teleportGalaxy) teleportGalaxy.addEventListener("change", function () {
+      state.teleportGalaxy = teleportGalaxy.value || "map";
+      renderLists();
+      draw();
+    });
+    if (teleportSearch) teleportSearch.addEventListener("input", function () {
+      state.teleportQuery = teleportSearch.value || "";
+      renderLists();
+      draw();
+    });
+    if (teleportSort) teleportSort.addEventListener("change", function () {
+      state.teleportSort = teleportSort.value || "name";
+      renderLists();
+    });
+    if (teleportList) {
+      teleportList.addEventListener("click", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-teleport]") : null;
+        if (!btn) return;
+        var id = btn.getAttribute("data-teleport");
+        if (ev.shiftKey && !(ev.ctrlKey || ev.metaKey)) {
+          commitSelection(rangeIds(teleportOrder, state.anchorId, id));
+          return;
+        }
+        if (ev.ctrlKey || ev.metaKey) {
+          commitSelection(toggleId(state.selection, id), id);
+          return;
+        }
+        focusTeleport(id);
+        commitSelection([id], id);
+        if (placeTitle) placeTitle.scrollIntoView({ block: "nearest" });
+      });
+    }
     if (discoveryList) {
       discoveryList.addEventListener("click", function (ev) {
         var btn = ev.target.closest ? ev.target.closest("[data-discovery]") : null;
@@ -4244,6 +4953,15 @@
     decodeAddressField: decodeAddressField,
     quoteGalacticAddresses: quoteGalacticAddresses,
     extractBases: extractBases,
+    extractTeleportEndpoints: extractTeleportEndpoints,
+    decodeUniverseAddress: decodeUniverseAddress,
+    displayTeleportName: displayTeleportName,
+    canonicalTeleporterType: canonicalTeleporterType,
+    filterTeleportEndpoints: filterTeleportEndpoints,
+    sortTeleportEndpoints: sortTeleportEndpoints,
+    teleportDistance: teleportDistance,
+    teleportGalaxyKey: teleportGalaxyKey,
+    basesInSameSystem: basesInSameSystem,
     extractDiscoveries: extractDiscoveries,
     mergeSaveDocuments: mergeSaveDocuments,
     playerStateOf: playerStateOf,
