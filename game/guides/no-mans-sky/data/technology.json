@@ -7,19 +7,31 @@
     "spelling": "British, as in the game-file NameLower text and the existing refine graph.",
     "repair": "The technology table stores one Requirements list. This file copies that list as the install recipe. It does not store a second repair list. Miraheze pages from 2020–2022 list a smaller repair cost for Neural Stimulator and Cadmium Drive. Those repair figures were not copied.",
     "fragmentCost": "FragmentCost is copied from the technology table. Neural Stimulator's 90 matches the Miraheze nanite price (Iteration: Selene, SentinelUp, 12 April 2022). Cadmium Drive's FragmentCost is 80, and that wiki lists 800 nanites (Iteration: Hyperion, SentinelUp). The unit is therefore left unverified.",
-    "primaryRefine": "The crafting tree expands inventory recipes fully. It expands a refiner step only along a fixed list of one-way ladders in graph-v2.json: ferrite dust to pure ferrite to magnetised ferrite, carbon to condensed carbon, sodium to sodium nitrate, cobalt to ionised cobalt, salt to chlorine, and copper to chromatic metal. Copper is the yellow-star path. Cadmium, emeril, and indium also make chromatic metal; those edges stay on the Refine page. Expansion loops are not walked.",
+    "primaryRefine": "The crafting tree expands inventory recipes fully, including crafted trade goods such as Stasis Device. It expands a refiner step only along a fixed list of one-way ladders in graph-v2.json: ferrite dust to pure ferrite to magnetised ferrite, carbon to condensed carbon, sodium to sodium nitrate, cobalt to ionised cobalt, salt to chlorine, and copper to chromatic metal. Copper is the yellow-star path. Cadmium, emeril, and indium also make chromatic metal; those edges stay on the Refine page. Expansion loops are not walked. Nitrogen salt, enriched carbon, and thermic condensate use the inventory blueprint in this file (250 gas and 50 condensed carbon). Their high-speed sublimation refiner rows stay on the refine graph as a second way to make them.",
     "omitted": [
       "Base-building parts (crafting table WikiCategory Construction).",
       "Damaged-slot technologies (ids containing DMG), OBSOLETE, and DUMMY_SCAN.",
       "Maintenance-category entries (portal glyphs and freighter maintenance slots).",
       "Procedural module Requirements templates.",
-      "Cooking, except where a cooking product is an ingredient of an included recipe."
+      "Cooking, except where a cooking product is an ingredient of an included recipe.",
+      "Starship launch fuel, kept out of the refine graph.",
+      "Repair Kit, whose crafting-table Ingredients list is empty.",
+      "WikiCategory NotEnabled rows (Frigate Fuel 50 and 200 tonnes, Surge Battery).",
+      "Three-input refiner alloy latticing. The inventory blueprint is the craft row."
+    ],
+    "craftGaps": [
+      "Starship Launch Fuel (LAUNCHFUEL) has a crafting-table recipe (40 Di-hydrogen and 1 Metal Plating) and stays out of the graph.",
+      "Repair Kit (REPAIRKIT) is in the crafting table with an empty Ingredients list, so it has no recipe.",
+      "Frigate Fuel (50 Tonnes), Frigate Fuel (200 Tonnes), and Surge Battery are WikiCategory NotEnabled in this extract.",
+      "Platinum is not an ingredient of these inventory blueprints. The three-input refiner alloy-latticing rows (tritium, silver, gold, or platinum) stay out.",
+      "Gamma Weed is the plant that yields Gamma Root. The recipes use Gamma Root.",
+      "Marrow Bulb and Sac Venom are not ingredients of these crafting-table recipes. Sac Venom has no crafting recipe."
     ],
     "knownCycles": [],
     "discrepancies": [],
     "counts": {
-      "product:component": 34,
-      "resource:resource": 46,
+      "product:component": 67,
+      "resource:resource": 53,
       "gathered:component": 24,
       "upgrade:exocraft": 12,
       "technology:exocraft": 32,
@@ -58,6 +70,30 @@
         "wiki": "https://nomanssky.miraheze.org/wiki/Jetpack",
         "wikiEra": "Desolation, 22 September 2020",
         "result": "Wiki repair lists 100 Ferrite Dust + 50 Cobalt. The February 2026 Requirements list is 100 Ferrite Dust only. The cobalt line was not added."
+      },
+      {
+        "item": "Stasis Device",
+        "gameId": "ULTRAPROD2",
+        "install": "1 Quantum Processor + 1 Cryogenic Chamber + 1 Iridesite",
+        "wiki": "https://nomanssky.miraheze.org/wiki/Stasis_Device",
+        "wikiEra": "Miraheze craft box. Page template Version Origins; release history through Outlaws. Value 15,600,000.",
+        "result": "Craft quantities and BaseValue 15600000 match the February 2026 crafting and product tables. Cosmos 7.04 was not re-extracted."
+      },
+      {
+        "item": "Quantum Processor",
+        "gameId": "MEGAPROD2",
+        "install": "1 Circuit Board + 1 Superconductor",
+        "wiki": "https://nomanssky.miraheze.org/wiki/Quantum_Processor",
+        "wikiEra": "Miraheze craft box. Page template Version Frontiers. Value 4,400,000.",
+        "result": "Craft quantities and BaseValue 4400000 match the February 2026 tables."
+      },
+      {
+        "item": "Cryogenic Chamber",
+        "gameId": "MEGAPROD3",
+        "install": "1 Living Glass + 1 Cryo-Pump",
+        "wiki": "https://nomanssky.miraheze.org/wiki/Cryogenic_Chamber",
+        "wikiEra": "Miraheze craft box. Page template Version Prisms. Value 3,800,000.",
+        "result": "Craft quantities and BaseValue 3800000 match the February 2026 tables."
       }
     ],
     "sources": [
@@ -108,6 +144,18 @@
       {
         "name": "Hello Games — Cosmos 7.04",
         "url": "https://www.nomanssky.com/2026/09/cosmos-7-04/"
+      },
+      {
+        "name": "No Man's Sky Wiki (Miraheze) — Stasis Device",
+        "url": "https://nomanssky.miraheze.org/wiki/Stasis_Device"
+      },
+      {
+        "name": "No Man's Sky Wiki (Miraheze) — Quantum Processor",
+        "url": "https://nomanssky.miraheze.org/wiki/Quantum_Processor"
+      },
+      {
+        "name": "No Man's Sky Wiki (Miraheze) — Cryogenic Chamber",
+        "url": "https://nomanssky.miraheze.org/wiki/Cryogenic_Chamber"
       }
     ]
   },
@@ -151,6 +199,90 @@
   ],
   "items": [
     {
+      "id": "aronium",
+      "gameId": "ALLOY1",
+      "name": "Aronium",
+      "symbol": "ARON",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A lightweight and highly malleable alloy.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "paraffinium",
+            "qty": 50,
+            "gameId": "LUSH1"
+          },
+          {
+            "id": "ionised-cobalt",
+            "qty": 50,
+            "gameId": "CAVE2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "aronium-paraffinium-50-ionised-cobalt-50"
+      },
+      "graphId": "aronium",
+      "aliases": [
+        "ALLOY1",
+        "alloy1",
+        "Aronium"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 25000
+    },
+    {
+      "id": "dirty-bronze",
+      "gameId": "ALLOY2",
+      "name": "Dirty Bronze",
+      "symbol": "DIRT",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A popular metal alloy with a wide variety of uses.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "pyrite",
+            "qty": 50,
+            "gameId": "DUSTY1"
+          },
+          {
+            "id": "pure-ferrite",
+            "qty": 100,
+            "gameId": "LAND2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "dirty-bronze-pyrite-50-pure-ferrite-100"
+      },
+      "graphId": "dirty-bronze",
+      "aliases": [
+        "ALLOY2",
+        "alloy2",
+        "Dirty Bronze"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 25000
+    },
+    {
       "id": "herox",
       "gameId": "ALLOY3",
       "name": "Herox",
@@ -179,16 +311,238 @@
             "gameId": "CAVE2"
           }
         ],
-        "source": "crafting-table"
+        "source": "crafting-table",
+        "matchesGraph": "herox-ammonia-50-ionised-cobalt-50"
       },
-      "graphId": null,
+      "graphId": "herox",
       "aliases": [
         "ALLOY3",
         "alloy3",
         "Herox"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 25000
+    },
+    {
+      "id": "lemmium",
+      "gameId": "ALLOY4",
+      "name": "Lemmium",
+      "symbol": "LEMM",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Pure Ferrite alloy.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "uranium",
+            "qty": 50,
+            "gameId": "RADIO1"
+          },
+          {
+            "id": "pure-ferrite",
+            "qty": 100,
+            "gameId": "LAND2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "lemmium-uranium-50-pure-ferrite-100"
+      },
+      "graphId": "lemmium",
+      "aliases": [
+        "ALLOY4",
+        "alloy4",
+        "Lemmium"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 25000
+    },
+    {
+      "id": "magno-gold",
+      "gameId": "ALLOY5",
+      "name": "Magno-Gold",
+      "symbol": "MAGN",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Highly prized and lustrous alloy.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "phosphorus",
+            "qty": 50,
+            "gameId": "HOT1"
+          },
+          {
+            "id": "ionised-cobalt",
+            "qty": 50,
+            "gameId": "CAVE2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "magno-gold-phosphorus-50-ionised-cobalt-50"
+      },
+      "graphId": "magno-gold",
+      "aliases": [
+        "ALLOY5",
+        "alloy5",
+        "Magno-Gold"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 25000
+    },
+    {
+      "id": "grantine",
+      "gameId": "ALLOY6",
+      "name": "Grantine",
+      "symbol": "GRAN",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Soft workable alloy favoured by artisans throughout the known galaxy.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "dioxite",
+            "qty": 50,
+            "gameId": "COLD1"
+          },
+          {
+            "id": "ionised-cobalt",
+            "qty": 50,
+            "gameId": "CAVE2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "grantine-dioxite-50-ionised-cobalt-50"
+      },
+      "graphId": "grantine",
+      "aliases": [
+        "ALLOY6",
+        "alloy6",
+        "Grantine"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 25000
+    },
+    {
+      "id": "geodesite",
+      "gameId": "ALLOY7",
+      "name": "Geodesite",
+      "symbol": "GEOD",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Enriched Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Advanced and durable alloy primarily used in starship hull construction and deep-space exploration drone technology.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "dirty-bronze",
+            "qty": 1,
+            "gameId": "ALLOY2"
+          },
+          {
+            "id": "herox",
+            "qty": 1,
+            "gameId": "ALLOY3"
+          },
+          {
+            "id": "lemmium",
+            "qty": 1,
+            "gameId": "ALLOY4"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "geodesite-dirty-bronze-1-herox-1-lemmium-1"
+      },
+      "graphId": "geodesite",
+      "aliases": [
+        "ALLOY7",
+        "alloy7",
+        "Geodesite"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 150000
+    },
+    {
+      "id": "iridesite",
+      "gameId": "ALLOY8",
+      "name": "Iridesite",
+      "symbol": "IRID",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Enriched Alloy Metal",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Advanced light metal alloy traded throughout the galactic Outer Edge.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "aronium",
+            "qty": 1,
+            "gameId": "ALLOY1"
+          },
+          {
+            "id": "magno-gold",
+            "qty": 1,
+            "gameId": "ALLOY5"
+          },
+          {
+            "id": "grantine",
+            "qty": 1,
+            "gameId": "ALLOY6"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "iridesite-aronium-1-magno-gold-1-grantine-1"
+      },
+      "graphId": "iridesite",
+      "aliases": [
+        "ALLOY8",
+        "alloy8",
+        "Iridesite"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 150000
     },
     {
       "id": "projectile-ammunition",
@@ -223,7 +577,8 @@
         "Projectile Ammunition"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1
     },
     {
       "id": "antimatter-housing",
@@ -264,7 +619,8 @@
         "Antimatter Housing"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 6500
     },
     {
       "id": "antimatter",
@@ -305,7 +661,8 @@
         "Antimatter"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 5233
     },
     {
       "id": "silver",
@@ -323,7 +680,7 @@
       "blueprint": null,
       "repair": null,
       "recipe": null,
-      "graphId": null,
+      "graphId": "silver",
       "aliases": [
         "ASTEROID1",
         "asteroid1"
@@ -347,7 +704,7 @@
       "blueprint": null,
       "repair": null,
       "recipe": null,
-      "graphId": null,
+      "graphId": "gold",
       "aliases": [
         "ASTEROID2",
         "asteroid2"
@@ -412,7 +769,8 @@
         "Captured Nanode"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "heart-of-the-sun",
@@ -452,7 +810,8 @@
         "Heart of the Sun"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "englobed-shade",
@@ -492,7 +851,8 @@
         "Englobed Shade"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "noospheric-orb",
@@ -532,7 +892,8 @@
         "Noospheric Orb"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "dark-matter",
@@ -572,7 +933,8 @@
         "Dark Matter"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "dawns-end",
@@ -612,7 +974,8 @@
         "Dawn's End"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "photic-jade",
@@ -652,7 +1015,8 @@
         "Photic Jade"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "state-phasure",
@@ -692,7 +1056,8 @@
         "State Phasure"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "novae-reclaiment",
@@ -732,7 +1097,8 @@
         "Novae Reclaiment"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "modified-quanta",
@@ -772,7 +1138,8 @@
         "Modified Quanta"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 1000
     },
     {
       "id": "amino-chamber",
@@ -817,7 +1184,8 @@
         "Amino Chamber"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 12300
     },
     {
       "id": "indium",
@@ -877,7 +1245,8 @@
         "Hermetic Seal"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 800
     },
     {
       "id": "metal-plating",
@@ -913,7 +1282,8 @@
         "Metal Plating"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 800
     },
     {
       "id": "sodium-nitrate",
@@ -1012,7 +1382,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 5050
     },
     {
       "id": "dioxite",
@@ -1037,6 +1408,258 @@
       ],
       "uncertain": [],
       "leaf": true
+    },
+    {
+      "id": "organic-catalyst",
+      "gameId": "COMPOUND1",
+      "name": "Organic Catalyst",
+      "symbol": "ORGA",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A catalytic material used in the creation of many organic fertilisers.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "thermic-condensate",
+            "qty": 1,
+            "gameId": "REACTION1"
+          },
+          {
+            "id": "enriched-carbon",
+            "qty": 1,
+            "gameId": "REACTION2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "organic-catalyst-thermic-condensate-1-enriched-carbon-1"
+      },
+      "graphId": "organic-catalyst",
+      "aliases": [
+        "COMPOUND1",
+        "compound1",
+        "Organic Catalyst"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 320000
+    },
+    {
+      "id": "semiconductor",
+      "gameId": "COMPOUND2",
+      "name": "Semiconductor",
+      "symbol": "SEMI",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "An advanced material useful in many electronic devices, with its own in-built temperature regulator.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "thermic-condensate",
+            "qty": 1,
+            "gameId": "REACTION1"
+          },
+          {
+            "id": "nitrogen-salt",
+            "qty": 1,
+            "gameId": "REACTION3"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "semiconductor-thermic-condensate-1-nitrogen-salt-1"
+      },
+      "graphId": "semiconductor",
+      "aliases": [
+        "COMPOUND2",
+        "compound2",
+        "Semiconductor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 320000
+    },
+    {
+      "id": "hot-ice",
+      "gameId": "COMPOUND3",
+      "name": "Hot Ice",
+      "symbol": "HOTI",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A paradoxical material, made less mysterious by its relative ease of manufacture.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "enriched-carbon",
+            "qty": 1,
+            "gameId": "REACTION2"
+          },
+          {
+            "id": "nitrogen-salt",
+            "qty": 1,
+            "gameId": "REACTION3"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "hot-ice-enriched-carbon-1-nitrogen-salt-1"
+      },
+      "graphId": "hot-ice",
+      "aliases": [
+        "COMPOUND3",
+        "compound3",
+        "Hot Ice"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 320000
+    },
+    {
+      "id": "fusion-accelerant",
+      "gameId": "COMPOUND4",
+      "name": "Fusion Accelerant",
+      "symbol": "FUSI",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "An advanced fuel source, made from a perfect blend of high potential energy organic materials.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "organic-catalyst",
+            "qty": 1,
+            "gameId": "COMPOUND1"
+          },
+          {
+            "id": "nitrogen-salt",
+            "qty": 1,
+            "gameId": "REACTION3"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "fusion-accelerant-organic-catalyst-1-nitrogen-salt-1"
+      },
+      "graphId": "fusion-accelerant",
+      "aliases": [
+        "COMPOUND4",
+        "compound4",
+        "Fusion Accelerant"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 1500000
+    },
+    {
+      "id": "superconductor",
+      "gameId": "COMPOUND5",
+      "name": "Superconductor",
+      "symbol": "SUPE",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "An advanced conductive material, the superconductor further enriches the field-warping power of the Semiconductor.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "semiconductor",
+            "qty": 1,
+            "gameId": "COMPOUND2"
+          },
+          {
+            "id": "enriched-carbon",
+            "qty": 1,
+            "gameId": "REACTION2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "superconductor-semiconductor-1-enriched-carbon-1"
+      },
+      "graphId": "superconductor",
+      "aliases": [
+        "COMPOUND5",
+        "compound5",
+        "Superconductor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 1500000
+    },
+    {
+      "id": "cryo-pump",
+      "gameId": "COMPOUND6",
+      "name": "Cryo-Pump",
+      "symbol": "CRYO",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Manufactured Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "An advanced, self-regulating hybrid material, the Cryo-Pump distributes heat across itself with near perfect efficiency, making it vital in the creation of thermal regulators.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "hot-ice",
+            "qty": 1,
+            "gameId": "COMPOUND3"
+          },
+          {
+            "id": "thermic-condensate",
+            "qty": 1,
+            "gameId": "REACTION1"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "cryo-pump-hot-ice-1-thermic-condensate-1"
+      },
+      "graphId": "cryo-pump",
+      "aliases": [
+        "COMPOUND6",
+        "compound6",
+        "Cryo-Pump"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 1500000
     },
     {
       "id": "quantum-computer",
@@ -1072,16 +1695,18 @@
             "gameId": "STELLAR2"
           }
         ],
-        "source": "crafting-table"
+        "source": "crafting-table",
+        "matchesGraph": "quantum-computer-microprocessor-1-antimatter-1-chromatic-metal-25"
       },
-      "graphId": null,
+      "graphId": "quantum-computer",
       "aliases": [
         "COMPUTER",
         "computer",
         "Quantum Computer"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 4200
     },
     {
       "id": "mordite",
@@ -1132,7 +1757,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 17000
     },
     {
       "id": "radiant-shard",
@@ -1159,6 +1785,31 @@
       "uncertain": [
         "no-craft-recipe"
       ],
+      "leaf": true,
+      "value": 1900
+    },
+    {
+      "id": "pyrite",
+      "gameId": "DUSTY1",
+      "name": "Pyrite",
+      "symbol": "DUST",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Localised Earth Element",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Local mineral extract, typically found in large deposits or extracted from common minerals after inspection with an Analysis Visor.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "pyrite",
+      "aliases": [
+        "DUSTY1",
+        "dusty1"
+      ],
+      "uncertain": [],
       "leaf": true
     },
     {
@@ -1186,7 +1837,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 13063
     },
     {
       "id": "activated-quartzite",
@@ -1237,7 +1889,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 60000
     },
     {
       "id": "acid",
@@ -1268,16 +1921,18 @@
             "gameId": "PLANT_TOXIC"
           }
         ],
-        "source": "crafting-table"
+        "source": "crafting-table",
+        "matchesGraph": "acid-mordite-25-fungal-mould-600"
       },
-      "graphId": null,
+      "graphId": "acid",
       "aliases": [
         "FARMPROD1",
         "farmprod1",
         "Acid"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 188000
     },
     {
       "id": "lubricant",
@@ -1318,7 +1973,8 @@
         "Lubricant"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 110000
     },
     {
       "id": "glass",
@@ -1354,7 +2010,171 @@
         "Glass"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 200
+    },
+    {
+      "id": "heat-capacitor",
+      "gameId": "FARMPROD4",
+      "name": "Heat Capacitor",
+      "symbol": "HEAT",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Agricultural Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A thermal regulator produced from refined organic material.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "frost-crystal",
+            "qty": 100,
+            "gameId": "PLANT_SNOW"
+          },
+          {
+            "id": "solanium",
+            "qty": 200,
+            "gameId": "PLANT_HOT"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "heat-capacitor-frost-crystal-100-solanium-200"
+      },
+      "graphId": "heat-capacitor",
+      "aliases": [
+        "FARMPROD4",
+        "farmprod4",
+        "Heat Capacitor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 180000
+    },
+    {
+      "id": "poly-fibre",
+      "gameId": "FARMPROD5",
+      "name": "Poly Fibre",
+      "symbol": "POLY",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Agricultural Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A connective fibre for electronics, made from an advanced synthetic polymer and capable of serving as a conduit for power and data.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "cactus-flesh",
+            "qty": 100,
+            "gameId": "PLANT_DUST"
+          },
+          {
+            "id": "star-bulb",
+            "qty": 200,
+            "gameId": "PLANT_LUSH"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "poly-fibre-cactus-flesh-100-star-bulb-200"
+      },
+      "graphId": "poly-fibre",
+      "aliases": [
+        "FARMPROD5",
+        "farmprod5",
+        "Poly Fibre"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 130000
+    },
+    {
+      "id": "unstable-gel",
+      "gameId": "FARMPROD6",
+      "name": "Unstable Gel",
+      "symbol": "UNST",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Agricultural Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A highly reactive gel, this substance is both energy-rich and dangerous to touch.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "cactus-flesh",
+            "qty": 200,
+            "gameId": "PLANT_DUST"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "unstable-gel-cactus-flesh-200"
+      },
+      "graphId": "unstable-gel",
+      "aliases": [
+        "FARMPROD6",
+        "farmprod6",
+        "Unstable Gel"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 50000
+    },
+    {
+      "id": "liquid-explosive",
+      "gameId": "FARMPROD7",
+      "name": "Liquid Explosive",
+      "symbol": "LIQU",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Agricultural Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A general purpose high explosive, offered in liquid form for convenience of transport and deployment.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "acid",
+            "qty": 1,
+            "gameId": "FARMPROD1"
+          },
+          {
+            "id": "unstable-gel",
+            "qty": 1,
+            "gameId": "FARMPROD6"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "liquid-explosive-acid-1-unstable-gel-1"
+      },
+      "graphId": "liquid-explosive",
+      "aliases": [
+        "FARMPROD7",
+        "farmprod7",
+        "Liquid Explosive"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 800500
     },
     {
       "id": "living-glass",
@@ -1395,7 +2215,50 @@
         "Living Glass"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 566000
+    },
+    {
+      "id": "circuit-board",
+      "gameId": "FARMPROD9",
+      "name": "Circuit Board",
+      "symbol": "CIRC",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Agricultural Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Stackable, semi-flexible circuit board made from a highly durable synthetic polymer.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "heat-capacitor",
+            "qty": 1,
+            "gameId": "FARMPROD4"
+          },
+          {
+            "id": "poly-fibre",
+            "qty": 1,
+            "gameId": "FARMPROD5"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "circuit-board-heat-capacitor-1-poly-fibre-1"
+      },
+      "graphId": "circuit-board",
+      "aliases": [
+        "FARMPROD9",
+        "farmprod9",
+        "Circuit Board"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 916250
     },
     {
       "id": "larval-core",
@@ -1422,7 +2285,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 65000
     },
     {
       "id": "hadal-core",
@@ -1449,7 +2313,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 97500
     },
     {
       "id": "rancid-flesh",
@@ -1476,7 +2341,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 6200
     },
     {
       "id": "processed-meat",
@@ -1503,7 +2369,260 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 2100
+    },
+    {
+      "id": "frigate-fuel-100-tonnes",
+      "gameId": "FRIGATE_FUEL_2",
+      "name": "Frigate Fuel (100 Tonnes)",
+      "symbol": "FRIG",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Stabilised Di-hydrogen Fuel",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A large barrel of frigate fuel.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "di-hydrogen",
+            "qty": 100,
+            "gameId": "LAUNCHSUB"
+          },
+          {
+            "id": "tritium",
+            "qty": 100,
+            "gameId": "ROCKETSUB"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "frigate-fuel-100-tonnes-di-hydrogen-100-tritium-100"
+      },
+      "graphId": "frigate-fuel-100-tonnes",
+      "aliases": [
+        "FRIGATE_FUEL_2",
+        "frigate_fuel_2",
+        "Frigate Fuel (100 Tonnes)"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 40000
+    },
+    {
+      "id": "explosive-drones",
+      "gameId": "FRIG_BOOST_COM",
+      "name": "Explosive Drones",
+      "symbol": "EXPL",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Consumable Frigate Upgrade",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A temporary frigate upgrade that lasts for one expedition.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "walker-brain",
+            "qty": 1,
+            "gameId": "WALKER_PROD"
+          },
+          {
+            "id": "gold",
+            "qty": 50,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "explosive-drones-walker-brain-1-gold-50"
+      },
+      "graphId": "explosive-drones",
+      "aliases": [
+        "FRIG_BOOST_COM",
+        "frig_boost_com",
+        "Explosive Drones"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 75000
+    },
+    {
+      "id": "holographic-analyser",
+      "gameId": "FRIG_BOOST_EXP",
+      "name": "Holographic Analyser",
+      "symbol": "HOLO",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Consumable Frigate Upgrade",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A temporary frigate upgrade that lasts for one expedition.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "quantum-computer",
+            "qty": 1,
+            "gameId": "COMPUTER"
+          },
+          {
+            "id": "gold",
+            "qty": 50,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "holographic-analyser-quantum-computer-1-gold-50"
+      },
+      "graphId": "holographic-analyser",
+      "aliases": [
+        "FRIG_BOOST_EXP",
+        "frig_boost_exp",
+        "Holographic Analyser"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 75000
+    },
+    {
+      "id": "mineral-compressor",
+      "gameId": "FRIG_BOOST_MIN",
+      "name": "Mineral Compressor",
+      "symbol": "MINE",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Consumable Frigate Upgrade",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A temporary frigate upgrade that lasts for one expedition.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "hydraulic-wiring",
+            "qty": 1,
+            "gameId": "HYDRALIC"
+          },
+          {
+            "id": "gold",
+            "qty": 50,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "mineral-compressor-hydraulic-wiring-1-gold-50"
+      },
+      "graphId": "mineral-compressor",
+      "aliases": [
+        "FRIG_BOOST_MIN",
+        "frig_boost_min",
+        "Mineral Compressor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 75000
+    },
+    {
+      "id": "fuel-oxidiser",
+      "gameId": "FRIG_BOOST_SPD",
+      "name": "Fuel Oxidiser",
+      "symbol": "FUEL",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Consumable Frigate Upgrade",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A temporary frigate upgrade that lasts for one expedition.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "quad-servo",
+            "qty": 2,
+            "gameId": "QUAD_PROD"
+          },
+          {
+            "id": "gold",
+            "qty": 50,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "fuel-oxidiser-quad-servo-2-gold-50"
+      },
+      "graphId": "fuel-oxidiser",
+      "aliases": [
+        "FRIG_BOOST_SPD",
+        "frig_boost_spd",
+        "Fuel Oxidiser"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 75000
+    },
+    {
+      "id": "mind-control-device",
+      "gameId": "FRIG_BOOST_TRA",
+      "name": "Mind Control Device",
+      "symbol": "MIND",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Consumable Frigate Upgrade",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A temporary frigate upgrade that lasts for one expedition.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "solar-mirror",
+            "qty": 1,
+            "gameId": "MIRROR"
+          },
+          {
+            "id": "gold",
+            "qty": 50,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "mind-control-device-solar-mirror-1-gold-50"
+      },
+      "graphId": "mind-control-device",
+      "aliases": [
+        "FRIG_BOOST_TRA",
+        "frig_boost_tra",
+        "Mind Control Device"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 75000
     },
     {
       "id": "carbon",
@@ -1549,6 +2668,78 @@
       "aliases": [
         "FUEL2",
         "fuel2"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "sulphurine",
+      "gameId": "GAS1",
+      "name": "Sulphurine",
+      "symbol": "GAS1",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Compressed Atmospheric Gas",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A pungent atmospheric gas.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "sulphurine",
+      "aliases": [
+        "GAS1",
+        "gas1"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "radon",
+      "gameId": "GAS2",
+      "name": "Radon",
+      "symbol": "GAS2",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Compressed Atmospheric Gas",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A colourless, odourless gas with a relatively short half-life.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "radon",
+      "aliases": [
+        "GAS2",
+        "gas2"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "nitrogen",
+      "gameId": "GAS3",
+      "name": "Nitrogen",
+      "symbol": "GAS3",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Compressed Atmospheric Gas",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A reactive atmospheric gas found wherever there is organic life.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "nitrogen",
+      "aliases": [
+        "GAS3",
+        "gas3"
       ],
       "uncertain": [],
       "leaf": true
@@ -1626,7 +2817,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 3200
     },
     {
       "id": "gravitino-ball",
@@ -1653,7 +2845,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 42130
     },
     {
       "id": "emeril",
@@ -1718,7 +2911,8 @@
         "Unstable Plasma"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 5750
     },
     {
       "id": "phosphorus",
@@ -1778,16 +2972,18 @@
             "gameId": "LAUNCHSUB"
           }
         ],
-        "source": "crafting-table"
+        "source": "crafting-table",
+        "matchesGraph": "hydraulic-wiring-carbon-nanotubes-2-salt-20-di-hydrogen-40"
       },
-      "graphId": null,
+      "graphId": "hydraulic-wiring",
       "aliases": [
         "HYDRALIC",
         "hydralic",
         "Hydraulic Wiring"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 3600
     },
     {
       "id": "warp-cell",
@@ -1828,7 +3024,8 @@
         "Warp Cell"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 46750
     },
     {
       "id": "warp-hypercore",
@@ -1868,7 +3065,8 @@
         "Warp Hypercore"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 46750
     },
     {
       "id": "counterfeit-circuits",
@@ -1895,7 +3093,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 68000
     },
     {
       "id": "di-hydrogen-jelly",
@@ -1931,7 +3130,8 @@
         "Di-hydrogen Jelly"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 200
     },
     {
       "id": "ferrite-dust",
@@ -2139,7 +3339,8 @@
         "Magnetic Resonator"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 6150
     },
     {
       "id": "hardframe-engine",
@@ -2166,7 +3367,134 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 28000
+    },
+    {
+      "id": "portable-reactor",
+      "gameId": "MEGAPROD1",
+      "name": "Portable Reactor",
+      "symbol": "PORT",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Crafted Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A miniature self-controlled nuclear reactor.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "liquid-explosive",
+            "qty": 1,
+            "gameId": "FARMPROD7"
+          },
+          {
+            "id": "fusion-accelerant",
+            "qty": 1,
+            "gameId": "COMPOUND4"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "portable-reactor-liquid-explosive-1-fusion-accelerant-1"
+      },
+      "graphId": "portable-reactor",
+      "aliases": [
+        "MEGAPROD1",
+        "megaprod1",
+        "Portable Reactor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 4200000
+    },
+    {
+      "id": "quantum-processor",
+      "gameId": "MEGAPROD2",
+      "name": "Quantum Processor",
+      "symbol": "QUAN",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Crafted Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A highly advanced computational device, essential for the complex calculations involved in warp travel.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "circuit-board",
+            "qty": 1,
+            "gameId": "FARMPROD9"
+          },
+          {
+            "id": "superconductor",
+            "qty": 1,
+            "gameId": "COMPOUND5"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "quantum-processor-circuit-board-1-superconductor-1"
+      },
+      "graphId": "quantum-processor",
+      "aliases": [
+        "MEGAPROD2",
+        "megaprod2",
+        "Quantum Processor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 4400000
+    },
+    {
+      "id": "cryogenic-chamber",
+      "gameId": "MEGAPROD3",
+      "name": "Cryogenic Chamber",
+      "symbol": "CRYO",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Advanced Crafted Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A low temperature chamber, designed to prevent the natural decay of organic matter.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "living-glass",
+            "qty": 1,
+            "gameId": "FARMPROD8"
+          },
+          {
+            "id": "cryo-pump",
+            "qty": 1,
+            "gameId": "COMPOUND6"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "cryogenic-chamber-living-glass-1-cryo-pump-1"
+      },
+      "graphId": "cryogenic-chamber",
+      "aliases": [
+        "MEGAPROD3",
+        "megaprod3",
+        "Cryogenic Chamber"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 3800000
     },
     {
       "id": "microprocessor",
@@ -2207,7 +3535,8 @@
         "Microprocessor"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 2000
     },
     {
       "id": "solar-mirror",
@@ -2243,16 +3572,18 @@
             "gameId": "STELLAR2"
           }
         ],
-        "source": "crafting-table"
+        "source": "crafting-table",
+        "matchesGraph": "solar-mirror-gold-40-silver-30-chromatic-metal-25"
       },
-      "graphId": null,
+      "graphId": "solar-mirror",
       "aliases": [
         "MIRROR",
         "mirror",
         "Solar Mirror"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 6150
     },
     {
       "id": "carbon-nanotubes",
@@ -2288,7 +3619,8 @@
         "Carbon Nanotubes"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 500
     },
     {
       "id": "oxygen",
@@ -2310,6 +3642,78 @@
       "aliases": [
         "OXYGEN",
         "oxygen"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "cactus-flesh",
+      "gameId": "PLANT_DUST",
+      "name": "Cactus Flesh",
+      "symbol": "PLAN",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Harvested Agricultural Substance",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "Succulent, edible cactus flesh from the Echinocactus plant.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "cactus-flesh",
+      "aliases": [
+        "PLANT_DUST",
+        "plant_dust"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "solanium",
+      "gameId": "PLANT_HOT",
+      "name": "Solanium",
+      "symbol": "PLAN",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Harvested Agricultural Substance",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A powerful chemical that has resisted attempts at synthesis.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "solanium",
+      "aliases": [
+        "PLANT_HOT",
+        "plant_hot"
+      ],
+      "uncertain": [],
+      "leaf": true
+    },
+    {
+      "id": "star-bulb",
+      "gameId": "PLANT_LUSH",
+      "name": "Star Bulb",
+      "symbol": "PLAN",
+      "kind": "resource",
+      "slot": "resource",
+      "slotLabel": "Resource",
+      "subcategory": "Harvested Agricultural Substance",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A beautiful gemstone, this prized product is the engorged, luminescent berry of the Star Bramble.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": null,
+      "graphId": "star-bulb",
+      "aliases": [
+        "PLANT_LUSH",
+        "plant_lush"
       ],
       "uncertain": [],
       "leaf": true
@@ -2449,7 +3853,8 @@
         "Ion Battery"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 200
     },
     {
       "id": "life-support-gel",
@@ -2490,7 +3895,8 @@
         "Life Support Gel"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 200
     },
     {
       "id": "quartzite",
@@ -2532,7 +3938,7 @@
       "blueprint": null,
       "repair": null,
       "recipe": null,
-      "graphId": null,
+      "graphId": "quad-servo",
       "aliases": [
         "QUAD_PROD",
         "quad_prod",
@@ -2541,7 +3947,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 20000
     },
     {
       "id": "vile-cortex",
@@ -2568,7 +3975,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 122000
     },
     {
       "id": "uranium",
@@ -2593,6 +4001,132 @@
       ],
       "uncertain": [],
       "leaf": true
+    },
+    {
+      "id": "thermic-condensate",
+      "gameId": "REACTION1",
+      "name": "Thermic Condensate",
+      "symbol": "THER",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Enhanced Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A refined product, holding the energy potential of heated atmospheric gas in a stable state until required.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "sulphurine",
+            "qty": 250,
+            "gameId": "GAS1"
+          },
+          {
+            "id": "condensed-carbon",
+            "qty": 50,
+            "gameId": "FUEL2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "thermic-condensate-sulphurine-250-condensed-carbon-50"
+      },
+      "graphId": "thermic-condensate",
+      "aliases": [
+        "REACTION1",
+        "reaction1",
+        "Thermic Condensate"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 50000
+    },
+    {
+      "id": "enriched-carbon",
+      "gameId": "REACTION2",
+      "name": "Enriched Carbon",
+      "symbol": "ENRI",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Enhanced Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A refined product, taking ordinary carbon and boosting it with radioactive energy.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "radon",
+            "qty": 250,
+            "gameId": "GAS2"
+          },
+          {
+            "id": "condensed-carbon",
+            "qty": 50,
+            "gameId": "FUEL2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "enriched-carbon-radon-250-condensed-carbon-50"
+      },
+      "graphId": "enriched-carbon",
+      "aliases": [
+        "REACTION2",
+        "reaction2",
+        "Enriched Carbon"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 50000
+    },
+    {
+      "id": "nitrogen-salt",
+      "gameId": "REACTION3",
+      "name": "Nitrogen Salt",
+      "symbol": "NITR",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Enhanced Gas Product",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A refined product, this is a powerful organic fertiliser in an easily distributed form.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "nitrogen",
+            "qty": 250,
+            "gameId": "GAS3"
+          },
+          {
+            "id": "condensed-carbon",
+            "qty": 50,
+            "gameId": "FUEL2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "nitrogen-salt-nitrogen-250-condensed-carbon-50"
+      },
+      "graphId": "nitrogen-salt",
+      "aliases": [
+        "REACTION3",
+        "reaction3",
+        "Nitrogen Salt"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 50000
     },
     {
       "id": "cadmium",
@@ -2715,7 +4249,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 64000
     },
     {
       "id": "silicate-powder",
@@ -2766,7 +4301,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 3000
     },
     {
       "id": "harmonic-brain",
@@ -2793,7 +4329,50 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 480016
+    },
+    {
+      "id": "starshield-battery",
+      "gameId": "SHIPCHARGE",
+      "name": "Starshield Battery",
+      "symbol": "STAR",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Portable Energy Storage",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A power storage unit optimised for use in starship defensive systems.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "tritium",
+            "qty": 50,
+            "gameId": "ROCKETSUB"
+          },
+          {
+            "id": "gold",
+            "qty": 20,
+            "gameId": "ASTEROID2"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "starshield-battery-tritium-50-gold-20"
+      },
+      "graphId": "starshield-battery",
+      "aliases": [
+        "SHIPCHARGE",
+        "shipcharge",
+        "Starshield Battery"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 500
     },
     {
       "id": "runaway-mould",
@@ -2892,7 +4471,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 37000
     },
     {
       "id": "chromatic-metal",
@@ -2943,7 +4523,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 206000
     },
     {
       "id": "hydrothermal-fuel-cell",
@@ -2988,7 +4569,8 @@
         "Hydrothermal Fuel Cell"
       ],
       "uncertain": [],
-      "leaf": false
+      "leaf": false,
+      "value": 7200
     },
     {
       "id": "wiring-loom",
@@ -3015,7 +4597,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 25000
     },
     {
       "id": "ammonia",
@@ -3042,6 +4625,100 @@
       "leaf": true
     },
     {
+      "id": "fusion-ignitor",
+      "gameId": "ULTRAPROD1",
+      "name": "Fusion Ignitor",
+      "symbol": "FUSI",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Highly Refined Technology",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A highly advanced piece of technology for use in the next generation of power plants.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "portable-reactor",
+            "qty": 1,
+            "gameId": "MEGAPROD1"
+          },
+          {
+            "id": "quantum-processor",
+            "qty": 1,
+            "gameId": "MEGAPROD2"
+          },
+          {
+            "id": "geodesite",
+            "qty": 1,
+            "gameId": "ALLOY7"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "fusion-ignitor-portable-reactor-1-quantum-processor-1-geodesite-1"
+      },
+      "graphId": "fusion-ignitor",
+      "aliases": [
+        "ULTRAPROD1",
+        "ultraprod1",
+        "Fusion Ignitor"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 15600000
+    },
+    {
+      "id": "stasis-device",
+      "gameId": "ULTRAPROD2",
+      "name": "Stasis Device",
+      "symbol": "STAS",
+      "kind": "product",
+      "slot": "component",
+      "slotLabel": "Component",
+      "subcategory": "Highly Refined Technology",
+      "upgrade": false,
+      "procedural": false,
+      "core": false,
+      "blurb": "A device specifically crafted to keep lifeforms alive for thousands of years longer than their natural lifespan.",
+      "blueprint": null,
+      "repair": null,
+      "recipe": {
+        "outQty": 1,
+        "inputs": [
+          {
+            "id": "quantum-processor",
+            "qty": 1,
+            "gameId": "MEGAPROD2"
+          },
+          {
+            "id": "cryogenic-chamber",
+            "qty": 1,
+            "gameId": "MEGAPROD3"
+          },
+          {
+            "id": "iridesite",
+            "qty": 1,
+            "gameId": "ALLOY8"
+          }
+        ],
+        "source": "crafting-table",
+        "matchesGraph": "stasis-device-quantum-processor-1-cryogenic-chamber-1-iridesite-1"
+      },
+      "graphId": "stasis-device",
+      "aliases": [
+        "ULTRAPROD2",
+        "ultraprod2",
+        "Stasis Device"
+      ],
+      "uncertain": [],
+      "leaf": false,
+      "value": 15600000
+    },
+    {
       "id": "crystal-sulphide",
       "gameId": "VENTGEM",
       "name": "Crystal Sulphide",
@@ -3066,7 +4743,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 7800
     },
     {
       "id": "walker-brain",
@@ -3084,7 +4762,7 @@
       "blueprint": null,
       "repair": null,
       "recipe": null,
-      "graphId": null,
+      "graphId": "walker-brain",
       "aliases": [
         "WALKER_PROD",
         "walker_prod",
@@ -3093,7 +4771,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 35000
     },
     {
       "id": "radiant-brain",
@@ -3120,7 +4799,8 @@
       "uncertain": [
         "no-craft-recipe"
       ],
-      "leaf": true
+      "leaf": true,
+      "value": 35000
     },
     {
       "id": "salt",

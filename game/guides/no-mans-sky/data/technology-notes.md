@@ -21,6 +21,11 @@ That commit includes the Gravitino Coil, which Hello Games added in [Remnant 6.2
 | Neural Stimulator (Miraheze) | https://nomanssky.miraheze.org/wiki/Neural_Stimulator |
 | Cadmium Drive (Miraheze) | https://nomanssky.miraheze.org/wiki/Cadmium_Drive |
 | Jetpack (Miraheze) | https://nomanssky.miraheze.org/wiki/Jetpack |
+| Stasis Device (Miraheze) | https://nomanssky.miraheze.org/wiki/Stasis_Device |
+| Quantum Processor (Miraheze) | https://nomanssky.miraheze.org/wiki/Quantum_Processor |
+| Cryogenic Chamber (Miraheze) | https://nomanssky.miraheze.org/wiki/Cryogenic_Chamber |
+| Nitrogen Salt (Miraheze) | https://nomanssky.miraheze.org/wiki/Nitrogen_Salt |
+| Aronium (Miraheze) | https://nomanssky.miraheze.org/wiki/Aronium |
 
 The handbook JSON is generated from MBINCompiler output of the reality tables. Install recipes are the technology table `Requirements` list. Component recipes are the crafting table `Ingredients` list. Shared component recipes (metal plating, hermetic seal, carbon nanotubes, microprocessor, antimatter, warp cell, and the rest of the refine graph’s craft rows) match `graph-v2.json`. The generator recorded zero quantity mismatches.
 
@@ -47,12 +52,34 @@ That is 130 technologies and 72 craftable upgrades. Living Ship entries are the 
 
 Also in the file, so those recipes resolve:
 
-- 34 crafted products (Carbon Nanotubes, Metal Plating, Hermetic Seal, Antimatter, Wiring Loom’s inputs, Circuit Board is not required by these tech rows, Ion Battery, Warp Cell, Di-hydrogen Jelly, and the other closure products)
+- 67 crafted products. That is the install-recipe closure (Carbon Nanotubes, Metal Plating, Hermetic Seal, Antimatter, Ion Battery, Warp Cell, Di-hydrogen Jelly, and the rest) plus the crafted trade goods below.
 - 24 gathered or bought products with no crafting-table recipe (Wiring Loom, Storm Crystal, Walker Brain, and the rest)
-- 46 substances
+- 53 substances (the previous 46, plus Pyrite, Sulphurine, Radon, Nitrogen, Cactus Flesh, Solanium, and Star Bulb, which the trade-good recipes name and the install tree did not)
 - 54 procedural modules
 
 Procedural modules are the `Procedural: true` rows (the S/A/B/C templates such as `T_JET`). Their `Requirements` lists are templates, not player recipes, and are omitted. The board’s Procedural filter is the explicit list.
+
+## Crafted trade goods
+
+The same generator copies inventory blueprints from `Crafting_Table.json` onto `graph-v2.json` and into this catalog. The set is every product-table row with `WikiCategory` Crafting and `Type` Tradeable, plus named products or trade goods of type Consumable that an install recipe does not already require. Quantities are the crafting-table `Ingredients` amounts. `BaseValue` from `Product_Table.json` is stored as `value`.
+
+Stasis Device (`ULTRAPROD2`) is 1 Quantum Processor, 1 Cryogenic Chamber, and 1 Iridesite. Base value 15,600,000. Quantum Processor (`MEGAPROD2`) is 1 Circuit Board and 1 Superconductor (4,400,000). Cryogenic Chamber (`MEGAPROD3`) is 1 Living Glass and 1 Cryo-Pump (3,800,000). Lubricant, Living Glass, Circuit Board, Heat Capacitor, Poly Fibre, Glass, and the three gas products were already nodes. Their existing craft or refiner edges were kept when the quantities matched. Nitrogen Salt, Enriched Carbon, and Thermic Condensate keep the high-speed sublimation refiner row (100 gas, 10 condensed carbon, 5 chlorine) and gain the inventory blueprint (250 gas and 50 condensed carbon).
+
+The raw bill uses the inventory blueprint, then the one-way ladders. One Stasis Device expands to 300 Frost Crystal, 200 Solanium, 100 Cactus Flesh, 200 Star Bulb, 500 Sulphurine, 500 Nitrogen, 500 Radon, 600 Carbon, 50 Faecium, 400 Gamma Root, 50 Paraffinium, 50 Phosphorus, 50 Dioxite, and 300 Cobalt. The 600 carbon is 300 condensed carbon at 2 carbon each. The 300 cobalt is 150 ionised cobalt at 2 cobalt each. Condensed carbon and ionised cobalt do not remain on the bill.
+
+Miraheze craft boxes match those three recipes and the two checked intermediates (Nitrogen Salt 250 + 50, value 50,000; Aronium 50 Paraffinium + 50 Ionised Cobalt, value 25,000). The wiki page templates are older than this extract: Stasis Device is stamped Origins (release history through Outlaws), Quantum Processor Frontiers, Cryogenic Chamber Prisms, Nitrogen Salt Prisms, Aronium Interceptor. They do not name a 2026 build. The quantities match the handbook commit of 20 February 2026, which includes Remnant 6.2. Cosmos 7.04 was not re-extracted.
+
+Also added from the same product table, because they are named products with a crafting recipe and were in neither catalog: Explosive Drones, Holographic Analyser, Mineral Compressor, Fuel Oxidiser, Mind Control Device, Frigate Fuel (100 Tonnes), and Starshield Battery. Their crafted ingredients (Quantum Computer, Hydraulic Wiring, Solar Mirror) are on the graph as well. Walker Brain and Quad Servo stay gathered. Gold and silver are gathered inputs with no refiner row.
+
+## Still not in either catalog
+
+- Starship Launch Fuel (`LAUNCHFUEL`) has a crafting-table recipe (40 Di-hydrogen and 1 Metal Plating). It stays out of the graph, with the portable refiner and wiring loom.
+- Repair Kit (`REPAIRKIT`) is in the crafting table with an empty `Ingredients` list.
+- Frigate Fuel (50 Tonnes), Frigate Fuel (200 Tonnes), and Surge Battery are `WikiCategory` NotEnabled in this extract.
+- Platinum is not an ingredient of these inventory blueprints. The three-input refiner alloy-latticing rows (tritium, silver, gold, or platinum beside the stellar metal and ferrite or cobalt) stay off the graph.
+- Gamma Weed (`RADIOPLANT`) is the planter. Recipes use Gamma Root, the harvest.
+- Marrow Bulb and Sac Venom are not ingredients of these recipes. Sac Venom has no crafting-table recipe.
+- Cooking, base-building parts, and trade goods with no crafting recipe (Albumen Pearl and the rest) stay out.
 
 ## How the tree walks
 
@@ -65,7 +92,7 @@ Inventory and install recipes expand fully, with batch multipliers. A refiner st
 - salt → chlorine
 - copper → chromatic metal (2 copper → 1)
 
-Cadmium, emeril, and indium also refine into chromatic metal. Those edges stay on the Refine page. Expansion loops (oxygen multiplying a stack, chromatic expansion) are not walked.
+Cadmium, emeril, and indium also refine into chromatic metal. Those edges stay on the Refine page. Expansion loops (oxygen multiplying a stack, chromatic expansion) are not walked. Crafted trade goods expand through the inventory blueprint first. The gas-product refiner rows are the other way to make nitrogen salt, enriched carbon, and thermic condensate. They are not the raw bill.
 
 ## Not verified
 
@@ -75,4 +102,4 @@ Cadmium, emeril, and indium also refine into chromatic metal. Those edges stay o
 - nomanssky.fandom.com returned 403 to the fetch used here, so the cross-checks are the Miraheze copies, which themselves cite older updates.
 - Cosmos 7.04 and Remnant 6.24 were not diffed against this extract.
 - Base-building parts, damaged-slot technologies (`DMG` ids), `OBSOLETE`, `DUMMY_SCAN`, and the Maintenance category (portal glyphs and freighter maintenance slots) are omitted.
-- Substances that are not in the refine graph (silver, gold, platinum, pugneum, and the rest) stay as leaves, even where a refiner recipe exists outside `graph-v2.json`.
+- Silver and gold are gathered inputs on the refine graph and stay leaves. Platinum, pugneum, and the other substances that are still not in the graph stay leaves, even where a refiner recipe exists outside `graph-v2.json`.

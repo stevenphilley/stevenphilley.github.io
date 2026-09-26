@@ -433,6 +433,8 @@ eq(techLabel("EXO_PLOUGH"), "Excavation Blade", "Excavation Blade comes from the
 eq(techLabel("T_SHIP_ATLAS"), "Aeron Starship Trail", "Aeron Starship Trail comes from the technology catalog");
 eq(techLabel("JET1"), "Jetpack", "a technology id in the name list stays the English name");
 eq(logistics.itemLabel({ id: "jetpack", rawId: "jetpack" }, merged), "Jetpack", "a crafting-tree slug uses the catalog name");
+eq(logistics.itemLabel({ id: "stasis-device", rawId: "ULTRAPROD2" }, merged), "Stasis Device", "the logistics picker names Stasis Device");
+assert(merged.byId["stasis-device"] && merged.byId["fusion-ignitor"] && merged.byId["quantum-processor"], "crafted trade goods are in the logistics catalog");
 eq(logistics.itemMeta({ id: "GRAVITYGUN", rawId: "^GRAVITYGUN" }, merged).category, "", "a catalog-only technology does not invent a category");
 eq(logistics.itemLabel({ id: "SPIDERBRAIN", rawId: "SPIDERBRAIN" }, merged), "Spiderbrain", "an id whose catalog name is the id itself is reworded");
 assert(!logistics.itemMeta({ id: "SPIDERBRAIN", rawId: "SPIDERBRAIN" }, merged).known, "SPIDERBRAIN stays unknown");
