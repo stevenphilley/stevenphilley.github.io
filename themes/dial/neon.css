@@ -24,6 +24,21 @@ html[data-theme="neon"]{
     radial-gradient(46% 40% at 78% 88%, rgba(184,77,255,.22), transparent 62%),
     radial-gradient(42% 36% at 18% 86%, rgba(255,200,40,.12), transparent 64%),
     radial-gradient(38% 34% at 50% 50%, rgba(57,255,20,.08), transparent 70%);
+  /* Decorative washes. The hue slider rotates these with the rest of the palette. */
+  --dial-wash-1:rgba(255,45,200,.16);
+  --dial-wash-2:rgba(0,240,255,.14);
+  --dial-wash-3:rgba(184,77,255,.16);
+  --dial-wash-4:rgba(255,210,50,.10);
+  --dial-wash-5:rgba(57,255,20,.10);
+  --dial-wash-6:rgba(255,80,160,.14);
+  --dial-tick-1:rgba(255,45,200,.07);
+  --dial-tick-2:rgba(0,240,255,.06);
+  --dial-tick-3:rgba(184,77,255,.07);
+  --dial-note:rgba(0,240,255,.35);
+  --dial-em:rgba(0,240,255,.7);
+  --dial-edge-1:rgba(255,45,200,.55);
+  --dial-edge-2:rgba(0,240,255,.45);
+  --dial-edge-3:rgba(184,77,255,.55);
 }
 @keyframes throb{0%,100%{opacity:1}50%{opacity:.72}}
 @keyframes neonTieSpin{to{transform:rotate(360deg)}}
@@ -32,9 +47,9 @@ html[data-theme="neon"] .stage::before{
   content:"";position:absolute;inset:4%;border-radius:50%;pointer-events:none;z-index:0;
   background:
     conic-gradient(from 210deg,
-      rgba(255,45,200,.16), rgba(0,240,255,.14), rgba(184,77,255,.16),
-      rgba(255,210,50,.10), rgba(57,255,20,.10), rgba(255,80,160,.14),
-      rgba(255,45,200,.16));
+      var(--dial-wash-1), var(--dial-wash-2), var(--dial-wash-3),
+      var(--dial-wash-4), var(--dial-wash-5), var(--dial-wash-6),
+      var(--dial-wash-1));
   filter:blur(36px) saturate(1.25);opacity:.85;mix-blend-mode:screen;
   animation:neonTieSpin 54s linear infinite;
 }
@@ -42,17 +57,17 @@ html[data-theme="neon"] .stage::after{
   content:"";position:absolute;inset:11%;border-radius:50%;pointer-events:none;z-index:0;
   background:
     repeating-conic-gradient(from 0deg,
-      rgba(255,45,200,.07) 0 8deg, transparent 8deg 22deg,
-      rgba(0,240,255,.06) 22deg 30deg, transparent 30deg 44deg,
-      rgba(184,77,255,.07) 44deg 52deg, transparent 52deg 66deg);
+      var(--dial-tick-1) 0 8deg, transparent 8deg 22deg,
+      var(--dial-tick-2) 22deg 30deg, transparent 30deg 44deg,
+      var(--dial-tick-3) 44deg 52deg, transparent 52deg 66deg);
   filter:blur(10px);opacity:.55;mix-blend-mode:screen;
   animation:neonTieSpin 90s linear infinite reverse;
 }
 html[data-theme="neon"] .stage > svg{position:relative;z-index:1}
 html[data-theme="neon"] button{border-radius:2px;text-shadow:var(--glow)}
-html[data-theme="neon"] .note{border-radius:2px;border-color:rgba(0,240,255,.35)}
-html[data-theme="neon"] .mark em{font-style:normal;color:var(--accent-lit);text-shadow:0 0 14px rgba(0,240,255,.7)}
+html[data-theme="neon"] .note{border-radius:2px;border-color:var(--dial-note)}
+html[data-theme="neon"] .mark em{font-style:normal;color:var(--accent-lit);text-shadow:0 0 14px var(--dial-em)}
 html[data-theme="neon"] .now{animation:throb 2.2s ease-in-out infinite}
 html[data-theme="neon"] header{
-  border-image:linear-gradient(90deg,rgba(255,45,200,.55),rgba(0,240,255,.45),rgba(184,77,255,.55)) 1;
+  border-image:linear-gradient(90deg,var(--dial-edge-1),var(--dial-edge-2),var(--dial-edge-3)) 1;
 }

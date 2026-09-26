@@ -81,7 +81,39 @@
     text-shadow:none;box-shadow:var(--glow)}
   button:focus-visible{outline:2px solid var(--accent-lit);outline-offset:2px}
   .step{width:2.1rem;padding:.5rem 0;text-align:center;font-size:.9rem;letter-spacing:0}
-  .themes{display:flex;flex-wrap:wrap;gap:.3rem;margin-left:.4rem;padding-left:.7rem;border-left:1px solid var(--hair);min-width:0;max-width:100%}
+  .themes{display:flex;flex-wrap:wrap;gap:.3rem;margin-left:.4rem;padding-left:.7rem;border-left:1px solid var(--hair);min-width:0;max-width:100%;align-items:center}
+  .hue-control{
+    display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;
+    flex:1 1 14rem;min-width:min(100%,14rem);max-width:100%;
+    font-family:var(--mono);font-size:.72rem;letter-spacing:var(--ui-track);
+    text-transform:uppercase;color:var(--text-dim);
+  }
+  .hue-control label{color:var(--accent);flex:0 0 auto;cursor:pointer}
+  .hue-val{flex:0 0 auto;min-width:3.2rem;color:var(--text);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+  .hue-control input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    flex:1 1 6.5rem;width:7.2rem;min-width:5.5rem;max-width:100%;
+    height:2rem;margin:0;padding:0;background:transparent;border:none;cursor:pointer;
+    touch-action:none;accent-color:var(--accent);
+  }
+  .hue-control input[type=range]:focus{outline:none;box-shadow:none}
+  .hue-control input[type=range]:focus-visible{outline:2px solid var(--accent-lit);outline-offset:2px}
+  .hue-control input[type=range]::-webkit-slider-runnable-track{
+    height:2px;background:var(--hair);border-radius:999px;
+  }
+  .hue-control input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:18px;height:18px;margin-top:-8px;border-radius:50%;
+    background:var(--accent);border:1px solid var(--plate-2);cursor:pointer;
+  }
+  .hue-control input[type=range]::-moz-range-track{
+    height:2px;background:var(--hair);border:none;border-radius:999px;
+  }
+  .hue-control input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;border-radius:50%;
+    background:var(--accent);border:1px solid var(--plate-2);cursor:pointer;
+  }
+  button.hue-reset{padding:.38rem .55rem;font-size:.62rem;letter-spacing:.06em;flex:0 0 auto}
 
   .helpwrap{position:relative}
   .help{width:1.9rem;height:1.9rem;padding:0;border-radius:50%;font-size:.72rem;letter-spacing:0;
@@ -242,6 +274,8 @@
     .note{
       position:fixed;top:5.2rem;left:1rem;right:1rem;width:auto;max-width:none;
     }
+    .hue-control{flex-basis:100%;min-width:0}
+    .hue-control input[type=range]{width:auto}
   }
 
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
@@ -270,6 +304,13 @@
         <button class="theme" data-theme-id="hallow" aria-pressed="false">Halloween</button>
         <button class="theme" data-theme-id="xmas" aria-pressed="false">Christmas</button>
         <button class="theme" data-theme-id="neon" aria-pressed="false">Neon</button>
+        <div class="hue-control">
+          <label for="hue">Hue</label>
+          <input type="range" id="hue" min="0" max="360" step="1" value="0"
+            aria-valuemin="0" aria-valuemax="360" aria-valuenow="0" aria-valuetext="0 degrees">
+          <output class="hue-val" id="hueVal" for="hue">0°</output>
+          <button type="button" class="hue-reset" id="hueReset">Reset (0)</button>
+        </div>
       </div>
       <div class="helpwrap">
         <button class="help" id="help" aria-expanded="false" aria-controls="note"
@@ -378,6 +419,7 @@
 <script src="/js/annual-dial-backup.js"></script>
 <script src="/js/annual-dial-marks.js"></script>
 <script src="/js/annual-dial-ics.js"></script>
+<script src="/js/annual-dial-hue.js"></script>
 <script>
 (() => {
   const SVG = "http://www.w3.org/2000/svg";
@@ -389,7 +431,7 @@
 
   const now0 = new Date();
   const state = {
-    view:'year', theme:'brass',
+    view:'year', theme:'brass', hue:0,
     year:now0.getFullYear(), month:now0.getMonth(),
     selected:isoOf(now0), events:{}
   };
@@ -443,47 +485,49 @@
     const t = 1 - Math.abs(2*pos - 1);
     return (265 + 125*t) % 360;
   }
+  function spinHue(h){ return annualDialHue.spin(h, state.hue); }
   function dayFill(m,d,days,weekend){
     const th = state.theme;
     if(th === 'vapor'){
-      const h = (monthHue(m) + (d/days)*14) % 360;
+      const h = spinHue((monthHue(m) + (d/days)*14) % 360);
       const l = 46 + (d/days)*22;
       return 'hsla('+h.toFixed(1)+',96%,'+l.toFixed(0)+'%,'+(weekend?.52:.30)+')';
     }
     if(th === 'columbus'){
-      const h = COLUMBUS[(m + d) % 4];
-      const warm = h === 40 || h === 32;
+      const base = COLUMBUS[(m + d) % 4];
+      const h = spinHue(base);
+      const warm = base === 40 || base === 32;
       return 'hsla('+h+','+(warm?62:48)+'%,'+(weekend?56:44)+'%,'+(weekend?.50:.30)+')';
     }
     if(th === 'hallow'){
-      const h = HALLOW[(m + d) % 5];
+      const h = spinHue(HALLOW[(m + d) % 5]);
       return 'hsla('+h+',92%,'+(weekend?62:52)+'%,'+(weekend?.50:.32)+')';
     }
     if(th === 'xmas'){
       const red = d % 2 === 1;
-      return 'hsla('+(red?353:145)+','+(red?76:54)+'%,'+(weekend?58:46)+'%,'+(weekend?.55:.34)+')';
+      return 'hsla('+spinHue(red?353:145)+','+(red?76:54)+'%,'+(weekend?58:46)+'%,'+(weekend?.55:.34)+')';
     }
     if(th === 'neon'){
-      const h = NEON[(m + d) % 4];
+      const h = spinHue(NEON[(m + d) % 4]);
       return 'hsla('+h+',100%,'+(weekend?58:48)+'%,'+(weekend?.48:.30)+')';
     }
     return weekend ? 'var(--cell-we)' : 'var(--cell-wd)';
   }
   function dayEdge(m,d,days){
     const th = state.theme;
-    if(th === 'vapor') return 'hsla('+((monthHue(m)+(d/days)*14)%360).toFixed(1)+',96%,74%,.5)';
-    if(th === 'columbus') return 'hsla('+COLUMBUS[(m+d)%4]+',62%,68%,.5)';
-    if(th === 'hallow') return 'hsla('+HALLOW[(m+d)%5]+',92%,70%,.55)';
-    if(th === 'xmas')   return 'hsla('+(d%2?353:145)+',70%,68%,.5)';
-    if(th === 'neon')   return 'hsla('+NEON[(m+d)%4]+',100%,72%,.55)';
+    if(th === 'vapor') return 'hsla('+spinHue((monthHue(m)+(d/days)*14)%360).toFixed(1)+',96%,74%,.5)';
+    if(th === 'columbus') return 'hsla('+spinHue(COLUMBUS[(m+d)%4])+',62%,68%,.5)';
+    if(th === 'hallow') return 'hsla('+spinHue(HALLOW[(m+d)%5])+',92%,70%,.55)';
+    if(th === 'xmas')   return 'hsla('+spinHue(d%2?353:145)+',70%,68%,.5)';
+    if(th === 'neon')   return 'hsla('+spinHue(NEON[(m+d)%4])+',100%,72%,.55)';
     return 'var(--hair)';
   }
   function monthLabelColor(m){
-    if(vapor())               return 'hsl('+monthHue(m).toFixed(1)+',96%,74%)';
-    if(state.theme==='columbus')return 'hsl('+COLUMBUS[m%4]+',62%,68%)';
-    if(state.theme==='hallow')return 'hsl('+HALLOW[m%5]+',92%,66%)';
+    if(vapor())               return 'hsl('+spinHue(monthHue(m)).toFixed(1)+',96%,74%)';
+    if(state.theme==='columbus')return 'hsl('+spinHue(COLUMBUS[m%4])+',62%,68%)';
+    if(state.theme==='hallow')return 'hsl('+spinHue(HALLOW[m%5])+',92%,66%)';
     if(state.theme==='xmas')  return m%2 ? 'var(--second)' : 'var(--accent-lit)';
-    if(state.theme==='neon')  return 'hsl('+NEON[m%4]+',100%,72%)';
+    if(state.theme==='neon')  return 'hsl('+spinHue(NEON[m%4])+',100%,72%)';
     return 'var(--accent)';
   }
 
@@ -511,7 +555,7 @@
   }
 
   /* ---------- storage ---------- */
-  const K_EV = 'annual-dial-entries', K_TH = 'annual-dial-theme';
+  const K_EV = 'annual-dial-entries', K_TH = 'annual-dial-theme', K_HUE = 'annual-dial-hue';
   async function storageRead(key){
     try{ const r = await window.storage.get(key); if(r && r.value != null) return r.value; }catch(e){}
     try{ return localStorage.getItem(key); }catch(e){ return null; }
@@ -530,9 +574,14 @@
       }
     }catch(e){}
     try{ const th = await storageRead(K_TH); if(th) state.theme = normalizeTheme(th); }catch(e){}
+    try{
+      const hue = await storageRead(K_HUE);
+      if(hue != null && hue !== '') state.hue = annualDialHue.normalizeHue(hue);
+    }catch(e){}
   }
   async function saveEvents(){ try{ await storageWrite(K_EV, JSON.stringify(state.events)); }catch(e){} }
   async function saveTheme(){ try{ await storageWrite(K_TH, state.theme); }catch(e){} }
+  async function saveHue(){ try{ await storageWrite(K_HUE, String(state.hue)); }catch(e){} }
 
   /* ---------- defs: bloom filter for the LED theme ---------- */
   function defs(){
@@ -904,7 +953,7 @@
     const stage = document.querySelector('.stage');
     const old = document.getElementById('lights');
     if(state.theme !== 'xmas'){ if(old) old.remove(); return; }
-    if(old) return;
+    if(old) old.remove();
 
     const W = 1200, H = 230, swags = 5, top = 12, sag = 96, perSwag = 6;
     let wire = '', lamps = '', n = 0;
@@ -924,7 +973,7 @@
         const tx = 2*mt*(cx-x0) + 2*t*(x1-cx);
         const ty = 2*mt*(cy-y0) + 2*t*(y1-cy);
         const rot = Math.atan2(ty,tx)*180/Math.PI - 90;
-        const col = BULBS[n % BULBS.length];
+        const col = annualDialHue.rotateColors(BULBS[n % BULBS.length], state.hue);
         const delay = ((n*0.37) % 3.6).toFixed(2);
 
         lamps +=
@@ -949,7 +998,7 @@
       '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">' +
         '<defs><filter id="soft" x="-60%" y="-60%" width="220%" height="220%">' +
           '<feGaussianBlur stdDeviation="11"/></filter></defs>' +
-        '<path d="'+wire+'" fill="none" stroke="#1F2A23" stroke-width="2.6" stroke-linecap="round"/>' +
+        '<path d="'+wire+'" fill="none" stroke="'+annualDialHue.rotateColors('#1F2A23', state.hue)+'" stroke-width="2.6" stroke-linecap="round"/>' +
         '<path d="'+wire+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="1" stroke-linecap="round"/>' +
         lamps +
       '</svg>';
@@ -961,7 +1010,7 @@
   function renderNote(){
     if(state.theme === 'vapor'){
       const swatches = Array.from({length:12}, (_,m)=>
-        '<i style="background:hsl('+monthHue(m).toFixed(1)+',96%,60%)"></i>').join('');
+        '<i style="background:hsl('+spinHue(monthHue(m)).toFixed(1)+',96%,60%)"></i>').join('');
       const h = monthHue(state.month).toFixed(1);
       note.innerHTML =
         '<h4>Vapor · hue by season</h4>' +
@@ -980,7 +1029,7 @@
         '<p>The glow is a real SVG filter, not a brighter fill — a Gaussian blur composited twice back under the shape, so light bleeds past the edges. Hands and the elapsed arc use the wider, softer pass so they read as the brightest thing on the panel.</p>' +
         '<p>Today burns amber at <strong>#FFD166</strong>, entry days cyan at <strong>#22E0C8</strong>.</p>';
     } else if(state.theme === 'columbus'){
-      const chips = COLUMBUS.map(h=>'<i style="background:hsl('+h+',62%,52%)"></i>').join('');
+      const chips = COLUMBUS.map(h=>'<i style="background:hsl('+spinHue(h)+',62%,52%)"></i>').join('');
       const k = state.month % 4;
       note.innerHTML =
         '<h4>Columbus · compass hues</h4>' +
@@ -991,7 +1040,7 @@
         '<p>Warm golds and ambers take a richer chroma than the cool navy and sea. Weekends lift lightness and alpha so the bands still read. Today is parchment cream and breathes on a slow lantern pulse.</p>' +
         '<p>The faint compass rose behind the plate is dressing only — CSS conic ticks, no extra DOM. '+MONTHS[state.month]+' labels sit on hue <strong>'+COLUMBUS[k]+'°</strong>.</p>';
     } else if(state.theme === 'hallow'){
-      const chips = HALLOW.map(h=>'<i style="background:hsl('+h+',92%,57%)"></i>').join('');
+      const chips = HALLOW.map(h=>'<i style="background:hsl('+spinHue(h)+',92%,57%)"></i>').join('');
       const k = (state.month + 1) % 5;
       note.innerHTML =
         '<h4>Halloween · five candy hues</h4>' +
@@ -1009,7 +1058,7 @@
         '<p>The string overhead is drawn as five quadratic swags. Each bulb is placed by evaluating the curve at fixed <em>t</em>, then rotated to the curve\'s normal so it sits square to the cord the way a real socket does.</p>' +
         '<p>Every bulb casts two blurred circles set to <code>mix-blend-mode: screen</code> — a tight one at the glass and a 104px pool below it. That\'s what actually lights the dial: the colors underneath are being added to, not covered up. Each bulb pulses on its own offset delay so the string never blinks in unison.</p>';
     } else if(state.theme === 'neon'){
-      const chips = NEON.map(h=>'<i style="background:hsl('+h+',100%,58%)"></i>').join('');
+      const chips = NEON.map(h=>'<i style="background:hsl('+spinHue(h)+',100%,58%)"></i>').join('');
       const k = (state.month + 1) % 4;
       note.innerHTML =
         '<h4>Neon · 1980s glow</h4>' +
@@ -1026,6 +1075,8 @@
         '<span class="formula">brass  #C8A45C\npatina #5FA894\nplate  #222D42 → #151D2E</span>' +
         '<p>The plate is a single radial gradient lit from slightly above center, the way a real instrument face catches light. Nothing glows, nothing moves. Switch to Vapor to see hues get calculated per day.</p>';
     }
+    note.insertAdjacentHTML('beforeend',
+      '<p>Hue rotates every color in this skin by the degrees on the slider, live as you drag, and keeps that offset when you switch themes.</p>');
   }
   function toggleNote(open){
     const on = open ?? !note.classList.contains('on');
@@ -1035,23 +1086,83 @@
   helpBtn.addEventListener('click', e=>{ e.stopPropagation(); toggleNote(); });
   document.addEventListener('click', e=>{
     if(note.classList.contains('on') && !note.contains(e.target)
-       && e.target!==helpBtn && !e.target.closest('.theme')) toggleNote(false);
+       && e.target!==helpBtn && !e.target.closest('.theme') && !e.target.closest('.hue-control')) toggleNote(false);
   });
   document.addEventListener('keydown', e=>{ if(e.key==='Escape') toggleNote(false); });
 
-  /* ---------- theme ---------- */
+  /* ---------- theme + hue ---------- */
+  const hueBase = {};
+  const hueInput = document.getElementById('hue');
+  const hueVal = document.getElementById('hueVal');
+  function syncHueControls(){
+    const n = state.hue;
+    hueInput.value = String(n);
+    hueInput.setAttribute('aria-valuenow', String(n));
+    hueInput.setAttribute('aria-valuetext', n + (n === 1 ? ' degree' : ' degrees'));
+    hueVal.textContent = n + '°';
+  }
+  function captureHueBase(theme){
+    const props = annualDialHue.PALETTE_PROPS;
+    const root = document.documentElement;
+    props.forEach(p => root.style.removeProperty(p));
+    const cs = getComputedStyle(root);
+    const base = {};
+    props.forEach(p => {
+      const v = cs.getPropertyValue(p).trim();
+      if(v) base[p] = v;
+    });
+    hueBase[theme] = base;
+  }
+  function applyHueShift(){
+    const props = annualDialHue.PALETTE_PROPS;
+    const root = document.documentElement;
+    const deg = state.hue % 360;
+    if(!deg){
+      props.forEach(p => root.style.removeProperty(p));
+      return;
+    }
+    if(!hueBase[state.theme]) captureHueBase(state.theme);
+    const base = hueBase[state.theme];
+    props.forEach(p => {
+      const raw = base[p];
+      if(!raw){ root.style.removeProperty(p); return; }
+      const next = annualDialHue.rotateColors(raw, deg);
+      if(next && next !== raw) root.style.setProperty(p, next);
+      else root.style.removeProperty(p);
+    });
+  }
+  let hueFrame = 0;
+  function paintHue(persist){
+    syncHueControls();
+    applyHueShift();
+    if(persist) saveHue();
+    if(hueFrame) return;
+    hueFrame = requestAnimationFrame(()=>{
+      hueFrame = 0;
+      buildLights();
+      draw();
+    });
+  }
+  function setHue(next, persist){
+    state.hue = annualDialHue.normalizeHue(next);
+    paintHue(persist);
+  }
   function applyTheme(id, persist){
     id = normalizeTheme(id);
     state.theme = id;
     document.documentElement.setAttribute('data-theme', id);
     document.querySelectorAll('.theme').forEach(b=>
       b.setAttribute('aria-pressed', b.dataset.themeId===id));
+    applyHueShift();
+    syncHueControls();
     buildLights();
     draw();
     if(persist) saveTheme();
   }
   document.querySelectorAll('.theme').forEach(b=>
     b.addEventListener('click', ()=>applyTheme(b.dataset.themeId, true)));
+  hueInput.addEventListener('input', ()=>setHue(hueInput.value, true));
+  document.getElementById('hueReset').addEventListener('click', ()=>setHue(0, true));
 
   /* ---------- wiring ---------- */
   function draw(){
