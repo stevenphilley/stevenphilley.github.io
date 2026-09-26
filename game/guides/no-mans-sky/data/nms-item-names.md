@@ -6,7 +6,9 @@ A slot id may start with `^` and may end in `#` plus a procedural seed (`^UP_LAS
 
 Installed technologies sometimes use a `YOURSHIP_`, `YOURSUIT_`, `YOURMULTI_`, `YOURFREIG_`, or `YOURVEHIC_` alias that is not a row in the technology table. Those aliases follow the list in nmstoolkit `icon_provider.py` (for example `YOURSHIP_PULSEDRIVE` is `SHIPJUMP1`, Pulse Engine).
 
-An id with no English name is reworded (`NOT_A_REAL_ITEM` becomes “Not A Real Item”). The save id stays in the tooltip and beside the name. Nothing is invented for that case.
+An id with no English name is reworded. The caret is stripped, underscores become spaces, and a digit is split from the letters around it (`NOT_A_CROP_9` becomes “Not A Crop 9”). The save id stays in the tooltip. It is not written next to the name. Nothing is invented for that case.
+
+Harvested crops and their seeds are in this file. `PLANT_TOXIC` is Fungal Mould and `SNOWPLANT` is the Frostwort seed. Gravitino Ball is `GRAVBALL`. There is no `PLANT_GRAV` id in the substance or product table.
 
 `technology.json` (NMS-Handbook, 20 February 2026, Remnant 6.2) is a second source for a display name. When a save id is an alias of a craftable technology or product in that catalog, and this file has no row, the logistics planner and the map use the catalog’s English name. That covers `GRAVITYGUN` (Gravitino Coil), `VEHICLE_SCOPE` (Cyclops Scope), `EXO_PLOUGH` (Excavation Blade), and `T_SHIP_ATLAS` (Aeron Starship Trail). The generated label `Procedural module …` is not an in-game name and is not shown. `SPIDERBRAIN` is still only the id in both sources, so it stays unmapped.
 

@@ -44,7 +44,18 @@
     EX_GREEN: "ammonia",
     EX_BLUE: "dioxite",
     CREATURE1: "mordite",
+    // Harvested flora. Substance ids from the reality substance table
+    // (nmstoolkit items.json, ids ^PLANT_*; wiki Item Id List). The
+    // plantable seed is a different product id (SNOWPLANT, not PLANT_SNOW).
+    // Gravitino Ball is the product GRAVBALL, not a PLANT_GRAV substance.
     PLANT_POOP: "faecium",
+    PLANT_TOXIC: "fungal-mould",
+    PLANT_SNOW: "frost-crystal",
+    PLANT_HOT: "solanium",
+    PLANT_DUST: "cactus-flesh",
+    PLANT_LUSH: "star-bulb",
+    PLANT_RADIO: "gamma-root",
+    PLANT_WATER: "kelp-sac",
     JUNK: "rusted-metal",
     CASING: "metal-plating",
     CARBON_SEAL: "hermetic-seal",
@@ -171,7 +182,7 @@
   function splitItemId(raw) {
     var original = text(raw);
     var base = original;
-    if (base.charAt(0) === "^") base = base.slice(1);
+    while (base.charAt(0) === "^") base = base.slice(1);
     var hash = base.indexOf("#");
     var seed = "";
     if (hash !== -1) {
@@ -207,9 +218,15 @@
   }
 
   function humanizeId(raw) {
-    var base = splitItemId(raw).base || text(raw);
-    var words = base.replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
-    if (!words) return text(raw);
+    var base = splitItemId(raw).base || text(raw).replace(/^\^+/, "");
+    var words = base
+      .replace(/[_-]+/g, " ")
+      .replace(/([A-Za-z])(\d)/g, "$1 $2")
+      .replace(/(\d)([A-Za-z])/g, "$1 $2")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+    if (!words) return "";
     return words.replace(/\b([a-z])/g, function (ch) { return ch.toUpperCase(); });
   }
 
@@ -294,16 +311,16 @@
 
   function itemLabel(item, index) {
     if (!item) return "";
-    if (item.name) return item.name;
+    var raw = item.rawId || item.id || "";
+    // A stored name that is still the caret id is not a display name.
+    if (item.name && String(item.name).indexOf("^") === -1) return item.name;
     var direct = index && index.byId && index.byId[item.id];
     var directName = usableNodeName(direct, item);
-    if (directName) return directName;
+    if (directName && directName.indexOf("^") === -1) return directName;
     var rec = recordForItem(item);
-    if (rec && rec.name) return rec.name;
+    if (rec && rec.name && String(rec.name).indexOf("^") === -1) return rec.name;
     var aliasName = usableNodeName(catalogNode(item, index), item);
-    if (aliasName) return aliasName;
-    var raw = item.rawId || item.id || "";
-    if (!raw) return "";
+    if (aliasName && aliasName.indexOf("^") === -1) return aliasName;
     return humanizeId(raw);
   }
 
@@ -797,7 +814,10 @@
   // part IDs, so they are not counted unless a raw part is labeled by hand.
   //
   // GcPersistentBaseEntry (MBINCompiler) stores ObjectID, Timestamp, UserData,
-  // Position, Up, At, and Message. UserData is a seed, not a substance id.
+  // Position, Up, At, and Message. A real save prefixes ObjectID with ^
+  // (^SNOWPLANT, ^BASE_FLAG), the same marker inventory slots use. Lookup
+  // strips that marker and any # suffix before matching the part id.
+  // UserData is a placement seed, not a substance id.
   // The save does not record which hotspot resource an extractor pulls, the
   // hotspot class, the live output, or which tray a plant sits in.
   //
@@ -865,11 +885,15 @@
     ["mordite", "Mordite"], ["faecium", "Faecium"], ["kelp-sac", "Kelp Sac"], ["pugneum", "Pugneum"]
   ];
 
-  function objectIdOf(entry) {
+  function rawObjectIdOf(entry) {
     if (!entry || typeof entry !== "object") return "";
     var raw = entry.ObjectID != null ? entry.ObjectID : entry.objectId;
     if (raw && typeof raw === "object") raw = raw.Value || raw.value || "";
-    return text(raw).toUpperCase();
+    return text(raw);
+  }
+
+  function objectIdOf(entry) {
+    return splitItemId(rawObjectIdOf(entry)).base.toUpperCase();
   }
 
   function productionId(glyphs, baseName, objectId, index) {
@@ -900,13 +924,16 @@
         strictBase: true
       });
       var counts = Object.create(null);
+      var rawOf = Object.create(null);
       list.forEach(function (entry) {
-        var id = objectIdOf(entry);
+        var rawId = rawObjectIdOf(entry);
+        var id = splitItemId(rawId).base.toUpperCase();
         if (!id || id.indexOf("BASE_") === 0) return;
         var part = MINING_PARTS[id] || CONTAINER_PARTS[id] || CROP_PARTS[id];
         var unknownCrop = !part && /PLANT$/.test(id) && id !== "WATERPLANT";
         if (!part && !unknownCrop) return;
         counts[id] = (counts[id] || 0) + 1;
+        if (!rawOf[id]) rawOf[id] = rawId || id;
       });
       Object.keys(counts).forEach(function (id) {
         var mining = MINING_PARTS[id];
@@ -917,6 +944,7 @@
           id: productionId(geo && geo.glyphs, baseName, id, index),
           source: "save",
           objectId: id,
+          rawObjectId: rawOf[id] || id,
           kind: kind,
           count: counts[id],
           geo: geo,
@@ -966,8 +994,12 @@
     });
   }
 
+  function partKey(objectId) {
+    return splitItemId(objectId).base.toUpperCase();
+  }
+
   function cropSpec(objectId) {
-    return CROP_PARTS[text(objectId).toUpperCase()] || null;
+    return CROP_PARTS[partKey(objectId)] || null;
   }
 
   function siteProductId(site) {
@@ -1030,7 +1062,8 @@
 
   function normalizeSite(site) {
     if (!site || typeof site !== "object") return null;
-    var objectId = text(site.objectId).toUpperCase();
+    var original = text(site.rawObjectId) || text(site.objectId);
+    var objectId = splitItemId(text(site.objectId)).base.toUpperCase() || splitItemId(original).base.toUpperCase();
     var id = text(site.id);
     var count = posInt(site.count);
     var kind = text(site.kind);
@@ -1040,21 +1073,26 @@
     var containers = { tray: 1, "large-tray": 1, biodome: 1, standing: 1, outdoor: 1 };
     var container = text(site.container);
     if (!containers[container]) container = "";
+    var crop = CROP_PARTS[objectId];
+    var knownPart = !!(crop || MINING_PARTS[objectId] || CONTAINER_PARTS[objectId]);
+    var resourceId = text(site.resourceId);
+    if (crop && !site.resourceUser && !resourceId) resourceId = crop.product;
     return {
       id: id,
       source: site.source === "manual" ? "manual" : "save",
       objectId: objectId,
+      rawObjectId: original || objectId,
       kind: kind,
       count: count,
       geo: site.geo && site.geo.glyphs ? site.geo : null,
-      resourceId: text(site.resourceId),
+      resourceId: resourceId,
       resourceUser: !!site.resourceUser,
       hotspotClass: klass,
       container: container,
       containerUser: !!site.containerUser,
       label: text(site.label),
       labelUser: !!site.labelUser,
-      known: site.known !== false
+      known: knownPart ? true : site.known !== false
     };
   }
 
@@ -1111,12 +1149,12 @@
     var q = loose(query || "");
     if (!q || !site) return false;
     var crop = cropSpec(site.objectId);
-    var mining = MINING_PARTS[site.objectId];
+    var mining = MINING_PARTS[partKey(site.objectId)];
     var product = siteProductId(site);
     var node = index && index.byId ? index.byId[product] : null;
     var productItem = { id: product, rawId: product };
     var hay = loose([
-      site.objectId, site.label, site.kind, product,
+      site.objectId, site.rawObjectId, site.label, site.kind, product,
       crop && crop.name, crop && crop.productName,
       mining && mining.name,
       node && node.name,
@@ -1146,16 +1184,30 @@
   }
 
   function describeSite(site, index) {
-    var crop = cropSpec(site && site.objectId);
-    var mining = MINING_PARTS[site && site.objectId];
-    var box = CONTAINER_PARTS[site && site.objectId];
+    var objectId = partKey(site && site.objectId);
+    var crop = cropSpec(objectId);
+    var mining = MINING_PARTS[objectId];
+    var box = CONTAINER_PARTS[objectId];
     var product = siteProductId(site);
     var node = index && index.byId ? index.byId[product] : null;
+    var raw = (site && (site.rawObjectId || site.objectId)) || "";
+    var name = (site && site.label) || (crop && crop.name) || (mining && mining.name) || (box && box.name) || "";
+    if (!name && (objectId || raw)) {
+      name = itemLabel({ id: objectId || raw, rawId: raw || objectId }, index);
+    }
+    if (!name || String(name).indexOf("^") !== -1) name = humanizeId(raw || objectId) || "Crop";
+    var productName = (node && node.name) || (crop && crop.productName) || "";
+    if (!productName && product) productName = itemLabel({ id: product, rawId: product }, index);
+    if (productName && String(productName).indexOf("^") !== -1) productName = humanizeId(product);
+    var titleBits = [];
+    if (productName && productName !== name) titleBits.push(productName);
+    if (raw && raw !== name) titleBits.push(raw);
     return {
       site: site,
-      name: (site && site.label) || (crop && crop.name) || (mining && mining.name) || (box && box.name) || (site && site.objectId) || "",
+      name: name,
+      title: titleBits.join(" · "),
       product: product,
-      productName: (node && node.name) || (crop && crop.productName) || itemLabel({ id: product, rawId: product }, index) || product,
+      productName: productName,
       rate: rateOf(site),
       storage: storageOf(site),
       crop: crop,

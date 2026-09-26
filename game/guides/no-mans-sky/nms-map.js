@@ -1125,10 +1125,10 @@
     var order = [];
     (sites || []).forEach(function (site) {
       if (!site || site.kind !== "crop") return;
-      var described = api && api.describeSite ? api.describeSite(site, index) : { name: site.objectId };
-      var label = (site.known === false && site.label) ? site.label : (described.name || site.objectId || "Crop");
+      var described = api && api.describeSite ? api.describeSite(site, index) : { name: "", title: "" };
+      var label = described.name || "Crop";
       if (!groups[label]) {
-        groups[label] = { label: label, count: 0, places: [] };
+        groups[label] = { label: label, title: described.title || "", count: 0, places: [] };
         order.push(label);
       }
       groups[label].count += site.count || 0;
@@ -1294,7 +1294,7 @@
       });
       cropRowsFor(api.sitesAtPlace(store, place, "base") || [], api, index).forEach(function (row) {
         if (!cropMap[row.label]) {
-          cropMap[row.label] = { label: row.label, count: 0, places: [] };
+          cropMap[row.label] = { label: row.label, title: row.title || "", count: 0, places: [] };
           cropOrder.push(row.label);
         }
         cropMap[row.label].count += row.count;
@@ -1722,7 +1722,7 @@
       crops.forEach(function (site) {
         var row = api.describeSite(site, catalogIdx);
         var where = site.geo && site.geo.baseName ? site.geo.baseName + " · " : "";
-        html += '<div class="place-prod"><strong>' + esc(where + (site.known ? row.name : site.objectId)) + "</strong> · " + esc(site.count);
+        html += '<div class="place-prod" title="' + esc(row.title || "") + '"><strong>' + esc(where + row.name) + "</strong> · " + esc(site.count);
         if (!site.known) {
           html += '<div><label>Label <input type="text" data-prod="label" data-id="' + esc(site.id) + '" value="' + esc(site.label) + '" placeholder="Crop name"></label></div>';
           html += '<div><label>Harvest <select data-prod="resourceId" data-id="' + esc(site.id) + '">' + resourceOptions(site.resourceId) + "</select></label>";
@@ -1768,8 +1768,6 @@
             var meta = api.itemMeta ? api.itemMeta(item, catalogIndex) : { label: api.itemLabel(item, catalogIndex), title: "", category: "", known: true, raw: item.rawId || "" };
             var stack = item.maxStack ? (item.stackApproximate ? " ~" : " ") + "max " + item.maxStack : "";
             var extra = meta.category ? " <span class=\"place-meta\">" + esc(meta.category) + "</span>" : "";
-            if (!meta.known && meta.raw) extra += " <span class=\"place-meta\">" + esc(meta.raw) + "</span>";
-            else if (item.rawId && item.rawId !== item.id && item.rawId !== meta.label) extra += " <span class=\"place-meta\">" + esc(item.rawId) + "</span>";
             return "<li title=\"" + esc(meta.title || "") + "\"><span>" + esc(meta.label) + extra + "</span><span>" + esc(item.qty) + esc(stack) + "</span></li>";
           }).join("");
           var cap = loc.slotCapacity ? (loc.slotApproximate ? "~" : "") + loc.slotCapacity + " slots" : "capacity not in the save";
@@ -1907,7 +1905,7 @@
           var breakdown = (row.places || []).map(function (entry) {
             return "<li><span>" + esc(entry.name) + "</span><span>×" + esc(formatQty(entry.count)) + "</span></li>";
           }).join("");
-          return "<details class=\"place-loc\"><summary><span>" + esc(cropChipText(row)) + "</span></summary><ul>" + breakdown + "</ul></details>";
+          return "<details class=\"place-loc\" title=\"" + esc(row.title || "") + "\"><summary><span>" + esc(cropChipText(row)) + "</span></summary><ul>" + breakdown + "</ul></details>";
         }).join("");
       }
       html += "<h3 class=\"place-sub\">Open shortfalls</h3>";
@@ -2948,7 +2946,7 @@
         html += '<span class="chip"><span class="chip-k">Mining</span> ' + esc(miningChipText(row)) + "</span>";
       });
       (summary.crops || []).forEach(function (row) {
-        html += '<span class="chip"><span class="chip-k">Harvest</span> ' + esc(cropChipText(row)) + "</span>";
+        html += '<span class="chip" title="' + esc(row.title || "") + '"><span class="chip-k">Harvest</span> ' + esc(cropChipText(row)) + "</span>";
       });
       var inv = inventoryChipText(summary);
       if (inv) html += '<span class="chip"><span class="chip-k">Inventory</span> ' + esc(inv) + "</span>";

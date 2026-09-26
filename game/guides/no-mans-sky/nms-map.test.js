@@ -383,6 +383,23 @@ var uthmiGlance = api.summarizeBase(uthmiPlace, aggStore, logistics, null, "");
 eq(api.miningChipText(uthmiGlance.mining[0]), "Copper ×4 · ~2,500/h", "a named class S mine shows an approximate rate");
 eq(api.cropChipText(uthmiGlance.crops[0]), "Frostwort ×24", "crop chips use the plant count");
 eq(api.cropChipText(uthmiGlance.crops[1]), "Solar Vine ×12", "a second crop is its own chip");
+var caretCrop = logistics.normalize({
+  source: { fileName: "sample.json" },
+  locations: [],
+  production: [{
+    id: "caret",
+    objectId: "^TOXICPLANT",
+    rawObjectId: "^TOXICPLANT",
+    kind: "crop",
+    count: 6,
+    geo: { glyphs: "2205D058AC1D", baseName: "Uthmi", strictBase: true },
+    known: false
+  }]
+});
+var caretGlance = api.summarizeBase(uthmiPlace, caretCrop, logistics, null, "");
+eq(api.cropChipText(caretGlance.crops[0]), "Fungal Cluster ×6", "a caret plant id is named, not shown raw");
+assert(caretGlance.crops[0].label.indexOf("^") === -1, "the harvest label has no caret");
+assert(caretGlance.crops[0].title.indexOf("^TOXICPLANT") !== -1, "the harvest tooltip keeps the save id");
 assert(api.inventoryChipText(uthmiGlance).indexOf("4 stacks") === 0, "inventory starts with the stack count");
 assert(api.inventoryChipText(uthmiGlance).indexOf("Chromatic Metal 9,999") !== -1, "the largest stack is listed");
 assert(api.inventoryChipText(uthmiGlance).indexOf("+1 more") !== -1, "items past the first three are counted");

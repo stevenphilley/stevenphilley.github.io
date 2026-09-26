@@ -48,8 +48,6 @@
     var meta = NmsLogistics.itemMeta(item, index);
     var bits = "<span title=\"" + esc(meta.title) + "\">" + esc(meta.label) + "</span>";
     if (meta.category) bits += " <span class=\"note\">" + esc(meta.category) + "</span>";
-    if (!meta.known && meta.raw) bits += " <span class=\"note\">" + esc(meta.raw) + "</span>";
-    else if (item.rawId && item.rawId !== item.id && item.rawId !== meta.label) bits += " <span class=\"note\">" + esc(item.rawId) + "</span>";
     return bits;
   }
 
@@ -405,7 +403,7 @@
     mount.innerHTML = order.map(function (key) {
       var body = groups[key].map(function (site) {
         var row = NmsLogistics.describeSite(site, index);
-        var bits = "<h3>" + esc(row.name) + "</h3><p>" + esc(site.count) + " · " + esc(site.objectId) + (site.known ? "" : " · raw id") + "</p>";
+        var bits = "<h3 title=\"" + esc(row.title || "") + "\">" + esc(row.name) + "</h3><p>" + esc(site.count) + "</p>";
         if (site.kind === "mineral" || site.kind === "gas" || site.kind === "amu" || !site.known) {
           bits += '<p><label class="field">Resource<select data-prod="resourceId" data-id="' + esc(site.id) + '">' + choiceOptions(site.resourceId) + "</select></label> " +
             (site.resourceUser ? "user-entered" : "not in the save") + "</p>";
