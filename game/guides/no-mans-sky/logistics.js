@@ -1867,6 +1867,38 @@
     return { ok: true, store: applied.store };
   }
 
+  function undoTransfer(store, demandId, moveId) {
+    store = normalize(store);
+    var demandKey = text(demandId);
+    var moveKey = text(moveId);
+    var found = null;
+    store.projects.forEach(function (project) {
+      project.demands.forEach(function (demand) {
+        if (demand.id !== demandKey) return;
+        demand.doneTransfers.forEach(function (move) {
+          if (move.id === moveKey) found = move;
+        });
+      });
+    });
+    if (!found) return { ok: false, error: "missing", store: store };
+    var applied = applyTransfer(store, {
+      fromId: found.toId,
+      toId: found.fromId,
+      itemId: found.itemId,
+      qty: found.qty
+    });
+    if (!applied.ok) return { ok: false, error: applied.error || "missing", store: store };
+    applied.store.projects.forEach(function (project) {
+      project.demands.forEach(function (demand) {
+        if (demand.id !== demandKey) return;
+        demand.doneTransfers = demand.doneTransfers.filter(function (move) {
+          return move.id !== moveKey;
+        });
+      });
+    });
+    return { ok: true, store: applied.store };
+  }
+
   function addressMatches(geo, place, mode) {
     if (!geo || !place) return false;
     var gg = String(geo.glyphs || "").toUpperCase();
@@ -2141,6 +2173,7 @@
     suggestTransfers: suggestTransfers,
     applyTransfer: applyTransfer,
     completeTransfer: completeTransfer,
+    undoTransfer: undoTransfer,
     expandRecipe: expandRecipe,
     chooseRecipe: chooseRecipe,
     seedRecipe: seedRecipe,

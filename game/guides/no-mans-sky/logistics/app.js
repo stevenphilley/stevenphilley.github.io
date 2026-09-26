@@ -348,7 +348,9 @@
   function movedHtml(demand) {
     return ((demand && demand.doneTransfers) || []).map(function (move) {
       var from = NmsLogistics.findLocation(store, move.fromId);
-      return '<p class="done">Moved ' + esc(move.qty) + " from " + esc(from ? from.name : move.fromId) + "</p>";
+      return '<label class="done" title="Click to uncheck">' +
+        '<input type="checkbox" checked data-done="' + esc(move.id) + '" data-transfer="' + esc(demand.id) + '">' +
+        "<span>Moved " + esc(move.qty) + " from " + esc(from ? from.name : move.fromId) + "</span></label>";
     }).join("");
   }
 
@@ -1204,7 +1206,27 @@
   checklistEl.addEventListener("change", function (ev) {
     var box = ev.target;
     if (!box || !box.getAttribute || !box.getAttribute("data-transfer")) return;
-    var result = NmsLogistics.completeTransfer(store, box.getAttribute("data-transfer"), {
+    var demandId = box.getAttribute("data-transfer");
+    var doneId = box.getAttribute("data-done");
+    if (doneId) {
+      if (box.checked) return;
+      var undone = NmsLogistics.undoTransfer(store, demandId, doneId);
+      if (!undone.ok) {
+        box.checked = true;
+        setStatus(undone.error === "short"
+          ? "That transfer could not be undone. The destination no longer holds that stack."
+          : "That transfer could not be undone.");
+        return;
+      }
+      store = undone.store;
+      persist();
+      render();
+      showTab("plan");
+      setStatus("Transfer unchecked. The inventory moved back. Nothing was uploaded.");
+      return;
+    }
+    if (!box.checked) return;
+    var result = NmsLogistics.completeTransfer(store, demandId, {
       fromId: box.getAttribute("data-from"),
       toId: box.getAttribute("data-to"),
       itemId: box.getAttribute("data-item"),

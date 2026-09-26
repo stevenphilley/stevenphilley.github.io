@@ -90,6 +90,38 @@ assert(checked.ok, "ticking a transfer updates the inventory");
 eq(checked.store.projects[0].demands[0].doneTransfers.length, 1, "the checklist keeps the completed transfer");
 eq(checked.store.projects[0].demands[0].doneTransfers[0].qty, 50, "the completed transfer records the quantity");
 
+var moveId = checked.store.projects[0].demands[0].doneTransfers[0].id;
+var undone = logistics.undoTransfer(checked.store, "d1", moveId);
+assert(undone.ok, "unticking a transfer puts the stock back");
+eq(undone.store.projects[0].demands[0].doneTransfers.length, 0, "unticking removes the completed transfer");
+eq(logistics.qtyOf(logistics.findLocation(undone.store, "box3"), "chromatic-metal"), 50, "unticking restores the source hold");
+eq(logistics.qtyOf(logistics.findLocation(undone.store, "freighter"), "chromatic-metal"), 30, "unticking restores the target hold");
+var recounted = logistics.shortfallFor(undone.store, undone.store.projects[0].demands[0]);
+eq(recounted.atTarget, 30, "unticking recomputes stock already at the target");
+eq(recounted.elsewhere, 62, "unticking recomputes stock in other holds");
+eq(recounted.need, 70, "unticking recomputes what the target is still short");
+eq(recounted.shortfall, 8, "unticking recomputes what is missing from every hold");
+eq(checked.store.projects[0].demands[0].doneTransfers.length, 1, "unticking does not mutate the checked store");
+var missingToggle = logistics.undoTransfer(checked.store, "d1", "mov-nope");
+assert(!missingToggle.ok && missingToggle.error === "missing", "unticking an unknown transfer is refused");
+eq(checked.store.projects[0].demands[0].doneTransfers.length, 1, "a refused untick leaves the checklist mark");
+var drained = logistics.normalize(JSON.parse(JSON.stringify(checked.store)));
+logistics.findLocation(drained, "freighter").items = [];
+var blocked = logistics.undoTransfer(drained, "d1", drained.projects[0].demands[0].doneTransfers[0].id);
+assert(!blocked.ok && blocked.error === "short", "unticking is refused when the destination no longer holds the stack");
+eq(blocked.store.projects[0].demands[0].doneTransfers.length, 1, "a refused untick keeps the checklist mark");
+eq(logistics.qtyOf(logistics.findLocation(drained, "box3"), "chromatic-metal"), 0, "a refused untick leaves the source untouched");
+var toggleDisk = memoryStorage();
+logistics.saveStore(toggleDisk, checked.store);
+var reloadedChecked = logistics.loadStore(toggleDisk);
+eq(reloadedChecked.projects[0].demands[0].doneTransfers.length, 1, "storage keeps a ticked transfer ticked");
+var savedUndo = logistics.undoTransfer(reloadedChecked, "d1", reloadedChecked.projects[0].demands[0].doneTransfers[0].id);
+assert(savedUndo.ok, "a saved transfer can be unticked");
+var savedOpen = logistics.saveStore(toggleDisk, savedUndo.store);
+eq(logistics.loadStore(toggleDisk).projects[0].demands[0].doneTransfers.length, 0, "storage keeps an unticked transfer unticked");
+eq(logistics.qtyOf(logistics.findLocation(savedOpen, "box3"), "chromatic-metal"), 50, "storage keeps the restored source quantity");
+eq(logistics.qtyOf(logistics.findLocation(savedOpen, "freighter"), "chromatic-metal"), 30, "storage keeps the restored target quantity");
+
 var warp = logistics.expandRecipe(catalog, "warp-cell", 1, {});
 assert(!warp.error, "warp cell expands");
 eq(warp.raw, {
