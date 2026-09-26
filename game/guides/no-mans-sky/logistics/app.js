@@ -11,6 +11,10 @@
   var sortKey = "item";
   var sortDir = "asc";
   var editing = null;
+  var editingProjectId = null;
+  var projectDraft = null;
+  var focusProjectName = false;
+  var skipDraftCapture = false;
   var selectionGlyphs = [];
 
   var statusEl = document.getElementById("status");
@@ -302,13 +306,377 @@
     }).join("");
   }
 
+  function catalogOptions(query) {
+    if (!catalog) return [];
+    var nodes = (typeof NmsRefine !== "undefined" && NmsRefine.searchItems)
+      ? NmsRefine.searchItems(catalog, query || "")
+      : (catalog.nodes || []);
+    return optionsFrom(nodes);
+  }
+
+  function optionList(options, current, placeholder, labelFor) {
+    var html = '<option value="">' + esc(placeholder) + "</option>";
+    var seen = false;
+    (options || []).forEach(function (opt) {
+      if (opt.value === current) seen = true;
+      html += '<option value="' + esc(opt.value) + '"' + (opt.value === current ? " selected" : "") + ">" + esc(opt.label) + "</option>";
+    });
+    if (current && !seen) {
+      var label = labelFor ? labelFor(current) : current;
+      html += '<option value="' + esc(current) + '" selected>' + esc(label) + "</option>";
+    }
+    return html;
+  }
+
+  function holdOptionsHtml(current, placeholder) {
+    return optionList(locationOptions(), current, placeholder || "Target hold", function (id) {
+      var loc = NmsLogistics.findLocation(store, id);
+      return loc ? loc.name : "missing hold";
+    });
+  }
+
+  function itemOptionsHtml(current, query) {
+    return optionList(catalogOptions(query || ""), current, "Choose", nodeName);
+  }
+
+  function pencilButton(projectId) {
+    var source = document.getElementById("edit-demand-project");
+    var svg = source ? source.innerHTML : "";
+    return '<button type="button" class="icon-btn" data-edit-project="' + esc(projectId) + '" aria-label="Edit project" title="Edit project">' + svg + "</button>";
+  }
+
+  function movedHtml(demand) {
+    return ((demand && demand.doneTransfers) || []).map(function (move) {
+      var from = NmsLogistics.findLocation(store, move.fromId);
+      return '<p class="done">Moved ' + esc(move.qty) + " from " + esc(from ? from.name : move.fromId) + "</p>";
+    }).join("");
+  }
+
+  function fieldValue(root, name) {
+    var el = root.querySelector('[data-field="' + name + '"]');
+    return el ? el.value : "";
+  }
+
+  function captureProjectDraft() {
+    var form = document.getElementById("form-edit-project");
+    if (!form || !projectDraft) return;
+    projectDraft.name = fieldValue(form, "name");
+    projectDraft.recipeFor = fieldValue(form, "recipeFor");
+    projectDraft.find = fieldValue(form, "find");
+    projectDraft.addItem = fieldValue(form, "addItem");
+    projectDraft.addLoc = fieldValue(form, "addLoc");
+    projectDraft.addQty = fieldValue(form, "addQty");
+    projectDraft.addNote = fieldValue(form, "addNote");
+    projectDraft.seedQty = fieldValue(form, "seedQty");
+    projectDraft.seedLoc = fieldValue(form, "seedLoc");
+    var demands = [];
+    Array.prototype.forEach.call(form.querySelectorAll("[data-demand-index]"), function (row) {
+      demands.push({
+        id: row.getAttribute("data-demand-id") || "",
+        itemId: fieldValue(row, "itemId"),
+        locationId: fieldValue(row, "locationId"),
+        qty: fieldValue(row, "qty"),
+        note: fieldValue(row, "note")
+      });
+    });
+    projectDraft.demands = demands;
+  }
+
+  function draftFromProject(project) {
+    return {
+      id: project.id,
+      name: project.name,
+      recipeFor: project.recipeFor || "",
+      demands: (project.demands || []).map(function (demand) {
+        return {
+          id: demand.id,
+          itemId: demand.itemId,
+          locationId: demand.locationId,
+          qty: String(demand.qty),
+          note: demand.note || ""
+        };
+      }),
+      find: "",
+      addItem: "",
+      addLoc: "",
+      addQty: "1",
+      addNote: "",
+      seedQty: "1",
+      seedLoc: "",
+      error: ""
+    };
+  }
+
+  function redrawPlan() {
+    skipDraftCapture = true;
+    render();
+    showTab("plan");
+  }
+
+  function focusProjectEditor() {
+    if (!focusProjectName) return;
+    var panel = document.getElementById("panel-plan");
+    if (panel && panel.hidden) return;
+    var nameInput = document.querySelector('#form-edit-project [data-field="name"]');
+    if (!nameInput) return;
+    focusProjectName = false;
+    nameInput.focus();
+    if (typeof nameInput.select === "function") nameInput.select();
+    var section = nameInput.closest("section");
+    if (section && section.scrollIntoView) section.scrollIntoView({ block: "nearest" });
+  }
+
+  function beginEditProject(id) {
+    var project = null;
+    store.projects.forEach(function (row) { if (row.id === id) project = row; });
+    if (!project) {
+      setStatus("Choose a project to edit.");
+      return;
+    }
+    if (editingProjectId === id && document.getElementById("form-edit-project")) {
+      focusProjectName = true;
+      showTab("plan");
+      return;
+    }
+    var form = document.getElementById("form-edit-project");
+    if (form) form.remove();
+    editingProjectId = project.id;
+    projectDraft = draftFromProject(project);
+    skipDraftCapture = true;
+    render();
+    focusProjectName = true;
+    showTab("plan");
+    setStatus("Editing " + project.name + ".");
+  }
+
+  function cancelEditProject() {
+    editingProjectId = null;
+    projectDraft = null;
+    focusProjectName = false;
+    render();
+    showTab("plan");
+    setStatus("Edit cancelled.");
+  }
+
+  function saveEditProject() {
+    if (!projectDraft || !editingProjectId) return;
+    captureProjectDraft();
+    var name = projectDraft.name.trim();
+    if (!name) {
+      projectDraft.error = "A project needs a name.";
+      skipDraftCapture = true;
+      render();
+      focusProjectName = true;
+      showTab("plan");
+      return;
+    }
+    var demands = [];
+    var i;
+    for (i = 0; i < projectDraft.demands.length; i++) {
+      var row = projectDraft.demands[i];
+      var qty = NmsLogistics.posInt(row.qty);
+      if (!qty || !row.itemId || !row.locationId) {
+        projectDraft.error = "Each demand needs a hold, an item, and a quantity.";
+        skipDraftCapture = true;
+        render();
+        showTab("plan");
+        return;
+      }
+      demands.push({
+        id: row.id,
+        itemId: row.itemId,
+        locationId: row.locationId,
+        qty: qty,
+        note: row.note || ""
+      });
+    }
+    var result = NmsLogistics.updateProject(store, editingProjectId, {
+      name: name,
+      recipeFor: projectDraft.recipeFor,
+      demands: demands
+    });
+    if (!result.ok) {
+      projectDraft.error = result.error === "name"
+        ? "A project needs a name."
+        : "Each demand needs a hold, an item, and a quantity.";
+      skipDraftCapture = true;
+      render();
+      if (result.error === "name") focusProjectName = true;
+      showTab("plan");
+      return;
+    }
+    var savedName = result.project.name;
+    store = result.store;
+    editingProjectId = null;
+    projectDraft = null;
+    persist();
+    render();
+    showTab("plan");
+    setStatus("Saved " + savedName + ".");
+  }
+
+  function addDraftDemand(itemId, locationId, qty, note) {
+    if (!projectDraft) return;
+    captureProjectDraft();
+    var amount = NmsLogistics.posInt(qty);
+    if (!amount || !itemId || !locationId) {
+      projectDraft.error = "Choose a hold, an item, and a quantity.";
+      skipDraftCapture = true;
+      render();
+      showTab("plan");
+      return;
+    }
+    projectDraft.demands.push({
+      id: "",
+      itemId: itemId,
+      locationId: locationId,
+      qty: String(amount),
+      note: note || ""
+    });
+    projectDraft.addItem = "";
+    projectDraft.addNote = "";
+    projectDraft.addQty = "1";
+    projectDraft.error = "";
+    redrawPlan();
+    setStatus("Demand added. Save the project to keep it.");
+  }
+
+  function seedDraft(kind) {
+    if (!projectDraft) return;
+    captureProjectDraft();
+    var itemId = projectDraft.addItem;
+    var qty = NmsLogistics.posInt(projectDraft.seedQty);
+    var locationId = projectDraft.seedLoc;
+    if (!itemId || !qty || !locationId) {
+      projectDraft.error = "Choose an item, a quantity, and a hold.";
+      skipDraftCapture = true;
+      render();
+      showTab("plan");
+      return;
+    }
+    var seeded = null;
+    if (kind === "raw") {
+      if (!techCatalog || !sourceGraph || typeof NmsCraft === "undefined") {
+        projectDraft.error = "The technology catalog has not loaded.";
+        skipDraftCapture = true;
+        render();
+        showTab("plan");
+        return;
+      }
+      var expanded = NmsCraft.expand(techCatalog, sourceGraph, itemId, qty);
+      seeded = NmsLogistics.seedRawBill(NmsLogistics.emptyStore(), expanded.raw, locationId, projectDraft.name || "Project", itemId);
+      if (!seeded.project) {
+        projectDraft.error = "That item has no raw bill.";
+        skipDraftCapture = true;
+        render();
+        showTab("plan");
+        return;
+      }
+    } else {
+      if (!catalog) {
+        projectDraft.error = "The recipe graph has not loaded.";
+        skipDraftCapture = true;
+        render();
+        showTab("plan");
+        return;
+      }
+      seeded = NmsLogistics.seedRecipe(NmsLogistics.emptyStore(), catalog, itemId, qty, locationId, projectDraft.name || "Project");
+      if (!seeded.project) {
+        projectDraft.error = "Choose an item, a quantity, and a hold.";
+        skipDraftCapture = true;
+        render();
+        showTab("plan");
+        return;
+      }
+    }
+    seeded.project.demands.forEach(function (demand) {
+      projectDraft.demands.push({
+        id: "",
+        itemId: demand.itemId,
+        locationId: demand.locationId,
+        qty: String(demand.qty),
+        note: demand.note || ""
+      });
+    });
+    if (!projectDraft.recipeFor) projectDraft.recipeFor = itemId;
+    projectDraft.error = "";
+    redrawPlan();
+    if (kind === "raw") setStatus("Added the raw bill to this edit. Save the project to keep it.");
+    else if (seeded.edge) setStatus("Added the direct build cost to this edit. Save the project to keep it.");
+    else setStatus("That item has no recipe in this graph, so the demand is the item itself. Save the project to keep it.");
+  }
+
+  function renderDraftDemand(row, index, prior) {
+    var stored = row.id && prior[row.id] ? prior[row.id] : null;
+    var moved = movedHtml(stored);
+    return '<div class="demand-row" data-demand-index="' + index + '" data-demand-id="' + esc(row.id || "") + '">' +
+      '<label class="field">Item<select data-field="itemId">' + itemOptionsHtml(row.itemId, "") + "</select></label>" +
+      '<label class="field">Target hold<select data-field="locationId">' + holdOptionsHtml(row.locationId) + "</select></label>" +
+      '<label class="field">Quantity<input data-field="qty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(row.qty) + '"></label>' +
+      '<label class="field">Note<input data-field="note" type="text" value="' + esc(row.note || "") + '" placeholder="optional"></label>' +
+      '<button type="button" data-remove-draft="' + index + '">Remove demand</button>' +
+      (moved ? '<div class="demand-moved">' + moved + "</div>" : "") +
+      "</div>";
+  }
+
+  function renderProjectEditor(project) {
+    var draft = projectDraft;
+    var prior = Object.create(null);
+    (project.demands || []).forEach(function (demand) { prior[demand.id] = demand; });
+    var rows = draft.demands.map(function (row, index) {
+      return renderDraftDemand(row, index, prior);
+    }).join("");
+    var nameInvalid = draft.error === "A project needs a name.";
+    return '<section class="check project-edit" data-project-id="' + esc(project.id) + '">' +
+      '<form id="form-edit-project">' +
+      '<div class="project-head"><label class="field project-name-field">Name' +
+      '<input data-field="name" type="text" value="' + esc(draft.name) + '" autocomplete="off"' +
+      (nameInvalid ? ' aria-invalid="true"' : "") +
+      (draft.error ? ' aria-describedby="project-edit-error"' : "") +
+      "></label></div>" +
+      (draft.error ? '<p class="form-error" id="project-edit-error" role="alert">' + esc(draft.error) + "</p>" : "") +
+      '<div class="form-grid"><label class="field">Recipe<select data-field="recipeFor">' +
+      optionList(catalogOptions(""), draft.recipeFor, "None", nodeName) +
+      "</select></label></div>" +
+      "<h3>Demands</h3>" +
+      (rows || '<p class="note">No demands in this project.</p>') +
+      "<h3>Add a demand</h3>" +
+      '<div class="form-grid">' +
+      '<label class="field">Find<input data-field="find" type="search" value="' + esc(draft.find || "") + '" placeholder="Stasis Device" autocomplete="off"></label>' +
+      '<label class="field">Item<select data-field="addItem">' + itemOptionsHtml(draft.addItem, draft.find || "") + "</select></label>" +
+      '<label class="field">Target hold<select data-field="addLoc">' + holdOptionsHtml(draft.addLoc) + "</select></label>" +
+      '<label class="field">Quantity<input data-field="addQty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(draft.addQty || "1") + '"></label>' +
+      '<label class="field">Note<input data-field="addNote" type="text" value="' + esc(draft.addNote || "") + '" placeholder="optional"></label>' +
+      "</div>" +
+      '<p class="edit-actions"><button type="button" data-add-demand>Add demand</button></p>' +
+      "<h3>Seed from a recipe</h3>" +
+      '<div class="form-grid">' +
+      '<label class="field">How many<input data-field="seedQty" type="number" min="1" step="1" inputmode="numeric" value="' + esc(draft.seedQty || "1") + '"></label>' +
+      '<label class="field">Deliver to<select data-field="seedLoc">' + holdOptionsHtml(draft.seedLoc, "Deliver to") + "</select></label>" +
+      "</div>" +
+      '<p class="edit-actions"><button type="button" data-seed-build>Add the build cost</button>' +
+      '<button type="button" data-seed-raw>Add the raw bill</button></p>' +
+      '<p class="note">Uses the item chosen above. The build cost is the direct recipe. The raw bill walks that recipe down to materials.</p>' +
+      '<p class="edit-actions"><button type="submit">Save</button><button type="button" data-cancel-project>Cancel</button></p>' +
+      "</form></section>";
+  }
+
   function renderPlan() {
     if (!checklistEl) return;
+    if (!skipDraftCapture) captureProjectDraft();
+    skipDraftCapture = false;
     if (!store.projects.length) {
+      editingProjectId = null;
+      projectDraft = null;
       checklistEl.innerHTML = '<p class="note">No projects yet.</p>';
       return;
     }
+    if (editingProjectId && !store.projects.some(function (project) { return project.id === editingProjectId; })) {
+      editingProjectId = null;
+      projectDraft = null;
+    }
     checklistEl.innerHTML = store.projects.map(function (project) {
+      if (editingProjectId === project.id && projectDraft) return renderProjectEditor(project);
       var demands = project.demands.filter(function (demand) {
         if (!selectionGlyphs.length) return true;
         var target = NmsLogistics.findLocation(store, demand.locationId);
@@ -335,10 +703,7 @@
         var pending = moves.map(function (move) {
           return '<label><input type="checkbox" data-transfer="' + esc(demand.id) + '" data-from="' + esc(move.fromId) + '" data-to="' + esc(move.toId) + '" data-item="' + esc(move.itemId) + '" data-qty="' + esc(move.qty) + '"> Move ' + esc(move.qty) + " " + esc(nodeName(move.itemId)) + " from " + esc(move.fromName) + "</label>";
         }).join("");
-        var done = (demand.doneTransfers || []).map(function (move) {
-          var from = NmsLogistics.findLocation(store, move.fromId);
-          return '<p class="done">Moved ' + esc(move.qty) + " from " + esc(from ? from.name : move.fromId) + "</p>";
-        }).join("");
+        var done = movedHtml(demand);
         var growers = "";
         if (report.shortfall > 0) {
           var makers = NmsLogistics.producersOf(store, demand.itemId);
@@ -366,10 +731,13 @@
           pending + done + growers + path +
           '<p><button type="button" data-drop-demand="' + esc(project.id) + '" data-demand="' + esc(demand.id) + '">Remove demand</button></p></div>';
       }).join("");
-      return '<section class="check"><h2>' + esc(project.name) + (project.recipeFor ? " · " + esc(nodeName(project.recipeFor)) : "") +
-        '</h2><p><button type="button" data-drop-project="' + esc(project.id) + '">Remove project</button></p>' +
+      return '<section class="check" data-project-id="' + esc(project.id) + '"><div class="project-head"><h2>' +
+        esc(project.name) + (project.recipeFor ? " · " + esc(nodeName(project.recipeFor)) : "") +
+        "</h2>" + pencilButton(project.id) +
+        '</div><p><button type="button" data-drop-project="' + esc(project.id) + '">Remove project</button></p>' +
         (body || '<p class="note">No demands in this project.</p>') + "</section>";
     }).join("");
+    focusProjectEditor();
   }
 
   function choiceOptions(current) {
@@ -719,10 +1087,25 @@
       setStatus("Choose a project, a hold, an item, and a quantity.");
       return;
     }
+    if (editingProjectId && project.id === editingProjectId && projectDraft) {
+      addDraftDemand(itemId, locationId, qty, "");
+      return;
+    }
     project.demands.push({ id: NmsLogistics.uid("dmd"), locationId: locationId, itemId: itemId, qty: qty, note: "", doneTransfers: [] });
     persist();
     render();
     setStatus("Demand added.");
+  });
+
+  var editSelectedProject = document.getElementById("edit-demand-project");
+  if (editSelectedProject) editSelectedProject.addEventListener("click", function () {
+    var selected = document.getElementById("demand-project");
+    var id = selected ? selected.value : "";
+    if (!id) {
+      setStatus("Choose a project to edit.");
+      return;
+    }
+    beginEditProject(id);
   });
 
   document.getElementById("form-recipe").addEventListener("submit", function (ev) {
@@ -840,8 +1223,50 @@
   });
 
   checklistEl.addEventListener("click", function (ev) {
-    var dropDemand = ev.target.closest ? ev.target.closest("[data-drop-demand]") : null;
-    var dropProject = ev.target.closest ? ev.target.closest("[data-drop-project]") : null;
+    var target = ev.target;
+    if (!target || !target.closest) return;
+    var editProject = target.closest("[data-edit-project]");
+    if (editProject) {
+      ev.preventDefault();
+      beginEditProject(editProject.getAttribute("data-edit-project"));
+      return;
+    }
+    if (target.closest("#form-edit-project")) {
+      if (target.closest("[data-cancel-project]")) {
+        ev.preventDefault();
+        cancelEditProject();
+        return;
+      }
+      if (target.closest("[data-add-demand]")) {
+        ev.preventDefault();
+        captureProjectDraft();
+        addDraftDemand(projectDraft.addItem, projectDraft.addLoc, projectDraft.addQty, projectDraft.addNote);
+        return;
+      }
+      if (target.closest("[data-seed-build]")) {
+        ev.preventDefault();
+        seedDraft("build");
+        return;
+      }
+      if (target.closest("[data-seed-raw]")) {
+        ev.preventDefault();
+        seedDraft("raw");
+        return;
+      }
+      var removeDraft = target.closest("[data-remove-draft]");
+      if (removeDraft) {
+        ev.preventDefault();
+        captureProjectDraft();
+        var index = Number(removeDraft.getAttribute("data-remove-draft"));
+        projectDraft.demands = projectDraft.demands.filter(function (row, i) { return i !== index; });
+        projectDraft.error = "";
+        redrawPlan();
+        return;
+      }
+      return;
+    }
+    var dropDemand = target.closest("[data-drop-demand]");
+    var dropProject = target.closest("[data-drop-project]");
     if (dropDemand) {
       store.projects.forEach(function (project) {
         if (project.id !== dropDemand.getAttribute("data-drop-demand")) return;
@@ -861,6 +1286,42 @@
       render();
       showTab("plan");
     }
+  });
+
+  checklistEl.addEventListener("submit", function (ev) {
+    if (!ev.target || ev.target.id !== "form-edit-project") return;
+    ev.preventDefault();
+    saveEditProject();
+  });
+
+  checklistEl.addEventListener("keydown", function (ev) {
+    if (!ev.target || !ev.target.closest || !ev.target.closest("#form-edit-project")) return;
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      cancelEditProject();
+      return;
+    }
+    if (ev.key !== "Enter") return;
+    var field = ev.target.getAttribute && ev.target.getAttribute("data-field");
+    if (field === "name") {
+      ev.preventDefault();
+      saveEditProject();
+      return;
+    }
+    if (ev.target.tagName === "INPUT") ev.preventDefault();
+  });
+
+  checklistEl.addEventListener("input", function (ev) {
+    if (!ev.target || !ev.target.getAttribute || ev.target.getAttribute("data-field") !== "find") return;
+    var select = document.querySelector('#form-edit-project [data-field="addItem"]');
+    if (!select || !projectDraft) return;
+    var previous = select.value;
+    var query = ev.target.value;
+    projectDraft.find = query;
+    var options = catalogOptions(query);
+    select.innerHTML = optionList(options, "", "Choose", nodeName);
+    if (query.trim() && options.length === 1) select.value = options[0].value;
+    else if (previous && Array.prototype.some.call(select.options, function (opt) { return opt.value === previous; })) select.value = previous;
   });
 
   document.getElementById("file-save").addEventListener("change", function (ev) {

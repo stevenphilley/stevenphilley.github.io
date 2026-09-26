@@ -1774,6 +1774,73 @@
     return { store: store, project: project };
   }
 
+  // Rename and rewrite one project. The id stays put so demands, map
+  // markers, and anything else that points at the project keep working.
+  // An empty name is refused. Demands omitted from the patch are left as they are.
+  function updateProject(store, projectId, patch) {
+    var id = text(projectId);
+    var current = null;
+    ((store && store.projects) || []).forEach(function (project) {
+      if (project && project.id === id) current = project;
+    });
+    if (!current || !patch || typeof patch !== "object") {
+      return { ok: false, error: "missing", store: store };
+    }
+    var name = patch.name == null ? text(current.name) : text(patch.name);
+    if (!name) return { ok: false, error: "name", store: store };
+    var recipeFor = patch.recipeFor == null ? text(current.recipeFor) : text(patch.recipeFor);
+    var built = null;
+    if (patch.demands != null) {
+      if (!Array.isArray(patch.demands)) return { ok: false, error: "demand", store: store };
+      var prior = Object.create(null);
+      (current.demands || []).forEach(function (demand) {
+        if (demand && demand.id) prior[demand.id] = demand;
+      });
+      var used = Object.create(null);
+      built = [];
+      for (var i = 0; i < patch.demands.length; i++) {
+        var demand = patch.demands[i];
+        if (!demand || typeof demand !== "object") return { ok: false, error: "demand", store: store };
+        var qty = posInt(demand.qty);
+        var itemId = text(demand.itemId);
+        var locationId = text(demand.locationId);
+        if (!qty || !itemId || !locationId) return { ok: false, error: "demand", store: store };
+        var demandId = text(demand.id);
+        var previous = demandId && prior[demandId] && !used[demandId] ? prior[demandId] : null;
+        if (previous) {
+          used[previous.id] = true;
+          demandId = previous.id;
+        } else if (!demandId || used[demandId] || prior[demandId]) {
+          demandId = uid("dmd");
+        } else {
+          used[demandId] = true;
+        }
+        built.push({
+          id: demandId,
+          locationId: locationId,
+          itemId: itemId,
+          qty: qty,
+          note: demand.note == null ? (previous ? text(previous.note) : "") : text(demand.note),
+          doneTransfers: previous && Array.isArray(previous.doneTransfers) ? previous.doneTransfers : []
+        });
+      }
+    }
+    var next = normalize(store);
+    var found = false;
+    next.projects.forEach(function (project) {
+      if (project.id !== id) return;
+      found = true;
+      project.name = name;
+      project.recipeFor = recipeFor;
+      if (built) project.demands = built;
+    });
+    if (!found) return { ok: false, error: "missing", store: store };
+    next = normalize(next);
+    var saved = null;
+    next.projects.forEach(function (project) { if (project.id === id) saved = project; });
+    return { ok: true, error: null, store: next, project: saved };
+  }
+
   function completeTransfer(store, demandId, move) {
     store = normalize(store);
     var exists = false;
@@ -2080,6 +2147,7 @@
     ensureUnassigned: ensureUnassigned,
     seedRawBill: seedRawBill,
     seedPins: seedPins,
+    updateProject: updateProject,
     addressMatches: addressMatches,
     locationsAtPlace: locationsAtPlace,
     demandsAtPlace: demandsAtPlace,
