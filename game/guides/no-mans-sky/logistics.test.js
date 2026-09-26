@@ -532,6 +532,120 @@ var gravStore = logistics.normalize({
 eq(logistics.searchStock(gravStore, "gravitino", merged).length, 1, "search matches a technology catalog name");
 eq(logistics.searchStock(gravStore, "gravitygun", merged).length, 1, "search still matches the technology save id");
 
+function memoryStorage() {
+  return {
+    value: null,
+    getItem: function () { return this.value; },
+    setItem: function (key, val) { this.value = val; }
+  };
+}
+
+var editable = logistics.normalize({
+  locations: [
+    { id: "freighter", name: "Freighter", category: "freighter", source: "manual", items: [{ id: "glass", qty: 5 }] },
+    { id: "box3", name: "Storage Container 3", category: "container", source: "manual", items: [{ id: "glass", qty: 2 }] }
+  ],
+  projects: [{
+    id: "p1",
+    name: "Freighter base build",
+    demands: [{ id: "d1", locationId: "freighter", itemId: "glass", qty: 10, doneTransfers: [] }]
+  }]
+});
+var renamed = logistics.updateProject(editable, "p1", { name: "  Hauler refit  " });
+assert(renamed.ok, "a project can be renamed");
+eq(renamed.project.name, "Hauler refit", "a project name is trimmed");
+eq(renamed.project.id, "p1", "renaming keeps the project id");
+eq(renamed.project.demands[0].id, "d1", "renaming keeps the demand id");
+eq(renamed.project.demands[0].qty, 10, "renaming leaves the demand quantity");
+eq(editable.projects[0].name, "Freighter base build", "renaming does not mutate the caller store");
+var linked = logistics.completeTransfer(renamed.store, "d1", {
+  fromId: "box3",
+  toId: "freighter",
+  itemId: "glass",
+  qty: 2
+});
+assert(linked.ok, "a renamed project still accepts a transfer on the same demand");
+eq(linked.store.projects[0].id, "p1", "the transfer stays on the same project");
+eq(linked.store.projects[0].demands[0].id, "d1", "the transfer stays on the same demand");
+
+var edited = logistics.updateProject(linked.store, "p1", {
+  name: "Hauler refit",
+  recipeFor: "warp-cell",
+  demands: [
+    { id: "d1", locationId: "box3", itemId: "glass", qty: 4, note: "bridge glass" },
+    { locationId: "freighter", itemId: "antimatter", qty: 2, note: "from the recipe" }
+  ]
+});
+assert(edited.ok, "a project can be edited");
+eq(edited.project.id, "p1", "editing keeps the project id");
+eq(edited.project.recipeFor, "warp-cell", "the recipe field saves");
+eq(edited.project.demands[0].id, "d1", "the edited demand keeps its id");
+eq(edited.project.demands[0].qty, 4, "a demand quantity can be edited");
+eq(edited.project.demands[0].locationId, "box3", "a demand target hold can be edited");
+eq(edited.project.demands[0].itemId, "glass", "a demand item can be edited");
+eq(edited.project.demands[0].note, "bridge glass", "a demand note can be edited");
+eq(edited.project.demands[0].doneTransfers.length, 1, "editing a demand keeps its completed transfers");
+eq(edited.project.demands[0].doneTransfers[0].qty, 2, "the completed transfer quantity stays");
+eq(edited.project.demands.length, 2, "a demand can be added");
+assert(edited.project.demands[1].id !== "d1" && edited.project.demands[1].id.indexOf("dmd-") === 0, "a new demand gets its own id");
+
+var removed = logistics.updateProject(edited.store, "p1", {
+  name: "Hauler refit",
+  demands: [{ id: "d1", locationId: "box3", itemId: "glass", qty: 4, note: "bridge glass" }]
+});
+assert(removed.ok, "a demand can be removed");
+eq(removed.project.demands.map(function (row) { return row.id; }), ["d1"], "removing a demand leaves the other id in place");
+eq(removed.project.recipeFor, "warp-cell", "omitting the recipe leaves it in place");
+
+var blank = logistics.updateProject(removed.store, "p1", { name: "   " });
+assert(!blank.ok && blank.error === "name", "an empty name is refused");
+eq(blank.store.projects[0].name, "Hauler refit", "a refused edit does not rename the project");
+eq(removed.store.projects[0].name, "Hauler refit", "a refused edit leaves the caller store unchanged");
+var badDemand = logistics.updateProject(removed.store, "p1", {
+  name: "Hauler refit",
+  demands: [{ id: "d1", locationId: "box3", itemId: "", qty: 4 }]
+});
+assert(!badDemand.ok && badDemand.error === "demand", "a demand needs an item");
+eq(removed.store.projects[0].demands[0].qty, 4, "a refused demand edit leaves the quantity");
+var unknown = logistics.updateProject(removed.store, "missing", { name: "Other" });
+assert(!unknown.ok && unknown.error === "missing", "an unknown project is refused");
+
+var disk = memoryStorage();
+var persisted = logistics.saveStore(disk, removed.store);
+eq(persisted.version, 1, "an edited project stays on schema version 1");
+var loadedEdit = logistics.loadStore(disk);
+eq(loadedEdit.version, 1, "storage reloads schema version 1");
+eq(loadedEdit.projects[0].id, "p1", "storage keeps the project id");
+eq(loadedEdit.projects[0].name, "Hauler refit", "storage keeps the edited name");
+eq(loadedEdit.projects[0].recipeFor, "warp-cell", "storage keeps the edited recipe");
+eq(loadedEdit.projects[0].demands[0].id, "d1", "storage keeps the demand id");
+eq(loadedEdit.projects[0].demands[0].qty, 4, "storage keeps the edited quantity");
+eq(loadedEdit.projects[0].demands[0].locationId, "box3", "storage keeps the edited hold");
+eq(loadedEdit.projects[0].demands[0].note, "bridge glass", "storage keeps the edited note");
+eq(loadedEdit.projects[0].demands[0].doneTransfers[0].qty, 2, "storage keeps the completed transfer");
+eq(loadedEdit.projects[0].demands.length, 1, "storage keeps the removed demand removed");
+
+var legacy = {
+  version: 1,
+  locations: [{ id: "freighter", name: "Freighter", category: "freighter", items: [] }],
+  projects: [{
+    id: "legacy",
+    name: "Old plan",
+    demands: [{ id: "ld", locationId: "freighter", itemId: "glass", qty: 3, doneTransfers: [] }]
+  }]
+};
+var legacyNorm = logistics.normalize(legacy);
+eq(legacyNorm.version, 1, "an older save stays version 1");
+eq(legacyNorm.projects[0].id, "legacy", "an older project keeps its id");
+eq(legacyNorm.projects[0].name, "Old plan", "an older project keeps its name");
+eq(legacyNorm.projects[0].recipeFor, "", "an older project has no recipe until one is set");
+eq(legacyNorm.projects[0].demands[0].id, "ld", "an older demand keeps its id");
+eq(legacyNorm.projects[0].demands[0].qty, 3, "an older demand keeps its quantity");
+eq(legacyNorm.projects[0].demands[0].note, "", "an older demand has an empty note");
+var legacyDisk = memoryStorage();
+logistics.saveStore(legacyDisk, legacy);
+eq(logistics.loadStore(legacyDisk).projects, legacyNorm.projects, "an older project loads unchanged");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);
