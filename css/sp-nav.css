@@ -271,10 +271,6 @@ body:has(> .sp-primary) {
 .sp-primary .sp-top-link:focus-visible {
   box-shadow: inset 0 -1px 0 var(--sp-accent);
 }
-.sp-sub-toggle:hover,
-.sp-sub-toggle:focus-visible {
-  color: var(--sp-accent);
-}
 .sp-primary a:focus-visible,
 .sp-primary button:focus-visible,
 .sp-q:focus-visible {
@@ -283,26 +279,50 @@ body:has(> .sp-primary) {
 }
 .sp-sub-toggle {
   appearance: none;
-  width: 18px;
-  height: 22px;
-  margin: 0 0 0 2px;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: 0 -2px 0 -4px;
   padding: 0;
   border: 0;
+  border-radius: 0;
   background: transparent;
   color: var(--sp-ink);
   cursor: pointer;
   flex-shrink: 0;
+  line-height: 0;
 }
 .sp-sub-toggle::before {
   content: "";
   display: block;
-  margin: 0 auto;
-  border: 4px solid transparent;
-  border-top-color: currentColor;
-  transform: translateY(2px);
+  box-sizing: border-box;
+  width: 6px;
+  height: 6px;
+  margin: 0;
+  border: 0;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent;
+  transform: translateY(-1px) rotate(45deg);
 }
+.sp-item:hover > .sp-sub-toggle,
+.sp-item:focus-within > .sp-sub-toggle,
+.sp-sub-toggle:hover,
+.sp-sub-toggle:focus-visible,
+.sp-sub-toggle[aria-expanded="true"] {
+  color: var(--sp-accent);
+}
+.sp-item:hover > .sp-sub-toggle::before,
+.sp-item:focus-within > .sp-sub-toggle::before,
 .sp-sub-toggle[aria-expanded="true"]::before {
-  transform: translateY(-1px) rotate(180deg);
+  transform: translateY(1px) rotate(225deg);
+}
+.sp-primary .sp-sub-toggle:focus-visible {
+  outline: 2px solid var(--sp-accent);
+  outline-offset: 2px;
 }
 .sp-sub {
   display: none;
@@ -737,7 +757,9 @@ html:not(.layout-fill) .sp-width-btn[data-sp-layout="std"]:focus-visible {
    When the links, swatches, Share, Suggest, Std | Fill, and the search
    field no longer fit, the search cluster drops to the next line.
    Narrower still, the swatches drop under the six links. The links
-   themselves stay one line. */
+   themselves stay one line. Desktop only: display:contents would
+   pull the tools out of the phone menu and lay them beside it. */
+@media (min-width: 900px) {
 @container spbar (max-width: 1080px) {
   /* Flatten the menu so the six links can take a full line and the
      swatches, Share, Suggest, width switch, and search share the next. */
@@ -752,6 +774,7 @@ html:not(.layout-fill) .sp-width-btn[data-sp-layout="std"]:focus-visible {
     margin-left: auto;
     min-width: min(100%, 260px);
   }
+}
 }
 
 /* Below 900px — phones and tight windows — the links collapse behind
@@ -804,12 +827,13 @@ html:not(.layout-fill) .sp-width-btn[data-sp-layout="std"]:focus-visible {
     position: absolute;
     left: 0;
     right: 0;
-    width: auto;
+    width: 100%;
     min-width: 0;
     max-width: 100%;
     box-sizing: border-box;
     top: 100%;
     flex-direction: column;
+    flex-wrap: nowrap;
     align-items: stretch;
     gap: 14px;
     max-height: calc(100vh - 64px);
@@ -821,6 +845,10 @@ html:not(.layout-fill) .sp-width-btn[data-sp-layout="std"]:focus-visible {
   }
   .sp-menu-toggle:checked ~ .sp-bar .sp-menu {
     display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    width: 100%;
   }
   .sp-links {
     flex: none;
@@ -860,7 +888,16 @@ html:not(.layout-fill) .sp-width-btn[data-sp-layout="std"]:focus-visible {
     font-size: 12px;
   }
   .sp-tools {
-    padding-top: 8px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px 12px;
+    margin: 0;
+    padding-top: 12px;
     border-top: 1px solid var(--sp-line);
   }
   .sp-search-panel {
