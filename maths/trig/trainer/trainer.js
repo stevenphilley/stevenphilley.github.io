@@ -62,33 +62,19 @@
   }
 
   function htmlValue(code) {
-    if (code === "undef") return "<span class=\"m\">undefined</span>";
-    var sign = "";
-    var body = code;
-    if (body.charAt(0) === "-") {
-      sign = "<span class=\"sgn\">−</span>";
-      body = body.slice(1);
-    }
-    var slash = body.indexOf("/");
-    if (slash === -1) return sign + "<span class=\"m\">" + htmlEscape(body) + "</span>";
-    return sign + "<span class=\"frac\"><span class=\"num\">" + htmlEscape(body.slice(0, slash)) + "</span><span class=\"den\">" + htmlEscape(body.slice(slash + 1)) + "</span></span>";
+    return window.ExactMath.htmlValue(code, 20);
   }
 
   function htmlPoint(cos, sin) {
-    return "<span class=\"pair\">(" + htmlValue(cos) + "<span class=\"comma\">,</span> " + htmlValue(sin) + ")</span>";
+    return window.ExactMath.htmlPoint(cos, sin, 20);
   }
 
   function htmlRad(angle) {
-    var n = angle.radNum;
-    var d = angle.radDen;
-    if (n === 0) return "<span class=\"m\">0</span>";
-    var num = (n === 1 ? "π" : String(n) + "π");
-    if (d === 1) return "<span class=\"m\">" + num + "</span>";
-    return "<span class=\"frac\"><span class=\"num\">" + num + "</span><span class=\"den\">" + d + "</span></span>";
+    return window.ExactMath.htmlRad(angle.radNum, angle.radDen, 20);
   }
 
   function htmlDeg(angle) {
-    return "<span class=\"m\">" + angle.deg + "°</span>";
+    return window.ExactMath.htmlDeg(angle.deg, 22);
   }
 
   function htmlAngle(angle, unit) {
@@ -876,10 +862,35 @@
       els.studyDetail.textContent = "Labels hidden. Click a point to reveal it.";
     });
 
+    function repaintMath() {
+      if (!current) return;
+      els.prompt.innerHTML = promptView(current).html;
+      if (current.mode !== "tap" && current.built) {
+        renderChoices(current);
+        if (locked) {
+          [].slice.call(els.choices.querySelectorAll(".choice")).forEach(function (button) {
+            button.disabled = true;
+            if (Number(button.dataset.i) === current.built.answer) button.classList.add("is-right");
+          });
+        }
+      }
+      if (studyFocus != null) {
+        var angle = UC.ANGLES.filter(function (item) { return item.deg === studyFocus; })[0];
+        paintStudyDetail(angle);
+      }
+    }
+
     wireHelp();
     paintStats();
     drawStudy();
     deal();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(repaintMath);
+    if (typeof MutationObserver !== "undefined") {
+      new MutationObserver(repaintMath).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-font"]
+      });
+    }
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
