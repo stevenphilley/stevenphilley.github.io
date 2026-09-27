@@ -325,8 +325,9 @@ assert(api.hubMarks().length === 3, "Hub capital, HUB1, and Former Hub stay");
 eq(api.hubMarks().map(function (h) { return h.id; }), ["capital", "hub1", "former"], "Hub mark ids are unchanged");
 
 var edges = api.edgeMarks();
-eq(edges.map(function (e) { return e.id; }), ["north", "south", "east", "west", "forward", "back"], "six galaxy edges, in compass order");
-eq(edges.map(function (e) { return e.letter; }), ["N", "S", "E", "W", "F", "B"], "edge letters match the compass");
+eq(edges.map(function (e) { return e.id; }), ["north", "south", "east", "west", "forward", "back", "ne-forward", "nw-forward", "se-forward", "sw-forward", "ne-back", "nw-back", "se-back", "sw-back"], "fourteen galaxy edges: six faces, then eight corners");
+eq(edges.filter(function (e) { return !e.corner; }).map(function (e) { return e.letter; }), ["N", "S", "E", "W", "F", "B"], "face letters match the compass");
+eq(edges.filter(function (e) { return e.corner; }).length, 8, "eight corners of the coordinate box");
 var edgeBy = {};
 edges.forEach(function (e) { edgeBy[e.id] = e; });
 eq([edgeBy.north.voxelX, edgeBy.north.voxelY, edgeBy.north.voxelZ], [0, 0, 2047], "north is +Z, the top of the flat map");
@@ -353,16 +354,39 @@ eq(edgeBy.east.coords, "0FFE:007F:07FF:0001", "Eurus signal-booster coords");
 eq(edgeBy.west.coords, "0000:007F:07FF:0001", "Zephyrus signal-booster coords");
 eq(edgeBy.forward.coords, "07FF:00FE:07FF:0000", "Ame signal-booster coords");
 eq(edgeBy.back.coords, "07FF:0000:07FF:0001", "Yomi signal-booster coords");
+eq(edgeBy["ne-forward"].system, "Sadoma-Osib XIII", "NE-Forward is Sadoma-Osib XIII");
+eq([edgeBy["ne-forward"].voxelX, edgeBy["ne-forward"].voxelY, edgeBy["ne-forward"].voxelZ], [2047, 127, 2047], "NE-Forward is east, north, and up");
+eq(edgeBy["ne-forward"].coords, "0FFE:00FE:0FFE:0001", "Sadoma-Osib XIII signal-booster coords");
+eq(edgeBy["ne-back"].system, "Delta Minoris", "NE-Back is Delta Minoris");
+eq([edgeBy["ne-back"].voxelX, edgeBy["ne-back"].voxelY, edgeBy["ne-back"].voxelZ], [2047, -127, 2047], "NE-Back is east, north, and down");
+eq(edgeBy["ne-back"].coords, "0FFE:0000:0FFE:0001", "Delta Minoris signal-booster coords");
+eq(edgeBy["sw-back"].system, "Tasyroga", "SW-Back is Tasyroga");
+eq([edgeBy["sw-back"].voxelX, edgeBy["sw-back"].voxelY, edgeBy["sw-back"].voxelZ], [-2047, -127, -2047], "SW-Back is west, south, and down");
+eq(edgeBy["sw-back"].coords, "0000:0000:0000:0001", "Tasyroga signal-booster coords");
+["nw-forward", "se-forward", "sw-forward", "nw-back", "se-back"].forEach(function (id) {
+  assert(!edgeBy[id].documented, id + " has no documented system");
+  assert(edgeBy[id].note.indexOf("Corner of the map (no documented system here)") === 0, id + " is labeled as a coordinate corner");
+  assert(edgeBy[id].note.indexOf("Polaris") !== -1, id + " notes the nearest documented spiral system");
+});
+eq([edgeBy["nw-forward"].voxelX, edgeBy["nw-forward"].voxelY, edgeBy["nw-forward"].voxelZ], [-2047, 127, 2047], "NW-Forward is west, north, and up");
+eq([edgeBy["se-forward"].voxelX, edgeBy["se-forward"].voxelY, edgeBy["se-forward"].voxelZ], [2047, 127, -2047], "SE-Forward is east, south, and up");
+eq([edgeBy["sw-forward"].voxelX, edgeBy["sw-forward"].voxelY, edgeBy["sw-forward"].voxelZ], [-2047, 127, -2047], "SW-Forward is west, south, and up");
+eq([edgeBy["nw-back"].voxelX, edgeBy["nw-back"].voxelY, edgeBy["nw-back"].voxelZ], [-2047, -127, 2047], "NW-Back is west, north, and down");
+eq([edgeBy["se-back"].voxelX, edgeBy["se-back"].voxelY, edgeBy["se-back"].voxelZ], [2047, -127, -2047], "SE-Back is east, south, and down");
 var edgeGlyphs = {};
 edges.forEach(function (e) {
-  assert(e.documented, e.id + " names a documented system");
-  assert(e.planet === 1, e.id + " uses planet index 1");
+  if (e.documented) {
+    assert(e.planet === 1, e.id + " uses planet index 1");
+    eq(api.analyzeGlyphs(e.glyphs).coords, e.coords, e.id + " glyphs round-trip to its coords");
+    assert(!edgeGlyphs[e.glyphs], e.id + " glyphs are unique");
+    edgeGlyphs[e.glyphs] = 1;
+  } else {
+    assert(!e.glyphs, e.id + " does not invent glyphs");
+    assert(!e.system, e.id + " does not invent a system name");
+  }
   assert(/^https:\/\/nomanssky\.fandom\.com\/wiki\//.test(e.source), e.id + " cites a wiki page");
-  eq(api.analyzeGlyphs(e.glyphs).coords, e.coords, e.id + " glyphs round-trip to its coords");
   eq(api.galaxyWorld(e.voxelX, e.voxelY, e.voxelZ), { x: e.voxelX, y: e.voxelY, z: e.voxelZ }, e.id + " keeps portal X, vertical Y, and Z");
   assert(e.ly > 400, e.id + " is far from the core");
-  assert(!edgeGlyphs[e.glyphs], e.id + " glyphs are unique");
-  edgeGlyphs[e.glyphs] = 1;
 });
 eq(api.parseFocusParam("?focus=forward", ""), "forward", "an edge id can be a focus query");
 eq(api.parseFocusParam("", "#focus=back"), "back", "an edge id can be a focus hash");

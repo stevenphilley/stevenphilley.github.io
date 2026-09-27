@@ -267,7 +267,9 @@
   // letters here follow the picture, and each note records the wiki name.
   // Forward is positive voxel Y, up in the 3D view. Back is negative voxel Y.
   // A wiki ":PC" system index is read as 0001, the same way the Polaris rows
-  // are. Glyphs use planet index 1. The Back mark has no confirmed system.
+  // are. Glyphs use planet index 1. The eight corners combine one north or
+  // south extreme, one east or west extreme, and Forward or Back. A corner
+  // with no published system stays on the coordinate corner.
   var EDGES = [
     {
       id: "north",
@@ -340,6 +342,120 @@
       documented: true,
       source: "https://nomanssky.fandom.com/wiki/Yomi",
       sourceName: "No Man's Sky Wiki — Yomi"
+    },
+    {
+      id: "ne-forward",
+      letter: "",
+      label: "NE-Forward",
+      axis: "+X +Z +Y",
+      corner: true,
+      system: "Sadoma-Osib XIII",
+      note: "The Arm of Uedennit. East, north, and up. The wiki calls this the upper Delta spiral, Delta Majoris. The page prints :PC; this map reads that as system 0001.",
+      coords: "0FFE:00FE:0FFE:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Sadoma-Osib_XIII",
+      sourceName: "No Man's Sky Wiki — Sadoma-Osib XIII"
+    },
+    {
+      id: "nw-forward",
+      letter: "",
+      label: "NW-Forward",
+      axis: "-X +Z +Y",
+      corner: true,
+      system: "",
+      note: "Corner of the map (no documented system here). West, north, and up. Euclid Size and the Outer Rim page name no system at the upper Gamma spiral. The nearest documented address in this spiral is Gamma Polaris, 0000:007F:0FFE:0001, on the galactic plane.",
+      documented: false,
+      voxelX: -2047,
+      voxelY: 127,
+      voxelZ: 2047,
+      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
+      sourceName: "No Man's Sky Wiki — Euclid Size"
+    },
+    {
+      id: "se-forward",
+      letter: "",
+      label: "SE-Forward",
+      axis: "+X -Z +Y",
+      corner: true,
+      system: "",
+      note: "Corner of the map (no documented system here). East, south, and up. Euclid Size and the Outer Rim page name no system at the upper Beta spiral. The nearest documented address in this spiral is Beta Polaris, 0FFE:007F:0000:0001, on the galactic plane.",
+      documented: false,
+      voxelX: 2047,
+      voxelY: 127,
+      voxelZ: -2047,
+      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
+      sourceName: "No Man's Sky Wiki — Euclid Size"
+    },
+    {
+      id: "sw-forward",
+      letter: "",
+      label: "SW-Forward",
+      axis: "-X -Z +Y",
+      corner: true,
+      system: "",
+      note: "Corner of the map (no documented system here). West, south, and up. Euclid Size and the Outer Rim page name no system at the upper Alpha spiral. The nearest documented address in this spiral is Alpha Polaris, 0000:007F:0000:0001, on the galactic plane.",
+      documented: false,
+      voxelX: -2047,
+      voxelY: 127,
+      voxelZ: -2047,
+      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
+      sourceName: "No Man's Sky Wiki — Euclid Size"
+    },
+    {
+      id: "ne-back",
+      letter: "",
+      label: "NE-Back",
+      axis: "+X +Z -Y",
+      corner: true,
+      system: "Delta Minoris",
+      note: "Rabirgi Boundary. East, north, and down. The wiki calls this the lower Delta spiral.",
+      coords: "0FFE:0000:0FFE:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Delta_Minoris",
+      sourceName: "No Man's Sky Wiki — Delta Minoris"
+    },
+    {
+      id: "nw-back",
+      letter: "",
+      label: "NW-Back",
+      axis: "-X +Z -Y",
+      corner: true,
+      system: "",
+      note: "Corner of the map (no documented system here). West, north, and down. Euclid Size and the Outer Rim page name no system at the lower Gamma spiral. The nearest documented address in this spiral is Gamma Polaris, 0000:007F:0FFE:0001, on the galactic plane.",
+      documented: false,
+      voxelX: -2047,
+      voxelY: -127,
+      voxelZ: 2047,
+      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
+      sourceName: "No Man's Sky Wiki — Euclid Size"
+    },
+    {
+      id: "se-back",
+      letter: "",
+      label: "SE-Back",
+      axis: "+X -Z -Y",
+      corner: true,
+      system: "",
+      note: "Corner of the map (no documented system here). East, south, and down. Euclid Size and the Outer Rim page name no system at the lower Beta spiral. The nearest documented address in this spiral is Beta Polaris, 0FFE:007F:0000:0001, on the galactic plane.",
+      documented: false,
+      voxelX: 2047,
+      voxelY: -127,
+      voxelZ: -2047,
+      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
+      sourceName: "No Man's Sky Wiki — Euclid Size"
+    },
+    {
+      id: "sw-back",
+      letter: "",
+      label: "SW-Back",
+      axis: "-X -Z -Y",
+      corner: true,
+      system: "Tasyroga",
+      note: "Thoslo Quadrant. West, south, and down. The wiki calls Tasyroga the lower Alpha spiral, Alpha Minoris. The current system article leaves the infobox blank. The Atlas article prints 0000:0000:0000:PC, and the Origins region page is that same region. This map reads :PC as system 0001.",
+      coords: "0000:0000:0000:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Tasyroga_(Atlas)",
+      sourceName: "No Man's Sky Wiki — Tasyroga (Atlas)"
     }
   ];
 
@@ -1238,6 +1354,7 @@
         axis: edge.axis,
         system: edge.system || "",
         documented: !!edge.documented,
+        corner: !!edge.corner,
         note: edge.note || "",
         glyphs: glyphs,
         coords: coords,
@@ -3139,8 +3256,7 @@
       var size = lastSize.w ? lastSize : canvasSize();
       var frame = frameOf(size.w, size.h);
       var flat = markerScreenPoint(row.voxelX, row.voxelZ, slot.index, slot.count, view, frame);
-      if (loc.kind === "edge" && row.id === "forward") flat.y -= 32;
-      else if (loc.kind === "edge" && row.id === "back") flat.y += 32;
+      if (loc.kind === "edge") flat.y += flatEdgeBias(row);
       return flat;
     }
 
@@ -3367,13 +3483,13 @@
       if (kind === "edge") {
         var edge = edgeById(id);
         if (!edge) return null;
-        var heading = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+        var heading = edgeTitle(edge);
         return {
           place: {
             glyphs: edge.glyphs,
             planet: edge.planet,
             galaxy: 0,
-            name: edge.documented ? edge.system : "Edge of the map (no documented system here)",
+            name: edge.documented ? edge.system : heading,
             type: "Edge",
             coords: edge.coords,
             centerId: edge.id,
@@ -3454,7 +3570,7 @@
         renderLists();
         renderRefList();
         showOpenMark();
-        var edgeName = loc.row.documented ? (loc.row.label + " — " + loc.row.system) : "Edge of the map (no documented system here)";
+        var edgeName = edgeTitle(loc.row);
         setStatus(edgeName + " — " + loc.row.axis + " — " + (loc.row.glyphs ? "glyphs " + loc.row.glyphs + " — " : "") + loc.row.coords + " — " + formatLy(loc.row.ly) + " from the core.");
         return;
       }
@@ -3741,6 +3857,40 @@
       ctx.stroke();
       starCache = { key: key, canvas: off };
       return off;
+    }
+
+    function flatEdgeBias(edge) {
+      if (!edge) return 0;
+      if (edge.corner) return edge.voxelY >= 0 ? -16 : 16;
+      if (edge.id === "forward") return -32;
+      if (edge.id === "back") return 32;
+      return 0;
+    }
+
+    function edgeTitle(edge) {
+      if (!edge) return "";
+      if (edge.documented) return edge.label + " — " + edge.system;
+      if (edge.corner) return "Corner of the map (no documented system here)";
+      return "Edge of the map (no documented system here)";
+    }
+
+    function paintCorner(ctx, x, y, r, stroke, fill) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.beginPath();
+      ctx.moveTo(0, -r);
+      ctx.lineTo(r * 0.72, 0);
+      ctx.lineTo(0, r);
+      ctx.lineTo(-r * 0.72, 0);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = stroke;
+      ctx.stroke();
+      ctx.fillStyle = stroke;
+      ctx.fillRect(-1.1, -1.1, 2.2, 2.2);
+      ctx.restore();
     }
 
     function paintCompass(ctx, x, y, letter, r, stroke, fill) {
@@ -4278,20 +4428,25 @@
           if (edge.id === "forward") { labelDx = 18; labelDy = -36; }
           if (edge.id === "back") { labelDx = -88; labelDy = 22; }
           if (edge.id === "east") labelDx = -52;
+          if (edge.corner) {
+            labelDx = edge.voxelX > 0 ? -86 : 12;
+            labelDy = edge.voxelY >= 0 ? -18 : 16;
+          }
           markers.push({
             id: edge.id,
             kind: "edge",
-            shape: "m" + edge.letter,
+            shape: edge.corner ? "corner" : ("m" + edge.letter),
             x: w.x,
             y: w.y,
             z: w.z,
-            size: onEdge ? 42 : 34,
+            size: edge.corner ? (onEdge ? 26 : 20) : (onEdge ? 42 : 34),
             alpha: 1,
             color: c.accent2,
-            hitR: 16,
+            hitR: edge.corner ? 12 : 16,
             label: edge.label,
             labelColor: c.accent2,
             priority: (canvas3d && canvas3d.clientHeight < 400) ? 4 : true,
+            spread: true,
             labelDx: labelDx,
             labelDy: labelDy
           });
@@ -4548,13 +4703,24 @@
         ctx.strokeStyle = withAlpha(c.accent2, 0.35);
         ctx.lineWidth = 1;
         edges.forEach(function (edge) {
-          if (edge.axis === "+Y" || edge.axis === "-Y") return;
+          if (edge.corner || edge.axis === "+Y" || edge.axis === "-Y") return;
           var tip = project(edge.voxelX, edge.voxelZ, w, h);
           ctx.beginPath();
           ctx.moveTo(origin.x, origin.y);
           ctx.lineTo(tip.x, tip.y);
           ctx.stroke();
         });
+        var boxNE = project(2047, 2047, w, h);
+        var boxNW = project(-2047, 2047, w, h);
+        var boxSW = project(-2047, -2047, w, h);
+        var boxSE = project(2047, -2047, w, h);
+        ctx.beginPath();
+        ctx.moveTo(boxNE.x, boxNE.y);
+        ctx.lineTo(boxNW.x, boxNW.y);
+        ctx.lineTo(boxSW.x, boxSW.y);
+        ctx.lineTo(boxSE.x, boxSE.y);
+        ctx.closePath();
+        ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(origin.x, origin.y - 32);
         ctx.lineTo(origin.x, origin.y + 32);
@@ -4562,16 +4728,20 @@
         ctx.restore();
         edges.forEach(function (edge) {
           var p = project(edge.voxelX, edge.voxelZ, w, h);
-          if (edge.id === "forward") p.y -= 32;
-          else if (edge.id === "back") p.y += 32;
+          p.y += flatEdgeBias(edge);
           var on = state.selectedEdge === edge.id || state.hoverEdge === edge.id;
-          paintCompass(ctx, p.x, p.y, edge.letter, on ? 9 : 7, c.accent2, withAlpha(c.base, 0.9));
-          hits.push({ x: p.x, y: p.y, r: 14, kind: "edge", id: edge.id });
+          if (edge.corner) paintCorner(ctx, p.x, p.y, on ? 6 : 4.5, c.accent2, withAlpha(c.base, 0.9));
+          else paintCompass(ctx, p.x, p.y, edge.letter, on ? 9 : 7, c.accent2, withAlpha(c.base, 0.9));
+          hits.push({ x: p.x, y: p.y, r: edge.corner ? 11 : 14, kind: "edge", id: edge.id });
           var lx = p.x + 12;
           var ly = p.y;
           if (edge.id === "north") ly = p.y + 16;
           else if (edge.id === "south") ly = p.y - 16;
           else if (edge.id === "east") lx = p.x - 64;
+          else if (edge.corner) {
+            lx = edge.voxelX > 0 ? p.x - 78 : p.x + 10;
+            ly = edge.voxelZ > 0 ? p.y + 12 : p.y - 12;
+          }
           paintLabel(ctx, edge.label, lx, ly, c.accent2, c.base);
         });
       }
@@ -5574,8 +5744,7 @@
         draw();
         if (edge && state.selectedEdge) {
           openMark = { kind: "edge", id: edge.id };
-          var edgeTitle = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
-          setStatus(edgeTitle + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
+          setStatus(edgeTitle(edge) + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
           showOpenMark();
         } else {
           openMark = null;
@@ -6148,8 +6317,7 @@
       view.panY = pan.panY;
       clampPan();
       aim = { x: size.w / 2, y: size.h / 2, kind: "edge", id: id };
-      var edgeTitle = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
-      setStatus(edgeTitle + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
+      setStatus(edgeTitle(edge) + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
       showOpenMark();
     }
 
@@ -6158,7 +6326,7 @@
       if (!edgeList) return;
       edgeList.innerHTML = edges.map(function (edge) {
         var on = state.selectedEdge === edge.id ? "true" : "false";
-        var title = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+        var title = edgeTitle(edge);
         return '<li class="loc-head"><button type="button" data-edge="' + esc(edge.id) + '" aria-pressed="' + on + '">' +
           '<span class="q">' + esc(edge.axis) + "</span> " +
           "<strong>" + esc(title) + "</strong>" +
