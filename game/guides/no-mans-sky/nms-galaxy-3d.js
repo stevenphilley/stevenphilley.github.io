@@ -5,7 +5,7 @@
 (function (root) {
   "use strict";
 
-  var SHAPES = ["circle", "ring", "diamond", "star", "square", "station", "cross", "brackets", "halo"];
+  var SHAPES = ["circle", "ring", "diamond", "star", "square", "station", "cross", "brackets", "halo", "mN", "mS", "mE", "mW", "mF", "mB"];
 
   function mulberry32(seed) {
     var a = seed >>> 0;
@@ -112,6 +112,19 @@
       ctx.beginPath();
       ctx.arc(cx, cy, 26, 0, Math.PI * 2);
       ctx.stroke();
+    } else if (/^m[NSEWFB]$/.test(kind)) {
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cx, 5);
+      ctx.lineTo(s - 7, cy);
+      ctx.lineTo(cx, s - 5);
+      ctx.lineTo(7, cy);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.font = "700 26px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(kind.charAt(1), cx, cy + 1);
     }
     var tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;

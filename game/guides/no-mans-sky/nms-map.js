@@ -261,6 +261,88 @@
 
   var QUADRANT_LABELS = { alpha: "Alpha", beta: "Beta", gamma: "Gamma", delta: "Delta" };
 
+  // Euclid edge marks. On the flat map, positive voxel Z is up and positive
+  // voxel X is right, so North is the top and East is the right. The wiki
+  // names positive Z the South Pole and negative Z the North Pole; the
+  // letters here follow the picture, and each note records the wiki name.
+  // Forward is positive voxel Y, up in the 3D view. Back is negative voxel Y.
+  // A wiki ":PC" system index is read as 0001, the same way the Polaris rows
+  // are. Glyphs use planet index 1. The Back mark has no confirmed system.
+  var EDGES = [
+    {
+      id: "north",
+      letter: "N",
+      label: "North",
+      axis: "+Z",
+      system: "Notus",
+      note: "Sunyak Anomaly. Positive voxel Z, the top of the flat map. The wiki calls Notus the South Pole. The page prints :PC; this map reads that as system 0001, as it does for Polaris.",
+      coords: "07FF:007F:0FFE:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Notus_(Sunyak_Anomaly)",
+      sourceName: "No Man's Sky Wiki — Notus"
+    },
+    {
+      id: "south",
+      letter: "S",
+      label: "South",
+      axis: "-Z",
+      system: "Boreas",
+      note: "Oxandr Instability. Negative voxel Z, the bottom of the flat map. The wiki calls Boreas the North Pole. This map uses planet index 1 in that system.",
+      coords: "07FF:007F:0000:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Boreas",
+      sourceName: "No Man's Sky Wiki — Boreas"
+    },
+    {
+      id: "east",
+      letter: "E",
+      label: "East",
+      axis: "+X",
+      system: "Eurus",
+      note: "Legoanzen. Positive voxel X, the right side of the flat map. The wiki calls Eurus the East Pole. The page prints :PC; this map reads that as system 0001, as it does for Polaris.",
+      coords: "0FFE:007F:07FF:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Eurus",
+      sourceName: "No Man's Sky Wiki — Eurus"
+    },
+    {
+      id: "west",
+      letter: "W",
+      label: "West",
+      axis: "-X",
+      system: "Zephyrus",
+      note: "Sea of Ledindu. Negative voxel X, the left side of the flat map. The wiki calls Zephyrus the West Pole. The page prints :PC; this map reads that as system 0001.",
+      coords: "0000:007F:07FF:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Zephyrus",
+      sourceName: "No Man's Sky Wiki — Zephyrus"
+    },
+    {
+      id: "forward",
+      letter: "F",
+      label: "Forward (+Y)",
+      axis: "+Y",
+      system: "Ame",
+      note: "Ruzenuan Cloud. Positive voxel Y, up in the 3D view. The wiki calls Ame the upper pole. This map uses planet index 1 in that system.",
+      coords: "07FF:00FE:07FF:0000",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Ame_(System)",
+      sourceName: "No Man's Sky Wiki — Ame"
+    },
+    {
+      id: "back",
+      letter: "B",
+      label: "Back (-Y)",
+      axis: "-Y",
+      system: "Yomi",
+      note: "Pehylodeni. Negative voxel Y, down in the 3D view. The wiki calls Yomi the lower pole. Portal Y 80 is unused and returns Y 81, so this system is the reachable edge. The page prints :PC; this map reads that as system 0001.",
+      coords: "07FF:0000:07FF:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Yomi",
+      sourceName: "No Man's Sky Wiki — Yomi"
+    }
+  ];
+
   var HG_MAGIC = 0xFEEDA1E5;
   var HG_CHUNK_MAX = 0x80000;
   var SAVE_BYTE_MAX = 48 * 1024 * 1024;
@@ -1108,6 +1190,70 @@
     });
   }
 
+  function signalRegion(voxelX, voxelY, voxelZ) {
+    var x = ((Number(voxelX) % 4096) + 4096) % 4096;
+    var y = ((Number(voxelY) % 256) + 256) % 256;
+    var z = ((Number(voxelZ) % 4096) + 4096) % 4096;
+    var sbX = (x + 0x7FF) & 0xFFF;
+    var sbY = (y + 0x7F) & 0xFF;
+    var sbZ = (z + 0x7FF) & 0xFFF;
+    return hexPad(sbX, 4) + ":" + hexPad(sbY, 4) + ":" + hexPad(sbZ, 4);
+  }
+
+  function edgeMarks() {
+    var seen = Object.create(null);
+    return EDGES.map(function (edge) {
+      var glyphs = "";
+      var coords = "";
+      var vx;
+      var vy;
+      var vz;
+      var planet = null;
+      var ssi = null;
+      if (edge.documented) {
+        glyphs = glyphsFromSignal(edge.coords, 1);
+        var info = analyzeGlyphs(glyphs);
+        if (info.coords !== String(edge.coords).toUpperCase()) {
+          throw new Error("Edge " + edge.id + " did not round-trip.");
+        }
+        if (info.planet !== 1) throw new Error("Edge " + edge.id + " is not planet index 1.");
+        if (seen[glyphs]) throw new Error("Duplicate edge glyphs " + glyphs);
+        seen[glyphs] = 1;
+        vx = info.voxelX;
+        vy = info.voxelY;
+        vz = info.voxelZ;
+        coords = info.coords;
+        planet = info.planet;
+        ssi = info.ssi;
+      } else {
+        vx = Number(edge.voxelX);
+        vy = Number(edge.voxelY);
+        vz = Number(edge.voxelZ);
+        coords = signalRegion(vx, vy, vz);
+      }
+      return {
+        id: edge.id,
+        letter: edge.letter,
+        label: edge.label,
+        axis: edge.axis,
+        system: edge.system || "",
+        documented: !!edge.documented,
+        note: edge.note || "",
+        glyphs: glyphs,
+        coords: coords,
+        source: edge.source,
+        sourceName: edge.sourceName,
+        galaxy: 0,
+        planet: planet,
+        ssi: ssi,
+        voxelX: vx,
+        voxelY: vy,
+        voxelZ: vz,
+        ly: lyBetween({ voxelX: vx, voxelY: vy, voxelZ: vz }, { voxelX: 0, voxelY: 0, voxelZ: 0 })
+      };
+    });
+  }
+
   var MIN_ZOOM = 0.8;
   var MAX_ZOOM = 128;
   // Neighbor spacing (px) of a same-voxel ring when zoom === CLUMP_REF_ZOOM.
@@ -1871,6 +2017,7 @@
     var showCenter = document.getElementById("show-center");
     var showHubs = document.getElementById("show-hubs");
     var showRefs = document.getElementById("show-refs");
+    var showEdges = document.getElementById("show-edges");
     var showStock = document.getElementById("show-stock");
     var showProduction = document.getElementById("show-production");
     var showDiscoveries = document.getElementById("show-discoveries");
@@ -1904,6 +2051,7 @@
 
     var hubs = hubMarks();
     var refs = referenceMarks();
+    var edges = edgeMarks();
     var state = {
       planetary: [],
       freighters: [],
@@ -1917,8 +2065,10 @@
       selectedOnTop: readSelectedOnTop(typeof window !== "undefined" ? window.localStorage : null),
       expanded: {},
       selectedRef: null,
+      selectedEdge: null,
       hover: null,
       hoverRef: null,
+      hoverEdge: null,
       filter: "",
       fileName: "",
       source: "",
@@ -2234,7 +2384,10 @@
       var only = next.length === 1 ? next[0] : null;
       state.selected = only && baseById(only) ? only : null;
       state.selectedFreight = only && freightById(only) ? only : null;
-      if (next.length) state.selectedRef = null;
+      if (next.length) {
+        state.selectedRef = null;
+        state.selectedEdge = null;
+      }
       announceSelection();
       renderLists();
       renderRefList();
@@ -2373,7 +2526,13 @@
       var html = '<p class="place-meta">' + esc(place.glyphs || "No portal address") +
         (place.coords ? " · " + esc(place.coords) : "") +
         (place.planet != null ? " · planet " + esc(place.planet) : "") +
+        (place.lyText ? " · " + esc(place.lyText) + " from the core" : "") +
         " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
+      if (place.note) html += '<p class="place-meta">' + esc(place.note) + "</p>";
+      if (place.sourceUrl) {
+        html += '<p class="place-meta">Source <a href="' + esc(place.sourceUrl) + '" rel="noopener">' +
+          esc(place.sourceName || place.sourceUrl) + "</a></p>";
+      }
       html += '<p class="place-actions">';
       if (place.centerId && place.centerKind !== "freighter") html += centerButton(place.centerId, place.centerKind || "base");
       html += '<a href="' + esc(href) + '">Open in the logistics planner</a>';
@@ -2392,6 +2551,7 @@
       var closeBtn = document.getElementById("place-close");
       if (closeBtn) closeBtn.addEventListener("click", function () {
         state.selectedRef = null;
+        state.selectedEdge = null;
         commitSelection([]);
       });
     }
@@ -2886,11 +3046,17 @@
           if (row.plotted) pts3.push(galaxyWorld(row.voxelX, row.voxelY, row.voxelZ));
         });
         if (!pts3.length) {
-          galaxy3d.fit([
+          var fitPts = [
             galaxyWorld(-2048, 0, -2048),
-            galaxyWorld(2048, 140, 2048),
+            galaxyWorld(2048, 0, 2048),
             galaxyWorld(0, 0, 0)
-          ]);
+          ];
+          if (state.galaxy === 0 && (!showEdges || showEdges.checked)) {
+            edges.forEach(function (edge) {
+              fitPts.push(galaxyWorld(edge.voxelX, edge.voxelY, edge.voxelZ));
+            });
+          }
+          galaxy3d.fit(fitPts);
           return;
         }
         if (state.galaxy === 0 && (!showHubs || showHubs.checked)) {
@@ -2972,7 +3138,10 @@
       }
       var size = lastSize.w ? lastSize : canvasSize();
       var frame = frameOf(size.w, size.h);
-      return markerScreenPoint(row.voxelX, row.voxelZ, slot.index, slot.count, view, frame);
+      var flat = markerScreenPoint(row.voxelX, row.voxelZ, slot.index, slot.count, view, frame);
+      if (loc.kind === "edge" && row.id === "forward") flat.y -= 32;
+      else if (loc.kind === "edge" && row.id === "back") flat.y += 32;
+      return flat;
     }
 
     function placePulse() {
@@ -3117,7 +3286,7 @@
 
     function prepareGalaxy(loc) {
       var g = state.galaxy;
-      if (loc.kind === "ref" || loc.kind === "hub") g = 0;
+      if (loc.kind === "ref" || loc.kind === "hub" || loc.kind === "edge") g = 0;
       else if (loc.kind === "teleporter") g = teleportGalaxyKey(loc.row, anyKnownGalaxy());
       else if (loc.row && loc.row.galaxy != null && isFinite(Number(loc.row.galaxy))) g = Number(loc.row.galaxy);
       if (g !== state.galaxy) {
@@ -3131,6 +3300,10 @@
           showRefs.disabled = state.galaxy !== 0;
           if (state.galaxy !== 0) showRefs.checked = false;
         }
+        if (showEdges) {
+          showEdges.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showEdges.checked = false;
+        }
       }
       if (loc.kind === "ref" && showRefs) {
         showRefs.disabled = false;
@@ -3139,6 +3312,10 @@
       if (loc.kind === "hub" && showHubs) {
         showHubs.disabled = false;
         showHubs.checked = true;
+      }
+      if (loc.kind === "edge" && showEdges) {
+        showEdges.disabled = false;
+        showEdges.checked = true;
       }
       if (loc.kind === "discovery" && showDiscoveries && !showDiscoveries.checked) showDiscoveries.checked = true;
       if (loc.kind === "teleporter" && showTeleporters && !showTeleporters.checked) showTeleporters.checked = true;
@@ -3187,6 +3364,28 @@
           heading: hub.label
         };
       }
+      if (kind === "edge") {
+        var edge = edgeById(id);
+        if (!edge) return null;
+        var heading = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+        return {
+          place: {
+            glyphs: edge.glyphs,
+            planet: edge.planet,
+            galaxy: 0,
+            name: edge.documented ? edge.system : "Edge of the map (no documented system here)",
+            type: "Edge",
+            coords: edge.coords,
+            centerId: edge.id,
+            centerKind: "edge",
+            note: edge.note,
+            lyText: formatLy(edge.ly),
+            sourceUrl: edge.source,
+            sourceName: edge.sourceName
+          },
+          heading: heading
+        };
+      }
       return null;
     }
 
@@ -3210,6 +3409,7 @@
           return;
         }
         state.selectedRef = loc.id;
+        state.selectedEdge = null;
         state.selection = [];
         state.anchorId = null;
         state.selected = null;
@@ -3224,6 +3424,7 @@
       }
       if (loc.kind === "hub") {
         state.selectedRef = null;
+        state.selectedEdge = null;
         state.selection = [];
         state.anchorId = null;
         state.selected = null;
@@ -3234,6 +3435,27 @@
         renderRefList();
         showOpenMark();
         setStatus(loc.row.label + (loc.row.note ? " · " + loc.row.note : "") + " — glyphs " + loc.row.glyphs + " — " + loc.row.coords + ". Euclid reference, not from your save.");
+        return;
+      }
+      if (loc.kind === "edge") {
+        if (keepSelection && state.selectedEdge === loc.id && !state.selection.length) {
+          openMark = { kind: "edge", id: loc.id };
+          if (placePanel && placePanel.hidden) showOpenMark({ keepMode: true });
+          return;
+        }
+        state.selectedEdge = loc.id;
+        state.selectedRef = null;
+        state.selection = [];
+        state.anchorId = null;
+        state.selected = null;
+        state.selectedFreight = null;
+        state.hover = null;
+        openMark = { kind: "edge", id: loc.id };
+        renderLists();
+        renderRefList();
+        showOpenMark();
+        var edgeName = loc.row.documented ? (loc.row.label + " — " + loc.row.system) : "Edge of the map (no documented system here)";
+        setStatus(edgeName + " — " + loc.row.axis + " — " + (loc.row.glyphs ? "glyphs " + loc.row.glyphs + " — " : "") + loc.row.coords + " — " + formatLy(loc.row.ly) + " from the core.");
         return;
       }
       if (keepSelection && isSelected(loc.id)) return;
@@ -3269,6 +3491,10 @@
       if (!kind || kind === "hub") {
         var hub = hubById(id);
         if (hub) return pack("hub", hub, true);
+      }
+      if (!kind || kind === "edge") {
+        var edge = edgeById(id);
+        if (edge) return pack("edge", edge, true);
       }
       if (kind) return null;
       var glyphs = id.toUpperCase();
@@ -3309,6 +3535,9 @@
       for (i = 0; i < refs.length; i++) {
         if (String(refs[i].glyphs || "").toUpperCase() === glyphs) return pack("ref", refs[i], true);
       }
+      for (i = 0; i < edges.length; i++) {
+        if (edges[i].glyphs && String(edges[i].glyphs).toUpperCase() === glyphs) return pack("edge", edges[i], true);
+      }
       return null;
     }
 
@@ -3335,6 +3564,7 @@
         var id = state.anchorId && state.selection.indexOf(state.anchorId) !== -1 ? state.anchorId : state.selection[0];
         return { id: id, kind: "", keep: true };
       }
+      if (state.selectedEdge) return { id: state.selectedEdge, kind: "edge", keep: true };
       if (state.selectedRef) return { id: state.selectedRef, kind: "ref", keep: true };
       if (placePanel && !placePanel.hidden && placeBody) {
         var panelBtn = placeBody.querySelector("button.center-on[data-center]");
@@ -3436,6 +3666,10 @@
           showRefs.disabled = state.galaxy !== 0;
           if (state.galaxy !== 0) showRefs.checked = false;
         }
+        if (showEdges) {
+          showEdges.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showEdges.checked = false;
+        }
       }
       if (showTeleporters && !showTeleporters.checked) showTeleporters.checked = true;
       if (viewMode === "3d" && galaxy3d) {
@@ -3507,6 +3741,28 @@
       ctx.stroke();
       starCache = { key: key, canvas: off };
       return off;
+    }
+
+    function paintCompass(ctx, x, y, letter, r, stroke, fill) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.beginPath();
+      ctx.moveTo(0, -r);
+      ctx.lineTo(r * 0.72, 0);
+      ctx.lineTo(0, r);
+      ctx.lineTo(-r * 0.72, 0);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = 1.4;
+      ctx.strokeStyle = stroke;
+      ctx.stroke();
+      ctx.fillStyle = stroke;
+      ctx.font = "700 " + Math.max(8, Math.round(r * 0.95)) + "px 'IBM Plex Mono', ui-monospace, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(letter, 0, 0.5);
+      ctx.restore();
     }
 
     function paintStar(ctx, x, y, r, fill, stroke) {
@@ -4013,6 +4269,35 @@
         });
       }
 
+      if (state.galaxy === 0 && (!showEdges || showEdges.checked)) {
+        edges.forEach(function (edge) {
+          var onEdge = state.selectedEdge === edge.id || state.hoverEdge === edge.id;
+          var w = galaxyWorld(edge.voxelX, edge.voxelY, edge.voxelZ);
+          var labelDx = 14;
+          var labelDy = -12;
+          if (edge.id === "forward") { labelDx = -78; labelDy = -6; }
+          if (edge.id === "back") { labelDx = -62; labelDy = 8; }
+          if (edge.id === "east") labelDx = -52;
+          markers.push({
+            id: edge.id,
+            kind: "edge",
+            shape: "m" + edge.letter,
+            x: w.x,
+            y: w.y,
+            z: w.z,
+            size: onEdge ? 42 : 34,
+            alpha: 1,
+            color: c.accent2,
+            hitR: 16,
+            label: edge.label,
+            labelColor: c.accent2,
+            priority: true,
+            labelDx: labelDx,
+            labelDy: labelDy
+          });
+        });
+      }
+
       var bases = visibleBases();
       var groups = Object.create(null);
       var groupKeys = [];
@@ -4256,6 +4541,41 @@
         hits.push({ x: core.x, y: core.y, r: 8, kind: "center" });
       }
 
+      var showEdge = state.galaxy === 0 && (!showEdges || showEdges.checked);
+      if (showEdge) {
+        var origin = project(0, 0, w, h);
+        ctx.save();
+        ctx.strokeStyle = withAlpha(c.accent2, 0.35);
+        ctx.lineWidth = 1;
+        edges.forEach(function (edge) {
+          if (edge.axis === "+Y" || edge.axis === "-Y") return;
+          var tip = project(edge.voxelX, edge.voxelZ, w, h);
+          ctx.beginPath();
+          ctx.moveTo(origin.x, origin.y);
+          ctx.lineTo(tip.x, tip.y);
+          ctx.stroke();
+        });
+        ctx.beginPath();
+        ctx.moveTo(origin.x, origin.y - 32);
+        ctx.lineTo(origin.x, origin.y + 32);
+        ctx.stroke();
+        ctx.restore();
+        edges.forEach(function (edge) {
+          var p = project(edge.voxelX, edge.voxelZ, w, h);
+          if (edge.id === "forward") p.y -= 32;
+          else if (edge.id === "back") p.y += 32;
+          var on = state.selectedEdge === edge.id || state.hoverEdge === edge.id;
+          paintCompass(ctx, p.x, p.y, edge.letter, on ? 9 : 7, c.accent2, withAlpha(c.base, 0.9));
+          hits.push({ x: p.x, y: p.y, r: 14, kind: "edge", id: edge.id });
+          var lx = p.x + 12;
+          var ly = p.y;
+          if (edge.id === "north") ly = p.y + 16;
+          else if (edge.id === "south") ly = p.y - 16;
+          else if (edge.id === "east") lx = p.x - 64;
+          paintLabel(ctx, edge.label, lx, ly, c.accent2, c.base);
+        });
+      }
+
       var showHub = state.galaxy === 0 && (!showHubs || showHubs.checked);
       if (showHub) {
         var clusters = [];
@@ -4488,6 +4808,11 @@
 
     function refById(id) {
       for (var i = 0; i < refs.length; i++) if (refs[i].id === id) return refs[i];
+      return null;
+    }
+
+    function edgeById(id) {
+      for (var i = 0; i < edges.length; i++) if (edges[i].id === id) return edges[i];
       return null;
     }
 
@@ -4768,11 +5093,15 @@
         showRefs.disabled = state.galaxy !== 0;
         if (state.galaxy !== 0) showRefs.checked = false;
       }
+      if (showEdges) {
+        showEdges.disabled = state.galaxy !== 0;
+        if (state.galaxy !== 0) showEdges.checked = false;
+      }
     }
 
     function summarize() {
       if (!state.fileName) {
-        setStatus("Ready — Euclid schematic with Hub marks and quadrant references. Choose exported JSON or a Steam save. Nothing is uploaded.");
+        setStatus("Ready — Euclid schematic with Hub marks, quadrant references, and galaxy edges. Choose exported JSON or a Steam save. Nothing is uploaded.");
         return;
       }
       var here = visibleBases().length;
@@ -4850,8 +5179,10 @@
       state.selectedFreight = null;
       state.expanded = {};
       state.selectedRef = null;
+      state.selectedEdge = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverEdge = null;
       state.hoverDiscovery = null;
       state.hoverTeleport = null;
       aim = null;
@@ -4868,6 +5199,7 @@
       } else state.galaxy = 0;
       if (showHubs) showHubs.checked = state.galaxy === 0;
       if (showRefs) showRefs.checked = state.galaxy === 0;
+      if (showEdges) showEdges.checked = state.galaxy === 0;
       resetView();
       saveDiscoveryCache();
       refresh();
@@ -4891,8 +5223,10 @@
       state.anchorId = null;
       state.selectedFreight = null;
       state.selectedRef = null;
+      state.selectedEdge = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverEdge = null;
       aim = null;
       openMark = null;
       state.fileName = "";
@@ -5116,15 +5450,17 @@
       var h = hitTest(ev);
       var next = h && h.kind === "base" ? h.id : null;
       var nextRef = h && h.kind === "ref" ? h.id : null;
+      var nextEdge = h && h.kind === "edge" ? h.id : null;
       var nextDisc = h && (h.kind === "discovery" || h.kind === "discovery-cluster") ? h.id : null;
       var nextTele = h && h.kind === "teleporter" ? h.id : null;
       var nextAim = h ? { x: h.ax != null ? h.ax : h.x, y: h.ay != null ? h.ay : h.y, kind: h.kind, id: h.id || null } : null;
       canvas.style.cursor = h ? "pointer" : (selectMode ? "crosshair" : "grab");
-      var sameHover = next === state.hover && nextRef === state.hoverRef && nextDisc === state.hoverDiscovery && nextTele === state.hoverTeleport;
+      var sameHover = next === state.hover && nextRef === state.hoverRef && nextEdge === state.hoverEdge && nextDisc === state.hoverDiscovery && nextTele === state.hoverTeleport;
       var sameAim = (!nextAim && !aim) || (nextAim && aim && nextAim.kind === aim.kind && nextAim.id === aim.id && nextAim.x === aim.x && nextAim.y === aim.y);
       if (sameHover && sameAim) return;
       state.hover = next;
       state.hoverRef = nextRef;
+      state.hoverEdge = nextEdge;
       state.hoverDiscovery = nextDisc;
       state.hoverTeleport = nextTele;
       aim = nextAim;
@@ -5134,9 +5470,10 @@
     if (mapWrap) {
       mapWrap.addEventListener("mouseleave", function () {
         if (drag) return;
-        if (!state.hover && !state.hoverRef && !state.hoverDiscovery && !state.hoverTeleport && !aim) return;
+        if (!state.hover && !state.hoverRef && !state.hoverEdge && !state.hoverDiscovery && !state.hoverTeleport && !aim) return;
         state.hover = null;
         state.hoverRef = null;
+        state.hoverEdge = null;
         state.hoverDiscovery = null;
         state.hoverTeleport = null;
         aim = null;
@@ -5197,6 +5534,7 @@
       var h = hitTest(ev);
       if (!h) {
         state.selectedRef = null;
+        state.selectedEdge = null;
         commitSelection([]);
         renderRefList();
         return;
@@ -5225,10 +5563,29 @@
         chooseMarker(h.id, ev, h.kind === "freighter" ? freightOrder : listOrder);
         return;
       }
-      if (h.kind === "ref") {
+      if (h.kind === "edge") {
+        var edge = edgeById(h.id);
+        var wasEdge = state.selectedEdge === h.id;
+        forgetPlaces();
+        state.selectedRef = null;
+        state.selectedEdge = wasEdge ? null : h.id;
+        renderLists();
+        renderRefList();
+        draw();
+        if (edge && state.selectedEdge) {
+          openMark = { kind: "edge", id: edge.id };
+          var edgeTitle = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+          setStatus(edgeTitle + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
+          showOpenMark();
+        } else {
+          openMark = null;
+          renderPlacePanel(null);
+        }
+      } else if (h.kind === "ref") {
         var ref = refById(h.id);
         var was = state.selectedRef === h.id;
         forgetPlaces();
+        state.selectedEdge = null;
         state.selectedRef = was ? null : h.id;
         renderLists();
         renderRefList();
@@ -5245,6 +5602,7 @@
         var hub = hubById(h.id);
         if (hub) {
           forgetPlaces();
+          state.selectedEdge = null;
           openMark = { kind: "hub", id: hub.id };
           renderLists();
           draw();
@@ -5565,8 +5923,9 @@
       if (helpOpen) return;
       var tag = ev.target && ev.target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if (!state.selection.length && !state.selectedRef && !openMark) return;
+      if (!state.selection.length && !state.selectedRef && !state.selectedEdge && !openMark) return;
       state.selectedRef = null;
+      state.selectedEdge = null;
       openMark = null;
       commitSelection([]);
     });
@@ -5641,13 +6000,19 @@
           if (state.galaxy !== 0) showHubs.checked = false;
           showHubs.disabled = state.galaxy !== 0;
         }
+        if (showEdges) {
+          if (state.galaxy !== 0) showEdges.checked = false;
+          showEdges.disabled = state.galaxy !== 0;
+        }
         state.selected = null;
         state.selection = [];
         state.anchorId = null;
         state.selectedFreight = null;
         state.selectedRef = null;
+        state.selectedEdge = null;
         state.hover = null;
         state.hoverRef = null;
+        state.hoverEdge = null;
         state.hoverDiscovery = null;
         state.hoverTeleport = null;
         aim = null;
@@ -5690,6 +6055,18 @@
       renderRefList();
       draw();
     });
+    if (showEdges) showEdges.addEventListener("change", function () {
+      if (showEdges.checked) return draw();
+      state.selectedEdge = null;
+      state.hoverEdge = null;
+      if (aim && aim.kind === "edge") aim = null;
+      if (openMark && openMark.kind === "edge") {
+        openMark = null;
+        if (!state.selection.length) renderPlacePanel(null);
+      }
+      renderRefList();
+      draw();
+    });
 
     function focusRef(id) {
       var ref = refById(id);
@@ -5701,12 +6078,14 @@
         if (showRefs) { showRefs.disabled = false; showRefs.checked = true; }
       }
       state.selectedRef = id;
+      state.selectedEdge = null;
       state.selection = [];
       state.anchorId = null;
       state.selected = null;
       state.selectedFreight = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverEdge = null;
       openMark = null;
       renderPlacePanel(null);
       var size = canvasSize();
@@ -5738,6 +6117,56 @@
         });
       });
       refList.innerHTML = html.join("");
+      renderEdgeList();
+    }
+
+    function focusEdge(id) {
+      var edge = edgeById(id);
+      if (!edge) return;
+      if (state.galaxy !== 0) {
+        state.galaxy = 0;
+        if (galaxySel) galaxySel.value = "0";
+        if (showHubs) showHubs.disabled = false;
+        if (showRefs) showRefs.disabled = false;
+        if (showEdges) { showEdges.disabled = false; showEdges.checked = true; }
+      }
+      if (showEdges) { showEdges.disabled = false; showEdges.checked = true; }
+      state.selectedEdge = id;
+      state.selectedRef = null;
+      state.selection = [];
+      state.anchorId = null;
+      state.selected = null;
+      state.selectedFreight = null;
+      state.hover = null;
+      state.hoverEdge = null;
+      openMark = { kind: "edge", id: edge.id };
+      var size = canvasSize();
+      lastSize = size;
+      var framed = frameOf(size.w, size.h);
+      var pan = panToMarker(edge.voxelX, edge.voxelZ, 0, 1, view.zoom, framed, size.w / 2, size.h / 2);
+      view.panX = pan.panX;
+      view.panY = pan.panY;
+      clampPan();
+      aim = { x: size.w / 2, y: size.h / 2, kind: "edge", id: id };
+      var edgeTitle = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+      setStatus(edgeTitle + " — " + edge.axis + " — " + (edge.glyphs ? "glyphs " + edge.glyphs + " — " : "") + edge.coords + " — " + formatLy(edge.ly) + " from the core.");
+      showOpenMark();
+    }
+
+    function renderEdgeList() {
+      var edgeList = document.getElementById("edge-list");
+      if (!edgeList) return;
+      edgeList.innerHTML = edges.map(function (edge) {
+        var on = state.selectedEdge === edge.id ? "true" : "false";
+        var title = edge.documented ? (edge.label + " — " + edge.system) : "Edge of the map (no documented system here)";
+        return '<li class="loc-head"><button type="button" data-edge="' + esc(edge.id) + '" aria-pressed="' + on + '">' +
+          '<span class="q">' + esc(edge.axis) + "</span> " +
+          "<strong>" + esc(title) + "</strong>" +
+          (edge.glyphs ? " — glyphs " + esc(edge.glyphs) : "") +
+          " — coords " + esc(edge.coords) +
+          " — " + esc(formatLy(edge.ly)) + " from the core</button>" +
+          centerButton(edge.id, "edge") + "</li>";
+      }).join("");
     }
 
     var refList = document.getElementById("ref-list");
@@ -5746,6 +6175,18 @@
         var btn = ev.target.closest ? ev.target.closest("[data-ref]") : null;
         if (!btn) return;
         focusRef(btn.getAttribute("data-ref"));
+        renderLists();
+        renderRefList();
+        draw();
+      });
+    }
+
+    var edgeList = document.getElementById("edge-list");
+    if (edgeList) {
+      edgeList.addEventListener("click", function (ev) {
+        var btn = ev.target.closest ? ev.target.closest("[data-edge]") : null;
+        if (!btn) return;
+        focusEdge(btn.getAttribute("data-edge"));
         renderLists();
         renderRefList();
         draw();
@@ -5776,8 +6217,10 @@
       state.selection = [];
       state.anchorId = null;
       state.selectedRef = null;
+      state.selectedEdge = null;
       state.hover = null;
       state.hoverRef = null;
+      state.hoverEdge = null;
       state.hoverDiscovery = null;
       aim = null;
       state.filter = "";
@@ -5788,6 +6231,7 @@
       if (fileInput) fileInput.value = "";
       if (showHubs) { showHubs.checked = true; showHubs.disabled = false; }
       if (showRefs) { showRefs.checked = true; showRefs.disabled = false; }
+      if (showEdges) { showEdges.checked = true; showEdges.disabled = false; }
       if (showCenter) showCenter.checked = true;
       if (showStock) showStock.checked = false;
       if (showProduction) showProduction.checked = false;
@@ -6207,6 +6651,7 @@
     looksBinary: looksBinary,
     hubMarks: hubMarks,
     referenceMarks: referenceMarks,
+    edgeMarks: edgeMarks,
     galaxyWorld: galaxyWorld,
     lz4BlockDecompress: lz4BlockDecompress,
     decompressHg: decompressHg,

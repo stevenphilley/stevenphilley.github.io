@@ -324,6 +324,49 @@ refs.forEach(function (r) {
 assert(api.hubMarks().length === 3, "Hub capital, HUB1, and Former Hub stay");
 eq(api.hubMarks().map(function (h) { return h.id; }), ["capital", "hub1", "former"], "Hub mark ids are unchanged");
 
+var edges = api.edgeMarks();
+eq(edges.map(function (e) { return e.id; }), ["north", "south", "east", "west", "forward", "back"], "six galaxy edges, in compass order");
+eq(edges.map(function (e) { return e.letter; }), ["N", "S", "E", "W", "F", "B"], "edge letters match the compass");
+var edgeBy = {};
+edges.forEach(function (e) { edgeBy[e.id] = e; });
+eq([edgeBy.north.voxelX, edgeBy.north.voxelY, edgeBy.north.voxelZ], [0, 0, 2047], "north is +Z, the top of the flat map");
+eq([edgeBy.south.voxelX, edgeBy.south.voxelY, edgeBy.south.voxelZ], [0, 0, -2047], "south is -Z, the bottom of the flat map");
+eq([edgeBy.east.voxelX, edgeBy.east.voxelY, edgeBy.east.voxelZ], [2047, 0, 0], "east is +X, the right of the flat map");
+eq([edgeBy.west.voxelX, edgeBy.west.voxelY, edgeBy.west.voxelZ], [-2047, 0, 0], "west is -X, the left of the flat map");
+eq([edgeBy.forward.voxelX, edgeBy.forward.voxelY, edgeBy.forward.voxelZ], [0, 127, 0], "forward is +Y, up in the 3D view");
+eq([edgeBy.back.voxelX, edgeBy.back.voxelY, edgeBy.back.voxelZ], [0, -127, 0], "back is -Y at the reachable lower pole");
+eq(edgeBy.north.system, "Notus", "north is Notus");
+eq(edgeBy.south.system, "Boreas", "south is Boreas");
+eq(edgeBy.east.system, "Eurus", "east is Eurus");
+eq(edgeBy.west.system, "Zephyrus", "west is Zephyrus");
+eq(edgeBy.forward.system, "Ame", "forward is Ame");
+eq(edgeBy.back.system, "Yomi", "back is Yomi");
+eq(edgeBy.north.glyphs, "1001007FF000", "Notus glyphs");
+eq(edgeBy.south.glyphs, "100100801000", "Boreas glyphs");
+eq(edgeBy.east.glyphs, "1001000007FF", "Eurus glyphs");
+eq(edgeBy.west.glyphs, "100100000801", "Zephyrus glyphs");
+eq(edgeBy.forward.glyphs, "10007F000000", "Ame glyphs");
+eq(edgeBy.back.glyphs, "100181000000", "Yomi glyphs");
+eq(edgeBy.north.coords, "07FF:007F:0FFE:0001", "Notus signal-booster coords");
+eq(edgeBy.south.coords, "07FF:007F:0000:0001", "Boreas signal-booster coords");
+eq(edgeBy.east.coords, "0FFE:007F:07FF:0001", "Eurus signal-booster coords");
+eq(edgeBy.west.coords, "0000:007F:07FF:0001", "Zephyrus signal-booster coords");
+eq(edgeBy.forward.coords, "07FF:00FE:07FF:0000", "Ame signal-booster coords");
+eq(edgeBy.back.coords, "07FF:0000:07FF:0001", "Yomi signal-booster coords");
+var edgeGlyphs = {};
+edges.forEach(function (e) {
+  assert(e.documented, e.id + " names a documented system");
+  assert(e.planet === 1, e.id + " uses planet index 1");
+  assert(/^https:\/\/nomanssky\.fandom\.com\/wiki\//.test(e.source), e.id + " cites a wiki page");
+  eq(api.analyzeGlyphs(e.glyphs).coords, e.coords, e.id + " glyphs round-trip to its coords");
+  eq(api.galaxyWorld(e.voxelX, e.voxelY, e.voxelZ), { x: e.voxelX, y: e.voxelY, z: e.voxelZ }, e.id + " keeps portal X, vertical Y, and Z");
+  assert(e.ly > 400, e.id + " is far from the core");
+  assert(!edgeGlyphs[e.glyphs], e.id + " glyphs are unique");
+  edgeGlyphs[e.glyphs] = 1;
+});
+eq(api.parseFocusParam("?focus=forward", ""), "forward", "an edge id can be a focus query");
+eq(api.parseFocusParam("", "#focus=back"), "back", "an edge id can be a focus hash");
+
 var logistics = require("./logistics.js");
 
 assert(api.pointInRect(10, 10, { x0: 0, y0: 0, x1: 20, y1: 20 }), "a point inside a rectangle is a hit");
