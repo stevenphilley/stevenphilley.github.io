@@ -7,18 +7,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Galaxy start — Milky Way orientation — Steven Philley</title>
-<meta name="description" content="Beginner Milky Way orientation: spiral arms overview, Sol’s approximate seat in the Orion Arm, a CSS/SVG scale diagram, and a short galactic glossary. Educational start — not a Gaia dump.">
+<meta name="description" content="Beginner Milky Way orientation: a 3D artist schematic of the disc, spiral arms, bar, and Sol in the Orion Arm, with the flat SVG still one click away. Educational start — not a Gaia dump.">
 <link rel="canonical" href="https://stevenphilley.com/science/astronomy/galaxy/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
 <meta property="og:title" content="Galaxy start — Milky Way orientation">
-<meta property="og:description" content="Spiral arms, Sol in the Orion Arm, scale diagram, and a short glossary of galactic terms.">
+<meta property="og:description" content="A 3D Milky Way schematic: spiral arms, the bar, and Sol in the Orion Arm. The flat diagram stays available.">
 <meta property="og:url" content="https://stevenphilley.com/science/astronomy/galaxy/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Galaxy start — Milky Way orientation">
-<meta name="twitter:description" content="Beginner diagram of the Milky Way and Sol’s place in the Orion Arm.">
+<meta name="twitter:description" content="3D Milky Way schematic — spiral arms, the thin disc, and Sol in the Orion Arm.">
 <meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -45,10 +45,56 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .stage{display:grid;grid-template-columns:minmax(280px,1.1fr) minmax(240px,.9fr);gap:12px;align-items:stretch}
 .diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);padding:12px;position:relative}
 .diagram .hint{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
-.diagram svg{display:block;width:100%;height:auto}
+.map-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}
+.map-tools button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:8px 10px;min-height:36px;cursor:pointer}
+.map-tools button:hover,.map-tools button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.map-tools button[aria-pressed="true"]{color:var(--ink,#e8e6e1);border-color:color-mix(in srgb,var(--accent,#c8b48a) 50%,var(--line,#2c303a));background:color-mix(in srgb,var(--accent,#c8b48a) 14%,transparent)}
+.map-tools button:disabled{opacity:.38;cursor:default}
+.map-tools .mode-toggle{display:inline-flex;border:1px solid var(--line,#2c303a)}
+.map-tools .mode-toggle button{border:0;border-right:1px solid var(--line,#2c303a);min-height:36px}
+.map-tools .mode-toggle button:last-child{border-right:0}
+.map-tools .help-q{margin-left:auto;width:36px;min-width:36px;padding:0;font-size:16px;letter-spacing:0;text-transform:none;color:var(--accent,#c8b48a);border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a))}
+.map-stage{position:relative;height:min(560px,68vh);min-height:320px;background:#07080e;touch-action:none}
+.map-stage svg,.map-stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#mw-3d,#mw-labels{visibility:hidden;pointer-events:none}
+.diagram.mode-3d #mw{visibility:hidden;pointer-events:none}
+.diagram.mode-3d #mw-3d{visibility:visible;pointer-events:auto}
+.diagram.mode-3d #mw-labels{visibility:visible;pointer-events:none}
+.diagram.mode-2d .map-stage{touch-action:auto}
+#mw-3d{cursor:grab}
+#mw-3d.is-dragging{cursor:grabbing}
+#mw-labels{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:2}
+.mw-label{position:absolute;transform:translate(-50%,-130%);pointer-events:auto;appearance:none;border:1px solid transparent;background:rgba(0,0,0,.42);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:3px 6px;cursor:pointer;text-shadow:0 1px 2px #000;white-space:nowrap}
+.mw-label:hover,.mw-label:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent);color:var(--ink,#e8e6e1);outline:none}
+.mw-label[aria-pressed="true"]{color:var(--accent,#c8b48a);border-color:color-mix(in srgb,var(--accent,#c8b48a) 65%,transparent);background:rgba(0,0,0,.62)}
+.mw-label.is-off{visibility:hidden;pointer-events:none}
+.gl-fallback{margin:8px 0 0;font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.5;color:var(--muted,#63666e)}
+.gl-fallback[hidden]{display:none}
 .arm{cursor:pointer;transition:opacity .15s,stroke-width .15s}
-.arm:hover,.arm:focus,.arm[aria-pressed="true"]{opacity:1;outline:none;filter:brightness(1.15)}
+.arm:hover,.arm:focus,.arm[aria-pressed="true"]{opacity:1;outline:none;filter:brightness(1.25)}
 .arm{opacity:.85}
+.arm:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.help-dialog{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:8px 12px;min-height:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:"IBM Plex Mono",monospace;font-size:12.5px;line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.refs a{color:var(--ink,#e8e6e1)}
 .detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column}
 .detail .tier{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
 .detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 10px;line-height:.95}
@@ -90,6 +136,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 @media (max-width:860px){
   .stage,.glossary,.more{grid-template-columns:1fr}
   .bar-row{grid-template-columns:90px 1fr 64px}
+  .map-stage{height:min(420px,54vh);min-height:280px}
+  .help-card th{width:42%}
+}
+@media (pointer:coarse){
+  .map-tools button,.arm-list button,.mw-label{min-height:44px}
 }
 </style>
 </head>
@@ -135,15 +186,26 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 
   <p class="kicker">Vol. Science · Astronomy · Milky Way</p>
   <h1>Galaxy<br>start</h1>
-  <p class="lede">A beginner orientation to the <strong>Milky Way</strong> — barred spiral, major arms, and where Sol sits (roughly) in the <strong>Orion Arm</strong> (Local Spur). Schematic art only: not a Gaia catalog dump, not a precision kinematic map.</p>
-  <p class="note-schematic">Arm names and geometry follow common educational cartoons (Perseus, Orion/Local, Sagittarius–Carina, Scutum–Centaurus, Norma / Outer). Real structure is messier; distances ~kpc are order-of-magnitude.</p>
+  <p class="lede">A beginner orientation to the <strong>Milky Way</strong> — barred spiral, major arms, and where Sol sits in the <strong>Orion Arm</strong> (Local Spur). The map opens in 3D. Face-on, edge-on, and a view from the Sun are in the toolbar; 2D keeps the classroom drawing. Schematic art only: not a Gaia catalog dump, not a precision kinematic map.</p>
+  <p class="note-schematic">The same six lanes as the flat cartoon: Perseus, Orion/Local, Sagittarius–Carina, Scutum–Centaurus, Norma, and the Outer Arm. In 3D their ridges follow published log-spiral pitches. Real arms have gaps and kinks; distances here are a teaching scale, not a star catalog.</p>
 
-  <p class="band">Interactive · Face-on schematic</p>
+  <p class="band">Interactive · 3D schematic</p>
   <div class="stage">
-    <div class="diagram">
-      <p class="hint">Tap an arm · Sol marked on Orion Arm</p>
-      <svg id="mw" viewBox="0 0 480 480" role="img" aria-labelledby="mw-title mw-desc">
-        <title id="mw-title">Milky Way spiral arms schematic</title>
+    <div class="diagram" id="galaxy-stage">
+      <div class="map-tools" role="toolbar" aria-label="Galaxy map">
+        <div class="mode-toggle" role="group" aria-label="Map dimension">
+          <button type="button" id="mode-3d" aria-pressed="true">3D</button>
+          <button type="button" id="mode-2d" aria-pressed="false">2D</button>
+        </div>
+        <button type="button" id="view-face" aria-pressed="false">Face-on</button>
+        <button type="button" id="view-edge" aria-pressed="false">Edge-on</button>
+        <button type="button" id="view-sun" aria-pressed="false">From the Sun</button>
+        <button type="button" id="view-reset">Reset view</button>
+        <button type="button" class="help-q" id="galaxy-help" aria-haspopup="dialog" aria-controls="galaxy-help-dialog" aria-expanded="false" aria-label="Galaxy map controls">?</button>
+      </div>
+      <p class="hint" id="map-hint">Artist-style schematic · drag to orbit · scroll to zoom · tap a lane</p>
+      <div class="map-stage" id="map-stage">
+      <svg id="mw" viewBox="0 0 480 480" role="img" aria-label="Milky Way spiral arms schematic. Top-down educational diagram with labeled spiral arms and Sol on the Orion Arm.">
         <desc id="mw-desc">Top-down educational diagram of the Milky Way with labeled spiral arms and Sol on the Orion Arm.</desc>
         <defs>
           <radialGradient id="disk" cx="50%" cy="50%" r="50%">
@@ -153,9 +215,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
           </radialGradient>
         </defs>
         <circle cx="240" cy="240" r="220" fill="url(#disk)" stroke="var(--line,#2c303a)" stroke-width="1"/>
+        <circle class="arm" id="feat-halo" tabindex="0" role="button" aria-label="Stellar halo" data-arm="halo" cx="240" cy="240" r="214" fill="none" stroke="color-mix(in srgb, var(--ink-soft, #9b9a96) 35%, transparent)" stroke-width="10" stroke-dasharray="2 6" pointer-events="stroke"/>
         <!-- bulge / bar -->
-        <ellipse cx="240" cy="240" rx="48" ry="22" transform="rotate(-25 240 240)" fill="color-mix(in srgb, var(--accent, #c8b48a) 35%, #2a2030)" stroke="color-mix(in srgb, var(--accent, #c8b48a) 50%, transparent)" stroke-width="1"/>
-        <text x="240" y="236" text-anchor="middle" fill="var(--ink-soft,#9b9a96)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="0.08em">BAR / BULGE</text>
+        <circle class="arm" id="feat-bulge" tabindex="0" role="button" aria-label="Bulge" data-arm="bulge" cx="240" cy="240" r="36" fill="color-mix(in srgb, var(--accent, #c8b48a) 22%, #1a1420)" stroke="color-mix(in srgb, var(--accent, #c8b48a) 40%, transparent)" stroke-width="1"/>
+        <ellipse class="arm" id="feat-bar" tabindex="0" role="button" aria-label="Central bar" data-arm="bar" cx="240" cy="240" rx="48" ry="22" transform="rotate(-25 240 240)" fill="color-mix(in srgb, var(--accent, #c8b48a) 35%, #2a2030)" stroke="color-mix(in srgb, var(--accent, #c8b48a) 50%, transparent)" stroke-width="1"/>
+        <text x="240" y="236" text-anchor="middle" fill="var(--ink-soft,#9b9a96)" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="0.08em" pointer-events="none">BAR / BULGE</text>
         <!-- Arms as stroked spirals (approximate paths) -->
         <path id="arm-outer" class="arm" tabindex="0" role="button" aria-label="Outer Arm" data-arm="outer"
           d="M240 48 C 340 60, 420 140, 420 240 C 420 360, 320 430, 220 430 C 120 430, 55 340, 60 240"
@@ -176,20 +240,26 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
           d="M240 55 C 355 75, 405 155, 400 250 C 395 355, 300 415, 205 410 C 110 405, 50 320, 70 220"
           fill="none" stroke="color-mix(in srgb, var(--accent, #c8b48a) 35%, #506878)" stroke-width="13" stroke-linecap="round"/>
         <!-- Sol -->
-        <circle cx="268" cy="228" r="5" fill="var(--ink,#e8e6e1)" stroke="var(--accent,#c8b48a)" stroke-width="1.5"/>
-        <text x="278" y="224" fill="var(--ink,#e8e6e1)" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="0.06em">SOL</text>
-        <text x="278" y="236" fill="var(--muted,#63666e)" font-family="IBM Plex Mono, monospace" font-size="8">~8 kpc from center</text>
+        <circle class="arm" id="feat-sun" tabindex="0" role="button" aria-label="Sun" data-arm="sun" cx="268" cy="228" r="8" fill="transparent" stroke="var(--accent,#c8b48a)" stroke-width="1"/>
+        <circle cx="268" cy="228" r="4.5" fill="var(--ink,#e8e6e1)" pointer-events="none"/>
+        <text x="278" y="224" fill="var(--ink,#e8e6e1)" font-family="IBM Plex Mono, monospace" font-size="10" letter-spacing="0.06em" pointer-events="none">SOL</text>
+        <text x="278" y="236" fill="var(--muted,#63666e)" font-family="IBM Plex Mono, monospace" font-size="8" pointer-events="none">~8.2 kpc · ~26,000 ly</text>
         <!-- center -->
-        <circle cx="240" cy="240" r="4" fill="var(--accent,#c8b48a)"/>
-        <text x="240" y="258" text-anchor="middle" fill="var(--muted,#63666e)" font-family="IBM Plex Mono, monospace" font-size="8">Sgr A*</text>
+        <circle class="arm" id="feat-sgra" tabindex="0" role="button" aria-label="Sagittarius A star" data-arm="sgra" cx="240" cy="240" r="8" fill="transparent" stroke="var(--accent,#c8b48a)" stroke-width="1"/>
+        <circle cx="240" cy="240" r="3.5" fill="var(--accent,#c8b48a)" pointer-events="none"/>
+        <text x="240" y="258" text-anchor="middle" fill="var(--muted,#63666e)" font-family="IBM Plex Mono, monospace" font-size="8" pointer-events="none">Sgr A*</text>
       </svg>
+      <canvas id="mw-3d" tabindex="0" role="application" aria-describedby="map-hint" aria-label="Three-dimensional Milky Way schematic. Drag to orbit, right-drag or two fingers to pan, scroll or pinch to zoom toward the pointer. The question mark lists every control."></canvas>
+      <div id="mw-labels"></div>
+      </div>
+      <p class="gl-fallback" id="gl-fallback" hidden>WebGL is unavailable in this browser, so the flat schematic is shown.</p>
     </div>
     <aside class="detail" id="detail" aria-live="polite">
       <p class="tier">Feature</p>
       <h2 id="d-name">Orion Arm</h2>
       <p class="range" id="d-range">Local Spur · Sol’s neighborhood</p>
       <p id="d-body">A minor spur between the Sagittarius–Carina and Perseus arms. Home to the Sun, nearby star-forming regions (Orion molecular clouds), and most naked-eye stars you learn first.</p>
-      <div class="arm-list" id="arm-btns" role="group" aria-label="Arms"></div>
+      <div class="arm-list" id="arm-btns" role="group" aria-label="Galaxy features"></div>
     </aside>
   </div>
 
@@ -202,14 +272,27 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       <div class="bar-row"><span class="lab">Sol → center</span><div class="bar-track"><div class="bar-fill" style="width:55%"></div></div><span class="val">~26,000 ly</span></div>
       <div class="bar-row"><span class="lab">Disk diameter</span><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><span class="val">~100,000 ly</span></div>
     </div>
-    <p class="credit">Bars are logarithmic-ish for readability, not a strict log plot. 1 kpc ≈ 3,260 light-years.</p>
+    <p class="credit">Bars are logarithmic-ish for readability, not a strict log plot. 1 kpc ≈ 3,260 light-years, so 8.2 kpc is about 27,000 ly. The ~26,000 ly row is the usual round number for that distance. Thin-disc scale height is about 300 pc (~1,000 ly), which is why the edge-on view is a thin band across a ~100,000 ly disc. A fainter thick-disc layer uses about 900 pc.</p>
+  </div>
+
+  <p class="band">Sources · scale</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2019/05/aa35656-19/aa35656-19.html" rel="noopener" target="_blank">GRAVITY Collaboration 2019, A&amp;A 625, L10</a> — geometric distance to Sgr A*, R<sub>0</sub> = 8178 ± 13 ± 22 pc.</li>
+      <li><a href="https://arxiv.org/abs/1602.07702" rel="noopener" target="_blank">Bland-Hawthorn &amp; Gerhard 2016, ARA&amp;A 54, 529</a> — the round scale used here: R<sub>0</sub> = 8.2 ± 0.1 kpc, the Sun 25 ± 5 pc above the stellar midplane, thin-disc scale height 300 ± 50 pc, scale length 2.6 ± 0.5 kpc.</li>
+      <li><a href="https://arxiv.org/abs/1910.03357" rel="noopener" target="_blank">Reid et al. 2019, ApJ 885, 131</a> — BeSSeL / VERA maser parallaxes. 3D arm pitch and radii follow their log-spiral fits, kinks included. They find R<sub>0</sub> = 8.15 ± 0.15 kpc and a smaller vertical offset, Z<sub>⊙</sub> = 5.5 ± 5.8 pc, on the young-star plane.</li>
+      <li><a href="https://arxiv.org/abs/1504.01401" rel="noopener" target="_blank">Wegg, Gerhard &amp; Portail 2015, MNRAS 450, 4050</a> — long bar half-length 5.0 ± 0.2 kpc, angle to the Sun–center line 28–33°. This drawing uses 5 kpc and 30°.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/features/cosmic/milkyway_info.html" rel="noopener" target="_blank">NASA Imagine the Universe — The Milky Way</a> — classroom diameter about 100,000 light-years. Sgr A* is about four million solar masses.</li>
+    </ul>
+    <p class="credit">Artist-style schematic. Star particles stand in for populations. Sol and Sgr A* markers are enlarged. Brighter arm stretches are where maser parallaxes anchor the fit; fainter stretches extend that same pitch. The 2D figure is the simpler classroom cartoon. Neither is a Gaia catalog.</p>
   </div>
 
   <p class="band">Glossary · starter terms</p>
   <dl class="glossary">
     <div class="gloss"><dt>Spiral arm</dt><dd>Denser lane of stars, gas, and dust where star formation is more active — a traffic jam in the disk’s density wave, not a rigid spoke.</dd></div>
     <div class="gloss"><dt>Orion Arm / Local Spur</dt><dd>Our minor arm segment. “Local Spur” emphasizes it is not a grand-design major arm like Perseus or Scutum–Centaurus.</dd></div>
-    <div class="gloss"><dt>Galactic center</dt><dd>~8 kpc toward Sagittarius. Hosts the radio source Sagittarius A*, a supermassive black hole.</dd></div>
+    <div class="gloss"><dt>Galactic center</dt><dd>~8.2 kpc (~26,000 ly) toward Sagittarius. Hosts the radio source Sagittarius A*, a supermassive black hole of about four million solar masses.</dd></div>
     <div class="gloss"><dt>Bar</dt><dd>Elongated stellar structure through the inner galaxy; the Milky Way is a barred spiral (SBc-ish).</dd></div>
     <div class="gloss"><dt>Halo</dt><dd>Sparse spherical population of old stars and dark matter surrounding the disk — globular clusters live here.</dd></div>
     <div class="gloss"><dt>kpc / ly</dt><dd>Kiloparsec and light-year. Astronomers mix both; educational pages often translate to ly for intuition.</dd></div>
@@ -229,6 +312,42 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 
   {% include footer.html %}
 </div>
+<div id="galaxy-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="galaxy-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="galaxy-help-title">Galaxy map controls</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">3D is the default. The 3D / 2D choice is remembered in this browser. If WebGL is unavailable, the flat schematic is shown on its own.</p>
+    <h3>3D Milky Way</h3>
+    <table>
+      <caption>3D Milky Way</caption>
+      <tbody>
+        <tr><th scope="row">3D / 2D</th><td>3D is a thin disc you can tilt. 2D is the classroom SVG. The choice stays in this browser.</td></tr>
+        <tr><th scope="row">Drag</th><td>Orbit. One finger orbits on a phone.</td></tr>
+        <tr><th scope="row">Right-drag</th><td>Pan. Two-finger drag pans as well.</td></tr>
+        <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
+        <tr><th scope="row">Face-on</th><td>Look down on the spiral.</td></tr>
+        <tr><th scope="row">Edge-on</th><td>Look across the disc so its thinness shows.</td></tr>
+        <tr><th scope="row">From the Sun</th><td>A seat just outside Sol, looking in toward Sagittarius A*.</td></tr>
+        <tr><th scope="row">Reset view</th><td>The three-quarter view the map opens on. The motion eases.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>Orbit while the map is focused. Plus and minus zoom. 0 or Home resets.</td></tr>
+        <tr><th scope="row">Click or tap</th><td>Highlights that arm or feature and fills the panel. The named buttons under the panel do the same, and so do the labels on the map.</td></tr>
+      </tbody>
+    </table>
+    <h3>Flat schematic</h3>
+    <table>
+      <caption>Flat schematic</caption>
+      <tbody>
+        <tr><th scope="row">Click or tap</th><td>An arm, the bar, the bulge, Sol, Sgr A*, or the halo ring. Enter or Space does it from the keyboard.</td></tr>
+        <tr><th scope="row">Feature list</th><td>The same names, in a focusable row under the text.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/js/vendor/three.galaxy.js"></script>
+<script src="/science/astronomy/galaxy/mw-galaxy-3d.js"></script>
 <script>
 (function(){
   "use strict";
@@ -245,38 +364,192 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     sgr:{name:'Sagittarius–Carina',range:'Major inner arm · toward center',body:'Bright star-forming arm inward of Sol. Carina and Sagittarius landmarks sit along this structure; summer Milky Way richness toward the south traces related material.'},
     scutum:{name:'Scutum–Centaurus',range:'Major arm · far side / inner',body:'A grand-design arm on the far/inner side of the bar region in many maps — massive stellar and molecular content.'},
     norma:{name:'Norma Arm',range:'Inner / far-side lane',body:'Often drawn near the bar ends and continuing as an outer far-side feature; naming and continuity are model-dependent.'},
-    outer:{name:'Outer Arm',range:'Far galactic outskirts',body:'Sparse outer spiral structure wrapping the disk. Useful reminder that “edge” is fuzzy — gas and stars taper gradually.'}
+    outer:{name:'Outer Arm',range:'Far galactic outskirts',body:'Sparse outer spiral structure wrapping the disk. Useful reminder that “edge” is fuzzy — gas and stars taper gradually.'},
+    bar:{name:'Central bar',range:'Long bar · ~5 kpc · ~30°',body:'An elongated stellar bar through the inner galaxy. The Milky Way is a barred spiral. This schematic uses a half-length of about 5 kpc and an angle of about 30° to the Sun–center line, inside the 28–33° range from Wegg, Gerhard and Portail (2015). The bar is much flatter than the bulge.'},
+    bulge:{name:'Bulge',range:'Boxy / peanut · inner galaxy',body:'The dense inner stellar bulge. It is the vertically thick part of the bar — a boxy, peanut-shaped distribution that stands well above the thin disc when you tip the map edge-on.'},
+    sgra:{name:'Sagittarius A*',range:'Galactic center',body:'The compact radio source at the dynamical center, a supermassive black hole of about four million solar masses. The marker is the origin of this model. Stellar orbits measured by the GRAVITY Collaboration put it 8,178 parsecs from the Sun; the drawing uses the round 8.2 kpc scale.'},
+    sun:{name:'Sun (Sol)',range:'Orion Arm · ~8.2 kpc · ~26,000 ly',body:'Our star sits in the Local Spur, about 8.2 kiloparsecs — roughly 26,000 light-years — from Sagittarius A*. It is slightly north of the stellar midplane: about 25 pc in the Bland-Hawthorn and Gerhard synthesis. Masers that define a younger plane put the offset closer to 5 pc.'},
+    halo:{name:'Stellar halo',range:'Sparse sphere · old stars',body:'A faint, roughly spherical population of old stars and globular clusters around the disc. The dark-matter halo is larger and is not drawn. Particles here fall off steeply so they stay a light haze and the thin disc still reads.'}
   };
-
-  var order=['orion','perseus','sgr','scutum','norma','outer'];
+  var SHORT={orion:'Orion',perseus:'Perseus',sgr:'Sagittarius',scutum:'Scutum',norma:'Norma',outer:'Outer',bar:'Bar',bulge:'Bulge',sgra:'Sgr A*',sun:'Sol',halo:'Halo'};
+  var order=['orion','perseus','sgr','scutum','norma','outer','bar','bulge','sgra','sun','halo'];
   var btnWrap=document.getElementById('arm-btns');
   order.forEach(function(id){
     var b=document.createElement('button');
     b.type='button';
     b.dataset.arm=id;
-    b.textContent=ARMS[id].name.split('–')[0].split(' ')[0];
+    b.textContent=SHORT[id];
+    b.setAttribute('aria-pressed','false');
     b.addEventListener('click',function(){select(id);});
     btnWrap.appendChild(b);
   });
+
+  var MODE_KEY='sp-mw-galaxy-mode';
+  var stage=document.getElementById('galaxy-stage');
+  var canvas=document.getElementById('mw-3d');
+  var hint=document.getElementById('map-hint');
+  var fallback=document.getElementById('gl-fallback');
+  var mode3d=document.getElementById('mode-3d');
+  var mode2d=document.getElementById('mode-2d');
+  var viewFace=document.getElementById('view-face');
+  var viewEdge=document.getElementById('view-edge');
+  var viewSun=document.getElementById('view-sun');
+  var viewReset=document.getElementById('view-reset');
+  var helpBtn=document.getElementById('galaxy-help');
+  var helpDialog=document.getElementById('galaxy-help-dialog');
+  var galaxy=null;
+  var mode='3d';
+  var preset='';
 
   function select(id){
     var a=ARMS[id];if(!a)return;
     document.getElementById('d-name').textContent=a.name;
     document.getElementById('d-range').textContent=a.range;
     document.getElementById('d-body').textContent=a.body;
-    document.querySelectorAll('.arm').forEach(function(el){
+    document.querySelectorAll('#mw .arm').forEach(function(el){
       el.setAttribute('aria-pressed',String(el.dataset.arm===id));
     });
     document.querySelectorAll('#arm-btns button').forEach(function(el){
       el.setAttribute('aria-pressed',String(el.dataset.arm===id));
     });
+    if(galaxy) galaxy.highlight(id);
   }
 
-  document.querySelectorAll('.arm').forEach(function(el){
+  document.querySelectorAll('#mw .arm').forEach(function(el){
     el.addEventListener('click',function(){select(el.dataset.arm);});
     el.addEventListener('keydown',function(ev){if(ev.key==='Enter'||ev.key===' '){ev.preventDefault();select(el.dataset.arm);}});
   });
+
+  function setSvgFocusable(on){
+    document.querySelectorAll('#mw .arm').forEach(function(el){
+      el.tabIndex=on?0:-1;
+      el.setAttribute('aria-hidden',on?'false':'true');
+    });
+    var svg=document.getElementById('mw');
+    if(svg) svg.setAttribute('aria-hidden',on?'false':'true');
+  }
+
+  function setPreset(name){
+    preset=name||'';
+    [['face',viewFace],['edge',viewEdge],['sun',viewSun]].forEach(function(pair){
+      if(pair[1]) pair[1].setAttribute('aria-pressed',String(preset===pair[0]));
+    });
+  }
+
+  function viewButtons(on){
+    [viewFace,viewEdge,viewSun,viewReset].forEach(function(b){ if(b) b.disabled=!on; });
+  }
+
+  function applyMode(next, persist){
+    mode = (next==='2d' || !galaxy) ? '2d' : '3d';
+    if(persist && galaxy){
+      try{ localStorage.setItem(MODE_KEY, mode); }catch(e){}
+    }
+    stage.classList.toggle('mode-3d', mode==='3d');
+    stage.classList.toggle('mode-2d', mode==='2d');
+    mode3d.setAttribute('aria-pressed', mode==='3d'?'true':'false');
+    mode2d.setAttribute('aria-pressed', mode==='2d'?'true':'false');
+    mode3d.setAttribute('aria-label', mode==='3d'?'3D view on':'Switch to the 3D map');
+    mode2d.setAttribute('aria-label', mode==='2d'?'Flat map on':'Switch to the flat map');
+    setSvgFocusable(mode==='2d');
+    if(canvas){
+      canvas.tabIndex = mode==='3d'?0:-1;
+      canvas.setAttribute('aria-hidden', mode==='3d'?'false':'true');
+    }
+    viewButtons(mode==='3d' && !!galaxy);
+    if(hint){
+      hint.textContent = mode==='3d'
+        ? 'Artist-style schematic · drag to orbit · scroll to zoom · tap a lane'
+        : 'Flat schematic · tap an arm · Sol marked on the Orion Arm';
+    }
+    if(galaxy){
+      galaxy.setEnabled(mode==='3d');
+      if(mode==='3d') galaxy.resize();
+    }
+  }
+
+  function goView(name){
+    if(!galaxy || mode!=='3d') return;
+    setPreset(name==='reset'?'':name);
+    galaxy.goTo(name);
+  }
+
+  if(mode3d) mode3d.addEventListener('click', function(){ applyMode('3d', true); });
+  if(mode2d) mode2d.addEventListener('click', function(){ applyMode('2d', true); });
+  if(viewFace) viewFace.addEventListener('click', function(){ goView('face'); });
+  if(viewEdge) viewEdge.addEventListener('click', function(){ goView('edge'); });
+  if(viewSun) viewSun.addEventListener('click', function(){ goView('sun'); });
+  if(viewReset) viewReset.addEventListener('click', function(){ goView('reset'); });
+
+  function openHelp(){
+    if(!helpDialog) return;
+    helpDialog.hidden=false;
+    if(helpBtn) helpBtn.setAttribute('aria-expanded','true');
+    var closer=helpDialog.querySelector('[data-help-close]');
+    if(closer) closer.focus();
+  }
+  function closeHelp(){
+    if(!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden=true;
+    if(helpBtn){ helpBtn.setAttribute('aria-expanded','false'); helpBtn.focus(); }
+  }
+  if(helpBtn) helpBtn.addEventListener('click', function(){
+    if(helpDialog.hidden) openHelp(); else closeHelp();
+  });
+  if(helpDialog){
+    helpDialog.addEventListener('click', function(ev){ if(ev.target===helpDialog) closeHelp(); });
+    helpDialog.querySelectorAll('[data-help-close]').forEach(function(b){ b.addEventListener('click', closeHelp); });
+    helpDialog.addEventListener('keydown', function(ev){
+      if(ev.key==='Escape'){ ev.preventDefault(); closeHelp(); return; }
+      if(ev.key!=='Tab') return;
+      var nodes=[].slice.call(helpDialog.querySelectorAll('button, a[href]'));
+      if(!nodes.length) return;
+      var first=nodes[0], last=nodes[nodes.length-1];
+      if(ev.shiftKey && document.activeElement===first){ ev.preventDefault(); last.focus(); }
+      else if(!ev.shiftKey && document.activeElement===last){ ev.preventDefault(); first.focus(); }
+    });
+  }
+  document.addEventListener('keydown', function(ev){
+    if(ev.key!=='?' ) return;
+    var tag=(ev.target && ev.target.tagName || '').toLowerCase();
+    if(tag==='input' || tag==='textarea') return;
+    if(!stage || !stage.contains(ev.target)) return;
+    ev.preventDefault();
+    if(helpDialog.hidden) openHelp(); else closeHelp();
+  });
+
+  var names={};
+  order.forEach(function(id){ names[id]=SHORT[id]; });
+  if(canvas && window.MwGalaxy3D){
+    try{
+      galaxy=window.MwGalaxy3D.create({
+        canvas:canvas,
+        labels:document.getElementById('mw-labels'),
+        names:names,
+        onPick:function(id){ select(id); },
+        onUserMove:function(){ setPreset(''); },
+        onReset:function(){ goView('reset'); },
+        onReady:function(){ window.__mwReady=true; },
+        onContextLost:function(){
+          galaxy=null;
+          if(fallback) fallback.hidden=false;
+          if(mode3d) mode3d.disabled=true;
+          applyMode('2d', false);
+        }
+      });
+    }catch(err){ galaxy=null; }
+  }
+  if(!galaxy){
+    if(fallback) fallback.hidden=false;
+    if(mode3d) mode3d.disabled=true;
+    applyMode('2d', false);
+  } else {
+    var stored=null;
+    try{ stored=localStorage.getItem(MODE_KEY); }catch(e){}
+    applyMode(stored==='2d'?'2d':'3d', false);
+  }
   select('orion');
+  window.__mwMap=galaxy;
 })();
 </script>
 </body>
