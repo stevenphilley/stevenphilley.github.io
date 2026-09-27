@@ -4275,8 +4275,8 @@
           var w = galaxyWorld(edge.voxelX, edge.voxelY, edge.voxelZ);
           var labelDx = 14;
           var labelDy = -12;
-          if (edge.id === "forward") { labelDx = -78; labelDy = -6; }
-          if (edge.id === "back") { labelDx = -62; labelDy = 8; }
+          if (edge.id === "forward") { labelDx = 18; labelDy = -36; }
+          if (edge.id === "back") { labelDx = -88; labelDy = 22; }
           if (edge.id === "east") labelDx = -52;
           markers.push({
             id: edge.id,
@@ -4291,7 +4291,7 @@
             hitR: 16,
             label: edge.label,
             labelColor: c.accent2,
-            priority: true,
+            priority: (canvas3d && canvas3d.clientHeight < 400) ? 4 : true,
             labelDx: labelDx,
             labelDy: labelDy
           });

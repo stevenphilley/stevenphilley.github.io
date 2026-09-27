@@ -480,7 +480,7 @@
             x: p.x + (m.labelDx == null ? 12 : m.labelDx),
             y: p.y + (m.labelDy || 0),
             color: m.labelColor || theme.ink,
-            priority: m.priority ? 2 : 0,
+            priority: typeof m.priority === "number" ? m.priority : (m.priority ? 2 : 0),
             badge: false
           });
         }
