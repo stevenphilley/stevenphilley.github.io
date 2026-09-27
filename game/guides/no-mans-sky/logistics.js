@@ -1411,6 +1411,93 @@
     return next;
   }
 
+  // Which projects are folded on the Plan tab. Kept beside the planner
+  // document, keyed by project id, so a rename does not drop the choice.
+  var COLLAPSE_KEY = "nms-logistics-collapsed";
+
+  function collapsedMap(value) {
+    var next = {};
+    if (!value || typeof value !== "object" || Array.isArray(value)) return next;
+    Object.keys(value).forEach(function (id) {
+      var key = text(id);
+      if (key && value[id] === true) next[key] = true;
+    });
+    return next;
+  }
+
+  function loadCollapsed(storage) {
+    if (!storage || typeof storage.getItem !== "function") return {};
+    try {
+      var raw = storage.getItem(COLLAPSE_KEY);
+      if (!raw) return {};
+      return collapsedMap(JSON.parse(raw));
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function saveCollapsed(storage, map) {
+    var next = collapsedMap(map);
+    storage.setItem(COLLAPSE_KEY, JSON.stringify(next));
+    return next;
+  }
+
+  function setCollapsed(map, projectId, flag) {
+    var next = collapsedMap(map);
+    var id = text(projectId);
+    if (!id) return next;
+    if (flag) next[id] = true;
+    else delete next[id];
+    return next;
+  }
+
+  function isCollapsed(map, projectId) {
+    var id = text(projectId);
+    return !!(id && map && map[id] === true);
+  }
+
+  function pruneCollapsed(map, projects) {
+    var live = Object.create(null);
+    (projects || []).forEach(function (project) {
+      var id = text(project && project.id);
+      if (id) live[id] = true;
+    });
+    var next = {};
+    Object.keys(collapsedMap(map)).forEach(function (id) {
+      if (live[id]) next[id] = true;
+    });
+    return next;
+  }
+
+  function setAllCollapsed(projects, flag) {
+    var next = {};
+    if (!flag) return next;
+    (projects || []).forEach(function (project) {
+      var id = text(project && project.id);
+      if (id) next[id] = true;
+    });
+    return next;
+  }
+
+  function projectProgress(store, demands) {
+    var list = Array.isArray(demands) ? demands : ((demands && demands.demands) || []);
+    var done = 0;
+    var pending = 0;
+    list.forEach(function (demand) {
+      if (!demand || typeof demand !== "object") return;
+      done += Array.isArray(demand.doneTransfers) ? demand.doneTransfers.length : 0;
+      pending += suggestTransfers(store || { locations: [] }, demand).length;
+    });
+    return { demands: list.length, done: done, moves: done + pending };
+  }
+
+  function projectSummary(store, demands) {
+    var progress = projectProgress(store, demands);
+    var demandWord = progress.demands === 1 ? "demand" : "demands";
+    var moveWord = progress.moves === 1 ? "move" : "moves";
+    return progress.demands + " " + demandWord + ", " + progress.done + " of " + progress.moves + " " + moveWord + " done";
+  }
+
   function exportDocument(store) {
     var doc = normalize(store);
     (doc.locations || []).forEach(function (loc) {
@@ -2165,6 +2252,15 @@
     normalize: normalize,
     loadStore: loadStore,
     saveStore: saveStore,
+    COLLAPSE_KEY: COLLAPSE_KEY,
+    loadCollapsed: loadCollapsed,
+    saveCollapsed: saveCollapsed,
+    setCollapsed: setCollapsed,
+    isCollapsed: isCollapsed,
+    pruneCollapsed: pruneCollapsed,
+    setAllCollapsed: setAllCollapsed,
+    projectProgress: projectProgress,
+    projectSummary: projectSummary,
     exportDocument: exportDocument,
     importDocument: importDocument,
     findLocation: findLocation,
