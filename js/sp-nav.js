@@ -9,14 +9,18 @@
     else fn();
   }
 
+  /* Keep in step with the max-width: 899px block in css/sp-nav.css. */
+  function isNarrow() {
+    return window.matchMedia("(max-width: 899px)").matches;
+  }
+
   function visibleSearch() {
-    var narrow = window.matchMedia("(max-width: 1400px)").matches;
-    if (narrow) return document.getElementById("sp-q-mobile");
+    if (isNarrow()) return document.getElementById("sp-q-mobile");
     return document.getElementById("sp-q");
   }
 
   function focusSearch() {
-    var narrow = window.matchMedia("(max-width: 1400px)").matches;
+    var narrow = isNarrow();
     var box = document.getElementById("sp-search-open");
     var pin = document.querySelector(".sp-search-pin");
     if (narrow && box) {
@@ -130,7 +134,7 @@
       menu.addEventListener("click", function (ev) {
         var link = ev.target.closest && ev.target.closest("a");
         if (!link || !menuBox) return;
-        if (window.matchMedia("(max-width: 1400px)").matches) {
+        if (isNarrow()) {
           menuBox.checked = false;
           if (menuLabel) menuLabel.setAttribute("aria-expanded", "false");
         }
