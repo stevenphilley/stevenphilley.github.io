@@ -28,6 +28,9 @@ eq(capital.ssi, 0x205, "capital system");
 eq(capital.voxelX, -995, "capital voxel X");
 eq(capital.voxelY, -48, "capital voxel Y");
 eq(capital.voxelZ, 1418, "capital voxel Z");
+eq(api.galaxyWorld(capital.voxelX, capital.voxelY, capital.voxelZ), { x: -995, y: -48, z: 1418 }, "world point keeps portal X, vertical Y, and Z");
+eq(api.galaxyWorld(0, 0, 0), { x: 0, y: 0, z: 0 }, "galactic core is the origin");
+eq(api.galaxyWorld("nope", null, undefined), { x: 0, y: 0, z: 0 }, "bad voxels fall back to the core");
 assert(capital.galaxy == null, "packed address does not invent a galaxy");
 
 var fromGlyphs = api.decodeGalacticAddress("2205D058AC1D");
