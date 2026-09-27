@@ -111,3 +111,85 @@ html.layout-fill :is(.map-wrap, .table-wrap, .diagram, .archive-grid, pre) {
 html.layout-fill :is(.table-wrap, pre) {
   overflow-x: auto;
 }
+
+/* Typeface. html[data-font] is set before first paint.
+   Sans is the default. Mono keeps today's IBM Plex Mono sizes
+   because the --fs-* / --sp-track tokens exist only for proportional faces.
+   --font-code stays mono for code, kbd, and numeric readouts. */
+:root {
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-system: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-code: var(--font-mono);
+  --font-body: var(--font-sans);
+  --font-ui: var(--font-sans);
+}
+
+html[data-font="mono"] {
+  --font-body: var(--font-mono);
+  --font-ui: var(--font-mono);
+}
+
+html[data-font="system"] {
+  --font-body: var(--font-system);
+  --font-ui: var(--font-system);
+}
+
+html[data-font="sans"] {
+  --font-body: var(--font-sans);
+  --font-ui: var(--font-sans);
+}
+
+html[data-font="sans"],
+html[data-font="system"] {
+  --sp-track: 0;
+  --sp-track-upper: 0.06em;
+  --lh-prose: 1.6;
+  --fs-9: 11px;
+  --fs-10: 12px;
+  --fs-105: 12.5px;
+  --fs-11: 13px;
+  --fs-115: 13.5px;
+  --fs-12: 14px;
+  --fs-125: 14.5px;
+  --fs-13: 15px;
+  --fs-135: 16px;
+  --fs-14: 16px;
+}
+
+html :where(code, kbd, pre, samp, tt) {
+  font-family: var(--font-code, "IBM Plex Mono", ui-monospace, monospace);
+}
+
+html[data-font="sans"] body,
+html[data-font="system"] body {
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Homepage and other rem-sized chrome. Mono keeps the authored sizes. */
+html[data-font="sans"] :is(.issue-label, .sub-tagline, .site-nav a, .intro-text, .fig-title),
+html[data-font="system"] :is(.issue-label, .sub-tagline, .site-nav a, .intro-text, .fig-title) {
+  font-size: 0.85rem;
+  letter-spacing: var(--sp-track-upper, 0.06em);
+}
+
+html[data-font="sans"] :is(.fig-note, .footer-left, .footer-right, .lb-note, .lb-hint, .lb-counter),
+html[data-font="system"] :is(.fig-note, .footer-left, .footer-right, .lb-note, .lb-hint, .lb-counter) {
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+}
+
+html[data-font="sans"] .text-block p,
+html[data-font="system"] .text-block p {
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+html[data-font="sans"] :is(.lb-title, .issue-label--domain),
+html[data-font="system"] :is(.lb-title, .issue-label--domain) {
+  font-size: 0.8rem;
+  letter-spacing: var(--sp-track-upper, 0.06em);
+}
