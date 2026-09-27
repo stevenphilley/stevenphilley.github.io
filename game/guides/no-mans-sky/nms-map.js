@@ -1938,6 +1938,7 @@
     var discoveryOrder = [];
     var teleportOrder = [];
     var openDiscoveryId = null;
+    var openMark = null;
     var DISCOVERY_KEY = "nms-map-discoveries";
     var freightOrder = [];
     var selectMode = false;
@@ -2219,6 +2220,7 @@
     }
 
     function commitSelection(ids, anchor) {
+      openMark = null;
       var next = [];
       var seen = Object.create(null);
       (ids || []).forEach(function (id) {
@@ -2741,9 +2743,11 @@
       if (!state.selection.length) {
         openDiscoveryId = null;
         revealDetail.last = null;
+        if (showOpenMark({ keepMode: true })) return;
         renderPlacePanel(null);
         return;
       }
+      openMark = null;
       if (!parts.bases.length && !parts.teles.length && parts.discs.length === 1) {
         renderDiscoveryPanel(parts.discs[0]);
         return;
@@ -3148,27 +3152,73 @@
       }
     }
 
+    function markPlace(kind, id) {
+      if (kind === "ref") {
+        var ref = refById(id);
+        if (!ref) return null;
+        return {
+          place: {
+            glyphs: ref.glyphs,
+            planet: ref.planet,
+            galaxy: 0,
+            name: ref.label,
+            type: "Reference",
+            coords: ref.coords,
+            centerId: ref.id,
+            centerKind: "ref"
+          },
+          heading: ref.label
+        };
+      }
+      if (kind === "hub") {
+        var hub = hubById(id);
+        if (!hub) return null;
+        return {
+          place: {
+            glyphs: hub.glyphs,
+            planet: null,
+            galaxy: 0,
+            name: hub.label,
+            type: "Hub",
+            coords: hub.coords,
+            centerId: hub.id,
+            centerKind: "hub"
+          },
+          heading: hub.label
+        };
+      }
+      return null;
+    }
+
+    function showOpenMark(opts) {
+      if (!openMark) return false;
+      var shown = markPlace(openMark.kind, openMark.id);
+      if (!shown) {
+        openMark = null;
+        return false;
+      }
+      if (!opts || !opts.keepMode) placeMode = "system";
+      renderPlacePanel(shown.place, shown.heading);
+      return true;
+    }
+
     function selectForCenter(loc, keepSelection) {
       if (loc.kind === "ref") {
-        if (keepSelection && state.selectedRef === loc.id && !state.selection.length) return;
+        if (keepSelection && state.selectedRef === loc.id && !state.selection.length) {
+          openMark = { kind: "ref", id: loc.id };
+          if (placePanel && placePanel.hidden) showOpenMark({ keepMode: true });
+          return;
+        }
         state.selectedRef = loc.id;
         state.selection = [];
         state.anchorId = null;
         state.selected = null;
         state.selectedFreight = null;
         state.hover = null;
+        openMark = { kind: "ref", id: loc.id };
         renderLists();
         renderRefList();
-        renderPlacePanel({
-          glyphs: loc.row.glyphs,
-          planet: loc.row.planet,
-          galaxy: 0,
-          name: loc.row.label,
-          type: "Reference",
-          coords: loc.row.coords,
-          centerId: loc.id,
-          centerKind: "ref"
-        }, loc.row.label);
+        showOpenMark();
         setStatus(loc.row.label + " — " + quadrantName(loc.row.quadrant) + " — " + (loc.row.note ? loc.row.note + " — " : "") + "glyphs " + loc.row.glyphs + " — " + loc.row.coords + ". Community landmark, not from your save.");
         return;
       }
@@ -3179,18 +3229,10 @@
         state.selected = null;
         state.selectedFreight = null;
         state.hover = null;
+        openMark = { kind: "hub", id: loc.id };
         renderLists();
         renderRefList();
-        renderPlacePanel({
-          glyphs: loc.row.glyphs,
-          planet: null,
-          galaxy: 0,
-          name: loc.row.label,
-          type: "Hub",
-          coords: loc.row.coords,
-          centerId: loc.id,
-          centerKind: "hub"
-        }, loc.row.label);
+        showOpenMark();
         setStatus(loc.row.label + (loc.row.note ? " · " + loc.row.note : "") + " — glyphs " + loc.row.glyphs + " — " + loc.row.coords + ". Euclid reference, not from your save.");
         return;
       }
@@ -4814,6 +4856,7 @@
       state.hoverTeleport = null;
       aim = null;
       openDiscoveryId = null;
+      openMark = null;
       renderPlacePanel(null);
       var baseGalaxy = DiscoveryLib ? DiscoveryLib.dominantBaseGalaxy(state.planetary.concat(state.freighters)) : null;
       if (baseGalaxy != null) state.galaxy = baseGalaxy;
@@ -4851,6 +4894,7 @@
       state.hover = null;
       state.hoverRef = null;
       aim = null;
+      openMark = null;
       state.fileName = "";
       state.source = "";
       state.galaxy = 0;
@@ -5190,19 +5234,22 @@
         renderRefList();
         draw();
         if (ref && state.selectedRef) {
-          placeMode = "system";
+          openMark = { kind: "ref", id: ref.id };
           setStatus(ref.label + " — " + quadrantName(ref.quadrant) + " — " + (ref.note ? ref.note + " — " : "") + "glyphs " + ref.glyphs + " — " + ref.coords + ". Community landmark, not from your save.");
-          renderPlacePanel({ glyphs: ref.glyphs, planet: ref.planet, galaxy: 0, name: ref.label, type: "Reference", coords: ref.coords, centerId: ref.id, centerKind: "ref" }, ref.label);
-        } else renderPlacePanel(null);
+          showOpenMark();
+        } else {
+          openMark = null;
+          renderPlacePanel(null);
+        }
       } else if (h.kind === "hub") {
         var hub = hubById(h.id);
         if (hub) {
           forgetPlaces();
-          placeMode = "system";
+          openMark = { kind: "hub", id: hub.id };
           renderLists();
           draw();
           setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
-          renderPlacePanel({ glyphs: hub.glyphs, planet: null, galaxy: 0, name: hub.label, type: "Hub", coords: hub.coords, centerId: hub.id, centerKind: "hub" }, hub.label);
+          showOpenMark();
         }
       } else if (h.kind === "center") {
         setStatus("Galactic center — voxel 0, 0, 0 on this schematic. Not a catalog star.");
@@ -5518,8 +5565,9 @@
       if (helpOpen) return;
       var tag = ev.target && ev.target.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if (!state.selection.length && !state.selectedRef) return;
+      if (!state.selection.length && !state.selectedRef && !openMark) return;
       state.selectedRef = null;
+      openMark = null;
       commitSelection([]);
     });
     document.addEventListener("click", function (ev) {
@@ -5603,6 +5651,7 @@
         state.hoverDiscovery = null;
         state.hoverTeleport = null;
         aim = null;
+        openMark = null;
         renderPlacePanel(null);
         renderLists();
         renderRefList();
@@ -5622,12 +5671,22 @@
       });
     }
     if (showCenter) showCenter.addEventListener("change", draw);
-    if (showHubs) showHubs.addEventListener("change", draw);
+    if (showHubs) showHubs.addEventListener("change", function () {
+      if (!showHubs.checked && openMark && openMark.kind === "hub") {
+        openMark = null;
+        if (!state.selection.length) renderPlacePanel(null);
+      }
+      draw();
+    });
     if (showRefs) showRefs.addEventListener("change", function () {
       if (showRefs.checked) return draw();
       state.selectedRef = null;
       state.hoverRef = null;
       if (aim && aim.kind === "ref") aim = null;
+      if (openMark && openMark.kind === "ref") {
+        openMark = null;
+        if (!state.selection.length) renderPlacePanel(null);
+      }
       renderRefList();
       draw();
     });
@@ -5648,6 +5707,7 @@
       state.selectedFreight = null;
       state.hover = null;
       state.hoverRef = null;
+      openMark = null;
       renderPlacePanel(null);
       var size = canvasSize();
       lastSize = size;
@@ -5753,6 +5813,7 @@
       view.panY = 0;
       state.selectedFreight = null;
       placeMode = "base";
+      openMark = null;
       var api = logisticsApi();
       if (api) writeLogistics(api.clearImported(readLogistics() || api.emptyStore()));
       renderPlacePanel(null);
