@@ -1,0 +1,519 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3D printing — materials and machines — Steven Philley</title>
+<meta name="description" content="Additive manufacturing for a general reader: the seven standard process families, filament motion systems, and a sourced comparison of common plastics and photopolymer resins.">
+<link rel="canonical" href="https://stevenphilley.com/science/tech/3d-printing/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="3D printing — materials and machines">
+<meta property="og:description" content="How filament, resin, powder, and sheet processes build a part, and what PLA, nylon, and high-temperature polymers actually ask of a machine.">
+<meta property="og:url" content="https://stevenphilley.com/science/tech/3d-printing/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta property="og:image:alt" content="A dusk-toned card reading Steven Philley">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="3D printing — materials and machines">
+<meta name="twitter:description" content="Process families, motion systems, and a filterable table of plastics. Cited ranges, no brochure numbers.">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:920px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 80px}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(40px,9vw,76px);line-height:.92;margin:0;max-width:16ch}
+.lede{max-width:68ch;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.75);color:var(--ink-soft,#9b9a96)}
+.lede a,.desk a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover,.desk a:hover{color:var(--accent,#c8b48a)}
+.meta{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:14px 0 0}
+.toc{margin:28px 0 0;padding:14px 0 0;border-top:1px solid var(--line,#2c303a);display:flex;flex-wrap:wrap;gap:10px 18px}
+.toc a{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.toc a:hover{color:var(--accent,#c8b48a)}
+.desk{margin-top:36px;border-top:1px solid var(--line,#2c303a);padding-top:18px;scroll-margin-top:24px}
+.desk > h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,5vw,34px);letter-spacing:.06em;margin:0 0 14px}
+.sub{margin:22px 0 8px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
+.desk p{margin:0 0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.75);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.callout{margin:16px 0 18px;padding:14px 16px;border:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.callout strong{color:var(--ink,#e8e6e1);font-weight:500}
+.procs{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px;margin:8px 0 18px}
+.procs article{border:1px solid var(--line,#2c303a);padding:10px 10px 12px;min-width:0}
+.procs svg{display:block;width:100%;height:72px;color:var(--accent,#c8b48a)}
+.procs h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:18px;letter-spacing:.04em;margin:8px 0 4px;line-height:1;color:var(--ink,#e8e6e1)}
+.procs p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--ink-soft,#9b9a96)}
+.moves{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0 16px}
+.moves div{border:1px solid var(--line,#2c303a);padding:12px}
+.moves b{display:block;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:20px;letter-spacing:.04em;margin:0 0 6px;color:var(--ink,#e8e6e1)}
+.moves span{display:block;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.toolbar button,.help{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;min-height:44px;padding:8px 12px;cursor:pointer}
+.toolbar button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.toolbar button:hover,.help:hover,.help[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1)}
+.helpwrap{position:relative;margin-left:auto}
+.help{width:44px;height:44px;border-radius:50%;padding:0;font-size:16px;letter-spacing:0;text-transform:none}
+.help-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:5;width:min(340px,calc(100vw - 48px));border:1px solid var(--line,#2c303a);background:var(--base-2,#14161c);padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.help-panel p{margin:0;max-width:none;font-size:var(--fs-125,12.5px)}
+.table-scroll{overflow-x:auto;border:1px solid var(--line,#2c303a);margin:0 0 12px;-webkit-overflow-scrolling:touch}
+table.mat{border-collapse:collapse;width:100%;min-width:720px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.mat caption{caption-side:bottom;text-align:left;padding:10px 12px;color:var(--muted,#63666e);font-size:var(--fs-12,12px);line-height:1.5}
+.mat th,.mat td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line,#2c303a);vertical-align:top;color:var(--ink-soft,#9b9a96)}
+.mat th{color:var(--ink,#e8e6e1);font-weight:500;background:var(--base-2,#14161c);white-space:nowrap}
+.mat th button{appearance:none;background:transparent;border:0;color:inherit;font:inherit;letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;cursor:pointer;padding:0;text-align:left}
+.mat th button:hover{color:var(--accent,#c8b48a)}
+.mat td:first-child,.mat th:first-child{position:sticky;left:0;background:var(--base-2,#14161c);z-index:1;box-shadow:1px 0 0 var(--line,#2c303a)}
+.mat th:first-child{z-index:2}
+.mat td:first-child{color:var(--ink,#e8e6e1);font-weight:500}
+.count{margin:0 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.sources{list-style:none;margin:0;padding:0}
+.sources li{border-top:1px solid var(--line,#2c303a);padding:12px 0}
+.sources a{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);color:var(--ink,#e8e6e1);text-decoration:none}
+.sources a:hover{color:var(--accent,#c8b48a)}
+.sources .note{display:block;margin-top:4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.55;color:var(--muted,#63666e)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 0}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em;margin:0;line-height:1;color:var(--ink,#e8e6e1)}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.disclaimer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.7;color:var(--muted,#63666e);max-width:72ch}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+@media (max-width:700px){
+  .more{grid-template-columns:1fr}
+  .helpwrap{position:static;margin-left:0;flex:1 1 100%}
+  .help-panel{position:static;width:auto;margin-top:8px;box-shadow:none}
+}
+@media print{
+  .sp-primary,.sp-subnav,.sp-site-footer,.toc,.toolbar,.help-panel,.more{display:none !important}
+  body,.l-wrap{background:#fff !important;color:#111 !important;max-width:none}
+  .desk p,.lede,.callout,.procs p,.moves span,.mat td,.sources .note,.disclaimer{color:#222 !important}
+  h1,h2,.sub,.procs h3,.moves b,.mat th,.mat td:first-child,.sources a{color:#000 !important}
+  .procs article,.moves div,.callout,.table-scroll{border-color:#bbb !important}
+  .table-scroll{overflow:visible;border:0}
+  table.mat{min-width:0;font-size:11px}
+  .mat tr[hidden]{display:table-row !important}
+  .mat td:first-child,.mat th:first-child{position:static;box-shadow:none;background:#fff !important}
+  a{color:#000 !important;text-decoration:underline}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="l-wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/tech/3d-printing/" aria-current="page">3D printing</a>
+      <a href="/science/tech/computer-history/">Computer history</a>
+      <a href="/science/graphics-3d/">3D graphics</a>
+    </div>
+  </div>
+
+  <p class="kicker">Science desk · Tech · Making</p>
+  <h1>Layer by layer</h1>
+  <p class="meta">Educational essay · Cited ranges · Not a buying guide · September 2026</p>
+  <p class="lede">Additive manufacturing builds a solid by adding material, usually one thin layer at a time, from a digital model. The public name “3D printing” covers that whole family. The machines do not share one plastic, one nozzle, or one idea of accuracy. A desktop that melts a spool of polylactic acid and a factory cell that melts metal powder are both additive, and they are barely the same tool. This page is a map of the standard process families and of the plastics and resins people actually feed them, with temperatures only where a public source states a range.</p>
+
+  <nav class="toc" aria-label="On this page">
+    <a href="#what">What it is</a>
+    <a href="#processes">Seven processes</a>
+    <a href="#extrusion">Filament</a>
+    <a href="#motion">Motion</a>
+    <a href="#vat">Resin vats</a>
+    <a href="#powder">Powders</a>
+    <a href="#other">Jets, sheets, sprays</a>
+    <a href="#materials">Plastics</a>
+    <a href="#table">Comparison</a>
+    <a href="#safety">Safety</a>
+    <a href="#choose">Choosing</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
+  <section class="desk" id="what" aria-labelledby="what-h">
+    <h2 id="what-h">Adding, not cutting</h2>
+    <p>A mill starts with a block and throws away what is not the part. Additive manufacturing starts with almost nothing and puts material only where the geometry says it should be. The model is sliced into layers. The machine then deposits, fuses, jets, or cures one layer, shifts by the layer thickness, and repeats. Supports, leftover powder, or a vat of unused liquid hold up overhangs that have nothing under them yet. When the job ends, that extra material comes off, and many processes still want a cure, a sinter, or a wash.</p>
+    <p>The origin people mean is stereolithography in the 1980s. Chuck Hull coined the term in 1984 in a patent application for curing liquid photopolymer with light; US 4,575,330 was granted in 1986. In the same decade Carl Deckard and Joseph Beaman developed selective laser sintering, with defense-research sponsorship. R. F. Housholder had patented a related powder process in 1979 that was not commercialized. Filament extrusion of thermoplastic arrived in the late 1980s and was sold commercially in 1992. After those patents expired, desktop machines became ordinary. The generic name is fused filament fabrication (FFF). Standards writers use the wider label material extrusion, which also covers pellets and pastes.</p>
+    <div class="callout"><strong>Seven families, one vocabulary.</strong> ISO/ASTM 52900, as summarized in the public process survey, groups additive manufacturing into binder jetting, directed energy deposition, material extrusion, material jetting, powder bed fusion, sheet lamination, and vat photopolymerization. Everything below is one of those seven. Trade names for individual machines come and go. The categories do not.</div>
+  </section>
+
+  <section class="desk" id="processes" aria-labelledby="processes-h">
+    <h2 id="processes-h">How the seven processes differ</h2>
+    <p>The useful question is where the material is, and what makes it solid. In extrusion it is a filament or pellet, melted in a hot nozzle. In a vat it is a liquid that light turns into a solid. In a powder bed it is a dry grain, sintered or melted in place, or glued and fired later. Jetting throws either the build material itself or a binder. Directed energy deposition feeds metal into a moving melt pool, often onto a part that already exists. Sheet lamination cuts and stacks sheets. Resolution, strength, and whether the machine belongs on a desk or in a shop follow from that choice.</p>
+
+    <div class="procs" role="list">
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M40 8 h40 l-8 18 h-24 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M60 26 v10" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M28 44 h64 M32 50 h56 M36 56 h48" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Extrusion</h3>
+        <p>A hot nozzle draws a bead. Home and factory.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M22 28 h76 v32 h-76 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M34 18 l8 10 M60 14 v14 M86 18 l-8 10" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M40 46 h40 v8 h-40 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Vat of resin</h3>
+        <p>Light cures a liquid layer. Fine surfaces.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M18 40 h84 v18 h-84 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="36" cy="48" r="1.4" fill="currentColor"/><circle cx="48" cy="46" r="1.4" fill="currentColor"/><circle cx="60" cy="49" r="1.4" fill="currentColor"/><circle cx="74" cy="47" r="1.4" fill="currentColor"/>
+          <path d="M78 10 l-22 28" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Powder bed</h3>
+        <p>A laser or a fusing agent locks grains.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M30 12 h60 v12 h-60 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="46" cy="36" r="2" fill="currentColor"/><circle cx="60" cy="42" r="2" fill="currentColor"/><circle cx="74" cy="34" r="2" fill="currentColor"/>
+          <path d="M28 56 h64" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Material jetting</h3>
+        <p>Droplets of the build material itself.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M20 44 h80 v14 h-80 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M48 16 h24 v10 h-24 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M60 26 v8" stroke="currentColor" stroke-width="1.6"/>
+          <circle cx="60" cy="40" r="3" fill="none" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Binder jetting</h3>
+        <p>Glue printed onto a powder layer.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M24 18 h28 v20 h-28 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M52 28 h22 l10 16 h-18 z" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M22 58 h76" stroke="currentColor" stroke-width="1.6"/>
+        </svg>
+        <h3>Energy deposition</h3>
+        <p>Feedstock melted onto the part. Metal repair.</p>
+      </article>
+      <article role="listitem">
+        <svg viewBox="0 0 120 72" aria-hidden="true">
+          <path d="M24 22 h72 M24 34 h72 M24 46 h72 M24 58 h72" fill="none" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M78 16 v50" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 3"/>
+        </svg>
+        <h3>Sheet stack</h3>
+        <p>Cut sheets, bonded in a pile.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="desk" id="extrusion" aria-labelledby="extrusion-h">
+    <h2 id="extrusion-h">Material extrusion, mostly filament</h2>
+    <p>Fused filament fabrication is the machine most people have stood next to. A spool feeds thermoplastic into a hot nozzle, a stepper meters the melt, and the head draws a bead that welds, imperfectly, to the bead below. Software plans that path as G-code. As of 2023 this was described as the dominant printing method: the usual home machine, and a factory tool once the polymer gets demanding. The surface you see is the bead, so a finer nozzle looks smoother and takes longer. Layers split before the plastic itself snaps. Steep overhangs need a support, in the same plastic or in a second one that can be dissolved. An open desk handles polylactic acid. ABS wants an enclosure; the compilation suggests a chamber around 40–60 °C. Polycarbonate and the high-temperature polymers want heat a hobby frame may not hold. Pellet extruders, for large parts and recycled flake, are the same family with a different feed.</p>
+    <h3 class="sub" id="motion">How the head moves</h3>
+    <p>Four motion systems cover almost every filament printer. None of them changes the polymer. They change speed, size, and how much mass has to reverse.</p>
+    <div class="moves" role="list">
+      <div role="listitem"><b>Cartesian</b><span>The common “bed-slinger”: the head travels in X, and often Z, while the bed slides in Y. Simple, and the whole part is along for that ride.</span></div>
+      <div role="listitem"><b>CoreXY</b><span>Two stationary motors and a crossed belt move the head in the plane. Less moving mass, which is why these frames are associated with higher speed.</span></div>
+      <div role="listitem"><b>Delta</b><span>Three arms hang from a triangular top and carry the nozzle. The volume is tall and open. A heavy head on thin arms can ring, and the filament path length changes as the head moves.</span></div>
+      <div role="listitem"><b>Belt</b><span>The bed is a conveyor. Parts can be longer than the frame in one direction, or a row of small parts can walk off the end. Less common than the other three.</span></div>
+    </div>
+    <p>A bed-moving Cartesian machine is enough for fixtures and anything you will drill later. CoreXY can reverse faster because the motors stay put, if the belt routing is right. A delta buys a tall volume and pays in calibration and vibration. A belt machine is for long sections and queues, not for a small precise part.</p>
+  </section>
+
+  <section class="desk" id="vat" aria-labelledby="vat-h">
+    <h2 id="vat-h">Vat photopolymerization</h2>
+    <p>The feedstock is liquid resin. Light crosslinks monomers, often acrylates, and that spot becomes solid. The platform steps one layer, leftover resin drains, and most formulations still need a wash and a final cure. Stereolithography scans a laser. A projector, commonly abbreviated DLP, flashes a whole layer. Masked machines, often called MSLA, put a liquid-crystal panel between a UV backlight and the vat. That last arrangement is what made resin cheap enough for a desk.</p>
+    <p>A spot or a pixel sets the surface, so fine features are the reason to choose a vat. Standard resin is brittle next to a decent filament. Tough, flexible, castable, and dental grades are different liquids. Castable grades are patterns that are invested and burned out. A biocompatible label belongs to one tested formulation and one kind of contact. Supports still leave marks. Desks run miniatures, jewelry patterns, and dental models. Industrial laser vats chase process control and size. Multiphoton lithography, a research cousin, cures only at a laser focus and has made features under 100 nanometers. It is not a home printer.</p>
+  </section>
+
+  <section class="desk" id="powder" aria-labelledby="powder-h">
+    <h2 id="powder-h">Powder bed fusion</h2>
+    <p>A powder bed spreads a thin layer, fuses the cross-section, drops, and spreads again. Loose powder holds overhangs, so the printed supports can almost disappear. The public survey splits the family by how the grains lock.</p>
+    <h3 class="sub">Polymer laser sintering</h3>
+    <p>Selective laser sintering scans a laser across powder, often PA12, sometimes glass-filled, sometimes PEEK. Deckard’s mid-1980s work is the commercial root. The surface stays slightly sandy. Hinges, ducts, and nested parts in one cake of powder are the usual work: prototypes, and a widening slice of low-volume production. Preheat, the laser, and the loose powder keep it in a shop more often than a spare room.</p>
+    <h3 class="sub">Fusing agents, no laser</h3>
+    <p>A cousin skips the laser. An inkjet lays a fusing agent where the part should absorb energy, and often a detailing agent at the edge. A heater sweeps the bed and sinters only the treated grains. Loose powder still supports the shape. It is an industrial route: fast layers, nylon-like powders, then a step to recover the cake. Chemistry and heat, not a spool and not a vat.</p>
+    <h3 class="sub">Metal, melted rather than glued</h3>
+    <p>Laser powder bed fusion melts metal grains into dense parts whose behavior is described as comparable to conventionally processed metal. Electron-beam machines do it in vacuum, often with titanium alloys. The powder is fine and the energy is serious. This is the wrong weekend bracket, and the right part when milling would throw away most of the billet.</p>
+  </section>
+
+  <section class="desk" id="other" aria-labelledby="other-h">
+    <h2 id="other-h">Jetting, binders, deposited metal, sheets</h2>
+    <h3 class="sub">Material jetting</h3>
+    <p>Material jetting deposits the build material as droplets, thin enough to leave a nozzle and thick enough to stack. Early work used hot-melt wax; later machines jet photopolymer and cure each pass with ultraviolet light. A second droplet material can form a support that washes or peels away. Layers are thin, and color or flexibility can change inside one part. The machines sit in labs and production cells. Unlike a vat, the head places every drop.</p>
+    <h3 class="sub">Binder jetting</h3>
+    <p>Binder jetting prints adhesive into powder: metal, ceramic, sand, or polymer, including plaster-like powders for full-color models. The fresh part is a weak green body. Loose powder supported every overhang. An oven burns out binder and sinters the powder, or the pores are filled with wax, a thermoset, or bronze. Sand printers make foundry molds. Sintered metal shrinks. Home use is rare. The powder and the furnace are the real equipment.</p>
+    <h3 class="sub">Directed energy deposition</h3>
+    <p>Directed energy deposition feeds metal into a melt pool on the part. Powder can be blown into a laser, or wire can be melted by a laser, an electron beam, or a welding arc. Inert gas, or a sealed chamber, keeps air out of the alloy. A tilting head on a multi-axis arm can coat a worn surface or add a boss to a forging. Resolution is coarser than a powder bed. When it works, the result is metal. It is a repair and large-part process, not a desk.</p>
+    <h3 class="sub">Sheet lamination</h3>
+    <p>Sheet lamination cuts each outline from paper, plastic, or metal and bonds the stack. Paper, cut by blade or laser, can be cheap and wood-like, and it is not a structural polymer. Ultrasonic consolidation bonds metal foil without a full melt. The family is standardized, and it is much less common than extrusion or a powder bed.</p>
+  </section>
+
+  <section class="desk" id="materials" aria-labelledby="materials-h">
+    <h2 id="materials-h">Plastics and resins</h2>
+    <p>Filament melts and freezes again. Resin, once light crosslinks it, generally does not. Nozzle and bed figures in the table are typical ranges from the public filament compilation, not a setpoint for one spool. Heat figures are a glass transition or a melting point where a polymer article states one. A dash means the column does not apply, or these sources do not give a single number.</p>
+    <h3 class="sub">PLA and PETG</h3>
+    <p>Polylactic acid is the default teaching plastic: low difficulty, a glass transition of 60–65 °C, and brittle, with elongation at break under 10 percent for the plain polymer. A hot car can slump it. Some heat-resistant grades are described as surviving 110 °C. It comes from feedstocks such as corn and biodegrades only in specific industrial conditions. Lactide shows up in its emissions. It is the lower-emission everyday choice, and it still emits. PETG is listed as more flexible than PLA or ABS, durable, and medium difficulty. These sources give it no single heat-deflection figure. Reach for it when PLA snaps. The melt is sticky and it strings.</p>
+    <h3 class="sub">ABS and ASA</h3>
+    <p>ABS is rubber-toughened, with a glass transition near 105 °C and medium difficulty. It shrinks as it cools, so a draft splits layers, which is why the compilation pairs it with a warm chamber. Styrene has been measured from ABS and from high-impact polystyrene. ASA was developed as the weatherable, ultraviolet-resistant outdoor alternative. It is still a styrene copolymer, and it still wants an enclosure and a vent.</p>
+    <h3 class="sub">Flexibles, nylon, polycarbonate</h3>
+    <p>TPU and TPE print rubber-like gaskets and wearables, both at high difficulty, and both slowly. Soft filament buckles in a loose extruder. TPU is noted for abrasion and oil resistance. Neither replaces a stiff part. Nylon is a family, medium difficulty, and the spool has to stay sealed. PA12, the usual powder-bed nylon, melts at 178–180 °C. PA11 melts at 180–190 °C, with a glass transition near 42 °C, and it holds size better after taking on water. The nozzle in the table sits above those melting points so the melt can pass a small hole. Wet nylon prints as bubbles. Polycarbonate is tougher and sometimes clear, glass transition near 147 °C, medium difficulty. Open frames usually fail it. Some grades can carry residual bisphenol A.</p>
+    <h3 class="sub">Fibers, supports, and the hot polymers</h3>
+    <p>Short carbon or glass fiber mostly buys stiffness, and it wears a brass nozzle, so the compilation says to use a hardened one. The heat limit is still the base polymer. PLA-filled grades are the easy row. ABS-filled grades are medium. High-impact polystyrene is the dissolvable support beside ABS, and one of the styrene emitters. PVA is water-soluble and as thirsty as nylon. It washes away as support for PLA or ABS. Humidity turns it to gel.</p>
+    <p>PEEK, PEKK, and PEI need another kind of machine. PEEK’s glass transition is about 143 °C and it melts near 343 °C; some grades are described as useful up to 250 °C. PEKK’s glass transition is 162 °C, with chemical resistance beside the heat. PEI’s glass transition is 215 °C. The table’s “medium” on PEI only makes sense on a machine that can hold a 220 °C chamber. Ducts, sterilizable fixtures, and chemical duty are why the three exist.</p>
+    <h3 class="sub">Photopolymer resins</h3>
+    <p>Standard resin favors detail and chips if you drop it. Tough grades add impact resistance. Flexible grades are not TPU. Castable grades are patterns that get invested and burned out. A dental or biocompatible label applies only to a formulation tested for a stated contact. None of them has a nozzle temperature. All of them are a skin hazard while liquid. A NIOSH-authored survey of light-curing resins for vats and for material jetting found irritants and sensitizers that the safety data sheets only partly declared.</p>
+  </section>
+
+  <section class="desk" id="table" aria-labelledby="table-h">
+    <h2 id="table-h">A comparison you can filter</h2>
+    <p>Sort a column by its header. Filter to a family if you are only deciding among flexibles, supports, or resins. The help button explains the dashes. Figures are typical ranges, and a spool’s own data sheet outranks this table when they disagree.</p>
+    <div class="toolbar">
+      <div role="group" aria-label="Filter materials" id="mat-filters">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" data-filter="everyday" aria-pressed="false">Everyday</button>
+        <button type="button" data-filter="engineering" aria-pressed="false">Engineering</button>
+        <button type="button" data-filter="flexible" aria-pressed="false">Flexible</button>
+        <button type="button" data-filter="support" aria-pressed="false">Supports</button>
+        <button type="button" data-filter="composite" aria-pressed="false">Composites</button>
+        <button type="button" data-filter="hightemp" aria-pressed="false">High-temp</button>
+        <button type="button" data-filter="resin" aria-pressed="false">Resins</button>
+      </div>
+      <div class="helpwrap">
+        <button type="button" class="help" id="mat-help" aria-expanded="false" aria-controls="mat-help-panel" title="How to use this table">?</button>
+        <div id="mat-help-panel" class="help-panel" hidden role="region" aria-label="How to use the materials table">
+          <p>Choose a family to hide the other rows. Choose All to bring them back. A column header sorts, and a second click reverses the order. Numeric columns sort from the low end of the range shown. Dashes sort last: resins are not extruded, and a few heat figures are simply not stated in the sources behind this table. Printing uses the full table, including rows the filter had hidden.</p>
+        </div>
+      </div>
+    </div>
+    <p class="count" id="mat-count" aria-live="polite">19 materials</p>
+    <div class="table-scroll">
+      <table class="mat" id="mat-table">
+        <caption>Typical filament ranges from the public compilation. Heat figures are glass transition (Tg) or melting point (Tm) where a polymer reference states one. Resin rows are qualitative.</caption>
+        <thead>
+          <tr>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="name">Material</button></th>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="nozzle">Nozzle</button></th>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="bed">Bed</button></th>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="heat">Heat behavior</button></th>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="diff">Difficulty</button></th>
+            <th scope="col" aria-sort="none"><button type="button" data-sort="uses">Common uses</button></th>
+          </tr>
+        </thead>
+        <tbody id="mat-body">
+          <tr data-group="everyday" data-name="pla" data-nozzle="180" data-bed="60" data-heat="60" data-diff="1" data-uses="consumer products">
+            <th scope="row">PLA</th><td>180–230 °C</td><td>None required; 60–80 °C also used</td><td>Tg 60–65 °C</td><td>Low</td><td>Consumer products, drafts, fixtures</td>
+          </tr>
+          <tr data-group="everyday" data-name="petg" data-nozzle="220" data-bed="" data-heat="" data-diff="2" data-uses="general parts">
+            <th scope="row">PETG</th><td>220–235 °C</td><td>None required</td><td>—</td><td>Medium</td><td>Tougher everyday parts</td>
+          </tr>
+          <tr data-group="engineering" data-name="abs" data-nozzle="210" data-bed="50" data-heat="105" data-diff="2" data-uses="functional parts">
+            <th scope="row">ABS</th><td>210–250 °C</td><td>50–100 °C</td><td>Tg about 105 °C; chamber about 40–60 °C</td><td>Medium</td><td>Functional parts</td>
+          </tr>
+          <tr data-group="engineering" data-name="asa" data-nozzle="240" data-bed="100" data-heat="" data-diff="2" data-uses="outdoor">
+            <th scope="row">ASA</th><td>240–260 °C</td><td>100–120 °C</td><td>Weather and UV resistance; no single Tg in these sources</td><td>Medium</td><td>Outdoor parts</td>
+          </tr>
+          <tr data-group="flexible" data-name="tpu" data-nozzle="225" data-bed="" data-heat="" data-diff="3" data-uses="elastic parts">
+            <th scope="row">TPU</th><td>225–235 °C</td><td>None required</td><td>Flexible at room temperature</td><td>High</td><td>Elastic parts, wearables; print slowly</td>
+          </tr>
+          <tr data-group="flexible" data-name="tpe" data-nozzle="225" data-bed="40" data-heat="" data-diff="3" data-uses="elastic parts">
+            <th scope="row">TPE</th><td>225–235 °C</td><td>40 °C</td><td>Extremely flexible, rubber-like</td><td>High</td><td>Elastic parts; print very slowly</td>
+          </tr>
+          <tr data-group="engineering" data-name="nylon" data-nozzle="220" data-bed="50" data-heat="178" data-diff="2" data-uses="functional parts">
+            <th scope="row">Nylon (PA11, PA12)</th><td>220–260 °C</td><td>50–100 °C</td><td>PA12 Tm 178–180 °C; PA11 Tm 180–190 °C</td><td>Medium</td><td>Functional parts and polymer powder beds; keep dry</td>
+          </tr>
+          <tr data-group="engineering" data-name="polycarbonate" data-nozzle="270" data-bed="90" data-heat="147" data-diff="2" data-uses="functional parts">
+            <th scope="row">Polycarbonate</th><td>270–310 °C</td><td>90–105 °C</td><td>Tg about 147 °C</td><td>Medium</td><td>Functional parts; chamber near 60 °C</td>
+          </tr>
+          <tr data-group="composite" data-name="fiber" data-nozzle="195" data-bed="50" data-heat="" data-diff="1" data-uses="stiff parts">
+            <th scope="row">Carbon- or glass-fiber filled</th><td>PLA-filled 195–220 °C; ABS-filled 210–260 °C</td><td>PLA-filled: none required. ABS-filled: 50–100 °C</td><td>Stiffer than the unfilled polymer; heat follows the base plastic</td><td>Low (PLA-filled), medium (ABS-filled)</td><td>Stiffer functional parts; hardened nozzle</td>
+          </tr>
+          <tr data-group="support" data-name="hips" data-nozzle="210" data-bed="50" data-heat="" data-diff="2" data-uses="supports">
+            <th scope="row">HIPS</th><td>210–250 °C</td><td>50–100 °C</td><td>Dissolvable support, not a heat champion</td><td>Medium</td><td>Support beside ABS</td>
+          </tr>
+          <tr data-group="support" data-name="pva" data-nozzle="180" data-bed="" data-heat="" data-diff="1" data-uses="supports">
+            <th scope="row">PVA</th><td>180–230 °C</td><td>None required</td><td>Water-soluble</td><td>Low</td><td>Wash-away support for PLA or ABS; keep dry</td>
+          </tr>
+          <tr data-group="hightemp" data-name="pei" data-nozzle="340" data-bed="180" data-heat="215" data-diff="2" data-uses="high temperature">
+            <th scope="row">PEI</th><td>340–380 °C</td><td>180–200 °C</td><td>Tg 215 °C</td><td>Medium on a high-temperature machine</td><td>Hot functional parts; chamber listed at 220 °C</td>
+          </tr>
+          <tr data-group="hightemp" data-name="peek" data-nozzle="360" data-bed="100" data-heat="143" data-diff="3" data-uses="high temperature">
+            <th scope="row">PEEK</th><td>360–450 °C</td><td>100–160 °C</td><td>Tg about 143 °C; Tm about 343 °C</td><td>High</td><td>High-heat parts; chamber 70–200 °C</td>
+          </tr>
+          <tr data-group="hightemp" data-name="pekk" data-nozzle="370" data-bed="120" data-heat="162" data-diff="3" data-uses="high temperature">
+            <th scope="row">PEKK</th><td>370–450 °C</td><td>120–180 °C</td><td>Tg 162 °C</td><td>High</td><td>Chemical duty; chamber 80–200 °C</td>
+          </tr>
+          <tr data-group="resin" data-name="resin standard" data-nozzle="" data-bed="" data-heat="" data-diff="" data-uses="detail models">
+            <th scope="row">Standard resin</th><td>—</td><td>—</td><td>Formulation-dependent</td><td>Liquid handling, not a filament score</td><td>Detail models and patterns</td>
+          </tr>
+          <tr data-group="resin" data-name="resin tough" data-nozzle="" data-bed="" data-heat="" data-diff="" data-uses="functional prototypes">
+            <th scope="row">Tough resin</th><td>—</td><td>—</td><td>Formulation-dependent</td><td>Liquid handling, not a filament score</td><td>Impact-resistant prototypes</td>
+          </tr>
+          <tr data-group="resin" data-name="resin flexible" data-nozzle="" data-bed="" data-heat="" data-diff="" data-uses="flexible parts">
+            <th scope="row">Flexible resin</th><td>—</td><td>—</td><td>Formulation-dependent</td><td>Liquid handling, not a filament score</td><td>Flexible skins and gaskets</td>
+          </tr>
+          <tr data-group="resin" data-name="resin castable" data-nozzle="" data-bed="" data-heat="" data-diff="" data-uses="casting patterns">
+            <th scope="row">Castable resin</th><td>—</td><td>—</td><td>Meant to burn out; follow the casting cycle</td><td>Liquid handling, not a filament score</td><td>Sacrificial patterns for metal casting</td>
+          </tr>
+          <tr data-group="resin" data-name="resin dental" data-nozzle="" data-bed="" data-heat="" data-diff="" data-uses="dental">
+            <th scope="row">Dental or biocompatible resin</th><td>—</td><td>—</td><td>Only as tested for that contact type</td><td>Liquid handling, not a filament score</td><td>Dental models and specified skin or mucosal contact</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="desk" id="safety" aria-labelledby="safety-h">
+    <h2 id="safety-h">Air, skin, and powder</h2>
+    <p>A hot spool is a small chemical plant. The U.S. Environmental Protection Agency reports volatile organic compounds, some hazardous to inhale, and ultrafine particles about 1–100 nanometers, small enough to deposit deep in the lung. PLA and ABS are the common cases, and filaments do not emit equally. Specialty filaments with metal or flame-retardant additives can add exposure. Printers now sit in classrooms; published respiratory studies have focused on adults. The practical summary is: lower-emitting materials, an enclosure, ventilation that captures the plume, and less time beside a running machine.</p>
+    <p>In a chamber study of desktop filament printers, Azimi and colleagues (2016) found median ultrafine-particle rates from about 10<sup>8</sup> to about 10<sup>11</sup> particles per minute, set mostly by the filament and less by bed temperature. The largest organic rates they quantified were caprolactam from nylon-based and from wood-like or mineral-like filled filaments (about 2 to 180 micrograms per minute), styrene from ABS and high-impact polystyrene (about 10 to 110), and lactide from PLA (about 4 to 5). Many of those combinations do not belong in a poorly ventilated room, or behind a filter that catches only particles or only gases. NIOSH puts the same warning in plainer words: particles under 100 nanometers are on the order of two thousand times narrower than a hair, and invisible. PLA often emits fewer particles than ABS and still emits. Prefer fresh air, a hood, or a garage over a bedroom. Smell is a late alarm.</p>
+    <p>A two-lab pilot (Felici and colleagues, 2023) found higher nanoparticle counts beside a stereolithography printer running resin (about 4,091 per cubic centimeter) than beside a filament printer running PLA (about 2,203). That is one comparison, and it is enough to treat resin as an air problem too.</p>
+    <p>Uncured resin is the skin problem. Methacrylates in printing resins have caused allergic contact dermatitis in case reports. A NIOSH survey of 39 light-curing products, for vats and for material jetting, found many more irritants and sensitizers than the safety data sheets listed. Gloves, eye protection, and a bench that is not the kitchen table are the minimum. Do not drive a splash into the skin with a random solvent. Cure waste before it is trash. A rash that returns is a reason to stop and get medical advice. The next exposure is worse, not easier.</p>
+    <p>Powder-bed jobs end as a cake of fine loose particles. Sweeping that cake into the room turns a solid into something you can inhale. Polymer and metal powder work belongs in an enclosed machine, with a shop procedure for spills and filters. It is not a dustpan hobby.</p>
+  </section>
+
+  <section class="desk" id="choose" aria-labelledby="choose-h">
+    <h2 id="choose-h">Choosing without a catalog</h2>
+    <p>Match the shape to a process, the duty to a plastic, and both to the room. Brackets, jigs, knobs, and drafts are filament jobs. PLA if the part stays cool. PETG for a little toughness. ASA in the sun. ABS only with an enclosure, a vent, and a reason to want a glass transition near 105 °C. TPU when it must bend, slowly. Nylon if you will dry the spool. Fiber-filled filament when you want stiffness and you own a hardened nozzle. PEEK, PEKK, and PEI only on a machine that can hold the table’s temperatures.</p>
+    <p>Use a vat when the surface and the small letters matter more than impact: a pattern, a dental model, a fine housing. Budget gloves, a wash, a cure lamp, and air, not just the printer. Use polymer powder bed fusion, usually nylon, when the shape is full of channels and a shop can run the cake. The sandy skin is part of the deal. Use metal laser powder bed fusion for dense complex metal, binder jetting plus a furnace when sintering and shrinkage are acceptable, and directed energy deposition to add metal onto a part you already have. Sheet lamination is for paper models or foil, not the default strong part.</p>
+    <p>Motion is the second choice. A Cartesian bed-slinger is enough to learn. CoreXY is the upgrade when speed and a quiet bed matter. A delta is a tall volume with a calibration habit. A belt is for long parts and queues. No motion system makes ABS safe in a closed bedroom, and none of them makes uncured resin safe on bare skin.</p>
+  </section>
+
+  <section class="desk" id="sources" aria-labelledby="sources-h">
+    <h2 id="sources-h">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://en.wikipedia.org/wiki/3D_printing">3D printing</a><span class="note">Plain-language definition: a digital model turned into a solid by adding material.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/3D_printing_processes">3D printing processes</a><span class="note">The seven ISO/ASTM 52900 families, and the process descriptions used here for extrusion, powder beds, vats, jetting, binders, directed energy, and sheets.</span></li>
+      <li><a href="https://patents.google.com/patent/US4575330A/en">Stereolithography patent US 4,575,330</a><span class="note">Hull’s patent. Filing date 8 August 1984, publication date 11 March 1986.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Stereolithography">Stereolithography</a><span class="note">1984 coinage, 1986 grant, and what vat curing is for.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Fused_filament_fabrication">Fused filament fabrication</a><span class="note">Process, Cartesian and delta motion, materials list, and health notes on ultrafine particles and ventilation.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/CoreXY">CoreXY kinematics</a><span class="note">Stationary motors, crossed belts, less moving mass.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Selective_laser_sintering">Selective laser sintering</a><span class="note">Laser sintering of powder, including polymers.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/3D_printing_filament">3D printing filament</a><span class="note">The compilation behind the nozzle, bed, and difficulty columns. Product nicknames in that table are omitted here on purpose.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polylactic_acid">Polylactic acid</a><span class="note">Glass transition 60–65 °C, melting range, and brittleness.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Acrylonitrile_butadiene_styrene">Acrylonitrile butadiene styrene</a><span class="note">Glass transition about 105 °C.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Acrylonitrile_styrene_acrylate">Acrylonitrile styrene acrylate</a><span class="note">Weatherable alternative to ABS, used outdoors.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Thermoplastic_polyurethane">Thermoplastic polyurethane</a><span class="note">Elasticity, abrasion, and oil resistance.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Nylon_12">Nylon 12</a><span class="note">Melting point 178–180 °C.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Nylon_11">Nylon 11</a><span class="note">Melting point 180–190 °C and glass transition about 42 °C.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polycarbonate">Polycarbonate</a><span class="note">Glass transition about 147 °C.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polyvinyl_alcohol">Polyvinyl alcohol</a><span class="note">Water-soluble polymer, including its use in printing.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polyetherimide">Polyetherimide</a><span class="note">Glass transition 215 °C. Trade names are left off this page.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polyether_ether_ketone">Polyether ether ketone</a><span class="note">Glass transition about 143 °C, melting point about 343 °C, service up to 250 °C for some grades.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Polyetherketoneketone">Polyetherketoneketone</a><span class="note">Glass transition 162 °C.</span></li>
+      <li><a href="https://www.epa.gov/chemical-research/3d-printing-research-epa">EPA: 3D printing research</a><span class="note">VOCs, ultrafine particles (1–100 nm), filament differences, and the summary of ventilation guidance.</span></li>
+      <li><a href="https://archive.cdc.gov/www_cdc_gov/niosh/newsroom/feature/2022print3D.html">NIOSH: 3D printing with plastics</a><span class="note">Particles under 100 nm, PLA often lower-emitting than ABS, fresh air, and enclosures. Archived public page.</span></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/26741485/">Ultrafine particles and VOCs from desktop printers</a><span class="note">Azimi, Zhao, Pouzet, Crain, and Stephens, Environmental Science &amp; Technology, 2016. Emission ranges cited in the safety section.</span></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/37333549/">Ultrafine particles in research laboratories</a><span class="note">Felici and colleagues, Frontiers in Public Health, 2023. The filament-versus-vat pilot.</span></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/35659913/">Irritants and sensitizers in light-curing resins</a><span class="note">Bowers and colleagues at NIOSH, Regulatory Toxicology and Pharmacology, 2022. Safety data sheets versus what the bottles contained.</span></li>
+      <li><a href="https://pubmed.ncbi.nlm.nih.gov/38990701/">Allergic contact dermatitis from a methacrylate resin</a><span class="note">Doré and colleagues, Dermatitis, 2025. A case report, not a rate.</span></li>
+      <li><a href="https://www.nist.gov/additive-manufacturing">NIST additive manufacturing</a><span class="note">The U.S. metrology laboratory’s door into the field. Process science, not a catalog.</span></li>
+    </ul>
+    <p class="disclaimer">Temperatures are typical ranges from the sources above, not setpoints. Polymers vary by molecular weight, fillers, and color. This page is not medical, occupational, or purchasing advice. When a spool, a resin bottle, or a shop procedure disagrees with a general range, believe the specific document and the ventilation you actually have.</p>
+  </section>
+
+  <nav class="more" aria-label="Related desks">
+    <a href="/science/tech/computer-history/"><p class="n">Science</p><h3>Computer history</h3><p>A sourced timeline from counting boards to modern machines.</p></a>
+    <a href="/science/graphics-3d/"><p class="n">Science</p><h3>3D graphics</h3><p>Frames, pivots, and handedness, for the model before it is sliced.</p></a>
+    <a href="/science/"><p class="n">Science</p><h3>Where we stand</h3><p>The status desk this essay hangs from.</p></a>
+    <a href="/electronics/"><p class="n">Electronics</p><h3>Circuits</h3><p>The other shop bench: wires, not filament.</p></a>
+  </nav>
+
+  {% include footer.html %}
+</div>
+<script>
+(function () {
+  var body = document.getElementById("mat-body");
+  var filters = document.getElementById("mat-filters");
+  var countEl = document.getElementById("mat-count");
+  var helpBtn = document.getElementById("mat-help");
+  var helpPanel = document.getElementById("mat-help-panel");
+  var current = "all";
+  var sortKey = "";
+  var sortDir = 1;
+
+  function rows() {
+    return Array.prototype.slice.call(body.querySelectorAll("tr"));
+  }
+
+  function apply() {
+    var n = 0;
+    rows().forEach(function (tr) {
+      var show = current === "all" || tr.getAttribute("data-group") === current;
+      tr.hidden = !show;
+      if (show) n += 1;
+    });
+    countEl.textContent = n + (n === 1 ? " material" : " materials");
+  }
+
+  function sortBy(key) {
+    if (sortKey === key) sortDir = -sortDir;
+    else { sortKey = key; sortDir = 1; }
+    var list = rows();
+    list.sort(function (a, b) {
+      var av = a.getAttribute("data-" + key) || "";
+      var bv = b.getAttribute("data-" + key) || "";
+      var an = parseFloat(av);
+      var bn = parseFloat(bv);
+      var anEmpty = av === "" || isNaN(an);
+      var bnEmpty = bv === "" || isNaN(bn);
+      if (key !== "name" && key !== "uses") {
+        if (anEmpty && bnEmpty) return a.getAttribute("data-name").localeCompare(b.getAttribute("data-name"));
+        if (anEmpty) return 1;
+        if (bnEmpty) return -1;
+        if (an !== bn) return (an - bn) * sortDir;
+      }
+      var as = (key === "name" || key === "uses") ? av : a.getAttribute("data-name");
+      var bs = (key === "name" || key === "uses") ? bv : b.getAttribute("data-name");
+      return as.localeCompare(bs) * (key === "name" || key === "uses" ? sortDir : 1);
+    });
+    list.forEach(function (tr) { body.appendChild(tr); });
+    document.querySelectorAll(".mat th").forEach(function (th) {
+      var btn = th.querySelector("button");
+      if (!btn) return;
+      th.setAttribute("aria-sort", btn.getAttribute("data-sort") === key ? (sortDir > 0 ? "ascending" : "descending") : "none");
+    });
+  }
+
+  filters.addEventListener("click", function (e) {
+    var btn = e.target.closest("button[data-filter]");
+    if (!btn) return;
+    current = btn.getAttribute("data-filter");
+    filters.querySelectorAll("button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+    apply();
+  });
+
+  document.querySelectorAll(".mat th button").forEach(function (btn) {
+    btn.addEventListener("click", function () { sortBy(btn.getAttribute("data-sort")); });
+  });
+
+  function setHelp(open) {
+    helpBtn.setAttribute("aria-expanded", String(open));
+    helpPanel.hidden = !open;
+  }
+  helpBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    setHelp(helpPanel.hidden);
+  });
+  document.addEventListener("click", function (e) {
+    if (helpPanel.hidden) return;
+    if (!helpPanel.contains(e.target) && e.target !== helpBtn) setHelp(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") setHelp(false);
+  });
+  apply();
+})();
+</script>
+</body>
+</html>
