@@ -3,6 +3,7 @@
   "use strict";
 
   var store = NmsLogistics.loadStore(localStorage);
+  var collapsed = NmsLogistics.loadCollapsed(localStorage);
   var catalog = null;
   var sourceGraph = null;
   var techCatalog = null;
@@ -38,6 +39,22 @@
   function persist() {
     try { store = NmsLogistics.saveStore(localStorage, store); }
     catch (err) { setStatus("Could not write this browser’s storage."); }
+  }
+
+  function persistCollapsed() {
+    try { collapsed = NmsLogistics.saveCollapsed(localStorage, collapsed); }
+    catch (err) { setStatus("Could not write this browser’s storage."); }
+  }
+
+  function collapsedKey(map) {
+    return Object.keys(map || {}).sort().join("\n");
+  }
+
+  function syncCollapsed() {
+    var next = NmsLogistics.pruneCollapsed(collapsed, store.projects);
+    var changed = collapsedKey(next) !== collapsedKey(NmsLogistics.loadCollapsed(localStorage));
+    collapsed = next;
+    if (changed) persistCollapsed();
   }
 
   function labelOf(item) {
@@ -337,6 +354,53 @@
 
   function itemOptionsHtml(current, query) {
     return optionList(catalogOptions(query || ""), current, "Choose", nodeName);
+  }
+
+  var CHEVRON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+
+  function projectDomId(id) {
+    var safe = String(id == null ? "" : id).replace(/[^A-Za-z0-9_-]/g, "");
+    return "project-body-" + (safe || "project");
+  }
+
+  function focusProjectToggle(id) {
+    var buttons = checklistEl.querySelectorAll("[data-toggle-project]");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      if (buttons[i].getAttribute("data-toggle-project") === id) {
+        buttons[i].focus();
+        return;
+      }
+    }
+  }
+
+  function foldProjects(flag) {
+    collapsed = NmsLogistics.setAllCollapsed(store.projects, flag);
+    persistCollapsed();
+    render();
+    showTab("plan");
+    var again = document.getElementById(flag ? "btn-collapse-all" : "btn-expand-all");
+    if (again && again.focus) again.focus();
+    setStatus(flag ? "Collapsed every project." : "Expanded every project.");
+  }
+
+  function toggleProject(id) {
+    var name = id;
+    store.projects.forEach(function (project) {
+      if (project.id === id) name = project.name;
+    });
+    var next = !NmsLogistics.isCollapsed(collapsed, id);
+    collapsed = NmsLogistics.setCollapsed(collapsed, id, next);
+    persistCollapsed();
+    render();
+    showTab("plan");
+    focusProjectToggle(id);
+    setStatus((next ? "Collapsed " : "Expanded ") + name + ".");
+  }
+
+  function updateFoldBar() {
+    var fold = document.getElementById("plan-fold");
+    if (fold) fold.hidden = store.projects.length < 2;
   }
 
   function pencilButton(projectId) {
@@ -667,6 +731,8 @@
     if (!checklistEl) return;
     if (!skipDraftCapture) captureProjectDraft();
     skipDraftCapture = false;
+    syncCollapsed();
+    updateFoldBar();
     if (!store.projects.length) {
       editingProjectId = null;
       projectDraft = null;
@@ -733,11 +799,21 @@
           pending + done + growers + path +
           '<p><button type="button" data-drop-demand="' + esc(project.id) + '" data-demand="' + esc(demand.id) + '">Remove demand</button></p></div>';
       }).join("");
-      return '<section class="check" data-project-id="' + esc(project.id) + '"><div class="project-head"><h2>' +
-        esc(project.name) + (project.recipeFor ? " · " + esc(nodeName(project.recipeFor)) : "") +
-        "</h2>" + pencilButton(project.id) +
-        '</div><p><button type="button" data-drop-project="' + esc(project.id) + '">Remove project</button></p>' +
-        (body || '<p class="note">No demands in this project.</p>') + "</section>";
+      var folded = NmsLogistics.isCollapsed(collapsed, project.id);
+      var bodyId = projectDomId(project.id);
+      var summary = NmsLogistics.projectSummary(store, demands);
+      return '<section class="check' + (folded ? " is-collapsed" : "") + '" data-project-id="' + esc(project.id) + '">' +
+        '<div class="project-head">' +
+        '<button type="button" class="icon-btn collapse-btn" data-toggle-project="' + esc(project.id) + '" aria-expanded="' + (folded ? "false" : "true") + '" aria-controls="' + esc(bodyId) + '" aria-label="' + esc((folded ? "Expand " : "Collapse ") + project.name) + '" title="' + esc(folded ? "Expand" : "Collapse") + '">' +
+        CHEVRON + "</button>" +
+        "<h2>" + esc(project.name) + (project.recipeFor ? " · " + esc(nodeName(project.recipeFor)) : "") + "</h2>" +
+        pencilButton(project.id) +
+        (folded ? '<p class="project-summary">' + esc(summary) + "</p>" : "") +
+        "</div>" +
+        '<div class="project-body" id="' + esc(bodyId) + '"' + (folded ? " hidden" : "") + ">" +
+        '<p><button type="button" data-drop-project="' + esc(project.id) + '">Remove project</button></p>' +
+        (body || '<p class="note">No demands in this project.</p>') +
+        "</div></section>";
     }).join("");
     focusProjectEditor();
   }
@@ -903,6 +979,10 @@
 
   document.getElementById("tab-inventory").addEventListener("click", function () { showTab("inventory"); });
   document.getElementById("tab-plan").addEventListener("click", function () { showTab("plan"); });
+  var collapseAllBtn = document.getElementById("btn-collapse-all");
+  var expandAllBtn = document.getElementById("btn-expand-all");
+  if (collapseAllBtn) collapseAllBtn.addEventListener("click", function () { foldProjects(true); });
+  if (expandAllBtn) expandAllBtn.addEventListener("click", function () { foldProjects(false); });
 
   ["q", "loc-filter", "cat-filter", "place-filter"].forEach(function (id) {
     var el = document.getElementById(id);
@@ -1247,6 +1327,11 @@
   checklistEl.addEventListener("click", function (ev) {
     var target = ev.target;
     if (!target || !target.closest) return;
+    var toggle = target.closest("[data-toggle-project]");
+    if (toggle) {
+      toggleProject(toggle.getAttribute("data-toggle-project"));
+      return;
+    }
     var editProject = target.closest("[data-edit-project]");
     if (editProject) {
       ev.preventDefault();
@@ -1301,10 +1386,13 @@
       showTab("plan");
     }
     if (dropProject) {
+      var droppedId = dropProject.getAttribute("data-drop-project");
       store.projects = store.projects.filter(function (project) {
-        return project.id !== dropProject.getAttribute("data-drop-project");
+        return project.id !== droppedId;
       });
+      collapsed = NmsLogistics.setCollapsed(collapsed, droppedId, false);
       persist();
+      persistCollapsed();
       render();
       showTab("plan");
     }

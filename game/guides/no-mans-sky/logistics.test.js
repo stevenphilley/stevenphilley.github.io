@@ -678,6 +678,96 @@ var legacyDisk = memoryStorage();
 logistics.saveStore(legacyDisk, legacy);
 eq(logistics.loadStore(legacyDisk).projects, legacyNorm.projects, "an older project loads unchanged");
 
+function keyedStorage() {
+  var data = {};
+  return {
+    getItem: function (key) {
+      return Object.prototype.hasOwnProperty.call(data, key) ? data[key] : null;
+    },
+    setItem: function (key, val) { data[key] = String(val); }
+  };
+}
+
+var foldDisk = keyedStorage();
+eq(logistics.loadCollapsed(foldDisk), {}, "a browser with no collapsed projects loads none");
+eq(logistics.loadCollapsed(null), {}, "missing storage loads no collapsed projects");
+var marked = logistics.setCollapsed({}, "p1", true);
+assert(logistics.isCollapsed(marked, "p1"), "a project can be marked collapsed");
+assert(!logistics.isCollapsed(marked, "p2"), "a different project stays expanded");
+eq(logistics.setCollapsed(marked, "p1", true), marked, "collapsing again keeps the same id");
+var withSecond = logistics.setCollapsed(marked, "  p2  ", true);
+eq(withSecond, { p1: true, p2: true }, "collapsed state is keyed by the trimmed project id");
+eq(marked, { p1: true }, "marking another project does not mutate the earlier map");
+var opened = logistics.setCollapsed(withSecond, "p1", false);
+eq(opened, { p2: true }, "expanding clears only that project");
+eq(logistics.saveCollapsed(foldDisk, withSecond), { p1: true, p2: true }, "collapsed projects save under their own key");
+eq(logistics.loadCollapsed(foldDisk), { p1: true, p2: true }, "collapsed projects reload from storage");
+assert(foldDisk.getItem(logistics.STORE_KEY) == null, "collapse storage does not write the planner document");
+var summaryStore = logistics.normalize({
+  locations: [
+    { id: "freighter", name: "Freighter", category: "freighter", items: [{ id: "chromatic-metal", qty: 80 }] },
+    { id: "box0", name: "Storage Container 0", category: "container", items: [{ id: "chromatic-metal", qty: 12 }, { id: "glass", qty: 4 }] },
+    { id: "suit", name: "Exosuit", category: "exosuit", items: [{ id: "ferrite-dust", qty: 20 }] }
+  ],
+  projects: [{
+    id: "p1",
+    name: "Freighter base build",
+    demands: [
+      {
+        id: "d1",
+        locationId: "freighter",
+        itemId: "chromatic-metal",
+        qty: 100,
+        doneTransfers: [{ id: "m1", fromId: "box3", toId: "freighter", itemId: "chromatic-metal", qty: 50 }]
+      },
+      {
+        id: "d2",
+        locationId: "freighter",
+        itemId: "glass",
+        qty: 10,
+        doneTransfers: [{ id: "m2", fromId: "box0", toId: "freighter", itemId: "glass", qty: 6 }]
+      },
+      {
+        id: "d3",
+        locationId: "freighter",
+        itemId: "ferrite-dust",
+        qty: 40,
+        doneTransfers: []
+      }
+    ]
+  }, {
+    id: "p2",
+    name: "Warp cell",
+    demands: [{ id: "d4", locationId: "freighter", itemId: "antimatter", qty: 1, doneTransfers: [] }]
+  }]
+});
+eq(logistics.projectProgress(summaryStore, summaryStore.projects[0]), {
+  demands: 3,
+  done: 2,
+  moves: 5
+}, "a project counts demands, finished moves, and moves still to make");
+eq(logistics.projectSummary(summaryStore, summaryStore.projects[0]), "3 demands, 2 of 5 moves done", "the collapsed heading uses those counts");
+eq(logistics.projectSummary(logistics.emptyStore(), {
+  demands: [{ id: "d", locationId: "freighter", itemId: "glass", qty: 1, doneTransfers: [{ id: "m", fromId: "box0", toId: "freighter", itemId: "glass", qty: 1 }] }]
+}), "1 demand, 1 of 1 move done", "a single demand and a single move stay singular");
+eq(logistics.projectSummary(logistics.emptyStore(), { demands: [] }), "0 demands, 0 of 0 moves done", "an empty project summarizes to zero");
+var renamedFold = logistics.updateProject(summaryStore, "p1", { name: "Hauler refit" });
+assert(renamedFold.ok, "a collapsed project can be renamed");
+eq(renamedFold.project.id, "p1", "the rename keeps the id collapse state is stored under");
+logistics.saveStore(foldDisk, renamedFold.store);
+eq(logistics.loadCollapsed(foldDisk), { p1: true, p2: true }, "renaming and saving the planner leaves the collapsed ids in place");
+eq(logistics.loadStore(foldDisk).projects[0].name, "Hauler refit", "the planner save still round-trips beside the collapse key");
+eq(logistics.pruneCollapsed(logistics.loadCollapsed(foldDisk), renamedFold.store.projects), { p1: true, p2: true }, "live projects keep their collapsed flags");
+eq(logistics.pruneCollapsed({ p1: true, gone: true }, [{ id: "p1" }]), { p1: true }, "removing a project drops its collapsed flag");
+eq(logistics.setAllCollapsed(renamedFold.store.projects, true), { p1: true, p2: true }, "collapse all marks every current project");
+eq(logistics.setAllCollapsed(renamedFold.store.projects, false), {}, "expand all clears every mark");
+foldDisk.setItem(logistics.COLLAPSE_KEY, "{");
+eq(logistics.loadCollapsed(foldDisk), {}, "broken collapse storage is ignored");
+foldDisk.setItem(logistics.COLLAPSE_KEY, "[]");
+eq(logistics.loadCollapsed(foldDisk), {}, "a collapse list is ignored");
+foldDisk.setItem(logistics.COLLAPSE_KEY, JSON.stringify({ p1: true, p2: false, "": true, nope: 1 }));
+eq(logistics.loadCollapsed(foldDisk), { p1: true }, "only a true flag for a real project id counts as collapsed");
+
 if (failed) {
   console.error(failed + " failed");
   process.exit(1);
