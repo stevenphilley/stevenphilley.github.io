@@ -52,7 +52,7 @@ Filenames are not dates. Any name in this folder is fine, for example `2026-09-2
 
 The archive sorts newest `date` first. Images with the same date keep the order they appear in `items`.
 
-Today's wallpaper is the newest item with `daily` set to `true`. If none is marked daily, the newest item is shown there instead. The rest of the list is the archive. Chips are All, Daily, then Nature, Sci-fi, Swimwear, Fedora, Cityscapes, Underwater, and Abstract when those categories have archive images, then any other category present in the list. A category with no images stays hidden. The address keeps the choice, for example `?c=fedora`. The page intro stays general (“and other collections”) so new chips do not require a rewrite.
+Today's wallpaper is the newest item with `daily` set to `true`. If none is marked daily, the newest item is shown there instead. The rest of the list is the archive. Chips are All, Daily, then Nature, Sci-fi, Swimwear, Fedora, Cityscapes, Underwater, and Abstract when those categories have archive images, then any other category present in the list. A category with no images stays hidden. The address keeps the choice, for example `?c=fedora`. Opening a wallpaper keeps that filter and adds `?w=` set to the filename, for example `?c=swimwear&w=swimwear-01-amalfi-terrace.jpg`. An unknown `w` leaves the gallery in place. The page intro stays general (“and other collections”) so new chips do not require a rewrite.
 
 An item with category `fedora` also shows this line in its detail: "Fedora-inspired, not official Fedora Project artwork. Fedora is a trademark of Red Hat, Inc."
 

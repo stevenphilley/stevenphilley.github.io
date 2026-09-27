@@ -50,9 +50,9 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .note{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.6;color:var(--muted,#63666e);margin:0 0 14px;padding:10px 12px;border:1px solid var(--line,#2c303a);background:rgba(200,180,138,.06)}
 .disclaimer{font-family:"IBM Plex Mono",monospace;font-size:11.5px;line-height:1.55;color:var(--muted,#63666e);margin:0 0 12px}
 .sizes{display:flex;flex-wrap:wrap;gap:8px;padding:4px 20px 18px}
-.sizes button,.custom button,.dlb-close{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;min-height:44px}
+.sizes button,.custom button,.dlb-close,.dlb-share{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 14px;cursor:pointer;min-height:44px}
 .sizes button.primary,.custom button.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
-.sizes button:hover,.custom button:hover,.sizes button:focus-visible,.custom button:focus-visible,.dlb-close:hover,.dlb-close:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.sizes button:hover,.custom button:hover,.sizes button:focus-visible,.custom button:focus-visible,.dlb-close:hover,.dlb-close:focus-visible,.dlb-share:hover,.dlb-share:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
 .sizes button .tag{display:none}
 .sizes button .tag:not(:empty){display:block;font-size:9px;letter-spacing:.12em;color:var(--accent,#c8b48a);margin-top:4px}
 .sizes button.primary .tag:not(:empty){color:var(--base-2,#14161c);opacity:.7}
@@ -90,15 +90,26 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .dlb:not([hidden]){position:fixed;inset:0;z-index:80;display:flex;align-items:flex-start;justify-content:center;padding:16px 12px;overflow:auto}
 .dlb-backdrop{position:fixed;inset:0;background:rgba(8,9,12,.82)}
 .dlb-dialog{position:relative;z-index:1;width:min(960px,100%);margin:8px auto 24px}
-.dlb-bar{display:flex;justify-content:flex-end;margin-bottom:8px}
-.dlb-close{background:var(--base-2,#14161c)}
+.dlb-bar{display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.dlb-close,.dlb-share{background:var(--base-2,#14161c);flex:0 0 auto}
+.dlb-share:hover,.dlb-share:focus-visible{color:var(--accent,#c8b48a)}
+.frame-open{cursor:zoom-in}
+.frame-open:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:-3px}
+.wp-share-fallback{margin:0 0 10px;padding:10px 12px;border:1px solid var(--line,#2c303a);background:rgba(255,255,255,.02)}
+.wp-share-fallback[hidden]{display:none}
+.wp-share-fallback label{display:flex;flex-direction:column;gap:6px;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted,#63666e)}
+.wp-share-fallback input{width:100%;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:13px;padding:10px 12px}
+.wp-share-fallback input:focus{border-color:var(--accent,#c8b48a);outline:none}
+.wp-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:90;margin:0;padding:8px 12px;border:1px solid var(--line,#2c303a);background:var(--base-2,#14161c);color:var(--ink,#e8e6e1);font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;pointer-events:none}
+.wp-toast[hidden]{display:none}
 body.lb-lock{overflow:hidden}
 @media (max-width:560px){
   .sizes button,.custom button{width:100%}
-  .custom input{width:100%;font-size:16px}
+  .custom input,.wp-share-fallback input{width:100%;font-size:16px}
   .custom label{flex:1 1 40%}
   .archive-grid{grid-template-columns:1fr}
   .themes button{padding:8px 10px}
+  .dlb-bar{justify-content:flex-end}
 }
 </style>
 </head>
@@ -159,11 +170,18 @@ body.lb-lock{overflow:hidden}
   <div class="dlb-backdrop" data-close></div>
   <div class="dlb-dialog" role="dialog" aria-modal="true" aria-labelledby="dlb-title">
     <div class="dlb-bar">
+      <button type="button" class="dlb-share" id="wp-share" aria-label="Share this wallpaper">Share</button>
       <button type="button" class="dlb-close" data-close>Close</button>
+    </div>
+    <div class="wp-share-fallback" id="wp-share-fallback" hidden>
+      <label for="wp-share-url">Copy this link
+        <input id="wp-share-url" type="text" readonly value="">
+      </label>
     </div>
     <div id="dlb-body"></div>
   </div>
 </div>
+<p class="wp-toast" id="wp-toast" role="status" aria-live="polite" hidden></p>
 
 <script>
 (function () {
@@ -209,6 +227,13 @@ body.lb-lock{overflow:hidden}
   var dlbDialog = dlb.querySelector(".dlb-dialog");
   var lastFocus = null;
   var dailyItems = [];
+  var openIndex = -1;
+  var manifestReady = false;
+  var shareBtn = document.getElementById("wp-share");
+  var shareFallback = document.getElementById("wp-share-fallback");
+  var shareInput = document.getElementById("wp-share-url");
+  var shareToast = document.getElementById("wp-toast");
+  var shareToastTimer = null;
 
   function esc(s) {
     return String(s == null ? "" : s)
@@ -453,9 +478,110 @@ body.lb-lock{overflow:hidden}
     var next = url.pathname + url.search + url.hash;
     var now = window.location.pathname + window.location.search + window.location.hash;
     if (next === now) return;
-    var state = { wallpaperFilter: filter || "all" };
+    var state = { wallpaperFilter: filter || "all", wallpaper: openFile() };
     if (mode === "push") history.pushState(state, "", next);
     else history.replaceState(state, "", next);
+  }
+
+  function readWallpaperParam() {
+    try {
+      return new URLSearchParams(window.location.search).get("w") || "";
+    } catch (err) {
+      return "";
+    }
+  }
+
+  function openFile() {
+    return openIndex >= 0 && dailyItems[openIndex] ? dailyItems[openIndex].file : "";
+  }
+
+  function findWallpaperIndex(raw) {
+    var q = String(raw || "").trim();
+    if (!q) return -1;
+    var lower = q.toLowerCase();
+    var i, item, base;
+    for (i = 0; i < dailyItems.length; i++) {
+      if (dailyItems[i].file === q) return i;
+    }
+    for (i = 0; i < dailyItems.length; i++) {
+      item = dailyItems[i];
+      if (item.file.toLowerCase() === lower) return i;
+      base = item.file.replace(/\.[^.]+$/, "");
+      if (base.toLowerCase() === lower) return i;
+      if (slugFrom(item.file) === lower) return i;
+    }
+    return -1;
+  }
+
+  function viewerState(item) {
+    return { wallpaperFilter: activeFilter || "all", wallpaper: item ? item.file : "" };
+  }
+
+  function writeViewerUrl(item) {
+    var url;
+    try { url = new URL(window.location.href); }
+    catch (err) { return ""; }
+    if (item) url.searchParams.set("w", item.file);
+    else url.searchParams.delete("w");
+    var next = url.pathname + url.search + url.hash;
+    var now = window.location.pathname + window.location.search + window.location.hash;
+    if (next !== now) history.replaceState(viewerState(item), "", next);
+    url.hash = "";
+    return url.toString();
+  }
+
+  function shareTextFor(item) {
+    return item.title + " — Wallpaper on stevenphilley.com. " + creditSentence(item);
+  }
+
+  function hideShareFallback() {
+    if (!shareFallback) return;
+    shareFallback.hidden = true;
+    if (shareInput) shareInput.value = "";
+  }
+
+  function showShareToast(msg) {
+    if (!shareToast) return;
+    shareToast.textContent = msg;
+    shareToast.hidden = false;
+    clearTimeout(shareToastTimer);
+    shareToastTimer = setTimeout(function () { shareToast.hidden = true; }, 2400);
+  }
+
+  function showShareFallback(url) {
+    if (!shareFallback || !shareInput) return;
+    shareInput.value = url;
+    shareFallback.hidden = false;
+    shareInput.focus();
+    shareInput.select();
+  }
+
+  function copyShareLink(url) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      navigator.clipboard.writeText(url).then(function () {
+        hideShareFallback();
+        showShareToast("Link copied");
+      }, function () {
+        showShareFallback(url);
+      });
+      return;
+    }
+    showShareFallback(url);
+  }
+
+  function shareCurrent() {
+    var item = dailyItems[openIndex];
+    if (!item || dlb.hidden) return;
+    var url = writeViewerUrl(item);
+    var payload = { title: item.title, text: shareTextFor(item), url: url };
+    if (navigator.share) {
+      navigator.share(payload).catch(function (err) {
+        if (err && err.name === "AbortError") return;
+        copyShareLink(url);
+      });
+      return;
+    }
+    copyShareLink(url);
   }
 
   function syncCategoryChips(counts, extras) {
@@ -530,10 +656,25 @@ body.lb-lock{overflow:hidden}
     if (!items.length) {
       showTodayMessage("First daily wallpaper coming soon.");
       archiveSection.hidden = true;
+      manifestReady = true;
+      syncViewerToUrl();
       return;
     }
     var heroAt = heroIndexOf(items);
-    mountItem(items[heroAt], todaySlot, { eager: true });
+    var heroCard = mountItem(items[heroAt], todaySlot, { eager: true });
+    var heroFrame = heroCard.querySelector(".frame");
+    if (heroFrame) {
+      heroFrame.classList.add("frame-open");
+      heroFrame.tabIndex = 0;
+      heroFrame.setAttribute("role", "button");
+      heroFrame.setAttribute("aria-label", "Open " + items[heroAt].title);
+      heroFrame.addEventListener("click", function () { openItem(heroAt, heroFrame); });
+      heroFrame.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        openItem(heroAt, heroFrame);
+      });
+    }
     var counts = { all: 0, daily: 0 };
     var extras = [];
     var seenExtra = {};
@@ -572,27 +713,63 @@ body.lb-lock{overflow:hidden}
     if (initial !== requested || (initial === "all" && hadParam)) historyMode = "replace";
     applyFilter(initial, historyMode);
     archiveSection.hidden = false;
+    manifestReady = true;
+    syncViewerToUrl();
   }
 
   function openItem(index, opener) {
     var item = dailyItems[index];
     if (!item) return;
-    lastFocus = opener || document.activeElement;
+    var wasHidden = dlb.hidden;
+    if (wasHidden) lastFocus = opener || document.activeElement;
+    openIndex = index;
+    hideShareFallback();
+    if (shareToast) shareToast.hidden = true;
+    if (shareBtn) shareBtn.setAttribute("aria-label", "Share " + item.title);
     dlbBody.textContent = "";
     mountItem(item, dlbBody, { eager: true, titleId: "dlb-title" });
     dlb.hidden = false;
+    dlb.scrollTop = 0;
     document.body.classList.add("lb-lock");
-    var closeBtn = dlb.querySelector(".dlb-close");
-    if (closeBtn) closeBtn.focus();
+    writeViewerUrl(item);
+    if (wasHidden) {
+      var closeBtn = dlb.querySelector(".dlb-close");
+      if (closeBtn) closeBtn.focus();
+    }
   }
 
-  function closeLightbox() {
+  function closeLightbox(opts) {
+    opts = opts || {};
     if (dlb.hidden) return;
     dlb.hidden = true;
     dlbBody.textContent = "";
+    openIndex = -1;
+    hideShareFallback();
+    if (shareToast) shareToast.hidden = true;
+    if (shareBtn) shareBtn.setAttribute("aria-label", "Share this wallpaper");
     document.body.classList.remove("lb-lock");
+    if (!opts.skipUrl) writeViewerUrl(null);
     if (lastFocus && typeof lastFocus.focus === "function") lastFocus.focus();
     lastFocus = null;
+  }
+
+  function syncViewerToUrl() {
+    var raw = readWallpaperParam();
+    if (!raw) {
+      if (!dlb.hidden) closeLightbox({ skipUrl: true });
+      return;
+    }
+    var index = findWallpaperIndex(raw);
+    if (index < 0) {
+      if (!dlb.hidden) closeLightbox({ skipUrl: true });
+      writeViewerUrl(null);
+      return;
+    }
+    if (!dlb.hidden && openIndex === index) {
+      writeViewerUrl(dailyItems[index]);
+      return;
+    }
+    openItem(index, dlb.hidden ? null : lastFocus);
   }
 
   archiveGrid.addEventListener("click", function (e) {
@@ -625,7 +802,15 @@ body.lb-lock{overflow:hidden}
     var btn = findFilterButton(requested);
     var next = (requested === "all" || (btn && !btn.hidden)) ? requested : "all";
     applyFilter(next);
+    if (manifestReady) syncViewerToUrl();
   });
+
+  if (shareBtn) {
+    shareBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      shareCurrent();
+    });
+  }
 
   dlb.addEventListener("click", function (e) {
     if (e.target && e.target.hasAttribute("data-close")) closeLightbox();
@@ -640,9 +825,14 @@ body.lb-lock{overflow:hidden}
     }
     if (e.key !== "Tab") return;
     var nodes = dlbDialog.querySelectorAll("button, input, a[href], [tabindex]:not([tabindex='-1'])");
-    if (!nodes.length) return;
-    var first = nodes[0];
-    var last = nodes[nodes.length - 1];
+    var visible = [];
+    Array.prototype.forEach.call(nodes, function (node) {
+      if (node.closest("[hidden]")) return;
+      visible.push(node);
+    });
+    if (!visible.length) return;
+    var first = visible[0];
+    var last = visible[visible.length - 1];
     if (e.shiftKey && document.activeElement === first) {
       e.preventDefault();
       last.focus();
