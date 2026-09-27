@@ -679,6 +679,18 @@
     return Math.sqrt(dx * dx + dy * dy + dz * dz) * 400;
   }
 
+  // Portal voxels in world space. X and Z lie on the disk. Y is up. The core is the origin.
+  function galaxyWorld(voxelX, voxelY, voxelZ) {
+    var x = Number(voxelX);
+    var y = Number(voxelY);
+    var z = Number(voxelZ);
+    return {
+      x: isFinite(x) ? x : 0,
+      y: isFinite(y) ? y : 0,
+      z: isFinite(z) ? z : 0
+    };
+  }
+
   function formatLy(n) {
     if (!isFinite(n)) return "—";
     var rounded = Math.round(n);
@@ -1867,6 +1879,20 @@
     var view = { zoom: 1, panX: 0, panY: 0 };
     var lastSize = { w: 640, h: 480 };
     var aim = null;
+    var MODE_KEY = "nms-map-view";
+    var viewMode = "3d";
+    try {
+      var storedMode = window.localStorage.getItem(MODE_KEY);
+      if (storedMode === "2d" || storedMode === "3d") viewMode = storedMode;
+    } catch (err) { /* 3D stays the default */ }
+    var canvas3d = document.getElementById("map-3d");
+    var mapLabels = document.getElementById("map-labels");
+    var mapMarquee = document.getElementById("map-marquee");
+    var mapWrapEl = document.getElementById("map-wrap") || (canvas.closest ? canvas.closest(".map-wrap") : canvas.parentElement);
+    var galaxy3d = null;
+    var orbitDragging = false;
+    var orbitMoved = false;
+    var rebuilding3d = false;
 
     function setStatus(msg) {
       if (statusEl) statusEl.textContent = msg || "";
@@ -2718,6 +2744,10 @@
     }
 
     function zoomBy(factor, sx, sy) {
+      if (viewMode === "3d" && galaxy3d) {
+        galaxy3d.zoomAt(factor, sx, sy);
+        return;
+      }
       var size = lastSize.w ? lastSize : canvasSize();
       var next = zoomAbout(view, sx, sy, size.w / 2, size.h / 2, factor);
       view.zoom = next.zoom;
@@ -2739,6 +2769,27 @@
 
     function resetView() {
       aim = null;
+      if (viewMode === "3d" && galaxy3d) {
+        var pts3 = [];
+        visibleBases().forEach(function (b) { pts3.push(galaxyWorld(b.voxelX, b.voxelY, b.voxelZ)); });
+        visibleDiscoveries().forEach(function (sys) { pts3.push(galaxyWorld(sys.voxelX, sys.voxelY, sys.voxelZ)); });
+        visibleTeleporters().forEach(function (row) {
+          if (row.plotted) pts3.push(galaxyWorld(row.voxelX, row.voxelY, row.voxelZ));
+        });
+        if (!pts3.length) {
+          galaxy3d.fit([
+            galaxyWorld(-2048, 0, -2048),
+            galaxyWorld(2048, 140, 2048),
+            galaxyWorld(0, 0, 0)
+          ]);
+          return;
+        }
+        if (state.galaxy === 0 && (!showHubs || showHubs.checked)) {
+          hubs.forEach(function (h) { pts3.push(galaxyWorld(h.voxelX, h.voxelY, h.voxelZ)); });
+        }
+        galaxy3d.fit(pts3);
+        return;
+      }
       var pts = [];
       visibleBases().forEach(function (b) { pts.push({ x: b.voxelX, z: b.voxelZ }); });
       visibleDiscoveries().forEach(function (sys) { pts.push({ x: sys.voxelX, z: sys.voxelZ }); });
@@ -2780,6 +2831,20 @@
       var spreadOut = mates.some(function (m) {
         return m.voxelX !== b.voxelX || m.voxelZ !== b.voxelZ;
       });
+      if (viewMode === "3d" && galaxy3d) {
+        var far = 48;
+        mates.forEach(function (m) {
+          var dx = m.voxelX - b.voxelX;
+          var dy = (m.voxelY || 0) - (b.voxelY || 0);
+          var dz = m.voxelZ - b.voxelZ;
+          var d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          if (d > far) far = d;
+        });
+        var half = galaxy3d.fov() * Math.PI / 360;
+        var radius = group.length > 1 && !spreadOut ? 70 : Math.max(80, far * 1.6);
+        galaxy3d.focus(b.voxelX, b.voxelY, b.voxelZ, (radius / Math.max(0.2, Math.sin(half))) * 0.72);
+        return;
+      }
       if (spreadOut) {
         applyFit(mates, { padVoxels: 70, minZoom: 4, maxZoom: 18 });
       } else if (group.length > 1) {
@@ -2800,6 +2865,11 @@
     function focusDiscovery(id) {
       var sys = discoveryById(id);
       if (!sys) return;
+      if (viewMode === "3d" && galaxy3d) {
+        var halfD = galaxy3d.fov() * Math.PI / 360;
+        galaxy3d.focus(sys.voxelX, sys.voxelY, sys.voxelZ, (56 / Math.max(0.2, Math.sin(halfD))) * 0.72);
+        return;
+      }
       var size = canvasSize();
       lastSize = size;
       applyFit([{ x: sys.voxelX, z: sys.voxelZ }], { padVoxels: 40, minZoom: 8, maxZoom: 22 });
@@ -2827,6 +2897,11 @@
         }
       }
       if (showTeleporters && !showTeleporters.checked) showTeleporters.checked = true;
+      if (viewMode === "3d" && galaxy3d) {
+        var halfT = galaxy3d.fov() * Math.PI / 360;
+        galaxy3d.focus(row.voxelX, row.voxelY, row.voxelZ, (56 / Math.max(0.2, Math.sin(halfT))) * 0.72);
+        return;
+      }
       var size = canvasSize();
       lastSize = size;
       applyFit([{ x: row.voxelX, z: row.voxelZ }], { padVoxels: 40, minZoom: 8, maxZoom: 22 });
@@ -3216,7 +3291,393 @@
       });
     }
 
+    function clipName(text) {
+      var name = String(text || "");
+      if (name.length > 28) return name.slice(0, 27) + "…";
+      return name;
+    }
+
+    function viewZoom3d(atX, atY, atZ) {
+      if (!galaxy3d || !canvas3d) return 1;
+      var rect = canvas3d.getBoundingClientRect();
+      var frame = frameOf(rect.width || lastSize.w, rect.height || lastSize.h);
+      var dist = atX == null ? galaxy3d.worldPerPixel() : galaxy3d.worldPerPixel(galaxy3d.distanceTo(atX, atY || 0, atZ || 0));
+      if (!(dist > 0) || !(frame.rx > 0)) return 1;
+      return (1 / dist) / (frame.rx / 2048);
+    }
+
+    function place3d(voxelX, voxelY, voxelZ, off, wpp, basis) {
+      var w = galaxyWorld(voxelX, voxelY, voxelZ);
+      var ox = off ? off.x * wpp : 0;
+      var oy = off ? -off.y * wpp : 0;
+      return {
+        x: w.x + basis.right.x * ox + basis.up.x * oy,
+        y: w.y + basis.right.y * ox + basis.up.y * oy,
+        z: w.z + basis.right.z * ox + basis.up.z * oy
+      };
+    }
+
+    function paint3d() {
+      if (!galaxy3d) return;
+      galaxy3d.resize();
+      var c = colors();
+      galaxy3d.setTheme(c);
+      var basis = galaxy3d.screenBasis();
+      var markers = [];
+      var query = itemFilter ? String(itemFilter.value || "").trim() : "";
+      var shade = !!(showStock && showStock.checked);
+      var showProd = !!(showProduction && showProduction.checked);
+
+      if (DiscoveryLib) {
+        var systems = visibleDiscoveries();
+        var cell = DiscoveryLib.discoveryCellSize(viewZoom3d());
+        var projected = [];
+        systems.forEach(function (sys) {
+          var w = galaxyWorld(sys.voxelX, sys.voxelY, sys.voxelZ);
+          var p = galaxy3d.project(w.x, w.y, w.z);
+          if (!p || p.behind) return;
+          projected.push({ sys: sys, x: p.x, y: p.y, id: sys.id, w: w });
+        });
+        DiscoveryLib.clusterScreenMarkers(projected, cell).forEach(function (node) {
+          if (node.clustered) {
+            var ax = 0;
+            var ay = 0;
+            var az = 0;
+            var n = node.items.length;
+            var cid = "cluster:" + node.items.map(function (marker) { return marker.id; }).join(",");
+            var hot = state.hoverDiscovery === cid || node.items.some(function (marker) { return isSelected(marker.id); });
+            node.items.forEach(function (marker) {
+              ax += marker.w.x;
+              ay += marker.w.y;
+              az += marker.w.z;
+              markers.push({
+                id: marker.id,
+                kind: "discovery",
+                shape: "ring",
+                x: marker.w.x,
+                y: marker.w.y,
+                z: marker.w.z,
+                size: 6,
+                alpha: 0,
+                color: c.ink,
+                hitR: 10
+              });
+            });
+            markers.push({
+              id: cid,
+              kind: "discovery-cluster",
+              shape: "ring",
+              x: ax / n,
+              y: ay / n,
+              z: az / n,
+              size: 22,
+              alpha: 1,
+              color: hot ? c.accent : c.ink,
+              hitR: 22,
+              members: node.items.map(function (marker) { return marker.sys; }),
+              label: hot ? (n + " systems") : "",
+              labelColor: c.ink,
+              priority: hot,
+              badge: String(n),
+              badgeFill: c.ink,
+              badgeColor: c.base
+            });
+            return;
+          }
+          var marker = node.items[0];
+          var sys = marker.sys;
+          var on = isSelected(sys.id) || state.hoverDiscovery === sys.id;
+          var zoomHere = viewZoom3d(sys.voxelX, sys.voxelY, sys.voxelZ);
+          markers.push({
+            id: sys.id,
+            kind: "discovery",
+            shape: "ring",
+            x: marker.w.x,
+            y: marker.w.y,
+            z: marker.w.z,
+            size: on ? 18 : 14,
+            alpha: 1,
+            color: on ? c.accent : c.ink,
+            hitR: 16,
+            label: (on || zoomHere >= 8) ? DiscoveryLib.discoveryMarkerLabel(sys) : "",
+            labelColor: on ? c.accent : c.ink,
+            priority: on,
+            badge: (sys.planetCount > 1 && zoomHere >= 6) ? String(sys.planetCount) : "",
+            badgeFill: c.ink,
+            badgeColor: c.base
+          });
+        });
+      }
+
+      if (!showCenter || showCenter.checked) {
+        markers.push({
+          id: "center",
+          kind: "center",
+          shape: "cross",
+          x: 0,
+          y: 0,
+          z: 0,
+          size: 16,
+          alpha: 1,
+          color: c.ink,
+          hitR: 10,
+          label: "Galactic center",
+          labelColor: c.ink,
+          priority: true,
+          labelDx: 14,
+          labelDy: -12
+        });
+      }
+
+      if (state.galaxy === 0 && (!showHubs || showHubs.checked)) {
+        hubs.forEach(function (hub) {
+          var w = galaxyWorld(hub.voxelX, hub.voxelY, hub.voxelZ);
+          markers.push({
+            id: hub.id,
+            kind: "hub",
+            shape: "diamond",
+            x: w.x,
+            y: w.y,
+            z: w.z,
+            size: 16,
+            alpha: 1,
+            color: c.accent2,
+            hitR: 12,
+            label: hub.label,
+            labelColor: c.accent2,
+            priority: true
+          });
+        });
+      }
+
+      if (state.galaxy === 0 && (!showRefs || showRefs.checked)) {
+        refs.forEach(function (ref) {
+          var onRef = state.selectedRef === ref.id || state.hoverRef === ref.id;
+          var w = galaxyWorld(ref.voxelX, ref.voxelY, ref.voxelZ);
+          markers.push({
+            id: ref.id,
+            kind: "ref",
+            shape: "star",
+            x: w.x,
+            y: w.y,
+            z: w.z,
+            size: onRef ? 18 : 12,
+            alpha: 1,
+            color: c.ink,
+            hitR: 12,
+            label: onRef ? ref.label : "",
+            labelColor: c.ink,
+            priority: onRef
+          });
+        });
+      }
+
+      var bases = visibleBases();
+      var groups = Object.create(null);
+      var groupKeys = [];
+      bases.forEach(function (b) {
+        var key = b.voxelX + ":" + b.voxelY + ":" + b.voxelZ;
+        if (!groups[key]) {
+          groups[key] = [];
+          groupKeys.push(key);
+        }
+        groups[key].push(b);
+      });
+      groupKeys.forEach(function (key) {
+        var group = groups[key];
+        var anchor = group[0];
+        var zoom = viewZoom3d(anchor.voxelX, anchor.voxelY, anchor.voxelZ);
+        var sample = clumpOffset(0, group.length, zoom);
+        var stacked = group.length > 1 && sample.stacked;
+        var showNames = group.length > 1 && !stacked && sample.chord >= LABEL_CHORD;
+        var wpp = galaxy3d.worldPerPixel(galaxy3d.distanceTo(anchor.voxelX, anchor.voxelY, anchor.voxelZ));
+        group.forEach(function (b, i) {
+          var off = clumpOffset(i, group.length, zoom);
+          var p = place3d(b.voxelX, b.voxelY, b.voxelZ, off, wpp, basis);
+          var on = isSelected(b.id) || state.hover === b.id;
+          var picked = isSelected(b.id);
+          var mark = (shade || query || showProd) ? stockMark(b) : null;
+          var dim = !!(query && mark && mark.hasQueryMatch === false);
+          var badge = "";
+          var badgeFill = c.accent;
+          if (!stacked && mark) {
+            if (shade) {
+              badge = query ? formatStockBadge(mark.matchQty || 0) : formatStockBadge(mark.lines);
+              if (mark.unmet) badgeFill = c.accent2;
+            }
+            if (query && mark.produces && !(mark.matchQty > 0)) {
+              badge = formatStockBadge(mark.produceCount || 0);
+              badgeFill = c.accent2;
+            }
+            if (showProd && !query && (mark.mining || mark.farming)) {
+              badge = (mark.mining ? "M" : "") + (mark.farming ? "F" : "");
+              badgeFill = c.accent2;
+            }
+            if (!badge || badge === "0") badge = "";
+          }
+          markers.push({
+            id: b.id,
+            kind: "base",
+            shape: "circle",
+            x: p.x,
+            y: p.y,
+            z: p.z,
+            size: on ? 16 : 11,
+            alpha: dim ? 0.35 : 1,
+            color: c.accent,
+            hitR: stacked ? 18 : 14,
+            label: (!stacked && (on || showNames || (group.length === 1 && zoom >= LABEL_ZOOM))) ? clipName(b.name) : "",
+            labelColor: c.accent,
+            priority: on,
+            badge: badge,
+            badgeFill: badgeFill,
+            badgeColor: c.base
+          });
+          if (picked) {
+            markers.push({
+              shape: "brackets",
+              x: p.x,
+              y: p.y,
+              z: p.z,
+              size: 28,
+              alpha: 1,
+              color: c.ink
+            });
+          }
+          if (query && mark && mark.hasQueryMatch) {
+            markers.push({
+              shape: "ring",
+              x: p.x,
+              y: p.y,
+              z: p.z,
+              size: 24,
+              alpha: 1,
+              color: c.ink
+            });
+          }
+          if (shade && mark && mark.unmet) {
+            markers.push({
+              shape: "halo",
+              x: p.x,
+              y: p.y,
+              z: p.z,
+              size: 30,
+              alpha: 1,
+              color: c.accent2
+            });
+          }
+        });
+        if (stacked) {
+          var pile = galaxyWorld(anchor.voxelX, anchor.voxelY, anchor.voxelZ);
+          var pileBadge = String(group.length);
+          var pileFill = c.accent;
+          if (shade && typeof NmsLogistics !== "undefined") {
+            var pileLines = 0;
+            var pileMatch = 0;
+            var pileUnmet = false;
+            group.forEach(function (member) {
+              var row = stockMark(member);
+              if (!row) return;
+              pileLines += row.lines;
+              pileMatch += row.matchQty || 0;
+              if (row.unmet) pileUnmet = true;
+            });
+            var extra = query ? formatStockBadge(pileMatch) : formatStockBadge(pileLines);
+            if (extra && extra !== "0") {
+              pileBadge = group.length + " · " + extra;
+              if (pileUnmet) pileFill = c.accent2;
+            }
+          }
+          markers.push({
+            shape: "circle",
+            x: pile.x,
+            y: pile.y,
+            z: pile.z,
+            size: 1,
+            alpha: 0,
+            color: c.accent,
+            badge: pileBadge,
+            badgeFill: pileFill,
+            badgeColor: c.base,
+            priority: true
+          });
+        }
+      });
+
+      var rows = visibleTeleporters();
+      var tgroups = Object.create(null);
+      var tkeys = [];
+      rows.forEach(function (row) {
+        var key = row.voxelX + ":" + row.voxelY + ":" + row.voxelZ;
+        if (!tgroups[key]) {
+          tgroups[key] = [];
+          tkeys.push(key);
+        }
+        tgroups[key].push(row);
+      });
+      tkeys.forEach(function (key) {
+        var group = tgroups[key];
+        var anchor = group[0];
+        var zoom = viewZoom3d(anchor.voxelX, anchor.voxelY, anchor.voxelZ);
+        var wpp = galaxy3d.worldPerPixel(galaxy3d.distanceTo(anchor.voxelX, anchor.voxelY, anchor.voxelZ));
+        group.forEach(function (row, idx) {
+          var off = clumpOffset(idx, group.length, zoom);
+          var p = place3d(row.voxelX, row.voxelY, row.voxelZ, off, wpp, basis);
+          var on = isSelected(row.id) || state.hoverTeleport === row.id;
+          markers.push({
+            id: row.id,
+            kind: "teleporter",
+            shape: row.station ? "station" : "square",
+            x: p.x,
+            y: p.y,
+            z: p.z,
+            size: on ? 18 : 13,
+            alpha: 1,
+            color: row.station ? c.accent2 : c.soft,
+            hitR: row.station ? 13 : 10,
+            label: (on || zoom >= 8) ? (row.name + " · " + row.typeLabel) : "",
+            labelColor: on ? (row.station ? c.accent2 : c.ink) : c.ink,
+            priority: on
+          });
+        });
+      });
+
+      galaxy3d.setMarkers(markers);
+      if (viewMode === "3d") syncMarquee();
+    }
+
+    function syncMarquee() {
+      if (!galaxy3d) return;
+      if (viewMode !== "3d" || !marquee) {
+        galaxy3d.setMarquee(null);
+        return;
+      }
+      if (marquee.shape === "circle") {
+        var radius = Math.hypot(marquee.x1 - marquee.x0, marquee.y1 - marquee.y0);
+        var ly = radius * galaxy3d.worldPerPixel() * 400;
+        galaxy3d.setMarquee({
+          type: "circle",
+          cx: marquee.x0,
+          cy: marquee.y0,
+          r: radius,
+          label: radius > 8 && isFinite(ly) ? ("~" + formatLy(ly) + " radius") : ""
+        });
+        return;
+      }
+      galaxy3d.setMarquee({
+        type: "rect",
+        x0: marquee.x0,
+        y0: marquee.y0,
+        x1: marquee.x1,
+        y1: marquee.y1
+      });
+    }
+
     function draw() {
+      if (viewMode === "3d") {
+        paint3d();
+        return;
+      }
       var size = canvasSize();
       var w = size.w;
       var h = size.h;
@@ -4051,6 +4512,11 @@
     }
 
     function zoomAnchor() {
+      if (viewMode === "3d" && canvas3d) {
+        if (aim && isFinite(aim.x) && isFinite(aim.y)) return { x: aim.x, y: aim.y };
+        var rect3 = canvas3d.getBoundingClientRect();
+        return { x: rect3.width / 2, y: rect3.height / 2 };
+      }
       if (aim) return { x: aim.x, y: aim.y };
       var size = lastSize.w ? lastSize : canvasSize();
       if (state.selected) {
@@ -4066,12 +4532,19 @@
       if (spot) aim = { x: spot.x, y: spot.y, kind: "base", id: state.hover };
     }
 
-    function hitTest(ev) {
-      var rect = canvas.getBoundingClientRect();
+    function activeHits() {
+      if (viewMode === "3d" && galaxy3d) return galaxy3d.projectHits();
+      return hits;
+    }
+
+    function hitTest(ev, surface) {
+      var el = surface || (viewMode === "3d" && canvas3d ? canvas3d : canvas);
+      var rect = el.getBoundingClientRect();
       var x = ev.clientX - rect.left;
       var y = ev.clientY - rect.top;
-      for (var i = hits.length - 1; i >= 0; i--) {
-        var h = hits[i];
+      var list = activeHits();
+      for (var i = list.length - 1; i >= 0; i--) {
+        var h = list[i];
         var dx = x - h.x;
         var dy = y - h.y;
         if (dx * dx + dy * dy <= h.r * h.r) return h;
@@ -4083,8 +4556,9 @@
     var drag = null;
     var suppressClick = false;
 
-    function localPoint(ev) {
-      var rect = canvas.getBoundingClientRect();
+    function localPoint(ev, surface) {
+      var el = surface || canvas;
+      var rect = el.getBoundingClientRect();
       return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
     }
 
@@ -4148,7 +4622,7 @@
       } else {
         shape = { type: "rect", x0: shapeDrag.x0, y0: shapeDrag.y0, x1: shapeDrag.x1, y1: shapeDrag.y1 };
       }
-      var ids = markersInside(hits, shape).map(function (hit) { return hit.id; });
+      var ids = markersInside(activeHits(), shape).map(function (hit) { return hit.id; });
       commitSelection(applySelectionOp(state.selection, ids, op || "replace"));
     }
 
@@ -4165,7 +4639,7 @@
       state.anchorId = null;
     }
 
-    canvas.addEventListener("click", function (ev) {
+    function handleMapClick(ev) {
       if (ev.button !== 0) return;
       if (suppressClick) {
         suppressClick = false;
@@ -4228,8 +4702,10 @@
       } else if (h.kind === "center") {
         setStatus("Galactic center — voxel 0, 0, 0 on this schematic. Not a catalog star.");
       }
-    });
-    canvas.addEventListener("dblclick", function (ev) {
+    }
+    canvas.addEventListener("click", handleMapClick);
+    if (canvas3d) canvas3d.addEventListener("click", handleMapClick);
+    function handleMapDblClick(ev) {
       var h = hitTest(ev);
       if (!h || (h.kind !== "base" && h.kind !== "discovery" && h.kind !== "teleporter")) return;
       ev.preventDefault();
@@ -4254,7 +4730,9 @@
       draw();
       var btn = baseList && baseList.querySelector('[data-base="' + h.id + '"]');
       if (btn) btn.scrollIntoView({ block: "nearest" });
-    });
+    }
+    canvas.addEventListener("dblclick", handleMapDblClick);
+    if (canvas3d) canvas3d.addEventListener("dblclick", handleMapDblClick);
     canvas.addEventListener("wheel", function (ev) {
       ev.preventDefault();
       var p = localPoint(ev);
@@ -4489,6 +4967,12 @@
       zoomBy(1 / 1.25, p.x, p.y);
     });
     bindZoom("zoom-reset", function () { resetView(); });
+    var viewBtn = document.getElementById("view-mode");
+    if (viewBtn) {
+      viewBtn.addEventListener("click", function () {
+        applyViewMode(viewMode === "3d" ? "2d" : "3d", true);
+      });
+    }
 
     function paintSelectTools() {
       var modeBtn = document.getElementById("select-mode");
@@ -4501,7 +4985,11 @@
       if (boxBtn) boxBtn.setAttribute("aria-pressed", selectShape === "box" ? "true" : "false");
       if (circleBtn) circleBtn.setAttribute("aria-pressed", selectShape === "circle" ? "true" : "false");
       canvas.classList.toggle("selecting", !!selectMode);
-      if (!drag) canvas.style.cursor = selectMode ? "crosshair" : "grab";
+      if (canvas3d) canvas3d.classList.toggle("selecting", !!selectMode);
+      if (!drag) {
+        canvas.style.cursor = selectMode ? "crosshair" : "grab";
+        if (canvas3d && !orbitDragging) canvas3d.style.cursor = selectMode ? "crosshair" : "grab";
+      }
     }
     function bindPress(id, fn) {
       var btn = document.getElementById(id);
@@ -4812,6 +5300,152 @@
       renderSelection();
     });
 
+    function applyViewMode(mode, persist) {
+      viewMode = mode === "2d" || !galaxy3d ? "2d" : "3d";
+      if (persist) {
+        try { window.localStorage.setItem(MODE_KEY, viewMode); } catch (err) { /* private mode */ }
+      }
+      if (mapWrapEl) {
+        mapWrapEl.classList.toggle("mode-3d", viewMode === "3d");
+        mapWrapEl.classList.toggle("mode-2d", viewMode === "2d");
+      }
+      if (viewBtn) {
+        viewBtn.setAttribute("aria-pressed", viewMode === "3d" ? "true" : "false");
+        viewBtn.textContent = viewMode === "3d" ? "3D" : "2D";
+        viewBtn.setAttribute("aria-label", viewMode === "3d" ? "3D view on. Switch to the flat map." : "Flat map on. Switch to 3D.");
+      }
+      canvas.tabIndex = viewMode === "2d" ? 0 : -1;
+      canvas.setAttribute("aria-hidden", viewMode === "2d" ? "false" : "true");
+      if (canvas3d) {
+        canvas3d.tabIndex = viewMode === "3d" ? 0 : -1;
+        canvas3d.setAttribute("aria-hidden", viewMode === "3d" ? "false" : "true");
+      }
+      aim = null;
+      if (galaxy3d) {
+        galaxy3d.setEnabled(viewMode === "3d");
+        if (viewMode !== "3d") galaxy3d.setMarquee(null);
+      }
+      paintSelectTools();
+      draw();
+    }
+
+    if (canvas3d && typeof NmsGalaxy3D !== "undefined") {
+      galaxy3d = NmsGalaxy3D.create({
+        canvas: canvas3d,
+        labels: mapLabels,
+        marquee: mapMarquee,
+        onChange: function () {
+          if (viewMode !== "3d" || rebuilding3d || !galaxy3d) return;
+          rebuilding3d = true;
+          try { paint3d(); } catch (err) { console.error(err); }
+          rebuilding3d = false;
+        }
+      });
+      if (galaxy3d) {
+        galaxy3d.controls.addEventListener("start", function () {
+          orbitDragging = true;
+          orbitMoved = false;
+        });
+        galaxy3d.controls.addEventListener("change", function () {
+          if (orbitDragging) orbitMoved = true;
+        });
+        galaxy3d.controls.addEventListener("end", function () {
+          orbitDragging = false;
+          if (orbitMoved) suppressClick = true;
+          orbitMoved = false;
+        });
+        canvas3d.addEventListener("contextmenu", function (ev) { ev.preventDefault(); });
+        canvas3d.addEventListener("pointerdown", function (ev) {
+          if (viewMode !== "3d" || !marqueeActive(ev)) return;
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+          if (canvas3d.setPointerCapture) {
+            try { canvas3d.setPointerCapture(ev.pointerId); } catch (err) { /* synthetic */ }
+          }
+          var start = localPoint(ev, canvas3d);
+          pointers[ev.pointerId] = start;
+          var gesture = gestureFromEvent(ev);
+          drag = { marquee: true, pinch: false, moved: false, x: start.x, y: start.y, shape: gesture.shape, op: gesture.op, surface: "3d" };
+          marquee = { shape: gesture.shape, x0: start.x, y0: start.y, x1: start.x, y1: start.y };
+          syncMarquee();
+        }, true);
+        canvas3d.addEventListener("pointermove", function (ev) {
+          if (viewMode !== "3d" || !pointers[ev.pointerId] || !drag || !drag.marquee || drag.surface !== "3d") return;
+          var p = localPoint(ev, canvas3d);
+          pointers[ev.pointerId] = p;
+          var dx = p.x - drag.x;
+          var dy = p.y - drag.y;
+          if (dx * dx + dy * dy > 16) drag.moved = true;
+          var gesture = gestureFromEvent(ev);
+          drag.shape = gesture.shape;
+          drag.op = gesture.op;
+          marquee = { shape: drag.shape, x0: drag.x, y0: drag.y, x1: p.x, y1: p.y };
+          syncMarquee();
+        });
+        function end3dPointer(ev) {
+          if (!pointers[ev.pointerId] || !drag || drag.surface !== "3d") return;
+          delete pointers[ev.pointerId];
+          if (Object.keys(pointers).length) return;
+          var finished = drag.marquee && drag.moved ? marquee : null;
+          var op = finished ? gestureFromEvent(ev).op : "replace";
+          drag = null;
+          marquee = null;
+          syncMarquee();
+          canvas3d.classList.remove("panning");
+          if (finished) {
+            suppressClick = true;
+            applyMarquee(finished, op);
+          }
+        }
+        canvas3d.addEventListener("pointerup", end3dPointer);
+        canvas3d.addEventListener("pointercancel", end3dPointer);
+        canvas3d.addEventListener("mousemove", function (ev) {
+          if (viewMode !== "3d" || orbitDragging || (drag && drag.marquee)) return;
+          var h = hitTest(ev, canvas3d);
+          var local = localPoint(ev, canvas3d);
+          aim = { x: local.x, y: local.y, kind: h ? h.kind : null, id: h ? (h.id || null) : null };
+          canvas3d.style.cursor = h ? "pointer" : (selectMode ? "crosshair" : "grab");
+          var next = h && h.kind === "base" ? h.id : null;
+          var nextRef = h && h.kind === "ref" ? h.id : null;
+          var nextDisc = h && (h.kind === "discovery" || h.kind === "discovery-cluster") ? h.id : null;
+          var nextTele = h && h.kind === "teleporter" ? h.id : null;
+          if (next === state.hover && nextRef === state.hoverRef && nextDisc === state.hoverDiscovery && nextTele === state.hoverTeleport) return;
+          state.hover = next;
+          state.hoverRef = nextRef;
+          state.hoverDiscovery = nextDisc;
+          state.hoverTeleport = nextTele;
+          draw();
+        });
+        canvas3d.addEventListener("mouseleave", function () {
+          if (drag || orbitDragging) return;
+          aim = null;
+          if (!state.hover && !state.hoverRef && !state.hoverDiscovery && !state.hoverTeleport) return;
+          state.hover = null;
+          state.hoverRef = null;
+          state.hoverDiscovery = null;
+          state.hoverTeleport = null;
+          draw();
+        });
+        canvas3d.addEventListener("keydown", function (ev) {
+          if (viewMode !== "3d" || !galaxy3d) return;
+          var key = ev.key;
+          if (key === "+" || key === "=") {
+            var zin = zoomAnchor();
+            zoomBy(1.25, zin.x, zin.y);
+          } else if (key === "-" || key === "_") {
+            var zout = zoomAnchor();
+            zoomBy(1 / 1.25, zout.x, zout.y);
+          } else if (key === "0" || key === "Home") resetView();
+          else if (key === "ArrowLeft") galaxy3d.controls.rotateLeft(0.09);
+          else if (key === "ArrowRight") galaxy3d.controls.rotateLeft(-0.09);
+          else if (key === "ArrowUp") galaxy3d.controls.rotateUp(0.07);
+          else if (key === "ArrowDown") galaxy3d.controls.rotateUp(-0.07);
+          else return;
+          ev.preventDefault();
+        });
+      }
+    }
+
     window.addEventListener("resize", draw);
     window.addEventListener("load", draw);
     if (typeof MutationObserver === "function") {
@@ -4833,6 +5467,8 @@
     }
     if (showProduction && restored && restored.production && restored.production.length) showProduction.checked = true;
     loadDiscoveryCache();
+    applyViewMode(viewMode, false);
+    if (viewMode === "3d" && galaxy3d) resetView();
     refresh();
     if (state.source === "browser") {
       setStatus("Restored bases and inventory from this browser. Nothing was uploaded.");
@@ -4968,6 +5604,7 @@
     looksBinary: looksBinary,
     hubMarks: hubMarks,
     referenceMarks: referenceMarks,
+    galaxyWorld: galaxyWorld,
     lz4BlockDecompress: lz4BlockDecompress,
     decompressHg: decompressHg,
     detectSaveFormat: detectSaveFormat,
