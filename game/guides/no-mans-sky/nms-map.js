@@ -362,14 +362,12 @@
       label: "NW-Forward",
       axis: "-X +Z +Y",
       corner: true,
-      system: "",
-      note: "Corner of the map (no documented system here). West, north, and up. Euclid Size and the Outer Rim page name no system at the upper Gamma spiral. The nearest documented address in this spiral is Gamma Polaris, 0000:007F:0FFE:0001, on the galactic plane.",
-      documented: false,
-      voxelX: -2047,
-      voxelY: 127,
-      voxelZ: 2047,
-      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
-      sourceName: "No Man's Sky Wiki — Euclid Size"
+      system: "Greater Asuras",
+      note: "Fokkoles Quadrant, Euclid. West, north, and up. Euclid Size names no system in the exact upper Gamma region. Greater Asuras is the closest documented system: one voxel east and one voxel south of that corner, still at the upper height. Discovered by Jdejongtr. This map uses planet index 1.",
+      coords: "0001:00FE:0FFD:01D9",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Greater_Asuras",
+      sourceName: "No Man's Sky Wiki — Greater Asuras"
     },
     {
       id: "se-forward",
@@ -377,14 +375,12 @@
       label: "SE-Forward",
       axis: "+X -Z +Y",
       corner: true,
-      system: "",
-      note: "Corner of the map (no documented system here). East, south, and up. Euclid Size and the Outer Rim page name no system at the upper Beta spiral. The nearest documented address in this spiral is Beta Polaris, 0FFE:007F:0000:0001, on the galactic plane.",
-      documented: false,
-      voxelX: 2047,
-      voxelY: 127,
-      voxelZ: -2047,
-      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
-      sourceName: "No Man's Sky Wiki — Euclid Size"
+      system: "Afangdi",
+      note: "Yadhyade Terminus, Euclid. East, south, and up. No published system sits in the upper Beta corner region. Afangdi, that region’s black hole, is the closest documented system: one voxel west of the east edge and 126 voxels below the upper extreme, on the Beta meridian. Discovered by Thamalandis. Beta Polaris is the spiral end on the galactic plane, farther from this corner.",
+      coords: "0FFD:0080:0000:0079",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Afangdi",
+      sourceName: "No Man's Sky Wiki — Afangdi"
     },
     {
       id: "sw-forward",
@@ -392,14 +388,12 @@
       label: "SW-Forward",
       axis: "-X -Z +Y",
       corner: true,
-      system: "",
-      note: "Corner of the map (no documented system here). West, south, and up. Euclid Size and the Outer Rim page name no system at the upper Alpha spiral. The nearest documented address in this spiral is Alpha Polaris, 0000:007F:0000:0001, on the galactic plane.",
-      documented: false,
-      voxelX: -2047,
-      voxelY: 127,
-      voxelZ: -2047,
-      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
-      sourceName: "No Man's Sky Wiki — Euclid Size"
+      system: "Alpha Polaris",
+      note: "Vedulay Cloud, Euclid. West, south, and up. No published Euclid system was found above the galactic plane at this corner. Alpha Polaris is the documented end of the Alpha spiral, on the plane, 127 voxels below the upper extreme. The page prints :PC; this map reads that as system 0001.",
+      coords: "0000:007F:0000:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Alpha_Polaris",
+      sourceName: "No Man's Sky Wiki — Alpha Polaris"
     },
     {
       id: "ne-back",
@@ -420,14 +414,12 @@
       label: "NW-Back",
       axis: "-X +Z -Y",
       corner: true,
-      system: "",
-      note: "Corner of the map (no documented system here). West, north, and down. Euclid Size and the Outer Rim page name no system at the lower Gamma spiral. The nearest documented address in this spiral is Gamma Polaris, 0000:007F:0FFE:0001, on the galactic plane.",
-      documented: false,
-      voxelX: -2047,
-      voxelY: -127,
-      voxelZ: 2047,
-      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
-      sourceName: "No Man's Sky Wiki — Euclid Size"
+      system: "Gamma Polaris",
+      note: "Sea of Siwain, Euclid. West, north, and down. No published Euclid system was found below the galactic plane at this corner. Gamma Polaris is the documented end of the Gamma spiral, on the plane, 127 voxels above the lower extreme. The page prints :PC; this map reads that as system 0001.",
+      coords: "0000:007F:0FFE:0001",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/Gamma_Polaris",
+      sourceName: "No Man's Sky Wiki — Gamma Polaris"
     },
     {
       id: "se-back",
@@ -435,14 +427,12 @@
       label: "SE-Back",
       axis: "+X -Z -Y",
       corner: true,
-      system: "",
-      note: "Corner of the map (no documented system here). East, south, and down. Euclid Size and the Outer Rim page name no system at the lower Beta spiral. The nearest documented address in this spiral is Beta Polaris, 0FFE:007F:0000:0001, on the galactic plane.",
-      documented: false,
-      voxelX: 2047,
-      voxelY: -127,
-      voxelZ: -2047,
-      source: "https://nomanssky.fandom.com/wiki/Euclid_Size",
-      sourceName: "No Man's Sky Wiki — Euclid Size"
+      system: "The Outer Edge",
+      note: "Awilso Instability, Euclid. East, south, and down, in the beta minoris pocket. No system is published in the exact lower Beta region. The Outer Edge is one voxel above that corner, at the east and south extremes. Discovered by Space Explorer. Egistne III is the black hole in the same region. This map uses planet index 1.",
+      coords: "0FFE:0001:0000:01AC",
+      documented: true,
+      source: "https://nomanssky.fandom.com/wiki/The_Outer_Edge",
+      sourceName: "No Man's Sky Wiki — The Outer Edge"
     },
     {
       id: "sw-back",
@@ -458,6 +448,24 @@
       sourceName: "No Man's Sky Wiki — Tasyroga (Atlas)"
     }
   ];
+
+  // Reachable extremes of portal space. Glyph 800 / Y 80 are unused borders.
+  var EDGE_IDEAL = {
+    north: [0, 0, 2047],
+    south: [0, 0, -2047],
+    east: [2047, 0, 0],
+    west: [-2047, 0, 0],
+    forward: [0, 127, 0],
+    back: [0, -127, 0],
+    "ne-forward": [2047, 127, 2047],
+    "nw-forward": [-2047, 127, 2047],
+    "se-forward": [2047, 127, -2047],
+    "sw-forward": [-2047, 127, -2047],
+    "ne-back": [2047, -127, 2047],
+    "nw-back": [-2047, -127, 2047],
+    "se-back": [2047, -127, -2047],
+    "sw-back": [-2047, -127, -2047]
+  };
 
   var HG_MAGIC = 0xFEEDA1E5;
   var HG_CHUNK_MAX = 0x80000;
@@ -1306,67 +1314,48 @@
     });
   }
 
-  function signalRegion(voxelX, voxelY, voxelZ) {
-    var x = ((Number(voxelX) % 4096) + 4096) % 4096;
-    var y = ((Number(voxelY) % 256) + 256) % 256;
-    var z = ((Number(voxelZ) % 4096) + 4096) % 4096;
-    var sbX = (x + 0x7FF) & 0xFFF;
-    var sbY = (y + 0x7F) & 0xFF;
-    var sbZ = (z + 0x7FF) & 0xFFF;
-    return hexPad(sbX, 4) + ":" + hexPad(sbY, 4) + ":" + hexPad(sbZ, 4);
-  }
-
   function edgeMarks() {
     var seen = Object.create(null);
     return EDGES.map(function (edge) {
-      var glyphs = "";
-      var coords = "";
-      var vx;
-      var vy;
-      var vz;
-      var planet = null;
-      var ssi = null;
-      if (edge.documented) {
-        glyphs = glyphsFromSignal(edge.coords, 1);
-        var info = analyzeGlyphs(glyphs);
-        if (info.coords !== String(edge.coords).toUpperCase()) {
-          throw new Error("Edge " + edge.id + " did not round-trip.");
-        }
-        if (info.planet !== 1) throw new Error("Edge " + edge.id + " is not planet index 1.");
-        if (seen[glyphs]) throw new Error("Duplicate edge glyphs " + glyphs);
-        seen[glyphs] = 1;
-        vx = info.voxelX;
-        vy = info.voxelY;
-        vz = info.voxelZ;
-        coords = info.coords;
-        planet = info.planet;
-        ssi = info.ssi;
-      } else {
-        vx = Number(edge.voxelX);
-        vy = Number(edge.voxelY);
-        vz = Number(edge.voxelZ);
-        coords = signalRegion(vx, vy, vz);
+      if (!edge.documented || !edge.system || !edge.coords) {
+        throw new Error("Edge " + edge.id + " needs a documented system.");
       }
+      var glyphs = glyphsFromSignal(edge.coords, 1);
+      var info = analyzeGlyphs(glyphs);
+      if (info.coords !== String(edge.coords).toUpperCase()) {
+        throw new Error("Edge " + edge.id + " did not round-trip.");
+      }
+      if (info.planet !== 1) throw new Error("Edge " + edge.id + " is not planet index 1.");
+      if (seen[glyphs]) throw new Error("Duplicate edge glyphs " + glyphs);
+      seen[glyphs] = 1;
+      var ideal = EDGE_IDEAL[edge.id];
+      if (!ideal) throw new Error("Edge " + edge.id + " has no ideal point.");
+      var here = { voxelX: info.voxelX, voxelY: info.voxelY, voxelZ: info.voxelZ };
       return {
         id: edge.id,
         letter: edge.letter,
         label: edge.label,
         axis: edge.axis,
-        system: edge.system || "",
-        documented: !!edge.documented,
+        system: edge.system,
+        documented: true,
         corner: !!edge.corner,
         note: edge.note || "",
         glyphs: glyphs,
-        coords: coords,
+        coords: info.coords,
         source: edge.source,
         sourceName: edge.sourceName,
         galaxy: 0,
-        planet: planet,
-        ssi: ssi,
-        voxelX: vx,
-        voxelY: vy,
-        voxelZ: vz,
-        ly: lyBetween({ voxelX: vx, voxelY: vy, voxelZ: vz }, { voxelX: 0, voxelY: 0, voxelZ: 0 })
+        galaxyName: "Euclid",
+        planet: info.planet,
+        ssi: info.ssi,
+        voxelX: info.voxelX,
+        voxelY: info.voxelY,
+        voxelZ: info.voxelZ,
+        idealX: ideal[0],
+        idealY: ideal[1],
+        idealZ: ideal[2],
+        offsetLy: lyBetween(here, { voxelX: ideal[0], voxelY: ideal[1], voxelZ: ideal[2] }),
+        ly: lyBetween(here, { voxelX: 0, voxelY: 0, voxelZ: 0 })
       };
     });
   }
@@ -2643,7 +2632,9 @@
       var html = '<p class="place-meta">' + esc(place.glyphs || "No portal address") +
         (place.coords ? " · " + esc(place.coords) : "") +
         (place.planet != null ? " · planet " + esc(place.planet) : "") +
+        (place.galaxyName ? " · " + esc(place.galaxyName) : "") +
         (place.lyText ? " · " + esc(place.lyText) + " from the core" : "") +
+        (place.offsetText ? " · " + esc(place.offsetText) : "") +
         " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
       if (place.note) html += '<p class="place-meta">' + esc(place.note) + "</p>";
       if (place.sourceUrl) {
@@ -3489,13 +3480,15 @@
             glyphs: edge.glyphs,
             planet: edge.planet,
             galaxy: 0,
-            name: edge.documented ? edge.system : heading,
+            name: edge.system,
             type: "Edge",
             coords: edge.coords,
             centerId: edge.id,
             centerKind: "edge",
             note: edge.note,
+            galaxyName: edge.galaxyName || "Euclid",
             lyText: formatLy(edge.ly),
+            offsetText: formatLy(edge.offsetLy) + " from the " + edge.label + (edge.corner ? " corner" : " extreme"),
             sourceUrl: edge.source,
             sourceName: edge.sourceName
           },
@@ -3861,7 +3854,7 @@
 
     function flatEdgeBias(edge) {
       if (!edge) return 0;
-      if (edge.corner) return edge.voxelY >= 0 ? -16 : 16;
+      if (edge.corner) return String(edge.id).indexOf("-forward") !== -1 ? -16 : 16;
       if (edge.id === "forward") return -32;
       if (edge.id === "back") return 32;
       return 0;
@@ -4430,7 +4423,7 @@
           if (edge.id === "east") labelDx = -52;
           if (edge.corner) {
             labelDx = edge.voxelX > 0 ? -86 : 12;
-            labelDy = edge.voxelY >= 0 ? -18 : 16;
+            labelDy = String(edge.id).indexOf("-forward") !== -1 ? -18 : 16;
           }
           markers.push({
             id: edge.id,
@@ -6332,6 +6325,7 @@
           "<strong>" + esc(title) + "</strong>" +
           (edge.glyphs ? " — glyphs " + esc(edge.glyphs) : "") +
           " — coords " + esc(edge.coords) +
+          " — " + esc(formatLy(edge.offsetLy)) + " from the " + esc(edge.label) + (edge.corner ? " corner" : " extreme") +
           " — " + esc(formatLy(edge.ly)) + " from the core</button>" +
           centerButton(edge.id, "edge") + "</li>";
       }).join("");

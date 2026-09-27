@@ -363,30 +363,42 @@ eq(edgeBy["ne-back"].coords, "0FFE:0000:0FFE:0001", "Delta Minoris signal-booste
 eq(edgeBy["sw-back"].system, "Tasyroga", "SW-Back is Tasyroga");
 eq([edgeBy["sw-back"].voxelX, edgeBy["sw-back"].voxelY, edgeBy["sw-back"].voxelZ], [-2047, -127, -2047], "SW-Back is west, south, and down");
 eq(edgeBy["sw-back"].coords, "0000:0000:0000:0001", "Tasyroga signal-booster coords");
-["nw-forward", "se-forward", "sw-forward", "nw-back", "se-back"].forEach(function (id) {
-  assert(!edgeBy[id].documented, id + " has no documented system");
-  assert(edgeBy[id].note.indexOf("Corner of the map (no documented system here)") === 0, id + " is labeled as a coordinate corner");
-  assert(edgeBy[id].note.indexOf("Polaris") !== -1, id + " notes the nearest documented spiral system");
-});
-eq([edgeBy["nw-forward"].voxelX, edgeBy["nw-forward"].voxelY, edgeBy["nw-forward"].voxelZ], [-2047, 127, 2047], "NW-Forward is west, north, and up");
-eq([edgeBy["se-forward"].voxelX, edgeBy["se-forward"].voxelY, edgeBy["se-forward"].voxelZ], [2047, 127, -2047], "SE-Forward is east, south, and up");
-eq([edgeBy["sw-forward"].voxelX, edgeBy["sw-forward"].voxelY, edgeBy["sw-forward"].voxelZ], [-2047, 127, -2047], "SW-Forward is west, south, and up");
-eq([edgeBy["nw-back"].voxelX, edgeBy["nw-back"].voxelY, edgeBy["nw-back"].voxelZ], [-2047, -127, 2047], "NW-Back is west, north, and down");
-eq([edgeBy["se-back"].voxelX, edgeBy["se-back"].voxelY, edgeBy["se-back"].voxelZ], [2047, -127, -2047], "SE-Back is east, south, and down");
+eq(edgeBy["nw-forward"].system, "Greater Asuras", "NW-Forward is Greater Asuras");
+eq(edgeBy["nw-forward"].coords, "0001:00FE:0FFD:01D9", "Greater Asuras signal-booster coords");
+eq([edgeBy["nw-forward"].voxelX, edgeBy["nw-forward"].voxelY, edgeBy["nw-forward"].voxelZ], [-2046, 127, 2046], "Greater Asuras sits one voxel inside the upper Gamma corner");
+assert(Math.abs(edgeBy["nw-forward"].offsetLy - Math.sqrt(2) * 400) < 1, "Greater Asuras is one diagonal voxel from the corner");
+eq(edgeBy["se-forward"].system, "Afangdi", "SE-Forward is Afangdi");
+eq(edgeBy["se-forward"].coords, "0FFD:0080:0000:0079", "Afangdi signal-booster coords");
+eq([edgeBy["se-forward"].voxelX, edgeBy["se-forward"].voxelY, edgeBy["se-forward"].voxelZ], [2046, 1, -2047], "Afangdi is on the Beta meridian, just below the plane");
+assert(edgeBy["se-forward"].offsetLy < 50800, "Afangdi is closer to the upper Beta corner than the galactic plane");
+eq(edgeBy["sw-forward"].system, "Alpha Polaris", "SW-Forward is Alpha Polaris");
+eq(edgeBy["sw-forward"].coords, "0000:007F:0000:0001", "Alpha Polaris signal-booster coords");
+eq([edgeBy["sw-forward"].voxelX, edgeBy["sw-forward"].voxelY, edgeBy["sw-forward"].voxelZ], [-2047, 0, -2047], "Alpha Polaris is the Alpha spiral end on the plane");
+eq(edgeBy["sw-forward"].offsetLy, 127 * 400, "Alpha Polaris is 127 voxels below the upper corner");
+eq(edgeBy["nw-back"].system, "Gamma Polaris", "NW-Back is Gamma Polaris");
+eq(edgeBy["nw-back"].coords, "0000:007F:0FFE:0001", "Gamma Polaris signal-booster coords");
+eq([edgeBy["nw-back"].voxelX, edgeBy["nw-back"].voxelY, edgeBy["nw-back"].voxelZ], [-2047, 0, 2047], "Gamma Polaris is the Gamma spiral end on the plane");
+eq(edgeBy["nw-back"].offsetLy, 127 * 400, "Gamma Polaris is 127 voxels above the lower corner");
+eq(edgeBy["se-back"].system, "The Outer Edge", "SE-Back is The Outer Edge");
+eq(edgeBy["se-back"].coords, "0FFE:0001:0000:01AC", "The Outer Edge signal-booster coords");
+eq([edgeBy["se-back"].voxelX, edgeBy["se-back"].voxelY, edgeBy["se-back"].voxelZ], [2047, -126, -2047], "The Outer Edge is one voxel above the lower Beta corner");
+eq(edgeBy["se-back"].offsetLy, 400, "The Outer Edge is 400 ly from the corner");
 var edgeGlyphs = {};
 edges.forEach(function (e) {
-  if (e.documented) {
-    assert(e.planet === 1, e.id + " uses planet index 1");
-    eq(api.analyzeGlyphs(e.glyphs).coords, e.coords, e.id + " glyphs round-trip to its coords");
-    assert(!edgeGlyphs[e.glyphs], e.id + " glyphs are unique");
-    edgeGlyphs[e.glyphs] = 1;
-  } else {
-    assert(!e.glyphs, e.id + " does not invent glyphs");
-    assert(!e.system, e.id + " does not invent a system name");
-  }
+  assert(e.documented && e.system, e.id + " names a documented system");
+  assert(e.galaxyName === "Euclid", e.id + " is in Euclid");
+  assert(e.planet === 1, e.id + " uses planet index 1");
+  eq(api.analyzeGlyphs(e.glyphs).coords, e.coords, e.id + " glyphs round-trip to its coords");
+  assert(!edgeGlyphs[e.glyphs], e.id + " glyphs are unique");
+  edgeGlyphs[e.glyphs] = 1;
+  assert(e.note.indexOf("Corner of the map") === -1, e.id + " is not a geometric placeholder");
   assert(/^https:\/\/nomanssky\.fandom\.com\/wiki\//.test(e.source), e.id + " cites a wiki page");
   eq(api.galaxyWorld(e.voxelX, e.voxelY, e.voxelZ), { x: e.voxelX, y: e.voxelY, z: e.voxelZ }, e.id + " keeps portal X, vertical Y, and Z");
   assert(e.ly > 400, e.id + " is far from the core");
+  assert(e.offsetLy >= 0, e.id + " has a distance from its extreme");
+});
+["north", "south", "east", "west", "forward", "back", "ne-forward", "ne-back", "sw-back"].forEach(function (id) {
+  eq(edgeBy[id].offsetLy, 0, id + " is on its extreme");
 });
 eq(api.parseFocusParam("?focus=forward", ""), "forward", "an edge id can be a focus query");
 eq(api.parseFocusParam("", "#focus=back"), "back", "an edge id can be a focus hash");
