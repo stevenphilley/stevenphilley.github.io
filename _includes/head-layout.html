@@ -10,11 +10,26 @@
 {%- endcomment -%}
 <script>
 (function () {
+  var root = document.documentElement;
   try {
     if (localStorage.getItem("sp-layout") === "fill") {
-      document.documentElement.classList.add("layout-fill");
+      root.classList.add("layout-fill");
     }
   } catch (e) {}
+  /* Typeface before first paint. sp-theme-boot.js repeats this (and ?font=). */
+  var fonts = { sans: 1, mono: 1, system: 1 };
+  var name = "sans";
+  try {
+    var q = (new URLSearchParams(location.search).get("font") || "").toLowerCase();
+    if (fonts[q]) {
+      name = q;
+      localStorage.setItem("sp-font", name);
+    } else {
+      var saved = localStorage.getItem("sp-font");
+      if (fonts[saved]) name = saved;
+    }
+  } catch (e) {}
+  root.setAttribute("data-font", name);
 })();
 </script>
 <link rel="stylesheet" href="/css/sp-layout.css">
