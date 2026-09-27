@@ -5,7 +5,7 @@
 (function (root) {
   "use strict";
 
-  var SHAPES = ["circle", "ring", "diamond", "star", "square", "station", "cross", "brackets", "halo"];
+  var SHAPES = ["circle", "ring", "diamond", "star", "square", "station", "cross", "brackets", "halo", "corner", "mN", "mS", "mE", "mW", "mF", "mB"];
 
   function mulberry32(seed) {
     var a = seed >>> 0;
@@ -112,6 +112,29 @@
       ctx.beginPath();
       ctx.arc(cx, cy, 26, 0, Math.PI * 2);
       ctx.stroke();
+    } else if (kind === "corner") {
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(cx, 16);
+      ctx.lineTo(s - 16, cy);
+      ctx.lineTo(cx, s - 16);
+      ctx.lineTo(16, cy);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.fillRect(cx - 3, cy - 3, 6, 6);
+    } else if (/^m[NSEWFB]$/.test(kind)) {
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(cx, 5);
+      ctx.lineTo(s - 7, cy);
+      ctx.lineTo(cx, s - 5);
+      ctx.lineTo(7, cy);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.font = "700 26px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(kind.charAt(1), cx, cy + 1);
     }
     var tex = new THREE.CanvasTexture(canvas);
     tex.needsUpdate = true;
@@ -322,6 +345,23 @@
     addLine(-2048, 0, 0, 2048, 0, 0, theme.faint, 0.35);
     addLine(0, 0, -2048, 0, 0, 2048, theme.faint, 0.35);
     addLine(0, -140, 0, 0, 140, 0, theme.ink, 0.28);
+    var boxX = [-2047, 2047];
+    var boxY = [-127, 127];
+    var boxZ = [-2047, 2047];
+    var bx, by, bz;
+    for (by = 0; by < boxY.length; by++) {
+      for (bz = 0; bz < boxZ.length; bz++) {
+        addLine(boxX[0], boxY[by], boxZ[bz], boxX[1], boxY[by], boxZ[bz], theme.accent2, 0.22);
+      }
+      for (bx = 0; bx < boxX.length; bx++) {
+        addLine(boxX[bx], boxY[by], boxZ[0], boxX[bx], boxY[by], boxZ[1], theme.accent2, 0.22);
+      }
+    }
+    for (bx = 0; bx < boxX.length; bx++) {
+      for (bz = 0; bz < boxZ.length; bz++) {
+        addLine(boxX[bx], boxY[0], boxZ[bz], boxX[bx], boxY[1], boxZ[bz], theme.accent2, 0.22);
+      }
+    }
 
     var starPositions = new Float32Array(1600 * 3);
     var rng = mulberry32(0x4E4D5303);
@@ -467,8 +507,9 @@
             x: p.x + (m.labelDx == null ? 12 : m.labelDx),
             y: p.y + (m.labelDy || 0),
             color: m.labelColor || theme.ink,
-            priority: m.priority ? 2 : 0,
-            badge: false
+            priority: typeof m.priority === "number" ? m.priority : (m.priority ? 2 : 0),
+            badge: false,
+            spread: !!m.spread
           });
         }
         if (m.badge) {
@@ -496,6 +537,20 @@
             { x: job.x - 10, y: job.y - 16 }
           ];
         var tw = measure(job.text);
+        if (job.spread) {
+          var extra = [
+            [0, 36], [0, -36], [0, 54], [0, -54],
+            [18, 36], [-72, 22], [-72, -20], [24, -42],
+            [0, 72], [0, -72], [18, 54], [-90, 8]
+          ];
+          var e;
+          for (e = 0; e < extra.length; e++) {
+            var sx = job.x + extra[e][0];
+            var sy = job.y + extra[e][1];
+            if (sx < 2 || sy < 14 || sx + tw > width - 4 || sy > height - 8) continue;
+            spots.push({ x: sx, y: sy });
+          }
+        }
         var i;
         for (i = 0; i < spots.length; i++) {
           var left = spots[i].x - (job.badge ? tw / 2 + 6 : 0);
