@@ -242,7 +242,8 @@
       glyphs: loc.geo.glyphs,
       planet: loc.geo.planet,
       galaxy: loc.geo.galaxy,
-      name: loc.geo.baseName || loc.name
+      name: loc.geo.baseName || loc.name,
+      focus: loc.geo.glyphs
     });
   }
 

@@ -238,6 +238,35 @@ var fanMx2 = frame.cx + fanNext.panX + (fanX / 2048) * frame.rx * fanNext.zoom +
 var fanMy2 = frame.cy + fanNext.panY - (fanZ / 2048) * frame.ry * fanNext.zoom + fanOff2.y;
 assert(Math.abs(fanMx2 - fanMx) < 1e-6 && Math.abs(fanMy2 - fanMy) < 1e-6, "zooming toward a fanned base keeps it planted");
 
+var centerSize = { w: 800, h: 500 };
+var wide = api.centerView({ zoom: 1, panX: 0, panY: 0 }, { voxelX: -995, voxelZ: 1418, index: 0, count: 1 }, frame, centerSize);
+eq(wide.zoom, api.CENTER_ZOOM, "centering from a wide view uses the close zoom");
+var widePt = api.markerScreenPoint(-995, 1418, 0, 1, wide, frame);
+assert(Math.abs(widePt.x - centerSize.w / 2) < 1e-4 && Math.abs(widePt.y - centerSize.h / 2) < 1e-4, "centering puts the marker in the middle");
+var kept = api.centerView({ zoom: 40, panX: 10, panY: -4 }, { voxelX: -995, voxelZ: 1418, index: 3, count: 8 }, frame, centerSize);
+eq(kept.zoom, 40, "centering keeps a zoom that is already closer");
+var keptPt = api.markerScreenPoint(-995, 1418, 3, 8, kept, frame);
+assert(Math.abs(keptPt.x - centerSize.w / 2) < 1e-4 && Math.abs(keptPt.y - centerSize.h / 2) < 1e-4, "a closer zoom still centers the fanned marker");
+eq(api.centerView({ zoom: 200, panX: 0, panY: 0 }, { voxelX: 0, voxelZ: 0 }, frame, centerSize).zoom, 128, "centering still stops at the zoom cap");
+var fromWide = { zoom: 1, panX: 12, panY: -8 };
+var spec = { voxelX: -995, voxelZ: 1418, index: 3, count: 8, zoom: api.CENTER_ZOOM };
+var atStart = api.interpolateCenter(fromWide, spec, frame, 0);
+var startPt = api.markerScreenPoint(spec.voxelX, spec.voxelZ, spec.index, spec.count, fromWide, frame);
+var startAgain = api.markerScreenPoint(spec.voxelX, spec.voxelZ, spec.index, spec.count, atStart, frame);
+assert(Math.abs(atStart.zoom - 1) < 1e-9, "the center animation starts at the current zoom");
+assert(Math.abs(startAgain.x - startPt.x) < 1e-4 && Math.abs(startAgain.y - startPt.y) < 1e-4, "the center animation does not jump at the first frame");
+var atEnd = api.interpolateCenter(fromWide, spec, frame, 1);
+var endPt = api.markerScreenPoint(spec.voxelX, spec.voxelZ, spec.index, spec.count, atEnd, frame);
+assert(Math.abs(atEnd.zoom - api.CENTER_ZOOM) < 1e-9 && Math.abs(endPt.x - frame.cx) < 1e-4 && Math.abs(endPt.y - frame.cy) < 1e-4, "the center animation ends on the marker");
+assert(api.easeOutCubic(0.5) > 0.5 && api.easeOutCubic(0.5) < 1, "the center ease is ease-out");
+eq(api.centerDistance(4000, api.CENTER_DISTANCE, { min: 18, max: 14000 }), api.CENTER_DISTANCE, "a far camera dollies in to the close distance");
+eq(api.centerDistance(40, api.CENTER_DISTANCE, { min: 18, max: 14000 }), 40, "a closer camera keeps its distance");
+eq(api.centerDistance(8, api.CENTER_DISTANCE, { min: 18, max: 14000 }), 18, "dolly distance stays inside the orbit limits");
+eq(api.parseFocusParam("?focus=b2", ""), "b2", "a focus query is read");
+eq(api.parseFocusParam("?place=2205D058AC1D&focus=b0", "#focus=nope"), "b0", "the focus query wins over the hash");
+eq(api.parseFocusParam("", "#focus=capital"), "capital", "a focus hash is read");
+eq(api.parseFocusParam("", "#focus=alpha-polaris"), "alpha-polaris", "a reference id can be a focus hash");
+
 var cluster = api.fitView(
   [{ x: -995, z: 1418 }, { x: -990, z: 1420 }],
   frame,

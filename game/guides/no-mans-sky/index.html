@@ -109,8 +109,25 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .rows li.list-split{padding:14px 0 4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--muted,#63666e)}
 .base-head{display:flex;gap:8px;align-items:flex-start}
 .base-head>button[data-base]{flex:1;min-width:0}
-.base-expand{appearance:none;flex:0 0 auto;align-self:flex-start;margin-top:12px;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 10px;min-height:44px;cursor:pointer}
+.base-expand{appearance:none;flex:0 0 auto;align-self:flex-start;margin-top:0;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 10px;min-height:44px;cursor:pointer}
 .base-expand:hover,.base-expand:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.row-tools{display:flex;gap:8px;align-items:flex-start;flex:0 0 auto;margin-top:12px}
+.loc-head{display:flex;gap:8px;align-items:flex-start}
+.loc-head>button:not(.center-on){flex:1;min-width:0;width:auto}
+.loc-copy{flex:1;min-width:0;padding:12px 0}
+.center-on{appearance:none;box-sizing:border-box;flex:0 0 44px;width:44px;height:44px;min-width:44px;min-height:44px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);cursor:pointer}
+.center-on svg{display:block;width:16px;height:16px}
+.center-on:hover,.center-on:focus-visible{border-color:var(--accent,#c8b48a);color:var(--accent,#c8b48a);outline:none}
+.rows button.center-on,.refs button.center-on,.place-actions button.center-on,.place-demands button.center-on{width:44px;flex:0 0 44px;height:44px;min-height:44px;padding:0;margin:0;border:1px solid var(--line,#2c303a);align-self:center}
+.place-actions .center-on{margin-top:0}
+#map-pulse{position:absolute;z-index:3;left:0;top:0;width:64px;height:64px;color:var(--accent,#c8b48a);pointer-events:none;transform:translate(-50%,-50%)}
+#map-pulse[hidden]{display:none}
+#map-pulse svg{display:block;width:64px;height:64px}
+#map-pulse .pulse-ring{transform-box:fill-box;transform-origin:center;animation:map-target-pulse 1.5s ease-out 1}
+@keyframes map-target-pulse{0%{transform:scale(.55);opacity:1}70%{transform:scale(1.28);opacity:.35}100%{transform:scale(1.45);opacity:0}}
+@media (prefers-reduced-motion:reduce){
+  #map-pulse .pulse-ring{animation:none;opacity:1}
+}
 .base-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .chip,.base-empty{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;letter-spacing:0;text-transform:none;color:var(--ink-soft,#9b9a96);border:1px solid var(--line,#2c303a);padding:4px 7px;max-width:100%}
 .base-empty{display:inline-block;margin-top:8px}
@@ -132,7 +149,8 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
 .swatch.core{background:transparent;border:1px solid var(--ink,#e8e6e1);width:12px;height:12px}
 .swatch.ref{width:12px;height:12px;background:var(--ink,#e8e6e1);clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%)}
 #ref-list li{padding:0}
-#ref-list button{appearance:none;display:block;width:100%;background:transparent;border:0;color:inherit;font:inherit;text-align:left;padding:12px 0;cursor:pointer}
+#ref-list button:not(.center-on){appearance:none;display:block;width:100%;background:transparent;border:0;color:inherit;font:inherit;text-align:left;padding:12px 0;cursor:pointer}
+#ref-list li.loc-head,#hub-list li.loc-head{padding:0;align-items:center}
 #ref-list button[aria-pressed="true"] strong{color:var(--accent,#c8b48a)}
 #ref-list .q{letter-spacing:.08em;text-transform:uppercase;font-size:11px;color:var(--muted,#63666e)}
 .columns{display:grid;grid-template-columns:1.4fr .8fr;gap:28px;margin-top:8px}
@@ -199,7 +217,9 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
   .zoom-tools button{flex:1}
   .zoom-bar .help-q{flex:0 0 44px}
   .base-head{flex-direction:column}
-  .base-expand{margin-top:0;width:100%}
+  .row-tools{width:100%;margin-top:0}
+  .row-tools .base-expand{width:auto;flex:1}
+  .loc-head .center-on{margin-top:8px}
   .help-card th{width:46%}
 }
 @media (max-width:560px){
@@ -317,6 +337,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
       <canvas id="map-3d" tabindex="0" role="application" aria-describedby="map-caption" aria-label="Three-dimensional No Man's Sky galaxy. Drag to orbit, right-drag or two fingers to pan, scroll or pinch to zoom toward the pointer. The question mark lists every control."></canvas>
       <div id="map-labels" aria-hidden="true"></div>
       <div id="map-marquee" hidden></div>
+      <div id="map-pulse" hidden aria-hidden="true"><svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><circle class="pulse-ring" cx="32" cy="32" r="14" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="32" cy="32" r="2.2" fill="currentColor"/><path d="M32 8v7M32 49v7M8 32h7M49 32h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg></div>
     </div>
   </div>
   <div id="map-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="map-help-title" data-help-hotkey="map" hidden>
@@ -335,6 +356,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
           <tr><th scope="row">Right-drag</th><td>Pan. Two-finger drag pans as well.</td></tr>
           <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
           <tr><th scope="row">Reset view</th><td>Frame your bases, discovered systems, teleporters on the layer, and the Hub marks. The motion eases to a stop.</td></tr>
+          <tr><th scope="row">Center</th><td>The target button, or C, moves the orbit to that place and dollies in, keeping the angle you are looking from. The move eases over about half a second. A closer view stays closer. A ring pulses on the place for a moment.</td></tr>
           <tr><th scope="row">Select</th><td>Box and circle stay in screen space, on top of the 3D view. Middle-drag draws the shape. With Select on, a left-drag or one finger draws it.</td></tr>
           <tr><th scope="row">Labels</th><td>Names face you and step aside when they would cover another label. Farther marks draw smaller and fainter.</td></tr>
         </tbody>
@@ -346,6 +368,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
           <tr><th scope="row">Left-drag</th><td>Pan, in 2D. One finger pans on a touch screen, unless Select is on.</td></tr>
           <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
           <tr><th scope="row">Reset view</th><td>Fit your bases, discovered systems, teleporters on the layer, and the Hub marks.</td></tr>
+          <tr><th scope="row">Center</th><td>The target button, or C, pans and zooms so that place sits in the middle. The move eases over about half a second. A closer zoom stays. A ring pulses on the place for a moment.</td></tr>
         </tbody>
       </table>
       <h3>Select</h3>
@@ -369,6 +392,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
         <caption>Panels and list</caption>
         <tbody>
           <tr><th scope="row">One place</th><td>The click panel shows inventory, mining, crops, and open demands. Items use their in-game names.</td></tr>
+          <tr><th scope="row">Center on map</th><td>The target beside a base, station, teleporter, discovery, Hub mark, or reference star, and the same target on the detail panel. Press C to center the selected place. A link with ?focus= or #focus= opens the map on that place.</td></tr>
           <tr><th scope="row">Several places</th><td>Combined totals, with in-game names. Open a line to see each place.</td></tr>
           <tr><th scope="row">Sort and filter</th><td>Name, inventory size, mining output, or crop count. All, mining, farming, or the searched item. Range select follows that order.</td></tr>
           <tr><th scope="row">Selected on top</th><td>Puts the bases in the current selection first. Name, inventory, mining, and crop order stay inside that group and inside the rest. A line between them counts the selected bases still in the list. The checkbox is remembered in this browser. Range select follows the list you see.</td></tr>
@@ -404,7 +428,7 @@ body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
     </div>
   </div>
   <p id="select-live" class="vh" aria-live="polite"></p>
-  <p class="caption" id="map-caption">The map opens in 3D. Drag to orbit, right-drag or two fingers to pan, and scroll or pinch to zoom toward the pointer. 3D / 2D in the toolbar switches to the flat map; the choice stays in this browser. The ? at the top right lists every control. Press ? while the map is focused. In 3D the disk is the real portal grid, Y up, core at the origin. On the flat map, ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Click a hollow discovery ring to open that system’s portal glyphs, planets, and upload times. Middle-drag a box, or Alt and middle-drag a circle, to select several bases and discovery rings. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list or the discovered-systems list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Hollow rings are discovered systems; a number on the ring is the planet count, or the number of systems bunched at this zoom. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases, discovered systems, teleporters on the layer, and the Hub marks. Double-click a base or a discovery ring, or click it in the list, to bring it to the middle.</p>
+  <p class="caption" id="map-caption">The map opens in 3D. Drag to orbit, right-drag or two fingers to pan, and scroll or pinch to zoom toward the pointer. 3D / 2D in the toolbar switches to the flat map; the choice stays in this browser. The ? at the top right lists every control. Press ? while the map is focused. In 3D the disk is the real portal grid, Y up, core at the origin. On the flat map, ellipses and dots stand in for the disk. This is not a star catalog. Click a base or a system mark to open the inventory, mining, and crops pinned there. Click a hollow discovery ring to open that system’s portal glyphs, planets, and upload times. Middle-drag a box, or Alt and middle-drag a circle, to select several bases and discovery rings. Select in the toolbar does the same with a left-drag or one finger. Ctrl or Cmd adds, Ctrl+Shift or Alt+Ctrl removes. Shift click selects a range in the base list or the discovered-systems list. Pink circles are your planetary bases. A selected base has corner brackets and a check. Hollow rings are discovered systems; a number on the ring is the planet count, or the number of systems bunched at this zoom. Cyan diamonds are Euclid Hub references. Stars are quadrant references; the name shows when you point at one or choose it in the list. The cross is the galactic center. Scroll or pinch to zoom toward the pointer. Zoom in and Zoom out follow the base under the pointer, or the selected base, and that base stays put as the scale changes. Bases in the same system spread apart as you zoom; a count sits on the pile until they separate, then their names show. Drag to pan, unless Select is on. Reset view fits your bases, discovered systems, teleporters on the layer, and the Hub marks. Double-click a base or a discovery ring, or click it in the list, to bring it to the middle. The target beside a listed place, or C, centers the selected place and pulses a ring on it.</p>
   <ul class="legend">
     <li><i class="swatch dot" aria-hidden="true"></i> Your bases</li>
     <li><i class="swatch hub" aria-hidden="true"></i> Euclid Hub</li>

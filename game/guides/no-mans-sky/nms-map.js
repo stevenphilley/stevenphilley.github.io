@@ -1162,6 +1162,79 @@
     };
   }
 
+  // Close framing for "center on this place". A wider view moves in to
+  // CENTER_ZOOM. A view that is already closer keeps its zoom.
+  var CENTER_ZOOM = 18;
+  var CENTER_DISTANCE = 150;
+  var CENTER_MS = 520;
+  var CENTER_PULSE_MS = 1500;
+
+  function easeOutCubic(t) {
+    var k = t;
+    if (!isFinite(k)) k = 0;
+    if (k < 0) k = 0;
+    if (k > 1) k = 1;
+    return 1 - Math.pow(1 - k, 3);
+  }
+
+  function centerZoomLevel(currentZoom, closeZoom) {
+    var close = closeZoom > 0 && isFinite(closeZoom) ? closeZoom : CENTER_ZOOM;
+    var now = currentZoom > 0 && isFinite(currentZoom) ? currentZoom : 1;
+    return clampZoom(Math.max(now, close));
+  }
+
+  function centerDistance(current, close, limits) {
+    limits = limits || {};
+    var target = close > 0 && isFinite(close) ? close : CENTER_DISTANCE;
+    var now = current > 0 && isFinite(current) ? current : target;
+    var next = now < target ? now : target;
+    var min = limits.min > 0 && isFinite(limits.min) ? limits.min : 0;
+    var max = limits.max > 0 && isFinite(limits.max) ? limits.max : Infinity;
+    if (next < min) next = min;
+    if (next > max) next = max;
+    return next;
+  }
+
+  function markerScreenPoint(voxelX, voxelZ, index, count, viewState, frame) {
+    var pt = mapToScreen(voxelX, voxelZ, viewState, frame);
+    var n = count > 0 ? count : 1;
+    var off = clumpOffset(index || 0, n, viewState && viewState.zoom);
+    return { x: pt.x + off.x, y: pt.y + off.y };
+  }
+
+  function centerView(viewState, point, frame, size, opts) {
+    opts = opts || {};
+    var zoom = centerZoomLevel(viewState && viewState.zoom, opts.closeZoom);
+    var index = point && point.index ? point.index : 0;
+    var count = point && point.count > 0 ? point.count : 1;
+    var pan = panToMarker(point.voxelX, point.voxelZ, index, count, zoom, frame, size.w / 2, size.h / 2);
+    return { zoom: zoom, panX: pan.panX, panY: pan.panY };
+  }
+
+  function interpolateCenter(from, spec, frame, t) {
+    var k = easeOutCubic(t);
+    var zoom = clampZoom(from.zoom + (spec.zoom - from.zoom) * k);
+    var count = spec.count > 0 ? spec.count : 1;
+    var start = markerScreenPoint(spec.voxelX, spec.voxelZ, spec.index, count, from, frame);
+    var sx = start.x + (frame.cx - start.x) * k;
+    var sy = start.y + (frame.cy - start.y) * k;
+    var pan = panToMarker(spec.voxelX, spec.voxelZ, spec.index || 0, count, zoom, frame, sx, sy);
+    return { zoom: zoom, panX: pan.panX, panY: pan.panY };
+  }
+
+  function parseFocusParam(search, hash) {
+    var params = new URLSearchParams(String(search || "").replace(/^\?/, ""));
+    var q = params.get("focus");
+    if (q) return String(q);
+    var raw = String(hash || "");
+    if (raw.charAt(0) === "#") raw = raw.slice(1);
+    if (raw.indexOf("focus=") === 0) {
+      try { return decodeURIComponent(raw.slice(6)); }
+      catch (err) { return raw.slice(6); }
+    }
+    return "";
+  }
+
   function frameOf(w, h) {
     var rx = Math.min(w, h * 1.35) * 0.42;
     var ry = rx * 0.72;
@@ -1879,6 +1952,9 @@
     var view = { zoom: 1, panX: 0, panY: 0 };
     var lastSize = { w: 640, h: 480 };
     var aim = null;
+    var centerAnim = null;
+    var centerLoop = 0;
+    var pulse = null;
     var MODE_KEY = "nms-map-view";
     var viewMode = "3d";
     try {
@@ -2196,6 +2272,18 @@
       var agg = aggregatePlaces(places, store, api, catalogIndex);
       var href = "/game/guides/no-mans-sky/logistics/" + api.selectionQuery(places);
       var html = '<p class="place-meta">' + (places.length + parts.discs.length) + " places selected.</p>";
+      html += '<h3 class="place-sub">Places</h3><ul class="place-demands">';
+      parts.bases.forEach(function (b) {
+        var freight = !!freightById(b.id);
+        html += "<li><span>" + esc(b.name) + "</span><span>" + (freight ? "" : centerButton(b.id, "base")) + "</span></li>";
+      });
+      parts.discs.forEach(function (sys) {
+        html += "<li><span>" + esc(sys.systemName || sys.glyphs) + "</span><span>" + centerButton(sys.id, "discovery") + "</span></li>";
+      });
+      (parts.teles || []).forEach(function (row) {
+        html += "<li><span>" + esc(row.name) + "</span><span>" + (row.plotted ? centerButton(row.id, "teleporter") : "") + "</span></li>";
+      });
+      html += "</ul>";
       html += '<p class="place-actions"><a href="' + esc(href) + '">Open these places in the logistics planner</a>';
       html += ' <button type="button" id="place-close">Clear selection</button></p>';
       html += "<h3 class=\"place-sub\">Inventory</h3>";
@@ -2284,7 +2372,9 @@
         (place.coords ? " · " + esc(place.coords) : "") +
         (place.planet != null ? " · planet " + esc(place.planet) : "") +
         " · " + (placeMode === "system" ? "whole system" : "this place") + "</p>";
-      html += '<p class="place-actions"><a href="' + esc(href) + '">Open in the logistics planner</a>';
+      html += '<p class="place-actions">';
+      if (place.centerId && place.centerKind !== "freighter") html += centerButton(place.centerId, place.centerKind || "base");
+      html += '<a href="' + esc(href) + '">Open in the logistics planner</a>';
       if (place.glyphs) {
         html += ' <button type="button" id="place-scope">' + (placeMode === "system" ? "Show this place only" : "Show this system") + "</button>";
       }
@@ -2440,8 +2530,9 @@
       else {
         html += '<ul class="place-demands">';
         mates.forEach(function (base) {
-          html += '<li><button type="button" data-tele-base="' + esc(base.id) + '">' + esc(base.name) +
-            "</button><span>" + esc(base.type || "") + "</span></li>";
+          var freight = !!freightById(base.id);
+        html += '<li><button type="button" data-tele-base="' + esc(base.id) + '">' + esc(base.name) +
+            "</button><span>" + (freight ? "" : centerButton(base.id, "base")) + " " + esc(base.type || "") + "</span></li>";
         });
         html += "</ul>";
       }
@@ -2476,7 +2567,8 @@
       placePanel.hidden = false;
       if (placeTitle) placeTitle.textContent = row.name || "Teleporter";
       var html = teleportFactsHtml(row);
-      html += '<p class="place-actions"><button type="button" id="place-close">Close</button></p>';
+      html += '<p class="place-actions">' + (row.plotted ? centerButton(row.id, "teleporter") : "") +
+        '<button type="button" id="place-close">Close</button></p>';
       placeBody.innerHTML = html;
       bindTeleportBases(placeBody);
       var closeBtn = document.getElementById("place-close");
@@ -2494,7 +2586,8 @@
       html += '<p class="place-actions"><button type="button" id="place-close">Clear selection</button></p>';
       html += '<ul class="place-demands">';
       rows.forEach(function (row) {
-        html += "<li><span>" + esc(row.name) + " · " + esc(row.typeLabel) + "</span><span>" + esc(row.glyphs || "—") + "</span></li>";
+        html += "<li><span>" + esc(row.name) + " · " + esc(row.typeLabel) + "</span><span>" +
+          (row.plotted ? centerButton(row.id, "teleporter") + " " : "") + esc(row.glyphs || "—") + "</span></li>";
       });
       html += "</ul>";
       placeBody.innerHTML = html;
@@ -2535,7 +2628,10 @@
       var list = systems || [];
       if (!list.length) return "";
       var params = new URLSearchParams();
-      if (list.length === 1) params.set("place", list[0].glyphs);
+      if (list.length === 1) {
+        params.set("place", list[0].glyphs);
+        if (list[0].id) params.set("focus", list[0].id);
+      }
       else params.set("places", list.map(function (sys) { return sys.glyphs; }).join(","));
       params.set("layer", "discovery");
       if (list[0].galaxy != null) params.set("galaxy", String(list[0].galaxy));
@@ -2569,7 +2665,8 @@
       if (placeTitle) placeTitle.textContent = title;
       var html = '<p class="place-meta">' + esc(sys.glyphs) + " · " + esc(sys.coords) +
         " · " + esc(galaxyLabel(sys.galaxy)) + " · " + esc(formatLy(sys.lyCenter)) + " from center</p>";
-      html += '<p class="place-actions"><a href="' + esc(discoveryLink([sys])) + '">Show on map</a>';
+      html += '<p class="place-actions">' + centerButton(sys.id, "discovery");
+      html += '<a href="' + esc(discoveryLink([sys])) + '">Show on map</a>';
       html += ' <button type="button" id="place-close">Close</button></p>';
       if (sys.systemName) html += '<p class="place-meta">Custom name · ' + esc(sys.systemName) + "</p>";
       html += '<p class="place-meta">System record · ' + (sys.hasSystem ? DiscoveryLib.uploadLabel(sys.systemUploaded, sys.systemTimestamp) : "No solar-system record") +
@@ -2630,7 +2727,7 @@
       html += '<ul class="place-demands">';
       systems.forEach(function (sys) {
         html += "<li><span>" + esc(sys.systemName || sys.glyphs) + " · " + esc(sys.glyphs) + "</span><span>" +
-          esc(sys.planetCount) + " planets · " + esc(sys.flora) + " flora</span></li>";
+          centerButton(sys.id, "discovery") + " " + esc(sys.planetCount) + " planets · " + esc(sys.flora) + " flora</span></li>";
       });
       html += "</ul>";
       placeBody.innerHTML = html;
@@ -2667,7 +2764,10 @@
         openDiscoveryId = null;
         var one = parts.bases[0];
         placeMode = "base";
-        renderPlacePanel(placeOf(one), one.name || "");
+        var place = placeOf(one);
+        place.centerId = one.id;
+        place.centerKind = freightById(one.id) ? "freighter" : "base";
+        renderPlacePanel(place, one.name || "");
         revealDetail("base:" + one.id);
         return;
       }
@@ -2744,7 +2844,9 @@
     }
 
     function zoomBy(factor, sx, sy) {
+      cancelCenterAnim();
       if (viewMode === "3d" && galaxy3d) {
+        if (galaxy3d.cancelMove) galaxy3d.cancelMove();
         galaxy3d.zoomAt(factor, sx, sy);
         return;
       }
@@ -2769,6 +2871,9 @@
 
     function resetView() {
       aim = null;
+      cancelCenterAnim();
+      if (galaxy3d && galaxy3d.cancelMove) galaxy3d.cancelMove();
+      clearPulse();
       if (viewMode === "3d" && galaxy3d) {
         var pts3 = [];
         visibleBases().forEach(function (b) { pts3.push(galaxyWorld(b.voxelX, b.voxelY, b.voxelZ)); });
@@ -2806,6 +2911,400 @@
         hubs.forEach(function (h) { pts.push({ x: h.voxelX, z: h.voxelZ }); });
       }
       applyFit(pts, { padVoxels: 160, minZoom: 0.8, maxZoom: 14 });
+    }
+
+    function centerButton(id, kind) {
+      return '<button type="button" class="center-on" data-center="' + esc(id) + '" data-center-kind="' + esc(kind) + '" aria-label="Center on map" title="Center on map">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+        '<circle cx="12" cy="12" r="6.25" fill="none" stroke="currentColor" stroke-width="1.6"/>' +
+        '<circle cx="12" cy="12" r="1.35" fill="currentColor"/>' +
+        '<path d="M12 2.4v3M12 18.6v3M2.4 12h3M18.6 12h3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/>' +
+        "</svg></button>";
+    }
+
+    function motionReduced() {
+      if (typeof window === "undefined" || !window.matchMedia) return false;
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    }
+
+    function cancelCenterAnim() {
+      centerAnim = null;
+    }
+
+    function clearPulse() {
+      pulse = null;
+      var el = document.getElementById("map-pulse");
+      if (el) el.hidden = true;
+    }
+
+    function clumpSlot(row, kind) {
+      var list = [];
+      if (!row) return { index: 0, count: 1 };
+      if (kind === "base") {
+        list = visibleBases().filter(function (b) {
+          return b.voxelX === row.voxelX && b.voxelZ === row.voxelZ && (viewMode !== "3d" || b.voxelY === row.voxelY);
+        });
+      } else if (kind === "teleporter") {
+        list = visibleTeleporters().filter(function (b) {
+          return b.voxelX === row.voxelX && b.voxelZ === row.voxelZ && (viewMode !== "3d" || b.voxelY === row.voxelY);
+        });
+      }
+      if (!list.length) list = [row];
+      var index = 0;
+      list.forEach(function (item, i) { if (item && item.id === row.id) index = i; });
+      return { index: index, count: list.length };
+    }
+
+    function screenOfLoc(loc) {
+      var slot = loc.slot || { index: 0, count: 1 };
+      var row = loc.row;
+      if (viewMode === "3d" && galaxy3d) {
+        var basis = galaxy3d.screenBasis();
+        var zoom = viewZoom3d(row.voxelX, row.voxelY, row.voxelZ);
+        var off = clumpOffset(slot.index, slot.count, zoom);
+        var wpp = galaxy3d.worldPerPixel(galaxy3d.distanceTo(row.voxelX, row.voxelY || 0, row.voxelZ));
+        var p = place3d(row.voxelX, row.voxelY, row.voxelZ, off, wpp, basis);
+        return galaxy3d.project(p.x, p.y, p.z);
+      }
+      var size = lastSize.w ? lastSize : canvasSize();
+      var frame = frameOf(size.w, size.h);
+      return markerScreenPoint(row.voxelX, row.voxelZ, slot.index, slot.count, view, frame);
+    }
+
+    function placePulse() {
+      var el = document.getElementById("map-pulse");
+      if (!el) return;
+      if (!pulse) {
+        el.hidden = true;
+        return;
+      }
+      if (performance.now() >= pulse.until) {
+        clearPulse();
+        return;
+      }
+      var pt = screenOfLoc(pulse.loc);
+      if (!pt || pt.behind || !isFinite(pt.x) || !isFinite(pt.y)) {
+        el.hidden = true;
+        return;
+      }
+      el.hidden = false;
+      el.style.left = pt.x + "px";
+      el.style.top = pt.y + "px";
+    }
+
+    function ensureCenterLoop() {
+      if (centerLoop) return;
+      centerLoop = window.requestAnimationFrame(tickCenter);
+    }
+
+    function tickCenter() {
+      centerLoop = 0;
+      var now = performance.now();
+      var moved = false;
+      if (centerAnim && viewMode !== "3d") {
+        var t = (now - centerAnim.t0) / centerAnim.dur;
+        var done = t >= 1;
+        if (done) t = 1;
+        var next = interpolateCenter(centerAnim.from, centerAnim.spec, centerAnim.frame, t);
+        view.zoom = next.zoom;
+        view.panX = next.panX;
+        view.panY = next.panY;
+        if (done) {
+          clampPan();
+          centerAnim = null;
+        }
+        moved = true;
+      }
+      if (pulse && now >= pulse.until) clearPulse();
+      if (moved) draw();
+      placePulse();
+      if (centerAnim || pulse) ensureCenterLoop();
+    }
+
+    function showPulse(loc) {
+      var el = document.getElementById("map-pulse");
+      pulse = { loc: loc, until: performance.now() + CENTER_PULSE_MS };
+      if (el) {
+        var ring = el.querySelector(".pulse-ring");
+        if (ring) {
+          ring.style.animation = "none";
+          void ring.offsetWidth;
+          ring.style.animation = "";
+        }
+        el.hidden = false;
+      }
+      placePulse();
+      ensureCenterLoop();
+    }
+
+    function closeWorldPoint(row, slot, dist) {
+      var w = galaxyWorld(row.voxelX, row.voxelY, row.voxelZ);
+      if (!slot || slot.count < 2 || !galaxy3d || !canvas3d) return w;
+      var rect = canvas3d.getBoundingClientRect();
+      var height = Math.max(1, rect.height || lastSize.h);
+      var width = Math.max(1, rect.width || lastSize.w);
+      var frame = frameOf(width, height);
+      var half = galaxy3d.fov() * Math.PI / 360;
+      var wpp = (2 * Math.tan(half) * dist) / height;
+      var zoom = frame.rx > 0 && wpp > 0 ? (1 / wpp) / (frame.rx / 2048) : 1;
+      var off = clumpOffset(slot.index, slot.count, zoom);
+      var basis = galaxy3d.screenBasis();
+      var ox = off.x * wpp;
+      var oy = -off.y * wpp;
+      return {
+        x: w.x + basis.right.x * ox + basis.up.x * oy,
+        y: w.y + basis.right.y * ox + basis.up.y * oy,
+        z: w.z + basis.right.z * ox + basis.up.z * oy
+      };
+    }
+
+    function moveToLocation(loc) {
+      var slot = clumpSlot(loc.row, loc.kind);
+      loc.slot = slot;
+      if (viewMode === "3d" && galaxy3d) {
+        cancelCenterAnim();
+        var limits = {
+          min: galaxy3d.controls ? galaxy3d.controls.minDistance : 18,
+          max: galaxy3d.controls ? galaxy3d.controls.maxDistance : 14000
+        };
+        var dist = centerDistance(galaxy3d.orbitDistance(), CENTER_DISTANCE, limits);
+        var w = closeWorldPoint(loc.row, slot, dist);
+        var reduced = motionReduced();
+        galaxy3d.focus(w.x, w.y, w.z, dist, {
+          duration: reduced ? 0 : CENTER_MS,
+          instant: reduced
+        });
+        return;
+      }
+      if (galaxy3d && galaxy3d.cancelMove) galaxy3d.cancelMove();
+      var size = canvasSize();
+      lastSize = size;
+      var frame = frameOf(size.w, size.h);
+      var dest = centerView(view, {
+        voxelX: loc.row.voxelX,
+        voxelZ: loc.row.voxelZ,
+        index: slot.index,
+        count: slot.count
+      }, frame, size, { closeZoom: CENTER_ZOOM });
+      if (motionReduced()) {
+        cancelCenterAnim();
+        view.zoom = dest.zoom;
+        view.panX = dest.panX;
+        view.panY = dest.panY;
+        clampPan();
+        draw();
+        return;
+      }
+      centerAnim = {
+        from: { zoom: view.zoom, panX: view.panX, panY: view.panY },
+        spec: {
+          voxelX: loc.row.voxelX,
+          voxelZ: loc.row.voxelZ,
+          index: slot.index,
+          count: slot.count,
+          zoom: dest.zoom
+        },
+        frame: frame,
+        t0: performance.now(),
+        dur: CENTER_MS
+      };
+      ensureCenterLoop();
+    }
+
+    function prepareGalaxy(loc) {
+      var g = state.galaxy;
+      if (loc.kind === "ref" || loc.kind === "hub") g = 0;
+      else if (loc.kind === "teleporter") g = teleportGalaxyKey(loc.row, anyKnownGalaxy());
+      else if (loc.row && loc.row.galaxy != null && isFinite(Number(loc.row.galaxy))) g = Number(loc.row.galaxy);
+      if (g !== state.galaxy) {
+        state.galaxy = g;
+        if (galaxySel) galaxySel.value = String(state.galaxy);
+        if (showHubs) {
+          showHubs.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showHubs.checked = false;
+        }
+        if (showRefs) {
+          showRefs.disabled = state.galaxy !== 0;
+          if (state.galaxy !== 0) showRefs.checked = false;
+        }
+      }
+      if (loc.kind === "ref" && showRefs) {
+        showRefs.disabled = false;
+        showRefs.checked = true;
+      }
+      if (loc.kind === "hub" && showHubs) {
+        showHubs.disabled = false;
+        showHubs.checked = true;
+      }
+      if (loc.kind === "discovery" && showDiscoveries && !showDiscoveries.checked) showDiscoveries.checked = true;
+      if (loc.kind === "teleporter" && showTeleporters && !showTeleporters.checked) showTeleporters.checked = true;
+    }
+
+    function scrollMapIntoView() {
+      var wrap = document.getElementById("map-wrap");
+      if (wrap && wrap.scrollIntoView) {
+        try { wrap.scrollIntoView({ block: "nearest", inline: "nearest" }); }
+        catch (err) { wrap.scrollIntoView(false); }
+      }
+    }
+
+    function selectForCenter(loc, keepSelection) {
+      if (loc.kind === "ref") {
+        if (keepSelection && state.selectedRef === loc.id && !state.selection.length) return;
+        state.selectedRef = loc.id;
+        state.selection = [];
+        state.anchorId = null;
+        state.selected = null;
+        state.selectedFreight = null;
+        state.hover = null;
+        renderLists();
+        renderRefList();
+        renderPlacePanel({
+          glyphs: loc.row.glyphs,
+          planet: loc.row.planet,
+          galaxy: 0,
+          name: loc.row.label,
+          type: "Reference",
+          coords: loc.row.coords,
+          centerId: loc.id,
+          centerKind: "ref"
+        }, loc.row.label);
+        setStatus(loc.row.label + " — " + quadrantName(loc.row.quadrant) + " — " + (loc.row.note ? loc.row.note + " — " : "") + "glyphs " + loc.row.glyphs + " — " + loc.row.coords + ". Community landmark, not from your save.");
+        return;
+      }
+      if (loc.kind === "hub") {
+        state.selectedRef = null;
+        state.selection = [];
+        state.anchorId = null;
+        state.selected = null;
+        state.selectedFreight = null;
+        state.hover = null;
+        renderLists();
+        renderRefList();
+        renderPlacePanel({
+          glyphs: loc.row.glyphs,
+          planet: null,
+          galaxy: 0,
+          name: loc.row.label,
+          type: "Hub",
+          coords: loc.row.coords,
+          centerId: loc.id,
+          centerKind: "hub"
+        }, loc.row.label);
+        setStatus(loc.row.label + (loc.row.note ? " · " + loc.row.note : "") + " — glyphs " + loc.row.glyphs + " — " + loc.row.coords + ". Euclid reference, not from your save.");
+        return;
+      }
+      if (keepSelection && isSelected(loc.id)) return;
+      commitSelection([loc.id], loc.id);
+    }
+
+    function resolveLocation(token, kind) {
+      var id = String(token || "");
+      if (!id) return null;
+      function pack(kindName, row, plotted) {
+        return { kind: kindName, id: row.id, row: row, plotted: plotted !== false };
+      }
+      if (!kind || kind === "base") {
+        var base = baseById(id);
+        if (base) return pack("base", base, true);
+      }
+      if (!kind || kind === "freighter") {
+        var freight = freightById(id);
+        if (freight) return pack("freighter", freight, false);
+      }
+      if (!kind || kind === "discovery") {
+        var disc = discoveryById(id);
+        if (disc) return pack("discovery", disc, true);
+      }
+      if (!kind || kind === "teleporter") {
+        var tele = teleportById(id);
+        if (tele) return pack("teleporter", tele, !!tele.plotted);
+      }
+      if (!kind || kind === "ref") {
+        var ref = refById(id);
+        if (ref) return pack("ref", ref, true);
+      }
+      if (!kind || kind === "hub") {
+        var hub = hubById(id);
+        if (hub) return pack("hub", hub, true);
+      }
+      if (kind) return null;
+      var glyphs = id.toUpperCase();
+      if (!/^[0-9A-F]{12}$/.test(glyphs)) return null;
+      var planetParam = null;
+      try {
+        var planetRaw = new URLSearchParams(window.location.search).get("planet");
+        if (planetRaw != null && planetRaw !== "" && isFinite(Number(planetRaw))) planetParam = Number(planetRaw);
+      } catch (err) { planetParam = null; }
+      var found = null;
+      function takeBase(requirePlanet) {
+        state.planetary.forEach(function (b) {
+          if (found) return;
+          if (String(b.glyphs || "").toUpperCase() !== glyphs) return;
+          if (requirePlanet && planetParam != null && Number(b.planet) !== planetParam) return;
+          found = pack("base", b, true);
+        });
+      }
+      if (planetParam != null) takeBase(true);
+      if (!found) takeBase(false);
+      if (found) return found;
+      var teleHit = null;
+      (state.teleporters || []).forEach(function (row) {
+        if (teleHit || !row.plotted) return;
+        if (String(row.glyphs || "").toUpperCase() === glyphs) teleHit = pack("teleporter", row, true);
+      });
+      if (teleHit) return teleHit;
+      var discHit = null;
+      state.discoveries.forEach(function (sys) {
+        if (discHit) return;
+        if (String(sys.glyphs || "").toUpperCase() === glyphs) discHit = pack("discovery", sys, true);
+      });
+      if (discHit) return discHit;
+      var i;
+      for (i = 0; i < hubs.length; i++) {
+        if (String(hubs[i].glyphs || "").toUpperCase() === glyphs) return pack("hub", hubs[i], true);
+      }
+      for (i = 0; i < refs.length; i++) {
+        if (String(refs[i].glyphs || "").toUpperCase() === glyphs) return pack("ref", refs[i], true);
+      }
+      return null;
+    }
+
+    function centerOn(token, kind, opts) {
+      opts = opts || {};
+      var loc = resolveLocation(token, kind || "");
+      if (!loc) return false;
+      prepareGalaxy(loc);
+      if (!loc.plotted) {
+        selectForCenter(loc, false);
+        setStatus("That place is listed and left off the map, so it cannot be centered.");
+        return true;
+      }
+      selectForCenter(loc, !!opts.keepSelection);
+      moveToLocation(loc);
+      showPulse(loc);
+      scrollMapIntoView();
+      return true;
+    }
+
+    function selectedCenterTarget() {
+      if (state.selection.length === 1) return { id: state.selection[0], kind: "", keep: false };
+      if (state.selection.length > 1) {
+        var id = state.anchorId && state.selection.indexOf(state.anchorId) !== -1 ? state.anchorId : state.selection[0];
+        return { id: id, kind: "", keep: true };
+      }
+      if (state.selectedRef) return { id: state.selectedRef, kind: "ref", keep: true };
+      if (placePanel && !placePanel.hidden && placeBody) {
+        var panelBtn = placeBody.querySelector("button.center-on[data-center]");
+        if (panelBtn) {
+          return {
+            id: panelBtn.getAttribute("data-center"),
+            kind: panelBtn.getAttribute("data-center-kind") || "",
+            keep: true
+          };
+        }
+      }
+      return null;
     }
 
     function focusCluster(id) {
@@ -3643,6 +4142,7 @@
       });
 
       galaxy3d.setMarkers(markers);
+      if (canvas3d && galaxy3d.orbitDistance) canvas3d.dataset.distance = String(galaxy3d.orbitDistance());
       if (viewMode === "3d") syncMarquee();
     }
 
@@ -3898,6 +4398,7 @@
       });
       paintDiscoveries(ctx, c, w, h);
       paintTeleporters(ctx, c, w, h);
+      canvas.dataset.zoom = String(view.zoom);
       refLabels.forEach(function (job) {
         paintLabel(ctx, job.text, job.x, job.y, c.ink, c.base);
       });
@@ -4046,12 +4547,13 @@
           discoveryList.innerHTML = shownDisc.map(function (sys) {
             var on = isSelected(sys.id);
             var title = sys.systemName || sys.glyphs;
-            return '<li><button type="button" data-discovery="' + esc(sys.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+            return '<li><div class="loc-head"><button type="button" data-discovery="' + esc(sys.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
               '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(title) + "</span>" +
               '<span class="meta">' + esc(sys.planetCount) + " planet" + (sys.planetCount === 1 ? "" : "s") +
               " · " + esc(sys.flora) + " flora · " + esc(sys.fauna) + " fauna · " + esc(sys.minerals) + " minerals · " +
               esc(galaxyLabel(sys.galaxy)) + "</span>" +
-              '<span class="glyphs">' + esc(sys.glyphs) + " · " + esc(sys.coords) + "</span></button></li>";
+              '<span class="glyphs">' + esc(sys.glyphs) + " · " + esc(sys.coords) + "</span></button>" +
+              centerButton(sys.id, "discovery") + "</div></li>";
           }).join("") + (orderedDisc.length > cap
             ? '<li class="empty">Showing ' + cap + " of " + orderedDisc.length + " systems. Filter by glyphs or a planet name to narrow the list. The map still draws every system.</li>"
             : "");
@@ -4090,12 +4592,13 @@
             var split = (teleSplit && i === pinnedTele.splitAfter)
               ? '<li class="list-split">' + pinnedTele.splitAfter + " selected</li>"
               : "";
-            return split + '<li><button type="button" data-teleport="' + esc(row.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
+            return split + '<li><div class="loc-head"><button type="button" data-teleport="' + esc(row.id) + '" aria-pressed="' + (on ? "true" : "false") + '">' +
               '<span class="nm">' + (on ? '<span class="sel-flag">Selected</span>' : "") + esc(row.name) + "</span>" +
               '<span class="meta">' + esc(row.typeLabel) + " · " + esc(galaxyLabel(row.galaxy)) +
               (row.coords ? " · " + esc(row.coords) : "") + " · " + esc(distLabel) +
               (row.favourite ? " · Favourite" : "") + "</span>" +
-              '<span class="glyphs">' + esc(row.glyphs || "No portal address") + "</span></button></li>";
+              '<span class="glyphs">' + esc(row.glyphs || "No portal address") + "</span></button>" +
+              (row.plotted ? centerButton(row.id, "teleporter") : "") + "</div></li>";
           }).join("");
         }
       }
@@ -4137,8 +4640,9 @@
             '<span class="glyphs">' + esc(b.glyphs) + "</span>" +
             glanceHtml(summaries[b.id]) +
             "</button>" +
+            '<div class="row-tools">' + centerButton(b.id, "base") +
             '<button type="button" class="base-expand" data-expand="' + esc(b.id) + '" aria-expanded="' + (open ? "true" : "false") + '" aria-controls="' + esc(detailId) + '">' +
-            (open ? "Hide" : "Details") + "</button></div>" +
+            (open ? "Hide" : "Details") + "</button></div></div>" +
             '<div id="' + esc(detailId) + '" class="base-detail"' + (open ? "" : " hidden") + ">" + detail + "</div></li>";
         }).join("");
         bindProduction(baseList);
@@ -4324,6 +4828,7 @@
       resetView();
       saveDiscoveryCache();
       refresh();
+      openFromQuery();
       if (!parsed.planetary.length && parsed.freighters.length && !state.discoveries.length) {
         setStatus("Only freighter bases were found. They stay off the map and are listed separately. Nothing was uploaded.");
       }
@@ -4687,7 +5192,7 @@
         if (ref && state.selectedRef) {
           placeMode = "system";
           setStatus(ref.label + " — " + quadrantName(ref.quadrant) + " — " + (ref.note ? ref.note + " — " : "") + "glyphs " + ref.glyphs + " — " + ref.coords + ". Community landmark, not from your save.");
-          renderPlacePanel({ glyphs: ref.glyphs, planet: ref.planet, galaxy: 0, name: ref.label, type: "Reference", coords: ref.coords }, ref.label);
+          renderPlacePanel({ glyphs: ref.glyphs, planet: ref.planet, galaxy: 0, name: ref.label, type: "Reference", coords: ref.coords, centerId: ref.id, centerKind: "ref" }, ref.label);
         } else renderPlacePanel(null);
       } else if (h.kind === "hub") {
         var hub = hubById(h.id);
@@ -4697,7 +5202,7 @@
           renderLists();
           draw();
           setStatus(hub.label + (hub.note ? " · " + hub.note : "") + " — glyphs " + hub.glyphs + " — " + hub.coords + ". Euclid reference, not from your save.");
-          renderPlacePanel({ glyphs: hub.glyphs, planet: null, galaxy: 0, name: hub.label, type: "Hub", coords: hub.coords }, hub.label);
+          renderPlacePanel({ glyphs: hub.glyphs, planet: null, galaxy: 0, name: hub.label, type: "Hub", coords: hub.coords, centerId: hub.id, centerKind: "hub" }, hub.label);
         }
       } else if (h.kind === "center") {
         setStatus("Galactic center — voxel 0, 0, 0 on this schematic. Not a catalog star.");
@@ -4735,6 +5240,7 @@
     if (canvas3d) canvas3d.addEventListener("dblclick", handleMapDblClick);
     canvas.addEventListener("wheel", function (ev) {
       ev.preventDefault();
+      cancelCenterAnim();
       var p = localPoint(ev);
       var factor = ev.deltaY < 0 ? 1.12 : 1 / 1.12;
       if (ev.deltaMode === 1) factor = ev.deltaY < 0 ? 1.2 : 1 / 1.2;
@@ -4828,7 +5334,10 @@
       var p = pointers[ids[0]];
       var dx = p.x - drag.x;
       var dy = p.y - drag.y;
-      if (dx * dx + dy * dy > 16) drag.moved = true;
+      if (dx * dx + dy * dy > 16) {
+        drag.moved = true;
+        if (centerAnim) cancelCenterAnim();
+      }
       if (drag.marquee) {
         var gesture = gestureFromEvent(ev);
         drag.shape = gesture.shape;
@@ -4883,6 +5392,7 @@
       else if (key === "ArrowDown") view.panY -= 40;
       else return;
       ev.preventDefault();
+      cancelCenterAnim();
       clampPan();
       draw();
     });
@@ -5011,6 +5521,24 @@
       if (!state.selection.length && !state.selectedRef) return;
       state.selectedRef = null;
       commitSelection([]);
+    });
+    document.addEventListener("click", function (ev) {
+      var btn = ev.target && ev.target.closest ? ev.target.closest("button.center-on[data-center]") : null;
+      if (!btn) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      centerOn(btn.getAttribute("data-center"), btn.getAttribute("data-center-kind") || "");
+    }, true);
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key !== "c" && ev.key !== "C") return;
+      if (ev.repeat || ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) return;
+      if (isTextField(ev.target) || isTextField(document.activeElement)) return;
+      var helpOpen = document.querySelector(".help-dialog[role='dialog']:not([hidden])");
+      if (helpOpen) return;
+      var target = selectedCenterTarget();
+      if (!target) return;
+      ev.preventDefault();
+      centerOn(target.id, target.kind, { keepSelection: target.keep });
     });
     var listSort = document.getElementById("list-sort");
     var listFilter = document.getElementById("list-filter");
@@ -5141,11 +5669,12 @@
         refs.forEach(function (r) {
           if (r.quadrant !== q) return;
           var on = state.selectedRef === r.id ? "true" : "false";
-          html.push('<li><button type="button" data-ref="' + esc(r.id) + '" aria-pressed="' + on + '">' +
+          html.push('<li class="loc-head"><button type="button" data-ref="' + esc(r.id) + '" aria-pressed="' + on + '">' +
             '<span class="q">' + esc(quadrantName(r.quadrant)) + "</span> " +
             "<strong>" + esc(r.label) + "</strong>" +
             (r.note ? " — " + esc(r.note) : "") +
-            " — glyphs " + esc(r.glyphs) + " — coords " + esc(r.coords) + "</button></li>");
+            " — glyphs " + esc(r.glyphs) + " — coords " + esc(r.coords) + "</button>" +
+            centerButton(r.id, "ref") + "</li>");
         });
       });
       refList.innerHTML = html.join("");
@@ -5166,9 +5695,10 @@
     var hubList = document.getElementById("hub-list");
     if (hubList) {
       hubList.innerHTML = hubs.map(function (h) {
-        return "<li><strong>" + esc(h.label) + "</strong>" +
+        return '<li class="loc-head"><div class="loc-copy"><strong>' + esc(h.label) + "</strong>" +
           (h.note ? " — " + esc(h.note) : "") +
-          " — glyphs " + esc(h.glyphs) + " — coords " + esc(h.coords) + "</li>";
+          " — glyphs " + esc(h.glyphs) + " — coords " + esc(h.coords) + "</div>" +
+          centerButton(h.id, "hub") + "</li>";
       }).join("");
     }
 
@@ -5321,6 +5851,8 @@
         canvas3d.setAttribute("aria-hidden", viewMode === "3d" ? "false" : "true");
       }
       aim = null;
+      cancelCenterAnim();
+      if (galaxy3d && galaxy3d.cancelMove) galaxy3d.cancelMove();
       if (galaxy3d) {
         galaxy3d.setEnabled(viewMode === "3d");
         if (viewMode !== "3d") galaxy3d.setMarquee(null);
@@ -5429,6 +5961,7 @@
         canvas3d.addEventListener("keydown", function (ev) {
           if (viewMode !== "3d" || !galaxy3d) return;
           var key = ev.key;
+          if (key === "c" || key === "C") return;
           if (key === "+" || key === "=") {
             var zin = zoomAnchor();
             zoomBy(1.25, zin.x, zin.y);
@@ -5442,7 +5975,11 @@
           else if (key === "ArrowDown") galaxy3d.controls.rotateUp(-0.07);
           else return;
           ev.preventDefault();
+          if (galaxy3d.cancelMove) galaxy3d.cancelMove();
         });
+        canvas3d.addEventListener("wheel", function () {
+          if (galaxy3d && galaxy3d.cancelMove) galaxy3d.cancelMove();
+        }, { passive: true });
       }
     }
 
@@ -5493,15 +6030,21 @@
 
     function showDiscovery(sys, ids) {
       if (!sys) return;
-      state.galaxy = sys.galaxy == null ? 0 : sys.galaxy;
-      if (galaxySel) galaxySel.value = String(state.galaxy);
-      if (showHubs) showHubs.disabled = state.galaxy !== 0;
-      if (showDiscoveries) showDiscoveries.checked = true;
-      focusDiscovery(sys.id);
-      commitSelection(ids || [sys.id], sys.id);
+      if (ids && ids.length > 1) {
+        state.galaxy = sys.galaxy == null ? 0 : sys.galaxy;
+        if (galaxySel) galaxySel.value = String(state.galaxy);
+        if (showHubs) showHubs.disabled = state.galaxy !== 0;
+        if (showDiscoveries) showDiscoveries.checked = true;
+        commitSelection(ids, sys.id);
+        centerOn(sys.id, "discovery", { keepSelection: true });
+        return;
+      }
+      centerOn(sys.id, "discovery");
     }
 
     function openFromQuery() {
+      var token = parseFocusParam(window.location.search, window.location.hash);
+      if (token && centerOn(token, "")) return;
       var params = new URLSearchParams(window.location.search);
       var layer = params.get("layer") || "";
       var api = logisticsApi();
@@ -5544,8 +6087,7 @@
         if (showHubs) showHubs.disabled = state.galaxy !== 0;
       }
       placeMode = "base";
-      if (!freight) focusCluster(match.id);
-      commitSelection([match.id], match.id);
+      centerOn(match.id, freight ? "freighter" : "base");
     }
     openFromQuery();
     window.addEventListener("load", openFromQuery);
@@ -5621,6 +6163,17 @@
     clumpOffset: clumpOffset,
     clumpZoomForGap: clumpZoomForGap,
     panToMarker: panToMarker,
+    CENTER_ZOOM: CENTER_ZOOM,
+    CENTER_DISTANCE: CENTER_DISTANCE,
+    CENTER_MS: CENTER_MS,
+    CENTER_PULSE_MS: CENTER_PULSE_MS,
+    easeOutCubic: easeOutCubic,
+    centerZoomLevel: centerZoomLevel,
+    centerDistance: centerDistance,
+    markerScreenPoint: markerScreenPoint,
+    centerView: centerView,
+    interpolateCenter: interpolateCenter,
+    parseFocusParam: parseFocusParam,
     pointInRect: pointInRect,
     pointInCircle: pointInCircle,
     mapToScreen: mapToScreen,

@@ -2157,6 +2157,7 @@
     if (place && place.planet != null && place.planet !== "") params.set("planet", String(place.planet));
     if (place && place.galaxy != null && place.galaxy !== "") params.set("galaxy", String(place.galaxy));
     if (place && place.name) params.set("base", place.name);
+    if (place && place.focus) params.set("focus", String(place.focus));
     var q = params.toString();
     return q ? "?" + q : "";
   }
