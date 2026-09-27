@@ -628,16 +628,34 @@
       return changed;
     }
 
-    function focus(x, y, z, dist) {
+    function orbitDistance() {
+      return camera.position.distanceTo(controls.target);
+    }
+
+    function focus(x, y, z, dist, opts) {
+      opts = opts || {};
       var endTarget = new THREE.Vector3(x || 0, y || 0, z || 0);
       var offset = camera.position.clone().sub(controls.target);
       if (offset.lengthSq() < 1) offset.set(0.72, 0.42, 0.78);
-      var next = dist > 0 ? dist : Math.max(80, offset.length() * 0.45);
+      var current = offset.length();
+      var next = dist > 0 ? dist : Math.max(80, current * 0.45);
+      if (opts.keepCloser && current < next) next = current;
       next = Math.max(controls.minDistance, Math.min(controls.maxDistance, next));
       offset.setLength(next);
+      var dur = opts.duration > 0 && isFinite(opts.duration) ? opts.duration : 680;
+      if (opts.instant || dur <= 0) {
+        cancelFocus();
+        controls.target.copy(endTarget);
+        camera.position.copy(endTarget).add(offset);
+        controls.enableDamping = false;
+        controls.update();
+        controls.enableDamping = true;
+        layoutLabels();
+        return;
+      }
       focusAnim = {
         t0: performance.now(),
-        dur: 680,
+        dur: dur,
         fromT: controls.target.clone(),
         fromP: camera.position.clone(),
         toT: endTarget,
@@ -782,6 +800,8 @@
       screenBasis: screenBasis,
       distanceTo: distanceTo,
       focus: focus,
+      cancelMove: cancelFocus,
+      orbitDistance: orbitDistance,
       fit: fit,
       zoomAt: zoomAt,
       setMarquee: setMarquee,
