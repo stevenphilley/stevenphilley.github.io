@@ -222,7 +222,7 @@ function showMatch(title, groom, bride, expect) {
 var ex1g = Koota.chartFromNakPada(0, 1);
 var ex1b = Koota.chartFromNakPada(0, 2);
 var ex1 = showMatch("Example 1 — same nakshatra, different pada (Ashwini 1 and Ashwini 2)", ex1g, ex1b, {
-  varna: 1, vashya: 2, tara: 0, yoni: 4, graha: 5, gana: 6, bhakoot: 7, nadi: 0, total: 25, band: "good"
+  varna: 1, vashya: 2, tara: 3, yoni: 4, graha: 5, gana: 6, bhakoot: 7, nadi: 0, total: 28, band: "good"
 });
 assert(ex1.cancellations.some(function (c) {
   return c.koota === "Nadi" && c.rule.indexOf("different padas") !== -1;
@@ -274,6 +274,20 @@ assert(purva.vashya === "Chatushpada", "the pada midpoint is scored on the secon
 var shravana = Koota.chartFromNakPada(21, 2);
 assert(shravana.vashyaSplit && shravana.vashyaSplit.below === "Chatushpada" && shravana.vashyaSplit.above === "Jalachara", "Shravana pada 2 crosses the Capricorn split");
 assert(Koota.chartFromNakPada(19, 2).vashyaSplit == null, "Purva Ashadha pada 2 does not cross 15°");
+
+/* 27×27 Tara table: Janma (remainder 1) is auspicious, so the diagonal is 3.
+ * Only remainders 3, 5, and 7 are inauspicious, and each of those pairs
+ * with an auspicious return count, so off-diagonal cells are 3 or 1.5.
+ */
+for (var tg = 0; tg < 27; tg++) {
+  for (var tb = 0; tb < 27; tb++) {
+    var taraPts = Koota.match(Koota.chartFromNakPada(tg, 1), Koota.chartFromNakPada(tb, 1)).parts.tara.points;
+    if (tg === tb) assert(taraPts === 3, "tara diagonal nak " + tg + " got " + taraPts);
+    else assert(taraPts === 3 || taraPts === 1.5, "tara " + tg + "/" + tb + " got " + taraPts);
+  }
+}
+var vipat = Koota.match(Koota.chartFromNakPada(2, 1), Koota.chartFromNakPada(0, 1));
+assert(vipat.parts.tara.fromBrideToGroom.index === 3 && vipat.parts.tara.points === 1.5, "count 3 Vipat one way scores 1.5");
 
 /* Published tara walk-through: bride Ashwini, groom Rohini.
  * Inclusive counts are 4 (Kshema) and 25 (Vadha), so one direction only: 1.5.

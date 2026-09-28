@@ -158,12 +158,18 @@
   var TARA_NAMES = [
     "", "Janma", "Sampat", "Vipat", "Kshema", "Pratyari", "Sadhana", "Vadha", "Mitra", "Ati Mitra"
   ];
-  var TARA_AUSPICIOUS = { 2: 1, 4: 1, 6: 1, 8: 1, 9: 1 };
+  /*
+   * Mainstream North Indian 27×27 Tara table. Remainders 3 (Vipat),
+   * 5 (Pratyak), and 7 (Vadha) are inauspicious. Janma (1, and the
+   * repeats at 10 and 19) is auspicious, so the same-nakshatra diagonal
+   * is 3. A remainder of 0 is Ati Mitra (9).
+   */
+  var TARA_AUSPICIOUS = { 1: 1, 2: 1, 4: 1, 6: 1, 8: 1, 9: 1 };
 
   var KOOTA_META = [
     { id: "varna", name: "Varna", max: 1, about: "A traditional ranking of the Moon signs, read as spiritual temperament. The point is given when the groom’s varna is the same as the bride’s, or stands above it in the order Brahmin, Kshatriya, Vaishya, Shudra." },
     { id: "vashya", name: "Vashya", max: 2, about: "Mutual attraction, from the creature-class of each Moon sign: quadruped, human, water, wild, or insect. Sagittarius and Capricorn are split at 15°." },
-    { id: "tara", name: "Tara", max: 3, about: "The nakshatra count from bride to groom and from groom to bride. Auspicious remainders (2, 4, 6, 8, 9) in both directions score 3; one direction scores 1.5; neither scores 0. Traditionally read for wellbeing." },
+    { id: "tara", name: "Tara", max: 3, about: "The nakshatra count from bride to groom and from groom to bride. Auspicious remainders are 1 (Janma), 2, 4, 6, 8, and 0 or 9. Inauspicious remainders are 3 (Vipat), 5 (Pratyak), and 7 (Vadha). Both directions auspicious scores 3; one scores 1.5. The same nakshatra is Janma both ways, so it scores 3. Traditionally read for wellbeing." },
     { id: "yoni", name: "Yoni", max: 4, about: "Instinct and physical compatibility, from the animal assigned to each nakshatra. Same animal scores 4. The seven classical enemy pairs score 0." },
     { id: "graha", name: "Graha Maitri", max: 5, about: "Natural friendship between the planets that rule the two Moon signs. Traditionally read as mental rapport. Same lord or mutual friends score 5." },
     { id: "gana", name: "Gana", max: 6, about: "Temperament of the nakshatra: deva, manushya, or rakshasa. Like with like scores 6." },

@@ -40,8 +40,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 @media (min-width:1100px){
   .bench{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}
 }
-.role{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 14px;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px)}
-.role span{letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--ink-soft);font-size:var(--fs-11,13px)}
+.role{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:0 0 14px;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px)}
+.role > span{flex:1 0 100%;letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--ink-soft);font-size:var(--fs-11,13px)}
 .people{display:grid;gap:16px}
 @media (min-width:720px){
   .people{grid-template-columns:1fr 1fr}
@@ -54,10 +54,16 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 label,legend{font-family:var(--font-ui,sans-serif);font-size:var(--fs-11,13px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;color:var(--ink-soft)}
 .field{display:grid;gap:6px;margin:0 0 12px}
 input,select{width:100%;box-sizing:border-box;background:transparent;color:var(--ink);border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 28%,transparent);font-family:var(--font-ui,sans-serif);font-size:16px;padding:8px 0;outline:none}
+input[type="radio"],input[type="checkbox"]{width:1.05em;height:1.05em;min-width:1.05em;margin:0;padding:0;flex:0 0 auto;accent-color:var(--accent);border:0;background:transparent}
 select{background:var(--base-2)}
-input:focus,select:focus{border-bottom-color:var(--accent)}
-.choices{display:flex;flex-wrap:wrap;gap:8px 14px;border:0;padding:0;margin:0 0 12px}
-.choices label{display:flex;gap:6px;align-items:center;text-transform:none;letter-spacing:0;font-size:var(--fs-13,15px);color:var(--ink);cursor:pointer}
+input:not([type="radio"]):not([type="checkbox"]):focus,select:focus{border-bottom-color:var(--accent)}
+.choices{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;margin:0 0 12px}
+.role label,.choices label{display:inline-flex;flex:1 1 auto;align-items:center;gap:8px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);text-transform:none;letter-spacing:0;line-height:1.2;white-space:nowrap;font-size:var(--fs-13,15px);color:var(--ink);cursor:pointer}
+.role label:has(input:checked),.choices label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.role label:focus-within,.choices label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:520px){
+  .role label,.choices label{flex:1 1 100%}
+}
 .city-wrap{position:relative}
 .city-list{position:absolute;z-index:5;left:0;right:0;top:100%;margin:0;padding:0;list-style:none;background:var(--base,#1c1724);border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);max-height:240px;overflow:auto}
 .city-opt{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink);font-family:var(--font-ui,sans-serif);font-size:15px;padding:8px 10px;cursor:pointer}
@@ -228,7 +234,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
       <p>The eight weights are the standard North Indian set: Varna 1, Vashya 2, Tara 3, Yoni 4, Graha Maitri 5, Gana 6, Bhakoot 7, Nadi 8. The bands on this page are under 18 not recommended, 18–24 average, 25–32 good, 33–36 excellent. The floor of 18 is the figure repeated from Rāma Daivajña’s <cite>Muhūrta Cintāmaṇi</cite>. The four bands are the scale printed in contemporary North Indian panchangs and in the line of B. V. Raman’s <cite>Muhurtha</cite>. Some writers start “good” at 24 rather than 25; the bands here do not overlap.</p>
       <p>Varna follows the triplicity used by most North Indian software: water signs Brahmin, fire Kshatriya, earth Vaishya, air Shudra. The point is given when the groom’s rank is the same or higher. Raman’s list differs (Libra as Kshatriya, Aries, Gemini, and Aquarius as Vaishya, Taurus, Virgo, and Capricorn as Shudra). That list is not used for the score.</p>
       <p>Vashya keeps the classical half-signs. Sagittarius is human in the first 15° and quadruped after. Capricorn is quadruped in the first 15° and aquatic after. Leo is wild, Scorpio is insect. The groom’s class is the row and the bride’s is the column: 2 for the same class, 1 for most mixes, 0.5 for human with aquatic, and 0 when the groom is wild and the bride is anything else. A water-sign groom with a Leo bride scores 1. An older table gives 1.5 for some of those mixes, including quadruped with wild in one direction. That older table is not used for the score. Purva Ashadha pada 1 and Shravana pada 2 cross the 15° line, so a nakshatra entered without a degree is scored on the second half and the other total is shown beside it.</p>
-      <p>Tara is counted both ways, bride to groom and groom to bride, including the starting nakshatra. Remainders 2, 4, 6, 8, and 9 are auspicious. Both auspicious scores 3, one scores 1.5, neither scores 0. Some manuals count only from the bride’s nakshatra and allow only 0 or 3.</p>
+      <p>Tara is counted both ways, bride to groom and groom to bride, including the starting nakshatra. Divide the count by 9. Auspicious remainders are 1 (Janma), 2 (Sampat), 4 (Kshema), 6 (Sadhana), 8 (Mitra), and 0 or 9 (Ati Mitra). Inauspicious remainders are 3 (Vipat), 5 (Pratyak), and 7 (Vadha). Both directions auspicious scores 3; one scores 1.5. The same nakshatra is Janma both ways, so the diagonal of the usual 27×27 table is 3. With these remainders the two directions are never both inauspicious, so that table has no 0. A Janma-tara variant treats remainder 1 as inauspicious and scores the diagonal 0; some electional notes do the same, and an even/odd shortcut (odd remainders bad) does too. That variant is not used for the score. Some manuals count only from the bride’s nakshatra and allow only 0 or 3.</p>
       <p>Yoni uses the 14-animal matrix with the groom’s animal as the row and the bride’s as the column, including the seven enemy pairs at 0 (horse/buffalo, elephant/lion, sheep/monkey, serpent/mongoose, dog/deer, cat/rat, cow/tiger). A few cells are not symmetric. The male or female label of the yoni is shown and does not change the points. Some remarks treat two male yonies as quarrelsome; that remark is not subtracted.</p>
       <p>Graha Maitri uses natural friendship from <cite>Bṛhat Parāśara Horā Śāstra</cite>, not temporary friendship from the chart. Same lord or mutual friends score 5, friend and neutral 4, both neutral 3, friend and enemy 1, neutral and enemy 0.5, mutual enemies 0.</p>
       <p>Gana gives 6 for the same group, 6 for a deva groom with a manushya bride, 5 for a manushya groom with a deva bride, 1 for a deva groom with a rakshasa bride, and 0 for the other deva/rakshasa and manushya/rakshasa pairs. Some tables give 0 for every deva–rakshasa pair, and some give 5 rather than 6 for deva groom with manushya bride.</p>
@@ -252,7 +258,7 @@ dialog::backdrop{background:rgba(0,0,0,.55)}
   <p>Enter two people. A name is optional. For a calculated Moon, give the birth date, the birth time, and a place. Pick a city, or type latitude, longitude (east positive), and the UTC offset in force that day, such as +05:30.</p>
   <p>If you already know the Moon’s nakshatra and pada, choose that instead. The sign is then fixed by the pada. Birth time is still required for Manglik, because the ascendant needs the clock and the place. Manglik stays hidden until time and place are present.</p>
   <p>Person A is the groom and Person B the bride unless you switch them. That switch matters for Varna, Vashya, Tara, and Gana. It is the traditional boy/girl direction of those kootas, not a claim about gender.</p>
-  <p>The total is out of 36. Under 18 was traditionally not recommended, 18–24 is average, 25–32 good, 33–36 excellent. Read the line under each koota for what that row was meant to describe. Open “Show the working” for the degrees and the table cells.</p>
+  <p>The total is out of 36. Under 18 was traditionally not recommended, 18–24 is average, 25–32 good, 33–36 excellent. Read the line under each koota for what that row was meant to describe. Open “Show the working” for the degrees and the table cells. Tara counts both ways: remainders 1, 2, 4, 6, 8, and 0 or 9 are auspicious, and 3, 5, and 7 are not. The same nakshatra scores 3.</p>
   <p>If the Moon sits within about a quarter of a degree of a nakshatra, pada, or sign boundary, the page says so and shows the other result. A birth time that is off by half an hour can cross that line. Nadi and Bhakoot exceptions are listed separately and are not quietly added into the score.</p>
   <p>Nothing leaves the browser. Remember is off until you tick it, and it only writes to local storage on this machine.</p>
   <form method="dialog"><button class="text-btn" type="submit">Close</button></form>
