@@ -39,6 +39,7 @@ class MetaGrab(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=True)
         self.title_parts: list[str] = []
+        self.in_head = False
         self.in_title = False
         self.description = ""
         self.canonical = ""
@@ -47,7 +48,9 @@ class MetaGrab(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         a = {k.lower(): (v or "") for k, v in attrs}
-        if tag == "title":
+        if tag == "head":
+            self.in_head = True
+        elif tag == "title" and self.in_head:
             self.in_title = True
         elif tag == "meta":
             name = (a.get("name") or a.get("property") or "").lower()
@@ -62,7 +65,9 @@ class MetaGrab(HTMLParser):
             self.canonical = a.get("href") or ""
 
     def handle_endtag(self, tag):
-        if tag == "title":
+        if tag == "head":
+            self.in_head = False
+        elif tag == "title":
             self.in_title = False
 
     def handle_data(self, data):
