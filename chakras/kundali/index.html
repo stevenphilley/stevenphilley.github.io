@@ -1,0 +1,273 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kundali matching — Ashtakoota guna milan — Steven Philley</title>
+<meta name="description" content="North Indian Ashtakoota kundali matching, 36 guna points, from birth date, time, and place or from a Moon nakshatra. Lahiri ayanamsa, computed in the browser. Nothing is uploaded.">
+<link rel="canonical" href="https://stevenphilley.com/chakras/kundali/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Kundali matching — Ashtakoota guna milan">
+<meta property="og:description" content="Thirty-six guna points from the two Moon nakshatras. Birth time stays in the browser.">
+<meta property="og:url" content="https://stevenphilley.com/chakras/kundali/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-chakras.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kundali matching — Ashtakoota guna milan">
+<meta name="twitter:description" content="North Indian 36-point guna milan, computed locally.">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-chakras.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.e-wrap{max-width:1120px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 80px}
+.kicker{font-family:var(--font-ui,sans-serif);font-size:var(--fs-11,13px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 10px}
+.hero{padding:clamp(28px,5vw,56px) 0 18px;border-bottom:1px solid color-mix(in srgb,var(--ink) 18%,transparent)}
+.hero h1{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-weight:400;font-size:clamp(46px,8vw,84px);line-height:.9;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,sans-serif);font-size:var(--fs-135,16px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.hero-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:16px}
+.hero-row button,.text-btn{appearance:none;background:transparent;border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);color:var(--ink);font-family:var(--font-ui,sans-serif);font-size:var(--fs-12,14px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;padding:8px 12px;cursor:pointer}
+.hero-row button:hover,.text-btn:hover,.hero-row button:focus-visible,.text-btn:focus-visible{border-color:var(--accent);outline:2px solid var(--accent);outline-offset:2px}
+.note{margin:14px 0 0;max-width:68ch;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);line-height:var(--lh-prose,1.6);color:var(--ink-soft)}
+.bench{display:grid;grid-template-columns:1fr;gap:28px;padding-top:22px}
+@media (min-width:1100px){
+  .bench{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:start}
+}
+.role{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch;margin:0 0 14px;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px)}
+.role > span{flex:1 0 100%;letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--ink-soft);font-size:var(--fs-11,13px)}
+.people{display:grid;gap:16px}
+@media (min-width:720px){
+  .people{grid-template-columns:1fr 1fr}
+}
+@media (min-width:1100px){
+  .people{grid-template-columns:1fr}
+}
+.card{border:1px solid color-mix(in srgb,var(--ink) 22%,transparent);padding:14px 14px 16px;background:color-mix(in srgb,var(--ink) 4%,var(--base-2))}
+.card h2{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-weight:400;font-size:32px;letter-spacing:.04em;margin:0 0 10px}
+label,legend{font-family:var(--font-ui,sans-serif);font-size:var(--fs-11,13px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;color:var(--ink-soft)}
+.field{display:grid;gap:6px;margin:0 0 12px}
+input,select{width:100%;box-sizing:border-box;background:transparent;color:var(--ink);border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 28%,transparent);font-family:var(--font-ui,sans-serif);font-size:16px;padding:8px 0;outline:none}
+input[type="radio"],input[type="checkbox"]{width:1.05em;height:1.05em;min-width:1.05em;margin:0;padding:0;flex:0 0 auto;accent-color:var(--accent);border:0;background:transparent}
+select{background:var(--base-2)}
+input:not([type="radio"]):not([type="checkbox"]):focus,select:focus{border-bottom-color:var(--accent)}
+.choices{display:flex;flex-wrap:wrap;gap:8px;border:0;padding:0;margin:0 0 12px}
+.role label,.choices label{display:inline-flex;flex:1 1 auto;align-items:center;gap:8px;margin:0;padding:8px 12px;border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);text-transform:none;letter-spacing:0;line-height:1.2;white-space:nowrap;font-size:var(--fs-13,15px);color:var(--ink);cursor:pointer}
+.role label:has(input:checked),.choices label:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.role label:focus-within,.choices label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:520px){
+  .role label,.choices label{flex:1 1 100%}
+}
+.city-wrap{position:relative}
+.city-list{position:absolute;z-index:5;left:0;right:0;top:100%;margin:0;padding:0;list-style:none;background:var(--base,#1c1724);border:1px solid color-mix(in srgb,var(--ink) 28%,transparent);max-height:240px;overflow:auto}
+.city-opt{display:block;width:100%;text-align:left;background:transparent;border:0;border-bottom:1px solid color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink);font-family:var(--font-ui,sans-serif);font-size:15px;padding:8px 10px;cursor:pointer}
+.city-opt:hover,.city-opt:focus-visible{background:color-mix(in srgb,var(--accent) 18%,transparent);outline:none}
+.manual{display:none}
+.card[data-place="manual"] .manual{display:grid;gap:8px}
+.card[data-place="manual"] .city-block{display:none}
+.nak-block{display:none}
+.card[data-mode="nakshatra"] .nak-block{display:block}
+.hint{margin:0;font-family:var(--font-ui,sans-serif);font-size:var(--fs-12,14px);line-height:1.45;color:var(--ink-soft)}
+.msg{min-height:1.2em;margin:8px 0 0;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);color:var(--accent)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:8px}
+.remember{display:flex;gap:8px;align-items:center;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);color:var(--ink-soft);text-transform:none;letter-spacing:0}
+.score{border-top:1px solid color-mix(in srgb,var(--ink) 22%,transparent);padding-top:8px}
+.score-kicker{font-family:var(--font-ui,sans-serif);font-size:var(--fs-11,13px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--accent);margin:0}
+.score-num{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-size:clamp(72px,12vw,120px);line-height:.85;margin:6px 0}
+.score-num small{font-size:.42em;letter-spacing:.04em}
+.score-band{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-size:36px;margin:0;letter-spacing:.06em}
+.bar{height:8px;margin:12px 0;background:color-mix(in srgb,var(--ink) 16%,transparent)}
+.bar span{display:block;height:100%;background:var(--accent)}
+.score-read,.exceptions p,.manglik p,.working p,.warn p,.fine{font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);line-height:var(--lh-prose,1.6);color:var(--ink-soft)}
+.kootas{width:100%;border-collapse:collapse;margin:18px 0;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px)}
+.kootas caption{text-align:left;font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-size:28px;letter-spacing:.05em;margin-bottom:6px;color:var(--ink)}
+.kootas th,.kootas td{text-align:left;vertical-align:top;padding:8px 8px 8px 0;border-top:1px solid color-mix(in srgb,var(--ink) 16%,transparent);font-weight:400}
+.kootas .num{white-space:nowrap;font-variant-numeric:tabular-nums}
+.pair{display:grid;gap:14px}
+@media (min-width:700px){.pair{grid-template-columns:1fr 1fr}}
+.pair h2,.exceptions h2,.manglik h2,.warn h2,.working h3{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-weight:400;letter-spacing:.04em;font-size:28px;margin:16px 0 8px}
+.pair dl{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:0}
+.pair dt{font-family:var(--font-ui,sans-serif);font-size:var(--fs-11,13px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;color:var(--ink-soft)}
+.pair dd{margin:0;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px)}
+.warn{border-left:3px solid var(--accent);padding:4px 0 4px 12px;margin-top:8px}
+.exceptions ul,.working ul,.sources{margin:8px 0 0;padding-left:1.1em}
+.exceptions li,.working li,.sources li{font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);line-height:var(--lh-prose,1.55);color:var(--ink-soft);margin:6px 0}
+details{margin-top:16px;border-top:1px solid color-mix(in srgb,var(--ink) 18%,transparent);padding-top:8px}
+summary{cursor:pointer;font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;color:var(--accent)}
+.sources a{color:var(--ink)}
+dialog{max-width:42rem;width:calc(100% - 28px);background:var(--base-2);color:var(--ink);border:1px solid color-mix(in srgb,var(--ink) 30%,transparent);padding:18px 18px 16px}
+dialog h2{font-family:var(--font-display,"Bebas Neue",Impact,sans-serif);font-weight:400;font-size:36px;margin:0 0 8px}
+dialog p{font-family:var(--font-ui,sans-serif);font-size:var(--fs-13,15px);line-height:1.55;color:var(--ink-soft)}
+dialog::backdrop{background:rgba(0,0,0,.55)}
+@media (max-width:420px){
+  .kootas thead{display:none}
+  .kootas,.kootas tbody,.kootas tr,.kootas td,.kootas th{display:block;width:100%}
+  .kootas tr{padding:8px 0;border-top:1px solid color-mix(in srgb,var(--ink) 16%,transparent)}
+  .kootas td,.kootas th{border:0;padding:2px 0}
+}
+@media print{
+  .sp-primary,.sp-site-footer,.no-print,dialog{display:none !important}
+  body,.e-wrap{background:#fff !important;color:#111 !important}
+  .card,.score,.pair article,details{break-inside:avoid}
+  a{color:#111;text-decoration:none}
+  .bar span{background:#111}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+<div class="e-wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/chakras/">Nine chakras</a>
+      <a href="/chakras/kundali/" aria-current="page">Kundali matching</a>
+    </div>
+  </div>
+
+  <header class="hero">
+    <p class="kicker">Chakras · Matching</p>
+    <h1>Kundali matching</h1>
+    <p class="lede">Ashtakoota guna milan, the 36-point match used in North Indian panchang practice. It compares the two Moon nakshatras — varna, vashya, tara, yoni, graha maitri, gana, bhakoot, and nadi — and adds them to a total out of 36.</p>
+    <div class="hero-row no-print">
+      <button type="button" id="help-open">? How to read this</button>
+      <button type="button" id="example">Fill an example</button>
+    </div>
+    <p class="note">This is a traditional Vedic astrology practice, a cultural way of reading a proposed match. It is not a scientific prediction of a marriage. The figures are computed in this browser. Nothing is sent anywhere, and nothing is stored unless you tick Remember.</p>
+  </header>
+
+  <noscript><p class="note">This page calculates in the browser. Enable JavaScript to run a match. The notes further down still describe the eight kootas.</p></noscript>
+
+  <div class="bench">
+    <form id="match-form">
+      <fieldset class="role">
+        <span>Traditional roles</span>
+        <label><input type="radio" name="groom" id="groom-a" value="A" checked> Person A is the groom</label>
+        <label><input type="radio" name="groom" id="groom-b" value="B"> Person B is the groom</label>
+      </fieldset>
+      <p class="hint">The labels are not locked to gender. Varna, vashya, tara, and gana are asymmetric, so the groom and bride roles change the score. The default is A as groom and B as bride. In the older manuals those roles are boy and girl.</p>
+
+      <div class="people">
+        <fieldset class="card" data-who="A" data-mode="birth" data-place="city">
+          <h2>Person A</h2>
+          <label class="field">Name, optional<input data-field="name" type="text" autocomplete="off" maxlength="80"></label>
+          <div class="choices">
+            <label><input type="radio" data-field="mode" name="mode-a" value="birth" checked> Birth details</label>
+            <label><input type="radio" data-field="mode" name="mode-a" value="nakshatra"> I know the Moon nakshatra</label>
+          </div>
+          <div class="nak-block">
+            <label class="field">Nakshatra<select data-field="nak"><option value="">Choose</option></select></label>
+            <label class="field">Pada<select data-field="pada"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+            <p class="hint">Birth time and place are optional here. Add them if you also want Manglik, which needs the ascendant.</p>
+          </div>
+          <label class="field">Birth date<input data-field="date" type="date"></label>
+          <label class="field">Birth time<input data-field="time" type="time" step="1"></label>
+          <div class="choices">
+            <label><input type="radio" data-field="placeMode" name="place-a" value="city" checked> City</label>
+            <label><input type="radio" data-field="placeMode" name="place-a" value="manual"> Latitude and longitude</label>
+          </div>
+          <div class="city-block">
+            <label class="field city-wrap">City
+              <input data-field="city" type="text" autocomplete="off" placeholder="Start typing — Mumbai, Chennai, London">
+              <div class="city-list" data-field="city-list" hidden></div>
+            </label>
+          </div>
+          <div class="manual">
+            <label class="field">Latitude, north positive<input data-field="lat" type="text" inputmode="decimal" placeholder="19.076"></label>
+            <label class="field">Longitude, east positive<input data-field="lon" type="text" inputmode="decimal" placeholder="72.8777"></label>
+            <label class="field">UTC offset<input data-field="offset" type="text" placeholder="+05:30"></label>
+          </div>
+          <p class="msg" data-field="msg" role="status"></p>
+        </fieldset>
+
+        <fieldset class="card" data-who="B" data-mode="birth" data-place="city">
+          <h2>Person B</h2>
+          <label class="field">Name, optional<input data-field="name" type="text" autocomplete="off" maxlength="80"></label>
+          <div class="choices">
+            <label><input type="radio" data-field="mode" name="mode-b" value="birth" checked> Birth details</label>
+            <label><input type="radio" data-field="mode" name="mode-b" value="nakshatra"> I know the Moon nakshatra</label>
+          </div>
+          <div class="nak-block">
+            <label class="field">Nakshatra<select data-field="nak"><option value="">Choose</option></select></label>
+            <label class="field">Pada<select data-field="pada"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
+            <p class="hint">Birth time and place are optional here. Add them if you also want Manglik, which needs the ascendant.</p>
+          </div>
+          <label class="field">Birth date<input data-field="date" type="date"></label>
+          <label class="field">Birth time<input data-field="time" type="time" step="1"></label>
+          <div class="choices">
+            <label><input type="radio" data-field="placeMode" name="place-b" value="city" checked> City</label>
+            <label><input type="radio" data-field="placeMode" name="place-b" value="manual"> Latitude and longitude</label>
+          </div>
+          <div class="city-block">
+            <label class="field city-wrap">City
+              <input data-field="city" type="text" autocomplete="off" placeholder="Start typing — Mumbai, Chennai, London">
+              <div class="city-list" data-field="city-list" hidden></div>
+            </label>
+          </div>
+          <div class="manual">
+            <label class="field">Latitude, north positive<input data-field="lat" type="text" inputmode="decimal" placeholder="13.0878"></label>
+            <label class="field">Longitude, east positive<input data-field="lon" type="text" inputmode="decimal" placeholder="80.2785"></label>
+            <label class="field">UTC offset<input data-field="offset" type="text" placeholder="+05:30"></label>
+          </div>
+          <p class="msg" data-field="msg" role="status"></p>
+        </fieldset>
+      </div>
+
+      <div class="actions no-print">
+        <button class="text-btn" type="submit">Calculate</button>
+        <label class="remember"><input type="checkbox" id="remember"> Remember on this browser</label>
+      </div>
+      <p class="msg" id="form-msg" role="status"></p>
+    </form>
+
+    <div id="result" hidden></div>
+  </div>
+
+  <details>
+    <summary>Notes on conventions</summary>
+    <div class="fine">
+      <p>The eight weights are the standard North Indian set: Varna 1, Vashya 2, Tara 3, Yoni 4, Graha Maitri 5, Gana 6, Bhakoot 7, Nadi 8. The bands on this page are under 18 not recommended, 18–24 average, 25–32 good, 33–36 excellent. The floor of 18 is the figure repeated from Rāma Daivajña’s <cite>Muhūrta Cintāmaṇi</cite>. The four bands are the scale printed in contemporary North Indian panchangs and in the line of B. V. Raman’s <cite>Muhurtha</cite>. Some writers start “good” at 24 rather than 25; the bands here do not overlap.</p>
+      <p>Varna follows the triplicity used by most North Indian software: water signs Brahmin, fire Kshatriya, earth Vaishya, air Shudra. The point is given when the groom’s rank is the same or higher. Raman’s list differs (Libra as Kshatriya, Aries, Gemini, and Aquarius as Vaishya, Taurus, Virgo, and Capricorn as Shudra). That list is not used for the score.</p>
+      <p>Vashya keeps the classical half-signs. Sagittarius is human in the first 15° and quadruped after. Capricorn is quadruped in the first 15° and aquatic after. Leo is wild, Scorpio is insect. The groom’s class is the row and the bride’s is the column: 2 for the same class, 1 for most mixes, 0.5 for human with aquatic, and 0 when the groom is wild and the bride is anything else. A water-sign groom with a Leo bride scores 1. An older table gives 1.5 for some of those mixes, including quadruped with wild in one direction. That older table is not used for the score. Purva Ashadha pada 1 and Shravana pada 2 cross the 15° line, so a nakshatra entered without a degree is scored on the second half and the other total is shown beside it.</p>
+      <p>Tara is counted both ways, bride to groom and groom to bride, including the starting nakshatra. Divide the count by 9. Auspicious remainders are 1 (Janma), 2 (Sampat), 4 (Kshema), 6 (Sadhana), 8 (Mitra), and 0 or 9 (Ati Mitra). Inauspicious remainders are 3 (Vipat), 5 (Pratyak), and 7 (Vadha). Both directions auspicious scores 3; one scores 1.5. The same nakshatra is Janma both ways, so the diagonal of the usual 27×27 table is 3. With these remainders the two directions are never both inauspicious, so that table has no 0. A Janma-tara variant treats remainder 1 as inauspicious and scores the diagonal 0; some electional notes do the same, and an even/odd shortcut (odd remainders bad) does too. That variant is not used for the score. Some manuals count only from the bride’s nakshatra and allow only 0 or 3.</p>
+      <p>Yoni uses the 14-animal matrix with the groom’s animal as the row and the bride’s as the column, including the seven enemy pairs at 0 (horse/buffalo, elephant/lion, sheep/monkey, serpent/mongoose, dog/deer, cat/rat, cow/tiger). A few cells are not symmetric. The male or female label of the yoni is shown and does not change the points. Some remarks treat two male yonies as quarrelsome; that remark is not subtracted.</p>
+      <p>Graha Maitri uses natural friendship from <cite>Bṛhat Parāśara Horā Śāstra</cite>, not temporary friendship from the chart. Same lord or mutual friends score 5, friend and neutral 4, both neutral 3, friend and enemy 1, neutral and enemy 0.5, mutual enemies 0.</p>
+      <p>Gana gives 6 for the same group, 6 for a deva groom with a manushya bride, 5 for a manushya groom with a deva bride, 1 for a deva groom with a rakshasa bride, and 0 for the other deva/rakshasa and manushya/rakshasa pairs. Some tables give 0 for every deva–rakshasa pair, and some give 5 rather than 6 for deva groom with manushya bride.</p>
+      <p>Bhakoot scores 0 for sign distances 2/12, 5/9, and 6/8 in either order, and 7 otherwise. An older directional reading treats only some of those directions as harmful. Nadi scores 0 when the nadi is the same and 8 otherwise.</p>
+      <p>When Nadi or Bhakoot is zero, the page lists the common exceptions — same Moon sign with different nakshatras, same nakshatra with different padas, and Moon-sign lords that are the same planet or mutual friends — and does not add those points back. Rajju and Vedha are outside the 36 and are not scored.</p>
+      <p>Manglik checks Mars in houses 1, 2, 4, 7, 8, and 12 from the sidereal ascendant and from the Moon. Venus is shown the same way and is not required for the common flag. The mutual rule used here is the popular one: if both people are Manglik by the Lagna-or-Moon reading, the dosha is treated as cancelled for the match. Classical sign-and-house exceptions are named when they apply and do not clear the house.</p>
+      <p>The Moon’s tropical longitude is Astronomy Engine 2.1.19 (Don Cross, MIT), the Brown lunar series via Montenbruck and Pfleger. Mars and Venus are geocentric apparent positions from the same library. Lahiri ayanamsa is computed for the date: the Indian Astronomical Ephemeris / Swiss Ephemeris Chitrapaksha anchor at 1956 March 21 (mean 23°15′00.658″ with epoch nutation removed), IAU 2006 precession, and IAU 2000B nutation. It is not a fixed offset. Civil time uses the IANA zone, including historical Asia/Kolkata offsets. City coordinates are GeoNames (CC-BY 4.0): world cities of 150,000 and above, and Indian cities of 15,000 and above.</p>
+      <ul class="sources">
+        <li>Rāma Daivajña, <cite>Muhūrta Cintāmaṇi</cite> — the eight kootas and the traditional minimum of 18.</li>
+        <li><cite>Bṛhat Parāśara Horā Śāstra</cite> — natural planetary friendship.</li>
+        <li>B. V. Raman, <cite>Muhurtha (Electional Astrology)</cite> — the modern score bands, and the alternate varna list noted above.</li>
+        <li>Indian Astronomical Ephemeris, following the Calendar Reform Committee (1955), and the Swiss Ephemeris note on Lahiri from IAE 1989, p. 556.</li>
+        <li>JPL Horizons DE441 — the tropical longitudes this page’s test script is checked against.</li>
+      </ul>
+    </div>
+  </details>
+</div>
+
+<dialog id="help">
+  <h2>How to use this</h2>
+  <p>Enter two people. A name is optional. For a calculated Moon, give the birth date, the birth time, and a place. Pick a city, or type latitude, longitude (east positive), and the UTC offset in force that day, such as +05:30.</p>
+  <p>If you already know the Moon’s nakshatra and pada, choose that instead. The sign is then fixed by the pada. Birth time is still required for Manglik, because the ascendant needs the clock and the place. Manglik stays hidden until time and place are present.</p>
+  <p>Person A is the groom and Person B the bride unless you switch them. That switch matters for Varna, Vashya, Tara, and Gana. It is the traditional boy/girl direction of those kootas, not a claim about gender.</p>
+  <p>The total is out of 36. Under 18 was traditionally not recommended, 18–24 is average, 25–32 good, 33–36 excellent. Read the line under each koota for what that row was meant to describe. Open “Show the working” for the degrees and the table cells. Tara counts both ways: remainders 1, 2, 4, 6, 8, and 0 or 9 are auspicious, and 3, 5, and 7 are not. The same nakshatra scores 3.</p>
+  <p>If the Moon sits within about a quarter of a degree of a nakshatra, pada, or sign boundary, the page says so and shows the other result. A birth time that is off by half an hour can cross that line. Nadi and Bhakoot exceptions are listed separately and are not quietly added into the score.</p>
+  <p>Nothing leaves the browser. Remember is off until you tick it, and it only writes to local storage on this machine.</p>
+  <form method="dialog"><button class="text-btn" type="submit">Close</button></form>
+</dialog>
+
+{% include footer.html %}
+<script src="/js/vendor/astronomy.js"></script>
+<script src="/chakras/kundali/koota.js"></script>
+<script src="/chakras/kundali/ephemeris.js"></script>
+<script src="/chakras/kundali/app.js"></script>
+</body>
+</html>
