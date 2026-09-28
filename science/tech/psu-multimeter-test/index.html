@@ -1,0 +1,686 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How to test a computer power supply (PSU) with a multimeter — Steven Philley</title>
+<meta name="description" content="A beginner’s bench test of a desktop power supply: DC volts on the colored plugs only, ATX pinouts, and the voltage windows from the Intel design guides. Never open the case.">
+<link rel="canonical" href="https://stevenphilley.com/science/tech/psu-multimeter-test/">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="How to test a computer power supply (PSU) with a multimeter">
+<meta property="og:description" content="What a no-load voltage test can and cannot tell you, with the 24-pin ATX plug drawn from the wire side and the Intel voltage windows.">
+<meta property="og:url" content="https://stevenphilley.com/science/tech/psu-multimeter-test/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta property="og:image:alt" content="A dusk-toned card reading Steven Philley">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="How to test a computer power supply (PSU) with a multimeter">
+<meta name="twitter:description" content="Low-voltage plugs only. Pinouts, expected volts, and when a good reading still is not the whole story.">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.l-wrap{max-width:920px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 80px}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(36px,7vw,64px);line-height:.92;margin:0;max-width:16ch}
+.lede{max-width:68ch;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.75);color:var(--ink-soft,#9b9a96)}
+.lede a,.desk a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover,.desk a:hover{color:var(--accent,#c8b48a)}
+.meta{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:14px 0 0}
+.toc{margin:28px 0 0;padding:14px 0 0;border-top:1px solid var(--line,#2c303a);display:flex;flex-wrap:wrap;gap:10px 18px}
+.toc a{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.toc a:hover{color:var(--accent,#c8b48a)}
+.desk{margin-top:36px;border-top:1px solid var(--line,#2c303a);padding-top:18px;scroll-margin-top:24px}
+.desk > h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,5vw,34px);letter-spacing:.06em;margin:0 0 14px}
+.sub{margin:22px 0 8px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em}
+.desk p,.desk li{margin:0 0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.75);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.desk ol,.desk ul{margin:0 0 14px;padding-left:1.2em;max-width:72ch}
+.desk li{margin:0 0 8px}
+.callout{margin:16px 0 18px;padding:14px 16px;border:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.callout strong{color:var(--ink,#e8e6e1);font-weight:500}
+.callout.safety{border-width:2px;border-color:var(--accent,#c8b48a);max-width:76ch}
+.callout.safety ul{margin:10px 0 0;padding-left:1.15em}
+.callout.safety li{margin:0 0 8px;font-size:var(--fs-125,12.5px);line-height:1.65;color:var(--ink-soft,#9b9a96)}
+.figure{margin:8px 0 16px}
+.figure figcaption{margin-top:8px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.55;color:var(--muted,#63666e);max-width:72ch}
+.pinout-scroll{overflow-x:auto;border:1px solid var(--line,#2c303a);background:var(--base-2,#14161c);-webkit-overflow-scrolling:touch}
+.pinout-scroll svg{display:block;min-width:680px;width:100%;height:auto;color:var(--ink,#e8e6e1)}
+.pinout-scroll.slim svg{min-width:0}
+.pinout-scroll text{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace)}
+.pinout-scroll text.sig,.pinout-scroll text.cap{fill:currentColor}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 14px}
+.pair .pinout-scroll svg{min-width:280px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
+.help{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);cursor:pointer}
+.help{width:44px;height:44px;border-radius:50%;padding:0;font-size:16px}
+.help:hover,.help[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1)}
+.helpwrap{position:relative;margin-left:auto}
+.help-panel{position:absolute;right:0;top:calc(100% + 8px);z-index:5;width:min(360px,calc(100vw - 48px));border:1px solid var(--line,#2c303a);background:var(--base-2,#14161c);padding:14px;box-shadow:0 12px 40px rgba(0,0,0,.28)}
+.help-panel p{margin:0;max-width:none;font-size:var(--fs-125,12.5px)}
+.table-scroll{overflow-x:auto;border:1px solid var(--line,#2c303a);margin:0 0 12px;-webkit-overflow-scrolling:touch}
+table.mat{border-collapse:collapse;width:100%;min-width:560px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.mat caption{caption-side:bottom;text-align:left;padding:10px 12px;color:var(--muted,#63666e);font-size:var(--fs-12,12px);line-height:1.5}
+.mat th,.mat td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line,#2c303a);vertical-align:top;color:var(--ink-soft,#9b9a96)}
+.mat th{color:var(--ink,#e8e6e1);font-weight:500;background:var(--base-2,#14161c)}
+.mat td:first-child,.mat th:first-child{color:var(--ink,#e8e6e1);font-weight:500}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 0 12px;max-width:72ch}
+.field{display:flex;flex-direction:column;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1)}
+.field span{letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;font-size:var(--fs-11,11px);color:var(--ink-soft,#9b9a96)}
+.field input,.field select{appearance:none;background:transparent;color:var(--ink,#e8e6e1);border:1px solid var(--line,#2c303a);font:inherit;letter-spacing:0;text-transform:none;min-height:44px;padding:8px 10px;width:100%}
+.field input:focus-visible,.field select:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+.check-go{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;min-height:44px;padding:8px 14px;cursor:pointer}
+.check-go:hover{border-color:var(--accent,#c8b48a)}
+.results{list-style:none;margin:12px 0 0;padding:0;max-width:72ch;border-top:1px solid var(--line,#2c303a)}
+.results li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--line,#2c303a);padding:10px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.results .tag{font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+.results .tag.bad{color:var(--accent,#c8b48a)}
+.sources{list-style:none;margin:0;padding:0}
+.sources li{border-top:1px solid var(--line,#2c303a);padding:12px 0}
+.sources a{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);color:var(--ink,#e8e6e1);text-decoration:none}
+.sources a:hover{color:var(--accent,#c8b48a)}
+.sources .note{display:block;margin-top:4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.55;color:var(--muted,#63666e)}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0 0}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:22px;letter-spacing:.04em;margin:0;line-height:1;color:var(--ink,#e8e6e1)}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:1.55;color:var(--ink-soft,#9b9a96)}
+.disclaimer{margin-top:28px;padding-top:16px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.7;color:var(--muted,#63666e);max-width:72ch}
+button:focus-visible,a:focus-visible{outline:2px solid var(--accent,#c8b48a);outline-offset:2px}
+@media (max-width:700px){
+  .more,.pair,.fields{grid-template-columns:1fr}
+  .helpwrap{position:static;margin-left:0;flex:1 1 100%}
+  .help-panel{position:static;width:auto;margin-top:8px;box-shadow:none}
+}
+@media print{
+  .sp-primary,.sp-subnav,.sp-site-footer,.toc,.toolbar,.help-panel,.more,.border-left,.border-right,.grain,.bg{display:none !important}
+  html,body,.l-wrap,.pinout-scroll{background:#fff !important;color:#111 !important}
+  body{padding:0 !important}
+  .l-wrap{max-width:none}
+  .desk p,.desk li,.lede,.callout,.mat td,.sources .note,.disclaimer,.figure figcaption,.results li{color:#222 !important}
+  h1,h2,.sub,.mat th,.sources a,.results .tag{color:#000 !important}
+  .callout,.table-scroll,.pinout-scroll{border-color:#bbb !important}
+  .pinout-scroll{overflow:visible}
+  .pinout-scroll svg{min-width:0;width:100%}
+  .pinout-scroll text.sig,.pinout-scroll text.cap{fill:#111 !important}
+  .pinout-scroll,.pinout-scroll rect,.pinout-scroll text{print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .table-scroll{overflow:visible;border:0}
+  table.mat{min-width:0;font-size:11px}
+  a{color:#000 !important;text-decoration:underline}
+  .figure,.callout.safety{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="l-wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/tech/3d-printing/">3D printing</a>
+      <a href="/science/tech/psu-multimeter-test/" aria-current="page">PSU test</a>
+      <a href="/science/tech/computer-history/">Computer history</a>
+      <a href="/science/graphics-3d/">3D graphics</a>
+    </div>
+  </div>
+
+  <p class="kicker">Science desk · A beginner’s how-to · Power supplies</p>
+  <h1>How to test a computer power supply</h1>
+  <p class="meta">For a first-time reader · Everyday language · Cited ranges · September 2026</p>
+  <p class="lede">A power supply, the PSU, turns the power from the wall into the steady low voltages a desktop computer runs on. This page shows how to read those voltages with a multimeter, on the colored plugs only, and what a reading like that can and cannot tell you.</p>
+
+  <nav class="toc" aria-label="On this page">
+    <a href="#what">What it does</a>
+    <a href="#limits">What the test misses</a>
+    <a href="#safety">Safety</a>
+    <a href="#need">What you need</a>
+    <a href="#meter">The meter</a>
+    <a href="#plug">24-pin plug</a>
+    <a href="#steps">Steps</a>
+    <a href="#windows">Expected volts</a>
+    <a href="#other">Other plugs</a>
+    <a href="#check">Check readings</a>
+    <a href="#read">What the numbers mean</a>
+    <a href="#sources">Sources</a>
+  </nav>
+
+  <section class="desk" id="what" aria-labelledby="what-h">
+    <h2 id="what-h">What the supply is doing</h2>
+    <p>Household power is alternating current (AC): the push reverses many times a second. A computer wants direct current (DC), which flows one way. A rail is one of those steady DC voltages. Volts (V) are how hard that push is. A desktop supply offers +12 V, +5 V, and +3.3 V, a small −12 V rail in the opposite direction, and a standby +5 V that stays up while the computer looks off, so the power button has something to wake.</p>
+    <p>The plugs follow ATX, the common desktop power-supply standard. The wide one is the 24-pin main connector. A 4-pin or 8-pin plug feeds the processor. A graphics card may take a 6-pin or 8-pin plug. Drives take a flat SATA power plug — SATA is the drive-connection standard — or an older 4-pin Molex plug. Molex here means that four-pin plug, not a brand of supply.</p>
+    <p>The motherboard does not switch the wall cord. It pulls one green wire, PS_ON#, down to ground. The # means the wire turns the supply on when it is low, near 0 V, not when it is high. Until then, only the purple standby wire should be alive. A paperclip does the motherboard’s job on the bench: green joined to a black ground wire, and the main rails wake with nothing else attached.</p>
+  </section>
+
+  <section class="desk" id="limits" aria-labelledby="limits-h">
+    <h2 id="limits-h">What a meter test can and cannot tell you</h2>
+    <p>This is a no-load voltage test, or a light-load one if you add a fan. No-load means almost nothing is drawing power. You learn whether each rail comes up near its rated voltage, not whether it stays there when the computer asks for real current. The design guide’s windows apply at the plug under the loads that guide lists. Inside the window on an empty plug is a good sign, not a certificate. Far outside has already failed this easier test. The guides also say a supply with nothing plugged into it must not become a hazard, and they allow it to shut itself off. One that will not stay on until you add a fan is not automatically scrap. One that sits at 9 V where 12 V belongs, is.</p>
+    <p>Ripple is the small fast wiggle on an otherwise steady voltage. The guide caps it at 50 millivolts peak to peak on +5 V, +3.3 V, and standby, and 120 millivolts on +12 V and −12 V, measured with an oscilloscope — a screen that draws voltage against time — from 10 hertz to 20 megahertz. A meter on DC volts averages that wiggle away. A dedicated PSU tester shows the same DC voltages, sometimes with a small load, and it still cannot see full power or ripple. If the meter looks fine and the PC does not, swap in a known-good supply.</p>
+  </section>
+
+  <section class="desk" id="safety" aria-labelledby="safety-h">
+    <h2 id="safety-h">Safety first</h2>
+    <div class="callout safety">
+      <strong>Do not open the case. Work only on the colored plugs.</strong>
+      <ul>
+        <li>Never take the cover off. Capacitors inside store energy and can hold a dangerous charge after the cord is unplugged. Do not assume one is empty because the switch is off. The design guide’s label says there are no user-serviceable parts inside. Do not discharge anything, and do not touch a fuse.</li>
+        <li>The colored-wire plugs are the low-voltage DC side. Do not put a probe in the mains inlet, on the prongs of the cord, or through a vent hole.</li>
+        <li>Use a cord with a ground pin, in a grounded outlet, and do not use a cord whose jacket is cut. Dry hands, dry bench. Take off metal rings and bracelets that could bridge two pins.</li>
+        <li>Switch the rear rocker off before you connect or remove the jumper. On that rocker, I is on and O is off. If the supply has no rocker, unplug the cord for that moment, and plug it back in only when the jumper is seated and your hands are off the metal.</li>
+        <li>Do not let the two probe tips touch each other while you are measuring. That shorts a rail through the meter.</li>
+        <li>The steps below are a bench test: drives, fans, and the motherboard unplugged, so a short in the computer does not look like a bad supply. You can measure the same wires in a running PC. That is a real load, but a slipped probe can join two pins. If you stay in the case, one hand holds the probes and the other stays off the metal.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="desk" id="need" aria-labelledby="need-h">
+    <h2 id="need-h">What you need</h2>
+    <p>A digital multimeter, the kind that shows digits, and its two probes. A jumper: a paperclip bent into a U, or a proper ATX jumper. The paperclip’s bare metal must touch only the two holes you chose. If it can lean into a third hole, tape the middle or use the proper jumper. That one is the better tool.</p>
+    <p>Optional: a small load. Some supplies shut off, or look wrong, with nothing attached. An old case fan or an old drive is enough for those. It is still a small load, not proof the supply can run a computer. The supply itself sits on a clear dry bench. Unplug the wall cord before you take it out of the case, and leave its lid screwed on.</p>
+  </section>
+
+  <section class="desk" id="meter" aria-labelledby="meter-h">
+    <h2 id="meter-h">Setting the multimeter</h2>
+    <p>Turn the dial to DC volts. The mark is a V beside a straight line, sometimes drawn V⎓ or V—. A wavy line, V~, is AC. That is the wrong position for these plugs.</p>
+    <p>If you must pick a range, use 20 V. It covers 12 V. The 2 V range is too small for 5 V and 12 V. The 200 V range works but shows fewer digits. A meter that picks its own range only needs the DC volts position.</p>
+    <p>Black probe in the jack marked COM, common, the meter’s zero. Red probe in the jack marked V or VΩ. Not the hole marked 10 A or mA. Those measure current. On a voltage rail the meter becomes a short, the reading is nonsense, and the meter’s fuse often opens.</p>
+  </section>
+
+  <section class="desk" id="plug" aria-labelledby="plug-h">
+    <h2 id="plug-h">The 24-pin plug</h2>
+    <p>Hold the main plug so the clip, the latch you squeeze to unplug it, is on top, and look at the end the wires enter. That is the wire side. Pin 1 is the top-left pin, next to the clip. The drawing matches Intel’s pin list, mirrored from the guide’s pin-side figure so the wires face you. A number molded in the plastic wins if a particular housing is stamped the other way around. The colors below are the usual ones.</p>
+    <figure class="figure" id="atx24-figure">
+      <div class="pinout-scroll">
+        <svg viewBox="0 0 792 292" role="img" aria-labelledby="atx24-title atx24-desc">
+<title id="atx24-title">24-pin ATX main plug, seen from the wire side</title>
+<desc id="atx24-desc">Wire side, clip on top, pin 1 at the top left. Top row, left to right: pin 1 +3.3 V orange, 2 +3.3 V orange, 3 ground black, 4 +5 V red, 5 ground black, 6 +5 V red, 7 ground black, 8 PWR_OK gray, 9 +5 V standby purple, 10 +12 V yellow, 11 +12 V yellow, 12 +3.3 V orange. Bottom row: pin 13 +3.3 V orange with a brown sense wire, 14 −12 V blue, 15 ground black, 16 PS_ON# green, 17 ground black, 18 ground black, 19 ground black, 20 not connected (older supplies may have a white −5 V wire), 21 +5 V red, 22 +5 V red, 23 +5 V red, 24 ground black.</desc>
+<text class="cap" x="396" y="16" text-anchor="middle">Wire side · you are looking at the end the wires enter</text>
+<rect x="18" y="26" width="756" height="24" rx="7" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<text class="cap" x="396" y="43" text-anchor="middle">latch / clip — this edge is the clip · pin 1 at the left</text>
+<rect x="18" y="64" width="56" height="42" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.25"/>
+<text x="46" y="90" text-anchor="middle" fill="#1a1208" font-size="14" font-weight="500">1</text>
+<text x="46" y="122" text-anchor="middle" class="sig" font-size="11">+3.3</text>
+<rect x="82" y="64" width="56" height="42" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.25"/>
+<text x="110" y="90" text-anchor="middle" fill="#1a1208" font-size="14" font-weight="500">2</text>
+<text x="110" y="122" text-anchor="middle" class="sig" font-size="11">+3.3</text>
+<rect x="146" y="64" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="174" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">3</text>
+<text x="174" y="122" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="210" y="64" width="56" height="42" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.25"/>
+<text x="238" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">4</text>
+<text x="238" y="122" text-anchor="middle" class="sig" font-size="11">+5</text>
+<rect x="274" y="64" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="302" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">5</text>
+<text x="302" y="122" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="338" y="64" width="56" height="42" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.25"/>
+<text x="366" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">6</text>
+<text x="366" y="122" text-anchor="middle" class="sig" font-size="11">+5</text>
+<rect x="402" y="64" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="430" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">7</text>
+<text x="430" y="122" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="466" y="64" width="56" height="42" rx="3" fill="#8d939c" stroke="currentColor" stroke-width="1.25"/>
+<text x="494" y="90" text-anchor="middle" fill="#1a1a1a" font-size="14" font-weight="500">8</text>
+<text x="494" y="122" text-anchor="middle" class="sig" font-size="11">OK</text>
+<rect x="530" y="64" width="56" height="42" rx="3" fill="#6d4a96" stroke="currentColor" stroke-width="1.25"/>
+<text x="558" y="90" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">9</text>
+<text x="558" y="122" text-anchor="middle" class="sig" font-size="11">SB</text>
+<rect x="594" y="64" width="56" height="42" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.25"/>
+<text x="622" y="90" text-anchor="middle" fill="#1a1400" font-size="14" font-weight="500">10</text>
+<text x="622" y="122" text-anchor="middle" class="sig" font-size="11">+12</text>
+<rect x="658" y="64" width="56" height="42" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.25"/>
+<text x="686" y="90" text-anchor="middle" fill="#1a1400" font-size="14" font-weight="500">11</text>
+<text x="686" y="122" text-anchor="middle" class="sig" font-size="11">+12</text>
+<rect x="722" y="64" width="56" height="42" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.25"/>
+<text x="750" y="90" text-anchor="middle" fill="#1a1208" font-size="14" font-weight="500">12</text>
+<text x="750" y="122" text-anchor="middle" class="sig" font-size="11">+3.3</text>
+<rect x="18" y="148" width="56" height="42" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.25"/>
+<rect x="46" y="176" width="24" height="10" rx="1" fill="#7a4e24"/>
+<text x="46" y="168" text-anchor="middle" fill="#1a1208" font-size="14" font-weight="500">13</text>
+<text x="46" y="206" text-anchor="middle" class="sig" font-size="11">+3.3</text>
+<rect x="82" y="148" width="56" height="42" rx="3" fill="#2f62c0" stroke="currentColor" stroke-width="1.25"/>
+<text x="110" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">14</text>
+<text x="110" y="206" text-anchor="middle" class="sig" font-size="11">−12</text>
+<rect x="146" y="148" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="174" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">15</text>
+<text x="174" y="206" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="210" y="148" width="56" height="42" rx="3" fill="#2c8a3e" stroke="currentColor" stroke-width="1.25"/>
+<text x="238" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">16</text>
+<text x="238" y="206" text-anchor="middle" class="sig" font-size="11">ON</text>
+<rect x="274" y="148" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="302" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">17</text>
+<text x="302" y="206" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="338" y="148" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="366" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">18</text>
+<text x="366" y="206" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="402" y="148" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="430" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">19</text>
+<text x="430" y="206" text-anchor="middle" class="sig" font-size="11">COM</text>
+<rect x="466" y="148" width="56" height="42" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 2"/>
+<text x="494" y="174" text-anchor="middle" class="sig" font-size="13">20</text>
+<text x="494" y="206" text-anchor="middle" class="sig" font-size="11">NC</text>
+<rect x="530" y="148" width="56" height="42" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.25"/>
+<text x="558" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">21</text>
+<text x="558" y="206" text-anchor="middle" class="sig" font-size="11">+5</text>
+<rect x="594" y="148" width="56" height="42" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.25"/>
+<text x="622" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">22</text>
+<text x="622" y="206" text-anchor="middle" class="sig" font-size="11">+5</text>
+<rect x="658" y="148" width="56" height="42" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.25"/>
+<text x="686" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">23</text>
+<text x="686" y="206" text-anchor="middle" class="sig" font-size="11">+5</text>
+<rect x="722" y="148" width="56" height="42" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.25"/>
+<text x="750" y="174" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="500">24</text>
+<text x="750" y="206" text-anchor="middle" class="sig" font-size="11">COM</text>
+<text class="cap" x="46" y="278">pin 1</text>
+<text class="cap" x="746" y="278" text-anchor="end">pin 12 above · pin 24 here</text>
+</svg>
+      </div>
+      <figcaption>Wire side, clip on top, pin 1 at the top left. Orange is +3.3 V, red is +5 V, yellow is +12 V, black is ground (COM). Green, pin 16, is PS_ON#. Gray, pin 8, is PWR_OK. Purple, pin 9, is +5 V standby. Blue, pin 14, is −12 V. Pin 13 is +3.3 V and often shares the hole with a thinner brown sense wire, drawn as the small brown block. Pin 20 is empty on supplies built to ATX12V 2.0 and later. An old supply may still have a white wire there: that was −5 V, and a PC from the last two decades does not use it. If the plug splits into 20+4, the extra block is pins 11, 12, 23, and 24, the right-hand end in this view.</figcaption>
+    </figure>
+    <div class="table-scroll">
+      <table class="mat">
+        <caption>Same 24 pins, for a reader who cannot use the colors. Signals and colors are Intel’s main-power table. Pin 13’s sense wire is called out in that table as 22 gauge, often brown, crimped with the orange wire.</caption>
+        <thead>
+          <tr><th scope="col">Pin</th><th scope="col">Signal</th><th scope="col">Usual color</th><th scope="col">Pin</th><th scope="col">Signal</th><th scope="col">Usual color</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>+3.3 V</td><td>Orange</td><td>13</td><td>+3.3 V, and the sense wire</td><td>Orange, often plus thin brown</td></tr>
+          <tr><td>2</td><td>+3.3 V</td><td>Orange</td><td>14</td><td>−12 V</td><td>Blue</td></tr>
+          <tr><td>3</td><td>COM, ground</td><td>Black</td><td>15</td><td>COM, ground</td><td>Black</td></tr>
+          <tr><td>4</td><td>+5 V</td><td>Red</td><td>16</td><td>PS_ON#</td><td>Green</td></tr>
+          <tr><td>5</td><td>COM, ground</td><td>Black</td><td>17</td><td>COM, ground</td><td>Black</td></tr>
+          <tr><td>6</td><td>+5 V</td><td>Red</td><td>18</td><td>COM, ground</td><td>Black</td></tr>
+          <tr><td>7</td><td>COM, ground</td><td>Black</td><td>19</td><td>COM, ground</td><td>Black</td></tr>
+          <tr><td>8</td><td>PWR_OK</td><td>Gray</td><td>20</td><td>Reserved, not connected</td><td>Empty. White only on old −5 V supplies</td></tr>
+          <tr><td>9</td><td>+5 V standby</td><td>Purple</td><td>21</td><td>+5 V</td><td>Red</td></tr>
+          <tr><td>10</td><td>+12 V</td><td>Yellow</td><td>22</td><td>+5 V</td><td>Red</td></tr>
+          <tr><td>11</td><td>+12 V</td><td>Yellow</td><td>23</td><td>+5 V</td><td>Red</td></tr>
+          <tr><td>12</td><td>+3.3 V</td><td>Orange</td><td>24</td><td>COM, ground</td><td>Black</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="desk" id="steps" aria-labelledby="steps-h">
+    <h2 id="steps-h">The steps</h2>
+    <ol>
+      <li>Unplug the mains cord and set a rear rocker to O. Unplug the motherboard, drives, and fans so a fault in the computer does not look like a fault in the supply. Leave the cover on.</li>
+      <li>Check standby before any jumper. Plug into a live grounded outlet and switch the rocker to I. Black probe on any black wire, red on the purple wire, pin 9, +5 VSB (standby). Expect about 5 V, inside 4.75 to 5.25. Green should be high, at least 2.0 V and not above 5.25 V. Other colors should sit near 0 V. If purple is dead, stop. Try the outlet and the cord. Do not open the box for a fuse.</li>
+      <li>Switch the rocker off, or unplug if there is no rocker. Jump the green wire, pin 16, to any black ground. Pins 15 and 17 are the neighbors; any black wire on that plug is the same ground. Do not jump green to yellow, red, orange, blue, or purple.</li>
+      <li>Switch on. Hands off the jumper and the bare tips. The fan may spin, or it may not. A still fan is not by itself a failure: the design guide says not to start the fan the instant PS_ON# goes low, and many supplies use a zero-RPM mode until the box needs air. The main rails should be up in under 500 milliseconds, half a second.</li>
+      <li>Measure. Black probe stays on black. Touch red to each color in the table, then to gray, pin 8, PWR_OK, power-good. Once the rails are steady, gray should be high: 2.4 V to 5 V, usually near 5 V. If gray stays near 0 V, the supply is saying the rails are not good. If a rail is missing, switch off, add a fan on a spare plug, and measure again.</li>
+      <li>Switch off before you pull the jumper. Then unplug the cord. Read the numbers against the windows, not against a hope that 10 V is “close enough” to 12 V.</li>
+    </ol>
+  </section>
+
+  <section class="desk" id="windows" aria-labelledby="windows-h">
+    <h2 id="windows-h">Expected readings</h2>
+    <p>±5% of 3.30 V is 3.135 to 3.465. Both design-guide tables round that published window to 3.14–3.47. A few tenths off is the supply, not the rounding.</p>
+    <div class="table-scroll">
+      <table class="mat">
+        <caption>DC windows from Intel. ATX12V version 2.2, Table 2, gives +12 V as ±5%, 11.40–12.60 V. ATX Version 3, document 336521, Table 4-2, widens the low side to −7%, 11.20–12.60 V, so the rail can dip during a short power spike. The guide notes that a designer may set the resting voltage a little above 12.0 V for that reason. −12 V is optional. These limits are at the plug, under the guide’s load conditions, not a promise at true zero load.</caption>
+        <thead>
+          <tr><th scope="col">Rail</th><th scope="col">Wire</th><th scope="col">Nominal</th><th scope="col">Window</th><th scope="col">Min</th><th scope="col">Max</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>+12 V</td><td>Yellow</td><td>12.00 V</td><td>Version 3: +5% / −7%. Version 2.2: ±5%</td><td>11.20 V (3) · 11.40 V (2.2)</td><td>12.60 V</td></tr>
+          <tr><td>+5 V</td><td>Red</td><td>5.00 V</td><td>±5%</td><td>4.75 V</td><td>5.25 V</td></tr>
+          <tr><td>+3.3 V</td><td>Orange</td><td>3.30 V</td><td>±5%, published as 3.14–3.47</td><td>3.14 V</td><td>3.47 V</td></tr>
+          <tr><td>+5 V standby</td><td>Purple</td><td>5.00 V</td><td>±5%. Present with the rocker on, jumper or not</td><td>4.75 V</td><td>5.25 V</td></tr>
+          <tr><td>−12 V</td><td>Blue</td><td>−12.00 V</td><td>±10%. Optional; many boards never use it</td><td>−13.20 V</td><td>−10.80 V</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="table-scroll">
+      <table class="mat">
+        <caption>The two signal wires, from the same guides. PS_ON# open-circuit high is at most 5.25 V, and it must be at least 2.0 V to count as off. Pulled low, it must be 0.8 V or less to count as on. PWR_OK low is under 0.4 V while sinking a small current. PWR_OK high is a +5 V logic level, between 2.4 V and 5 V.</caption>
+        <thead>
+          <tr><th scope="col">Signal</th><th scope="col">Wire</th><th scope="col">Plugged in, not jumped</th><th scope="col">Jumped, supply on</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PS_ON#</td><td>Green, pin 16</td><td>High. At least 2.0 V, at most 5.25 V</td><td>Low. 0 to 0.8 V</td></tr>
+          <tr><td>PWR_OK</td><td>Gray, pin 8</td><td>Low. Near 0 V, under 0.4 V</td><td>High once the rails are steady. 2.4 V to 5 V, usually near 5 V</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="desk" id="other" aria-labelledby="other-h">
+    <h2 id="other-h">The other plugs</h2>
+    <p>Do not jump these. With the main plug already jumped and the supply on, black probe on black, red on the color you are checking. Yellow is +12 V, red is +5 V, orange is +3.3 V, and black to black is about 0 V. The housings only fit one way. If a molded pin number disagrees with left and right in a drawing, believe the plastic, and believe the wire color either way.</p>
+
+    <h3 class="sub">Processor plugs, 4-pin and 8-pin</h3>
+    <p>These carry only +12 V and ground. On the 4-pin, pins 1–2 are ground and pins 3–4 are +12 V. On the 8-pin, pins 1–4 are ground and pins 5–8 are +12 V. A split 4+4 lead can fill an older 4-pin socket; measure yellow to black on each half. You should see about 12 V, not 5 V or 3.3 V.</p>
+    <div class="pair">
+      <figure class="figure">
+        <div class="pinout-scroll slim"><svg viewBox="0 0 184 236" role="img">
+<title>4-pin CPU power plug</title>
+<desc>Pins 1 and 2 are ground, black. Pins 3 and 4 are +12 V, yellow. Intel Table 5-8.</desc>
+<rect x="12" y="12" width="78" height="62" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="51.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">1 COM</text>
+<rect x="96" y="12" width="78" height="62" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="135.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">2 COM</text>
+<rect x="12" y="112" width="78" height="62" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="51.0" y="138" text-anchor="middle" fill="#1a1400" font-size="11">3 +12</text>
+<rect x="96" y="112" width="78" height="62" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="135.0" y="138" text-anchor="middle" fill="#1a1400" font-size="11">4 +12</text>
+</svg></div>
+        <figcaption>4-pin CPU plug. Ground row, then +12 V row. Intel Table 5-8.</figcaption>
+      </figure>
+      <figure class="figure">
+        <div class="pinout-scroll slim"><svg viewBox="0 0 320 220" role="img">
+<title>8-pin CPU power plug</title>
+<desc>Pins 1 to 4 are ground, black. Pins 5 to 8 are +12 V, yellow. Intel Table 5-9.</desc>
+<rect x="12" y="12" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="47.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">1</text>
+<rect x="88" y="12" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="123.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">2</text>
+<rect x="164" y="12" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="199.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">3</text>
+<rect x="240" y="12" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="275.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">4</text>
+<rect x="12" y="104" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="47.0" y="130" text-anchor="middle" fill="#1a1400" font-size="11">5 +12</text>
+<rect x="88" y="104" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="123.0" y="130" text-anchor="middle" fill="#1a1400" font-size="11">6 +12</text>
+<rect x="164" y="104" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="199.0" y="130" text-anchor="middle" fill="#1a1400" font-size="11">7 +12</text>
+<rect x="240" y="104" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="275.0" y="130" text-anchor="middle" fill="#1a1400" font-size="11">8 +12</text>
+</svg></div>
+        <figcaption>8-pin CPU plug. Pins 1–4 ground, pins 5–8 +12 V. Intel Table 5-9.</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="sub">Graphics-card plugs, 6-pin and 8-pin</h3>
+    <p>Also +12 V and ground, plus a sense pin the card reads to learn what the cable may deliver. The supply ties that pin to ground, so a meter cannot tell it from any other black wire. On the 6-pin, pins 1–3 are +12 V, pins 4 and 6 are ground, and pin 5 is sense. On the 8-pin, pins 1–3 are +12 V, pins 4 and 6 are the sense pins, and pins 5, 7, and 8 are ground. A 6+2 plug is those eight pins with two on a side piece. Yellow to black should be the +12 V window.</p>
+    <div class="pair">
+      <figure class="figure">
+        <div class="pinout-scroll slim"><svg viewBox="0 0 268 236" role="img">
+<title>6-pin PCIe auxiliary plug</title>
+<desc>Pins 1 to 3 are +12 V, yellow. Pins 4 and 6 are ground. Pin 5 is sense, tied to ground in the supply, so it also reads 0 V. Intel Table 5-4.</desc>
+<rect x="12" y="12" width="78" height="62" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="51.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">1 +12</text>
+<rect x="96" y="12" width="78" height="62" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="135.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">2 +12</text>
+<rect x="180" y="12" width="78" height="62" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="219.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">3 +12</text>
+<rect x="12" y="112" width="78" height="62" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="51.0" y="138" text-anchor="middle" fill="#ffffff" font-size="11">4 COM</text>
+<rect x="96" y="112" width="78" height="62" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="135.0" y="138" text-anchor="middle" fill="#ffffff" font-size="11">5 sense</text>
+<rect x="180" y="112" width="78" height="62" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="219.0" y="138" text-anchor="middle" fill="#ffffff" font-size="11">6 COM</text>
+</svg></div>
+        <figcaption>6-pin graphics plug, 75 watt class. Intel Table 5-4. Pin 5 reads like ground.</figcaption>
+      </figure>
+      <figure class="figure">
+        <div class="pinout-scroll slim"><svg viewBox="0 0 320 220" role="img">
+<title>8-pin PCIe auxiliary plug</title>
+<desc>Pins 1 to 3 are +12 V. Pin 4 is sense 1 and pin 6 is sense 0; both are grounded on a 150 watt cable. Pins 5, 7, and 8 are ground. Intel Table 5-5.</desc>
+<rect x="12" y="12" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="47.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">1 +12</text>
+<rect x="88" y="12" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="123.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">2 +12</text>
+<rect x="164" y="12" width="70" height="54" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="199.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">3 +12</text>
+<rect x="240" y="12" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="275.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">4 sen</text>
+<rect x="12" y="104" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="47.0" y="130" text-anchor="middle" fill="#ffffff" font-size="11">5 COM</text>
+<rect x="88" y="104" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="123.0" y="130" text-anchor="middle" fill="#ffffff" font-size="11">6 sen</text>
+<rect x="164" y="104" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="199.0" y="130" text-anchor="middle" fill="#ffffff" font-size="11">7 COM</text>
+<rect x="240" y="104" width="70" height="54" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="275.0" y="130" text-anchor="middle" fill="#ffffff" font-size="11">8 COM</text>
+</svg></div>
+        <figcaption>8-pin graphics plug, 150 watt class. Intel Table 5-5. Sense pins read like ground.</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="sub">SATA power</h3>
+    <p>The flat 15-pin plug can carry +3.3 V, +5 V, and +12 V. Pin 1 is at the left of this drawing. Pins 1 and 2 used to be +3.3 V and are retired. Pin 3 used to be +3.3 V and, on newer drives, is Power Disable: if it sits near 3.3 V, a drive with that feature stays off. Intel notes +3.3 V left the SATA 3.2 spec and is only for older gear, so missing orange wires are normal. If orange is present it should read the +3.3 V window. Red, pins 7–9, is +5 V. Yellow, pins 13–15, is +12 V. Pin 11 is a spin-up or activity signal, not a rail.</p>
+    <figure class="figure">
+      <div class="pinout-scroll"><svg viewBox="0 0 766 100" role="img" aria-labelledby="sata-title sata-desc">
+<title id="sata-title">SATA 15-pin power plug, pin 1 at the left</title>
+<desc id="sata-desc">Pin 1 at the left. Pins 1 and 2 were +3.3 V and are retired. Pin 3 was +3.3 V and is Power Disable on newer drives. Pins 4, 5, 6, 10, and 12 are ground. Pins 7–9 are +5 V. Pin 11 is a signal, not a supply. Pins 13–15 are +12 V.</desc>
+<text class="cap" x="8" y="14">pin 1 at the left of this drawing</text>
+<rect x="10" y="24" width="46" height="36" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.1"/>
+<text x="33.0" y="47" text-anchor="middle" fill="#1a1208" font-size="12">1</text>
+<text class="sig" x="33.0" y="76" text-anchor="middle" font-size="10">3.3</text>
+<rect x="60" y="24" width="46" height="36" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.1"/>
+<text x="83.0" y="47" text-anchor="middle" fill="#1a1208" font-size="12">2</text>
+<text class="sig" x="83.0" y="76" text-anchor="middle" font-size="10">3.3</text>
+<rect x="110" y="24" width="46" height="36" rx="3" fill="#e07a1f" stroke="currentColor" stroke-width="1.1"/>
+<text x="133.0" y="47" text-anchor="middle" fill="#1a1208" font-size="12">3</text>
+<text class="sig" x="133.0" y="76" text-anchor="middle" font-size="10">PD</text>
+<rect x="160" y="24" width="46" height="36" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.1"/>
+<text x="183.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">4</text>
+<text class="sig" x="183.0" y="76" text-anchor="middle" font-size="10">COM</text>
+<rect x="210" y="24" width="46" height="36" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.1"/>
+<text x="233.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">5</text>
+<text class="sig" x="233.0" y="76" text-anchor="middle" font-size="10">COM</text>
+<rect x="260" y="24" width="46" height="36" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.1"/>
+<text x="283.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">6</text>
+<text class="sig" x="283.0" y="76" text-anchor="middle" font-size="10">COM</text>
+<rect x="310" y="24" width="46" height="36" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.1"/>
+<text x="333.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">7</text>
+<text class="sig" x="333.0" y="76" text-anchor="middle" font-size="10">+5</text>
+<rect x="360" y="24" width="46" height="36" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.1"/>
+<text x="383.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">8</text>
+<text class="sig" x="383.0" y="76" text-anchor="middle" font-size="10">+5</text>
+<rect x="410" y="24" width="46" height="36" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.1"/>
+<text x="433.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">9</text>
+<text class="sig" x="433.0" y="76" text-anchor="middle" font-size="10">+5</text>
+<rect x="460" y="24" width="46" height="36" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.1"/>
+<text x="483.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">10</text>
+<text class="sig" x="483.0" y="76" text-anchor="middle" font-size="10">COM</text>
+<rect x="510" y="24" width="46" height="36" rx="3" fill="none" stroke="currentColor" stroke-dasharray="3 2"/>
+<text x="533.0" y="47" text-anchor="middle" class="sig" font-size="12">11</text>
+<text class="sig" x="533.0" y="76" text-anchor="middle" font-size="10">sig</text>
+<rect x="560" y="24" width="46" height="36" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.1"/>
+<text x="583.0" y="47" text-anchor="middle" fill="#ffffff" font-size="12">12</text>
+<text class="sig" x="583.0" y="76" text-anchor="middle" font-size="10">COM</text>
+<rect x="610" y="24" width="46" height="36" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.1"/>
+<text x="633.0" y="47" text-anchor="middle" fill="#1a1400" font-size="12">13</text>
+<text class="sig" x="633.0" y="76" text-anchor="middle" font-size="10">+12</text>
+<rect x="660" y="24" width="46" height="36" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.1"/>
+<text x="683.0" y="47" text-anchor="middle" fill="#1a1400" font-size="12">14</text>
+<text class="sig" x="683.0" y="76" text-anchor="middle" font-size="10">+12</text>
+<rect x="710" y="24" width="46" height="36" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.1"/>
+<text x="733.0" y="47" text-anchor="middle" fill="#1a1400" font-size="12">15</text>
+<text class="sig" x="733.0" y="76" text-anchor="middle" font-size="10">+12</text>
+</svg></div>
+      <figcaption>SATA power, pin 1 at the left. “PD” is pin 3, Power Disable on newer drives, formerly +3.3 V. “sig” is pin 11, not a supply pin. Grounds are black. Intel groups the wires as five conductors and points to the SATA spec for the fifteen pins; the pin jobs here are the ones Wikipedia summarizes from that spec.</figcaption>
+    </figure>
+
+    <h3 class="sub">Molex, the older 4-pin drive plug</h3>
+    <p>Four pins in order: pin 1 yellow +12 V, pin 2 black ground, pin 3 black ground, pin 4 red +5 V. There is no +3.3 V on this plug. Yellow to black is the +12 V window. Red to black is the +5 V window.</p>
+    <figure class="figure">
+      <div class="pinout-scroll slim"><svg viewBox="0 0 328 130" role="img">
+<title>Molex peripheral plug, pins 1 to 4 in order</title>
+<desc>Pin 1 +12 V yellow, pin 2 ground black, pin 3 ground black, pin 4 +5 V red. Intel Table 5-2.</desc>
+<rect x="12" y="12" width="72" height="56" rx="3" fill="#e2b400" stroke="currentColor" stroke-width="1.2"/>
+<text x="48.0" y="38" text-anchor="middle" fill="#1a1400" font-size="11">1 +12</text>
+<rect x="90" y="12" width="72" height="56" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="126.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">2 COM</text>
+<rect x="168" y="12" width="72" height="56" rx="3" fill="#161616" stroke="currentColor" stroke-width="1.2"/>
+<text x="204.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">3 COM</text>
+<rect x="246" y="12" width="72" height="56" rx="3" fill="#c53636" stroke="currentColor" stroke-width="1.2"/>
+<text x="282.0" y="38" text-anchor="middle" fill="#ffffff" font-size="11">4 +5</text>
+</svg></div>
+      <figcaption>Peripheral plug, pins 1 to 4 in order. Intel Table 5-2.</figcaption>
+    </figure>
+  </section>
+
+  <section class="desk" id="check" aria-labelledby="check-h">
+    <h2 id="check-h">Check my readings</h2>
+    <p>Type the volts you measured. Blank boxes are skipped. Nothing is sent anywhere; the marks are computed in the browser. The +12 V line uses the current guide’s 11.20–12.60 V window, and it also tells you if the number fell below the older 11.40 V floor.</p>
+    <div class="toolbar">
+      <button type="button" class="check-go" id="check-go">Check readings</button>
+      <div class="helpwrap">
+        <button type="button" class="help" id="chk-help" aria-expanded="false" aria-controls="chk-help-panel" title="How this check works">?</button>
+        <div id="chk-help-panel" class="help-panel" hidden role="region" aria-label="How the reading check works">
+          <p>Type volts. A comma or a dot is the decimal mark. An empty box is skipped. +12 V passes from 11.20 to 12.60 (ATX Version 3). From 11.20 up to 11.40 it is inside that window and below the older ±5% floor. +5 V and standby are 4.75 to 5.25. +3.3 V is 3.14 to 3.47. −12 V needs a minus, from −13.20 to −10.80. Power-good, supply on, is 2.4 to 5 V; up to 5.25 is marked near 5 V because the +5 V rail may sit that high. Green, not jumped, is 2.0 to 5.25. Green, jumped, is 0 to 0.8. A hundredth past a line can be the meter. A tenth past it is the supply.</p>
+        </div>
+      </div>
+    </div>
+    <form id="chk-form" action="#" onsubmit="return false">
+      <div class="fields">
+        <label class="field"><span>+12 V, yellow</span><input id="v12" inputmode="decimal" autocomplete="off" aria-describedby="chk-help-panel"></label>
+        <label class="field"><span>+5 V, red</span><input id="v5" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>+3.3 V, orange</span><input id="v33" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>+5 V standby, purple</span><input id="v5sb" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>−12 V, blue, use a minus</span><input id="vn12" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>PWR_OK, gray, supply on</span><input id="vpwr" inputmode="decimal" autocomplete="off"></label>
+        <label class="field"><span>PS_ON#, green</span>
+          <select id="pson-mode" aria-label="Whether the green wire is jumped">
+            <option value="off">Not jumped, supply waiting</option>
+            <option value="on">Jumped, supply on</option>
+          </select>
+        </label>
+        <label class="field"><span>Green wire, volts</span><input id="vpson" inputmode="decimal" autocomplete="off"></label>
+      </div>
+    </form>
+    <ul class="results" id="chk-out" aria-live="polite"></ul>
+  </section>
+
+  <section class="desk" id="read" aria-labelledby="read-h">
+    <h2 id="read-h">What the numbers mean</h2>
+    <p>A rail clearly outside its window is not in spec on this test. Replace the supply. Do not open it to look at the capacitors. One rail at 0 V, with the others healthy, is a dead rail: replace it. If the supply turns on and every rail is 0 V, check the dull mistakes first: dial on AC, red probe in the amp hole, jumper in the wrong holes, or the black probe not on a black wire. If those are right, the supply is not delivering power.</p>
+    <p>If nothing happens, including a dead purple wire, the outlet, the cord, the rocker, or the supply is at fault. The internal fuse is not yours to change. A supply that stays off until a fan is plugged in can still be within the guide, which allows a shutdown when every connector is empty. Add the fan and read again. That is still not a pass under load.</p>
+    <p>Voltages in the window, and the computer still restarts or dies under load: this test never asked for real current, and it could not see ripple. Swap in a known-good supply. If the swap fixes the machine, replace the old one. Also replace for a rail out of range, a rail stuck at 0 V, no standby, or a burning smell. If you are unsure, replace it. Do not repair the inside. The cover stays on.</p>
+    <h3 class="sub">A short note on continuity</h3>
+    <p>Use continuity or ohms only with the cord unplugged and the rocker off, after the supply has sat. Two black wires should beep. A beep from a colored wire to black is not a verdict: the circuits inside still connect those pins. Do not use ohms while the supply is plugged in.</p>
+  </section>
+
+  <section class="desk" id="sources" aria-labelledby="sources-h">
+    <h2 id="sources-h">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://cdrdv2-public.intel.com/336521/336521_Rev2p1a.pdf">Intel ATX Version 3 Multi Rail Desktop Platform Power Supply Design Guide</a><span class="note">Document 336521, revision 2.1a. Table 4-2 voltage windows, including +12 V at +5%/−7% (11.20–12.60 V) and +3.3 V published as 3.14–3.47 V. Table 4-6 ripple, measured with a 20 MHz oscilloscope. Table 4-11 PWR_OK (2.4 V to 5 V high). Table 4-12 PS_ON# (0–0.8 V on, at least 2.0 V and at most 5.25 V off). Tables 5-1 through 5-5 and 5-8 through 5-10 for the plugs. Figure 5-2 is the pin-side drawing this page mirrors. Section 4.5.3: no load must not cause a hazard; the supply may shut down. Section 5.3.2: do not spin the fan at the instant PS_ON# goes low. The label text: no user-serviceable parts inside.</span></li>
+      <li><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/atx-version-3-0-multi-rail-desktop-platform-power-supply-design-guide/2.1a/dc-voltage-regulation-required/">Intel design guide, DC voltage regulation (HTML)</a><span class="note">The same Table 4-2, in the public HTML edition of document 336521.</span></li>
+      <li><a href="https://www.techpowerup.com/articles/160/images/ATX_2_2.pdf">Intel ATX12V Power Supply Design Guide, version 2.2</a><span class="note">March 2005. Table 2: +12 V ±5% is 11.40–12.60 V, +5 V and +5 VSB ±5% are 4.75–5.25 V, +3.3 V ±5% is published as 3.14–3.47 V, −12 V ±10% is −10.80 to −13.20 V. Pin 20 of the 24-pin plug is reserved, not connected. Public copy of Intel’s document.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/ATX">ATX</a><span class="note">The desktop supply and connector family, the standby rail, and the plugs this test uses.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Power_supply_unit_(computer)">Power supply unit (computer)</a><span class="note">What the box is for: AC from the wall into the DC rails a desktop needs.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Serial_ATA#Power_connectors">Serial ATA, power connectors</a><span class="note">The 15-pin plug: pins 1–2 retired as +3.3 V, pin 3 redefined as Power Disable, pin 11 a signal, +5 V on 7–9, +12 V on 13–15, grounds on 4–6, 10, and 12.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Molex_connector">Molex connector</a><span class="note">The older four-pin drive plug: +12 V, two grounds, +5 V.</span></li>
+      <li><a href="https://en.wikipedia.org/wiki/Capacitor">Capacitor</a><span class="note">A capacitor stores energy. That is why the inside of a supply is not safe just because the cord is out.</span></li>
+      <li><a href="https://drs.illinois.edu/Page/SafetyLibrary/ElectricalSafetyInTheResearchLaboratory">University of Illinois, electrical safety in the research laboratory</a><span class="note">Do not assume a capacitor is discharged. High-voltage capacitors are treated as hazardous stored energy.</span></li>
+      <li><a href="https://ehs.ucr.edu/basic-electrical-safety">UC Riverside, basic electrical safety</a><span class="note">Capacitors can retain a dangerous charge after the equipment is disconnected.</span></li>
+      <li><a href="https://ehs.berkeley.edu/news/injury-caused-high-voltage-capacitor-discharge">UC Berkeley, injury from a charged capacitor</a><span class="note">A capacitor can still discharge after the power is turned off. Their lesson from a supply that had been opened.</span></li>
+    </ul>
+    <p class="disclaimer">This is a bench check for a person who can use a meter, not a repair manual and not a promise that a supply in the window is healthy under load. When a label on the supply disagrees with a general window, the label is about that model; the windows here are the design guides’ limits. If you are unsure, replace the supply. Leave the cover on.</p>
+  </section>
+
+  <nav class="more" aria-label="Related desks">
+    <a href="/science/tech/3d-printing/"><p class="n">Science</p><h3>3D printing</h3><p>Printers and plastics, the how-to beside this one.</p></a>
+    <a href="/science/tech/computer-history/"><p class="n">Science</p><h3>Computer history</h3><p>A sourced timeline from counting boards to modern machines.</p></a>
+    <a href="/electronics/"><p class="n">Electronics</p><h3>Circuits</h3><p>The other shop bench.</p></a>
+    <a href="/science/"><p class="n">Science</p><h3>Where we stand</h3><p>The status desk this how-to hangs from.</p></a>
+  </nav>
+
+  {% include footer.html %}
+</div>
+<script>
+(function () {
+  var helpBtn = document.getElementById("chk-help");
+  var helpPanel = document.getElementById("chk-help-panel");
+  function setHelp(open) {
+    helpBtn.setAttribute("aria-expanded", String(open));
+    helpPanel.hidden = !open;
+  }
+  helpBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    setHelp(helpPanel.hidden);
+  });
+  document.addEventListener("click", function (e) {
+    if (helpPanel.hidden) return;
+    if (!helpPanel.contains(e.target) && e.target !== helpBtn) setHelp(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") setHelp(false);
+  });
+
+  function parse(id) {
+    var raw = document.getElementById(id).value.trim().replace(/\s+/g, "").replace(",", ".");
+    if (!raw) return null;
+    if (!/^[+-]?\d+(\.\d+)?$/.test(raw)) return NaN;
+    return parseFloat(raw);
+  }
+  function inRange(v, lo, hi) { return v >= lo && v <= hi; }
+  function row(name, tag, detail, kind) {
+    return "<li><span>" + name + " — " + detail + "</span><span class=\"tag" + (kind === "bad" ? " bad" : "") + "\">" + tag + "</span></li>";
+  }
+  function judge() {
+    var items = [];
+    function add(name, v, lo, hi, unit) {
+      if (v === null) return;
+      if (typeof v !== "number" || isNaN(v)) {
+        items.push(row(name, "Not a number", "Could not read that box.", "bad"));
+        return;
+      }
+      var ok = inRange(v, lo, hi);
+      items.push(row(name, ok ? "In spec" : "Out of spec", v.toFixed(3) + " V. Window " + lo.toFixed(2) + " to " + hi.toFixed(2) + " " + unit + ".", ok ? "ok" : "bad"));
+    }
+    var v12 = parse("v12");
+    if (v12 === null) {
+      /* skip */
+    } else if (typeof v12 !== "number" || isNaN(v12)) {
+      items.push(row("+12 V", "Not a number", "Could not read that box.", "bad"));
+    } else if (inRange(v12, 11.4, 12.6)) {
+      items.push(row("+12 V", "In spec", v12.toFixed(3) + " V. Inside ATX Version 3 (11.20–12.60) and inside the older ±5% window (11.40–12.60).", "ok"));
+    } else if (inRange(v12, 11.2, 12.6)) {
+      items.push(row("+12 V", "Newer window only", v12.toFixed(3) + " V. Inside ATX Version 3, down to 11.20 V, and below the older ±5% floor of 11.40 V.", "ok"));
+    } else {
+      items.push(row("+12 V", "Out of spec", v12.toFixed(3) + " V. Outside 11.20–12.60 V.", "bad"));
+    }
+    add("+5 V", parse("v5"), 4.75, 5.25, "V");
+    add("+3.3 V", parse("v33"), 3.14, 3.47, "V");
+    add("+5 V standby", parse("v5sb"), 4.75, 5.25, "V");
+    add("−12 V", parse("vn12"), -13.2, -10.8, "V");
+    var pwr = parse("vpwr");
+    if (pwr === null) {
+      /* skip */
+    } else if (isNaN(pwr)) {
+      items.push(row("PWR_OK", "Not a number", "Could not read that box.", "bad"));
+    } else if (inRange(pwr, 2.4, 5)) {
+      items.push(row("PWR_OK", "In spec", pwr.toFixed(3) + " V. High level is 2.4 V to 5 V once the rails are steady.", "ok"));
+    } else if (inRange(pwr, 5, 5.25)) {
+      items.push(row("PWR_OK", "Near 5 V", pwr.toFixed(3) + " V. A hair over the guide’s 5 V high level, still inside the +5 V rail’s own 5.25 V ceiling. Treat a healthy near-5 V as fine.", "ok"));
+    } else {
+      items.push(row("PWR_OK", "Out of spec", pwr.toFixed(3) + " V. With the supply on, expect about 2.4 V to 5 V.", "bad"));
+    }
+    var ps = parse("vpson");
+    var mode = document.getElementById("pson-mode").value;
+    if (ps === null) {
+      /* skip */
+    } else if (isNaN(ps)) {
+      items.push(row("PS_ON#", "Not a number", "Could not read that box.", "bad"));
+    } else if (mode === "off") {
+      var offOk = inRange(ps, 2, 5.25);
+      items.push(row("PS_ON#", offOk ? "In spec" : "Out of spec", ps.toFixed(3) + " V, read while waiting. Expect 2.0 V to 5.25 V.", offOk ? "ok" : "bad"));
+    } else {
+      var onOk = inRange(ps, 0, 0.8);
+      items.push(row("PS_ON#", onOk ? "In spec" : "Out of spec", ps.toFixed(3) + " V, read while jumped. Expect 0 V to 0.8 V.", onOk ? "ok" : "bad"));
+    }
+    var out = document.getElementById("chk-out");
+    if (!items.length) {
+      out.innerHTML = row("No readings yet", "Waiting", "Type at least one voltage.", "ok");
+      return;
+    }
+    out.innerHTML = items.join("");
+  }
+  document.getElementById("check-go").addEventListener("click", judge);
+  document.getElementById("chk-form").addEventListener("input", judge);
+  document.getElementById("pson-mode").addEventListener("change", judge);
+})();
+</script>
+</body>
+</html>
