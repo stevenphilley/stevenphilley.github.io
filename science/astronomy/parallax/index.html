@@ -1,0 +1,999 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parallax — the parsec yardstick — Steven Philley</title>
+<meta name="description" content="Interactive stellar parallax desk: drag Earth around a circular orbit and watch the line-of-sight angle at a nearby star. Distance in parsecs is 1 divided by the parallax in arcseconds. Classroom schematic, not a catalog or a finder chart.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/parallax/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Parallax — the parsec yardstick">
+<meta property="og:description" content="Top-down Sun, Earth, and a nearby star. The half-angle at the star is the parallax. One arcsecond is one parsec. A classroom schematic.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/parallax/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Parallax — the parsec yardstick">
+<meta name="twitter:description" content="Earth’s orbit shifts a nearby star against the background. That angle is a distance. Classroom schematic, not a catalog.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:36px;height:36px;min-width:36px;min-height:36px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:grab;user-select:none}
+.diagram canvas.dragging{cursor:grabbing}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0;border-radius:50%}
+.swatch.earth{background:#6ea4b8;border-radius:50%}
+.swatch.near{background:var(--accent,#c8b48a);border-radius:50%}
+.swatch.far{background:transparent;border-radius:50%}
+.swatch.base{background:transparent;border-style:dashed}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/" aria-current="page">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Stellar distance</p>
+  <h1>Parallax<br>the yardstick</h1>
+  <p class="lede">Hold a finger out and blink from eye to eye. The finger seems to jump against the far wall. The finger stayed put. Your eyes moved. A nearby star does that as Earth goes around the Sun: it seems to shift against the distant stars. That shift is <strong>parallax</strong>. It is the line-of-sight change from Earth’s orbit, not the star sliding sideways on its own. The short side of the triangle is the baseline, <strong>1 AU</strong>. The half-angle at the star, for that baseline, is the annual parallax <strong>p</strong>. Distance in parsecs is 1 divided by p in arcseconds. One parsec is the distance where p is one arcsecond. The <a href="/science/astronomy/nearest-stars/">nearest stars</a> desk is the neighborhood this yardstick measures. The <a href="/science/astronomy/">solar map</a> is the same orbit, drawn for the planets.</p>
+  <p class="note-schematic">Classroom schematic — a circular orbit, flattened into one plane with the star, disks and the nearby star enlarged so a phone can see the triangle. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists orbit eccentricity 0.0167; this circle leaves that out. The slider is a 365-day classroom year, not that sheet’s 365.256-day sidereal period. The arcseconds in the panel are the teaching figures cited below, run through d(pc) = 1 / p(″). The wedge on the canvas is drawn large. Not a precision ephemeris, not Gaia catalog precision, not a finder chart, and not astrology. It does not point Proxima or Sirius.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Earth, Sun, and a nearby star</span>
+    <button type="button" class="help-q" id="parallax-help" aria-haspopup="dialog" aria-controls="parallax-help-dialog" aria-expanded="false" aria-label="How this parallax desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Drag Earth · or slide the day · star drawn far too close · baseline = 1 AU</p>
+      <canvas id="orbit" width="880" height="640" role="img" aria-label="Top-down schematic. Sun, Earth’s circular orbit, a nearby star, and faint background stars. The angle at the star is the parallax. Classroom picture, not a finder chart."></canvas>
+      <p class="hint strip-label" id="shift-hint">Against the background · shift exaggerated · not a chart</p>
+      <canvas id="shift" width="880" height="180" role="img" aria-label="Exaggerated sideways shift of a nearby star against fixed background stars. Not a finder chart."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch earth" aria-hidden="true"></span> Earth · drag</li>
+        <li><span class="swatch near" aria-hidden="true"></span> Nearby star</li>
+        <li><span class="swatch far" aria-hidden="true"></span> Background</li>
+        <li><span class="swatch base" aria-hidden="true"></span> Baseline · 1 AU</li>
+      </ul>
+      <div class="controls">
+        <div class="presets" role="group" aria-label="Star presets">
+          <button type="button" id="btn-proxima" data-star="proxima" aria-pressed="true">Proxima Centauri</button>
+          <button type="button" id="btn-sirius" data-star="sirius" aria-pressed="false">Sirius</button>
+          <button type="button" id="btn-parsec" data-star="parsec" aria-pressed="false">1 parsec</button>
+        </div>
+        <div class="slider-row">
+          <label for="doy">Day of year</label>
+          <input type="range" id="doy" min="1" max="365" step="1" value="92" aria-valuemin="1" aria-valuemax="365" aria-valuenow="92" aria-valuetext="April 2, widest angle">
+          <span class="date-val" id="date-val">Apr 2</span>
+        </div>
+        <div class="presets" role="group" aria-label="Day presets">
+          <button type="button" id="btn-wide" data-doy="92" aria-pressed="true">Widest angle</button>
+          <button type="button" id="btn-spring" data-doy="79" aria-pressed="false">Spring</button>
+          <button type="button" id="btn-summer" data-doy="172" aria-pressed="false">Summer</button>
+          <button type="button" id="btn-autumn" data-doy="265" aria-pressed="false">Autumn</button>
+          <button type="button" id="btn-winter" data-doy="355" aria-pressed="false">Winter</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Wide angle · schematic</p>
+      <h2 id="r-title">Proxima Centauri</h2>
+      <p class="range" id="r-range">d(pc) = 1 / p(″)</p>
+      <ul class="stats">
+        <li><span class="k">Day of year</span><span class="v" id="r-day">Day 92 · Apr 2</span></li>
+        <li><span class="k">Season</span><span class="v" id="r-season">Northern spring</span></li>
+        <li><span class="k">Angle today</span><span class="v" id="r-now">0.7728″ · schematic</span></li>
+        <li><span class="k">Parallax p</span><span class="v" id="r-p">0.7728″ · 772.8 mas</span></li>
+        <li><span class="k">Distance</span><span class="v" id="r-pc">1.294 pc</span></li>
+        <li><span class="k">Light-years</span><span class="v" id="r-ly">4.22 ly</span></li>
+        <li><span class="k">Baseline</span><span class="v" id="r-au">1 AU</span></li>
+      </ul>
+      <p class="why" id="r-why">Earth sits at the side of the circle, so the angle at the star is the parallax p. Distance stays 1 / p.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="The triangle and the half-angle">
+    <p class="tag">Geometry · half-angle at the star</p>
+    <h2>Baseline 1 AU, angle p</h2>
+    <p>The triangle is Sun, Earth, and the star. The short side is labeled <strong>1 AU</strong>. <a href="https://sci.esa.int/web/education/-/35616-stellar-distances" rel="noopener" target="_blank">ESA’s stellar-distances page</a> says the parallax is the angular radius of Earth’s orbit as seen from the star, and writes d(parsec) = 1 / p(arcsecond). On this circle that radius sits at a right angle to the star on the widest days, and the wedge at the star is p. Six months later Earth is on the other side, and the star has swung by about 2p. <a href="https://science.nasa.gov/missions/hubble/hubble-stretches-stellar-tape-measure-10-times-farther-into-space/" rel="noopener" target="_blank">A NASA Hubble note</a> uses the diameter of the orbit — 186 million miles — as the surveyor’s baseline for that full year. This desk’s p is the half-angle for the radius. The star is parked close so the wedge can be seen. A real nearby star would leave a hairline.</p>
+  </aside>
+
+  <p class="band">Literacy · words for the yardstick</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Annual parallax</dt><dd>The yearly shift of a nearby star against more distant stars, caused by Earth’s orbit. <a href="https://www.esa.int/Science_Exploration/Space_Science/Gaia/Parallax" rel="noopener" target="_blank">ESA’s Gaia parallax page</a> puts it as the finger trick: blink from eye to eye and the finger moves against the background, and every six months Earth gives a new vantage point. <a href="https://science.nasa.gov/image-detail/a-sparkling-galactic-neighbour/" rel="noopener" target="_blank">A NASA Hubble caption</a> says the same thing in one line: stars appear to slightly shift against very distant stars over the course of a year. The star in this drawing is held still.</dd></div>
+    <div class="gloss"><dt>Arcsecond</dt><dd>A small angle. <a href="https://www.esa.int/Science_Exploration/Space_Science/Gaia/Cosmic_distances" rel="noopener" target="_blank">ESA’s cosmic-distances page</a> divides a circle into 360 degrees, a degree into 60 arcminutes, and an arcminute into 60 arcseconds. An arcsecond is 1/3600 of a degree, which is also how <a href="https://sci.esa.int/web/education/-/35616-stellar-distances" rel="noopener" target="_blank">the stellar-distances page</a> puts it. A milliarcsecond is one thousandth of an arcsecond. The panel’s milliarcseconds are that conversion of the arcsecond figure, not a separate measurement.</dd></div>
+    <div class="gloss"><dt>Parsec</dt><dd>The distance at which the parallax is one arcsecond. NASA’s Hubble caption says one parsec is the distance creating a parallax of one arcsecond, equal to 3.26 light-years. ESA’s stellar-distances page derives the name the same way — “parallax of one arcsecond” — and prints 1 parsec = 3.26 light years = 206&nbsp;265 AU. Then d(pc) = 1 / p(″). An archival <a href="https://pwg.gsfc.nasa.gov/stargaze/Sparalax.htm" rel="noopener" target="_blank">NASA GSFC lesson</a> says no star is that close. The “1 parsec” button is the definition, drawn so the formula reads 1.</dd></div>
+    <div class="gloss"><dt>Light-year</dt><dd>The distance light travels in one year. ESA’s cosmic-distances page calls it about 9.5 million million kilometres. The same page, and the NASA caption, and the ESA stellar-distances page, all put 1 parsec at 3.26 light-years. Light-years on this desk are the parsec figure times 3.26. Proxima’s 4.22 and Sirius’s 8.6 are the products ESA already prints.</dd></div>
+    <div class="gloss gloss-wide"><dt>Baseline · 1 AU</dt><dd>The Sun–Earth side of the triangle. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists the semimajor axis as 149.598 × 10<sup>6</sup> km, and the J2000 elements list it as 1.00000011 AU. This circle calls that scale 1 AU and ignores the sheet’s eccentricity 0.0167. NASA’s Hubble note uses the diameter, 186 million miles, when the baseline runs from one side of the year to the other. The label on the canvas is the radius.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA and ESA</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — semimajor axis 149.598 × 10<sup>6</sup> km; J2000 semimajor axis 1.00000011 AU; orbit eccentricity 0.0167; sidereal orbit period 365.256 days. The baseline label is 1 AU. The circle does not use the eccentricity. The slider counts 365 days.</li>
+      <li><a href="https://science.nasa.gov/image-detail/a-sparkling-galactic-neighbour/" rel="noopener" target="_blank">NASA Science — Hubble image of ESO 300-16</a> — the motion of Earth around the Sun makes stars appear to slightly shift against very distant stars over a year. That shift is parallax. One parsec is the distance creating a parallax of one arcsecond, equal to 3.26 light-years or 30.9 trillion kilometers (19.2 trillion miles). The closest star to the Sun is Proxima Centauri, at 1.3 parsecs. Image credit on that page: ESA/Hubble &amp; NASA, R. Tully. One divided by 1.3 is about 0.77 arcseconds, about 770 milliarcseconds. That reciprocal is a classroom reading of NASA’s rounded 1.3 parsecs. It is not a catalog parallax, and the Proxima button does not use it.</li>
+      <li><a href="https://sci.esa.int/web/education/-/35616-stellar-distances" rel="noopener" target="_blank">ESA Science &amp; Technology — Stellar distances</a> — parallax is the apparent movement of a nearer object against distant ones. The parsec is “the distance at which an object has a parallax of one arcsecond.” An arcsecond is 1/3600 of a degree. 1 parsec = 3.26 light years = 3.09 × 10<sup>13</sup> km = 206&nbsp;265 AU. The parallax is the angular radius of Earth’s orbit as seen from the star, and d(parsec) = 1 / p(arcsecond). The table lists Proxima Centauri, the closest star to the Sun, at 1.294 parsec and 4.22 light years (also 3.99 × 10<sup>13</sup> km and 2.67 × 10<sup>5</sup> AU). The Proxima button’s p is 1 / 1.294, so the distance reads that table back. Sirius (α Canis Major) is the worked example: parallax 0.37921 arcseconds, distance 1 / 0.37921 = 2.637 parsecs, times 3.26 is 8.6 light-years.</li>
+      <li><a href="https://www.esa.int/Science_Exploration/Space_Science/Gaia/Parallax" rel="noopener" target="_blank">ESA — Gaia, Parallax</a> — even the nearest star is 40 trillion kilometres away. Every six months Earth is a new vantage point, and the star seems to move against more distant stars. For the nearest stars that apparent movement is less than one arcsecond. Gaia measured positions of one billion stars to microarcsecond accuracies. This page does not reprint a Gaia catalog.</li>
+      <li><a href="https://www.esa.int/Science_Exploration/Space_Science/Gaia/Cosmic_distances" rel="noopener" target="_blank">ESA — Gaia, Cosmic distances</a> — a light-year is the distance light travels in one year, about 9.5 million million kilometres. A parsec is 3.26 light-years, or nearly 31 trillion kilometres, the distance for a parallax angle of one arcsecond. An arcminute is 1/60 of a degree. An arcsecond is 1/60 of an arcminute. A milliarcsecond is one thousandth of an arcsecond. A microarcsecond is one millionth.</li>
+      <li><a href="https://science.nasa.gov/missions/hubble/hubble-stretches-stellar-tape-measure-10-times-farther-into-space/" rel="noopener" target="_blank">NASA Science — Hubble stretches the stellar tape measure</a> — the reliable distance method is geometry, using the 186-million-mile diameter of Earth’s orbit as the baseline of a triangle. A close enough star zigzags through the year as a reflection of Earth’s orbit. That is parallax. It works for stars within a few hundred light-years. Alpha Centauri, the nearest star system, varies by only one arc second over the year on that page, the apparent width of a dime seen from two miles away. Farther stars make a smaller angle. The one-arc-second line is that page’s example. It is not the p on these buttons.</li>
+      <li><a href="https://pwg.gsfc.nasa.gov/stargaze/Sparalax.htm" rel="noopener" target="_blank">NASA GSFC — Parallax (archival ISTP lesson)</a> — a parsec is the distance to a star whose yearly parallax is 1″, one second of arc. One parsec equals 3.26 light years, and no star is that close. The page gives Alpha Centauri a distance of 4.3 years and a parallax of 0.75″. It also calls the biggest baseline the diameter of Earth’s orbit, 300,000,000 kilometers, the separation of two positions half a year apart. The page is kept online for archival use and is no longer updated. This slider does not use the 0.75″ figure.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of an angle becoming a distance. Proxima’s parallax on the button is the reciprocal of ESA’s 1.294 parsec, not a Gaia measurement. Sirius’s 0.37921″ is the parallax ESA prints, and the parsecs and light-years are that page’s arithmetic. The 1 parsec button is the definition: p = 1″, d = 1 pc, 3.26 light-years. Today’s angle is p times the sine of Earth’s angle from the star, so it equals p when the baseline is broadside. The six-month swing on the lower strip is that angle from one side of the orbit to the other, drawn huge. Not an ephemeris, not a catalog, not a pointing aid. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima through the next dozen light-years. This page is how the yardstick is an angle.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Color</p><h3>Stars</h3><p>OBAFGKM and life phases. Distance is a different question from color.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The same Sun and Earth, compressed so the planets fit. Still a schematic.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Earth’s axis, kept parallel. A different angle from the parallax at the star.</p></a>
+    <a href="/science/astronomy/opposition/"><p class="n">Lineup</p><h3>Opposition</h3><p>Another Sun–Earth triangle, this one out to Mars. The angle there is at Earth.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>What the horizon puts overhead. This desk does not aim it.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="parallax-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="parallax-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="parallax-help-title">Parallax desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom picture. The star is drawn far too close so the triangle fits on the screen. It does not point at a real star.</p>
+    <h3>Move Earth</h3>
+    <table>
+      <caption>Move Earth</caption>
+      <tbody>
+        <tr><th scope="row">Drag</th><td>Drag the blue Earth around its orbit. The day follows where you put it.</td></tr>
+        <tr><th scope="row">Day slider</th><td>The same trip, one day at a time. You can drag Earth or use the slider. Widest angle, the seasons, and Play move that day too.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Magenta line</th><td>The sightline from Earth to the star.</td></tr>
+        <tr><th scope="row">p wedge</th><td>The parallax angle at the star. It is drawn large. On the widest days the label reads p.</td></tr>
+        <tr><th scope="row">Background strip</th><td>The strip under the orbit shows the star’s apparent shift against far stars. The shift is drawn exaggerated. It is not a chart.</td></tr>
+      </tbody>
+    </table>
+    <h3>Presets</h3>
+    <table>
+      <caption>Presets</caption>
+      <tbody>
+        <tr><th scope="row">Proxima Centauri</th><td>The nearest star on the teaching table. The button sets the parallax so the distance reads 1.294 parsecs, about 4.22 light-years.</td></tr>
+        <tr><th scope="row">Sirius</th><td>Farther than Proxima, so the angle is smaller. The button uses 0.37921 arcseconds, which is 2.637 parsecs, about 8.6 light-years.</td></tr>
+        <tr><th scope="row">1 parsec</th><td>The definition, not a catalog star. The parallax is 1 arcsecond, so the distance is 1 parsec, 3.26 light-years.</td></tr>
+      </tbody>
+    </table>
+    <h3>Distance</h3>
+    <table>
+      <caption>Distance</caption>
+      <tbody>
+        <tr><th scope="row">d(pc) = 1/p(″)</th><td>Distance in parsecs is 1 divided by the parallax in arcseconds. Moving Earth changes today’s angle. The distance stays 1 / p.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Classroom parallax.
+     Baseline: Earth Fact Sheet semimajor axis, called 1 AU on the drawing.
+     p for Proxima is 1/1.294, the reciprocal of the parsec on ESA’s
+     stellar-distances table — not a catalog parallax.
+     p for Sirius is 0.37921″, the parallax that page prints.
+     p for the definition button is 1″, so d = 1 pc.
+     Light-years use 3.26 ly per parsec, the factor NASA and ESA both print.
+     Today’s angle is p|sin θ|, the small-angle classroom model.
+     Not an ephemeris. Not a Gaia dump. */
+  var YEAR = 365;
+  var LY_PER_PC = 3.26;
+  var PLAY_DPD = 20;
+  var WIDE = 92;
+  var PRE = { wide: 92, spring: 79, summer: 172, autumn: 265, winter: 355 };
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  var MDAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
+  var STARS = {
+    proxima: { id: "proxima", name: "Proxima Centauri", p: 1 / 1.294, kind: "reciprocal" },
+    sirius: { id: "sirius", name: "Sirius", p: 0.37921, kind: "published" },
+    parsec: { id: "parsec", name: "1 parsec", p: 1, kind: "definition" }
+  };
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var orbitCanvas = document.getElementById("orbit");
+  var shiftCanvas = document.getElementById("shift");
+  var slider = document.getElementById("doy");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-doy]"));
+  var starBtns = [].slice.call(document.querySelectorAll("[data-star]"));
+  var state = { day: WIDE, star: "proxima", playing: false, dragging: false };
+  var q = new URLSearchParams(location.search);
+  if (q.get("star") && STARS[q.get("star")]) state.star = q.get("star");
+  if (q.get("doy")) state.day = clamp(parseInt(q.get("doy"), 10) || WIDE, 1, YEAR);
+  var raf = 0;
+  var lastT = 0;
+  var layout = { cssW: 640, cssH: 480, cx: 0, cy: 0, orbitR: 80, earth: { x: 0, y: 0 } };
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function wrapDay(t){
+    var x = ((t - 1) % YEAR) + 1;
+    if (x < 1) x += YEAR;
+    return x;
+  }
+  function dayNum(t){
+    var n = Math.round(wrapDay(t));
+    if (n > YEAR) n = 1;
+    if (n < 1) n = YEAR;
+    return n;
+  }
+  function splitDay(day){
+    var d = day;
+    var m;
+    for (m = 0; m < 12; m++){
+      if (d <= MDAYS[m]) return { month: MONTHS[m], mon: MONTHS[m].slice(0, 3), date: d };
+      d -= MDAYS[m];
+    }
+    return { month: "December", mon: "Dec", date: 31 };
+  }
+  function thetaOf(day){
+    return Math.PI * 2 * (wrapDay(day) - 1) / YEAR;
+  }
+  function starObj(){
+    return STARS[state.star] || STARS.proxima;
+  }
+  function angleNow(p, day){
+    return p * Math.abs(Math.sin(thetaOf(day)));
+  }
+  function seasonNorth(day){
+    if (day >= 79 && day <= 171) return "Spring";
+    if (day >= 172 && day <= 264) return "Summer";
+    if (day >= 265 && day <= 354) return "Autumn";
+    return "Winter";
+  }
+  function nearPreset(day){
+    var n = dayNum(day);
+    var keys = ["wide", "spring", "summer", "autumn", "winter"];
+    var i;
+    for (i = 0; i < keys.length; i++){
+      if (n === PRE[keys[i]]) return keys[i];
+    }
+    if (n === 275) return "wide";
+    return "";
+  }
+  function fmtArc(a){
+    if (!(a > 0.0005)) return "0″";
+    var rounded = Math.round(a * 100000) / 100000;
+    var s = rounded.toFixed(5).replace(/0+$/, "").replace(/\.$/, "");
+    return s + "″";
+  }
+  function fmtMas(p){
+    var tenths = Math.round(p * 10000);
+    if (tenths % 10 === 0) return String(tenths / 10) + " mas";
+    return (tenths / 10).toFixed(1) + " mas";
+  }
+  function fmtPc(p){
+    var pc = 1 / p;
+    if (Math.abs(pc - 1) < 1e-9) return "1 pc";
+    var milli = Math.round(pc * 1000) / 1000;
+    return milli.toFixed(3).replace(/0+$/, "").replace(/\.$/, "") + " pc";
+  }
+  function fmtLy(p){
+    var ly = (1 / p) * LY_PER_PC;
+    var cents = Math.round(ly * 100);
+    if (cents % 10 === 0) return (cents / 100).toFixed(1) + " ly";
+    return (cents / 100).toFixed(2) + " ly";
+  }
+  function atWide(day){
+    var preset = nearPreset(day);
+    if (preset === "wide") return true;
+    var frac = angleNow(1, day);
+    return frac > 0.999;
+  }
+  function copyFor(day, star){
+    var n = dayNum(day);
+    var parts = splitDay(n);
+    var nh = seasonNorth(n);
+    var wide = atWide(day);
+    var p = star.p;
+    var now = angleNow(p, day);
+    var pc = fmtPc(p);
+    var ly = fmtLy(p);
+    var pText = fmtArc(p);
+    var nowText = (Math.abs(now - p) / p < 1e-4) ? pText : fmtArc(now);
+    var base = {
+      tier: (wide ? "Wide angle" : "Along the orbit") + " · schematic",
+      title: star.name,
+      range: "d(pc) = 1 / p(″)",
+      day: "Day " + n + " · " + parts.mon + " " + parts.date,
+      season: "Northern " + nh.toLowerCase(),
+      now: nowText + " · schematic",
+      p: pText + " · " + fmtMas(p),
+      pc: pc + " · 1 / p",
+      ly: ly + " · × 3.26",
+      au: "1 AU",
+      slider: parts.month + " " + parts.date + ", Northern " + nh.toLowerCase() + ", angle " + nowText + ", parallax " + pText + ", " + pc
+    };
+    if (star.kind === "definition"){
+      base.tier = (wide ? "Definition · wide angle" : "Definition") + " · not a star";
+      base.why = wide
+        ? "This button is the definition, not a catalog star. p is 1 arcsecond, so the distance is 1 parsec, and 1 × 3.26 is 3.26 light-years. NASA’s Hubble caption and ESA’s stellar-distances page both state that pair. An archival NASA lesson says no star is this close. Earth is broadside, so the angle at the star equals p."
+        : "This button is the definition, not a catalog star. p stays 1 arcsecond, and the distance stays 1 parsec. Earth is off the broadside, so the angle at the star is smaller than p. Distance uses p. Drag Earth to the top or the bottom of the circle.";
+      return base;
+    }
+    if (star.kind === "published"){
+      base.why = wide
+        ? "Sirius is the worked example on ESA’s stellar-distances page: parallax 0.37921 arcseconds, distance 1 / 0.37921 = 2.637 parsecs, times 3.26 is 8.6 light-years. The angle is smaller than Proxima’s because Sirius is farther. Earth is broadside, so the wedge is that p. The drawing still exaggerates it."
+        : "Sirius keeps the parallax ESA prints, 0.37921 arcseconds, so the distance stays 2.637 parsecs and 8.6 light-years. Today’s angle is the smaller one, p times a sine, because Earth is not broadside. The star did not move closer.";
+      return base;
+    }
+    base.why = wide
+      ? "Proxima’s button uses ESA’s table: 1.294 parsecs and 4.22 light-years. p is 1 / 1.294, the classroom reciprocal, not a Gaia parallax. NASA’s Hubble caption rounds the same star to 1.3 parsecs; one divided by 1.3 is about 0.77 arcseconds, about 770 milliarcseconds. Earth is broadside, so the angle at the star is this p, and the distance is 1 / p."
+      : "Proxima’s distance stays 1.294 parsecs, from 1 / p, with p the reciprocal of ESA’s 1.294. Today’s angle is smaller because Earth is not at the side of the orbit. Parallax p is the broadside angle. The star is not sliding on its own.";
+    return base;
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function screenEarth(cx, cy, orbitR, day){
+    var th = thetaOf(day);
+    return { x: cx + Math.cos(th) * orbitR, y: cy - Math.sin(th) * orbitR, th: th };
+  }
+
+  function drawOrbit(cssW){
+    var cssH = Math.round(clamp(cssW * 0.78, 300, 520));
+    var ctx = fitCanvas(orbitCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var star = starObj();
+    var copy = copyFor(state.day, star);
+    var pad = 28;
+    var cx = cssW * 0.36;
+    var cy = cssH * 0.52;
+    var orbitR = Math.min(cssH * 0.28, cssW * 0.20);
+    orbitR = clamp(orbitR, 52, 150);
+    var starX = cssW - pad - 6;
+    if (starX < cx + orbitR + 78) orbitR = Math.max(46, starX - cx - 78);
+    var starY = cy;
+    var sunR = clamp(cssW * 0.028, 10, 16);
+    var earthR = clamp(orbitR * 0.09, 7, 11);
+    var e = screenEarth(cx, cy, orbitR, state.day);
+    layout = { cssW: cssW, cssH: cssH, cx: cx, cy: cy, orbitR: orbitR, earth: { x: e.x, y: e.y }, earthR: earthR };
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    var ang = Math.PI * 0.15;
+    var tip = screenEarth(cx, cy, orbitR, 1 + (ang / (Math.PI * 2)) * YEAR);
+    var tx = -Math.sin(ang);
+    var ty = -Math.cos(ang);
+    ctx.fillStyle = "rgba(110,164,184,0.9)";
+    ctx.beginPath();
+    ctx.moveTo(tip.x + tx * 11, tip.y + ty * 11);
+    ctx.lineTo(tip.x - ty * 4.2, tip.y - tx * 4.2);
+    ctx.lineTo(tip.x + ty * 4.2, tip.y + tx * 4.2);
+    ctx.closePath();
+    ctx.fill();
+
+    var bgs = [
+      { x: starX - 8, y: cy - 78, r: 1.5 },
+      { x: starX - 36, y: cy - 112, r: 1.15 },
+      { x: starX + 2, y: cy + 84, r: 1.35 },
+      { x: starX - 28, y: cy + 118, r: 1.05 },
+      { x: starX - 54, y: cy - 48, r: 1.2 }
+    ];
+    ctx.fillStyle = "rgba(232,230,225,0.38)";
+    bgs.forEach(function(b){
+      var bx = clamp(b.x, pad, cssW - 10);
+      var by = clamp(b.y, 16, cssH - 16);
+      ctx.beginPath();
+      ctx.arc(bx, by, b.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.save();
+    ctx.setLineDash([2, 5]);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.45;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(clamp(bgs[0].x, pad, cssW - 10), clamp(bgs[0].y, 16, cssH - 16));
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = soft;
+    ctx.globalAlpha = 0.8;
+    ctx.lineWidth = 1.15;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(e.x, e.y);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(starX, starY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.35;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y);
+    ctx.lineTo(starX, starY);
+    ctx.stroke();
+
+    if (atWide(state.day)){
+      var mark = 11;
+      var ux = (e.x - cx) / orbitR;
+      var uy = (e.y - cy) / orbitR;
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.moveTo(cx + ux * mark, cy + uy * mark);
+      ctx.lineTo(cx + ux * mark + mark, cy + uy * mark);
+      ctx.lineTo(cx + mark, cy);
+      ctx.stroke();
+    }
+
+    var a0 = Math.atan2(cy - starY, cx - starX);
+    var a1 = Math.atan2(e.y - starY, e.x - starX);
+    var sweep = Math.atan2(Math.sin(a1 - a0), Math.cos(a1 - a0));
+    var arcR = clamp(earthR + 16, 22, 30);
+    if (Math.abs(sweep) > 0.03){
+      ctx.beginPath();
+      ctx.moveTo(starX, starY);
+      ctx.arc(starX, starY, arcR, a0, a1, sweep < 0);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(200,180,138,0.16)";
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(starX, starY, arcR, a0, a1, sweep < 0);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+      var mid = a0 + sweep / 2;
+      var lx = starX + Math.cos(mid) * (arcR + 12);
+      var ly = starY + Math.sin(mid) * (arcR + 12);
+      lx = clamp(lx, 36, cssW - 36);
+      ly = clamp(ly, 14, cssH - 14);
+      text(ctx, atWide(state.day) ? "p" : "angle", lx, ly, { size: 11, align: "center", color: accent });
+    }
+
+    var glow = ctx.createRadialGradient(cx, cy, sunR * 0.2, cx, cy, sunR * 2.6);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(cx, cy, sunR * 2.6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(cx, cy, sunR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#6ea4b8";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, earthR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(232,230,225,0.7)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    var starGlow = ctx.createRadialGradient(starX, starY, 1, starX, starY, 16);
+    starGlow.addColorStop(0, "rgba(200,180,138,0.95)");
+    starGlow.addColorStop(1, "rgba(200,180,138,0)");
+    ctx.fillStyle = starGlow;
+    ctx.beginPath();
+    ctx.arc(starX, starY, 16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(starX, starY, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    var mx = (cx + e.x) / 2;
+    var my = (cy + e.y) / 2;
+    var dx = e.x - cx;
+    var dy = e.y - cy;
+    var len = Math.hypot(dx, dy) || 1;
+    text(ctx, "1 AU", mx + (-dy / len) * 16, my + (dx / len) * 16, { size: 10, align: "center", color: soft });
+
+    var eLab = screenEarth(cx, cy, orbitR + earthR + 14, state.day);
+    eLab.x = clamp(eLab.x, 28, cssW - 28);
+    eLab.y = clamp(eLab.y, 14, cssH - 12);
+    text(ctx, "Earth", eLab.x, eLab.y, { size: 11, align: "center", color: ink });
+    text(ctx, "Sun", cx, cy + sunR + 12, { size: 11, align: "center", color: ink });
+    text(ctx, star.kind === "definition" ? "1″" : "Star", starX, starY - 16, { size: 11, align: "center", color: ink });
+    text(ctx, copy.title, cssW - 10, 14, { size: 11, align: "right", color: accent });
+
+    orbitCanvas.setAttribute("aria-label",
+      "Top-down schematic for " + copy.title + ". " + copy.day + ". " + copy.season +
+      ". Angle at the star " + copy.now + ". Parallax " + copy.p + ". Distance " + copy.pc +
+      ", " + copy.ly + ". Baseline 1 AU. Star drawn far too close. Not a finder chart.");
+  }
+
+  function drawShift(cssW){
+    var cssH = Math.round(clamp(cssW * 0.24, 132, 176));
+    var ctx = fitCanvas(shiftCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var star = starObj();
+    var copy = copyFor(state.day, star);
+    var y = cssH * 0.56;
+    var x0 = 36;
+    var x1 = cssW - 36;
+    var mid = (x0 + x1) / 2;
+    var amp = (x1 - x0) * 0.28;
+    var sx = mid + Math.sin(thetaOf(state.day)) * amp;
+    var backs = [-0.72, -0.38, -0.05, 0.22, 0.48, 0.7];
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(x1, y);
+    ctx.stroke();
+    backs.forEach(function(u){
+      var x = mid + u * (x1 - x0) * 0.46;
+      ctx.fillStyle = "rgba(232,230,225,0.45)";
+      ctx.beginPath();
+      ctx.arc(x, y, 1.6, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.strokeStyle = muted;
+    ctx.beginPath();
+    ctx.moveTo(mid, y - 8);
+    ctx.lineTo(mid, y + 8);
+    ctx.stroke();
+    text(ctx, "mean", mid, y + 20, { size: 10, align: "center", color: muted });
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(sx, y - 16, 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = accent;
+    ctx.beginPath();
+    ctx.moveTo(sx, y - 10);
+    ctx.lineTo(sx, y);
+    ctx.stroke();
+    var nameX = clamp(sx, 78, cssW - 78);
+    text(ctx, star.kind === "definition" ? "1″ marker" : star.name, nameX, y - 32, { size: 11, align: "center", color: ink });
+    text(ctx, "one side", x0, cssH - 14, { size: 10, align: "left", color: muted });
+    text(ctx, "other side", x1, cssH - 14, { size: 10, align: "right", color: muted });
+    shiftCanvas.setAttribute("aria-label",
+      "Exaggerated background shift for " + copy.title + ". The nearby marker moves as Earth moves. Background dots stay put. Angle today " + copy.now + ". Not a finder chart.");
+  }
+
+  function syncUrl(){
+    var url = new URL(location.href);
+    url.searchParams.set("star", state.star);
+    url.searchParams.set("doy", String(dayNum(state.day)));
+    history.replaceState(null, "", url.pathname + url.search);
+  }
+
+  function render(){
+    state.day = wrapDay(state.day);
+    var star = starObj();
+    var copy = copyFor(state.day, star);
+    var n = dayNum(state.day);
+    var parts = splitDay(n);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("r-day").textContent = copy.day;
+    document.getElementById("r-season").textContent = copy.season;
+    document.getElementById("r-now").textContent = copy.now;
+    document.getElementById("r-p").textContent = copy.p;
+    document.getElementById("r-pc").textContent = copy.pc;
+    document.getElementById("r-ly").textContent = copy.ly;
+    document.getElementById("r-au").textContent = copy.au;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("date-val").textContent = parts.mon + " " + parts.date;
+    slider.value = String(n);
+    slider.setAttribute("aria-valuenow", String(n));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    var shown = nearPreset(state.day);
+    jumpBtns.forEach(function(b){
+      var key = b.id.replace("btn-", "");
+      b.setAttribute("aria-pressed", String(key === shown));
+    });
+    starBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.dataset.star === state.star));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = orbitCanvas.clientWidth || (orbitCanvas.parentElement && orbitCanvas.parentElement.clientWidth) || 640;
+    drawOrbit(cssW);
+    drawShift(cssW);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.day = wrapDay(state.day + dt * PLAY_DPD);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+  function localPoint(ev){
+    var rect = orbitCanvas.getBoundingClientRect();
+    var sx = rect.width ? (layout.cssW / rect.width) : 1;
+    var sy = rect.height ? (layout.cssH / rect.height) : 1;
+    return {
+      x: (ev.clientX - rect.left) * sx,
+      y: (ev.clientY - rect.top) * sy
+    };
+  }
+  function hitEarth(pt){
+    var reach = Math.max(28, (layout.earthR || 8) + 22);
+    var dx = pt.x - layout.earth.x;
+    var dy = pt.y - layout.earth.y;
+    return Math.hypot(dx, dy) <= reach;
+  }
+  function setFromPointer(pt){
+    var ang = Math.atan2(-(pt.y - layout.cy), pt.x - layout.cx);
+    if (ang < 0) ang += Math.PI * 2;
+    state.day = 1 + (ang / (Math.PI * 2)) * YEAR;
+    render();
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.day = clamp(parseInt(slider.value, 10) || 1, 1, YEAR);
+    render();
+    syncUrl();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      state.day = clamp(parseInt(b.dataset.doy, 10) || 1, 1, YEAR);
+      render();
+      syncUrl();
+    });
+  });
+  starBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      if (!STARS[b.dataset.star]) return;
+      state.star = b.dataset.star;
+      render();
+      syncUrl();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      syncUrl();
+      return;
+    }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  orbitCanvas.addEventListener("pointerdown", function(ev){
+    var pt = localPoint(ev);
+    if (!hitEarth(pt)) return;
+    state.dragging = true;
+    orbitCanvas.classList.add("dragging");
+    stopPlay();
+    orbitCanvas.setPointerCapture(ev.pointerId);
+    setFromPointer(pt);
+    ev.preventDefault();
+  });
+  orbitCanvas.addEventListener("pointermove", function(ev){
+    if (!state.dragging) return;
+    setFromPointer(localPoint(ev));
+  });
+  function endDrag(ev){
+    if (!state.dragging) return;
+    state.dragging = false;
+    orbitCanvas.classList.remove("dragging");
+    if (ev) setFromPointer(localPoint(ev));
+    syncUrl();
+  }
+  orbitCanvas.addEventListener("pointerup", endDrag);
+  orbitCanvas.addEventListener("pointercancel", function(){
+    state.dragging = false;
+    orbitCanvas.classList.remove("dragging");
+    syncUrl();
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("parallax-help");
+  var helpDialog = document.getElementById("parallax-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
