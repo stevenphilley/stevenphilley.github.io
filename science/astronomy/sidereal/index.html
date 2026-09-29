@@ -44,6 +44,24 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .note-schematic a{color:var(--ink,#e8e6e1)}
 .band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
 .band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
 .stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
 .diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
 .diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
@@ -118,6 +136,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
 .dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
 .dial-link svg{width:14px;height:14px;display:block}
 .top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
 @media (max-width:860px){
   .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
 }
@@ -168,7 +194,10 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   <p class="lede">A clock day is not one spin of Earth. <strong>Mean solar time</strong> brings the Sun back to the same meridian. NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists that length of day as <strong>24.0000 hours</strong>. A <strong>sidereal day</strong> is one full turn relative to the distant stars. The same sheet lists the sidereal rotation period as <strong>23.9345 hours</strong>. <a href="https://spaceplace.nasa.gov/days/" rel="noopener" target="_blank">NASA Space Place</a> says the same thing in hours and minutes: a solar day is around 24 hours, and a sidereal day is almost exactly 23 hours and 56 minutes. The star day is the shorter one. After the meridian faces a star again, Earth has moved along its orbit, so the Sun is not quite back. The mark still has a little farther to turn. That is why the stars rise earlier the next night. <a href="https://www.jpl.nasa.gov/videos/whats-up-january-2024/" rel="noopener" target="_blank">JPL’s January 2024 What’s Up</a> says the stars rise 4 minutes earlier each day. The mean in “mean solar” is the average the <a href="/science/astronomy/analemma/">analemma</a> desk takes apart. The orbit itself, used as a ruler, is the <a href="/science/astronomy/parallax/">parallax</a> desk.</p>
   <p class="note-schematic">Classroom schematic — a top-down disk, a fixed star direction, and a short arc of a circular orbit, viewed from the north so spin and orbit both run counterclockwise. The daily step on that orbit is 360° divided by the fact sheet’s 365.256-day sidereal orbit. The sketch draws that step much larger so a phone can see the leftover turn. The clocks and the degree readout use 23.9345 hours and 24.0000 hours. They are not enlarged. Not an ephemeris. Not a sidereal clock for navigation, surveying, or a telescope. Not a sundial. Not astrology. The fact sheet lists orbit eccentricity 0.0167; this circle leaves that out. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a> states the published gap: rotation relative to the fixed stars is 3 minutes 56.55 seconds shorter than the mean solar day, the equivalent of one solar day per year. This page does not replace that sentence with a sharper subtraction of the rounded fact-sheet periods.</p>
 
-  <p class="band">Interactive · Top-down</p>
+  <div class="band has-help">
+    <span class="band-label">Interactive · Top-down</span>
+    <button type="button" class="help-q" id="sidereal-help" aria-haspopup="dialog" aria-controls="sidereal-help-dialog" aria-expanded="false" aria-label="How this sidereal desk works">?</button>
+  </div>
   <div class="stage">
     <div class="diagram">
       <p class="hint" id="orbit-hint">North up · meridian mark on the disk · orbit step enlarged</p>
@@ -258,6 +287,53 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   </div>
 
   {% include footer.html %}
+</div>
+<div id="sidereal-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="sidereal-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="sidereal-help-title">Sidereal desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom picture, viewed from the north so spin and orbit both run counterclockwise. The sketch draws the orbit step much larger so a phone can see the leftover turn. The clocks are not enlarged.</p>
+    <h3>Move the day</h3>
+    <table>
+      <caption>Move the day</caption>
+      <tbody>
+        <tr><th scope="row">Hours from this noon</th><td>The slider walks two mean solar days, from this solar noon through 48 hours. Each hour is a mean solar hour on the fact sheet’s 24.0000-hour day.</td></tr>
+        <tr><th scope="row">Play</th><td>Play walks that same slider. It slows at the landmarks, then starts again at this noon. It is not a clock for navigation.</td></tr>
+      </tbody>
+    </table>
+    <h3>Presets</h3>
+    <table>
+      <caption>Presets</caption>
+      <tbody>
+        <tr><th scope="row">This solar noon</th><td>The start. The meridian mark faces the Sun. On this sketch the reference star lies along that same direction, so the two line up.</td></tr>
+        <tr><th scope="row">Same star transit next day</th><td>The same star’s transit, one spin later. The mark faces the fixed star again after the fact sheet’s 23.9345 hours. Earth has moved along its orbit, so the Sun is not on the mark yet.</td></tr>
+        <tr><th scope="row">Same solar noon next day</th><td>The next mean solar noon. The mark faces the Sun again after 24.0000 hours, the fact sheet’s length of the day. The star already crossed the mark.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Meridian mark</th><td>The mark on the disk. At solar noon it faces the Sun. It spins counterclockwise, the same way the orbit runs.</td></tr>
+        <tr><th scope="row">Sun</th><td>Drawn distant, at the center of the short orbit arc. The lit half of the disk faces the Sun.</td></tr>
+        <tr><th scope="row">Fixed star</th><td>A direction, not a catalog star. At the first noon it lies along the same line as the Sun. The next time the mark faces that star is one sidereal period later.</td></tr>
+        <tr><th scope="row">Three nights</th><td>The strip under the orbit, at the same mean solar clock time. The star is on the horizon the first night and higher the next two — the picture of rising earlier. JPL’s January 2024 sky note says the stars rise 4 minutes earlier each day. The labels use that pace: about 4 minutes the next night, about 8 minutes the night after. The heights are stretched. They are not altitudes. Not a finder chart.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Mean solar time</th><td>The clock on 24.0000 hours, the fact sheet’s length of day. It starts at noon and counts mean solar time.</td></tr>
+        <tr><th scope="row">Sidereal rotation</th><td>The other readout, on 23.9345 hours. It shows the turn against the fixed star, in degrees. One full spin is 360°.</td></tr>
+        <tr><th scope="row">Still to the Sun</th><td>The true angle left before the mark faces the Sun. It uses the fact-sheet periods. It is not enlarged. When the mark is on the star and the Sun is still ahead, that leftover is the orbit step.</td></tr>
+        <tr><th scope="row">Orbit step</th><td>360° ÷ 365.256 per mean solar day, the fact sheet’s sidereal orbit. The sketch draws that step much larger. The readout does not.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
 </div>
 <script>
 (function(){
@@ -791,6 +867,78 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   }
   paintTheme();
   render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("sidereal-help");
+  var helpDialog = document.getElementById("sidereal-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
 })();
 </script>
 </body>
