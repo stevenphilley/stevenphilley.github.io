@@ -1,0 +1,797 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sidereal day — shorter than the mean solar day — Steven Philley</title>
+<meta name="description" content="Interactive sidereal desk: why one spin against the stars is shorter than the mean solar day. NASA’s Earth Fact Sheet lists 23.9345 hours and 24.0000 hours. Stars rise about four minutes earlier each night. Classroom schematic, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/sidereal/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Sidereal day — shorter than the mean solar day">
+<meta property="og:description" content="Top-down Sun, spinning Earth, and a fixed star. One turn against the star still leaves a little rotation before the Sun is back on the meridian. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/sidereal/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sidereal day — shorter than the mean solar day">
+<meta name="twitter:description" content="Why a sidereal day is shorter than a mean solar day, and why the stars rise earlier each night. Schematic clocks.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.earth{background:#6ea4b8}
+.swatch.star{background:var(--accent,#c8b48a)}
+.swatch.lit{background:var(--ink,#e8e6e1)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(16px,2.4vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.04em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a,.cadence a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/" aria-current="page">Sidereal</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The day</p>
+  <h1>Sidereal<br>the shorter day</h1>
+  <p class="lede">A clock day is not one spin of Earth. <strong>Mean solar time</strong> brings the Sun back to the same meridian. NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists that length of day as <strong>24.0000 hours</strong>. A <strong>sidereal day</strong> is one full turn relative to the distant stars. The same sheet lists the sidereal rotation period as <strong>23.9345 hours</strong>. <a href="https://spaceplace.nasa.gov/days/" rel="noopener" target="_blank">NASA Space Place</a> says the same thing in hours and minutes: a solar day is around 24 hours, and a sidereal day is almost exactly 23 hours and 56 minutes. The star day is the shorter one. After the meridian faces a star again, Earth has moved along its orbit, so the Sun is not quite back. The mark still has a little farther to turn. That is why the stars rise earlier the next night. <a href="https://www.jpl.nasa.gov/videos/whats-up-january-2024/" rel="noopener" target="_blank">JPL’s January 2024 What’s Up</a> says the stars rise 4 minutes earlier each day. The mean in “mean solar” is the average the <a href="/science/astronomy/analemma/">analemma</a> desk takes apart. The orbit itself, used as a ruler, is the <a href="/science/astronomy/parallax/">parallax</a> desk.</p>
+  <p class="note-schematic">Classroom schematic — a top-down disk, a fixed star direction, and a short arc of a circular orbit, viewed from the north so spin and orbit both run counterclockwise. The daily step on that orbit is 360° divided by the fact sheet’s 365.256-day sidereal orbit. The sketch draws that step much larger so a phone can see the leftover turn. The clocks and the degree readout use 23.9345 hours and 24.0000 hours. They are not enlarged. Not an ephemeris. Not a sidereal clock for navigation, surveying, or a telescope. Not a sundial. Not astrology. The fact sheet lists orbit eccentricity 0.0167; this circle leaves that out. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a> states the published gap: rotation relative to the fixed stars is 3 minutes 56.55 seconds shorter than the mean solar day, the equivalent of one solar day per year. This page does not replace that sentence with a sharper subtraction of the rounded fact-sheet periods.</p>
+
+  <p class="band">Interactive · Top-down</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">North up · meridian mark on the disk · orbit step enlarged</p>
+      <canvas id="orbit" width="880" height="760" role="img" aria-label="Top-down schematic. A distant Sun, Earth as a rotating disk with a meridian mark, and a fixed star. Educational cartoon, not an ephemeris."></canvas>
+      <p class="hint strip-label" id="sky-hint">Same mean solar clock time · three nights · the step is stretched</p>
+      <canvas id="sky" width="880" height="200" role="img" aria-label="Schematic strip. A star is higher at the same clock time on the next nights, the picture of rising earlier. Not a finder chart."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun · distant</li>
+        <li><span class="swatch earth" aria-hidden="true"></span> Earth · meridian mark</li>
+        <li><span class="swatch star" aria-hidden="true"></span> Fixed star</li>
+        <li><span class="swatch lit" aria-hidden="true"></span> Lit half faces the Sun</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="hour">Hours from this noon</label>
+          <input type="range" id="hour" min="0" max="48" step="0.001" value="0" aria-valuemin="0" aria-valuemax="48" aria-valuenow="0" aria-valuetext="This solar noon, 0 hours">
+          <span class="date-val" id="hour-val">0.00 h</span>
+        </div>
+        <div class="presets" role="group" aria-label="Solar noon and star transit presets">
+          <button type="button" id="btn-noon" data-jump="noon" aria-pressed="true">This solar noon</button>
+          <button type="button" id="btn-star" data-jump="star" aria-pressed="false">Same star transit next day</button>
+          <button type="button" id="btn-next" data-jump="next" aria-pressed="false">Same solar noon next day</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Solar noon · mean solar · schematic</p>
+      <h2 id="r-title">Solar noon</h2>
+      <p class="range" id="r-range">Meridian mark faces the Sun</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Mean solar · 24.0000 h day</p>
+          <p class="face" id="c-solar">12:00:00</p>
+          <p class="sub" id="c-solar-sub">Fact-sheet length of day</p>
+        </div>
+        <div class="clock">
+          <p class="k">Sidereal rotation · 23.9345 h</p>
+          <p class="face" id="c-sid">0.0°</p>
+          <p class="sub" id="c-sid-sub">Turn against the fixed star</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Still to the Sun</span><span class="v" id="r-gap">0.000° · true</span></li>
+        <li><span class="k">Orbit step</span><span class="v" id="r-orbit">0.000° · 360° ÷ 365.256</span></li>
+        <li><span class="k">This drawing</span><span class="v" id="r-day">Day 1 · solar noon</span></li>
+      </ul>
+      <p class="why" id="r-why">The meridian mark faces the Sun. On this sketch the reference star lies along that same direction, so the two line up. A mean solar day brings the Sun back to the mark. A sidereal turn gets back to the star a little sooner.</p>
+      <p class="cadence">NASA’s <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists a sidereal rotation period of 23.9345 hours, a length of day of 24.0000 hours, and a sidereal orbit period of 365.256 days. The orbit readout is 360° divided by that 365.256. Play walks the slider. It is not a clock for navigation.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="A shorter star day is geometry, not a horoscope">
+    <p class="tag">Geometry · not astrology</p>
+    <h2>Not a horoscope</h2>
+    <p>The four minutes are not a mood, a birth chart, or a reason the night “feels” different. They are the geometry of a planet that spins and also orbits. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/" rel="noopener" target="_blank">Basics of Space Flight</a> calls the shorter spin the equivalent of one solar day per year. <a href="https://www.jpl.nasa.gov/videos/whats-up-january-2024/" rel="noopener" target="_blank">JPL</a> uses the skywatching round number: the stars rise 4 minutes earlier each day, about 2 hours earlier in a month, and the stars of summer and winter trade places because Earth moved, not because the stars did. Nothing on this page aims a telescope or sets a watch.</p>
+  </aside>
+
+  <p class="band">Literacy · two kinds of day</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Sidereal day</dt><dd>One full rotation relative to the distant stars. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists the sidereal rotation period as 23.9345 hours. <a href="https://spaceplace.nasa.gov/days/" rel="noopener" target="_blank">NASA Space Place</a> rounds that spin: almost exactly 23 hours and 56 minutes. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/" rel="noopener" target="_blank">Basics of Space Flight</a> says rotation relative to the fixed stars is 3 minutes 56.55 seconds shorter than the mean solar day. On this desk the reference star is the direction the meridian pointed at the first noon. The next time the mark faces that star is one sidereal period later.</dd></div>
+    <div class="gloss"><dt>Mean solar day</dt><dd>The average from noon to the next noon — the Sun back on the same meridian. The fact sheet lists the length of day as 24.0000 hours. Basics of Space Flight: Earth rotates relative to the Sun every 24.0 hours mean solar time, and mean solar time is an average over the non-circular orbit. The leftover after that average, true Sun minus mean Sun, is the equation of time on the <a href="/science/astronomy/analemma/">analemma</a> desk. This slider uses the mean. It does not draw the equation of time.</dd></div>
+    <div class="gloss"><dt>The extra turn</dt><dd>Basics of Space Flight calls the shorter spin the equivalent of one solar day per year. Spread over the fact sheet’s 365.256-day sidereal orbit, the step is 360° ÷ 365.256. After one full spin against the star, the mark still has to rotate through that step to face the Sun, because Earth moved along its orbit. The sketch enlarges the step. The “still to the Sun” figure does not. The <a href="/science/astronomy/seasons/">seasons</a> desk is a different angle: the axis, kept parallel, not this daily catch-up.</dd></div>
+    <div class="gloss gloss-wide"><dt>Stars rise earlier</dt><dd><a href="https://www.jpl.nasa.gov/videos/whats-up-january-2024/" rel="noopener" target="_blank">JPL’s January 2024 What’s Up</a>: the stars rise 4 minutes earlier each day. In one week a given star rises 28 minutes earlier. In one month the same star rises about 2 hours earlier. The strip draws three nights at one mean solar clock time and stretches the heights so the step can be seen. The heights are not altitudes. The pace in the labels is JPL’s 4 minutes a day. Two days at that pace is 8 minutes. This page does not turn the 4 minutes into a rise time for Campbell.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA education</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — sidereal rotation period 23.9345 hours; length of day 24.0000 hours; sidereal orbit period 365.256 days; orbit eccentricity 0.0167. The clocks use the two periods. The orbit step is 360° divided by 365.256. The circle does not use the eccentricity.</li>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter2-1/" rel="noopener" target="_blank">NASA Science — Basics of Space Flight, Chapter 2</a> — Earth rotates relative to the Sun every 24.0 hours mean solar time. Mean solar time averages the variations from the non-circular orbit. Rotation relative to the fixed stars is 3 minutes 56.55 seconds shorter than the mean solar day, the equivalent of one solar day per year.</li>
+      <li><a href="https://spaceplace.nasa.gov/days/" rel="noopener" target="_blank">NASA Space Place — How long is one day on other planets?</a> — a solar day is one cycle of daytime to nighttime; on Earth a solar day is around 24 hours. A sidereal day is one full rotation; on Earth a sidereal day is almost exactly 23 hours and 56 minutes. The same page notes that Earth’s orbit is not a perfect circle, so some solar days run a few minutes longer than 24 hours and some a few minutes shorter. This slider stays on the mean.</li>
+      <li><a href="https://www.jpl.nasa.gov/videos/whats-up-january-2024/" rel="noopener" target="_blank">NASA JPL — What’s Up, January 2024</a> — the stars rise 4 minutes earlier each day. In one week a given star rises 28 minutes earlier than it does tonight. In one month the same star rises about 2 hours earlier. The change happens at a pace of 4 minutes per day because Earth moves in its orbit and the stars are not the ones moving.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a shorter star day. Not an ephemeris, not a sidereal clock, and not for pointing a telescope or setting a watch. Hours on the slider are counted from a schematic solar noon. The degree still to the Sun is the slider counted with the fact-sheet periods above, not a new measurement. The orbit arc on the canvas is enlarged. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/analemma/"><p class="n">Noon Sun</p><h3>Analemma</h3><p>The mean solar day, taken apart. Declination and the equation of time — the figure-8 after the average.</p></a>
+    <a href="/science/astronomy/parallax/"><p class="n">Yardstick</p><h3>Parallax</h3><p>The same orbit, out to a nearby star. The fact sheet’s 365.256-day sidereal period is the year, not this shorter day.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>The axis kept parallel against the stars. A different angle from this daily catch-up.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits among the planets — day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>Which stars the earlier rising puts overhead. This desk does not point them.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Color</p><h3>Stars</h3><p>OBAFGKM and life phases. The fixed star here is a direction, not a spectral type.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Clocks use NASA Earth Fact Sheet periods only:
+     sidereal rotation 23.9345 h, length of day 24.0000 h,
+     sidereal orbit 365.256 d.
+     Orbit step on the readout is 360° / 365.256, times elapsed mean solar days.
+     DRAW_DAY enlarges that step on the canvas. It is not a second measurement.
+     Basics of Space Flight states the gap as 3 min 56.55 s. This script does not
+     reprint that sentence as a subtraction of the rounded periods.
+     Not an ephemeris. */
+  var SID_H = 23.9345;
+  var SOL_H = 24.0000;
+  var YEAR_D = 365.256;
+  var DRAW_DAY = 32;
+  var SPAN = SOL_H * 2;
+  var TAU = Math.PI * 2;
+  var STAR0 = Math.PI;
+  var PRE = {
+    noon: 0,
+    star: SID_H,
+    next: SOL_H
+  };
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  var orbitCanvas = document.getElementById("orbit");
+  var skyCanvas = document.getElementById("sky");
+  var slider = document.getElementById("hour");
+  var playBtn = document.getElementById("btn-play");
+  var jumpBtns = [].slice.call(document.querySelectorAll("[data-jump]"));
+  var state = { t: 0, playing: false };
+  var hashT = /(?:^|[?#&])t=([0-9.]+)/.exec(String(location.hash || "") + String(location.search || ""));
+  if (hashT) state.t = clamp(parseFloat(hashT[1]) || 0, 0, SPAN);
+  var raf = 0;
+  var lastT = 0;
+
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function wrap360(d){
+    var x = d % 360;
+    if (x < 0) x += 360;
+    return x;
+  }
+  function sidDeg(t){ return (t / SID_H) * 360; }
+  function orbitDeg(t){ return (t / SOL_H) * (360 / YEAR_D); }
+  function stillDeg(t){
+    var past = wrap360(sidDeg(t) - orbitDeg(t));
+    return (360 - past) % 360;
+  }
+  function turns(t){ return t / SID_H; }
+  function keyframes(){
+    var day = DRAW_DAY * Math.PI / 180;
+    return [
+      { t: 0, a: STAR0 },
+      { t: SID_H, a: STAR0 + TAU },
+      { t: SOL_H, a: STAR0 + day + TAU },
+      { t: 2 * SID_H, a: STAR0 + 2 * TAU },
+      { t: 2 * SOL_H, a: STAR0 + 2 * day + 2 * TAU }
+    ];
+  }
+  function meridian(t){
+    var kf = keyframes();
+    var tt = clamp(t, 0, SPAN);
+    var i;
+    if (tt <= kf[0].t) return kf[0].a;
+    for (i = 0; i < kf.length - 1; i++){
+      if (tt <= kf[i + 1].t + 1e-9){
+        var span = kf[i + 1].t - kf[i].t;
+        var u = span === 0 ? 0 : (tt - kf[i].t) / span;
+        return kf[i].a + u * (kf[i + 1].a - kf[i].a);
+      }
+    }
+    return kf[kf.length - 1].a;
+  }
+  function earthTheta(t){
+    return (clamp(t, 0, SPAN) / SOL_H) * DRAW_DAY * Math.PI / 180;
+  }
+  function pad2(n){ return (n < 10 ? "0" : "") + n; }
+  function solarClock(t){
+    var total = Math.round((12 * 3600) + (t * 3600));
+    if (total < 0) total = 0;
+    var day = Math.floor(total / 86400);
+    var sod = total % 86400;
+    var h = Math.floor(sod / 3600);
+    var m = Math.floor((sod % 3600) / 60);
+    var s = sod % 60;
+    return { h: h, m: m, s: s, day: day, text: pad2(h) + ":" + pad2(m) + ":" + pad2(s) };
+  }
+  function degText(d){
+    if (d < 10) return d.toFixed(3) + "°";
+    return d.toFixed(1) + "°";
+  }
+  function nearMark(t){
+    var marks = [
+      { id: "noon", at: 0 },
+      { id: "star", at: SID_H },
+      { id: "next", at: SOL_H },
+      { id: "star2", at: 2 * SID_H },
+      { id: "noon2", at: 2 * SOL_H }
+    ];
+    var i, best = "", bestD = 1e9;
+    for (i = 0; i < marks.length; i++){
+      var d = Math.abs(t - marks[i].at);
+      if (d < bestD){ bestD = d; best = marks[i].id; }
+    }
+    return bestD < 0.02 ? best : "";
+  }
+  function copyFor(t){
+    var mark = nearMark(t);
+    var clock = solarClock(t);
+    var still = stillDeg(t);
+    var orb = orbitDeg(t);
+    var turn = turns(t);
+    var base = {
+      tier: "Between the landmarks · schematic",
+      title: "Turning",
+      range: "The mark is on its way around",
+      why: "The meridian mark spins counterclockwise, the same way the orbit runs. Mean solar time counts a 24.0000-hour day. The sidereal turn counts 23.9345 hours for a full spin against the star. They meet the Sun together at mean solar noon. The star gets there sooner.",
+      slider: clock.text + ", " + t.toFixed(2) + " hours from this noon"
+    };
+    if (mark === "noon"){
+      base.tier = "Solar noon · mean solar · schematic";
+      base.title = "Solar noon";
+      base.range = "Meridian mark faces the Sun";
+      base.why = "The meridian mark faces the Sun. On this sketch the reference star lies along that same direction, so the two line up. NASA’s Earth Fact Sheet lists the length of the day as 24.0000 hours — noon to the next noon, on average. One spin against the star is the shorter period on that sheet, 23.9345 hours.";
+    } else if (mark === "star" || mark === "star2"){
+      var days = mark === "star2" ? "two" : "one";
+      base.tier = "Star transit · sidereal · schematic";
+      base.title = mark === "star2" ? "Same star, two spins" : "Same star";
+      base.range = "The mark faces the fixed star again";
+      base.why = "The mark has spun " + days + " full turn" + (mark === "star2" ? "s" : "") + " relative to the fixed star. That period is the fact sheet’s 23.9345 hours. Earth has also moved along its orbit, so the Sun is not on the mark yet. Basics of Space Flight calls the shorter spin the equivalent of one solar day per year. The true step is 360° divided by the fact sheet’s 365.256-day sidereal orbit. The sketch draws the step large. The clocks do not.";
+    } else if (mark === "next" || mark === "noon2"){
+      base.tier = "Solar noon again · mean solar · schematic";
+      base.title = mark === "noon2" ? "Solar noon, day 3" : "Solar noon again";
+      base.range = "The mark faces the Sun again";
+      base.why = "The mark faces the Sun again. That took another 24.0000 hours, the fact sheet’s length of the day. The reference star already crossed the mark. JPL’s January 2024 sky note says the stars rise 4 minutes earlier each day. Basics of Space Flight states the underlying gap as 3 minutes 56.55 seconds shorter than the mean solar day. The strip uses JPL’s 4-minute pace and stretches the picture.";
+    } else if (still < 8){
+      base.tier = "Close to the Sun · schematic";
+      base.title = "Closing the gap";
+      base.range = "A little turn left before the Sun";
+      base.why = "The mark is near the Sun again. The true angle still to turn is the slider counted with the fact-sheet periods: a sidereal spin of 23.9345 hours, and an orbit step of 360° ÷ 365.256 per mean solar day. If the mark is on the star and the Sun is still ahead, that leftover is the orbit step. The wedge on the disk is the enlarged sketch, not that true angle.";
+    }
+    base.clock = clock;
+    base.still = still;
+    base.orb = orb;
+    base.turn = turn;
+    base.mark = mark;
+    return base;
+  }
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function spark(ctx, x, y, r, color){
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x - r, y);
+    ctx.lineTo(x + r, y);
+    ctx.moveTo(x, y - r);
+    ctx.lineTo(x, y + r);
+    ctx.moveTo(x - r * 0.62, y - r * 0.62);
+    ctx.lineTo(x + r * 0.62, y + r * 0.62);
+    ctx.moveTo(x + r * 0.62, y - r * 0.62);
+    ctx.lineTo(x - r * 0.62, y + r * 0.62);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(2, r * 0.22), 0, TAU);
+    ctx.fill();
+    ctx.restore();
+  }
+  function drawOrbit(cssW){
+    var cssH = Math.round(clamp(cssW * 0.92, 340, 640));
+    var ctx = fitCanvas(orbitCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var meterH = 58;
+    var top = 18;
+    var sceneH = cssH - meterH - 8;
+    var sun = { x: cssW * 0.30, y: top + sceneH * 0.70 };
+    var R = Math.min(cssW * 0.34, sceneH * 0.46);
+    R = Math.max(R, 108);
+    var th = earthTheta(state.t);
+    var earth = {
+      x: sun.x + Math.cos(th) * R,
+      y: sun.y - Math.sin(th) * R
+    };
+    var er = clamp(R * 0.20, 28, 54);
+    var sunR = clamp(cssW * 0.028, 12, 18);
+    var mAng = meridian(state.t);
+    var copy = copyFor(state.t);
+
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    var span = DRAW_DAY * 2 * Math.PI / 180;
+    var steps = 48;
+    var i;
+    for (i = 0; i <= steps; i++){
+      var a = span * (i / steps);
+      var px = sun.x + Math.cos(a) * R;
+      var py = sun.y - Math.sin(a) * R;
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    var aTip = 22 * Math.PI / 180;
+    var tip = { x: sun.x + Math.cos(aTip) * R, y: sun.y - Math.sin(aTip) * R };
+    var tx = -Math.sin(aTip);
+    var ty = -Math.cos(aTip);
+    ctx.fillStyle = "rgba(110,164,184,0.9)";
+    ctx.beginPath();
+    ctx.moveTo(tip.x + tx * 11, tip.y + ty * 11);
+    ctx.lineTo(tip.x - ty * 4.2, tip.y + tx * 4.2);
+    ctx.lineTo(tip.x + ty * 4.2, tip.y - tx * 4.2);
+    ctx.closePath();
+    ctx.fill();
+
+    var starY = clamp(earth.y, top + 16, top + sceneH - 16);
+    var starX = 22;
+    ctx.save();
+    ctx.setLineDash([3, 6]);
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.9;
+    ctx.lineWidth = 1.15;
+    ctx.beginPath();
+    ctx.moveTo(starX + 12, starY);
+    ctx.lineTo(Math.max(starX + 24, earth.x - er - 8), starY);
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.strokeStyle = soft;
+    ctx.globalAlpha = 0.8;
+    ctx.lineWidth = 1.15;
+    ctx.beginPath();
+    ctx.moveTo(earth.x, earth.y);
+    ctx.lineTo(sun.x, sun.y);
+    ctx.stroke();
+    ctx.restore();
+
+    var glow = ctx.createRadialGradient(sun.x, sun.y, sunR * 0.2, sun.x, sun.y, sunR * 3.2);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(sun.x, sun.y, sunR * 3.2, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(sun.x, sun.y, sunR, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#fff8e8";
+    ctx.beginPath();
+    ctx.arc(sun.x - sunR * 0.22, sun.y - sunR * 0.18, sunR * 0.42, 0, TAU);
+    ctx.fill();
+
+    spark(ctx, starX, starY, 9, accent);
+
+    ctx.fillStyle = "#6ea4b8";
+    ctx.beginPath();
+    ctx.arc(earth.x, earth.y, er, 0, TAU);
+    ctx.fill();
+    var toSun = Math.atan2(sun.y - earth.y, sun.x - earth.x);
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(earth.x, earth.y, er, 0, TAU);
+    ctx.clip();
+    ctx.fillStyle = "rgba(8,10,14,0.55)";
+    ctx.beginPath();
+    ctx.moveTo(earth.x, earth.y);
+    ctx.arc(earth.x, earth.y, er + 1, toSun + Math.PI / 2, toSun + 3 * Math.PI / 2, false);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = "rgba(232,230,225,0.65)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(earth.x, earth.y, er, 0, TAU);
+    ctx.stroke();
+
+    var mx = earth.x + Math.cos(mAng) * er;
+    var my = earth.y - Math.sin(mAng) * er;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(earth.x, earth.y);
+    ctx.lineTo(mx, my);
+    ctx.stroke();
+    ctx.fillStyle = ink;
+    ctx.beginPath();
+    ctx.arc(mx, my, 3.5, 0, TAU);
+    ctx.fill();
+
+    var sunAng = Math.atan2(-(sun.y - earth.y), sun.x - earth.x);
+    var starAng = STAR0;
+    var wedge = Math.atan2(Math.sin(sunAng - starAng), Math.cos(sunAng - starAng));
+    var mRel = Math.atan2(Math.sin(mAng - starAng), Math.cos(mAng - starAng));
+    if (Math.abs(wedge) > 0.04 && Math.abs(mRel) < 0.35){
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      var wr = er + 16;
+      var a0 = -starAng;
+      var a1 = -sunAng;
+      ctx.arc(earth.x, earth.y, wr, a0, a1, wedge > 0);
+      ctx.stroke();
+    }
+
+    text(ctx, "Sun", sun.x, sun.y + sunR + 12, { size: 11, align: "center", color: ink });
+    text(ctx, "Star", starX, starY - 16, { size: 11, align: "center", color: accent });
+    var eLabY = clamp(earth.y + er + 14, top + 12, top + sceneH - 8);
+    text(ctx, "Earth", earth.x, eLabY, { size: 11, align: "center", color: ink });
+    var labX = clamp(mx + Math.cos(mAng) * 16, 36, cssW - 36);
+    var labY = clamp(my - Math.sin(mAng) * 16, top + 10, top + sceneH - 8);
+    if (Math.abs(labY - eLabY) < 14 && Math.abs(labX - earth.x) < 36) labY -= 16;
+    text(ctx, "Meridian", labX, labY, { size: 10, align: "center", color: accent });
+    text(ctx, "orbit step enlarged", cssW - 10, 14, { size: 10, align: "right", color: muted });
+
+    var my0 = cssH - meterH + 8;
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(12, my0);
+    ctx.lineTo(cssW - 12, my0);
+    ctx.stroke();
+    text(ctx, "True angle still to the Sun · not enlarged", 12, my0 + 12, { size: 10, align: "left", color: muted });
+    var x0 = 12;
+    var x1 = cssW - 12;
+    var yb = my0 + 36;
+    ctx.strokeStyle = line;
+    ctx.beginPath();
+    ctx.moveTo(x0, yb);
+    ctx.lineTo(x1, yb);
+    ctx.stroke();
+    var windowDeg = 6;
+    var frac = copy.still <= windowDeg ? (copy.still / windowDeg) : 1;
+    var px = x0 + frac * (x1 - x0);
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(px, yb, 5, 0, TAU);
+    ctx.fill();
+    text(ctx, "0° · on the Sun", x0, yb + 14, { size: 10, align: "left", color: muted });
+    text(ctx, copy.still <= windowDeg ? "6°" : "past 6°", x1, yb + 14, { size: 10, align: "right", color: muted });
+    text(ctx, degText(copy.still), px, yb - 12, { size: 11, align: "center", color: ink });
+
+    orbitCanvas.setAttribute("aria-label",
+      "Top-down schematic, north up. " + copy.title + ". Mean solar " + copy.clock.text +
+      ". Sidereal rotation " + degText(sidDeg(state.t)) +
+      ". True angle still to the Sun " + degText(copy.still) +
+      ". The orbit step is enlarged on the drawing. Educational cartoon, not an ephemeris.");
+  }
+  function drawSky(cssW){
+    var cssH = Math.round(clamp(cssW * 0.30, 156, 210));
+    var ctx = fitCanvas(skyCanvas, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var horizon = cssH * 0.72;
+    var labels = [
+      { t: "This night", s: "on the horizon", y: 0 },
+      { t: "Next night", s: "~4 min earlier", y: 1 },
+      { t: "Night after", s: "~8 min earlier", y: 2 }
+    ];
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(16, horizon);
+    ctx.lineTo(cssW - 16, horizon);
+    ctx.stroke();
+    text(ctx, "Horizon · same mean solar clock time", 16, 16, { size: 10, align: "left", color: muted });
+    var i;
+    for (i = 0; i < labels.length; i++){
+      var col = 16 + (i + 0.5) * ((cssW - 32) / 3);
+      var lift = 18 + labels[i].y * Math.min(28, cssH * 0.16);
+      var sy = horizon - lift;
+      spark(ctx, col, sy, 8, accent);
+      ctx.strokeStyle = line;
+      ctx.setLineDash([2, 4]);
+      ctx.beginPath();
+      ctx.moveTo(col, sy + 10);
+      ctx.lineTo(col, horizon);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      text(ctx, labels[i].t, col, horizon + 16, { size: 10, align: "center", color: ink });
+      text(ctx, labels[i].s, col, horizon + 30, { size: 10, align: "center", color: muted });
+    }
+    skyCanvas.setAttribute("aria-label",
+      "Schematic strip of three nights at the same mean solar clock time. The star is on the horizon the first night, higher the next night, and higher again the night after. Labels use JPL’s pace of about 4 minutes earlier each day. Heights are stretched. Not a finder chart.");
+  }
+  function render(){
+    state.t = clamp(state.t, 0, SPAN);
+    var copy = copyFor(state.t);
+    var sid = sidDeg(state.t);
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("c-solar").textContent = copy.clock.text;
+    document.getElementById("c-solar-sub").textContent = "Day " + (copy.clock.day + 1) + " · fact-sheet length of day";
+    document.getElementById("c-sid").textContent = sid.toFixed(2) + "°";
+    document.getElementById("c-sid-sub").textContent = copy.turn.toFixed(3) + " turns · period 23.9345 h";
+    document.getElementById("r-gap").textContent = copy.still < 15 ? (degText(copy.still) + " · true") : "away from the Sun";
+    document.getElementById("r-orbit").textContent = degText(copy.orb) + " · 360° ÷ 365.256";
+    var dayNote = "Day " + (Math.floor(state.t / SOL_H) + 1);
+    if (copy.mark === "noon" || copy.mark === "next" || copy.mark === "noon2") dayNote += " · solar noon";
+    else if (copy.mark === "star" || copy.mark === "star2") dayNote += " · star transit";
+    else dayNote += " · " + state.t.toFixed(2) + " h";
+    document.getElementById("r-day").textContent = dayNote;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("hour-val").textContent = state.t.toFixed(2) + " h";
+    slider.value = String(state.t);
+    slider.setAttribute("aria-valuenow", state.t.toFixed(3));
+    slider.setAttribute("aria-valuetext", copy.slider);
+    jumpBtns.forEach(function(b){
+      var on = false;
+      if (b.dataset.jump === "noon") on = copy.mark === "noon";
+      if (b.dataset.jump === "star") on = copy.mark === "star";
+      if (b.dataset.jump === "next") on = copy.mark === "next";
+      b.setAttribute("aria-pressed", String(on));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.textContent = state.playing ? "Pause" : "Play";
+    var cssW = orbitCanvas.clientWidth || (orbitCanvas.parentElement && orbitCanvas.parentElement.clientWidth) || 640;
+    drawOrbit(cssW);
+    drawSky(cssW);
+  }
+  function stopPlay(){
+    state.playing = false;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    lastT = 0;
+  }
+  function playRate(t){
+    var marks = [SID_H, SOL_H, 2 * SID_H, 2 * SOL_H];
+    var near = 99;
+    var i;
+    for (i = 0; i < marks.length; i++) near = Math.min(near, Math.abs(t - marks[i]));
+    if (near < 0.07) return 0.045;
+    if (near < 0.35) return 0.28;
+    return 4.5;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(0.05, (now - lastT) / 1000);
+    lastT = now;
+    state.t += dt * playRate(state.t);
+    if (state.t >= SPAN) state.t = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+  slider.addEventListener("input", function(){
+    stopPlay();
+    state.t = clamp(parseFloat(slider.value) || 0, 0, SPAN);
+    render();
+  });
+  jumpBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      var which = b.dataset.jump;
+      if (PRE[which] != null) state.t = PRE[which];
+      render();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){
+      stopPlay();
+      render();
+      return;
+    }
+    if (state.t >= SPAN - 0.001) state.t = 0;
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+  }
+  paintTheme();
+  render();
+})();
+</script>
+</body>
+</html>
