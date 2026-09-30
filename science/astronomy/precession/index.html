@@ -385,6 +385,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   if (hashY) state.y = clamp(parseFloat(hashY[1]) || 0, 0, CYCLE);
   var raf = 0;
   var lastT = 0;
+  var rendering = false;
+  var lastCssW = 0;
 
   function paintTheme(){
     var c = root.getAttribute("data-theme") || "neon";
@@ -483,7 +485,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       canvas.width = pw;
       canvas.height = ph;
     }
-    canvas.style.height = cssH + "px";
+    if (canvas.style.height !== cssH + "px") canvas.style.height = cssH + "px";
     var ctx = canvas.getContext("2d");
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, cssW, cssH);
@@ -662,6 +664,9 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     text(ctx, commas(state.y) + " y", 12, 14, { size: 12, color: soft, align: "left", base: "top" });
   }
   function render(){
+    if (rendering) return;
+    rendering = true;
+    try {
     var y = clamp(state.y, 0, CYCLE);
     state.y = y;
     var copy = copyFor(y);
@@ -693,7 +698,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     playBtn.setAttribute("aria-pressed", String(state.playing));
     playBtn.textContent = state.playing ? "Pause" : "Play";
     var cssW = orbitCanvas.clientWidth || (orbitCanvas.parentElement && orbitCanvas.parentElement.clientWidth) || 640;
+    lastCssW = cssW;
     drawOrbit(cssW);
+    } finally {
+      rendering = false;
+    }
   }
   function stopPlay(){
     state.playing = false;
@@ -763,7 +772,11 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
   });
   window.addEventListener("resize", render);
   if (window.ResizeObserver){
-    new ResizeObserver(function(){ render(); }).observe(orbitCanvas.parentElement || orbitCanvas);
+    new ResizeObserver(function(){
+      var w = orbitCanvas.clientWidth || 0;
+      if (Math.abs(w - lastCssW) < 1) return;
+      render();
+    }).observe(orbitCanvas.parentElement || orbitCanvas);
   }
   paintTheme();
   render();
