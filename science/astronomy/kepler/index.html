@@ -1,0 +1,761 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kepler’s third law — P² = a³ in years and AU — Steven Philley</title>
+<meta name="description" content="Interactive Kepler desk: for a circular orbit around the Sun, P² = a³ when P is in years and a is in AU. Planet presets use NASA fact-sheet semi-major axes and sidereal periods. Classroom schematic, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/kepler/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Kepler’s third law — P² = a³ in years and AU">
+<meta property="og:description" content="Top-down Sun and one circular orbit. Drag the semi-major axis. The classroom year is a^(3/2). Fact-sheet periods sit beside it. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/kepler/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kepler’s third law — P² = a³ in years and AU">
+<meta name="twitter:description" content="Drag semi-major axis from Mercury to Neptune. P² = a³ in years and AU. Schematic, not a trajectory.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.orbit{background:transparent;border-color:var(--accent,#c8b48a);border-radius:50%}
+.swatch.planet{background:var(--accent,#c8b48a);border-radius:50%}
+.swatch.ghost{background:transparent;border-style:dashed}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(16px,2.4vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.04em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/" aria-current="page">Kepler</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The year</p>
+  <h1>Kepler<br>the year is a distance</h1>
+  <p class="lede">A larger orbit takes longer, and the classroom form of that fact is short. For a circular orbit around the Sun — one solar mass, nothing else pulling — when the semi-major axis <strong>a</strong> is in astronomical units and the period <strong>P</strong> is in years, <strong>P² = a³</strong>. The predicted year is <strong>P = a<sup>3/2</sup></strong>. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter3-3/" rel="noopener" target="_blank">NASA’s Basics of Space Flight</a> states the law in words: the square of the orbital period of a planet is directly proportional to the cube of the semi-major axis of its orbit. <a href="https://science.nasa.gov/solar-system/orbits-and-keplers-laws/" rel="noopener" target="_blank">NASA Science</a> writes the same relation as <strong>p² = a³</strong>. That page also rounds three periods — Mercury 88 days, Earth 365 days, Saturn 10,759 days. This desk does not use those rounds. The presets use each NSSDCA fact sheet’s line labeled <strong>Semimajor axis (AU)</strong>, in the Mean Orbital Elements (J2000) block, and that sheet’s <strong>sidereal orbit period</strong> in days. Earth’s sheet prints <strong>1.00000011 AU</strong> and <strong>365.256 days</strong>. Divide the days by 365.256 and the fact-sheet year is 1.000. The <a href="/science/astronomy/">solar map</a> is where those worlds sit. The pull that makes the law true is the <a href="/science/gravity/">gravity</a> desk. Passing and lining up are <a href="/science/astronomy/retrograde/">retrograde</a> and <a href="/science/astronomy/opposition/">opposition</a>.</p>
+  <p class="note-schematic">Classroom schematic — top-down, from the north, so the orbit runs counterclockwise. One circle. Its radius tracks the slider on a log scale from 0.30 AU to 40 AU, so Mercury and Neptune share the disk. The planet mark is a dot, not a world drawn to size. Real orbits are slightly eccentric: the fact sheets list 0.0068 for Venus and 0.2056 for Mercury, and the path is an ellipse with the Sun at one focus. In the one-sun law the year still comes from <em>a</em>, not from that eccentricity, so the sheet and <em>a</em><sup>3/2</sup> disagree only a little — rounded means, other planets tugging, and a J2000 element set beside a mean period. The remainder is a classroom comparison. It is not an ephemeris error bar. Play is a time-lapse, not a clock: a 1-year circle laps in about 8 seconds, and a longer period is stretched by that period to the power 0.35, so an outer planet still moves. Not a live position. Not spacecraft trajectory design. Not astrology.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · One circle</span>
+    <button type="button" class="help-q" id="kepler-help" aria-haspopup="dialog" aria-controls="kepler-help-dialog" aria-expanded="false" aria-label="How this Kepler desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">From the north · log radius · Play is a time-lapse</p>
+      <canvas id="orbit" width="880" height="760" role="img" aria-label="Schematic top-down Sun and one circular orbit. The radius follows the semi-major-axis slider. Not a live planet position."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch orbit" aria-hidden="true"></span> Slider orbit</li>
+        <li><span class="swatch planet" aria-hidden="true"></span> Planet mark</li>
+        <li><span class="swatch ghost" aria-hidden="true"></span> Fact-sheet distances</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="a-slider">Semi-major axis</label>
+          <input type="range" id="a-slider" min="0" max="1000" step="1" value="246" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="246" aria-valuetext="1.00000011 AU, Earth">
+          <span class="date-val" id="a-val">1.00000011 AU</span>
+        </div>
+        <div class="presets" role="group" aria-label="Planet presets">
+          <button type="button" data-planet="mercury" aria-pressed="false">Mercury</button>
+          <button type="button" data-planet="venus" aria-pressed="false">Venus</button>
+          <button type="button" data-planet="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-planet="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-planet="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-planet="saturn" aria-pressed="false">Saturn</button>
+          <button type="button" data-planet="uranus" aria-pressed="false">Uranus</button>
+          <button type="button" data-planet="neptune" aria-pressed="false">Neptune</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Earth · fact sheet · schematic</p>
+      <h2 id="r-title">Earth</h2>
+      <p class="range" id="r-range">1.00000011 AU · classroom anchor</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Predicted P · a<sup>3/2</sup></p>
+          <p class="face" id="c-pred">1.000000 y</p>
+          <p class="sub" id="c-pred-sub">× 365.256 days</p>
+        </div>
+        <div class="clock">
+          <p class="k">Fact-sheet sidereal</p>
+          <p class="face" id="c-sheet">365.256 d</p>
+          <p class="sub" id="c-sheet-sub">÷ 365.256 → years</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">a</span><span class="v" id="r-a">1.00000011 AU</span></li>
+        <li><span class="k">Predicted days</span><span class="v" id="r-days">—</span></li>
+        <li><span class="k">Fact-sheet years</span><span class="v" id="r-sheet-y">—</span></li>
+        <li><span class="k">Remainder</span><span class="v" id="r-gap">—</span></li>
+        <li><span class="k">a³</span><span class="v" id="r-a3">—</span></li>
+        <li><span class="k">Predicted P²</span><span class="v" id="r-p2">—</span></li>
+        <li><span class="k">Fact-sheet P²</span><span class="v" id="r-sp2">—</span></li>
+      </ul>
+      <p class="why" id="r-why"></p>
+      <p class="cadence" id="r-cadence"></p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Not astrology, not an ephemeris, not mission design">
+    <p class="tag">Not astrology · not an ephemeris · not mission design</p>
+    <h2>A classroom circle</h2>
+    <p>Nothing here names a sign, a birth chart, or a night that “feels” like a planet. The circle is not a position for tonight, and it is not a trajectory a spacecraft could fly. One solar mass, a circular path, and a log-compressed radius. The <a href="/science/astronomy/">solar map</a> moves worlds by date. This page only scales the year with distance. <a href="/science/astronomy/opposition/">Opposition</a> is the lineup. <a href="/science/astronomy/retrograde/">Retrograde</a> is Earth overtaking. <a href="/science/gravity/">Gravity</a> is the pull the law leaves unnamed.</p>
+  </aside>
+
+  <p class="band">Literacy · the law in solar units</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>The classroom law</dt><dd>When <em>a</em> is in astronomical units and <em>P</em> is in years, <em>P</em>² = <em>a</em>³ for a circular Keplerian orbit around the Sun. One solar mass. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter3-3/" rel="noopener" target="_blank">Basics of Space Flight</a>: the square of the orbital period is directly proportional to the cube of the semi-major axis. <a href="https://science.nasa.gov/solar-system/orbits-and-keplers-laws/" rel="noopener" target="_blank">NASA Science</a> writes that relation as p² = a³. The units that make the constant equal to 1 are the classroom choice on this page. NASA’s Kepler page does not print “years and AU” in that sentence.</dd></div>
+    <div class="gloss"><dt>Semi-major axis</dt><dd>Half the long axis of the orbit. On a circle it is the radius. Each fact sheet’s Mean Orbital Elements (J2000) block labels a line <strong>Semimajor axis (AU)</strong>. Earth’s is 1.00000011. That is the ~1.000 AU anchor, printed with the digits the sheet actually uses. The slider snaps to those AU lines. A free drag between them is the slider, not a new fact-sheet figure.</dd></div>
+    <div class="gloss"><dt>Sidereal period</dt><dd>The orbit relative to the distant stars, in days, from the same fact sheet’s orbital parameters. Fact-sheet years on this page are those days divided by 365.256, Earth’s sidereal orbit period as printed on these sheets. The label is “÷ 365.256”. It is not a new definition of the year.</dd></div>
+    <div class="gloss"><dt>The small remainder</dt><dd>Real orbits are slightly eccentric, so the drawing’s circle is not the path. Eccentricity changes speed along the path. In the one-sun law it does not change the period that belongs to a given <em>a</em>. The sheet and <em>a</em><sup>3/2</sup> still disagree a little: the AU line is a J2000 element, the sidereal period is a mean, and the other planets tug. Inner worlds differ by a fraction of a day. Neptune’s remainder is tens of days on a 60,189.018-day period. That is a classroom comparison, not an ephemeris.</dd></div>
+    <div class="gloss"><dt>Two distances on the sheet</dt><dd>The orbital-parameters table also prints semimajor axis in 10<sup>6</sup> km and a ratio to Earth: Mercury 0.387, Venus 0.723, Mars 1.524, Jupiter 5.204, Saturn 9.573, Uranus 19.165, Neptune 30.178, beside Earth’s 149.598 × 10<sup>6</sup> km. The phase desks on this site use those ratios. This slider uses the later line that the sheet names in AU. The two prints are close. This page does not average them.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the circle leaves out</dt><dd>Eccentricity, inclination, and every other planet’s pull. The log radius squeezes the outer system so Neptune fits; a true AU scale would make Mercury a speck. Play’s 8-second lap and the 0.35 power are display choices so the outer planets stay watchable. They are not orbital speeds. NASA’s round 88, 365, and 10,759 days stay on the Kepler essay. They are not substituted for 87.969, 365.256, or 10,755.699. No exoplanet formula. No live sky.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter3-3/" rel="noopener" target="_blank">NASA Science — Basics of Space Flight, Chapter 3</a> — Kepler’s laws. “The square of the orbital period of a planet is directly proportional to the cube of the semi-major axis of its orbit.”</li>
+      <li><a href="https://science.nasa.gov/solar-system/orbits-and-keplers-laws/" rel="noopener" target="_blank">NASA Science — Orbits and Kepler’s Laws</a> — “The orbital period of a planet, squared, is directly proportional to the semi-major axes of its orbit, cubed. This is written in equation form as p² = a³.” The same paragraph rounds Mercury to 88 days, Earth to 365 days, and Saturn to 10,759 days. Those rounds are not the presets.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mercury Fact Sheet</a> — Semimajor axis (AU) 0.38709893 in Mean Orbital Elements (J2000). Sidereal orbit period 87.969 days. Semimajor axis 57.909 × 10<sup>6</sup> km; ratio to Earth 0.387. Orbit eccentricity 0.2056. Earth’s column on that table: 149.598 × 10<sup>6</sup> km and 365.256 days. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Venus Fact Sheet</a> — Semimajor axis (AU) 0.72333199. Sidereal orbit period 224.701 days. Semimajor axis 108.210 × 10<sup>6</sup> km; ratio 0.723. Orbit eccentricity 0.0068. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Semimajor axis (AU) 1.00000011 in Mean Orbital Elements (J2000). Sidereal orbit period 365.256 days. Semimajor axis 149.598 × 10<sup>6</sup> km. Orbit eccentricity 0.0167. The sheet does not print a separate “1.000 AU” ratio row; 1.00000011 is the printed AU, and 365.256 ÷ 365.256 is the 1.000 year on this desk. Last updated 15 November 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — Semimajor axis (AU) 1.52366231. Sidereal orbit period 686.980 days. Semimajor axis 227.956 × 10<sup>6</sup> km; ratio 1.524. Orbit eccentricity 0.0935. Last updated 19 May 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — Semimajor axis (AU) 5.20336301. Sidereal orbit period 4,332.589 days. Semimajor axis 778.479 × 10<sup>6</sup> km; ratio 5.204. Orbit eccentricity 0.0487. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturn Fact Sheet</a> — Semimajor axis (AU) 9.53707032. Sidereal orbit period 10,755.699 days. Semimajor axis 1,432.041 × 10<sup>6</sup> km; ratio 9.573. Orbit eccentricity 0.0520. Last updated 18 March 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranus Fact Sheet</a> — Semimajor axis (AU) 19.19126393. Sidereal orbit period 30,685.400 days. Semimajor axis 2,867.043 × 10<sup>6</sup> km; ratio 19.165. Orbit eccentricity 0.0469. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptune Fact Sheet</a> — Semimajor axis (AU) 30.06896348. Sidereal orbit period 60,189.018 days. Semimajor axis 4,514.953 × 10<sup>6</sup> km; ratio 30.178. Orbit eccentricity 0.0097. Last updated 3 October 2024.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of one law: P² = a³ in years and AU, for a circular orbit around one solar mass. Not an ephemeris, not a live sky, and not a trajectory. The AU presets are the fact sheets’ Mean Orbital Elements (J2000). The sidereal periods are the orbital-parameter tables. Fact-sheet years are those days ÷ 365.256. The radius is log-compressed. Play is a time-lapse. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the eight planets sit. Day and local time, still a schematic, still not this law drawn as a clock.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>The force Kepler did not have. The year on this page is what that pull schedules.</p></a>
+    <a href="/science/astronomy/opposition/"><p class="n">Lineup</p><h3>Opposition</h3><p>Earth between the Sun and an outer planet. A geometry, not a period.</p></a>
+    <a href="/science/astronomy/retrograde/"><p class="n">Passing</p><h3>Retrograde</h3><p>Earth laps Mars on a faster inner orbit. The loop is the line of sight.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="kepler-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="kepler-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="kepler-help-title">Kepler desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom Sun and one circle, viewed from the north. The radius is log-compressed. The law is P² = a³ in years and AU. Nothing here is tonight’s sky, a finder chart, or a spacecraft path.</p>
+    <h3>Move the orbit</h3>
+    <table>
+      <caption>Move the orbit</caption>
+      <tbody>
+        <tr><th scope="row">Semi-major axis</th><td>The slider. It runs from 0.30 AU to 40 AU on a log scale, a little inside Mercury and a little past Neptune. The live readout is in AU. A free position is the slider, not a fact-sheet figure.</td></tr>
+        <tr><th scope="row">Play</th><td>The planet mark walks counterclockwise. A 1-year orbit laps in about 8 seconds. Longer orbits take longer by the period to the power 0.35, so Neptune still moves. Pause keeps the place. Play is a time-lapse, not a year and not a mission clock.</td></tr>
+      </tbody>
+    </table>
+    <h3>Presets</h3>
+    <table>
+      <caption>Presets</caption>
+      <tbody>
+        <tr><th scope="row">Mercury through Neptune</th><td>Each button snaps <em>a</em> to that planet’s fact-sheet Semimajor axis (AU), the Mean Orbital Elements (J2000) line. The sidereal period from the same sheet appears beside the prediction. Dragging the slider clears the preset.</td></tr>
+        <tr><th scope="row">Earth</th><td>1.00000011 AU and 365.256 days, as the Earth Fact Sheet prints them. Fact-sheet years are 365.256 ÷ 365.256 = 1.000.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Sun</th><td>The center. One solar mass, by the classroom rule. Not a drawing of the photosphere.</td></tr>
+        <tr><th scope="row">Slider orbit</th><td>The bright circle. Its radius is the slider, log-compressed between 0.30 and 40 AU. A true scale would hide Mercury.</td></tr>
+        <tr><th scope="row">Planet mark</th><td>A dot on that circle. Size is a mark, not a diameter. It moves only while Play is on.</td></tr>
+        <tr><th scope="row">Fact-sheet distances</th><td>Eight faint circles at the preset AU values, on the same log scale. They are rulers, not a second solar system in motion.</td></tr>
+        <tr><th scope="row">N</th><td>North, the view. The orbit runs counterclockwise, the same sense as the other top-down desks.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">a</th><td>Semi-major axis in AU. A preset shows the printed fact-sheet digits. A free slider shows the slider’s AU.</td></tr>
+        <tr><th scope="row">Predicted P</th><td>a<sup>3/2</sup> in years, and the same interval in days: years × 365.256. That 365.256 is Earth’s sidereal orbit period on these sheets.</td></tr>
+        <tr><th scope="row">Fact-sheet sidereal</th><td>Shown when a preset is on. Days as printed, and years = days ÷ 365.256. Off a preset, the law still predicts a period. There is no sheet to compare.</td></tr>
+        <tr><th scope="row">Remainder</th><td>Predicted days minus the fact-sheet days. A little, on purpose. Not an uncertainty.</td></tr>
+        <tr><th scope="row">a³ and P²</th><td>Predicted P² equals a³ by the classroom law. Fact-sheet P² is the sheet’s year, squared. The two sit near each other. They are not forced to match.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Classroom Kepler desk.
+     AU values: each fact sheet's Mean Orbital Elements (J2000),
+     line "Semimajor axis (AU)".
+     Sidereal periods: orbital-parameters table, days.
+     Fact-sheet years = those days / 365.256.
+     P = a^(3/2) for a circular one-sun orbit in years and AU.
+     Not an ephemeris. */
+  var YEAR_DAYS = 365.256;
+  var A_MIN = 0.30;
+  var A_MAX = 40;
+  var SLIDER_MAX = 1000;
+  var LAP_MS = 8000;
+  var LAP_POWER = 0.35;
+  var TAU = Math.PI * 2;
+
+  var PLANETS = [
+    { id: "mercury", name: "Mercury", au: 0.38709893, auLabel: "0.38709893", days: 87.969, daysLabel: "87.969", ecc: "0.2056" },
+    { id: "venus", name: "Venus", au: 0.72333199, auLabel: "0.72333199", days: 224.701, daysLabel: "224.701", ecc: "0.0068" },
+    { id: "earth", name: "Earth", au: 1.00000011, auLabel: "1.00000011", days: 365.256, daysLabel: "365.256", ecc: "0.0167" },
+    { id: "mars", name: "Mars", au: 1.52366231, auLabel: "1.52366231", days: 686.980, daysLabel: "686.980", ecc: "0.0935" },
+    { id: "jupiter", name: "Jupiter", au: 5.20336301, auLabel: "5.20336301", days: 4332.589, daysLabel: "4,332.589", ecc: "0.0487" },
+    { id: "saturn", name: "Saturn", au: 9.53707032, auLabel: "9.53707032", days: 10755.699, daysLabel: "10,755.699", ecc: "0.0520" },
+    { id: "uranus", name: "Uranus", au: 19.19126393, auLabel: "19.19126393", days: 30685.400, daysLabel: "30,685.400", ecc: "0.0469" },
+    { id: "neptune", name: "Neptune", au: 30.06896348, auLabel: "30.06896348", days: 60189.018, daysLabel: "60,189.018", ecc: "0.0097" }
+  ];
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+
+  var canvas = document.getElementById("orbit");
+  var slider = document.getElementById("a-slider");
+  var aVal = document.getElementById("a-val");
+  var playBtn = document.getElementById("btn-play");
+  var presetBtns = [].slice.call(document.querySelectorAll("[data-planet]"));
+  var state = { au: 1.00000011, planet: "earth", angle: 0, playing: false };
+  var raf = 0;
+  var lastT = 0;
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function planetById(id){
+    var i;
+    for (i = 0; i < PLANETS.length; i++) if (PLANETS[i].id === id) return PLANETS[i];
+    return null;
+  }
+  function tFromAu(au){
+    var t = (Math.log(au) - Math.log(A_MIN)) / (Math.log(A_MAX) - Math.log(A_MIN));
+    return Math.round(clamp(t, 0, 1) * SLIDER_MAX);
+  }
+  function auFromT(t){
+    var u = clamp(t, 0, SLIDER_MAX) / SLIDER_MAX;
+    return Math.exp(Math.log(A_MIN) + u * (Math.log(A_MAX) - Math.log(A_MIN)));
+  }
+  function group(n, digits){
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function fmtAuFree(au){
+    if (au >= 10) return au.toFixed(4);
+    if (au >= 1) return au.toFixed(5);
+    return au.toFixed(6);
+  }
+  function fmtYear(y){ return group(y, 6) + " y"; }
+  function fmtDay(d){ return group(d, 4) + " d"; }
+  function fmtCheck(n){
+    var abs = Math.abs(n);
+    if (abs >= 100) return group(n, 2);
+    if (abs >= 1) return group(n, 6);
+    return group(n, 6);
+  }
+  function predict(au){
+    var years = Math.pow(au, 1.5);
+    return { years: years, days: years * YEAR_DAYS, a3: au * au * au, p2: years * years };
+  }
+
+  function setPressed(){
+    presetBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-planet") === state.planet));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+  }
+
+  function applyAu(au, planetId, fromSlider){
+    state.au = au;
+    state.planet = planetId || "";
+    if (!fromSlider) slider.value = String(tFromAu(au));
+    var labelAu = planetId ? planetById(planetId).auLabel : fmtAuFree(au);
+    var who = planetId ? planetById(planetId).name : "free slider";
+    slider.setAttribute("aria-valuenow", slider.value);
+    slider.setAttribute("aria-valuetext", labelAu + " AU, " + who);
+    setPressed();
+    render();
+  }
+
+  function copyFor(){
+    var p = planetById(state.planet);
+    var pred = predict(state.au);
+    var base = {
+      tier: "Free distance · circular law · schematic",
+      title: "Free slider",
+      range: fmtAuFree(state.au) + " AU · not a fact-sheet stop",
+      why: "The slider is between the fact-sheet distances, or off them. Predicted P is a to the power 3/2, in years. There is no sidereal period to set beside it until a planet preset is on. The circle is still one solar mass, and the drawing is still not an orbit to fly.",
+      auText: fmtAuFree(state.au) + " AU",
+      sheetFace: "—",
+      sheetSub: "No preset",
+      sheetYears: "—",
+      gap: "—",
+      sheetP2: "—"
+    };
+    if (p){
+      var sheetYears = p.days / YEAR_DAYS;
+      var gap = pred.days - p.days;
+      var sign = gap >= 0 ? "+" : "−";
+      base.tier = p.name + " · fact sheet · schematic";
+      base.title = p.name;
+      base.range = p.auLabel + " AU · eccentricity " + p.ecc;
+      base.why = p.name + "’s fact sheet prints Semimajor axis (AU) " + p.auLabel + " and a sidereal orbit period of " + p.daysLabel + " days. Fact-sheet years are those days ÷ 365.256. The circular law predicts a^(3/2). The two are close. The orbit is slightly eccentric (" + p.ecc + " on the sheet), so this circle is not the path. The year in the one-sun law still comes from a. The remainder is that pair of printed numbers, not a live ephemeris.";
+      base.auText = p.auLabel + " AU";
+      base.sheetFace = p.daysLabel + " d";
+      base.sheetSub = fmtYear(sheetYears) + " · days ÷ 365.256";
+      base.sheetYears = fmtYear(sheetYears);
+      base.gap = sign + group(Math.abs(gap), 4) + " d";
+      base.sheetP2 = fmtCheck(sheetYears * sheetYears);
+      if (p.id === "earth"){
+        base.range = "1.00000011 AU · classroom anchor";
+        base.why = "The Earth Fact Sheet prints Semimajor axis (AU) 1.00000011 and a sidereal orbit period of 365.256 days. Divided by 365.256, that period is 1.000 year. The sheet’s AU is the ~1.000 anchor, with the digits it prints. Predicted P is (1.00000011)^(3/2). The remainder is a sliver of a day. Eccentricity on the sheet is 0.0167, so the real path is not this circle. The law still reads the year from a.";
+      }
+    }
+    base.pred = pred;
+    return base;
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function radiusFor(au, rMin, rMax){
+    var t = (Math.log(au) - Math.log(A_MIN)) / (Math.log(A_MAX) - Math.log(A_MIN));
+    return rMin + clamp(t, 0, 1) * (rMax - rMin);
+  }
+
+  function render(){
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = clamp(cssW, 280, 760);
+    var cssH = Math.round(clamp(cssW * 0.92, 320, 640));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var cx = cssW * 0.5;
+    var cy = cssH * 0.52;
+    var rMax = Math.min(cssW, cssH) * 0.42;
+    var rMin = Math.max(36, rMax * 0.12);
+    var sunR = clamp(cssW * 0.028, 11, 16);
+    var copy = copyFor();
+    var i;
+
+    ctx.save();
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 5]);
+    for (i = 0; i < PLANETS.length; i++){
+      var rg = radiusFor(PLANETS[i].au, rMin, rMax);
+      ctx.beginPath();
+      ctx.arc(cx, cy, rg, 0, TAU);
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    var r = radiusFor(state.au, rMin, rMax);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, TAU);
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.95;
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([]);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var ax = cx;
+    var ay = cy - r;
+    ctx.beginPath();
+    ctx.moveTo(ax - 7, ay);
+    ctx.lineTo(ax + 1, ay - 6);
+    ctx.lineTo(ax + 1, ay + 6);
+    ctx.closePath();
+    ctx.fillStyle = accent;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, sunR, 0, TAU);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+    text(ctx, "Sun", cx, cy + sunR + 12, { align: "center", size: 10, color: muted });
+    text(ctx, "N", cx, 16, { align: "center", size: 11, color: soft });
+
+    var px = cx + Math.cos(state.angle) * r;
+    var py = cy - Math.sin(state.angle) * r;
+    ctx.beginPath();
+    ctx.arc(px, py, 7, 0, TAU);
+    ctx.fillStyle = accent;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+
+    var name = state.planet ? planetById(state.planet).name : "a";
+    var lx = px + (px >= cx ? 12 : -12);
+    text(ctx, name, lx, py, { align: px >= cx ? "left" : "right", size: 12, color: ink });
+
+    aVal.textContent = copy.auText;
+    document.getElementById("r-tier").textContent = copy.tier;
+    document.getElementById("r-title").textContent = copy.title;
+    document.getElementById("r-range").textContent = copy.range;
+    document.getElementById("c-pred").textContent = fmtYear(copy.pred.years);
+    document.getElementById("c-pred-sub").textContent = fmtDay(copy.pred.days) + " · years × 365.256";
+    document.getElementById("c-sheet").textContent = copy.sheetFace;
+    document.getElementById("c-sheet-sub").textContent = copy.sheetSub;
+    document.getElementById("r-a").textContent = copy.auText;
+    document.getElementById("r-days").textContent = fmtDay(copy.pred.days);
+    document.getElementById("r-sheet-y").textContent = copy.sheetYears;
+    document.getElementById("r-gap").textContent = copy.gap;
+    document.getElementById("r-a3").textContent = fmtCheck(copy.pred.a3);
+    document.getElementById("r-p2").textContent = fmtCheck(copy.pred.p2);
+    document.getElementById("r-sp2").textContent = copy.sheetP2;
+    document.getElementById("r-why").textContent = copy.why;
+    document.getElementById("r-cadence").textContent = state.playing
+      ? "Play is a classroom time-lapse. A 1-year orbit laps in about 8 seconds. Longer periods are stretched by the period to the power 0.35 so the outer planets stay watchable. Not a clock."
+      : "Paused. The mark holds its place. Play walks the circle as a time-lapse, not as a year and not as a trajectory.";
+    canvas.setAttribute("aria-label",
+      "Schematic top-down orbit at " + copy.auText +
+      ". Predicted period " + fmtYear(copy.pred.years) +
+      ". Log-compressed radius. Not a live position.");
+  }
+
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(48, now - lastT);
+    lastT = now;
+    var years = Math.pow(state.au, 1.5);
+    var lap = LAP_MS * Math.pow(Math.max(years, 1e-4), LAP_POWER);
+    state.angle += TAU * (dt / lap);
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+  function stopPlay(){
+    state.playing = false;
+    lastT = 0;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    setPressed();
+    render();
+  }
+
+  slider.addEventListener("input", function(){
+    applyAu(auFromT(Number(slider.value)), "", true);
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var p = planetById(b.getAttribute("data-planet"));
+      if (!p) return;
+      applyAu(p.au, p.id, false);
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){ stopPlay(); return; }
+    state.playing = true;
+    lastT = 0;
+    setPressed();
+    raf = requestAnimationFrame(frame);
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  paintTheme();
+  applyAu(1.00000011, "earth", false);
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("kepler-help");
+  var helpDialog = document.getElementById("kepler-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
