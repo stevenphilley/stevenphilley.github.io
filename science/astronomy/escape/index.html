@@ -1,0 +1,955 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escape and orbital velocity — circular orbit and escape speed — Steven Philley</title>
+<meta name="description" content="Interactive escape-speed desk: circular orbital speed and escape speed at one altitude, for the Moon and the planets. Presets use NASA fact-sheet GM and volumetric mean radius. Earth’s surface escape is 11.186 km/s. Classroom schematic, not a trajectory.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/escape/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Escape and orbital velocity — circular orbit and escape speed">
+<meta property="og:description" content="Pick a body and an altitude. Circular speed is sqrt(GM/r). Escape speed is sqrt(2GM/r). A sideways launch draws the fall, the circle, the ellipse, and the open curve. Not a trajectory.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/escape/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Escape and orbital velocity — circular orbit and escape speed">
+<meta name="twitter:description" content="sqrt(GM/r) and sqrt(2GM/r) from NASA fact-sheet GM and volumetric mean radius. Earth’s surface escape is 11.186 km/s. Schematic, not a launch.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.fall{border-top-color:var(--muted,#63666e)}
+.swatch.circ{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.ell{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.esc{border-top-style:dotted;border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.swatch.you{border-top-style:solid;border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.custom-fields{display:flex;flex-wrap:wrap;gap:8px}
+.custom-fields[hidden]{display:none}
+.custom-fields label{flex:1 1 140px;display:flex;flex-direction:column;gap:4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.custom-fields input{min-height:44px;font-size:16px;padding:8px 10px;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);letter-spacing:0;text-transform:none}
+.custom-fields input:focus-visible{outline:1px solid var(--accent,#c8b48a);border-color:var(--accent,#c8b48a)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(16px,2.4vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.04em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/" aria-current="page">Escape</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The speed</p>
+  <h1>Escape<br>and the orbit</h1>
+  <p class="lede">Two speeds belong to one distance from a body’s center. A circular orbit needs <strong>v = √(GM/r)</strong>. Leaving, and never coming back, needs <strong>v<sub>esc</sub> = √(2GM/r)</strong>. The second is the first times <strong>√2</strong>. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA fact sheets</a> print GM and a volumetric mean radius for the Moon and each planet. This desk uses those two numbers. At altitude 0 on Earth, GM = 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup> and R = 6,371.000 km give 11.186 km/s, the escape velocity the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists. The <a href="/science/gravity/">Gravity</a> desk names Newton’s cannon and does not compute these speeds. The year of a solar orbit is the <a href="/science/astronomy/kepler/">Kepler</a> desk. The neighborhood those orbits sit in is the <a href="/science/astronomy/">solar map</a>.</p>
+  <p class="note-schematic">Classroom schematic. The body is a smooth sphere with the volumetric mean radius. The launch is sideways, from rest relative to a body that is not spinning. No air, so no drag. No thrust after the speed is set. The drawing is Newton’s cannon as a diagram: paths are conic sections, clipped when they leave the frame. It is not a launch window, not a trajectory a spacecraft could fly, and not mission-planning data. Miles per hour are a conversion of the computed km/s. They are not a second NASA table.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · One radius</span>
+    <button type="button" class="help-q" id="escape-help" aria-haspopup="dialog" aria-controls="escape-help-dialog" aria-expanded="false" aria-label="How this escape desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Sideways launch · body to scale with altitude · no air, no spin</p>
+      <canvas id="cannon" width="880" height="760" role="img" aria-label="Schematic sphere and a sideways launch. Faint paths show a fall, a circular orbit, an ellipse, and escape. The bright path is the launch-speed slider."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch fall" aria-hidden="true"></span> Falls back</li>
+        <li><span class="swatch circ" aria-hidden="true"></span> Circular</li>
+        <li><span class="swatch ell" aria-hidden="true"></span> Ellipse</li>
+        <li><span class="swatch esc" aria-hidden="true"></span> Escape</li>
+        <li><span class="swatch you" aria-hidden="true"></span> Your launch</li>
+      </ul>
+      <div class="controls">
+        <div class="presets" role="group" aria-label="Body presets">
+          <button type="button" data-body="moon" aria-pressed="false">Moon</button>
+          <button type="button" data-body="mercury" aria-pressed="false">Mercury</button>
+          <button type="button" data-body="venus" aria-pressed="false">Venus</button>
+          <button type="button" data-body="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-body="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-body="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-body="saturn" aria-pressed="false">Saturn</button>
+          <button type="button" data-body="uranus" aria-pressed="false">Uranus</button>
+          <button type="button" data-body="neptune" aria-pressed="false">Neptune</button>
+          <button type="button" data-body="custom" aria-pressed="false">Custom</button>
+        </div>
+        <div class="custom-fields" id="custom-fields" hidden>
+          <label>Mass (10<sup>24</sup> kg)
+            <input type="number" id="custom-mass" inputmode="decimal" min="0" step="any" value="5.9722" aria-describedby="custom-note">
+          </label>
+          <label>Radius (km)
+            <input type="number" id="custom-radius" inputmode="decimal" min="0" step="any" value="6371" aria-describedby="custom-note">
+          </label>
+        </div>
+        <div class="slider-row">
+          <label for="alt-slider">Altitude</label>
+          <input type="range" id="alt-slider" min="0" max="1000" step="1" value="0" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="0" aria-valuetext="0 km above the surface">
+          <span class="date-val" id="alt-val">0 km</span>
+        </div>
+        <div class="slider-row">
+          <label for="spd-slider">Launch speed</label>
+          <input type="range" id="spd-slider" min="0" max="2000" step="1" value="707" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="707" aria-valuetext="Circular orbit">
+          <span class="date-val" id="spd-val">—</span>
+        </div>
+        <div class="presets" role="group" aria-label="Launch examples">
+          <button type="button" id="btn-fall" data-kind="fall">Falls back</button>
+          <button type="button" id="btn-circ" data-kind="circ" aria-pressed="true">Circular</button>
+          <button type="button" id="btn-ell" data-kind="ell">Ellipse</button>
+          <button type="button" id="btn-esc" data-kind="esc">Escape</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Earth · fact sheet · schematic</p>
+      <h2 id="r-title">Earth</h2>
+      <p class="range" id="r-range">Surface · volumetric mean radius</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Circular · √(GM/r)</p>
+          <p class="face" id="c-orb">7.910 km/s</p>
+          <p class="sub" id="c-orb-mph">17,694 mph</p>
+        </div>
+        <div class="clock">
+          <p class="k">Escape · √(2GM/r)</p>
+          <p class="face" id="c-esc">11.186 km/s</p>
+          <p class="sub" id="c-esc-mph">25,023 mph</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">√2 ratio</span><span class="v" id="r-ratio">1.4142</span></li>
+        <li><span class="k">Gravity here</span><span class="v" id="r-g">9.820 m/s²</span></li>
+        <li><span class="k">From center</span><span class="v" id="r-r">6,371 km</span></li>
+        <li><span class="k">Altitude</span><span class="v" id="r-alt">0 km</span></li>
+        <li><span class="k">Launch</span><span class="v" id="r-launch">Circular orbit</span></li>
+        <li><span class="k">Sheet escape</span><span class="v" id="r-sheet">11.186 km/s</span></li>
+      </ul>
+      <p class="why" id="r-why"></p>
+      <p class="cadence" id="r-cadence"></p>
+      <p class="cadence" id="custom-note">Custom mass uses NIST’s 2022 CODATA G, 6.67430 × 10<sup>−11</sup> m<sup>3</sup> kg<sup>−1</sup> s<sup>−2</sup>, times the mass you type. A preset uses the fact sheet’s GM instead, so the Earth button is not the same number as typing Earth’s mass.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Classroom idealization, not mission planning">
+    <p class="tag">Classroom idealization · not mission-planning data</p>
+    <h2>A sphere and a speed</h2>
+    <p>Nothing here is a countdown, a launch azimuth, or a fuel load. The sphere ignores air, spin, oblateness, and every mountain. A real rocket adds energy for as long as the engines burn. This page only assigns a speed at one radius and draws the coast that follows. The <a href="/science/gravity/">Gravity</a> desk is the force. The <a href="/science/astronomy/kepler/">Kepler</a> desk is the year that force gives a planet around the Sun.</p>
+  </aside>
+
+  <p class="band">What this means</p>
+  <div class="means">
+    <p><strong>Escape speed does not care which way you point, or how heavy the projectile is, in this model.</strong> The speed is the one that makes kinetic energy equal the depth of the well: ½mv² = GMm/r, so v = √(2GM/r). The projectile’s mass cancels. Direction never enters the energy. The same speed, aimed any way that stays clear of the sphere, still coasts to infinity. Aim into the sphere and you hit it even above escape speed. The drawing fires sideways, the cannon way. Straight up at the same speed is a different path and the same threshold.</p>
+    <p><strong>A rocket does not have to be at escape speed in one instant.</strong> Escape speed is a coasting speed at one place, with the engine already off. A rocket can thrust for minutes and add energy the whole way. It may never pass through the surface escape speed as a single reading. Most launches are not trying to escape. A circular orbit needs less speed, by exactly √2. The vehicle climbs, turns, and settles into that slower circle. This page has no throttle. The slider is the speed at the moment the coast begins.</p>
+    <p><strong>Air and rotation are left out on purpose.</strong> A spinning body gives an eastward launch a head start. An atmosphere takes speed back as drag, and it makes a surface-grazing circle impossible. The fact-sheet notes define escape velocity as the speed at the surface needed to escape, ignoring atmospheric drag, and for a gas giant that surface is the 1-bar level. This sphere uses the volumetric mean radius, because that is the radius that reproduces the sheet’s mean gravity. Jupiter, Saturn, Uranus, and Neptune list an escape speed that matches the equatorial 1-bar radius instead. Both radii are on the sheet. The readout keeps them apart.</p>
+  </div>
+
+  <p class="band">Literacy · two speeds, one radius</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Circular orbit</dt><dd>Sideways speed √(GM/r). The path is a circle of that radius. In the drawing it is the dashed gold curve through the launch point. At altitude 0 it lies on the limb: a grazing circle, only because this model has no air and no terrain.</dd></div>
+    <div class="gloss"><dt>Escape speed</dt><dd>Sideways, or any other direction that clears the sphere, at √(2GM/r). The path is a parabola. Faster than that, the path is a hyperbola. Both leave and do not return. The ratio of escape speed to circular speed is √2 at every altitude. Altitude changes both speeds. It does not change the ratio.</dd></div>
+    <div class="gloss"><dt>Falls back</dt><dd>The coast intersects the sphere. On the surface, every speed below circular does that. Above the surface, a slow ellipse can still miss the ground. The button marked Falls back picks a speed that hits.</dd></div>
+    <div class="gloss"><dt>Ellipse</dt><dd>A closed coast that misses the sphere and is not a circle. The button picks 1.2 times circular speed, so the launch point is the near end and the far end may leave the frame. The frame does not shrink to chase it.</dd></div>
+    <div class="gloss"><dt>Gravity at this radius</dt><dd>GM/r², in m/s². At altitude 0 this is the fact sheet’s mean surface gravity (for a gas giant, gravity at the mean 1-bar radius). It is the pull per unit mass. It is not a reading from a scale on a spinning world.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the sphere leaves out</dt><dd>Drag, lift, thrust, rotation, equatorial bulge, and density lumps. The <a href="/science/gravity/">Gravity</a> desk already says an orbit is falling sideways. This page is only the two speeds. Gas-giant escape speeds on the fact sheets match √(2GM/R<sub>eq</sub>) at the equatorial 1-bar radius. Mean gravity matches GM/R² at the volumetric mean radius. The presets use the volumetric radius for both readouts, and the cadence says when the sheet’s escape speed is the equatorial one. Custom mass is NIST G times the kilograms you type. It is not a fact-sheet GM.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the metric table and the per-body sheets. The metric table rounds Earth escape velocity to 11.2 km/s. This desk uses the Earth Fact Sheet’s 11.186 km/s, not that round.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html" rel="noopener" target="_blank">NASA NSSDCA — Fact Sheet Notes</a> — escape velocity is the initial speed, in km/s, needed at the surface to escape, ignoring atmospheric drag. For the gas giants the surface in that sentence is the 1-bar pressure level. Notes last updated 20 December 2021.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_british.html" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet, U.S. units</a> — escape velocity in miles per second (Earth 7.0). That column is not miles per hour. The mph on this page is the computed km/s times 3,600/1.609344.</li>
+      <li><a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors" rel="noopener" target="_blank">NIST — Guide to the SI, Appendix B</a> — conversion factors. The international mile used here is 1.609344 km. Miles per hour are that conversion, rounded, not a fact-sheet line.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA recommended value 6.67430 × 10<sup>−11</sup> m<sup>3</sup> kg<sup>−1</sup> s<sup>−2</sup>. Used only when Custom is selected. Presets use each sheet’s printed GM and do not multiply mass by G.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — GM 0.00490 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 1,737.4 km; equatorial radius 1,738.1 km; surface gravity 1.62 m/s<sup>2</sup>; escape velocity 2.38 km/s. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mercury Fact Sheet</a> — GM 0.022032 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 2,439.7 km; equatorial radius 2,440.5 km; surface gravity (mean) 3.70 m/s<sup>2</sup>; escape velocity 4.3 km/s. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Venus Fact Sheet</a> — GM 0.32486 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 6,051.8 km; surface gravity (mean) 8.87 m/s<sup>2</sup>; escape velocity 10.36 km/s. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 6,371.000 km; equatorial radius 6,378.137 km; surface gravity (mean) 9.820 m/s<sup>2</sup>; escape velocity 11.186 km/s. Last updated 15 November 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — GM 0.042828 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 3,389.5 km; equatorial radius 3,396.2 km; surface gravity (mean) 3.73 m/s<sup>2</sup>; escape velocity 5.03 km/s. Last updated 19 May 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — GM 126.687 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 69,911 km; equatorial radius (1 bar) 71,492 km; gravity (mean, 1 bar) 25.92 m/s<sup>2</sup>; escape velocity 59.5 km/s. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturn Fact Sheet</a> — GM 37.931 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 58,232 km; equatorial radius (1 bar) 60,268 km; gravity (mean, 1 bar) 11.19 m/s<sup>2</sup>; escape velocity 35.5 km/s. Last updated 18 March 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranus Fact Sheet</a> — GM 5.7940 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 25,362 km; equatorial radius (1 bar) 25,559 km; gravity (mean, 1 bar) 9.01 m/s<sup>2</sup>; escape velocity 21.3 km/s. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptune Fact Sheet</a> — GM 6.8351 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>; volumetric mean radius 24,622 km; equatorial radius (1 bar) 24,764 km; gravity (mean, 1 bar) 11.27 m/s<sup>2</sup>; escape velocity 23.5 km/s. Last updated 3 October 2024.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of two speeds at one radius. GM and the volumetric mean radius are the fact sheets’ printed figures. Earth’s surface escape on this page is 11.186 km/s because that is what those two figures produce, and it is what the Earth Fact Sheet lists. Not a trajectory, not a launch, and not mission-planning data. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Newton’s cannon, named. Weight, orbits, and the gap this speed formula does not close.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU. How long a solar orbit takes, not how fast you leave.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the eight planets sit. Day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/tides/"><p class="n">The difference</p><h3>Tides</h3><p>The same pull, weaker on the far side. Two bulges, not a harbor table.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="escape-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="escape-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="escape-help-title">Escape desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom sphere and a sideways launch. Circular speed is √(GM/r). Escape speed is √(2GM/r). The picture ignores air and spin. It is not a trajectory to fly.</p>
+    <h3>Choose the body</h3>
+    <table>
+      <caption>Choose the body</caption>
+      <tbody>
+        <tr><th scope="row">Moon through Neptune</th><td>Each button loads that fact sheet’s GM and volumetric mean radius. Altitude returns to the surface so the speeds are the surface speeds. The sheet’s listed escape velocity stays in the readout for comparison.</td></tr>
+        <tr><th scope="row">Earth</th><td>GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup> and volumetric mean radius 6,371.000 km. Surface escape speed is 11.186 km/s, the figure the Earth Fact Sheet lists.</td></tr>
+        <tr><th scope="row">Custom</th><td>Type a mass in 10<sup>24</sup> kg and a radius in km. GM is NIST’s 2022 CODATA G, 6.67430 × 10<sup>−11</sup>, times that mass. There is no fact-sheet escape speed to compare. Typing Earth’s mass does not reproduce Earth’s button: the button uses the sheet’s GM, not G times mass.</td></tr>
+      </tbody>
+    </table>
+    <h3>Sliders</h3>
+    <table>
+      <caption>Sliders</caption>
+      <tbody>
+        <tr><th scope="row">Altitude</th><td>Height above the volumetric mean radius, from 0 to twice that radius. The distance in the formulas is radius plus altitude. Both speeds fall as you climb. Their ratio stays √2.</td></tr>
+        <tr><th scope="row">Launch speed</th><td>The coasting speed at that altitude, from 0 to twice escape speed. The bright path is this slider. The faint paths stay put so the four cases remain visible.</td></tr>
+        <tr><th scope="row">Falls back</th><td>Sets a speed below circular that intersects the sphere.</td></tr>
+        <tr><th scope="row">Circular</th><td>Sets √(GM/r).</td></tr>
+        <tr><th scope="row">Ellipse</th><td>Sets 1.2 times circular speed. Closed, and it misses the sphere. The far end may leave the frame.</td></tr>
+        <tr><th scope="row">Escape</th><td>Sets √(2GM/r). The path opens and does not return.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Sphere</th><td>The body, to scale with the launch radius. A higher altitude makes the sphere smaller in the frame. The size is the volumetric radius, not a photograph.</td></tr>
+        <tr><th scope="row">Arrow</th><td>Sideways, at the top of the sphere or of the altitude. Longer means faster, up to a cap so escape does not grow an arrow off the page.</td></tr>
+        <tr><th scope="row">Four paths</th><td>A fall that hits, a dashed circle, a longer ellipse, and an open escape curve. Your launch is the thick gold path. Paths that would run far are cut at the frame.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Circular and escape</th><td>km/s from the formulas, and mph from those km/s times 3,600/1.609344, rounded. The mph is a conversion, not the fact sheet’s miles-per-second column.</td></tr>
+        <tr><th scope="row">√2 ratio</th><td>Escape speed divided by circular speed. It stays √2 when you move altitude or change the body.</td></tr>
+        <tr><th scope="row">Gravity here</th><td>GM/r² in m/s². At the surface it is the sheet’s mean surface gravity.</td></tr>
+        <tr><th scope="row">Sheet escape</th><td>The escape velocity printed on the fact sheet, for a preset. On Jupiter, Saturn, Uranus, and Neptune that print matches the equatorial 1-bar radius. This sphere’s surface escape is the volumetric one. The line under the numbers says which is which.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  var KEY = "sp-theme";
+  /* Escape and orbital speed.
+     Preset GM and volumetric mean radius: NASA NSSDCA fact sheets.
+     v = sqrt(GM/r), v_esc = sqrt(2GM/r), g = GM/r^2.
+     Custom mass uses NIST 2022 CODATA G = 6.67430e-11.
+     Not a trajectory. */
+  var G_SI = 6.67430e-11;
+  var MPH_PER_KMS = 3600 / 1.609344;
+  var SQRT2 = Math.SQRT2;
+  var TAU = Math.PI * 2;
+  var ALT_MAX = 1000;
+  var SPD_MAX = 2000;
+
+  var BODIES = [
+    { id: "moon", name: "Moon", gm: 0.00490, gmLabel: "0.00490", radius: 1737.4, radiusLabel: "1,737.4", eqRadius: 1738.1, eqLabel: "1,738.1", sheetEsc: "2.38", sheetG: "1.62", gName: "Surface gravity", oblate: false },
+    { id: "mercury", name: "Mercury", gm: 0.022032, gmLabel: "0.022032", radius: 2439.7, radiusLabel: "2,439.7", eqRadius: 2440.5, eqLabel: "2,440.5", sheetEsc: "4.3", sheetG: "3.70", gName: "Surface gravity (mean)", oblate: false },
+    { id: "venus", name: "Venus", gm: 0.32486, gmLabel: "0.32486", radius: 6051.8, radiusLabel: "6,051.8", eqRadius: 6051.8, eqLabel: "6,051.8", sheetEsc: "10.36", sheetG: "8.87", gName: "Surface gravity (mean)", oblate: false },
+    { id: "earth", name: "Earth", gm: 0.39860, gmLabel: "0.39860", radius: 6371.000, radiusLabel: "6,371.000", eqRadius: 6378.137, eqLabel: "6,378.137", sheetEsc: "11.186", sheetG: "9.820", gName: "Surface gravity (mean)", oblate: false },
+    { id: "mars", name: "Mars", gm: 0.042828, gmLabel: "0.042828", radius: 3389.5, radiusLabel: "3,389.5", eqRadius: 3396.2, eqLabel: "3,396.2", sheetEsc: "5.03", sheetG: "3.73", gName: "Surface gravity (mean)", oblate: false },
+    { id: "jupiter", name: "Jupiter", gm: 126.687, gmLabel: "126.687", radius: 69911, radiusLabel: "69,911", eqRadius: 71492, eqLabel: "71,492", sheetEsc: "59.5", sheetG: "25.92", gName: "Gravity (mean, 1 bar)", oblate: true },
+    { id: "saturn", name: "Saturn", gm: 37.931, gmLabel: "37.931", radius: 58232, radiusLabel: "58,232", eqRadius: 60268, eqLabel: "60,268", sheetEsc: "35.5", sheetG: "11.19", gName: "Gravity (mean, 1 bar)", oblate: true },
+    { id: "uranus", name: "Uranus", gm: 5.7940, gmLabel: "5.7940", radius: 25362, radiusLabel: "25,362", eqRadius: 25559, eqLabel: "25,559", sheetEsc: "21.3", sheetG: "9.01", gName: "Gravity (mean, 1 bar)", oblate: true },
+    { id: "neptune", name: "Neptune", gm: 6.8351, gmLabel: "6.8351", radius: 24622, radiusLabel: "24,622", eqRadius: 24764, eqLabel: "24,764", sheetEsc: "23.5", sheetG: "11.27", gName: "Gravity (mean, 1 bar)", oblate: true }
+  ];
+
+  var root = document.documentElement;
+  var buttons = [].slice.call(document.querySelectorAll("[data-set-theme]"));
+  function paintTheme(){
+    var c = root.getAttribute("data-theme") || "neon";
+    buttons.forEach(function(b){ b.setAttribute("aria-pressed", String(b.dataset.setTheme === c)); });
+  }
+  buttons.forEach(function(b){
+    b.addEventListener("click", function(){
+      root.setAttribute("data-theme", b.dataset.setTheme);
+      try { localStorage.setItem(KEY, b.dataset.setTheme); } catch (e) {}
+      paintTheme();
+      render();
+    });
+  });
+
+  var canvas = document.getElementById("cannon");
+  var altSlider = document.getElementById("alt-slider");
+  var spdSlider = document.getElementById("spd-slider");
+  var altVal = document.getElementById("alt-val");
+  var spdVal = document.getElementById("spd-val");
+  var customFields = document.getElementById("custom-fields");
+  var massInput = document.getElementById("custom-mass");
+  var radiusInput = document.getElementById("custom-radius");
+  var presetBtns = [].slice.call(document.querySelectorAll("[data-body]"));
+  var kindBtns = [].slice.call(document.querySelectorAll("[data-kind]"));
+  var state = { body: "earth", altT: 0, speedT: Math.round(1000 / SQRT2), kind: "circ" };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function bodyById(id){
+    var i;
+    for (i = 0; i < BODIES.length; i++) if (BODIES[i].id === id) return BODIES[i];
+    return null;
+  }
+  function decimals(s){
+    var p = String(s).split(".");
+    return p.length === 2 ? p[1].length : 0;
+  }
+  function group(n, digits){
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function fmtKm(n){
+    if (!isFinite(n)) return "—";
+    if (n >= 100) return group(n, 0) + " km";
+    if (n >= 10) return group(n, 1) + " km";
+    return group(n, 2) + " km";
+  }
+  function fmtKms(v){
+    if (!isFinite(v)) return "—";
+    if (v >= 1000) return group(v, 0) + " km/s";
+    if (v >= 100) return group(v, 2) + " km/s";
+    return group(v, 3) + " km/s";
+  }
+  function fmtMph(v){
+    if (!isFinite(v)) return "—";
+    var mph = v * MPH_PER_KMS;
+    if (mph >= 100) return group(Math.round(mph), 0) + " mph";
+    return group(mph, 1) + " mph";
+  }
+  function fmtG(g){
+    if (!isFinite(g)) return "—";
+    if (g >= 100) return group(g, 1) + " m/s²";
+    return group(g, 3) + " m/s²";
+  }
+  function gmKm3(model){
+    return model.gm * 1e6;
+  }
+  function customModel(){
+    var mass = Number(massInput.value);
+    var radius = Number(radiusInput.value);
+    if (!(mass > 0) || !(radius > 0) || !isFinite(mass) || !isFinite(radius)) return null;
+    var gm = G_SI * mass * 1e24 / 1e9 / 1e6;
+    return {
+      id: "custom",
+      name: "Custom",
+      gm: gm,
+      gmLabel: gm.toPrecision(6),
+      radius: radius,
+      radiusLabel: fmtKm(radius).replace(" km", ""),
+      eqRadius: radius,
+      eqLabel: "",
+      sheetEsc: "",
+      sheetG: "",
+      gName: "GM/R²",
+      oblate: false,
+      custom: true,
+      mass: mass
+    };
+  }
+  function activeModel(){
+    if (state.body === "custom") return customModel();
+    return bodyById(state.body);
+  }
+  function speeds(model, altKm){
+    var mu = gmKm3(model);
+    var r = model.radius + altKm;
+    var vc = Math.sqrt(mu / r);
+    var ve = vc * SQRT2;
+    var g = mu / (r * r) * 1000;
+    return { mu: mu, r: r, vc: vc, ve: ve, g: g };
+  }
+  function kindFrac(kind){
+    if (kind === "fall") return 0.55 / SQRT2;
+    if (kind === "circ") return 1 / SQRT2;
+    if (kind === "ell") return 1.2 / SQRT2;
+    if (kind === "esc") return 1;
+    return 1 / SQRT2;
+  }
+  function classify(v, vc, ve, r, R){
+    if (!(v > 0)) return { id: "fall", label: "Falls back" };
+    var u = (v * v) / (vc * vc);
+    var e = Math.abs(1 - u);
+    var p = r * u;
+    var peri = (u < 1) ? (p / (2 - u)) : r;
+    var nearEsc = Math.abs(v - ve) / ve < 0.004;
+    var nearCirc = Math.abs(v - vc) / vc < 0.004;
+    if (v >= ve && !nearEsc) return { id: "hyper", label: "Faster than escape" };
+    if (nearEsc || v >= ve) return { id: "esc", label: "Escape" };
+    if (nearCirc) return { id: "circ", label: "Circular orbit" };
+    if (peri < R * 0.9995) return { id: "fall", label: "Falls back" };
+    return { id: "ell", label: "Ellipse" };
+  }
+
+  function samplePath(v, r, R, mu){
+    var pts = [];
+    var vc = Math.sqrt(mu / r);
+    if (!(v > vc * 1e-4)){
+      pts.push({ psi: 0, rho: r });
+      pts.push({ psi: 0, rho: R });
+      return pts;
+    }
+    var u = v * v / (vc * vc);
+    var e = Math.abs(1 - u);
+    var p = r * u;
+    var psiMax = TAU;
+    if (u > 2 + 1e-8){
+      var limit = Math.acos(clamp(-1 / e, -1, 1));
+      psiMax = Math.max(0.05, limit - 0.03);
+    } else if (u >= 2 - 1e-8){
+      psiMax = Math.PI - 0.05;
+    }
+    var steps = 280;
+    var cap = r * 6;
+    var i;
+    for (i = 0; i <= steps; i++){
+      var psi = psiMax * (i / steps);
+      var denom = (u >= 1) ? (1 + e * Math.cos(psi)) : (1 - e * Math.cos(psi));
+      if (denom <= 1e-5) break;
+      var rho = p / denom;
+      if (!isFinite(rho) || rho > cap) break;
+      if (rho <= R && i > 2){
+        pts.push({ psi: psi, rho: R });
+        break;
+      }
+      pts.push({ psi: psi, rho: rho });
+    }
+    return pts;
+  }
+
+  function setPressed(){
+    presetBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-body") === state.body));
+    });
+    kindBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-kind") === state.kind));
+    });
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function strokePath(ctx, pts, cx, cy, scale, color, width, dash){
+    if (!pts || pts.length < 2) return;
+    ctx.beginPath();
+    var i;
+    for (i = 0; i < pts.length; i++){
+      var x = cx + scale * pts[i].rho * Math.sin(pts[i].psi);
+      var y = cy - scale * pts[i].rho * Math.cos(pts[i].psi);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dash || []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function arrow(ctx, x, y, len, color){
+    var head = Math.min(12, len * 0.45);
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + len, y);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + len, y);
+    ctx.lineTo(x + len - head, y - head * 0.55);
+    ctx.lineTo(x + len - head, y + head * 0.55);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  function sheetSentence(model, sp0){
+    if (!model || model.custom){
+      var gmTxt = model ? (Number(model.gm).toPrecision(6) + " × 10^6 km³/s²") : "—";
+      return "Custom has no fact-sheet escape speed. GM is NIST’s 2022 value of G times the mass you typed: " + gmTxt + ". The Earth preset uses the fact sheet’s 0.39860 × 10^6 km³/s², not that product. Rounded to three decimals, the speeds can still look the same.";
+    }
+    var ve = sp0.ve;
+    var g = sp0.g;
+    var veText = fmtKms(ve).replace(" km/s", "");
+    var gText = fmtG(g).replace(" m/s²", "");
+    var base = "At altitude 0, GM " + model.gmLabel + " × 10^6 km³/s² and volumetric mean radius " + model.radiusLabel + " km give escape " + veText + " km/s and gravity " + gText + " m/s². The fact sheet lists escape " + model.sheetEsc + " km/s and " + model.gName.toLowerCase() + " " + model.sheetG + " m/s².";
+    if (model.oblate){
+      var veq = Math.sqrt(2 * gmKm3(model) / model.eqRadius);
+      base += " The listed escape speed matches the equatorial 1-bar radius, " + model.eqLabel + " km, where √(2GM/R) is " + fmtKms(veq) + ". This sphere keeps the volumetric radius, because that is the radius that matches the listed mean gravity.";
+    } else if (model.id === "earth"){
+      base += " Those two surface figures are the sheet’s own 11.186 km/s and 9.820 m/s².";
+    } else {
+      base += " The computed escape is the full √(2GM/R). The sheet prints it with fewer decimals.";
+    }
+    return base;
+  }
+
+  function render(){
+    var model = activeModel();
+    customFields.hidden = state.body !== "custom";
+    var customNote = document.getElementById("custom-note");
+    if (customNote) customNote.hidden = state.body !== "custom";
+    var altKm = 0;
+    var sp = null;
+    var v = 0;
+    var regime = { id: "fall", label: "—" };
+    if (model){
+      altKm = (state.altT / ALT_MAX) * 2 * model.radius;
+      sp = speeds(model, altKm);
+      v = (state.speedT / 1000) * sp.ve;
+      if (state.kind) v = kindFrac(state.kind) * sp.ve;
+      regime = classify(v, sp.vc, sp.ve, sp.r, model.radius);
+    }
+
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = clamp(cssW, 280, 760);
+    var cssH = Math.round(clamp(cssW * 0.92, 300, 640));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var cx = cssW * 0.5;
+    var cy = cssH * 0.56;
+
+    if (!model || !sp){
+      text(ctx, "Enter a mass and a radius greater than zero.", cx, cy, { align: "center", size: 13, color: soft });
+      altVal.textContent = "—";
+      spdVal.textContent = "—";
+      document.getElementById("r-tier").textContent = "Custom · needs two numbers";
+      document.getElementById("r-title").textContent = "Custom";
+      document.getElementById("r-range").textContent = "Mass and radius must be greater than zero";
+      document.getElementById("c-orb").textContent = "—";
+      document.getElementById("c-orb-mph").textContent = "—";
+      document.getElementById("c-esc").textContent = "—";
+      document.getElementById("c-esc-mph").textContent = "—";
+      document.getElementById("r-ratio").textContent = "√2";
+      document.getElementById("r-g").textContent = "—";
+      document.getElementById("r-r").textContent = "—";
+      document.getElementById("r-alt").textContent = "—";
+      document.getElementById("r-launch").textContent = "—";
+      document.getElementById("r-sheet").textContent = "—";
+      document.getElementById("r-why").textContent = "The formulas need a positive mass and a positive radius. GM for a custom body is NIST’s 2022 CODATA G times that mass.";
+      document.getElementById("r-cadence").textContent = "Presets remain available. Earth uses the fact sheet’s GM, not G times Earth’s mass.";
+      canvas.setAttribute("aria-label", "Escape desk waiting for a positive custom mass and radius.");
+      return;
+    }
+
+    var R = model.radius;
+    var r = sp.r;
+    var view = 2.75 * r;
+    var scale = Math.min(cssW, cssH) * 0.46 / view;
+    var guides = [
+      { v: 0.55 * sp.vc, color: muted, width: 1.25, dash: [] },
+      { v: sp.vc, color: accent, width: 1.25, dash: [5, 5] },
+      { v: 1.2 * sp.vc, color: soft, width: 1.25, dash: [2, 4] },
+      { v: sp.ve, color: ink, width: 1.35, dash: [1, 3] }
+    ];
+    var i;
+    for (i = 0; i < guides.length; i++){
+      strokePath(ctx, samplePath(guides[i].v, r, R, sp.mu), cx, cy, scale, guides[i].color, guides[i].width, guides[i].dash);
+    }
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, scale * R, 0, TAU);
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.16;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = accent;
+    ctx.stroke();
+
+    if (altKm > R * 0.002){
+      ctx.beginPath();
+      ctx.arc(cx, cy, scale * r, 0, TAU);
+      ctx.setLineDash([2, 6]);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    var userPts = samplePath(v, r, R, sp.mu);
+    strokePath(ctx, userPts, cx, cy, scale, accent, 2.6, []);
+
+    var lx = cx;
+    var ly = cy - scale * r;
+    var arrowLen = 16 + 34 * clamp(v / sp.ve, 0, 1.6);
+    if (v > sp.vc * 1e-3) arrow(ctx, lx, ly, arrowLen, accent);
+    ctx.beginPath();
+    ctx.arc(lx, ly, 3.5, 0, TAU);
+    ctx.fillStyle = ink;
+    ctx.fill();
+
+    if (scale * R > 42){
+      text(ctx, model.name, cx, cy, { align: "center", size: 13, color: ink });
+    }
+    text(ctx, "launch", lx + arrowLen + 8, ly - 10, { size: 10, color: muted });
+
+    var altLabel = fmtKm(altKm);
+    var spdLabel = fmtKms(v);
+    altVal.textContent = altLabel;
+    spdVal.textContent = spdLabel;
+    altSlider.setAttribute("aria-valuenow", String(state.altT));
+    altSlider.setAttribute("aria-valuetext", altLabel + " above the volumetric mean radius");
+    spdSlider.setAttribute("aria-valuenow", String(state.speedT));
+    spdSlider.setAttribute("aria-valuetext", spdLabel + ", " + regime.label);
+
+    var tier = model.custom ? "Custom · NIST G × mass · schematic" : (model.name + " · fact sheet · schematic");
+    var range = altKm < 0.05 ? "Surface · volumetric mean radius" : (altLabel + " above the surface");
+    document.getElementById("r-tier").textContent = tier;
+    document.getElementById("r-title").textContent = model.name;
+    document.getElementById("r-range").textContent = range;
+    document.getElementById("c-orb").textContent = fmtKms(sp.vc);
+    document.getElementById("c-orb-mph").textContent = fmtMph(sp.vc);
+    document.getElementById("c-esc").textContent = fmtKms(sp.ve);
+    document.getElementById("c-esc-mph").textContent = fmtMph(sp.ve);
+    document.getElementById("r-ratio").textContent = "√2 = " + (sp.ve / sp.vc).toFixed(4);
+    document.getElementById("r-g").textContent = fmtG(sp.g);
+    document.getElementById("r-r").textContent = fmtKm(sp.r);
+    document.getElementById("r-alt").textContent = altLabel;
+    document.getElementById("r-launch").textContent = regime.label + " · " + spdLabel;
+    document.getElementById("r-sheet").textContent = model.custom ? "—" : (model.sheetEsc + " km/s");
+
+    var why = "The bright path is a coast at " + spdLabel + " from " + altLabel + " up. ";
+    if (regime.id === "fall") why += "It meets the sphere. Below a circular orbit, and aimed so the near end is inside the body, the coast falls back.";
+    else if (regime.id === "circ") why += "That is √(GM/r). The path is a circle. Escape is this speed times √2.";
+    else if (regime.id === "ell") why += "Faster than a circle, slower than escape. The path closes. The far end may sit outside the frame.";
+    else if (regime.id === "esc") why += "That is √(2GM/r). The path opens. It does not come back.";
+    else why += "Faster than escape. Still an open curve. The extra speed is not required to leave.";
+    document.getElementById("r-why").textContent = why;
+
+    var sp0 = speeds(model, 0);
+    var cadence = sheetSentence(model, sp0);
+    if (altKm >= 0.05){
+      cadence = "These speeds are " + fmtKm(sp.r) + " from the center, " + altLabel + " above the volumetric mean radius. " + cadence;
+    }
+    document.getElementById("r-cadence").textContent = cadence;
+    canvas.setAttribute("aria-label",
+      "Schematic " + model.name + " at " + altLabel + " altitude. Circular " + fmtKms(sp.vc) +
+      ", escape " + fmtKms(sp.ve) + ". Launch " + spdLabel + ", " + regime.label +
+      ". Not a trajectory.");
+    setPressed();
+  }
+
+  function selectBody(id){
+    state.body = id;
+    state.altT = 0;
+    altSlider.value = "0";
+    if (!state.kind) state.kind = "circ";
+    state.speedT = Math.round(kindFrac(state.kind) * 1000);
+    spdSlider.value = String(state.speedT);
+    setPressed();
+    render();
+  }
+
+  altSlider.addEventListener("input", function(){
+    state.altT = Number(altSlider.value);
+    render();
+  });
+  spdSlider.addEventListener("input", function(){
+    state.kind = "";
+    state.speedT = Number(spdSlider.value);
+    render();
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      selectBody(b.getAttribute("data-body"));
+    });
+  });
+  kindBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.kind = b.getAttribute("data-kind");
+      state.speedT = Math.round(kindFrac(state.kind) * 1000);
+      spdSlider.value = String(state.speedT);
+      render();
+    });
+  });
+  massInput.addEventListener("input", function(){
+    if (state.body === "custom") render();
+  });
+  radiusInput.addEventListener("input", function(){
+    if (state.body === "custom") render();
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  paintTheme();
+  selectBody("earth");
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("escape-help");
+  var helpDialog = document.getElementById("escape-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
