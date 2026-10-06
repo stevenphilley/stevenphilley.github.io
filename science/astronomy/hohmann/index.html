@@ -1,0 +1,1073 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hohmann transfer — the half-ellipse between two circular orbits — Steven Philley</title>
+<meta name="description" content="Interactive Hohmann desk: the minimum-energy two-impulse transfer between two circular, coplanar orbits. Earth to Mars takes 258.88 days and 5.594 km/s with NASA fact-sheet radii and the Sun’s GM. Classroom schematic, not a mission plan.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/hohmann/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Hohmann transfer — the half-ellipse between two circular orbits">
+<meta property="og:description" content="Inner circle, outer circle, and the half-ellipse tangent to both. Earth to Mars is 258.88 days and 5.594 km/s from fact-sheet inputs. Not mission-planning software.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/hohmann/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hohmann transfer — the half-ellipse between two circular orbits">
+<meta name="twitter:description" content="Two burns and one half-ellipse. Earth to Mars: 258.88 days, 5.594 km/s, from NASA fact-sheet GM and semimajor axes. Schematic, not a trajectory to fly.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.inner{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.outer{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.xfer{border-top-style:solid;border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.swatch.craft{border-top-style:solid;border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.swatch.focus{width:12px;height:12px;border:0;border-top:0;border-radius:50%;background:#ffe6b0}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+#planet-picks[hidden],#earth-picks[hidden]{display:none}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.date-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:11ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.presets button:disabled,.play-btn:disabled{opacity:.45;cursor:not-allowed}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(16px,2.4vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.04em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/" aria-current="page">Hohmann</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The coast</p>
+  <h1>Hohmann<br>two burns, one ellipse</h1>
+  <p class="lede">The cheap way from one circular orbit to another, in the classroom, is not a straight line. It is half an ellipse, tangent to the inner circle and tangent to the outer circle, with the central body at one focus. Two impulses do the work. The first burn leaves the departure circle. The craft coasts. The second burn joins the arrival circle. For circles of radii <strong>r₁</strong> and <strong>r₂</strong>, the transfer semi-major axis is <strong>a<sub>t</sub> = (r₁ + r₂) / 2</strong>. The coast lasts half an ellipse period, <strong>t = π √(a<sub>t</sub>³ / μ)</strong>. Speeds come from a circular orbit, <strong>v = √(μ / r)</strong>, and from vis-viva, <strong>v = √(μ (2/r − 1/a))</strong>. Around the Sun, μ is the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> GM, 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. The radii are each planet’s orbital-parameters semimajor axis in 10<sup>6</sup> km, and the periods used for the phase angle are the sidereal orbit periods on those same <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NSSDCA fact sheets</a>. Earth 149.598 × 10<sup>6</sup> km to Mars 227.956 × 10<sup>6</sup> km takes <strong>258.88 days</strong> and <strong>5.594 km/s</strong>. That is about 8.5 months of Earth’s 365.256-day sidereal year. The year of one circle is the <a href="/science/astronomy/kepler/">Kepler</a> desk. The speed to stay on a circle, or to leave a world, is the <a href="/science/astronomy/escape/">Escape</a> desk.</p>
+  <p class="note-schematic">Classroom schematic assuming circular, coplanar orbits and impulsive burns. It ignores planetary gravity wells and patched conics, inclination, eccentricity, and real mission design. It is not mission-planning software. Top-down, from the north, so motion runs counterclockwise. The Sun (or Earth, in the around-Earth case) sits at the focus of the transfer ellipse, not at the ellipse’s center. Planets are marks, not worlds drawn to size. Play is a time-lapse of the coast, about 8 seconds, not a clock. The 400 km low-orbit altitude in the around-Earth case is a round classroom example. The Earth Fact Sheet does not print it. The geosynchronous radius is computed from that sheet’s GM and its 23.9345-hour sidereal rotation period.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Two circles</span>
+    <button type="button" class="help-q" id="hohmann-help" aria-haspopup="dialog" aria-controls="hohmann-help-dialog" aria-expanded="false" aria-label="How this Hohmann desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">From the north · Sun at the focus · scrub is time</p>
+      <canvas id="orbit" width="880" height="760" role="img" aria-label="Schematic top-down Hohmann transfer from Earth to Mars. Two circular orbits and a half-ellipse tangent to both, Sun at the focus. Not a mission trajectory."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch focus" aria-hidden="true"></span> Focus</li>
+        <li><span class="swatch inner" aria-hidden="true"></span> Inner circle</li>
+        <li><span class="swatch outer" aria-hidden="true"></span> Outer circle</li>
+        <li><span class="swatch xfer" aria-hidden="true"></span> Transfer</li>
+        <li><span class="swatch craft" aria-hidden="true"></span> Craft</li>
+      </ul>
+      <div class="controls">
+        <div class="presets" role="group" aria-label="Example transfers">
+          <button type="button" data-route="earth-mars" aria-pressed="true">Earth to Mars</button>
+          <button type="button" data-route="earth-venus" aria-pressed="false">Earth to Venus</button>
+          <button type="button" data-route="earth-jupiter" aria-pressed="false">Earth to Jupiter</button>
+          <button type="button" data-route="earth-orbit" aria-pressed="false">Around Earth</button>
+        </div>
+        <div id="planet-picks">
+          <p class="pick-label">Departure</p>
+          <div class="presets" role="group" aria-label="Departure planet">
+            <button type="button" data-dep="mercury" aria-pressed="false">Mercury</button>
+            <button type="button" data-dep="venus" aria-pressed="false">Venus</button>
+            <button type="button" data-dep="earth" aria-pressed="true">Earth</button>
+            <button type="button" data-dep="mars" aria-pressed="false">Mars</button>
+            <button type="button" data-dep="jupiter" aria-pressed="false">Jupiter</button>
+            <button type="button" data-dep="saturn" aria-pressed="false">Saturn</button>
+            <button type="button" data-dep="uranus" aria-pressed="false">Uranus</button>
+            <button type="button" data-dep="neptune" aria-pressed="false">Neptune</button>
+          </div>
+          <p class="pick-label">Arrival</p>
+          <div class="presets" role="group" aria-label="Arrival planet">
+            <button type="button" data-arr="mercury" aria-pressed="false">Mercury</button>
+            <button type="button" data-arr="venus" aria-pressed="false">Venus</button>
+            <button type="button" data-arr="earth" aria-pressed="false">Earth</button>
+            <button type="button" data-arr="mars" aria-pressed="true">Mars</button>
+            <button type="button" data-arr="jupiter" aria-pressed="false">Jupiter</button>
+            <button type="button" data-arr="saturn" aria-pressed="false">Saturn</button>
+            <button type="button" data-arr="uranus" aria-pressed="false">Uranus</button>
+            <button type="button" data-arr="neptune" aria-pressed="false">Neptune</button>
+          </div>
+        </div>
+        <div id="earth-picks" hidden>
+          <p class="pick-label">Low orbit · example altitude, not a fact-sheet line</p>
+          <div class="slider-row">
+            <label for="alt-slider">Altitude</label>
+            <input type="range" id="alt-slider" min="0" max="2000" step="1" value="400" aria-valuemin="0" aria-valuemax="2000" aria-valuenow="400" aria-valuetext="400 km above the volumetric mean radius, a classroom example">
+            <span class="date-val" id="alt-val">400 km</span>
+          </div>
+          <div class="presets" role="group" aria-label="Earth-orbit direction">
+            <button type="button" id="btn-out" data-earth-dir="out" aria-pressed="true">Low to geosynchronous</button>
+            <button type="button" id="btn-in" data-earth-dir="in" aria-pressed="false">Geosynchronous to low</button>
+          </div>
+        </div>
+        <div class="slider-row">
+          <label for="f-slider">Along the coast</label>
+          <input type="range" id="f-slider" min="0" max="1000" step="1" value="0" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="0" aria-valuetext="Departure">
+          <span class="date-val" id="f-val">Departure</span>
+        </div>
+        <div class="presets" role="group" aria-label="Playback">
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Earth to Mars · fact sheet · schematic</p>
+      <h2 id="r-title">Earth to Mars</h2>
+      <p class="range" id="r-range">Outward · speed up, then speed up</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Transfer time · π√(a<sub>t</sub>³/μ)</p>
+          <p class="face" id="c-time">258.88 d</p>
+          <p class="sub" id="c-time-sub">8.51 × (365.256/12) d</p>
+        </div>
+        <div class="clock">
+          <p class="k">Total Δv · Δv₁ + Δv₂</p>
+          <p class="face" id="c-dv">5.594 km/s</p>
+          <p class="sub" id="c-dv-sub">2.945 + 2.649 km/s</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">a<sub>t</sub></span><span class="v" id="r-a">188.777 × 10⁶ km</span></li>
+        <li><span class="k">r departure</span><span class="v" id="r-r1">149.598 × 10⁶ km</span></li>
+        <li><span class="k">r arrival</span><span class="v" id="r-r2">227.956 × 10⁶ km</span></li>
+        <li><span class="k">Circular departure</span><span class="v" id="r-vc1">29.785 km/s</span></li>
+        <li><span class="k">Circular arrival</span><span class="v" id="r-vc2">24.128 km/s</span></li>
+        <li><span class="k">Vis-viva departure</span><span class="v" id="r-vt1">32.730 km/s</span></li>
+        <li><span class="k">Vis-viva arrival</span><span class="v" id="r-vt2">21.479 km/s</span></li>
+        <li><span class="k">Δv₁</span><span class="v" id="r-dv1">2.945 km/s · speed up</span></li>
+        <li><span class="k">Δv₂</span><span class="v" id="r-dv2">2.649 km/s · speed up</span></li>
+        <li><span class="k">Phase lead θ</span><span class="v" id="r-phase">44.34°</span></li>
+        <li><span class="k">Window spacing</span><span class="v" id="r-syn">779.93 d</span></li>
+        <li><span class="k">μ</span><span class="v" id="r-mu">132,712 × 10⁶ km³/s²</span></li>
+      </ul>
+      <p class="why" id="r-why">Earth’s fact sheet prints semimajor axis 149.598 × 10⁶ km and a sidereal orbit period of 365.256 days. Mars prints 227.956 × 10⁶ km and 686.980 days. With the Sun’s GM, half the transfer ellipse is 258.88 days. Mars must lead by 44.34° at departure. The same geometry repeats every 779.93 days.</p>
+      <p class="cadence" id="r-cadence">Paused at departure. Scrub walks the coast in time, so the craft is faster on the inner end. Play is an 8-second time-lapse, not a clock.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Classroom idealization, not mission planning">
+    <p class="tag">Classroom idealization · not mission-planning software</p>
+    <h2>Circles, one plane, two kicks</h2>
+    <p>Nothing here is a launch window a flight dynamics team would sign, a fuel load, or a path through a planet’s gravity well. Real orbits are eccentric and tilted. A real spacecraft falls into the departure planet’s well, burns for minutes rather than in an instant, and often needs a mid-course trim. This page does not do patched conics. It draws two circles in one plane and the ellipse that kisses both. The <a href="/science/astronomy/kepler/">Kepler</a> desk is the year of one of those circles. The <a href="/science/astronomy/escape/">Escape</a> desk is the local speed at one radius. The <a href="/science/astronomy/">solar map</a> is where the worlds sit on a date.</p>
+  </aside>
+
+  <p class="band">The formulas</p>
+  <div class="means">
+    <p><strong>a<sub>t</sub> = (r₁ + r₂) / 2.</strong> The transfer ellipse is tangent to the inner circle at one end of its long axis and tangent to the outer circle at the other. Those two radii are the periapsis and the apoapsis, so the semi-major axis is their average. The central body is at the focus, a distance |r₂ − r₁| / 2 from the ellipse’s center.</p>
+    <p><strong>t = π √(a<sub>t</sub>³ / μ).</strong> A full ellipse has period 2π √(a³ / μ). The Hohmann coast is half of that, from one apsis to the other. μ is GM of the body at the focus. For planets, μ is the Sun Fact Sheet’s 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. For the around-Earth case, μ is the Earth Fact Sheet’s 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>.</p>
+    <p><strong>v = √(μ / r)</strong> on a circle. <strong>v = √(μ (2/r − 1/a))</strong> on the ellipse, which is vis-viva. At the inner end the ellipse is faster than the inner circle, so an outward trip speeds up. At the outer end the ellipse is slower than the outer circle, so the second burn speeds up again to join that circle. An inward trip slows down at both ends. Δv₁ and Δv₂ are the absolute differences. Total Δv is their sum.</p>
+    <p><strong>θ = 180° − (360° × t / P<sub>target</sub>).</strong> During the coast the target moves 360° × t / P. The craft moves 180° of the transfer. The target must already lead by θ at departure so the two meet at the far apsis. A negative θ means the target is behind the departure body, along the direction of motion. P<sub>target</sub> is the fact-sheet sidereal period for a planet. Around Earth, P is the circular period 2π √(r³ / μ) from the same GM and radius. The window spacing is the synodic period <strong>|P₁ P₂ / (P₁ − P₂)|</strong>, from those same periods. When the formula’s θ passes ±180°, the drawing places the target at that angle modulo 360°. The printed θ stays the formula.</p>
+  </div>
+
+  <p class="band">Literacy · a coast, not a mission</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Which radius</dt><dd>Each fact sheet prints a semimajor axis twice. The Mean Orbital Elements (J2000) line is in AU. The orbital-parameters table is in 10<sup>6</sup> km, with a rounded ratio to Earth beside it. This desk uses the 10<sup>6</sup> km line, because μ is in km<sup>3</sup>/s<sup>2</sup>. It does not multiply the AU line by a kilometer conversion, and it does not average the two prints. Earth’s kilometer line is 149.598 × 10<sup>6</sup> km. The AU line, 1.00000011, is the <a href="/science/astronomy/kepler/">Kepler</a> desk’s slider.</dd></div>
+    <div class="gloss"><dt>Impulsive burn</dt><dd>The model changes speed in an instant, at one point, and then coasts. Δv is that change of speed. A rocket burns for minutes and climbs while it burns. Those minutes are not on this page. Direction is along the circle: speed up means prograde, slow down means retrograde. Nothing here points out of the plane.</dd></div>
+    <div class="gloss"><dt>Phase lead</dt><dd>How far ahead the target must sit at the moment of the first burn, in the direction of motion. Earth to Mars, with these inputs, is 44.34°. Mars’s fact-sheet period is 686.980 days, and the coast is 258.88 days, so Mars moves 135.66° while the craft moves 180°. The lead is the difference. Earth to Venus comes out negative: Venus is faster, so it starts behind.</dd></div>
+    <div class="gloss"><dt>Window spacing</dt><dd>The synodic period of the two orbits, |P₁ P₂ / (P₁ − P₂)|. Earth and Mars, from 365.256 and 686.980 days, give 779.93 days. That is how often the same phase angle comes back. It is not a calendar of launch dates, and it is not an ephemeris.</dd></div>
+    <div class="gloss"><dt>Around Earth</dt><dd>The focus is Earth. μ and the volumetric mean radius, 6,371.000 km, and the sidereal rotation period, 23.9345 hours, are the Earth Fact Sheet. The geosynchronous radius is the circle whose period equals that spin: r³ = μ T² / (4π²). The low orbit is that volumetric radius plus the altitude slider. 400 km is the slider’s start. It is a classroom example, not a line on the sheet. This is still one focus and two circles. It does not model the atmosphere or a launch from the ground.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the ellipse leaves out</dt><dd>Eccentricity, so the real path is not the fact-sheet semimajor axis drawn as a circle. Inclination, so the planes do not match and a third burn would be needed. Planetary gravity, so you do not simply start already on a heliocentric circle. Finite burns, gravity assists, mid-course corrections, and arrival into orbit around the target world. The <a href="/science/astronomy/escape/">Escape</a> desk is the speed at one world. This desk starts after you are already on the departure circle. Not a trajectory to fly.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — GM 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. The same table’s Earth column lists GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>, matching the Earth Fact Sheet. Solar transfers on this page use 132,712 × 10<sup>6</sup>. Last updated 9 May 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the per-body sheets. Radii below are the orbital-parameters semimajor axis in 10<sup>6</sup> km. Periods are the sidereal orbit period in days. The J2000 AU line is cited on the <a href="/science/astronomy/kepler/">Kepler</a> desk and is not the radius in these formulas.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mercury Fact Sheet</a> — Semimajor axis 57.909 × 10<sup>6</sup> km. Sidereal orbit period 87.969 days. Semimajor axis (AU) 0.38709893. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Venus Fact Sheet</a> — Semimajor axis 108.210 × 10<sup>6</sup> km. Sidereal orbit period 224.701 days. Semimajor axis (AU) 0.72333199. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Semimajor axis 149.598 × 10<sup>6</sup> km. Sidereal orbit period 365.256 days. Semimajor axis (AU) 1.00000011. GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 6,371.000 km. Sidereal rotation period 23.9345 hours. The around-Earth case uses the GM, the volumetric radius, and that spin. Last updated 15 November 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — Semimajor axis 227.956 × 10<sup>6</sup> km. Sidereal orbit period 686.980 days. Semimajor axis (AU) 1.52366231. Last updated 19 May 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — Semimajor axis 778.479 × 10<sup>6</sup> km. Sidereal orbit period 4,332.589 days. Semimajor axis (AU) 5.20336301. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturn Fact Sheet</a> — Semimajor axis 1,432.041 × 10<sup>6</sup> km. Sidereal orbit period 10,755.699 days. Semimajor axis (AU) 9.53707032. Last updated 18 March 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranus Fact Sheet</a> — Semimajor axis 2,867.043 × 10<sup>6</sup> km. Sidereal orbit period 30,685.400 days. Semimajor axis (AU) 19.19126393. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptune Fact Sheet</a> — Semimajor axis 4,514.953 × 10<sup>6</sup> km. Sidereal orbit period 60,189.018 days. Semimajor axis (AU) 30.06896348. Last updated 3 October 2024.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a Hohmann transfer. Earth to Mars, from the kilometer semimajor axes and the Sun’s GM above, is 258.88 days and 5.594 km/s. Circular, coplanar, impulsive. Not patched conics, not a launch, and not mission-planning software. The 400 km altitude is an example, not a fact-sheet line. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU. How long one solar circle takes, not the coast between two.</p></a>
+    <a href="/science/astronomy/escape/"><p class="n">The speed</p><h3>Escape</h3><p>Circular orbit and escape at one altitude. √2 apart. A cannon diagram, not this transfer.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the eight planets sit. Day and local time, still a schematic.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>The force that makes both circles, and the ellipse between them, fall.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="hohmann-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="hohmann-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="hohmann-help-title">Hohmann desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Two circular orbits and the half-ellipse that touches both. The focus is the Sun, or Earth in the around-Earth case. The picture assumes one plane and instantaneous burns. It is not a trajectory to fly.</p>
+    <h3>Choose the orbits</h3>
+    <table>
+      <caption>Choose the orbits</caption>
+      <tbody>
+        <tr><th scope="row">Earth to Mars</th><td>The default. Fact-sheet semimajor axes 149.598 and 227.956 × 10<sup>6</sup> km. Transfer time 258.88 days. Total Δv 5.594 km/s.</td></tr>
+        <tr><th scope="row">Earth to Venus</th><td>An inward coast. Both burns slow the craft down. The phase lead comes out negative: Venus starts behind Earth.</td></tr>
+        <tr><th scope="row">Earth to Jupiter</th><td>A long outward coast. The inner circle is drawn to scale, so Earth is smaller on the disk than it is for Mars.</td></tr>
+        <tr><th scope="row">Departure and arrival</th><td>Any two of Mercury through Neptune. The radii are the fact-sheet kilometer semimajor axes. The same planet on both ends is not a transfer.</td></tr>
+        <tr><th scope="row">Around Earth</th><td>Leaves the Sun. μ is Earth’s GM, 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. The outer circle of an outward trip is the geosynchronous radius computed from the 23.9345-hour sidereal day. The inner circle is the volumetric mean radius, 6,371.000 km, plus the altitude slider.</td></tr>
+        <tr><th scope="row">Altitude</th><td>0 to 2,000 km above the volumetric mean radius. It starts at 400 km, a classroom example. The fact sheet does not print that altitude. Moving it changes the low orbit only.</td></tr>
+        <tr><th scope="row">Low to geosynchronous</th><td>Outward. Speed up at the low orbit, coast, speed up again to join the geosynchronous circle.</td></tr>
+        <tr><th scope="row">Geosynchronous to low</th><td>The return. Same ellipse, other way. Both burns slow the craft down. The Δv magnitudes match the outward trip.</td></tr>
+      </tbody>
+    </table>
+    <h3>Scrub and play</h3>
+    <table>
+      <caption>Scrub and play</caption>
+      <tbody>
+        <tr><th scope="row">Along the coast</th><td>Time along the transfer, from the first burn to the second. The craft moves faster near the inner orbit, because vis-viva says so. The slider is time, not an even angle.</td></tr>
+        <tr><th scope="row">Play</th><td>Runs the coast in about 8 seconds, then stops at arrival. Press again to start over. It is a time-lapse, not those days on a clock. Pause keeps the place.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Focus</th><td>The Sun, or Earth. The circles are centered on it. The ellipse is not. Its center sits toward the outer apsis.</td></tr>
+        <tr><th scope="row">Inner and outer circles</th><td>The two circular orbits, to scale with each other. A far arrival makes the departure orbit a small ring. That scale is the point.</td></tr>
+        <tr><th scope="row">Transfer</th><td>The bright half of the ellipse, the half the craft flies. The faint other half is the rest of the same ellipse, not a second route. An outward trip uses the upper half. An inward trip uses the lower half, so the coast stays counterclockwise.</td></tr>
+        <tr><th scope="row">Craft</th><td>The moving mark. At the start it sits on the departure body. At the end it sits on the target.</td></tr>
+        <tr><th scope="row">Phase arc</th><td>The angle at the focus between the departure body and the target at the first burn, drawn modulo 360°. The readout’s θ is the formula, which can pass a full turn when the target is much faster.</td></tr>
+        <tr><th scope="row">N</th><td>North, the view. Motion runs counterclockwise, the same sense as the other top-down desks.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Transfer time</th><td>π √(a<sub>t</sub>³ / μ), in days. Under two days, the face switches to hours. The subtitle in days uses Earth’s 365.256-day sidereal period divided by 12, labeled as that quotient, not as a calendar month.</td></tr>
+        <tr><th scope="row">Δv₁ and Δv₂</th><td>The speed change at departure and at arrival. “Speed up” is prograde. “Slow down” is retrograde. Total Δv adds the two magnitudes.</td></tr>
+        <tr><th scope="row">Circular and vis-viva</th><td>√(μ / r) on each circle, and √(μ (2/r − 1/a<sub>t</sub>)) on the ellipse at that same r.</td></tr>
+        <tr><th scope="row">Phase lead</th><td>θ = 180° − (360° × t / P<sub>target</sub>). Planet periods are the fact-sheet sidereal days. Around Earth, the periods are 2π √(r³ / μ). A second line appears when θ and the on-circle angle differ by a full turn.</td></tr>
+        <tr><th scope="row">Window spacing</th><td>|P₁ P₂ / (P₁ − P₂)| from those same periods. How often this phase repeats. Not a launch calendar.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* Classroom Hohmann desk.
+     Solar GM: Sun Fact Sheet, 132,712 × 10^6 km^3/s^2.
+     Planet radii: orbital-parameters semimajor axis, 10^6 km.
+     Planet periods: sidereal orbit period, days.
+     Earth GM, volumetric radius, sidereal spin: Earth Fact Sheet.
+     a_t = (r1+r2)/2
+     t = pi * sqrt(a_t^3 / mu)   // half the ellipse
+     v_c = sqrt(mu/r)
+     v = sqrt(mu*(2/r - 1/a))
+     Not a mission. Not patched conics. */
+  var SUN_MU = 132712 * 1e6;
+  var EARTH_MU = 0.39860 * 1e6;
+  var EARTH_R = 6371;
+  var SIDEREAL_H = 23.9345;
+  var YEAR_DAYS = 365.256;
+  var DAY = 86400;
+  var LAP_MS = 8000;
+  var TAU = Math.PI * 2;
+
+  var PLANETS = [
+    { id: "mercury", name: "Mercury", km: 57909000, kmLabel: "57.909 × 10⁶ km", days: 87.969, daysLabel: "87.969" },
+    { id: "venus", name: "Venus", km: 108210000, kmLabel: "108.210 × 10⁶ km", days: 224.701, daysLabel: "224.701" },
+    { id: "earth", name: "Earth", km: 149598000, kmLabel: "149.598 × 10⁶ km", days: 365.256, daysLabel: "365.256" },
+    { id: "mars", name: "Mars", km: 227956000, kmLabel: "227.956 × 10⁶ km", days: 686.980, daysLabel: "686.980" },
+    { id: "jupiter", name: "Jupiter", km: 778479000, kmLabel: "778.479 × 10⁶ km", days: 4332.589, daysLabel: "4,332.589" },
+    { id: "saturn", name: "Saturn", km: 1432041000, kmLabel: "1,432.041 × 10⁶ km", days: 10755.699, daysLabel: "10,755.699" },
+    { id: "uranus", name: "Uranus", km: 2867043000, kmLabel: "2,867.043 × 10⁶ km", days: 30685.4, daysLabel: "30,685.400" },
+    { id: "neptune", name: "Neptune", km: 4514953000, kmLabel: "4,514.953 × 10⁶ km", days: 60189.018, daysLabel: "60,189.018" }
+  ];
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("orbit");
+  var fSlider = document.getElementById("f-slider");
+  var fVal = document.getElementById("f-val");
+  var altSlider = document.getElementById("alt-slider");
+  var altVal = document.getElementById("alt-val");
+  var playBtn = document.getElementById("btn-play");
+  var planetPicks = document.getElementById("planet-picks");
+  var earthPicks = document.getElementById("earth-picks");
+  var routeBtns = [].slice.call(document.querySelectorAll("[data-route]"));
+  var depBtns = [].slice.call(document.querySelectorAll("[data-dep]"));
+  var arrBtns = [].slice.call(document.querySelectorAll("[data-arr]"));
+  var state = { mode: "solar", dep: "earth", arr: "mars", earthDir: "out", alt: 400, f: 0, playing: false };
+  var raf = 0;
+  var lastT = 0;
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function byId(id){
+    var i;
+    for (i = 0; i < PLANETS.length; i++) if (PLANETS[i].id === id) return PLANETS[i];
+    return PLANETS[2];
+  }
+  function group(n, digits){
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function fmtSpeed(v){ return group(v, 3) + " km/s"; }
+  function fmtDays(d){ return group(d, 2) + " d"; }
+  function fmtSpan(days){
+    if (!isFinite(days)) return "—";
+    if (days < 2) return group(days * 24, 2) + " h";
+    return fmtDays(days);
+  }
+  function fmtDeg(d){
+    var sign = d < 0 ? "−" : "";
+    return sign + group(Math.abs(d), 2) + "°";
+  }
+  function fmtMillion(km){
+    var m = km / 1e6;
+    var s = Math.abs(m).toFixed(4);
+    var parts = s.split(".");
+    parts[1] = parts[1].replace(/0+$/, "");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var body = parts[1] ? parts[0] + "." + parts[1] : parts[0];
+    return (m < 0 ? "−" : "") + body + " × 10⁶ km";
+  }
+  function fmtKm(km){
+    var digits = km >= 1e6 ? 0 : 3;
+    return group(km, digits) + " km";
+  }
+  function geoRadius(){
+    var T = SIDEREAL_H * 3600;
+    return Math.cbrt(EARTH_MU * T * T / (4 * Math.PI * Math.PI));
+  }
+  function circPeriodDays(mu, r){
+    return TAU * Math.sqrt(r * r * r / mu) / DAY;
+  }
+  function keplerE(M, e){
+    var tw = TAU;
+    M = ((M % tw) + tw) % tw;
+    var E = e < 0.8 ? M : Math.PI;
+    var i, f, fp, d;
+    for (i = 0; i < 30; i++){
+      f = E - e * Math.sin(E) - M;
+      fp = 1 - e * Math.cos(E);
+      d = f / fp;
+      E -= d;
+      if (Math.abs(d) < 1e-12) break;
+    }
+    return E;
+  }
+  function wrapDeg(d){
+    var w = ((d + 180) % 360 + 360) % 360 - 180;
+    if (w === -180) w = 180;
+    return w;
+  }
+
+  function scenario(){
+    var alt = clamp(state.alt, 0, 2000);
+    var rLow = EARTH_R + alt;
+    var rGeo = geoRadius();
+    var outward, r1, r2, mu, p1, p2, name1, name2, label1, label2, periodNote, centerName, bodyR, same;
+    if (state.mode === "earth"){
+      outward = state.earthDir !== "in";
+      r1 = outward ? rLow : rGeo;
+      r2 = outward ? rGeo : rLow;
+      mu = EARTH_MU;
+      p1 = circPeriodDays(mu, r1);
+      p2 = circPeriodDays(mu, r2);
+      name1 = outward ? "Low orbit" : "Geosynchronous";
+      name2 = outward ? "geosynchronous" : "low orbit";
+      label1 = fmtKm(r1);
+      label2 = fmtKm(r2);
+      periodNote = "computed";
+      centerName = "Earth";
+      bodyR = EARTH_R;
+      same = false;
+    } else {
+      var a = byId(state.dep);
+      var b = byId(state.arr);
+      same = a.id === b.id;
+      r1 = a.km;
+      r2 = b.km;
+      outward = r2 > r1;
+      mu = SUN_MU;
+      p1 = a.days;
+      p2 = b.days;
+      name1 = a.name;
+      name2 = b.name;
+      label1 = a.kmLabel;
+      label2 = b.kmLabel;
+      periodNote = "fact sheet";
+      centerName = "Sun";
+      bodyR = 0;
+    }
+    var at = (r1 + r2) / 2;
+    var tSec = Math.PI * Math.sqrt(at * at * at / mu);
+    var tDays = tSec / DAY;
+    var vc1 = Math.sqrt(mu / r1);
+    var vc2 = Math.sqrt(mu / r2);
+    var vt1 = Math.sqrt(mu * (2 / r1 - 1 / at));
+    var vt2 = Math.sqrt(mu * (2 / r2 - 1 / at));
+    var dv1 = Math.abs(vt1 - vc1);
+    var dv2 = Math.abs(vt2 - vc2);
+    var speed1 = vt1 > vc1 ? "speed up" : "slow down";
+    var speed2 = vt2 < vc2 ? "speed up" : "slow down";
+    var phase = 180 - (360 * tDays / p2);
+    var syn = Math.abs(p1 * p2 / (p1 - p2));
+    var e = Math.abs(r2 - r1) / (r2 + r1);
+    var c = Math.abs(r2 - r1) / 2;
+    var b = Math.sqrt(Math.max(0, at * at - c * c));
+    var rInner = Math.min(r1, r2);
+    var rOuter = Math.max(r1, r2);
+    return {
+      same: same, outward: outward, r1: r1, r2: r2, mu: mu, at: at,
+      tDays: tDays, vc1: vc1, vc2: vc2, vt1: vt1, vt2: vt2,
+      dv1: dv1, dv2: dv2, speed1: speed1, speed2: speed2,
+      phase: phase, syn: syn, p1: p1, p2: p2,
+      e: e, c: c, bAxis: b, rInner: rInner, rOuter: rOuter,
+      name1: name1, name2: name2, label1: label1, label2: label2,
+      periodNote: periodNote, centerName: centerName, bodyR: bodyR,
+      alt: alt, rGeo: rGeo, rLow: rLow
+    };
+  }
+
+  function durationCopy(days){
+    if (days < 2){
+      return { face: group(days * 24, 2) + " h", sub: group(days, 3) + " d" };
+    }
+    var months = days / (YEAR_DAYS / 12);
+    return { face: fmtDays(days), sub: group(months, 2) + " × (365.256/12) d" };
+  }
+
+  function setPressed(sc){
+    routeBtns.forEach(function(b){
+      var id = b.getAttribute("data-route");
+      var on = false;
+      if (state.mode === "earth") on = id === "earth-orbit";
+      else if (id === "earth-mars") on = state.dep === "earth" && state.arr === "mars";
+      else if (id === "earth-venus") on = state.dep === "earth" && state.arr === "venus";
+      else if (id === "earth-jupiter") on = state.dep === "earth" && state.arr === "jupiter";
+      b.setAttribute("aria-pressed", String(on));
+    });
+    depBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(state.mode === "solar" && b.getAttribute("data-dep") === state.dep));
+    });
+    arrBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(state.mode === "solar" && b.getAttribute("data-arr") === state.arr));
+    });
+    var outBtn = document.getElementById("btn-out");
+    var inBtn = document.getElementById("btn-in");
+    if (outBtn) outBtn.setAttribute("aria-pressed", String(state.earthDir !== "in"));
+    if (inBtn) inBtn.setAttribute("aria-pressed", String(state.earthDir === "in"));
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    playBtn.disabled = !!(sc && sc.same);
+    planetPicks.hidden = state.mode === "earth";
+    earthPicks.hidden = state.mode !== "earth";
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function xy(cx, cy, scale, xKm, yKm){
+    return { x: cx + xKm * scale, y: cy - yKm * scale };
+  }
+  function polar(cx, cy, scale, ang, rKm){
+    return xy(cx, cy, scale, Math.cos(ang) * rKm, Math.sin(ang) * rKm);
+  }
+
+  function paintReadout(sc){
+    var time = durationCopy(sc.tDays);
+    var title = sc.name1 + " to " + sc.name2;
+    var tier = title + " · " + sc.periodNote + " · schematic";
+    var range = (sc.outward ? "Outward" : "Inward") + " · " + sc.speed1 + ", then " + sc.speed2;
+    var why;
+    var phaseWrapped = wrapDeg(sc.phase);
+    var phaseText = fmtDeg(sc.phase);
+    if (Math.abs(sc.phase - phaseWrapped) > 0.05){
+      phaseText += " · on the circle " + fmtDeg(phaseWrapped);
+    }
+    if (sc.same){
+      tier = sc.name1 + " · same orbit · schematic";
+      title = sc.name1;
+      range = "Pick two different orbits";
+      why = "A Hohmann transfer needs two radii. " + sc.name1 + " is selected on both ends. Choose another arrival, or another departure.";
+      document.getElementById("c-time").textContent = "—";
+      document.getElementById("c-time-sub").textContent = "Same circle";
+      document.getElementById("c-dv").textContent = "—";
+      document.getElementById("c-dv-sub").textContent = "No burns";
+      document.getElementById("r-a").textContent = "—";
+      document.getElementById("r-r1").textContent = sc.label1;
+      document.getElementById("r-r2").textContent = sc.label2;
+      document.getElementById("r-vc1").textContent = fmtSpeed(sc.vc1);
+      document.getElementById("r-vc2").textContent = fmtSpeed(sc.vc2);
+      document.getElementById("r-vt1").textContent = "—";
+      document.getElementById("r-vt2").textContent = "—";
+      document.getElementById("r-dv1").textContent = "—";
+      document.getElementById("r-dv2").textContent = "—";
+      document.getElementById("r-phase").textContent = "—";
+      document.getElementById("r-syn").textContent = "—";
+    } else {
+      why = sc.name1 + " at " + sc.label1 + ", " + sc.name2 + " at " + sc.label2 + ". ";
+      if (state.mode === "earth"){
+        why += "Earth’s GM is 0.39860 × 10⁶ km³/s². The low orbit is the volumetric mean radius 6,371.000 km plus " + group(sc.alt, 0) + " km. That altitude is a classroom example, not a fact-sheet line. The geosynchronous radius is " + fmtKm(sc.rGeo) + ", from r³ = μ T² / (4π²) with T = 23.9345 h. ";
+      } else {
+        why += "Periods are the fact-sheet sidereal days, " + byId(state.dep).daysLabel + " and " + byId(state.arr).daysLabel + ". μ is the Sun’s 132,712 × 10⁶ km³/s². ";
+      }
+      why += "a_t is " + (state.mode === "earth" ? fmtKm(sc.at) : fmtMillion(sc.at)) + ". The coast is " + time.face + ". Δv₁ is " + fmtSpeed(sc.dv1) + " (" + sc.speed1 + "). Δv₂ is " + fmtSpeed(sc.dv2) + " (" + sc.speed2 + "). Total " + fmtSpeed(sc.dv1 + sc.dv2) + ". ";
+      why += "Phase lead θ is " + fmtDeg(sc.phase) + ", from 180° − (360° × t / P). ";
+      if (Math.abs(sc.phase - phaseWrapped) > 0.05){
+        why += "On the circle that is " + fmtDeg(phaseWrapped) + ". ";
+      }
+      why += "The same phase repeats every " + fmtSpan(sc.syn) + ".";
+      document.getElementById("c-time").textContent = time.face;
+      document.getElementById("c-time-sub").textContent = time.sub;
+      document.getElementById("c-dv").textContent = fmtSpeed(sc.dv1 + sc.dv2);
+      document.getElementById("c-dv-sub").textContent = fmtSpeed(sc.dv1) + " + " + fmtSpeed(sc.dv2);
+      document.getElementById("r-a").textContent = state.mode === "earth" ? fmtKm(sc.at) : fmtMillion(sc.at);
+      document.getElementById("r-r1").textContent = sc.label1;
+      document.getElementById("r-r2").textContent = sc.label2;
+      document.getElementById("r-vc1").textContent = fmtSpeed(sc.vc1);
+      document.getElementById("r-vc2").textContent = fmtSpeed(sc.vc2);
+      document.getElementById("r-vt1").textContent = fmtSpeed(sc.vt1);
+      document.getElementById("r-vt2").textContent = fmtSpeed(sc.vt2);
+      document.getElementById("r-dv1").textContent = fmtSpeed(sc.dv1) + " · " + sc.speed1;
+      document.getElementById("r-dv2").textContent = fmtSpeed(sc.dv2) + " · " + sc.speed2;
+      document.getElementById("r-phase").textContent = phaseText;
+      document.getElementById("r-syn").textContent = fmtSpan(sc.syn);
+    }
+    document.getElementById("r-mu").textContent = state.mode === "earth" ? "0.39860 × 10⁶ km³/s²" : "132,712 × 10⁶ km³/s²";
+    document.getElementById("r-tier").textContent = tier;
+    document.getElementById("r-title").textContent = title;
+    document.getElementById("r-range").textContent = range;
+    document.getElementById("r-why").textContent = why;
+    var coast = sc.same ? "Choose two orbits." : (state.playing ? "Playing. About 8 seconds for the whole coast. A time-lapse, not those days." : (state.f <= 0.001 ? "Paused at departure. Scrub walks the coast in time, so the craft is faster on the inner end. Play is an 8-second time-lapse, not a clock." : (state.f >= 0.999 ? "Paused at arrival. Play starts the coast again." : "Paused on the coast. Scrub is time, not a uniform angle.")));
+    document.getElementById("r-cadence").textContent = coast;
+    var pct = Math.round(state.f * 100);
+    var fText = state.f <= 0.001 ? "Departure" : (state.f >= 0.999 ? "Arrival" : pct + "% of the coast");
+    fVal.textContent = fText;
+    fSlider.value = String(Math.round(state.f * 1000));
+    fSlider.setAttribute("aria-valuenow", fSlider.value);
+    fSlider.setAttribute("aria-valuetext", fText);
+    altVal.textContent = group(state.alt, 0) + " km";
+    altSlider.value = String(state.alt);
+    altSlider.setAttribute("aria-valuenow", String(state.alt));
+    altSlider.setAttribute("aria-valuetext", group(state.alt, 0) + " km above the volumetric mean radius, a classroom example");
+    document.getElementById("orbit-hint").textContent = state.mode === "earth"
+      ? "From the north · Earth at the focus · disk to scale"
+      : "From the north · Sun at the focus · scrub is time";
+  }
+
+  function drawPath(ctx, sc, cx, cy, scale, e0, e1, style){
+    var steps = 96;
+    var i, E, p, xKm, yKm;
+    ctx.beginPath();
+    for (i = 0; i <= steps; i++){
+      E = e0 + (e1 - e0) * (i / steps);
+      xKm = -sc.c + sc.at * Math.cos(E);
+      yKm = sc.bAxis * Math.sin(E);
+      p = xy(cx, cy, scale, xKm, yKm);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.strokeStyle = style.color;
+    ctx.globalAlpha = style.alpha;
+    ctx.lineWidth = style.width;
+    ctx.setLineDash(style.dash || []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+  }
+
+  function render(){
+    var sc = scenario();
+    setPressed(sc);
+    paintReadout(sc);
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = clamp(cssW, 280, 760);
+    var cssH = Math.round(clamp(cssW * 0.92, 320, 640));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var cx = cssW * 0.5;
+    var cy = cssH * 0.52;
+    var rMaxPx = Math.min(cssW, cssH) * 0.38;
+    var scale = rMaxPx / sc.rOuter;
+    var i;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, sc.rOuter * scale, 0, TAU);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.25;
+    ctx.setLineDash([4, 5]);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, sc.rInner * scale, 0, TAU);
+    ctx.strokeStyle = soft;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    if (!sc.same){
+      drawPath(ctx, sc, cx, cy, scale, 0, TAU, { color: muted, alpha: 0.45, width: 1, dash: [2, 4] });
+      if (sc.outward) drawPath(ctx, sc, cx, cy, scale, 0, Math.PI, { color: accent, alpha: 1, width: 2.25, dash: [] });
+      else drawPath(ctx, sc, cx, cy, scale, Math.PI, TAU, { color: accent, alpha: 1, width: 2.25, dash: [] });
+    }
+
+    if (state.mode === "earth"){
+      var earthPx = Math.max(4, sc.bodyR * scale);
+      ctx.beginPath();
+      ctx.arc(cx, cy, earthPx, 0, TAU);
+      ctx.fillStyle = "#8eb4c9";
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = cssVar("--base-2", "#14161c");
+      ctx.stroke();
+    } else {
+      var sunR = clamp(sc.rInner * scale * 0.28, 5, 14);
+      ctx.beginPath();
+      ctx.arc(cx, cy, sunR, 0, TAU);
+      ctx.fillStyle = "#ffe6b0";
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = cssVar("--base-2", "#14161c");
+      ctx.stroke();
+    }
+    text(ctx, sc.centerName, cx, cy + Math.max(14, (state.mode === "earth" ? sc.bodyR * scale : 12) + 12), { align: "center", size: 10, color: muted });
+    text(ctx, "N", cx, 16, { align: "center", size: 11, color: soft });
+
+    if (!sc.same){
+      var depAng = sc.outward ? 0 : Math.PI;
+      var lead = sc.phase * Math.PI / 180;
+      var ang1 = depAng + TAU * state.f * sc.tDays / sc.p1;
+      var ang2 = depAng + lead + TAU * state.f * sc.tDays / sc.p2;
+      var arcR = sc.r1 * scale * 0.72;
+      if (arcR < 18) arcR = Math.min(sc.rOuter * scale * 0.55, 36);
+      var a0 = depAng;
+      var a1 = depAng + wrapDeg(sc.phase) * Math.PI / 180;
+      ctx.beginPath();
+      ctx.arc(cx, cy, arcR, -a0, -a1, wrapDeg(sc.phase) > 0);
+      ctx.strokeStyle = accent;
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      var dep = polar(cx, cy, scale, ang1, sc.r1);
+      var arr = polar(cx, cy, scale, ang2, sc.r2);
+      ctx.beginPath();
+      ctx.arc(dep.x, dep.y, 5.5, 0, TAU);
+      ctx.fillStyle = soft;
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = cssVar("--base-2", "#14161c");
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(arr.x, arr.y, 5.5, 0, TAU);
+      ctx.fillStyle = ink;
+      ctx.fill();
+      ctx.stroke();
+
+      var M = sc.outward ? (Math.PI * state.f) : (Math.PI + Math.PI * state.f);
+      var E = keplerE(M, sc.e);
+      var craft = xy(cx, cy, scale, -sc.c + sc.at * Math.cos(E), sc.bAxis * Math.sin(E));
+      ctx.beginPath();
+      ctx.arc(craft.x, craft.y, 6.5, 0, TAU);
+      ctx.fillStyle = accent;
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = cssVar("--base-2", "#14161c");
+      ctx.stroke();
+
+      function tag(pt, ang, rPx, name){
+        var push = 14;
+        var lx = cx + Math.cos(ang) * (rPx + push);
+        var ly = cy - Math.sin(ang) * (rPx + push);
+        if (Math.hypot(lx - cx, ly - cy) < 28){
+          lx = cx + Math.cos(ang) * (rPx + 28);
+          ly = cy - Math.sin(ang) * (rPx + 28);
+        }
+        text(ctx, name, lx, ly, { align: Math.cos(ang) >= 0 ? "left" : "right", size: 11, color: ink });
+      }
+      tag(dep, ang1, sc.r1 * scale, sc.name1);
+      tag(arr, ang2, sc.r2 * scale, sc.name2);
+    }
+
+    var aria = sc.same
+      ? "Schematic. " + sc.name1 + " is selected twice. A Hohmann transfer needs two different orbits."
+      : "Schematic top-down Hohmann transfer from " + sc.name1 + " to " + sc.name2 + ". Transfer time " + durationCopy(sc.tDays).face + ". Total delta-v " + fmtSpeed(sc.dv1 + sc.dv2) + ". " + sc.centerName + " at the focus. Not a mission trajectory.";
+    canvas.setAttribute("aria-label", aria);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    lastT = 0;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(48, now - lastT);
+    lastT = now;
+    state.f += dt / LAP_MS;
+    if (state.f >= 1){
+      state.f = 1;
+      state.playing = false;
+      lastT = 0;
+      raf = 0;
+      render();
+      return;
+    }
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  routeBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var id = b.getAttribute("data-route");
+      stopPlay();
+      state.f = 0;
+      if (id === "earth-orbit"){
+        state.mode = "earth";
+        state.earthDir = "out";
+      } else {
+        state.mode = "solar";
+        state.dep = "earth";
+        state.arr = id === "earth-venus" ? "venus" : (id === "earth-jupiter" ? "jupiter" : "mars");
+      }
+      render();
+    });
+  });
+  depBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      state.mode = "solar";
+      state.dep = b.getAttribute("data-dep");
+      state.f = 0;
+      render();
+    });
+  });
+  arrBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      stopPlay();
+      state.mode = "solar";
+      state.arr = b.getAttribute("data-arr");
+      state.f = 0;
+      render();
+    });
+  });
+  document.getElementById("btn-out").addEventListener("click", function(){
+    stopPlay();
+    state.mode = "earth";
+    state.earthDir = "out";
+    state.f = 0;
+    render();
+  });
+  document.getElementById("btn-in").addEventListener("click", function(){
+    stopPlay();
+    state.mode = "earth";
+    state.earthDir = "in";
+    state.f = 0;
+    render();
+  });
+  altSlider.addEventListener("input", function(){
+    state.mode = "earth";
+    state.alt = clamp(Number(altSlider.value), 0, 2000);
+    render();
+  });
+  fSlider.addEventListener("input", function(){
+    stopPlay();
+    state.f = clamp(Number(fSlider.value), 0, 1000) / 1000;
+    render();
+  });
+  playBtn.addEventListener("click", function(){
+    if (scenario().same) return;
+    if (state.playing){ stopPlay(); render(); return; }
+    if (state.f >= 0.999) state.f = 0;
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("hohmann-help");
+  var helpDialog = document.getElementById("hohmann-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
