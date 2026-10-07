@@ -1780,6 +1780,10 @@
       miningCount: 0,
       miningRate: 0,
       cropCount: 0,
+      builtGlance: [],
+      builtMore: 0,
+      structureCount: 0,
+      builtCount: 0,
       unmet: false,
       hasQuery: false
     };
@@ -1788,6 +1792,8 @@
     var sites = api.sitesAtPlace(store, place, "base") || [];
     var mining = miningRowsFor(sites, api, index);
     var crops = cropRowsFor(sites, api, index);
+    var builtParts = api.builtAtPlace ? (api.builtAtPlace(store, place, "base") || []) : [];
+    var builtView = api.groupBuilt ? api.groupBuilt(builtParts, index, "") : { useful: [], structureCount: 0, totalCount: 0 };
     var byItem = Object.create(null);
     var itemOrder = [];
     var stacks = 0;
@@ -1828,7 +1834,7 @@
       var mark = api.markerState(store, place, q, index);
       hasQuery = !!(mark && mark.hasQueryMatch);
     }
-    if (!(stacks > 0 || miningCount > 0 || cropCount > 0)) {
+    if (!(stacks > 0 || miningCount > 0 || cropCount > 0 || (builtView.totalCount || 0) > 0)) {
       empty.loaded = true;
       empty.hasQuery = hasQuery;
       empty.unmet = unmet;
@@ -1846,6 +1852,10 @@
       miningCount: miningCount,
       miningRate: miningRate,
       cropCount: cropCount,
+      builtGlance: (builtView.useful || []).slice(0, 3),
+      builtMore: Math.max(0, (builtView.useful || []).length - 3),
+      structureCount: builtView.structureCount || 0,
+      builtCount: builtView.totalCount || 0,
       unmet: unmet,
       hasQuery: hasQuery
     };
@@ -2407,6 +2417,45 @@
       return html;
     }
 
+    function builtItemLi(item) {
+      var qty = "×" + formatQty(item.count);
+      var title = item.title ? ' title="' + esc(item.title) + '"' : "";
+      if (item.places && item.places.length > 1) {
+        var breakdown = item.places.map(function (entry) {
+          return "<li><span>" + esc(entry.name) + "</span><span>×" + esc(formatQty(entry.count)) + "</span></li>";
+        }).join("");
+        return "<details" + title + "><summary><span>" + esc(item.name) + "</span><span>" + esc(qty) + "</span></summary><ul>" + breakdown + "</ul></details>";
+      }
+      return "<li" + title + "><span>" + esc(item.name) + "</span><span>" + esc(qty) + "</span></li>";
+    }
+
+    function builtObjectsHtml(parts, query) {
+      var api = logisticsApi();
+      if (!api || !api.groupBuilt) return "";
+      var view = api.groupBuilt(parts || [], catalogIndex, query || "");
+      var html = '<h3 class="place-sub">Built objects</h3>';
+      if (!view.totalCount) {
+        html += '<p class="empty">No objects were in this place’s object list.</p>';
+        return html;
+      }
+      if (!view.shown) {
+        html += '<p class="empty">No built objects match this search.</p>';
+        return html;
+      }
+      if (query && String(query).trim()) html += '<p class="place-meta">Matching the item search.</p>';
+      view.categories.forEach(function (cat) {
+        html += '<section class="place-loc"><h3>' + esc(cat.label) + "</h3>";
+        if (cat.items && cat.items.length) html += "<ul>" + cat.items.map(builtItemLi).join("") + "</ul>";
+        if (cat.structure && cat.structure.items && cat.structure.items.length) {
+          html += '<details class="place-built-structure"' + (cat.structure.open ? " open" : "") + ">" +
+            "<summary><span>Structure</span><span>×" + esc(formatQty(cat.structure.total)) + "</span></summary><ul>" +
+            cat.structure.items.map(builtItemLi).join("") + "</ul></details>";
+        }
+        html += "</section>";
+      });
+      return html;
+    }
+
     function placeSectionsHtml(api, store, place, mode) {
       var locs = api.locationsAtPlace(store, place, mode);
       var demands = api.demandsAtPlace(store, place, mode);
@@ -2432,6 +2481,9 @@
             (rows ? "<ul>" + rows + "</ul>" : '<p class="empty">Empty.</p>') + "</section>";
         }).join("");
       }
+      var builtQuery = itemFilter ? itemFilter.value : "";
+      var builtParts = api.builtAtPlace ? api.builtAtPlace(store, place, mode) : [];
+      html += builtObjectsHtml(builtParts, builtQuery);
       if (demands.length) {
         html += '<h3 class="place-sub">Open demands</h3><ul class="place-demands">';
         demands.forEach(function (row) {
@@ -2559,6 +2611,20 @@
           return "<details class=\"place-loc\" title=\"" + esc(item.title || "") + "\"><summary><span>" + esc(item.label) + cat + "</span><span>" + esc(formatQty(item.total)) + "</span></summary><ul>" + breakdown + "</ul></details>";
         }).join("");
       }
+      var builtParts = [];
+      places.forEach(function (place) {
+        (api.builtAtPlace ? api.builtAtPlace(store, place, "base") : []).forEach(function (part) {
+          builtParts.push({
+            id: part.id,
+            objectId: part.objectId,
+            rawObjectId: part.rawObjectId,
+            count: part.count,
+            geo: part.geo,
+            placeName: place.name || place.glyphs || "Place"
+          });
+        });
+      });
+      html += builtObjectsHtml(builtParts, itemFilter ? itemFilter.value : "");
       html += "<h3 class=\"place-sub\">Mining</h3>";
       if (!agg.mining.length) html += '<p class="empty">No extractors at these places.</p>';
       else {
@@ -5009,6 +5075,15 @@
       var inv = inventoryChipText(summary);
       if (inv) html += '<span class="chip"><span class="chip-k">Inventory</span> ' + esc(inv) + "</span>";
       else html += '<span class="chip"><span class="chip-k">Inventory</span> No stacks pinned here</span>';
+      if (summary.builtGlance && summary.builtGlance.length) {
+        var builtText = summary.builtGlance.map(function (row) {
+          return row.name + " ×" + formatQty(row.count);
+        }).join(" · ");
+        if (summary.builtMore > 0) builtText += " · +" + summary.builtMore;
+        html += '<span class="chip"><span class="chip-k">Built</span> ' + esc(builtText) + "</span>";
+      } else if (summary.structureCount > 0) {
+        html += '<span class="chip"><span class="chip-k">Built</span> Structure ×' + esc(formatQty(summary.structureCount)) + "</span>";
+      }
       if (summary.unmet) html += '<span class="chip chip-need">Open demand</span>';
       html += "</span>";
       return html;
