@@ -1,0 +1,385 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tenant issues — maintenance and habitability log — Steven Philley</title>
+<meta name="description" content="Track apartment maintenance and habitability issues through resolution: status, priority, work orders, dates, and a dated note log you can send a landlord. Save and load a text file. Stays in the browser — nothing is uploaded. Not legal advice.">
+<link rel="canonical" href="https://stevenphilley.com/tools/tenant-issues/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Tenant issues — maintenance and habitability log">
+<meta property="og:description" content="A local log for maintenance and habitability issues you can keep for a landlord. Save and load a text file. Nothing is uploaded. Not legal advice.">
+<meta property="og:url" content="https://stevenphilley.com/tools/tenant-issues/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tenant issues — maintenance and habitability log">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.e-wrap{max-width:980px;margin:0 auto;padding:0 clamp(20px,5vw,64px) 72px}
+.e-hero{padding:clamp(36px,6vw,72px) 0 22px;border-bottom:1px solid var(--line,#2c303a)}
+.e-kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.e-hero h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48px,10vw,108px);line-height:.88;margin:0}
+.e-hero .lede{max-width:62ch;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.meta-row{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-top:18px}
+.ti-field label,.ti-label{display:block;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 6px}
+.ti-field input,.ti-field select,.ti-field textarea,.log-add input,.log-add select,.log-add textarea,.filters input,.filters select{
+  width:100%;box-sizing:border-box;background:rgba(0,0,0,.22);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:14px;line-height:1.45;padding:10px 12px;min-height:44px;color-scheme:dark
+}
+.ti-field textarea{min-height:120px;resize:vertical}
+.ti-field input:focus,.ti-field select:focus,.ti-field textarea:focus,.log-add input:focus,.log-add select:focus,.log-add textarea:focus,.filters input:focus,.filters select:focus{outline:none;border-color:var(--accent,#c8b48a)}
+html[data-theme="sage"] .ti-field input,html[data-theme="sage"] .ti-field select,html[data-theme="sage"] .ti-field textarea,
+html[data-theme="sand"] .ti-field input,html[data-theme="sand"] .ti-field select,html[data-theme="sand"] .ti-field textarea,
+html[data-theme="sage"] .log-add input,html[data-theme="sage"] .log-add select,html[data-theme="sage"] .log-add textarea,
+html[data-theme="sand"] .log-add input,html[data-theme="sand"] .log-add select,html[data-theme="sand"] .log-add textarea,
+html[data-theme="sage"] .filters input,html[data-theme="sage"] .filters select,
+html[data-theme="sand"] .filters input,html[data-theme="sand"] .filters select{color-scheme:light;background:rgba(255,255,255,.55)}
+.ti-toolbar{display:flex;flex-wrap:wrap;gap:10px;margin:8px 0 12px}
+.ti-toolbar button,.ti-toolbar label.file-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;
+  padding:12px 16px;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;justify-content:center
+}
+.ti-toolbar button.primary{background:var(--ink,#e8e6e1);color:var(--base-2,#14161c);border-color:var(--ink,#e8e6e1)}
+.ti-toolbar button:hover,.ti-toolbar button:focus-visible,.ti-toolbar label.file-btn:hover{border-color:var(--accent,#c8b48a);outline:none}
+.status{margin:0 0 8px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96);min-height:1.6em}
+.counts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 14px}
+.count-btn{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 10px;min-height:44px;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.count-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.count-btn:hover,.count-btn:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.count-num{font-family:"Bebas Neue",Impact,sans-serif;font-size:18px;letter-spacing:.04em}
+.count-note{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.06em);color:var(--muted,#63666e)}
+.filters{display:grid;grid-template-columns:1.4fr .8fr .9fr;gap:12px;margin:0 0 8px}
+.showing{margin:0 0 4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.08em);color:var(--muted,#63666e);min-height:1.2em}
+.issue{display:grid;grid-template-columns:1fr auto;gap:8px 16px;padding:16px 0;border-top:1px solid var(--line,#2c303a);align-items:start}
+.issue:last-child{border-bottom:1px solid var(--line,#2c303a)}
+.issue.is-overdue{box-shadow:inset 3px 0 0 var(--accent,#c8b48a);padding-left:12px}
+.issue.is-due{box-shadow:inset 3px 0 0 var(--muted,#63666e);padding-left:12px}
+.issue.is-editing{background:rgba(0,0,0,.12)}
+.issue h3{margin:0 0 6px;font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,36px);line-height:.95}
+.issue-title{appearance:none;background:transparent;border:0;padding:0;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.issue-title:hover,.issue-title:focus-visible{color:var(--accent,#c8b48a);outline:none}
+.issue-meta,.issue-flags,.flag-late,.flag-due{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.issue-flags{display:flex;flex-wrap:wrap;gap:8px 12px;margin-top:8px;align-items:center}
+.pill{border:1px solid var(--line,#2c303a);padding:3px 8px;letter-spacing:.06em;text-transform:uppercase;font-size:10px;color:var(--ink,#e8e6e1)}
+.days{color:var(--accent,#c8b48a);letter-spacing:.04em}
+.flag-late{margin-top:8px;color:var(--accent,#c8b48a);letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+.flag-due{margin-top:8px;color:var(--ink-soft,#9b9a96);letter-spacing:.04em;text-transform:uppercase;font-size:11px}
+.issue-actions{display:flex;gap:8px}
+.issue-actions button,.editor-actions button,.log-add button,.log-row button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;cursor:pointer
+}
+.issue-actions button:hover,.editor-actions button:hover,.log-add button:hover,.log-row button:hover,
+.issue-actions button:focus-visible,.editor-actions button:focus-visible,.log-add button:focus-visible,.log-row button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.empty{margin:12px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:1.6;color:var(--ink-soft,#9b9a96)}
+.editor{margin-top:22px;border-top:1px solid var(--line,#2c303a);padding-top:8px}
+.editor[hidden]{display:none}
+.editor h2,.also h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.06em;margin:12px 0}
+.ti-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px}
+.ti-grid .span{grid-column:1 / -1}
+.log-head{margin:18px 0 8px}
+.log-list{list-style:none;margin:0;padding:0}
+.log-empty{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--muted,#63666e);padding:8px 0}
+.log-row,.log-add{display:grid;grid-template-columns:150px 1fr 180px auto;gap:8px;align-items:start;margin:0 0 8px}
+.log-row textarea,.log-add textarea{min-height:44px;resize:vertical}
+.editor-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.ti-summary{margin:18px 0 0;white-space:pre-wrap;border:1px solid var(--line,#2c303a);padding:16px 18px;background:rgba(0,0,0,.18);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:12px;line-height:1.55;color:var(--ink,#e8e6e1)}
+.also{margin-top:8px}
+.also ul{list-style:none;margin:0;padding:0}
+.also li{border-top:1px solid var(--line,#2c303a);padding:12px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.also a{color:inherit}
+.also a:hover{color:var(--accent,#c8b48a)}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:720px){
+  .meta-row,.ti-grid,.filters,.log-row,.log-add{grid-template-columns:1fr}
+  .issue{grid-template-columns:1fr}
+  .ti-toolbar button,.ti-toolbar label.file-btn{flex:1 1 calc(50% - 10px)}
+}
+@media print{
+  @page{margin:14mm}
+  html,body{background:#fff !important;color:#111 !important}
+  .sp-primary,.sp-subnav,.sp-site-footer,.e-hero,.band,.meta-row,.ti-toolbar,.status,.counts,.filters,.showing,#issue-list,.editor,.also,.help-dialog,.help-q{display:none !important}
+  .e-wrap{max-width:none;padding:0}
+  .ti-summary,.ti-summary[hidden]{display:block !important;border:0 !important;background:#fff !important;color:#111 !important;padding:0 !important;font-size:11pt}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="e-wrap" id="tenant-app">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/tools/">Tools</a>
+      <a href="/tools/tenant-issues/" aria-current="page">Tenant issues</a>
+      <a href="/tools/text/">Text</a>
+      <a href="/tools/speed/">Speed</a>
+      <a href="/tools/temperature.html">Temperature</a>
+    </div>
+  </div>
+
+  <header class="e-hero">
+    <p class="e-kicker">Vol. V — Tools · Home</p>
+    <h1>Tenant issues</h1>
+    <p class="lede">Track maintenance and habitability issues through resolution. Record what happened, when, and who was told. This is an organizing tool, not legal advice. The list stays in this browser and in the text file you save — nothing is uploaded.</p>
+  </header>
+
+  <div class="band has-help">
+    <span class="band-label">Log · Local only</span>
+    <button type="button" class="help-q" id="tenant-help" aria-haspopup="dialog" aria-controls="tenant-help-dialog" aria-expanded="false" aria-label="How this tenant issues log works">?</button>
+  </div>
+
+  <div class="meta-row">
+    <div class="ti-field">
+      <label for="list-name">List name</label>
+      <input id="list-name" type="text" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="ti-field">
+      <label for="unit">Unit or address</label>
+      <input id="unit" type="text" autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <div class="ti-toolbar" role="toolbar" aria-label="List actions">
+    <button type="button" class="primary" id="btn-add">Add issue</button>
+    <button type="button" id="btn-save">Save .txt</button>
+    <label class="file-btn">Load .txt<input type="file" id="file" accept=".txt,text/plain" hidden></label>
+    <button type="button" id="btn-copy">Copy summary</button>
+    <button type="button" id="btn-print">Print</button>
+    <button type="button" id="btn-summary" aria-expanded="false" aria-controls="summary">Summary</button>
+    <button type="button" id="btn-new">New list</button>
+  </div>
+  <p class="status" id="status" aria-live="polite">Autosaved in this browser.</p>
+
+  <div class="counts" id="counts" aria-label="Issues by status"></div>
+
+  <div class="filters">
+    <div class="ti-field">
+      <label for="q">Search</label>
+      <input id="q" type="search" autocomplete="off" spellcheck="false" placeholder="Title, room, work order, note…">
+    </div>
+    <div class="ti-field">
+      <label for="filter">Status</label>
+      <select id="filter">
+        <option value="">All</option>
+        <option>New</option>
+        <option>Reported</option>
+        <option>Acknowledged</option>
+        <option>Scheduled</option>
+        <option>In progress</option>
+        <option>Resolved</option>
+        <option>Closed</option>
+        <option>Disputed/Unresolved</option>
+      </select>
+    </div>
+    <div class="ti-field">
+      <label for="sort">Sort</label>
+      <select id="sort">
+        <option value="noticed-desc">Date noticed (newest)</option>
+        <option value="noticed-asc">Date noticed (oldest)</option>
+        <option value="priority">Priority</option>
+        <option value="followup">Follow-up (soonest)</option>
+        <option value="activity">Latest activity</option>
+      </select>
+    </div>
+  </div>
+  <p class="showing" id="showing"></p>
+  <div id="issue-list"></div>
+
+  <section class="editor" id="editor" hidden aria-labelledby="editor-title">
+    <h2 id="editor-title">Issue</h2>
+    <div class="ti-grid">
+      <div class="ti-field span">
+        <label for="f-title">Title</label>
+        <input id="f-title" type="text" autocomplete="off">
+      </div>
+      <div class="ti-field">
+        <label for="f-location">Location / room</label>
+        <input id="f-location" type="text" autocomplete="off">
+      </div>
+      <div class="ti-field">
+        <label for="f-category">Category</label>
+        <input id="f-category" type="text" list="categories" autocomplete="off">
+        <datalist id="categories">
+          <option value="Plumbing"></option>
+          <option value="Heat"></option>
+          <option value="Hot water"></option>
+          <option value="Electrical"></option>
+          <option value="Mold / moisture"></option>
+          <option value="Pests"></option>
+          <option value="Appliance"></option>
+          <option value="Door / lock / window"></option>
+          <option value="Structural"></option>
+          <option value="Safety"></option>
+          <option value="Other"></option>
+        </datalist>
+      </div>
+      <div class="ti-field">
+        <label for="f-priority">Priority</label>
+        <select id="f-priority"></select>
+      </div>
+      <div class="ti-field">
+        <label for="f-status">Status</label>
+        <select id="f-status"></select>
+      </div>
+      <div class="ti-field span">
+        <label for="f-description">Description</label>
+        <textarea id="f-description" rows="5"></textarea>
+      </div>
+      <div class="ti-field span">
+        <label for="f-work">Work order number(s)</label>
+        <input id="f-work" type="text" autocomplete="off" placeholder="WO-1042, WO-1108">
+      </div>
+      <div class="ti-field">
+        <label for="f-noticed">Date first noticed</label>
+        <input id="f-noticed" type="date">
+      </div>
+      <div class="ti-field">
+        <label for="f-reported">Date reported</label>
+        <input id="f-reported" type="date">
+      </div>
+      <div class="ti-field">
+        <label for="f-how">How reported</label>
+        <select id="f-how"></select>
+      </div>
+      <div class="ti-field">
+        <label for="f-contacted">Who was contacted</label>
+        <input id="f-contacted" type="text" autocomplete="off">
+      </div>
+      <div class="ti-field">
+        <label for="f-follow">Follow-up due</label>
+        <input id="f-follow" type="date">
+      </div>
+      <div class="ti-field">
+        <label for="f-resolved">Resolved date</label>
+        <input id="f-resolved" type="date">
+      </div>
+    </div>
+
+    <h3 class="log-head ti-label">Activity / notes</h3>
+    <ul class="log-list" id="log-list"></ul>
+    <div class="log-add">
+      <input id="log-date" type="date" aria-label="Date for the new note">
+      <textarea id="log-note" rows="2" placeholder="What happened" aria-label="New note"></textarea>
+      <select id="log-status" aria-label="Optional new status for this note"></select>
+      <button type="button" id="btn-log-add">Add note</button>
+    </div>
+    <div class="editor-actions">
+      <button type="button" id="btn-close">Close</button>
+      <button type="button" id="btn-delete">Delete issue</button>
+    </div>
+  </section>
+
+  <pre class="ti-summary" id="summary" hidden></pre>
+
+  <div class="also">
+    <h2>Also in Tools</h2>
+    <ul>
+      <li><a href="/tools/text/">Text</a> — character, word, line, and byte counts. Local only.</li>
+      <li><a href="/tools/speed/">Speed test</a> — ping, download, upload against Cloudflare’s public edge.</li>
+      <li><a href="/tools/temperature.html">Temperature</a> — Fahrenheit ↔ Celsius with live presets.</li>
+      <li><a href="/tools/">Tools desk</a> — the full index.</li>
+    </ul>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="tenant-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="tenant-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tenant-help-title">Tenant issues</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">An organizing record for maintenance and habitability issues. Not legal advice, not a court filing, and not a message to your landlord until you choose to send one. Data stays in this browser and in the text file you download. Nothing is uploaded.</p>
+    <h3>Issues</h3>
+    <table>
+      <caption>Issues</caption>
+      <tbody>
+        <tr><th scope="row">Add</th><td>Add issue opens a blank record. Title, room, description, category, priority, and status. Work order numbers can be several, separated however you like.</td></tr>
+        <tr><th scope="row">Dates</th><td>Date first noticed, date reported, follow-up due, and resolved date. How reported is portal, email, phone, or in person. Who was contacted is a name or office.</td></tr>
+        <tr><th scope="row">Status</th><td>New, Reported, Acknowledged, Scheduled, In progress, Resolved, Closed, or Disputed/Unresolved. Changing Status writes a dated note so the change stays in the history.</td></tr>
+        <tr><th scope="row">Edit / delete</th><td>Edit on a card, or the title. Delete asks first. Delete removes it from this browser only. A file you already downloaded is left as it was.</td></tr>
+      </tbody>
+    </table>
+    <h3>Activity log</h3>
+    <table>
+      <caption>Activity log</caption>
+      <tbody>
+        <tr><th scope="row">A note</th><td>Each entry is a date, a note, and an optional new status. Add one when you call, email, or hear back. The list of notes is the history of that issue.</td></tr>
+        <tr><th scope="row">Status on a note</th><td>If you pick a status on a new note, the issue’s status updates to match. Older notes keep the status you stored on them.</td></tr>
+        <tr><th scope="row">Edit a note</th><td>Change the date, the wording, or the recorded status in the row. Delete note removes that line only.</td></tr>
+      </tbody>
+    </table>
+    <h3>The list</h3>
+    <table>
+      <caption>The list</caption>
+      <tbody>
+        <tr><th scope="row">Counts</th><td>Each status shows how many issues are in it. All is the full list. Open and overdue follow-ups are counted under the buttons. A count filters the list. Search and sort still apply.</td></tr>
+        <tr><th scope="row">Days open</th><td>From the date first noticed, or the date reported if noticed is blank, through today. Resolved and Closed stop at the resolved date when you have one.</td></tr>
+        <tr><th scope="row">Overdue</th><td>A follow-up date before today, on an issue that is not Resolved or Closed, is marked on the card. Due today is marked separately. Save writes the whole list, not only the rows on screen.</td></tr>
+      </tbody>
+    </table>
+    <h3>Save, load, new list</h3>
+    <table>
+      <caption>Save, load, new list</caption>
+      <tbody>
+        <tr><th scope="row">Autosave</th><td>The list is stored in this browser as you type. Another device does not see it. Clearing site data clears it.</td></tr>
+        <tr><th scope="row">Save .txt</th><td>Downloads a plain text file: a readable report, then a JSON block between BEGIN and END markers. Load reads that block and restores every field and every note.</td></tr>
+        <tr><th scope="row">Load .txt</th><td>Pick a file this page saved. If the browser already has issues, it asks before replacing them. A file without the markers will not load.</td></tr>
+        <tr><th scope="row">New list</th><td>Asks, then clears the browser copy. Download a .txt first if you still want the old list. New list does not delete a file already on disk.</td></tr>
+      </tbody>
+    </table>
+    <h3>Summary and print</h3>
+    <table>
+      <caption>Summary and print</caption>
+      <tbody>
+        <tr><th scope="row">Copy summary</th><td>Copies the readable report, without the JSON block, so you can paste it into an email or a letter.</td></tr>
+        <tr><th scope="row">Print</th><td>Opens the print dialog with that same report. The buttons and the form stay off the page.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/tools/tenant-issues/app.js"></script>
+</body>
+</html>
