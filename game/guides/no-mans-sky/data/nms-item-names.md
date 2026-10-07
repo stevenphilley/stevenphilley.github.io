@@ -79,3 +79,9 @@ These rows exist in the toolkit extract, but the stored name is a localisation k
 | `CV_INV1`–`CV_INV4` | `UT_CR_MINE_NAME_L` |
 
 The full id list, one per row, is `unresolvedIds` in `nms-item-names.json`.
+
+## Placed base parts
+
+A base’s `Objects` list uses these ids when the part is a product. `U_EXTRACTOR_S` is Mineral Extractor, `BUILD_REFINER3` is Large Refiner, `BASE_FLAG` is Base Computer, and `BUILDSAVE` is Save Point. The logistics planner and the galaxy map count every placed part from that list.
+
+A few placed-object ids are not product-table rows, so they are not in `items`. The planner maps those aliases itself: `REFINERYL` and `REFINERY3` are Large Refiner, `REFINERYM` and `REFINERY2` are Medium Refiner, and `REFINERY`, `REFINERY1`, and `REFINERYS` are Portable Refiner. Any other unknown id is reworded. The save id stays in the tooltip.

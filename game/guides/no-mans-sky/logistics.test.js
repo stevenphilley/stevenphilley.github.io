@@ -340,6 +340,93 @@ eq(mouldHeld.map(function (row) { return row.item.rawId; }), ["^PLANT_TOXIC"], "
 assert(!site("WALL"), "a wall is not production");
 assert(produced.skipped.some(function (row) { return row.id === "base-objects"; }), "a base without an Objects list is flagged");
 
+var built = logistics.extractBuilt(player, { decodeAddress: map.decodeAddressField });
+function part(id) {
+  var found = null;
+  built.parts.forEach(function (row) {
+    if (row.objectId === id && row.geo && row.geo.baseName === "Uthmi") found = row;
+  });
+  return found;
+}
+eq(part("U_EXTRACTOR_S").count, 2, "built objects count both mineral extractors");
+eq(part("BUILD_REFINER3").count, 2, "two large refiners are counted from the product id");
+eq(part("REFINERYL").count, 1, "a placed REFINERYL is counted");
+eq(part("REFINERYL").rawObjectId, "^REFINERYL", "the caret stays on the raw object id");
+eq(part("WALL").count, 2, "walls are counted even though they are not production");
+eq(part("BASE_FLAG").count, 1, "the base computer is a built object");
+eq(logistics.partCategory("U_SOLAR_S"), "power", "a solar panel is power");
+eq(logistics.partCategory("U_EXTRACTOR_S"), "extraction", "a mineral extractor is extraction");
+eq(logistics.partCategory("U_SILO_S"), "storage", "a supply depot is storage");
+eq(logistics.partCategory("BUILD_REFINER3"), "refining", "a large refiner product id is refining");
+eq(logistics.partCategory("REFINERYL"), "refining", "REFINERYL is refining");
+eq(logistics.partCategory("SNOWPLANT"), "farming", "a planted crop is farming");
+eq(logistics.partCategory("BASE_FLAG"), "technology", "the base computer is technology");
+eq(logistics.partCategory("BUILDLIGHT"), "decor", "a standing light is decor");
+eq(logistics.partCategory("WALL"), "structure", "a wall is structure");
+eq(logistics.partCategory("FLOOR"), "structure", "a floor is structure");
+eq(logistics.partCategory("FOUNDATION"), "structure", "a foundation is structure");
+eq(logistics.partCategory("WALLLIGHTWHITE"), "decor", "a wall light is decor, not structure");
+eq(logistics.describeBuilt(part("U_EXTRACTOR_S"), index).name, "Mineral Extractor", "the extractor uses the item-list name");
+eq(logistics.describeBuilt(part("BUILD_REFINER3"), index).name, "Large Refiner", "BUILD_REFINER3 is Large Refiner");
+eq(logistics.describeBuilt(part("REFINERYL"), index).name, "Large Refiner", "REFINERYL uses the large refiner name");
+eq(logistics.describeBuilt(part("BASE_FLAG"), index).name, "Base Computer", "BASE_FLAG is the base computer");
+eq(logistics.describeBuilt(part("BUILDSAVE"), index).name, "Save Point", "BUILDSAVE is a save point");
+var unknownPart = logistics.describeBuilt(part("NOT_A_PART_9"), index);
+eq(unknownPart.name, "Not A Part 9", "an unknown part id is reworded");
+assert(!unknownPart.known, "an unknown part is marked unknown");
+assert(unknownPart.title.indexOf("^NOT_A_PART_9") !== -1, "an unknown part keeps the save id in the title");
+var uthmiParts = built.parts.filter(function (row) { return row.geo && row.geo.baseName === "Uthmi"; });
+var grouped = logistics.groupBuilt(uthmiParts, index, "");
+var refiner = null;
+grouped.categories.forEach(function (cat) {
+  (cat.items || []).forEach(function (item) { if (item.name === "Large Refiner") refiner = item; });
+});
+eq(refiner && refiner.count, 3, "Large Refiner merges the product id and REFINERYL");
+var structure = null;
+grouped.categories.forEach(function (cat) {
+  if (cat.structure) structure = cat.structure;
+});
+assert(structure && !structure.open, "structure starts collapsed");
+eq(structure.total, 5, "two walls, two floors, and a foundation are structure");
+var wallSearch = logistics.groupBuilt(uthmiParts, index, "foundation");
+var wallOpen = null;
+wallSearch.categories.forEach(function (cat) { if (cat.structure) wallOpen = cat.structure; });
+assert(wallOpen && wallOpen.open && wallOpen.total === 1, "a structure search opens that group");
+var nameSearch = logistics.groupBuilt(uthmiParts, index, "large refiner");
+eq(nameSearch.shown, 3, "search matches the readable refiner name");
+assert(!nameSearch.categories.some(function (cat) { return cat.structure && cat.structure.items.length; }), "a refiner search hides structure");
+var wrapped = logistics.extractBuilt({
+  PersistentPlayerBases: [{
+    Name: "Wrap",
+    BaseType: { PersistentBaseTypes: "PlanetBase" },
+    GalacticAddress: "2205D058AC1D",
+    Objects: [
+      { ObjectID: { Value: "^FLOOR" }, Position: { X: 1, Y: 0, Z: 2 } },
+      { ObjectID: "^FLOOR", Position: [0, 1, 0] }
+    ]
+  }]
+}, { decodeAddress: map.decodeAddressField });
+eq(wrapped.parts.length, 1, "a wrapped object id and a string id count as one part");
+eq(wrapped.parts[0].count, 2, "position does not split a part");
+eq(wrapped.parts[0].objectId, "FLOOR", "the caret and Value wrapper are stripped");
+var importedBuilt = logistics.importSave(logistics.emptyStore(), player, {
+  decodeAddress: map.decodeAddressField,
+  fileName: "fixture-save.json",
+  format: "json"
+});
+assert(importedBuilt.built.some(function (row) { return row.objectId === "REFINERYL"; }), "import keeps built objects on the store");
+var roundBuilt = logistics.normalize(JSON.parse(JSON.stringify(importedBuilt)));
+eq(roundBuilt.built.length, importedBuilt.built.length, "built objects survive normalize");
+var clearedBuilt = logistics.clearImported(JSON.parse(JSON.stringify(importedBuilt)));
+eq(clearedBuilt.built.length, 0, "clearing an import drops built objects");
+var builtPlace = { glyphs: "2205D058AC1D", planet: 2, name: "Uthmi", type: "PlanetBase" };
+var builtGlance = map.summarizeBase(builtPlace, importedBuilt, logistics, index, "");
+assert(builtGlance.builtGlance.some(function (row) { return row.name === "Large Refiner" && row.count === 3; }), "the base list glance names the large refiners");
+assert(builtGlance.structureCount === 5, "the glance keeps the structure count");
+assert(map.summarizeBase(builtPlace, importedBuilt, logistics, index, "foundation").hasQuery, "item search matches a built foundation");
+assert(map.summarizeBase(builtPlace, importedBuilt, logistics, index, "large refiner").hasQuery, "item search matches a built refiner by name");
+assert(!logistics.markerState(importedBuilt, builtPlace, "glass", index).hasQueryMatch, "a part the base does not have is not a match");
+
 var withClass = logistics.setProduction({ production: [site("U_EXTRACTOR_S")], locations: [], projects: [] }, site("U_EXTRACTOR_S").id, {
   resourceId: "copper",
   hotspotClass: "S"

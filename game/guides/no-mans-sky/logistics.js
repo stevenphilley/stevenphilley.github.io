@@ -116,6 +116,7 @@
       locations: [],
       projects: [],
       production: [],
+      built: [],
       skipped: []
     };
   }
@@ -998,6 +999,118 @@
     return splitItemId(objectId).base.toUpperCase();
   }
 
+  // Placed-object ids that are not rows in the product table. The craftable
+  // ids are BUILD_REFINER1/2/3. Some saves store the placed refiner as
+  // REFINERY, REFINERYM, or REFINERYL instead.
+  var PART_NAME_ALIASES = {
+    REFINERY: "Portable Refiner",
+    REFINERY1: "Portable Refiner",
+    REFINERYS: "Portable Refiner",
+    REFINERY2: "Medium Refiner",
+    REFINERYM: "Medium Refiner",
+    REFINERY3: "Large Refiner",
+    REFINERYL: "Large Refiner"
+  };
+  var BUILT_CATEGORIES = [
+    { id: "power", label: "Power" },
+    { id: "extraction", label: "Extraction" },
+    { id: "storage", label: "Storage" },
+    { id: "refining", label: "Refining" },
+    { id: "farming", label: "Farming" },
+    { id: "technology", label: "Technology" },
+    { id: "decor", label: "Decor" }
+  ];
+  var POWER_IDS = {
+    U_SOLAR_S: 1, U_BIOGENERATOR: 1, U_GENERATOR_S: 1, U_BATTERY_S: 1, U_POWERLINE: 1,
+    U_SWITCHBUTTON: 1, U_SWITCHPRESS: 1, U_SWITCHPROX: 1, U_SWITCHWALL: 1
+  };
+  var TECH_IDS = {
+    BASE_FLAG: 1, BUILDSAVE: 1, TELEPORTER: 1, TELEPORTER_F: 1,
+    U_MINIPORTAL: 1, U_MINIPORTAL_CV: 1, U_PORTALLINE: 1,
+    BUILDTERMINAL: 1, BUILDSIGNAL: 1, BUILDBEACON: 1,
+    HEALTHSTATION: 1, SHIELDSTATION: 1, MESSAGEMODULE: 1,
+    BUILDLANDINGPAD: 1, NPCBUILDERTERM: 1, NPCFARMTERM: 1,
+    NPCSCIENCETERM: 1, NPCWEAPONTERM: 1, BYTEBEAT: 1, BYTEBEATSWITCH: 1,
+    U_BYTEBEATLINE: 1
+  };
+
+  function partCategory(objectId) {
+    var id = partKey(objectId);
+    if (!id) return "decor";
+    if (POWER_IDS[id] || /^U_SOLAR|^U_BATTERY|^U_GENERATOR|^U_BIOGENERATOR|^U_POWERLINE|^U_SWITCH/.test(id)) return "power";
+    if (id === "U_SILO_S" || /^U_SILO/.test(id) || /^CONTAINER\d+$/.test(id)) return "storage";
+    if (id === "U_EXTRACTOR_S" || id === "U_GASEXTRACTOR" || id === "BUILDHARVESTER" || id === "U_PIPELINE" || /EXTRACTOR|HARVESTER|PIPELINE$/.test(id)) return "extraction";
+    if (/REFINER|REFINERY|^COOKER$/.test(id)) return "refining";
+    if (CROP_PARTS[id] || CONTAINER_PARTS[id] || /PLANT$/.test(id)) return "farming";
+    if (TECH_IDS[id] || /^GARAGE_/.test(id) || /TELEPORT|LANDING|TERMINAL$|BEACON$|HEALTHSTATION|SHIELDSTATION|MESSAGEMODULE/.test(id)) return "technology";
+    if (/LIGHT|LAMP|FLAG|DECAL|POSTER|CHAIR|SOFA|BED$|TABLE|LOCKER|CABINET|CRATE|STATUE|FOSSIL|BANNER|ORNAMENT|FOUNTAIN|FAN$|NOISEBOX/.test(id)) return "decor";
+    if (/^(WALL|FLOOR|ROOF|DOOR|RAMP|STAIR|LADDER|FOUNDATION|FOUNDLEG|CUBEROOM|CUBEFLOOR|CUBEROOF|CUBESTAIRS|MAINROOM|CORRIDOR|PAVING|BUILDPAVING|BUILDDOOR|BUILDWINDOW|BUILDRAMP|BUILDLADDER|BUILDFLATPANEL|BUILDSIDEPANEL|CORNERPOST)/.test(id)) return "structure";
+    if (/^(B_|C_|F_|T_|M_|S_)(WALL|FLOOR|ROOF|DOOR|RAMP|STAIR|GDOOR|WINDOW|ROOF)/.test(id)) return "structure";
+    if (/WALL|FLOOR|ROOF|FOUNDATION|DOOR|WINDOW|RAMP|STAIR|CORRIDOR|CUBEROOM|CUBEFLOOR|CUBEROOF|PAVING|LADDER|ARCH|PILLAR|STRUT/.test(id)) return "structure";
+    return "decor";
+  }
+
+  function extractBuilt(player, options) {
+    options = options || {};
+    var decode = options.decodeAddress;
+    var parts = [];
+    var bases = Array.isArray(player && player.PersistentPlayerBases) ? player.PersistentPlayerBases : [];
+    bases.forEach(function (base, index) {
+      if (!base || typeof base !== "object") return;
+      var list = base.Objects || base.objects;
+      if (!Array.isArray(list)) return;
+      var baseName = text(base.Name) || ("Base " + (index + 1));
+      var addr = base.GalacticAddress != null ? base.GalacticAddress : base.galacticAddress;
+      var geo = geoFromAddress(addr, decode, {
+        baseName: baseName,
+        baseType: text(base.BaseType && base.BaseType.PersistentBaseTypes) || "",
+        scope: "base",
+        strictBase: true
+      });
+      // Position is where the part sits. UserData is a placement seed.
+      // Neither one splits a part into a different kind, so both are ignored
+      // once the ObjectID has been counted.
+      var counts = Object.create(null);
+      var rawOf = Object.create(null);
+      list.forEach(function (entry) {
+        var rawId = rawObjectIdOf(entry);
+        var id = splitItemId(rawId).base.toUpperCase();
+        if (!id) return;
+        counts[id] = (counts[id] || 0) + 1;
+        if (!rawOf[id]) rawOf[id] = rawId || id;
+      });
+      Object.keys(counts).forEach(function (id) {
+        var where = geo && geo.glyphs ? geo.glyphs + ":" + norm(baseName || "") : "nogeo:" + index;
+        parts.push({
+          id: "built:" + where + ":" + id,
+          source: "save",
+          objectId: id,
+          rawObjectId: rawOf[id] || id,
+          count: counts[id],
+          geo: geo
+        });
+      });
+    });
+    return { parts: parts };
+  }
+
+  function normalizeBuilt(part) {
+    if (!part || typeof part !== "object") return null;
+    var original = text(part.rawObjectId) || text(part.objectId);
+    var objectId = splitItemId(text(part.objectId)).base.toUpperCase() || splitItemId(original).base.toUpperCase();
+    var id = text(part.id);
+    var count = posInt(part.count);
+    if (!id || !objectId || !count) return null;
+    return {
+      id: id,
+      source: part.source === "manual" ? "manual" : "save",
+      objectId: objectId,
+      rawObjectId: original || objectId,
+      count: count,
+      geo: normalizeGeo(part.geo)
+    };
+  }
+
   function cropSpec(objectId) {
     return CROP_PARTS[partKey(objectId)] || null;
   }
@@ -1183,6 +1296,145 @@
     return rows;
   }
 
+  function describeBuilt(part, index) {
+    var objectId = partKey(part && part.objectId);
+    var raw = (part && (part.rawObjectId || part.objectId)) || "";
+    var item = { id: objectId, rawId: raw || objectId };
+    var meta = itemMeta(item, index);
+    var name = meta.label;
+    var known = !!meta.known;
+    if ((!known || !name) && PART_NAME_ALIASES[objectId]) {
+      name = PART_NAME_ALIASES[objectId];
+      known = true;
+    }
+    if (!name) name = humanizeId(raw || objectId) || objectId || "Part";
+    var bits = [];
+    if (!known) bits.push("not in the item list");
+    if (raw) bits.push(raw);
+    return {
+      name: name,
+      title: bits.join(" · "),
+      known: known,
+      raw: raw,
+      category: partCategory(objectId),
+      objectId: objectId
+    };
+  }
+
+  function builtMatchesQuery(part, query, index) {
+    var q = loose(query || "");
+    if (!q || !part) return false;
+    var described = describeBuilt(part, index);
+    var hay = loose([
+      described.name, described.title, described.raw, described.objectId,
+      described.category, part.rawObjectId,
+      described.category === "structure" ? "Structure" : "",
+      described.category === "decor" || described.category === "structure" ? "Structure/Decor" : ""
+    ].concat(BUILT_CATEGORIES.map(function (cat) {
+      return cat.id === described.category ? cat.label : "";
+    })).filter(Boolean).join(" "));
+    return hay.indexOf(q) !== -1;
+  }
+
+  function sortBuiltItems(list) {
+    return (list || []).slice().sort(function (a, b) {
+      if (b.count !== a.count) return b.count - a.count;
+      var an = String(a.name || "").toLowerCase();
+      var bn = String(b.name || "").toLowerCase();
+      if (an < bn) return -1;
+      if (an > bn) return 1;
+      return 0;
+    });
+  }
+
+  function groupBuilt(parts, index, query) {
+    var q = loose(query || "");
+    var buckets = Object.create(null);
+    BUILT_CATEGORIES.forEach(function (cat) { buckets[cat.id] = []; });
+    buckets.structure = [];
+    var totalCount = 0;
+    (parts || []).forEach(function (part) {
+      if (!part) return;
+      totalCount += part.count || 0;
+      if (q && !builtMatchesQuery(part, query, index)) return;
+      var described = describeBuilt(part, index);
+      var cat = buckets[described.category] ? described.category : "decor";
+      var row = null;
+      buckets[cat].forEach(function (item) {
+        if (loose(item.name) === loose(described.name)) row = item;
+      });
+      if (!row) {
+        row = { name: described.name, title: described.title, count: 0, known: described.known, raws: [], places: [] };
+        buckets[cat].push(row);
+      }
+      row.count += part.count || 0;
+      if (described.raw && row.raws.indexOf(described.raw) === -1) row.raws.push(described.raw);
+      if (part.placeName) {
+        var slot = null;
+        row.places.forEach(function (entry) { if (entry.name === part.placeName) slot = entry; });
+        if (!slot) row.places.push({ name: part.placeName, count: part.count || 0 });
+        else slot.count += part.count || 0;
+      }
+      var bits = [];
+      if (!row.known) bits.push("not in the item list");
+      if (row.raws.length) bits.push(row.raws.join(" · "));
+      row.title = bits.join(" · ");
+    });
+    var categories = [];
+    BUILT_CATEGORIES.forEach(function (cat) {
+      if (cat.id === "decor") return;
+      var items = sortBuiltItems(buckets[cat.id]);
+      if (!items.length) return;
+      categories.push({ id: cat.id, label: cat.label, items: items });
+    });
+    var decorItems = sortBuiltItems(buckets.decor);
+    var structureItems = sortBuiltItems(buckets.structure);
+    var structureCount = 0;
+    structureItems.forEach(function (item) { structureCount += item.count; });
+    if (decorItems.length || structureItems.length) {
+      categories.push({
+        id: "decor",
+        label: "Structure/Decor",
+        items: decorItems,
+        structure: {
+          total: structureCount,
+          open: !!(q && structureItems.length),
+          items: structureItems
+        }
+      });
+    }
+    var useful = [];
+    categories.forEach(function (cat) {
+      (cat.items || []).forEach(function (item) { useful.push(item); });
+    });
+    useful = sortBuiltItems(useful);
+    var shown = structureCount;
+    useful.forEach(function (item) { shown += item.count; });
+    return {
+      categories: categories,
+      useful: useful,
+      structureCount: structureCount,
+      totalCount: totalCount,
+      shown: shown
+    };
+  }
+
+  function builtAtPlace(store, place, mode) {
+    return ((store && store.built) || []).filter(function (part) {
+      if (!part || !part.geo) return false;
+      if (mode === "planet") {
+        var geo = {
+          glyphs: part.geo.glyphs,
+          baseName: part.geo.baseName,
+          baseType: part.geo.baseType,
+          strictBase: false
+        };
+        return addressMatches(geo, place, "base");
+      }
+      return addressMatches(part.geo, place, mode || "base");
+    });
+  }
+
   function describeSite(site, index) {
     var objectId = partKey(site && site.objectId);
     var crop = cropSpec(objectId);
@@ -1235,10 +1487,12 @@
     options = options || {};
     var extracted = extractInventories(player, options);
     var produced = extractProduction(player, options);
+    var built = extractBuilt(player, options);
     var kept = store.locations.filter(function (loc) { return loc.source !== "save"; });
     var manualSites = (store.production || []).filter(function (site) { return site.source === "manual"; });
     store.locations = extracted.locations.concat(kept);
     store.production = keepProductionEdits(store.production, produced.sites).concat(manualSites);
+    store.built = built.parts;
     store.skipped = extracted.skipped.concat(produced.skipped);
     if (options.bases) {
       store.bases = {
@@ -1389,6 +1643,10 @@
     (Array.isArray(store.production) ? store.production : []).forEach(function (site) {
       var next = normalizeSite(site);
       if (next) base.production.push(next);
+    });
+    (Array.isArray(store.built) ? store.built : []).forEach(function (part) {
+      var next = normalizeBuilt(part);
+      if (next) base.built.push(next);
     });
     return base;
   }
@@ -2052,12 +2310,18 @@
         produceCount += site.count;
       }
     });
+    var builtHit = false;
+    if (q) {
+      builtAtPlace(store, place, "base").forEach(function (part) {
+        if (builtMatchesQuery(part, q, index)) builtHit = true;
+      });
+    }
     return {
       locations: locs.length,
       lines: lines,
       units: units,
       matchQty: q ? matchQty : null,
-      hasQueryMatch: q ? (matchQty > 0 || produces) : null,
+      hasQueryMatch: q ? (matchQty > 0 || produces || builtHit) : null,
       produces: q ? produces : null,
       produceCount: q ? produceCount : 0,
       mining: mining,
@@ -2221,6 +2485,7 @@
     store = normalize(store);
     store.locations = store.locations.filter(function (loc) { return loc.source !== "save"; });
     store.production = (store.production || []).filter(function (site) { return site.source !== "save"; });
+    store.built = (store.built || []).filter(function (part) { return part.source !== "save"; });
     store.bases = { planetary: [], freighters: [], problems: [] };
     store.skipped = [];
     store.source = null;
@@ -2299,6 +2564,12 @@
     formatCover: formatCover,
     cropSpec: cropSpec,
     describeSite: describeSite,
+    partCategory: partCategory,
+    extractBuilt: extractBuilt,
+    describeBuilt: describeBuilt,
+    builtMatchesQuery: builtMatchesQuery,
+    groupBuilt: groupBuilt,
+    builtAtPlace: builtAtPlace,
     searchStock: searchStock,
     summarizeSearch: summarizeSearch,
     sortRows: sortRows,

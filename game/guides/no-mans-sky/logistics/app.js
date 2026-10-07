@@ -236,6 +236,104 @@
     return NmsLogistics.sortRows(rows, sortKey, sortDir);
   }
 
+  function filteredBuiltParts() {
+    var q = document.getElementById("q");
+    var locFilter = document.getElementById("loc-filter");
+    var catFilter = document.getElementById("cat-filter");
+    var placeFilter = document.getElementById("place-filter");
+    var query = q ? q.value : "";
+    if (catFilter && catFilter.value && catFilter.value !== "base") return [];
+    var loc = locFilter && locFilter.value ? NmsLogistics.findLocation(store, locFilter.value) : null;
+    if (locFilter && locFilter.value && (!loc || !loc.geo)) return [];
+    var base = null;
+    if (placeFilter && placeFilter.value && placeFilter.value !== "unpinned") {
+      NmsLogistics.knownBases(store).forEach(function (candidate) {
+        if (candidate.id === placeFilter.value) base = candidate;
+      });
+    }
+    return (store.built || []).filter(function (part) {
+      if (!part) return false;
+      if (query && !NmsLogistics.builtMatchesQuery(part, query, index)) return false;
+      if (placeFilter && placeFilter.value === "unpinned") {
+        if (part.geo) return false;
+      } else if (base) {
+        if (!NmsLogistics.addressMatches(part.geo, {
+          glyphs: base.glyphs,
+          planet: base.planet,
+          name: base.name,
+          type: base.type
+        }, "base")) return false;
+      }
+      if (loc && loc.geo) {
+        if (!NmsLogistics.addressMatches(part.geo, {
+          glyphs: loc.geo.glyphs,
+          planet: loc.geo.planet,
+          name: loc.geo.baseName,
+          type: loc.geo.baseType
+        }, "base")) return false;
+      }
+      if (selectionGlyphs.length && !NmsLogistics.geoInSelection(part.geo, selectionGlyphs)) return false;
+      return true;
+    });
+  }
+
+  function builtPlaceGroups(parts) {
+    var groups = Object.create(null);
+    var order = [];
+    (parts || []).forEach(function (part) {
+      var name = (part.geo && part.geo.baseName) || "Not on the map";
+      var key = (part.geo && part.geo.glyphs ? part.geo.glyphs + ":" : "nogeo:") + name;
+      if (!groups[key]) {
+        groups[key] = { name: name, geo: part.geo, parts: [] };
+        order.push(key);
+      }
+      groups[key].parts.push(part);
+    });
+    return order.map(function (key) { return groups[key]; });
+  }
+
+  function builtItemsHtml(items) {
+    return (items || []).map(function (item) {
+      var title = item.title ? ' title="' + esc(item.title) + '"' : "";
+      return "<li" + title + "><span>" + esc(item.name) + "</span><span>×" + esc(item.count) + "</span></li>";
+    }).join("");
+  }
+
+  function renderBuilt() {
+    var mount = document.getElementById("built");
+    if (!mount || !NmsLogistics.groupBuilt) return;
+    var q = document.getElementById("q");
+    var query = q ? String(q.value || "").trim() : "";
+    var parts = filteredBuiltParts();
+    var any = (store.built || []).length;
+    if (!any) {
+      mount.innerHTML = '<p class="built-empty">No built objects yet. Import a save that includes base objects, or the sample.</p>';
+      return;
+    }
+    if (!parts.length) {
+      mount.innerHTML = '<p class="built-empty">No built objects match this view.</p>';
+      return;
+    }
+    var places = builtPlaceGroups(parts);
+    mount.innerHTML = places.map(function (place) {
+      var view = NmsLogistics.groupBuilt(place.parts, index, query);
+      if (!view.shown) return "";
+      var body = view.categories.map(function (cat) {
+        var html = '<div class="built-cat"><h3>' + esc(cat.label) + "</h3>";
+        if (cat.items && cat.items.length) html += "<ul>" + builtItemsHtml(cat.items) + "</ul>";
+        if (cat.structure && cat.structure.items && cat.structure.items.length) {
+          html += '<details class="built-structure"' + (cat.structure.open ? " open" : "") + ">" +
+            "<summary><span>Structure</span><span>×" + esc(cat.structure.total) + "</span></summary><ul>" +
+            builtItemsHtml(cat.structure.items) + "</ul></details>";
+        }
+        return html + "</div>";
+      }).join("");
+      var href = place.geo && place.geo.glyphs ? mapHref({ geo: place.geo, name: place.name }) : "";
+      return '<article class="built-place"><h3>' + esc(place.name) +
+        (href ? ' · <a href="' + esc(href) + '">Show on map</a>' : "") + "</h3>" + body + "</article>";
+    }).join("") || '<p class="built-empty">' + (query ? "No built objects match this search." : "No built objects match this view.") + "</p>";
+  }
+
   function mapHref(loc) {
     if (!loc.geo || !loc.geo.glyphs) return "";
     return "/game/guides/no-mans-sky/" + NmsLogistics.placeQuery({
@@ -275,7 +373,10 @@
     }
     var groups = NmsLogistics.summarizeSearch(rows);
     if (!groups.length) {
-      summaryEl.innerHTML = "<p>No hold matches that search.</p>";
+      var builtHit = filteredBuiltParts().length;
+      summaryEl.innerHTML = builtHit
+        ? "<p>No hold matches that search. Built objects are listed below.</p>"
+        : "<p>No hold matches that search.</p>";
       return;
     }
     summaryEl.innerHTML = groups.map(function (group) {
@@ -297,6 +398,7 @@
     });
     if (!rows.length) {
       rowsEl.innerHTML = '<tr><td colspan="6">No stacks in this view.</td></tr>';
+      renderBuilt();
       return;
     }
     rowsEl.innerHTML = rows.map(function (row) {
@@ -311,6 +413,7 @@
         '</td><td><div class="row-actions"><button type="button" data-edit="' + esc(row.location.id) + '" data-index="' + indexInLoc +
         '">Edit</button><button type="button" data-remove="' + esc(row.location.id) + '" data-index="' + indexInLoc + '">Remove</button></div></td></tr>';
     }).join("");
+    renderBuilt();
   }
 
   function renderSkipped() {
