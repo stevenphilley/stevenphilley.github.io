@@ -1,0 +1,1003 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lagrange points — five equilibria of a two-body system — Steven Philley</title>
+<meta name="description" content="Interactive Lagrange desk: L1 through L5 for Sun–Earth, Earth–Moon, and Sun–Jupiter. Hill approximation r ≈ a·(μ/3)^(1/3) and a numerical collinear solution, from NASA fact-sheet masses and semimajor axes. Sun–Earth L1 is 1,491,557 km from Earth; L2 is 1,501,538 km. Earth–Moon L1 is 326,380 km from Earth and 58,020 km from the Moon. Classroom schematic, not mission-planning data.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/lagrange/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Lagrange points — five equilibria of a two-body system">
+<meta property="og:description" content="Top-down rotating-frame schematic of L1–L5. Sun–Earth L1 and L2 come out near 1.5 million km from Earth. Earth–Moon L1 is 326,380 km from Earth. Not mission-planning data.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/lagrange/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lagrange points — five equilibria of a two-body system">
+<meta name="twitter:description" content="Pick Sun–Earth, Earth–Moon, or Sun–Jupiter. Hill approximation and a numerical L1/L2, in km and in units of the separation. Schematic, not a trajectory.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent;cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.pri{width:12px;height:12px;border:0;border-top:0;border-radius:50%;background:#ffe6b0}
+.swatch.sec{width:10px;height:10px;border:0;border-top:0;border-radius:50%;background:var(--ink-soft,#9b9a96)}
+.swatch.col{width:10px;height:10px;border:0;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.tri{width:10px;height:10px;border:0;border-top:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.swatch.hill{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(15px,2.2vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.02em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/lagrange/" aria-current="page">Lagrange</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The five points</p>
+  <h1>Lagrange<br>five places that keep station</h1>
+  <p class="lede">Two bodies on circular orbits have five points where a third, tiny mass can sit still in the frame that rotates with them. <strong>L1</strong>, <strong>L2</strong>, and <strong>L3</strong> lie on the line through the primary and the secondary. <strong>L4</strong> and <strong>L5</strong> complete equilateral triangles, 60° ahead of the secondary and 60° behind. The mass parameter is <strong>μ = m₂ / (m₁ + m₂)</strong>. A Hill-sphere approximation puts L1 and L2 a distance <strong>r ≈ a · (μ / 3)<sup>1/3</sup></strong> from the secondary. That is an approximation. This desk also solves the collinear force-balance equation and prints that distance beside it, in kilometers and in units of the separation <strong>a</strong>. Masses and semimajor axes are the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA fact sheets</a>. With those inputs, Sun–Earth L1 is <strong>1,491,557 km</strong> from Earth and L2 is <strong>1,501,538 km</strong>. Earth–Moon L1 is <strong>326,380 km</strong> from Earth and <strong>58,020 km</strong> from the Moon. The year of one solar circle is the <a href="/science/astronomy/kepler/">Kepler</a> desk. The speed at one radius is the <a href="/science/astronomy/escape/">Escape</a> desk. The half-ellipse between two circles is the <a href="/science/astronomy/hohmann/">Hohmann</a> desk.</p>
+  <p class="note-schematic">Circular restricted three-body classroom schematic. Two bodies on circles about their barycenter, and a test mass with no pull of its own. One plane. Top-down, from the north, so the pair’s motion runs counterclockwise. Body disks are marks, not radii, so the picture is not to scale where a world is drawn. L1 through L5 are drawn at the computed positions. For Sun–Earth, L1 and L2 sit almost on Earth in the full view; the lower panel magnifies that neighborhood, and that panel has its own scale. Not mission-planning data. Not an ephemeris. Not a halo orbit.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Five points</span>
+    <button type="button" class="help-q" id="lagrange-help" aria-haspopup="dialog" aria-controls="lagrange-help-dialog" aria-expanded="false" aria-label="How this Lagrange desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Rotating frame · from the north · L4 leads</p>
+      <canvas id="orbit" width="880" height="980" role="img" aria-label="Schematic top-down rotating frame of the Sun and Earth, with L1 through L5. L4 and L5 are 60 degrees ahead and behind. Not mission-planning data."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch pri" aria-hidden="true"></span> Primary</li>
+        <li><span class="swatch sec" aria-hidden="true"></span> Secondary</li>
+        <li><span class="swatch col" aria-hidden="true"></span> L1–L3</li>
+        <li><span class="swatch tri" aria-hidden="true"></span> L4–L5</li>
+        <li><span class="swatch hill" aria-hidden="true"></span> Hill approx.</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Pair</p>
+        <div class="presets" role="group" aria-label="Two-body pair">
+          <button type="button" data-pair="sun-earth" aria-pressed="true">Sun–Earth</button>
+          <button type="button" data-pair="earth-moon" aria-pressed="false">Earth–Moon</button>
+          <button type="button" data-pair="sun-jupiter" aria-pressed="false">Sun–Jupiter</button>
+        </div>
+        <p class="pick-label">Highlight a point</p>
+        <div class="presets" role="group" aria-label="Lagrange point">
+          <button type="button" data-point="all" aria-pressed="true">All five</button>
+          <button type="button" data-point="L1" aria-pressed="false">L1</button>
+          <button type="button" data-point="L2" aria-pressed="false">L2</button>
+          <button type="button" data-point="L3" aria-pressed="false">L3</button>
+          <button type="button" data-point="L4" aria-pressed="false">L4</button>
+          <button type="button" data-point="L5" aria-pressed="false">L5</button>
+        </div>
+        <div class="presets" role="group" aria-label="Playback">
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Sun–Earth · fact sheet · schematic</p>
+      <h2 id="r-title">Sun–Earth</h2>
+      <p class="range" id="r-range">L4 and L5 pass the Routh test</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k" id="c-l1-k">L1 · numeric · from Earth</p>
+          <p class="face" id="c-l1">1,491,557 km</p>
+          <p class="sub" id="c-l1-sub">0.009970 a · Hill 1,496,563 km</p>
+        </div>
+        <div class="clock">
+          <p class="k" id="c-l2-k">L2 · numeric · from Earth</p>
+          <p class="face" id="c-l2">1,501,538 km</p>
+          <p class="sub" id="c-l2-sub">0.010037 a · Hill 1,496,563 km</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Separation a</span><span class="v" id="r-a">149.598 × 10⁶ km</span></li>
+        <li><span class="k">μ = m₂/(m₁+m₂)</span><span class="v" id="r-mu">3.00351 × 10⁻⁶</span></li>
+        <li><span class="k">m₁/m₂</span><span class="v" id="r-ratio">332,942.63</span></li>
+        <li><span class="k">Routh</span><span class="v" id="r-routh">Passes · 332,942.63 &gt; 24.96</span></li>
+        <li><span class="k">Hill from secondary</span><span class="v" id="r-hill">1,496,563 km · 0.010004 a</span></li>
+        <li><span class="k">L1 from primary</span><span class="v" id="r-l1p">148,106,443 km</span></li>
+        <li><span class="k">L2 from primary</span><span class="v" id="r-l2p">151,099,538 km</span></li>
+        <li><span class="k">L3 from primary</span><span class="v" id="r-l3">149,597,738 km</span></li>
+        <li><span class="k">L4 / L5</span><span class="v" id="r-l45">60° equilateral · stable in this model</span></li>
+        <li><span class="k">Barycenter</span><span class="v" id="r-bary">449 km from Sun · inside the 695,700 km radius</span></li>
+      </ul>
+      <p class="why" id="r-why">Sun mass 1,988,400 × 10²⁴ kg and Earth mass 5.9722 × 10²⁴ kg, with Earth’s semimajor axis 149.598 × 10⁶ km. The Hill approximation is 1,496,563 km from Earth. The collinear solution is 1,491,557 km for L1 and 1,501,538 km for L2. NASA states those Sun–Earth distances as 1.5 million km from Earth.</p>
+      <p class="cadence" id="r-cadence">Paused. The points stay fixed relative to the two bodies. Play turns the whole pattern, the way this rotating frame moves against the stars. About 12 seconds per turn. A time-lapse, not a year.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Classroom idealization, not mission planning">
+    <p class="tag">Classroom idealization · not mission-planning data</p>
+    <h2>Two circles and a test mass</h2>
+    <p>Nothing here is a halo orbit, a station-keeping budget, or a launch window. The model is the circular restricted three-body problem: the primary and the secondary on circles, the third body massless, everything in one plane. Real orbits are eccentric. The Sun pulls on the Earth–Moon pair, and Jupiter does not orbit the Sun alone. A spacecraft at L1 or L2 usually orbits the point, on a halo or a Lissajous path, and still fires thrusters. <a href="https://webb.nasa.gov/content/about/orbit.html" rel="noopener" target="_blank">NASA’s Webb orbit page</a> says Webb orbits around L2 and does not sit stationary on the point. The <a href="/science/astronomy/kepler/">Kepler</a> desk is the year of one circle. The <a href="/science/astronomy/escape/">Escape</a> desk is the local speed. The <a href="/science/astronomy/hohmann/">Hohmann</a> desk is the coast between two circles.</p>
+  </aside>
+
+  <p class="band">The formulas</p>
+  <div class="means">
+    <p><strong>μ = m₂ / (m₁ + m₂).</strong> m₁ is the primary, m₂ the secondary. Sun–Earth uses the Sun Fact Sheet mass 1,988,400 × 10<sup>24</sup> kg and the Earth Fact Sheet mass 5.9722 × 10<sup>24</sup> kg. Earth–Moon uses that same Earth mass and the Moon Fact Sheet mass 0.07346 × 10<sup>24</sup> kg. Sun–Jupiter uses the Sun’s mass and the Jupiter Fact Sheet mass 1,898.13 × 10<sup>24</sup> kg. The separation <strong>a</strong> is the secondary’s fact-sheet semimajor axis: Earth 149.598 × 10<sup>6</sup> km, Moon 0.3844 × 10<sup>6</sup> km, Jupiter 778.479 × 10<sup>6</sup> km.</p>
+    <p><strong>r ≈ a · (μ / 3)<sup>1/3</sup>.</strong> This Hill-sphere approximation is one distance from the secondary, used here for both L1 and L2. It is labeled as an approximation on every readout. It is closer when μ is tiny. For Sun–Earth it and the numerical L1 differ by about 5,000 km. For Earth–Moon the Hill figure is 61,274 km from the Moon and the numerical L1 is 58,020 km.</p>
+    <p><strong>The collinear balance.</strong> In units where a = 1 and the mean motion is 1, the primary sits at x = −μ and the secondary at x = 1 − μ. A point on that line is in equilibrium when x − (1−μ)(x − x₁)/|x − x₁|³ − μ(x − x₂)/|x − x₂|³ = 0. That condition is a quintic in the distance from the secondary. This page solves it by bisection: L1 between the bodies, L2 beyond the secondary, L3 beyond the primary. L4 and L5 are the equilateral points, each one separation from both bodies, so the angle at either body is 60°.</p>
+    <p><strong>Routh.</strong> In this model L4 and L5 are linearly stable when μ(1−μ) &lt; 1/27. That is a mass ratio m₁/m₂ greater than 24.96, the threshold this page computes from that inequality. L1, L2, and L3 are unstable. A spacecraft there needs station-keeping. <a href="https://webb.nasa.gov/content/about/orbit.html" rel="noopener" target="_blank">NASA’s Webb orbit page</a> calls L1, L2, and L3 metastable: an object drifts away unless it maintains its position, for example with small periodic rocket thrust. The same page says objects at L4 and L5 orbit those points with no assistance. The mass-ratio test is the classroom criterion. The three pairs on this desk all pass it.</p>
+  </div>
+
+  <p class="band">Where this shows up</p>
+  <div class="means">
+    <p><strong>Sun–Earth L2.</strong> <a href="https://science.nasa.gov/mission/webb/" rel="noopener" target="_blank">NASA’s Webb mission page</a> says the James Webb Space Telescope orbits the Sun 1.5 million kilometers from Earth at L2. <a href="https://webb.nasa.gov/content/about/orbit.html" rel="noopener" target="_blank">The Webb orbit page</a> says the same distance, and says Webb orbits around L2 rather than sitting on the point. This desk’s arithmetic, from the fact-sheet masses and 149.598 × 10<sup>6</sup> km, puts numerical L2 at 1,501,538 km from Earth.</p>
+    <p><strong>Sun–Earth L1.</strong> The same Webb orbit page says L1 is 1.5 million km from Earth toward the Sun, and names SOHO among the solar observatories there. <a href="https://science.nasa.gov/mission/soho/" rel="noopener" target="_blank">NASA’s SOHO mission page</a> says SOHO was placed 1.5 million kilometers from Earth in an elliptical Lissajous orbit around the L1 libration point. This desk’s numerical L1 is 1,491,557 km from Earth. The same Webb page says some small asteroids are known at Sun–Earth L4 and L5.</p>
+    <p><strong>Sun–Jupiter L4 and L5.</strong> <a href="https://www.nasa.gov/missions/how-were-the-trojan-asteroids-discovered-and-named/" rel="noopener" target="_blank">NASA’s account of the Trojan asteroids</a> says Max Wolf’s 1906 asteroid stayed nearly 60° in front of Jupiter, at Jupiter’s L4, and that another swarm was found at L5. Those asteroids lead or follow Jupiter in its orbit around the Sun. On this desk L4 and L5 are the equilateral points of the Sun–Jupiter pair.</p>
+  </div>
+
+  <p class="band">Literacy · a point, not a mission</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>L1</dt><dd>Between the primary and the secondary, closer to the secondary. Unstable. Sun–Earth L1, from these inputs, is 1,491,557 km from Earth, sunward. NASA’s round figure for that neighborhood is 1.5 million km, which is where SOHO loops.</dd></div>
+    <div class="gloss"><dt>L2</dt><dd>On the line of centers, beyond the secondary. Unstable. Sun–Earth L2 is 1,501,538 km from Earth on this page. Webb orbits around that point, about 1.5 million km from Earth, and does not sit on it.</dd></div>
+    <div class="gloss"><dt>L3</dt><dd>Beyond the primary, opposite the secondary. Unstable. For a small μ it sits about one separation from the primary. Nothing on this page claims an object there.</dd></div>
+    <div class="gloss"><dt>L4 and L5</dt><dd>The equilateral points. L4 is 60° ahead of the secondary, in the direction of motion. L5 is 60° behind. Each is a distance a from the primary and a distance a from the secondary. They are linearly stable in this model when the Routh test passes. Jupiter’s Trojan asteroids occupy the Sun–Jupiter pair’s L4 and L5.</dd></div>
+    <div class="gloss"><dt>Hill approximation</dt><dd>r ≈ a · (μ / 3)<sup>1/3</sup>, measured from the secondary. One number for both L1 and L2. The dashed circle in the lower panel is that radius. The dots are the numerical collinear points. When μ is not tiny, the circle and the dots separate. Earth–Moon is the pair where you can see it.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the circles leave out</dt><dd>Eccentricity, inclination, and every other body. The Earth–Moon mass ratio passes the Routh test, so L4 and L5 are stable in this two-body model. The Sun is not in that model. A real L1 or L2 mission flies a halo or a Lissajous around the point and budgets station-keeping. This page marks the equilibrium. The lower panel is magnified. Body disks are not radii. Not a trajectory to fly.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the per-body sheets. Masses below are the bulk-parameter mass in 10<sup>24</sup> kg. Separations are the orbital-parameters semimajor axis in 10<sup>6</sup> km.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — Mass 1,988,400 × 10<sup>24</sup> kg. The Earth column on that sheet is 5.9722 × 10<sup>24</sup> kg, and the printed Sun/Earth mass ratio is 332,900. Volumetric mean radius 695,700 km. Last updated 9 May 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Mass 5.9722 × 10<sup>24</sup> kg. Semimajor axis 149.598 × 10<sup>6</sup> km. Volumetric mean radius 6,371.000 km. This desk uses 5.9722 for Earth’s mass in every pair. Last updated 15 November 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — Mass 0.07346 × 10<sup>24</sup> kg. Semimajor axis 0.3844 × 10<sup>6</sup> km. The Earth column on that sheet prints 5.9724 × 10<sup>24</sup> kg and a Moon/Earth mass ratio of 0.0123. This desk keeps the Earth Fact Sheet’s 5.9722. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — Mass 1,898.13 × 10<sup>24</sup> kg. Semimajor axis 778.479 × 10<sup>6</sup> km. The Earth column matches the Earth Fact Sheet’s 5.9722. Last updated 2 October 2024.</li>
+      <li><a href="https://science.nasa.gov/mission/webb/" rel="noopener" target="_blank">NASA Science — James Webb Space Telescope</a> — Webb orbits the Sun 1.5 million kilometers from Earth at the second Lagrange point, L2.</li>
+      <li><a href="https://webb.nasa.gov/content/about/orbit.html" rel="noopener" target="_blank">NASA — Webb’s orbit</a> — 1.5 million km at L2; Webb orbits around L2 and does not sit on the point. L1 is 1.5 million km from Earth toward the Sun; SOHO is named among the observatories there. L1, L2, and L3 are metastable and need station-keeping. L4 and L5 can hold objects. Some small asteroids are known at Sun–Earth L4 and L5. The diagram on that page is marked not to scale.</li>
+      <li><a href="https://science.nasa.gov/mission/soho/" rel="noopener" target="_blank">NASA Science — SOHO</a> — Objective listed as the Sun–Earth L1 Lagrange point. SOHO was placed 1.5 million kilometers (932,000 miles) from Earth in an elliptical Lissajous orbit around the L1 libration point.</li>
+      <li><a href="https://www.nasa.gov/missions/how-were-the-trojan-asteroids-discovered-and-named/" rel="noopener" target="_blank">NASA — How were the Trojan asteroids discovered and named?</a> — Wolf’s asteroid was nearly 60° in front of Jupiter, at Jupiter’s L4. Another swarm sits at L5. The asteroids lead or follow Jupiter around the Sun. Published 22 February 2021. The mission-status sentences on that page are from before Lucy flew; this desk cites the L4/L5 geometry, not the launch schedule.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of the five Lagrange points. Sun–Earth L1 is 1,491,557 km from Earth and L2 is 1,501,538 km, from the fact-sheet masses and Earth’s 149.598 × 10<sup>6</sup> km semimajor axis. Earth–Moon L1 is 326,380 km from Earth and 58,020 km from the Moon. The Hill radius is the approximation, printed beside those roots. Circular, coplanar, a massless third body. Not a halo, and not mission-planning data. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU. How long one solar circle takes.</p></a>
+    <a href="/science/astronomy/escape/"><p class="n">The speed</p><h3>Escape</h3><p>Circular orbit and escape at one altitude. √2 apart.</p></a>
+    <a href="/science/astronomy/hohmann/"><p class="n">The coast</p><h3>Hohmann</h3><p>Two burns and half an ellipse. Earth to Mars is 258.88 days.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the eight planets sit. Day and local time, still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="lagrange-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="lagrange-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="lagrange-help-title">Lagrange desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Five equilibrium points of two bodies on circular orbits, drawn in the rotating frame. Distances come from NASA fact-sheet masses and semimajor axes. The picture is a classroom schematic, not a trajectory to fly.</p>
+    <h3>Choose the pair</h3>
+    <table>
+      <caption>Choose the pair</caption>
+      <tbody>
+        <tr><th scope="row">Sun–Earth</th><td>The default. Sun 1,988,400 × 10<sup>24</sup> kg, Earth 5.9722 × 10<sup>24</sup> kg, separation 149.598 × 10<sup>6</sup> km. Numerical L1 is 1,491,557 km from Earth. Numerical L2 is 1,501,538 km. The Hill approximation is 1,496,563 km.</td></tr>
+        <tr><th scope="row">Earth–Moon</th><td>Earth 5.9722 × 10<sup>24</sup> kg, Moon 0.07346 × 10<sup>24</sup> kg, separation 0.3844 × 10<sup>6</sup> km. Numerical L1 is 326,380 km from Earth and 58,020 km from the Moon. The Hill approximation is 61,274 km from the Moon, so the lower panel shows the approximation and the root apart.</td></tr>
+        <tr><th scope="row">Sun–Jupiter</th><td>Jupiter’s mass is 1,898.13 × 10<sup>24</sup> kg and its semimajor axis is 778.479 × 10<sup>6</sup> km. L4 and L5 are where NASA places the Trojan asteroids, 60° ahead of Jupiter and 60° behind.</td></tr>
+      </tbody>
+    </table>
+    <h3>Points, play, and the drawing</h3>
+    <table>
+      <caption>Points, play, and the drawing</caption>
+      <tbody>
+        <tr><th scope="row">All five, L1–L5</th><td>Highlights one point, or all of them. You can also tap a point on the drawing. L1, L2, and L3 are the collinear points. L4 leads. L5 trails.</td></tr>
+        <tr><th scope="row">Play</th><td>Turns the whole pattern counterclockwise, as seen from the north. The five points stay fixed relative to the two bodies. That is the rotating frame, shown against a fixed page. About 12 seconds per turn. A time-lapse, not a year. Press again to pause.</td></tr>
+        <tr><th scope="row">Full view</th><td>Barycenter at the cross. Primary and secondary on the line of centers. The secondary’s orbit is the circle. L4 and L5 sit on the equilateral triangles. Body disks are marks, not radii.</td></tr>
+        <tr><th scope="row">Lower panel</th><td>The secondary’s neighborhood, magnified, always drawn along the line of centers. It does not spin with Play. The dashed circle is the Hill approximation. The dots are numerical L1, toward the primary, and numerical L2, outward. The scale is not the scale of the view above.</td></tr>
+        <tr><th scope="row">N</th><td>North, the view. Motion runs counterclockwise, the same sense as the other top-down desks.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">L1 and L2 faces</th><td>The numerical distance from the secondary, in km. The line under each face is that distance in units of a, and the Hill approximation in km. The Hill figure is the same for both points. The roots are not.</td></tr>
+        <tr><th scope="row">From the primary</th><td>Center to center, along the line. Earth–Moon L1 from Earth is the primary distance: 326,380 km. The 58,020 km figure is from the Moon.</td></tr>
+        <tr><th scope="row">Routh</th><td>Passes when m₁/m₂ is greater than 24.96, from μ(1−μ) &lt; 1/27. All three pairs on this desk pass, so L4 and L5 are linearly stable in the model. L1–L3 stay unstable either way.</td></tr>
+        <tr><th scope="row">Barycenter</th><td>μ·a from the primary’s center. Compared with the fact-sheet volumetric mean radius: inside the Sun for Sun–Earth, inside Earth for Earth–Moon, outside the Sun’s volumetric radius for Sun–Jupiter.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* Classroom Lagrange desk.
+     Masses (10^24 kg) and semimajor axes (km): NASA NSSDCA fact sheets.
+     mu = m2 / (m1 + m2)
+     Hill: r = a * (mu/3)^(1/3)   // approximation, from the secondary
+     Collinear points: bisection on the rotating-frame force balance.
+     Primary at x=-mu, secondary at x=1-mu, a=1, mean motion=1.
+     Routh: L4/L5 linearly stable when mu*(1-mu) < 1/27.
+     Not a mission. Not a halo orbit. */
+  var TAU = Math.PI * 2;
+  var LAP_MS = 12000;
+  var SUP = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+
+  var PAIRS = {
+    "sun-earth": {
+      id: "sun-earth",
+      title: "Sun–Earth",
+      primary: "Sun",
+      secondary: "Earth",
+      m1: 1988400,
+      m2: 5.9722,
+      m1Label: "1,988,400 × 10²⁴ kg",
+      m2Label: "5.9722 × 10²⁴ kg",
+      a: 149598000,
+      aLabel: "149.598 × 10⁶ km",
+      rPri: 695700,
+      rPriLabel: "695,700 km",
+      priFill: "#ffe6b0",
+      secFill: "#8eb4c9",
+      callout: "NASA states the Sun–Earth L1 and L2 distances as 1.5 million km from Earth. Webb orbits around L2. SOHO loops around L1. The same Webb orbit page says some small asteroids are known at Sun–Earth L4 and L5."
+    },
+    "earth-moon": {
+      id: "earth-moon",
+      title: "Earth–Moon",
+      primary: "Earth",
+      secondary: "Moon",
+      m1: 5.9722,
+      m2: 0.07346,
+      m1Label: "5.9722 × 10²⁴ kg",
+      m2Label: "0.07346 × 10²⁴ kg",
+      a: 384400,
+      aLabel: "0.3844 × 10⁶ km",
+      rPri: 6371,
+      rPriLabel: "6,371.000 km",
+      priFill: "#8eb4c9",
+      secFill: "#c5c7ce",
+      callout: "No mission is named for this pair on this page. The mass ratio passes the Routh test, so L4 and L5 are linearly stable in this two-body model. The Sun is not in the model."
+    },
+    "sun-jupiter": {
+      id: "sun-jupiter",
+      title: "Sun–Jupiter",
+      primary: "Sun",
+      secondary: "Jupiter",
+      m1: 1988400,
+      m2: 1898.13,
+      m1Label: "1,988,400 × 10²⁴ kg",
+      m2Label: "1,898.13 × 10²⁴ kg",
+      a: 778479000,
+      aLabel: "778.479 × 10⁶ km",
+      rPri: 695700,
+      rPriLabel: "695,700 km",
+      priFill: "#ffe6b0",
+      secFill: "#d4c4a8",
+      callout: "NASA’s account of the Trojan asteroids puts one swarm nearly 60° ahead of Jupiter, at L4, and another at L5. They lead or follow Jupiter around the Sun."
+    }
+  };
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("orbit");
+  var playBtn = document.getElementById("btn-play");
+  var pairBtns = [].slice.call(document.querySelectorAll("[data-pair]"));
+  var pointBtns = [].slice.call(document.querySelectorAll("[data-point]"));
+  var state = { pair: "sun-earth", point: "all", angle: 0, playing: false };
+  var hits = [];
+  var raf = 0;
+  var lastT = 0;
+  var routhRatio = routhThreshold();
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function group(n, digits){
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function sup(n){
+    return String(n).split("").map(function(c){ return SUP[c] || c; }).join("");
+  }
+  function fmtKm(km){
+    if (!isFinite(km)) return "—";
+    return group(Math.round(km), 0) + " km";
+  }
+  function fmtA(g){
+    if (!isFinite(g)) return "—";
+    return g.toFixed(6) + " a";
+  }
+  function fmtMu(mu){
+    if (!(mu > 0)) return "—";
+    if (mu < 0.001){
+      var exp = Math.floor(Math.log10(mu));
+      var mant = mu / Math.pow(10, exp);
+      return mant.toFixed(5) + " × 10" + sup(exp);
+    }
+    return mu.toFixed(6);
+  }
+  function fmtRatio(r){
+    if (!isFinite(r)) return "—";
+    return group(r, 2);
+  }
+  function routhThreshold(){
+    var mu = (1 - Math.sqrt(1 - 4 / 27)) / 2;
+    return (1 - mu) / mu;
+  }
+  function bisect(f, a, b){
+    var fa = f(a);
+    var fb = f(b);
+    var i, m, fm, left, right, fl, fr;
+    if (!(fa * fb < 0)){
+      var found = false;
+      var steps = 48;
+      for (i = 0; i < steps; i++){
+        left = a + (b - a) * i / steps;
+        right = a + (b - a) * (i + 1) / steps;
+        fl = f(left);
+        fr = f(right);
+        if (fl * fr < 0){
+          a = left;
+          b = right;
+          fa = fl;
+          fb = fr;
+          found = true;
+          break;
+        }
+      }
+      if (!found) return null;
+    }
+    for (i = 0; i < 80; i++){
+      m = (a + b) / 2;
+      fm = f(m);
+      if (Math.abs(fm) < 1e-14 || (b - a) < 1e-15) return m;
+      if (fa * fm <= 0){ b = m; fb = fm; }
+      else { a = m; fa = fm; }
+    }
+    return (a + b) / 2;
+  }
+  function solve(mu){
+    var hill = Math.pow(mu / 3, 1 / 3);
+    function f1(g){
+      if (!(g > 1e-6) || g >= 0.98) return 1;
+      return (1 - mu) - g - (1 - mu) / Math.pow(1 - g, 2) + mu / (g * g);
+    }
+    function f2(g){
+      if (!(g > 1e-6) || g > 0.98) return -1;
+      return (1 - mu) + g - (1 - mu) / Math.pow(1 + g, 2) - mu / (g * g);
+    }
+    function f3(rho){
+      if (!(rho > 0.2)) return 1;
+      return -mu - rho + (1 - mu) / (rho * rho) + mu / Math.pow(1 + rho, 2);
+    }
+    return {
+      hill: hill,
+      g1: bisect(f1, Math.max(1e-5, hill * 0.4), Math.min(0.95, Math.max(hill * 2.2, 0.02))),
+      g2: bisect(f2, Math.max(1e-5, hill * 0.4), Math.min(0.95, Math.max(hill * 2.4, 0.02))),
+      rho: bisect(f3, 0.85, 1.08)
+    };
+  }
+
+  function scenario(){
+    var p = PAIRS[state.pair];
+    var mu = p.m2 / (p.m1 + p.m2);
+    var ratio = p.m1 / p.m2;
+    var sol = solve(mu);
+    var pass = ratio > routhRatio;
+    var bary = mu * p.a;
+    var lead = Math.atan2(Math.sqrt(3) / 2, 0.5 - mu) * 180 / Math.PI;
+    return {
+      p: p, mu: mu, ratio: ratio, pass: pass, bary: bary, lead: lead,
+      hill: sol.hill, g1: sol.g1, g2: sol.g2, rho: sol.rho,
+      hillKm: sol.hill * p.a,
+      l1sec: sol.g1 * p.a,
+      l2sec: sol.g2 * p.a,
+      l1pri: (1 - sol.g1) * p.a,
+      l2pri: (1 + sol.g2) * p.a,
+      l3pri: sol.rho * p.a,
+      l3sec: (1 + sol.rho) * p.a
+    };
+  }
+
+  function setPressed(){
+    pairBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-pair") === state.pair));
+    });
+    pointBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-point") === state.point));
+    });
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function rot(x, y, ang){
+    var c = Math.cos(ang);
+    var s = Math.sin(ang);
+    return { x: x * c - y * s, y: x * s + y * c };
+  }
+  function toScreen(cx, cy, scale, x, y){
+    return { x: cx + x * scale, y: cy - y * scale };
+  }
+  function disk(ctx, x, y, r, fill){
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+  }
+  function ring(ctx, x, y, r, color){
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, TAU);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+
+  function paintReadout(sc){
+    var p = sc.p;
+    var focus = state.point;
+    var range = sc.pass
+      ? "L4 and L5 pass the Routh test"
+      : "L4 and L5 do not pass the Routh test";
+    if (focus === "L1" || focus === "L2" || focus === "L3") range = focus + " · unstable · station-keeping";
+    if (focus === "L4" || focus === "L5"){
+      range = focus + (sc.pass ? " · stable in this model" : " · not stable in this model");
+    }
+    var barySide = sc.bary < p.rPri ? "inside" : "outside";
+    var why = p.primary + " " + p.m1Label + ", " + p.secondary + " " + p.m2Label + ", separation " + p.aLabel + ". ";
+    why += "μ is " + fmtMu(sc.mu) + ". m₁/m₂ is " + fmtRatio(sc.ratio) + ". The Routh threshold is " + group(routhRatio, 2) + ", so L4 and L5 " + (sc.pass ? "are linearly stable in this model" : "are not linearly stable in this model") + ". L1, L2, and L3 are unstable. ";
+    why += "The Hill approximation is " + fmtKm(sc.hillKm) + " from " + p.secondary + " (" + fmtA(sc.hill) + "). ";
+    why += "Numerical L1 is " + fmtKm(sc.l1sec) + " from " + p.secondary + " and " + fmtKm(sc.l1pri) + " from " + p.primary + ". ";
+    why += "Numerical L2 is " + fmtKm(sc.l2sec) + " from " + p.secondary + ". ";
+    why += "The barycenter is " + fmtKm(sc.bary) + " from " + p.primary + "’s center, " + barySide + " the volumetric mean radius " + p.rPriLabel + ". ";
+    why += p.callout;
+    document.getElementById("r-tier").textContent = p.title + " · fact sheet · schematic";
+    document.getElementById("r-title").textContent = p.title;
+    document.getElementById("r-range").textContent = range;
+    document.getElementById("c-l1-k").textContent = "L1 · numeric · from " + p.secondary;
+    document.getElementById("c-l2-k").textContent = "L2 · numeric · from " + p.secondary;
+    document.getElementById("c-l1").textContent = fmtKm(sc.l1sec);
+    document.getElementById("c-l2").textContent = fmtKm(sc.l2sec);
+    document.getElementById("c-l1-sub").textContent = fmtA(sc.g1) + " · Hill " + fmtKm(sc.hillKm);
+    document.getElementById("c-l2-sub").textContent = fmtA(sc.g2) + " · Hill " + fmtKm(sc.hillKm);
+    document.getElementById("r-a").textContent = p.aLabel;
+    document.getElementById("r-mu").textContent = fmtMu(sc.mu);
+    document.getElementById("r-ratio").textContent = fmtRatio(sc.ratio);
+    document.getElementById("r-routh").textContent = (sc.pass ? "Passes · " : "Does not pass · ") + fmtRatio(sc.ratio) + (sc.pass ? " > " : " < ") + group(routhRatio, 2);
+    document.getElementById("r-hill").textContent = fmtKm(sc.hillKm) + " · " + fmtA(sc.hill);
+    document.getElementById("r-l1p").textContent = fmtKm(sc.l1pri) + " · " + fmtA(1 - sc.g1);
+    document.getElementById("r-l2p").textContent = fmtKm(sc.l2pri) + " · " + fmtA(1 + sc.g2);
+    document.getElementById("r-l3").textContent = fmtKm(sc.l3pri) + " · " + fmtA(sc.rho);
+    document.getElementById("r-l45").textContent = "60° at each body · barycenter " + group(sc.lead, 2) + "° · " + (sc.pass ? "stable in this model" : "not stable in this model");
+    document.getElementById("r-bary").textContent = fmtKm(sc.bary) + " from " + p.primary + " · " + barySide + " the " + p.rPriLabel + " radius";
+    document.getElementById("r-why").textContent = why;
+    var coast = state.playing
+      ? "Playing. About 12 seconds per turn. The points stay fixed relative to the two bodies. A time-lapse, not a year."
+      : "Paused. The points stay fixed relative to the two bodies. Play turns the whole pattern, the way this rotating frame moves against the stars. About 12 seconds per turn. A time-lapse, not a year.";
+    document.getElementById("r-cadence").textContent = coast;
+    document.getElementById("orbit-hint").textContent = state.playing
+      ? "Turning · from the north · L4 leads"
+      : "Rotating frame · from the north · L4 leads";
+    var aria = "Schematic rotating frame of " + p.title + ". Numerical L1 is " + fmtKm(sc.l1sec) + " from " + p.secondary + ". Numerical L2 is " + fmtKm(sc.l2sec) + ". L4 and L5 are 60 degrees ahead and behind. " + (sc.pass ? "The mass ratio passes the Routh test." : "The mass ratio does not pass the Routh test.") + " Not mission-planning data.";
+    canvas.setAttribute("aria-label", aria);
+  }
+
+  function drawPoint(ctx, sx, sy, kind, id, selected, accent, ink){
+    var col = (kind === "tri") ? accent : ink;
+    var rad = selected ? 6.5 : 4.5;
+    if (state.point !== "all" && !selected) ctx.globalAlpha = 0.45;
+    disk(ctx, sx, sy, rad, col);
+    if (selected && state.point !== "all") ring(ctx, sx, sy, rad + 5, accent);
+    ctx.globalAlpha = 1;
+    hits.push({ id: id, x: sx, y: sy, r: 18 });
+  }
+
+  function render(){
+    var sc = scenario();
+    setPressed();
+    paintReadout(sc);
+    hits = [];
+    var p = sc.p;
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = clamp(cssW, 280, 760);
+    var cssH = Math.round(clamp(cssW * 1.18, 440, 760));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var split = Math.round(cssH * 0.62);
+    var ang = state.angle;
+    var mu = sc.mu;
+    var sys = {
+      cx: cssW * 0.5,
+      cy: split * 0.52,
+      scale: Math.min(cssW, split) * 0.36
+    };
+    var x1 = -mu;
+    var x2 = 1 - mu;
+    var pts = {
+      pri: { x: x1, y: 0, kind: "body" },
+      sec: { x: x2, y: 0, kind: "body" },
+      L1: { x: x2 - sc.g1, y: 0, kind: "col" },
+      L2: { x: x2 + sc.g2, y: 0, kind: "col" },
+      L3: { x: x1 - sc.rho, y: 0, kind: "col" },
+      L4: { x: 0.5 - mu, y: Math.sqrt(3) / 2, kind: "tri" },
+      L5: { x: 0.5 - mu, y: -Math.sqrt(3) / 2, kind: "tri" }
+    };
+
+    function S(unit){
+      var r = rot(unit.x, unit.y, ang);
+      return toScreen(sys.cx, sys.cy, sys.scale, r.x, r.y);
+    }
+
+    ctx.beginPath();
+    ctx.arc(sys.cx, sys.cy, (1 - mu) * sys.scale, 0, TAU);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.8;
+    ctx.lineWidth = 1.15;
+    ctx.setLineDash([4, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    if (mu * sys.scale > 3){
+      ctx.beginPath();
+      ctx.arc(sys.cx, sys.cy, mu * sys.scale, 0, TAU);
+      ctx.strokeStyle = soft;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    var priS = S(pts.pri);
+    var secS = S(pts.sec);
+    var l4S = S(pts.L4);
+    var l5S = S(pts.L5);
+    ctx.beginPath();
+    ctx.moveTo(priS.x, priS.y);
+    ctx.lineTo(secS.x, secS.y);
+    ctx.lineTo(l4S.x, l4S.y);
+    ctx.closePath();
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.35;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(priS.x, priS.y);
+    ctx.lineTo(secS.x, secS.y);
+    ctx.lineTo(l5S.x, l5S.y);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var arcR = Math.max(18, (1 - mu) * sys.scale * 0.72);
+    ctx.beginPath();
+    ctx.arc(sys.cx, sys.cy, arcR, -0.15 - ang, 0.55 - ang, true);
+    ctx.strokeStyle = muted;
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+
+    text(ctx, "N", sys.cx, 14, { align: "center", size: 11, color: soft });
+
+    var names = ["L3", "L1", "L2", "L5", "L4"];
+    var i;
+    for (i = 0; i < names.length; i++){
+      var id = names[i];
+      var sp = S(pts[id]);
+      var nearSec = (id === "L1" || id === "L2") && Math.hypot(sp.x - secS.x, sp.y - secS.y) < 16;
+      if (nearSec) continue;
+      drawPoint(ctx, sp.x, sp.y, pts[id].kind, id, state.point === id, accent, ink);
+      var outward = rot(pts[id].x, pts[id].y, ang);
+      var len = Math.hypot(outward.x, outward.y) || 1;
+      var lx = sp.x + (outward.x / len) * 16;
+      var ly = sp.y - (outward.y / len) * 16;
+      text(ctx, id, lx, ly, {
+        align: outward.x >= 0 ? "left" : "right",
+        size: 11,
+        color: state.point === "all" || state.point === id ? ink : muted
+      });
+    }
+
+    disk(ctx, priS.x, priS.y, 11, p.priFill);
+    disk(ctx, secS.x, secS.y, 7, p.secFill);
+    hits.push({ id: "pri", x: priS.x, y: priS.y, r: 16 });
+    hits.push({ id: "sec", x: secS.x, y: secS.y, r: 16 });
+    ctx.beginPath();
+    ctx.moveTo(sys.cx - 5, sys.cy);
+    ctx.lineTo(sys.cx + 5, sys.cy);
+    ctx.moveTo(sys.cx, sys.cy - 5);
+    ctx.lineTo(sys.cx, sys.cy + 5);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    var priLab = rot(pts.pri.x, pts.pri.y - 0.12, ang);
+    var priLabS = toScreen(sys.cx, sys.cy, sys.scale, priLab.x, priLab.y);
+    if (Math.hypot(priS.x - sys.cx, priS.y - sys.cy) < 10){
+      text(ctx, p.primary, priS.x, priS.y + 20, { align: "center", size: 11, color: ink });
+    } else {
+      text(ctx, p.primary, priLabS.x, priLabS.y, { align: "center", size: 11, color: ink });
+    }
+    var secOut = rot(pts.sec.x, pts.sec.y, ang);
+    var secLen = Math.hypot(secOut.x, secOut.y) || 1;
+    text(ctx, p.secondary, secS.x + (secOut.x / secLen) * 14, secS.y - (secOut.y / secLen) * 14 - 12, {
+      align: secOut.x >= 0 ? "left" : "right",
+      size: 11,
+      color: ink
+    });
+
+    ctx.beginPath();
+    ctx.moveTo(12, split);
+    ctx.lineTo(cssW - 12, split);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    text(ctx, "Near " + p.secondary + " · magnified · own scale", 12, split + 14, { size: 10, color: muted });
+
+    var inTop = split + 28;
+    var inH = cssH - inTop - 8;
+    var inCx = cssW * 0.5;
+    var inCy = inTop + inH * 0.52;
+    var reach = Math.max(sc.hill, sc.g1, sc.g2) * 1.45;
+    var inScale = Math.min(cssW * 0.36, inH * 0.38) / reach;
+    ctx.beginPath();
+    ctx.arc(inCx, inCy, sc.hill * inScale, 0, TAU);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = muted;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.moveTo(inCx - reach * inScale, inCy);
+    ctx.lineTo(inCx + reach * inScale, inCy);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    var l1x = inCx - sc.g1 * inScale;
+    var l2x = inCx + sc.g2 * inScale;
+    drawPoint(ctx, l1x, inCy, "col", "L1", state.point === "L1", accent, ink);
+    drawPoint(ctx, l2x, inCy, "col", "L2", state.point === "L2", accent, ink);
+    disk(ctx, inCx, inCy, 8, p.secFill);
+    text(ctx, "L1", l1x, inCy - 16, { align: "center", size: 11, color: ink });
+    text(ctx, "L2", l2x, inCy - 16, { align: "center", size: 11, color: ink });
+    text(ctx, "toward " + p.primary, inCx - reach * inScale, inCy + 16, { align: "left", size: 10, color: muted });
+    var hillGap = sc.hillKm - sc.l1sec;
+    var hillRel = hillGap >= 0 ? fmtKm(hillGap) + " inside" : fmtKm(-hillGap) + " outside";
+    text(ctx, "Hill " + fmtKm(sc.hillKm), inCx, inCy + sc.hill * inScale + 14, { align: "center", size: 10, color: muted });
+    text(ctx, "L1 is " + hillRel + " that circle", inCx, Math.min(cssH - 12, inCy + sc.hill * inScale + 28), { align: "center", size: 10, color: muted });
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    lastT = 0;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(48, now - lastT);
+    lastT = now;
+    state.angle = (state.angle + TAU * dt / LAP_MS) % TAU;
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+  function pickAt(x, y){
+    var best = null;
+    var bestD = 1e9;
+    var i;
+    for (i = 0; i < hits.length; i++){
+      var h = hits[i];
+      if (h.id === "pri" || h.id === "sec") continue;
+      var d = Math.hypot(h.x - x, h.y - y);
+      if (d < h.r && d < bestD){
+        best = h.id;
+        bestD = d;
+      }
+    }
+    if (best){
+      state.point = best;
+      render();
+    }
+  }
+
+  pairBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.pair = b.getAttribute("data-pair");
+      render();
+    });
+  });
+  pointBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.point = b.getAttribute("data-point");
+      render();
+    });
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){ stopPlay(); render(); return; }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+  canvas.addEventListener("click", function(ev){
+    var rect = canvas.getBoundingClientRect();
+    pickAt(ev.clientX - rect.left, ev.clientY - rect.top);
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("lagrange-help");
+  var helpDialog = document.getElementById("lagrange-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
