@@ -261,16 +261,28 @@
     paintSide();
   }
 
-  function scopeSample() {
-    if (!live) return 0;
-    if (probeKey && live.pinV && live.pinV[probeKey] != null) return live.pinV[probeKey];
+  function scopeChoice() {
+    if (!live) return { v: 0, name: "" };
+    if (probeKey && live.pinV && live.pinV[probeKey] != null) return { v: live.pinV[probeKey], name: probeKey };
     var ids = selectedIds();
-    if (ids.length && live.part && live.part[ids[0]] && isFinite(live.part[ids[0]].v)) return live.part[ids[0]].v;
-    var keys = live.pinV ? Object.keys(live.pinV) : [];
-    for (var i = 0; i < keys.length; i++) {
-      if (keys[i].indexOf(".p") > 0 || keys[i].indexOf(".out") > 0 || keys[i].indexOf(".a") > 0) return live.pinV[keys[i]];
+    if (ids.length && live.part && live.part[ids[0]] && isFinite(live.part[ids[0]].v)) {
+      return { v: live.part[ids[0]].v, name: ids[0] };
     }
-    return 0;
+    var prefer = ["c", "l", "r", "pot", "led", "d", "op", "npn", "ic555", "not", "and", "nand", "or", "nor"];
+    var i;
+    var p;
+    for (p = 0; p < prefer.length; p++) {
+      for (i = 0; i < doc.parts.length; i++) {
+        if (doc.parts[i].type !== prefer[p]) continue;
+        var info = live.part && live.part[doc.parts[i].id];
+        if (info && isFinite(info.v)) return { v: info.v, name: doc.parts[i].id };
+      }
+    }
+    return { v: 0, name: "" };
+  }
+
+  function scopeSample() {
+    return scopeChoice().v;
   }
 
   function runLoop() {
@@ -840,8 +852,9 @@
       return x.toFixed(1) + "," + y.toFixed(1);
     }).join(" ");
     svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+    var choice = scopeChoice();
     svg.innerHTML =
-      '<text x="8" y="16" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">' + esc(fmtV(max)) + " … " + esc(fmtV(min)) + "</text>" +
+      '<text x="8" y="16" fill="currentColor" font-size="11" font-family="IBM Plex Mono,monospace">' + esc(choice.name || "Scope") + "  " + esc(fmtV(max)) + " … " + esc(fmtV(min)) + "</text>" +
       '<polyline points="' + pts + '" fill="none" stroke="var(--accent,#c8b48a)" stroke-width="1.6"/>';
   }
 
