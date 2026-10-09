@@ -6,19 +6,19 @@
 {% include head-layout.html %}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Astronomy — Solar map · Moon · tides · local sky · stars · parallax · exoplanets · galaxy — Steven Philley</title>
-<meta name="description" content="Astronomy desk: solar system map with day and time controls, Moon phases, Venus phases (inner orbit), planet phases (Mercury through Neptune, including Jupiter from a spacecraft), eclipses (why not every month), tides (spring and neap), local sky, seasons (axial tilt), analemma (the noon Sun’s figure-8), sidereal day (stars rise earlier), synodic month (new Moon to new Moon is longer than one orbit), lunar libration (the same face, plus a peek past the limbs), precession of the equinoxes (the pole star changes; the tropical year is shorter than the sidereal year), retrograde (Earth overtaking Mars), opposition (Earth between the Sun and an outer planet), Kepler’s third law (P² = a³ in years and AU for a circular solar orbit), escape and orbital speed (circular orbit and escape, √2 apart, from fact-sheet GM and volumetric radius), Hohmann transfer (the half-ellipse between two circular orbits), Lagrange points (L1 through L5 of a two-body system, Hill approximation and a numerical collinear root), Roche limit (fluid and rigid distances from fact-sheet densities; Rhea and the Moon outside, Phobos between), stellar types and life phases, stellar parallax (the parsec yardstick), nearest stars, exoplanets, and Milky Way orientation. Schematic educational pages.">
+<title>Astronomy — 3D solar map · Moon · tides · local sky · stars · parallax · exoplanets · galaxy — Steven Philley</title>
+<meta name="description" content="Astronomy desk: 3D solar system orrery with a 2D map fallback, day and time controls, Moon phases, Venus phases (inner orbit), planet phases (Mercury through Neptune, including Jupiter from a spacecraft), eclipses (why not every month), tides (spring and neap), local sky, seasons (axial tilt), analemma (the noon Sun’s figure-8), sidereal day (stars rise earlier), synodic month (new Moon to new Moon is longer than one orbit), lunar libration (the same face, plus a peek past the limbs), precession of the equinoxes (the pole star changes; the tropical year is shorter than the sidereal year), retrograde (Earth overtaking Mars), opposition (Earth between the Sun and an outer planet), Kepler’s third law (P² = a³ in years and AU for a circular solar orbit), escape and orbital speed (circular orbit and escape, √2 apart, from fact-sheet GM and volumetric radius), Hohmann transfer (the half-ellipse between two circular orbits), Lagrange points (L1 through L5 of a two-body system, Hill approximation and a numerical collinear root), Roche limit (fluid and rigid distances from fact-sheet densities; Rhea and the Moon outside, Phobos between), stellar types and life phases, stellar parallax (the parsec yardstick), nearest stars, exoplanets, and Milky Way orientation. Schematic educational pages.">
 <link rel="canonical" href="https://stevenphilley.com/science/astronomy/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Steven Philley">
-<meta property="og:title" content="Astronomy — Solar system map">
-<meta property="og:description" content="Interactive educational solar system map. Set a day and local time for approximate heliocentric positions — schematic, not a precision ephemeris.">
+<meta property="og:title" content="Astronomy — 3D solar system map">
+<meta property="og:description" content="Interactive 3D solar system map with a 2D fallback. JPL approximate Keplerian orbits, day and local time — schematic, not a precision ephemeris.">
 <meta property="og:url" content="https://stevenphilley.com/science/astronomy/">
 <meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Astronomy — Solar system map">
-<meta name="twitter:description" content="Set a day and time — approximate heliocentric layout. Schematic, not a precision ephemeris.">
+<meta name="twitter:title" content="Astronomy — 3D solar system map">
+<meta name="twitter:description" content="3D orrery with a 2D fallback. Set a day and time. Schematic, not a precision ephemeris.">
 <meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
 <script src="/js/sp-theme-boot.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,46 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .map-shell{margin-top:28px;display:grid;grid-template-columns:1fr minmax(260px,320px);gap:12px;align-items:stretch}
 .map-col{min-width:0}
 .map-stage{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);position:relative;min-height:420px;overflow:hidden}
-.map-stage canvas{display:block;width:100%;height:100%;cursor:pointer;touch-action:manipulation}
+.map-canvas-wrap{position:relative;min-height:280px}
+.map-canvas-wrap canvas{display:block;width:100%;height:100%}
+#sys{cursor:pointer;touch-action:manipulation}
+#sys-3d,#sys-labels{position:absolute;inset:0;visibility:hidden;pointer-events:none}
+#sys-3d{touch-action:none;cursor:grab}
+#sys-3d.is-dragging{cursor:grabbing}
+#sys-labels{overflow:hidden;z-index:2}
+.map-stage.mode-3d #sys{visibility:hidden;pointer-events:none}
+.map-stage.mode-3d #sys-3d{visibility:visible;pointer-events:auto}
+.map-stage.mode-3d #sys-labels{visibility:visible}
+.ss-label{position:absolute;transform:translate(-50%,-140%);pointer-events:auto;appearance:none;border:1px solid transparent;background:rgba(0,0,0,.42);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:2px 5px;cursor:pointer;text-shadow:0 1px 2px #000;white-space:nowrap}
+.ss-label:hover,.ss-label:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent);outline:none}
+.ss-label[aria-pressed="true"]{color:var(--accent,#c8b48a);border-color:color-mix(in srgb,var(--accent,#c8b48a) 65%,transparent);background:rgba(0,0,0,.62)}
+.ss-label.is-off{visibility:hidden;pointer-events:none}
+.astro-tools{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}
+.astro-tools button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;padding:8px 10px;min-height:36px;cursor:pointer}
+.astro-tools button:hover,.astro-tools button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.astro-tools button[aria-pressed="true"]{color:var(--ink,#e8e6e1);border-color:color-mix(in srgb,var(--accent,#c8b48a) 50%,var(--line,#2c303a));background:color-mix(in srgb,var(--accent,#c8b48a) 14%,transparent)}
+.astro-tools button:disabled{opacity:.38;cursor:default}
+.astro-tools .mode-toggle,.astro-tools .scale-toggle{display:inline-flex;border:1px solid var(--line,#2c303a)}
+.astro-tools .mode-toggle button,.astro-tools .scale-toggle button{border:0;border-right:1px solid var(--line,#2c303a)}
+.astro-tools .mode-toggle button:last-child,.astro-tools .scale-toggle button:last-child{border-right:0}
+.astro-tools .help-q{margin-left:auto;width:36px;min-width:36px;padding:0;font-size:16px;letter-spacing:0;text-transform:none;color:var(--accent,#c8b48a);border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a))}
+.scale-note,.gl-fallback{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--muted,#63666e);max-width:70ch}
+.gl-fallback[hidden]{display:none}
+.help-dialog{position:fixed;inset:0;z-index:40;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line,#2c303a);background:rgba(0,0,0,.22);position:absolute;left:0;right:0;bottom:0;z-index:2}
 .controls button,.epoch-bar button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;padding:7px 12px;cursor:pointer}
 .controls button:hover,.controls button[aria-pressed="true"],.epoch-bar button:hover,.epoch-bar button[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
@@ -108,6 +147,14 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   .epoch-bar input[type="date"]{min-width:8.6rem;font-size:10px}
   .speed-group{gap:5px}
   .speed-val{font-size:10px}
+  .astro-tools button{padding:6px 8px;font-size:9px}
+  .help-card th{width:42%}
+}
+@media (pointer:coarse){
+  .astro-tools button,.controls button,.epoch-bar button{min-height:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  .map-stage canvas{scroll-behavior:auto}
 }
 </style>
 </head>
@@ -169,14 +216,35 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 
   <p class="kicker">Vol. Science · Astronomy · Interactive map</p>
   <h1>Solar system<br>map</h1>
-  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. <strong>Play</strong> walks the date forward; set the speed (0.5×–10×) to go slower or faster. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, why that same face still shows past the limb (<a href="/science/astronomy/libration/">libration</a> — a locked spin, eccentricity 0.0549, and a lunar equator tilted 6.68° to its orbit), why <a href="/science/astronomy/eclipses/">eclipses</a> are rare (the Moon’s orbit is tilted about 5°, so most new and full Moons miss), why most shores on a smooth-Earth cartoon see about two high <a href="/science/astronomy/tides/">tides</a> a day (spring when the Sun lines up, neap at the quarters), and why the year has <a href="/science/astronomy/seasons/">seasons</a> (axial tilt, not distance), why that axis slowly walks a cone so the pole star changes (<a href="/science/astronomy/precession/">precession</a> — about 26,000 years, and the tropical year is shorter than the sidereal year), why the noon Sun traces a figure-8 (<a href="/science/astronomy/analemma/">analemma</a> — declination and the equation of time), why a sidereal day is shorter than the mean solar day (<a href="/science/astronomy/sidereal/">sidereal</a> — the stars gain about four minutes a night), why new Moon to new Moon outlasts one orbit of the Moon (<a href="/science/astronomy/synodic/">synodic month</a> — the Moon is back among the stars and the Sun has moved on), why Mars can seem to back up (<a href="/science/astronomy/retrograde/">retrograde</a> — Earth overtaking on a faster inner orbit, not a reversed path), why an outer planet stands opposite the Sun at <a href="/science/astronomy/opposition/">opposition</a> (Earth between the Sun and Mars — the bright geometry, not a reversed orbit), why a larger orbit takes longer (<a href="/science/astronomy/kepler/">Kepler</a> — for a circular orbit around the Sun, P² = a³ when P is in years and a is in AU), why a circular orbit is slower than escape by √2 (<a href="/science/astronomy/escape/">escape</a> — orbital speed and escape speed at one altitude, Newton’s cannon as a schematic), why the cheap path between two circular orbits is half an ellipse (<a href="/science/astronomy/hohmann/">Hohmann</a> — two impulsive burns, fact-sheet distances, Earth to Mars in 258.88 days), why five points keep a fixed pattern in the rotating frame (<a href="/science/astronomy/lagrange/">Lagrange</a> — L1 through L5, a Hill approximation beside the numerical collinear root, Sun–Earth L2 at 1,501,538 km from Earth), why a moon inside a critical distance cannot hold together (<a href="/science/astronomy/roche/">Roche</a> — a fluid limit and a rigid one, Rhea outside, the Moon far outside, Phobos between them), why Venus shows phases (<a href="/science/astronomy/venus/">Venus</a> — an orbit inside Earth’s, crescent through gibbous, not a moon), why the other planets do not all do that (<a href="/science/astronomy/phases/">planet phases</a> — Mercury’s crescent, Mars’s gibbous disk, Jupiter from Earth and from a spacecraft), then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, the <a href="/science/astronomy/parallax/">parallax</a> yardstick that turns Earth’s orbital shift into a parsec, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Light itself — radio through gamma — has a literacy desk at <a href="/science/em-spectrum/">EM spectrum</a>. The force that schedules this map has its own literacy desk: <a href="/science/gravity/">Gravity</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
-  <p class="note-schematic">Educational schematic with compressed orbital scale and exaggerated planet sizes so everything fits and stays visible. Planet angles are approximate mean heliocentric longitudes for the chosen date and time (circular orbits, NASA/JPL-style mean elements) — <strong>not a precision ephemeris</strong>. Distances and periods are mean values from public NASA fact sheets.</p>
+  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. It opens in <strong>3D</strong> (drag to orbit; the flat map is the 2D control). Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. <strong>Play</strong> walks the date forward; set the speed (0.5×–10×) to go slower or faster. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, why that same face still shows past the limb (<a href="/science/astronomy/libration/">libration</a> — a locked spin, eccentricity 0.0549, and a lunar equator tilted 6.68° to its orbit), why <a href="/science/astronomy/eclipses/">eclipses</a> are rare (the Moon’s orbit is tilted about 5°, so most new and full Moons miss), why most shores on a smooth-Earth cartoon see about two high <a href="/science/astronomy/tides/">tides</a> a day (spring when the Sun lines up, neap at the quarters), and why the year has <a href="/science/astronomy/seasons/">seasons</a> (axial tilt, not distance), why that axis slowly walks a cone so the pole star changes (<a href="/science/astronomy/precession/">precession</a> — about 26,000 years, and the tropical year is shorter than the sidereal year), why the noon Sun traces a figure-8 (<a href="/science/astronomy/analemma/">analemma</a> — declination and the equation of time), why a sidereal day is shorter than the mean solar day (<a href="/science/astronomy/sidereal/">sidereal</a> — the stars gain about four minutes a night), why new Moon to new Moon outlasts one orbit of the Moon (<a href="/science/astronomy/synodic/">synodic month</a> — the Moon is back among the stars and the Sun has moved on), why Mars can seem to back up (<a href="/science/astronomy/retrograde/">retrograde</a> — Earth overtaking on a faster inner orbit, not a reversed path), why an outer planet stands opposite the Sun at <a href="/science/astronomy/opposition/">opposition</a> (Earth between the Sun and Mars — the bright geometry, not a reversed orbit), why a larger orbit takes longer (<a href="/science/astronomy/kepler/">Kepler</a> — for a circular orbit around the Sun, P² = a³ when P is in years and a is in AU), why a circular orbit is slower than escape by √2 (<a href="/science/astronomy/escape/">escape</a> — orbital speed and escape speed at one altitude, Newton’s cannon as a schematic), why the cheap path between two circular orbits is half an ellipse (<a href="/science/astronomy/hohmann/">Hohmann</a> — two impulsive burns, fact-sheet distances, Earth to Mars in 258.88 days), why five points keep a fixed pattern in the rotating frame (<a href="/science/astronomy/lagrange/">Lagrange</a> — L1 through L5, a Hill approximation beside the numerical collinear root, Sun–Earth L2 at 1,501,538 km from Earth), why a moon inside a critical distance cannot hold together (<a href="/science/astronomy/roche/">Roche</a> — a fluid limit and a rigid one, Rhea outside, the Moon far outside, Phobos between them), why Venus shows phases (<a href="/science/astronomy/venus/">Venus</a> — an orbit inside Earth’s, crescent through gibbous, not a moon), why the other planets do not all do that (<a href="/science/astronomy/phases/">planet phases</a> — Mercury’s crescent, Mars’s gibbous disk, Jupiter from Earth and from a spacecraft), then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, the <a href="/science/astronomy/parallax/">parallax</a> yardstick that turns Earth’s orbital shift into a parsec, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Light itself — radio through gamma — has a literacy desk at <a href="/science/em-spectrum/">EM spectrum</a>. The force that schedules this map has its own literacy desk: <a href="/science/gravity/">Gravity</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
+  <p class="note-schematic">Educational schematic. The 3D view uses <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">NASA JPL approximate Keplerian elements</a> (eccentricity and inclination) for the eight planets. Pluto uses the same style of fit. Distances can be log-compressed or true to the AU. <strong>Planet sizes are exaggerated</strong> in both views so the bodies stay visible. Moon gaps, when shown, are stretched. The 2D control keeps the original flat map: circular orbits and approximate mean heliocentric longitudes. <strong>Not a JPL Horizons ephemeris.</strong> Periods and mean distances follow NASA NSSDCA fact sheets.</p>
 
   <div class="map-shell">
     <div class="map-col">
+    <div class="astro-tools" role="toolbar" aria-label="Solar map view">
+      <div class="mode-toggle" role="group" aria-label="Map dimension">
+        <button type="button" id="mode-3d" aria-pressed="true">3D</button>
+        <button type="button" id="mode-2d" aria-pressed="false">2D</button>
+      </div>
+      <button type="button" id="btn-orbits" aria-pressed="true">Orbits</button>
+      <button type="button" id="btn-grid" aria-pressed="true">Ecliptic</button>
+      <button type="button" id="btn-moons" aria-pressed="false">Moons</button>
+      <div class="scale-toggle" role="group" aria-label="Distance scale">
+        <button type="button" id="scale-compressed" aria-pressed="true">Compressed</button>
+        <button type="button" id="scale-true" aria-pressed="false">True AU</button>
+      </div>
+      <button type="button" id="view-top" aria-pressed="false">Top</button>
+      <button type="button" id="view-edge" aria-pressed="false">Edge</button>
+      <button type="button" id="view-follow" aria-pressed="false">Follow</button>
+      <button type="button" class="help-q" id="astro-help" aria-haspopup="dialog" aria-controls="astro-help-dialog" aria-expanded="false" aria-label="How this solar map works">?</button>
+    </div>
     <div class="map-stage" id="stage">
       <p class="hint" id="hint">Tap a planet · set day &amp; time · drag to pan · scroll to zoom</p>
+      <div class="map-canvas-wrap" id="map-canvas-wrap">
       <canvas id="sys" width="800" height="800" role="img" aria-label="Interactive solar system map for today, now, local time. Approximate heliocentric positions, not a precision ephemeris."></canvas>
+      <canvas id="sys-3d" tabindex="-1" aria-hidden="true" role="application" aria-describedby="hint" aria-label="Three-dimensional solar system. Drag to orbit, right-drag or two fingers to pan, scroll or pinch to zoom. The question mark lists every control."></canvas>
+      <div id="sys-labels"></div>
+      </div>
       <div class="controls" role="toolbar" aria-label="Map display">
         <button type="button" id="btn-play" aria-pressed="false" aria-label="Play through days" title="Advance the date so orbits walk forward">Play</button>
         <button type="button" id="btn-labels" aria-pressed="true">Labels</button>
@@ -219,6 +287,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
       <p class="credit" id="info-credit">Data adapted from NASA Solar System Exploration fact sheets · public educational use. Schematic art for this page · not NASA imagery.</p>
     </aside>
   </div>
+  <p class="scale-note" id="scale-note">3D · log-compressed distances · inclinations kept · sizes exaggerated.</p>
+  <p class="gl-fallback" id="gl-fallback" hidden>WebGL is unavailable in this browser, so the flat map is shown.</p>
 
   <p class="band">Astronomy desk</p>
   <div class="more">
@@ -376,6 +446,49 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 
   {% include footer.html %}
 </div>
+<div id="astro-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="astro-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="astro-help-title">Solar map controls</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">3D is the default. The 3D / 2D choice is remembered in this browser. If WebGL is unavailable, the flat map is shown on its own. Sizes are exaggerated in every view. This is not a Horizons ephemeris.</p>
+    <h3>3D orrery</h3>
+    <table>
+      <caption>3D orrery</caption>
+      <tbody>
+        <tr><th scope="row">3D / 2D</th><td>3D draws eccentric, inclined orbits. 2D is the original flat map: circular orbits and mean longitude. The choice stays in this browser.</td></tr>
+        <tr><th scope="row">Drag</th><td>Orbit the view. One finger orbits on a phone.</td></tr>
+        <tr><th scope="row">Right-drag</th><td>Pan. Two-finger drag pans as well.</td></tr>
+        <tr><th scope="row">Wheel or pinch</th><td>Zoom toward the pointer. Two fingers pinch.</td></tr>
+        <tr><th scope="row">Orbits</th><td>Show or hide the orbit lines.</td></tr>
+        <tr><th scope="row">Ecliptic</th><td>Show or hide the ecliptic grid.</td></tr>
+        <tr><th scope="row">Moons</th><td>Moon, the Galilean moons, Titan, and Triton. Their gaps from the parent are stretched.</td></tr>
+        <tr><th scope="row">Compressed</th><td>Log radius so Neptune sits beside Mercury. The tilt of each orbit is kept.</td></tr>
+        <tr><th scope="row">True AU</th><td>Real distances in astronomical units. Inner planets bunch near the Sun. Sizes are still exaggerated.</td></tr>
+        <tr><th scope="row">Top</th><td>Look down on the ecliptic.</td></tr>
+        <tr><th scope="row">Edge</th><td>Look across the ecliptic so the inclinations show.</td></tr>
+        <tr><th scope="row">Follow</th><td>Keep the camera on the selected body, or on Earth if the Sun is selected.</td></tr>
+        <tr><th scope="row">Reset view</th><td>Three-quarter view in 3D. In 2D it clears pan and zoom.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>Orbit while the 3D map is focused. Plus and minus zoom. 0 or Home resets.</td></tr>
+        <tr><th scope="row">Click or tap</th><td>Fills the card: distance from the Sun in AU, orbital period, and the current ecliptic position.</td></tr>
+      </tbody>
+    </table>
+    <h3>Flat map</h3>
+    <table>
+      <caption>Flat map</caption>
+      <tbody>
+        <tr><th scope="row">Day and time</th><td>Local calendar day and time. Now returns to this moment. Share still uses ?date= and ?time=.</td></tr>
+        <tr><th scope="row">Play</th><td>Walks the date forward. Speed is 0.5× through 10×, labeled in days per second.</td></tr>
+        <tr><th scope="row">Labels / Pluto</th><td>Names, and the dwarf planet. Both work on the flat map and in 3D.</td></tr>
+        <tr><th scope="row">Drag / wheel</th><td>Pan and zoom, as before.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/js/vendor/three.galaxy.js"></script>
+<script src="/science/astronomy/solar-system-3d.js"></script>
 <script>
 (function(){
   "use strict";
@@ -453,6 +566,13 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   var speedVal=document.getElementById('speed-val');
   var speedBtns=[].slice.call(document.querySelectorAll('.speed-btn'));
   var playing=false, showLabels=true, showPluto=true;
+  var MODE_KEY='sp-astro-view-mode';
+  var viewMode='2d';
+  var orrery=null;
+  var showOrbits=true, showGrid=true, showMoons=false;
+  var scaleMode='compressed';
+  var followOn=false;
+  var camPreset='';
   var selected=null;
   var epoch=new Date();
   var epochIsCustom=false;
@@ -522,6 +642,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     canvas.width=Math.floor(w*dpr);
     canvas.height=Math.floor(h*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    if(orrery && viewMode==='3d') orrery.resize();
   }
 
   function bodiesVisible(){
@@ -529,6 +650,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   }
 
   function draw(){
+    if(viewMode==='3d') return;
     var w=canvas.clientWidth, h=canvas.clientHeight;
     var cx=w/2+view.ox, cy=h/2+view.oy;
     var maxR=Math.min(w,h)*0.46*view.scale;
@@ -644,23 +766,56 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     raf=requestAnimationFrame(loop);
   }
 
+  function fmtPos(h){
+    if(!h) return '';
+    var lat=Math.abs(h.lat)<0.05?0:h.lat;
+    var sign=lat>=0?'+':'';
+    return 'λ '+h.lon.toFixed(1)+'° · β '+sign+lat.toFixed(1)+'°';
+  }
+  function helioNow(b){
+    if(viewMode!=='3d' || !window.SolarSystem3D || !b) return null;
+    return SolarSystem3D.helio(b.id, julianDate(epoch));
+  }
   function showInfo(b){
     selected=b;
+    if(orrery) orrery.select(b.id);
+    if(followOn && orrery && viewMode==='3d'){
+      orrery.setState({follow: b.id==='sun' ? 'earth' : b.id});
+    }
     document.getElementById('info-name').textContent=b.name;
     document.getElementById('info-type').textContent=b.type;
     var stats=document.getElementById('info-stats');
     stats.hidden=false;
-    var longHtml=b.au
+    var h3=b.id==='sun' ? null : helioNow(b);
+    var distLabel=b.moon ? 'Mean from '+b.parentName : 'Mean distance';
+    var distVal='—';
+    if(b.au){
+      distVal=b.moon
+        ? Math.round(b.au*149597870.7).toLocaleString('en-US')+' km'
+        : b.au.toFixed(3)+' AU';
+    }
+    var nowHtml='';
+    if(h3){
+      nowHtml='<li><span class="k">Distance now</span><span class="v" id="helio-r">'+h3.r.toFixed(3)+' AU</span></li>';
+      if(b.moon && h3.fromParent!=null){
+        nowHtml+='<li><span class="k">From '+b.parentName+' now</span><span class="v" id="helio-moon">'+Math.round(h3.fromParent*149597870.7).toLocaleString('en-US')+' km</span></li>';
+      }
+      nowHtml+='<li><span class="k">Position</span><span class="v" id="helio-pos">'+fmtPos(h3)+'</span></li>';
+    }
+    var longHtml=(!b.moon && b.au)
       ? '<li><span class="k">Helio. long.</span><span class="v" id="helio-long">'+meanLongDeg(b,julianDate(epoch)).toFixed(1)+'°</span></li>'
       : '';
     stats.innerHTML=
-      '<li><span class="k">Mean distance</span><span class="v">'+(b.au?b.au.toFixed(3)+' AU':'—')+'</span></li>'+
+      '<li><span class="k">'+distLabel+'</span><span class="v">'+distVal+'</span></li>'+
+      nowHtml+
       '<li><span class="k">Orbital period</span><span class="v">'+b.period+'</span></li>'+
       '<li><span class="k">Diameter</span><span class="v">'+b.diameter+'</span></li>'+
       longHtml;
     var facts=document.getElementById('info-facts');
     facts.innerHTML=b.facts.map(function(f){return '<li>'+f+'</li>';}).join('');
-    document.getElementById('info-credit').innerHTML='Figures adapted from <a href="https://science.nasa.gov/solar-system/" rel="noopener" target="_blank">NASA Solar System Exploration</a> fact sheets. Angles use <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">JPL approximate mean elements</a> (circular-orbit longitude). Map is a schematic — not NASA imagery or a precision ephemeris.';
+    document.getElementById('info-credit').innerHTML=viewMode==='3d'
+      ? 'Distances and periods adapted from <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA fact sheets</a>. 3D positions use <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">JPL approximate Keplerian elements</a> (Earth is the Earth–Moon barycenter). Sizes are exaggerated. Not a Horizons ephemeris.'
+      : 'Figures adapted from <a href="https://science.nasa.gov/solar-system/" rel="noopener" target="_blank">NASA Solar System Exploration</a> fact sheets. Angles use <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">JPL approximate mean elements</a> (circular-orbit longitude). Map is a schematic — not NASA imagery or a precision ephemeris.';
   }
 
   function paintEpochChrome(){
@@ -668,7 +823,12 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     epochLab.textContent=live ? (fmtEpoch(epoch)+' · now') : fmtEpoch(epoch);
     canvas.setAttribute('aria-label','Interactive solar system map for '+fmtEpochLong(epoch)+'. Approximate heliocentric positions, not a precision ephemeris.');
     var el=document.getElementById('helio-long');
-    if(el && selected) el.textContent=meanLongDeg(selected, julianDate(epoch)).toFixed(1)+'°';
+    if(el && selected && !selected.moon) el.textContent=meanLongDeg(selected, julianDate(epoch)).toFixed(1)+'°';
+    var h3=helioNow(selected);
+    var rEl=document.getElementById('helio-r');
+    var pEl=document.getElementById('helio-pos');
+    if(h3 && rEl) rEl.textContent=h3.r.toFixed(3)+' AU';
+    if(h3 && pEl) pEl.textContent=fmtPos(h3);
   }
   function playDaysPerSec(){ return BASE_DAYS_PER_SEC*playSpeed; }
   function fmtSpeedLabel(mult){
@@ -862,13 +1022,20 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   document.getElementById('btn-labels').addEventListener('click',function(){
     showLabels=!showLabels;
     this.setAttribute('aria-pressed',String(showLabels));
+    pushOrrery();
   });
   document.getElementById('btn-pluto').addEventListener('click',function(){
     showPluto=!showPluto;
     this.setAttribute('aria-pressed',String(showPluto));
+    if(!showPluto && selected && selected.id==='pluto') showInfo(BODIES[0]);
+    pushOrrery();
   });
   document.getElementById('btn-reset').addEventListener('click',function(){
     view={scale:1,ox:0,oy:0};
+    followOn=false;
+    camPreset='';
+    paintCam();
+    if(orrery && viewMode==='3d') orrery.goTo('reset');
   });
   document.getElementById('btn-now').addEventListener('click', setNow);
   dateEl.addEventListener('change', applyInputs);
@@ -881,6 +1048,232 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   window.addEventListener('resize',resize);
   /* observe theme changes to redraw colors */
   new MutationObserver(function(){/* colors read each frame */}).observe(root,{attributes:true,attributeFilter:['data-theme']});
+
+  var mode3dBtn=document.getElementById('mode-3d');
+  var mode2dBtn=document.getElementById('mode-2d');
+  var orbitsBtn=document.getElementById('btn-orbits');
+  var gridBtn=document.getElementById('btn-grid');
+  var moonsBtn=document.getElementById('btn-moons');
+  var scaleCompressed=document.getElementById('scale-compressed');
+  var scaleTrue=document.getElementById('scale-true');
+  var viewTop=document.getElementById('view-top');
+  var viewEdge=document.getElementById('view-edge');
+  var viewFollow=document.getElementById('view-follow');
+  var helpBtn=document.getElementById('astro-help');
+  var helpDialog=document.getElementById('astro-help-dialog');
+  var scaleNote=document.getElementById('scale-note');
+  var glFallback=document.getElementById('gl-fallback');
+  var canvas3d=document.getElementById('sys-3d');
+  var reduceMotion=false;
+  try{ reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+
+  function pushOrrery(){
+    if(!orrery) return;
+    orrery.setState({
+      pluto: showPluto,
+      moons: showMoons,
+      orbits: showOrbits,
+      labels: showLabels,
+      grid: showGrid,
+      scale: scaleMode,
+      follow: (followOn && viewMode==='3d') ? ((selected && selected.id!=='sun') ? selected.id : 'earth') : null
+    });
+  }
+  function paintCam(){
+    if(viewTop) viewTop.setAttribute('aria-pressed', String(camPreset==='top'));
+    if(viewEdge) viewEdge.setAttribute('aria-pressed', String(camPreset==='edge'));
+    if(viewFollow) viewFollow.setAttribute('aria-pressed', String(followOn));
+  }
+  function paintScale(){
+    if(scaleCompressed) scaleCompressed.setAttribute('aria-pressed', String(scaleMode==='compressed'));
+    if(scaleTrue) scaleTrue.setAttribute('aria-pressed', String(scaleMode==='true'));
+    if(!scaleNote) return;
+    if(viewMode!=='3d'){
+      scaleNote.textContent='2D flat map · circular orbits · log-compressed distances · sizes exaggerated.';
+      return;
+    }
+    var moonBit=showMoons ? ' Moon gaps are stretched.' : '';
+    if(scaleMode==='true'){
+      scaleNote.textContent='3D · true AU distances. Inner planets sit close to the Sun — zoom in or Follow one. Sizes are exaggerated.'+moonBit;
+    } else {
+      scaleNote.textContent='3D · log-compressed distances · inclinations kept · sizes exaggerated.'+moonBit;
+    }
+  }
+  function viewButtons(on){
+    [orbitsBtn, gridBtn, moonsBtn, scaleCompressed, scaleTrue, viewTop, viewEdge, viewFollow].forEach(function(b){
+      if(b) b.disabled=!on;
+    });
+  }
+  function paintHint(){
+    var hint=document.getElementById('hint');
+    if(!hint) return;
+    hint.textContent=viewMode==='3d'
+      ? 'Drag to orbit · scroll or pinch to zoom · right-drag or two fingers to pan · tap a body'
+      : 'Tap a planet · set day & time · drag to pan · scroll to zoom';
+  }
+  function applyMode(next, persist){
+    viewMode=(next==='3d' && orrery) ? '3d' : '2d';
+    if(persist && orrery){
+      try{ localStorage.setItem(MODE_KEY, viewMode); }catch(e){}
+    }
+    stage.classList.toggle('mode-3d', viewMode==='3d');
+    stage.classList.toggle('mode-2d', viewMode==='2d');
+    if(mode3dBtn){
+      mode3dBtn.setAttribute('aria-pressed', viewMode==='3d'?'true':'false');
+      mode3dBtn.setAttribute('aria-label', viewMode==='3d'?'3D view on':'Switch to the 3D map');
+    }
+    if(mode2dBtn){
+      mode2dBtn.setAttribute('aria-pressed', viewMode==='2d'?'true':'false');
+      mode2dBtn.setAttribute('aria-label', viewMode==='2d'?'Flat map on':'Switch to the flat map');
+    }
+    if(canvas3d){
+      canvas3d.tabIndex=viewMode==='3d'?0:-1;
+      canvas3d.setAttribute('aria-hidden', viewMode==='3d'?'false':'true');
+    }
+    canvas.setAttribute('aria-hidden', viewMode==='3d'?'true':'false');
+    viewButtons(viewMode==='3d' && !!orrery);
+    paintHint();
+    paintScale();
+    if(viewMode==='2d' && selected && selected.moon) showInfo(BODIES[0]);
+    else if(selected) showInfo(selected);
+    if(orrery){
+      orrery.setEnabled(viewMode==='3d');
+      if(viewMode==='3d'){
+        pushOrrery();
+        orrery.resize();
+      }
+    }
+    window.__astroMapMode=viewMode;
+  }
+  function goView(name){
+    if(!orrery || viewMode!=='3d') return;
+    if(name==='follow'){
+      followOn=!followOn;
+      camPreset=followOn?'follow':'';
+      paintCam();
+      pushOrrery();
+      return;
+    }
+    followOn=false;
+    camPreset=name==='reset'?'':name;
+    paintCam();
+    pushOrrery();
+    orrery.goTo(name);
+  }
+  if(mode3dBtn) mode3dBtn.addEventListener('click', function(){ applyMode('3d', true); });
+  if(mode2dBtn) mode2dBtn.addEventListener('click', function(){ applyMode('2d', true); });
+  if(orbitsBtn) orbitsBtn.addEventListener('click', function(){
+    showOrbits=!showOrbits;
+    orbitsBtn.setAttribute('aria-pressed', String(showOrbits));
+    pushOrrery();
+  });
+  if(gridBtn) gridBtn.addEventListener('click', function(){
+    showGrid=!showGrid;
+    gridBtn.setAttribute('aria-pressed', String(showGrid));
+    pushOrrery();
+  });
+  if(moonsBtn) moonsBtn.addEventListener('click', function(){
+    showMoons=!showMoons;
+    moonsBtn.setAttribute('aria-pressed', String(showMoons));
+    if(!showMoons && selected && selected.moon) showInfo(BODIES[3]);
+    paintScale();
+    pushOrrery();
+  });
+  if(scaleCompressed) scaleCompressed.addEventListener('click', function(){
+    scaleMode='compressed';
+    paintScale();
+    pushOrrery();
+  });
+  if(scaleTrue) scaleTrue.addEventListener('click', function(){
+    scaleMode='true';
+    paintScale();
+    pushOrrery();
+  });
+  if(viewTop) viewTop.addEventListener('click', function(){ goView('top'); });
+  if(viewEdge) viewEdge.addEventListener('click', function(){ goView('edge'); });
+  if(viewFollow) viewFollow.addEventListener('click', function(){ goView('follow'); });
+
+  function openHelp(){
+    if(!helpDialog) return;
+    helpDialog.hidden=false;
+    if(helpBtn) helpBtn.setAttribute('aria-expanded','true');
+    var closer=helpDialog.querySelector('[data-help-close]');
+    if(closer) closer.focus();
+  }
+  function closeHelp(){
+    if(!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden=true;
+    if(helpBtn){ helpBtn.setAttribute('aria-expanded','false'); helpBtn.focus(); }
+  }
+  if(helpBtn) helpBtn.addEventListener('click', function(){
+    if(helpDialog.hidden) openHelp(); else closeHelp();
+  });
+  if(helpDialog){
+    helpDialog.addEventListener('click', function(ev){ if(ev.target===helpDialog) closeHelp(); });
+    helpDialog.querySelectorAll('[data-help-close]').forEach(function(b){ b.addEventListener('click', closeHelp); });
+    helpDialog.addEventListener('keydown', function(ev){
+      if(ev.key==='Escape'){ ev.preventDefault(); closeHelp(); return; }
+      if(ev.key!=='Tab') return;
+      var nodes=[].slice.call(helpDialog.querySelectorAll('button, a[href]'));
+      if(!nodes.length) return;
+      var first=nodes[0], last=nodes[nodes.length-1];
+      if(ev.shiftKey && document.activeElement===first){ ev.preventDefault(); last.focus(); }
+      else if(!ev.shiftKey && document.activeElement===last){ ev.preventDefault(); first.focus(); }
+    });
+  }
+  document.addEventListener('keydown', function(ev){
+    if(ev.key!=='?') return;
+    var tag=(ev.target && ev.target.tagName || '').toLowerCase();
+    if(tag==='input' || tag==='textarea' || tag==='select') return;
+    if(!stage || !stage.contains(ev.target) && !(ev.target && ev.target.closest && ev.target.closest('.astro-tools'))) return;
+    ev.preventDefault();
+    if(helpDialog && helpDialog.hidden) openHelp(); else closeHelp();
+  });
+
+  function bootOrrery(){
+    resize();
+    if(!canvas3d || !window.SolarSystem3D || !window.THREE || !window.OrbitControls) return;
+    try{
+      orrery=SolarSystem3D.create({
+        canvas: canvas3d,
+        labels: document.getElementById('sys-labels'),
+        reduceMotion: reduceMotion,
+        getEpoch: function(){ return epoch; },
+        onPick: function(id){
+          var b=null;
+          var i;
+          for(i=0;i<BODIES.length;i++) if(BODIES[i].id===id) b=BODIES[i];
+          if(!b && orrery && orrery.moon) b=orrery.moon(id);
+          if(b) showInfo(b);
+        },
+        onUserMove: function(){
+          followOn=false;
+          camPreset='';
+          paintCam();
+        },
+        onReset: function(){ goView('reset'); },
+        onReady: function(){ window.__astro3dReady=true; },
+        onContextLost: function(){
+          orrery=null;
+          if(glFallback) glFallback.hidden=false;
+          if(mode3dBtn) mode3dBtn.disabled=true;
+          applyMode('2d', false);
+        }
+      });
+    }catch(err){ orrery=null; }
+  }
+  bootOrrery();
+  if(!orrery){
+    if(glFallback) glFallback.hidden=false;
+    if(mode3dBtn) mode3dBtn.disabled=true;
+    applyMode('2d', false);
+  } else {
+    var storedMode=null;
+    try{ storedMode=localStorage.getItem(MODE_KEY); }catch(e){}
+    applyMode(storedMode==='2d'?'2d':'3d', false);
+  }
+  paintCam();
+  paintScale();
 
   var qEpoch=parseQueryEpoch();
   if(qEpoch){
