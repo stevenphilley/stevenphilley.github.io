@@ -92,8 +92,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 .time-val,.speed-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);color:var(--ink,#e8e6e1);white-space:nowrap}
 .time-val{min-width:4.5ch}
 .speed-group{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.ctrl-speed input[type="range"]{flex:1 1 90px;max-width:160px}
+.ctrl-speed input[type="range"]{flex:1 1 180px;max-width:none;min-width:8.5rem;height:36px;margin:0;touch-action:pan-y}
 .speed-group .speed-btn{padding:6px 9px;letter-spacing:.08em;min-width:2.8rem}
+output.speed-val{display:inline;padding:0;border:0;background:transparent}
+.speed-rate{display:inline-flex;align-items:stretch;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.35)}
+.speed-rate button{border:0;min-width:2.15rem;padding:6px 8px;letter-spacing:0;text-transform:none;font-size:16px;line-height:1;touch-action:manipulation}
+.speed-rate button:first-child{border-right:1px solid var(--line,#2c303a)}
+.speed-rate button:last-child{border-left:1px solid var(--line,#2c303a)}
+.epoch-bar label.speed-figure{display:inline-flex;align-items:center;gap:5px;margin:0;padding:0 8px;text-transform:none;letter-spacing:0;color:var(--ink,#e8e6e1);font-size:var(--fs-11,11px)}
+.speed-figure input{width:5.1rem;border:0;background:transparent;color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);padding:6px 0;text-align:right;min-height:28px;text-transform:none}
+.speed-figure input:focus{outline:none}
+.speed-rate:focus-within{border-color:var(--accent,#c8b48a)}
+.speed-unit{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:.04em;text-transform:none;color:var(--muted,#63666e);white-space:nowrap}
 .epoch-val{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--ink-soft,#9b9a96)}
 .hint{position:absolute;top:10px;left:12px;z-index:2;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);pointer-events:none}
 .panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px;display:flex;flex-direction:column;min-height:420px}
@@ -146,12 +156,18 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   .controls button,.epoch-bar button{padding:6px 9px;font-size:9px}
   .epoch-bar input[type="date"]{min-width:8.6rem;font-size:10px}
   .speed-group{gap:5px}
-  .speed-val{font-size:10px}
+  .speed-val{font-size:12px}
+  .ctrl-speed input[type="range"]{flex:1 1 100%;min-width:0;height:44px}
+  .speed-rate button{min-width:44px;min-height:44px;font-size:18px}
+  .speed-figure input{font-size:16px;min-height:44px;width:5.4rem}
   .astro-tools button{padding:6px 8px;font-size:9px}
   .help-card th{width:42%}
 }
 @media (pointer:coarse){
   .astro-tools button,.controls button,.epoch-bar button{min-height:44px}
+  .speed-rate button{min-width:44px;min-height:44px}
+  .ctrl-speed input[type="range"]{height:44px}
+  .speed-figure input{min-height:44px;font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){
   .map-stage canvas{scroll-behavior:auto}
@@ -216,7 +232,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 
   <p class="kicker">Vol. Science · Astronomy · Interactive map</p>
   <h1>Solar system<br>map</h1>
-  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. It opens in <strong>3D</strong> (drag to orbit; the flat map is the 2D control). Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. <strong>Play</strong> walks the date forward; set the speed (0.5×–10×) to go slower or faster. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, why that same face still shows past the limb (<a href="/science/astronomy/libration/">libration</a> — a locked spin, eccentricity 0.0549, and a lunar equator tilted 6.68° to its orbit), why <a href="/science/astronomy/eclipses/">eclipses</a> are rare (the Moon’s orbit is tilted about 5°, so most new and full Moons miss), why most shores on a smooth-Earth cartoon see about two high <a href="/science/astronomy/tides/">tides</a> a day (spring when the Sun lines up, neap at the quarters), and why the year has <a href="/science/astronomy/seasons/">seasons</a> (axial tilt, not distance), why that axis slowly walks a cone so the pole star changes (<a href="/science/astronomy/precession/">precession</a> — about 26,000 years, and the tropical year is shorter than the sidereal year), why the noon Sun traces a figure-8 (<a href="/science/astronomy/analemma/">analemma</a> — declination and the equation of time), why a sidereal day is shorter than the mean solar day (<a href="/science/astronomy/sidereal/">sidereal</a> — the stars gain about four minutes a night), why new Moon to new Moon outlasts one orbit of the Moon (<a href="/science/astronomy/synodic/">synodic month</a> — the Moon is back among the stars and the Sun has moved on), why Mars can seem to back up (<a href="/science/astronomy/retrograde/">retrograde</a> — Earth overtaking on a faster inner orbit, not a reversed path), why an outer planet stands opposite the Sun at <a href="/science/astronomy/opposition/">opposition</a> (Earth between the Sun and Mars — the bright geometry, not a reversed orbit), why a larger orbit takes longer (<a href="/science/astronomy/kepler/">Kepler</a> — for a circular orbit around the Sun, P² = a³ when P is in years and a is in AU), why a circular orbit is slower than escape by √2 (<a href="/science/astronomy/escape/">escape</a> — orbital speed and escape speed at one altitude, Newton’s cannon as a schematic), why the cheap path between two circular orbits is half an ellipse (<a href="/science/astronomy/hohmann/">Hohmann</a> — two impulsive burns, fact-sheet distances, Earth to Mars in 258.88 days), why five points keep a fixed pattern in the rotating frame (<a href="/science/astronomy/lagrange/">Lagrange</a> — L1 through L5, a Hill approximation beside the numerical collinear root, Sun–Earth L2 at 1,501,538 km from Earth), why a moon inside a critical distance cannot hold together (<a href="/science/astronomy/roche/">Roche</a> — a fluid limit and a rigid one, Rhea outside, the Moon far outside, Phobos between them), why Venus shows phases (<a href="/science/astronomy/venus/">Venus</a> — an orbit inside Earth’s, crescent through gibbous, not a moon), why the other planets do not all do that (<a href="/science/astronomy/phases/">planet phases</a> — Mercury’s crescent, Mars’s gibbous disk, Jupiter from Earth and from a spacecraft), then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, the <a href="/science/astronomy/parallax/">parallax</a> yardstick that turns Earth’s orbital shift into a parsec, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Light itself — radio through gamma — has a literacy desk at <a href="/science/em-spectrum/">EM spectrum</a>. The force that schedules this map has its own literacy desk: <a href="/science/gravity/">Gravity</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
+  <p class="lede">A clickable schematic of our neighborhood — Sun through Neptune, with Pluto labeled as a dwarf planet. It opens in <strong>3D</strong> (drag to orbit; the flat map is the 2D control). Set a <strong>day</strong> and <strong>local time</strong> (defaults to now) and the planets move to approximate positions for that moment. <strong>Play</strong> walks the date forward; set the speed from one hour per second up to ten years per second. Also see the <a href="/science/astronomy/moon/">Moon phases</a> dial, why that same face still shows past the limb (<a href="/science/astronomy/libration/">libration</a> — a locked spin, eccentricity 0.0549, and a lunar equator tilted 6.68° to its orbit), why <a href="/science/astronomy/eclipses/">eclipses</a> are rare (the Moon’s orbit is tilted about 5°, so most new and full Moons miss), why most shores on a smooth-Earth cartoon see about two high <a href="/science/astronomy/tides/">tides</a> a day (spring when the Sun lines up, neap at the quarters), and why the year has <a href="/science/astronomy/seasons/">seasons</a> (axial tilt, not distance), why that axis slowly walks a cone so the pole star changes (<a href="/science/astronomy/precession/">precession</a> — about 26,000 years, and the tropical year is shorter than the sidereal year), why the noon Sun traces a figure-8 (<a href="/science/astronomy/analemma/">analemma</a> — declination and the equation of time), why a sidereal day is shorter than the mean solar day (<a href="/science/astronomy/sidereal/">sidereal</a> — the stars gain about four minutes a night), why new Moon to new Moon outlasts one orbit of the Moon (<a href="/science/astronomy/synodic/">synodic month</a> — the Moon is back among the stars and the Sun has moved on), why Mars can seem to back up (<a href="/science/astronomy/retrograde/">retrograde</a> — Earth overtaking on a faster inner orbit, not a reversed path), why an outer planet stands opposite the Sun at <a href="/science/astronomy/opposition/">opposition</a> (Earth between the Sun and Mars — the bright geometry, not a reversed orbit), why a larger orbit takes longer (<a href="/science/astronomy/kepler/">Kepler</a> — for a circular orbit around the Sun, P² = a³ when P is in years and a is in AU), why a circular orbit is slower than escape by √2 (<a href="/science/astronomy/escape/">escape</a> — orbital speed and escape speed at one altitude, Newton’s cannon as a schematic), why the cheap path between two circular orbits is half an ellipse (<a href="/science/astronomy/hohmann/">Hohmann</a> — two impulsive burns, fact-sheet distances, Earth to Mars in 258.88 days), why five points keep a fixed pattern in the rotating frame (<a href="/science/astronomy/lagrange/">Lagrange</a> — L1 through L5, a Hill approximation beside the numerical collinear root, Sun–Earth L2 at 1,501,538 km from Earth), why a moon inside a critical distance cannot hold together (<a href="/science/astronomy/roche/">Roche</a> — a fluid limit and a rigid one, Rhea outside, the Moon far outside, Phobos between them), why Venus shows phases (<a href="/science/astronomy/venus/">Venus</a> — an orbit inside Earth’s, crescent through gibbous, not a moon), why the other planets do not all do that (<a href="/science/astronomy/phases/">planet phases</a> — Mercury’s crescent, Mars’s gibbous disk, Jupiter from Earth and from a spacecraft), then continue with the <a href="/science/astronomy/local-sky/">local sky</a> (city or ZIP, default Campbell), a <a href="/science/astronomy/stars/">stars types &amp; lives</a> color lesson, <a href="/science/astronomy/nearest-stars/">nearest stars</a>, the <a href="/science/astronomy/parallax/">parallax</a> yardstick that turns Earth’s orbital shift into a parsec, <a href="/science/astronomy/exoplanets/">exoplanets</a>, and a <a href="/science/astronomy/galaxy/">Milky Way starter</a>. Light itself — radio through gamma — has a literacy desk at <a href="/science/em-spectrum/">EM spectrum</a>. The force that schedules this map has its own literacy desk: <a href="/science/gravity/">Gravity</a>. Part of the <a href="/science/">science desk</a>; also see <a href="/science/atmosphere/">Earth’s atmosphere</a>.</p>
   <p class="note-schematic">Educational schematic. The 3D view uses <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">NASA JPL approximate Keplerian elements</a> (eccentricity and inclination) for the eight planets. Pluto uses the same style of fit. Distances can be log-compressed or true to the AU. <strong>Planet sizes are exaggerated</strong> in both views so the bodies stay visible. Moon gaps, when shown, are stretched. The 2D control keeps the original flat map: circular orbits and approximate mean heliocentric longitudes. <strong>Not a JPL Horizons ephemeris.</strong> Periods and mean distances follow NASA NSSDCA fact sheets.</p>
 
   <div class="map-shell">
@@ -263,7 +279,16 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
       </div>
       <div class="ctrl-row ctrl-speed">
         <label id="speed-lab-txt" for="map-speed">Speed</label>
-        <input type="range" id="map-speed" min="0" max="4" step="1" value="1" aria-labelledby="speed-lab-txt" aria-valuetext="1×, 36 days per second">
+        <input type="range" id="map-speed" min="0" max="1000" step="any" value="594.099" aria-labelledby="speed-lab-txt" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="594" aria-valuetext="36 days per second" title="Logarithmic speed, from 1 hour per second to 10 years per second">
+        <output class="speed-val" id="speed-val" for="map-speed" aria-live="polite">36 days/s</output>
+        <span class="speed-rate" role="group" aria-label="Fine-tune speed">
+          <button type="button" id="speed-dec" aria-label="Slower" title="Slower, about 2 percent. Hold Shift for about 25 percent.">−</button>
+          <label class="speed-figure">
+            <input type="text" id="speed-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="36" aria-label="Play speed, 36 days per second" title="Type a rate. A bare number uses the unit shown. You can also type hours, days, or years.">
+            <span class="speed-unit" id="speed-unit">days/s</span>
+          </label>
+          <button type="button" id="speed-inc" aria-label="Faster" title="Faster, about 2 percent. Hold Shift for about 25 percent.">+</button>
+        </span>
         <span class="speed-group" id="speed-group" role="group" aria-label="Walkthrough speed presets">
           <button type="button" class="speed-btn" data-speed="0.5" aria-pressed="false" title="Half speed — 18 days per second">0.5×</button>
           <button type="button" class="speed-btn" data-speed="1" aria-pressed="true" title="Default speed — 36 days per second">1×</button>
@@ -271,7 +296,6 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
           <button type="button" class="speed-btn" data-speed="5" aria-pressed="false" title="5× speed — 180 days per second">5×</button>
           <button type="button" class="speed-btn" data-speed="10" aria-pressed="false" title="10× speed — 360 days per second">10×</button>
         </span>
-        <span class="speed-val" id="speed-val" aria-live="polite">1× · 36 days/s</span>
       </div>
       <p class="epoch-val" id="epoch-lab">Today · now (local)</p>
     </div>
@@ -472,6 +496,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
         <tr><th scope="row">Reset view</th><td>Three-quarter view in 3D. In 2D it clears pan and zoom.</td></tr>
         <tr><th scope="row">Arrow keys</th><td>Orbit while the 3D map is focused. Plus and minus zoom. 0 or Home resets.</td></tr>
         <tr><th scope="row">Click or tap</th><td>Fills the card: distance from the Sun in AU, orbital period, and the current ecliptic position.</td></tr>
+        <tr><th scope="row">Play and speed</th><td>Same clock as the flat map. Pause, Now, and the logarithmic speed slider move both views.</td></tr>
       </tbody>
     </table>
     <h3>Flat map</h3>
@@ -479,7 +504,8 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
       <caption>Flat map</caption>
       <tbody>
         <tr><th scope="row">Day and time</th><td>Local calendar day and time. Now returns to this moment. Share still uses ?date= and ?time=.</td></tr>
-        <tr><th scope="row">Play</th><td>Walks the date forward. Speed is 0.5× through 10×, labeled in days per second.</td></tr>
+        <tr><th scope="row">Play</th><td>Walks the date forward. Pause stops it. Now returns to this moment.</td></tr>
+        <tr><th scope="row">Speed</th><td>Logarithmic slider from 1 hour per second to 10 years per second. The readout is the rate, such as 12.3 days/s. A year there is 365.25 days. Arrow keys step about 2 percent; Shift steps about 25 percent. Minus, plus, and the number do the same, including with a finger. The 0.5×–10× buttons are still 18, 36, 72, 180, and 360 days per second.</td></tr>
         <tr><th scope="row">Labels / Pluto</th><td>Names, and the dwarf planet. Both work on the flat map and in 3D.</td></tr>
         <tr><th scope="row">Drag / wheel</th><td>Pan and zoom, as before.</td></tr>
       </tbody>
@@ -489,6 +515,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
 </div>
 <script src="/js/vendor/three.galaxy.js"></script>
 <script src="/science/astronomy/solar-system-3d.js"></script>
+<script src="/science/astronomy/play-speed.js"></script>
 <script>
 (function(){
   "use strict";
@@ -564,7 +591,13 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   var playBtn=document.getElementById('btn-play');
   var speedEl=document.getElementById('map-speed');
   var speedVal=document.getElementById('speed-val');
+  var speedNum=document.getElementById('speed-num');
+  var speedUnit=document.getElementById('speed-unit');
+  var speedDec=document.getElementById('speed-dec');
+  var speedInc=document.getElementById('speed-inc');
+  var speedNumDirty=false;
   var speedBtns=[].slice.call(document.querySelectorAll('.speed-btn'));
+  var Speed=window.AstroPlaySpeed;
   var playing=false, showLabels=true, showPluto=true;
   var MODE_KEY='sp-astro-view-mode';
   var viewMode='2d';
@@ -579,9 +612,7 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   var lastPlayWall=0;
   var lastShareSync=0;
   var SPEED_KEY='sp-astro-play-speed';
-  var SPEED_PRESETS=[0.5,1,2,5,10];
-  var BASE_DAYS_PER_SEC=36;
-  var playSpeed=1;
+  var playDps=Speed?Speed.BASE_DAYS_PER_SEC:36;
   var MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var MONTHS_LONG=['January','February','March','April','May','June','July','August','September','October','November','December'];
   var view={scale:1, ox:0, oy:0};
@@ -830,36 +861,109 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
     if(h3 && rEl) rEl.textContent=h3.r.toFixed(3)+' AU';
     if(h3 && pEl) pEl.textContent=fmtPos(h3);
   }
-  function playDaysPerSec(){ return BASE_DAYS_PER_SEC*playSpeed; }
-  function fmtSpeedLabel(mult){
-    var dps=BASE_DAYS_PER_SEC*mult;
-    return mult+'× · '+dps+' days/s';
-  }
+  function playDaysPerSec(){ return playDps; }
   function loadPlaySpeed(){
+    if(!Speed) return;
     try{
-      var n=parseFloat(localStorage.getItem(SPEED_KEY));
-      if(SPEED_PRESETS.indexOf(n)>=0) playSpeed=n;
+      var dps=Speed.fromStoredMultiplier(localStorage.getItem(SPEED_KEY));
+      if(dps!=null) playDps=dps;
     }catch(e){}
   }
   function savePlaySpeed(){
-    try{ localStorage.setItem(SPEED_KEY, String(playSpeed)); }catch(e){}
+    if(!Speed) return;
+    try{ localStorage.setItem(SPEED_KEY, Speed.toStoredMultiplier(playDps)); }catch(e){}
   }
   function paintSpeed(){
-    var idx=SPEED_PRESETS.indexOf(playSpeed);
-    if(idx<0) idx=SPEED_PRESETS.indexOf(1);
-    if(speedEl && String(speedEl.value)!==String(idx)) speedEl.value=String(idx);
-    if(speedEl) speedEl.setAttribute('aria-valuetext', playSpeed+'×, '+playDaysPerSec()+' days per second');
+    if(!Speed) return;
+    var rate=Speed.formatRate(playDps);
+    var pos=Speed.dpsToPos(playDps);
+    if(speedEl){
+      var cur=parseFloat(speedEl.value);
+      if(!isFinite(cur) || Math.abs(cur-pos)>1e-3) speedEl.value=String(pos);
+      speedEl.setAttribute('aria-valuenow', String(Math.round(pos)));
+      speedEl.setAttribute('aria-valuemin', '0');
+      speedEl.setAttribute('aria-valuemax', String(Speed.SLIDER_MAX));
+      speedEl.setAttribute('aria-valuetext', rate.spoken);
+    }
     speedBtns.forEach(function(b){
       var s=parseFloat(b.getAttribute('data-speed'));
-      b.setAttribute('aria-pressed', String(s===playSpeed));
+      b.setAttribute('aria-pressed', String(Speed.near(playDps, s*Speed.BASE_DAYS_PER_SEC)));
     });
-    if(speedVal) speedVal.textContent=fmtSpeedLabel(playSpeed);
+    if(speedVal) speedVal.textContent=rate.label;
+    if(speedUnit) speedUnit.textContent=rate.unitLabel;
+    if(speedNum && !(speedNumDirty && document.activeElement===speedNum)){
+      speedNum.value=rate.num;
+      speedNum.setAttribute('aria-label', 'Play speed, '+rate.spoken);
+    }
   }
-  function setPlaySpeed(mult){
-    if(SPEED_PRESETS.indexOf(mult)<0) return;
-    playSpeed=mult;
+  function setPlayDps(dps){
+    if(!Speed) return;
+    var next=Speed.clamp(dps);
+    if(!isFinite(next)) return;
+    playDps=next;
+    speedNumDirty=false;
     savePlaySpeed();
     paintSpeed();
+  }
+  function setPlaySpeed(mult){
+    if(!Speed) return;
+    setPlayDps(mult*Speed.BASE_DAYS_PER_SEC);
+  }
+  function commitSpeedNum(){
+    if(!speedNum || !Speed) return;
+    var unit=speedUnit?speedUnit.textContent:'days/s';
+    var parsed=Speed.parseRate(speedNum.value, unit);
+    speedNumDirty=false;
+    if(parsed==null){ paintSpeed(); return; }
+    setPlayDps(parsed);
+  }
+  function onSpeedKey(ev){
+    if(!Speed) return;
+    var key=ev.key;
+    var onText=speedNum && ev.currentTarget===speedNum;
+    if(onText && (key==='ArrowLeft' || key==='ArrowRight' || key==='Home' || key==='End')) return;
+    if(ev.altKey || ev.ctrlKey || ev.metaKey) return;
+    var dir=0, coarse=!!ev.shiftKey;
+    if(key==='ArrowUp' || key==='ArrowRight') dir=1;
+    else if(key==='ArrowDown' || key==='ArrowLeft') dir=-1;
+    else if(key==='PageUp'){ dir=1; coarse=true; }
+    else if(key==='PageDown'){ dir=-1; coarse=true; }
+    else if(!onText && key==='Home'){ ev.preventDefault(); setPlayDps(Speed.MIN_DPS); return; }
+    else if(!onText && key==='End'){ ev.preventDefault(); setPlayDps(Speed.MAX_DPS); return; }
+    else return;
+    ev.preventDefault();
+    setPlayDps(Speed.nudge(playDps, dir, coarse));
+  }
+  function bindSpeedNudge(btn, dir){
+    if(!btn) return;
+    var delay=null, repeat=null, held=false, coarse=false;
+    function stop(){
+      held=false;
+      if(delay){ clearTimeout(delay); delay=null; }
+      if(repeat){ clearInterval(repeat); repeat=null; }
+    }
+    function apply(){
+      if(!Speed) return;
+      setPlayDps(Speed.nudge(playDps, dir, coarse));
+    }
+    btn.addEventListener('pointerdown', function(ev){
+      if(ev.button!=null && ev.button!==0) return;
+      held=true;
+      coarse=!!ev.shiftKey;
+      try{ btn.setPointerCapture(ev.pointerId); }catch(e){}
+      apply();
+      delay=setTimeout(function(){
+        repeat=setInterval(function(){ if(held) apply(); }, 80);
+      }, 380);
+      ev.preventDefault();
+    });
+    btn.addEventListener('pointerup', stop);
+    btn.addEventListener('pointercancel', stop);
+    btn.addEventListener('click', function(ev){
+      if(ev.detail!==0) return;
+      coarse=!!ev.shiftKey;
+      apply();
+    });
   }
   function updatePlayBtn(){
     playBtn.textContent=playing?'Pause':'Play';
@@ -1013,12 +1117,27 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(48
   });
   if(speedEl){
     speedEl.addEventListener('input',function(){
-      var idx=Math.round(+speedEl.value);
-      if(idx<0) idx=0;
-      if(idx>SPEED_PRESETS.length-1) idx=SPEED_PRESETS.length-1;
-      setPlaySpeed(SPEED_PRESETS[idx]);
+      if(!Speed) return;
+      setPlayDps(Speed.posToDps(speedEl.value));
+    });
+    speedEl.addEventListener('keydown', onSpeedKey);
+  }
+  if(speedNum){
+    speedNum.addEventListener('focus', function(){
+      speedNumDirty=false;
+      try{ speedNum.select(); }catch(e){}
+    });
+    speedNum.addEventListener('input', function(){ speedNumDirty=true; });
+    speedNum.addEventListener('change', commitSpeedNum);
+    speedNum.addEventListener('blur', function(){ if(speedNumDirty) commitSpeedNum(); });
+    speedNum.addEventListener('keydown', function(ev){
+      if(ev.key==='Enter'){ ev.preventDefault(); commitSpeedNum(); return; }
+      if(ev.key==='Escape'){ ev.preventDefault(); speedNumDirty=false; paintSpeed(); return; }
+      onSpeedKey(ev);
     });
   }
+  bindSpeedNudge(speedDec, -1);
+  bindSpeedNudge(speedInc, 1);
   document.getElementById('btn-labels').addEventListener('click',function(){
     showLabels=!showLabels;
     this.setAttribute('aria-pressed',String(showLabels));
