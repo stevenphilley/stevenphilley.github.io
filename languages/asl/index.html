@@ -1,0 +1,308 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASL trainer — American Sign Language fingerspelling — Steven Philley</title>
+<meta name="description" content="Beginner ASL trainer with original handshape diagrams: fingerspelling A–Z, numbers 0–20, and a starter vocabulary. Learn, Leitner flashcards, quizzes, and a fingerspelling reader. Progress stays in the browser.">
+<link rel="canonical" href="https://stevenphilley.com/languages/asl/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="ASL trainer — American Sign Language fingerspelling">
+<meta property="og:description" content="Original diagrams for the alphabet, numbers, and a starter vocabulary. Flashcards, quizzes, and a fingerspelling reader. Not a class.">
+<meta property="og:url" content="https://stevenphilley.com/languages/asl/">
+<meta property="og:image" content="https://stevenphilley.com/images/og/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ASL trainer — American Sign Language fingerspelling">
+<meta name="twitter:description" content="Alphabet, numbers, vocabulary, flashcards, and quizzes. Diagrams are simplified. Not a class.">
+<meta name="twitter:image" content="https://stevenphilley.com/images/og/og-home.png">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/languages/asl/asl.css">
+</head>
+<body>
+{% include nav.html %}
+
+<div class="asl-wrap wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/languages/">Languages</a>
+      <a href="/languages/asl/" aria-current="page">ASL</a>
+      <a href="/tools/">Tools</a>
+    </div>
+  </div>
+
+  <p class="kicker">Vol. Languages · American Sign Language</p>
+  <h1>ASL trainer</h1>
+  <p class="lede">Fingerspelling, numbers, and a short vocabulary, drawn as original diagrams. Practice with Leitner flashcards, two quizzes, a fingerspelling reader, and a spell-it drill. Progress stays in this browser. You can save it to a text file and load it back.</p>
+  <aside class="culture">
+    <strong>ASL is a language.</strong> It has its own grammar. It is not a code for English words, and it is not mime. It belongs to Deaf communities. This page is a beginner aid: simplified drawings, not a class, and not a substitute for Deaf instructors. Facial expression and movement carry meaning a still picture cannot show. Check a video before you rely on a sign.
+  </aside>
+  <p class="mini" id="asl-mini">Streak 0 · Due —</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Four modes</span>
+    <button type="button" class="help-q" id="asl-help" aria-haspopup="dialog" aria-controls="asl-help-dialog" aria-expanded="false" aria-label="How this ASL trainer works">?</button>
+  </div>
+
+  <div class="asl-modes" role="tablist" aria-label="Trainer modes">
+    <button type="button" role="tab" id="tab-learn" data-mode="learn" aria-selected="true" aria-controls="panel-learn">Learn</button>
+    <button type="button" role="tab" id="tab-cards" data-mode="cards" aria-selected="false" tabindex="-1" aria-controls="panel-cards">Flashcards</button>
+    <button type="button" role="tab" id="tab-quiz" data-mode="quiz" aria-selected="false" tabindex="-1" aria-controls="panel-quiz">Quiz</button>
+    <button type="button" role="tab" id="tab-progress" data-mode="progress" aria-selected="false" tabindex="-1" aria-controls="panel-progress">Progress</button>
+  </div>
+  <div class="asl-mode-compact">
+    <label for="asl-mode-select">Mode</label>
+    <select id="asl-mode-select">
+      <option value="learn">Learn</option>
+      <option value="cards">Flashcards</option>
+      <option value="quiz">Quiz</option>
+      <option value="progress">Progress</option>
+    </select>
+  </div>
+
+  <div id="asl-live" class="asl-vh" aria-live="polite"></div>
+
+  <section id="panel-learn" role="tabpanel" aria-labelledby="tab-learn" tabindex="-1">
+    <h2 class="asl-panel-title" tabindex="-1">Learn</h2>
+    <div class="asl-sub" role="group" aria-label="Set">
+      <button type="button" data-group="alphabet" aria-pressed="true">Alphabet</button>
+      <button type="button" data-group="numbers" aria-pressed="false">Numbers</button>
+      <button type="button" data-group="vocabulary" aria-pressed="false">Vocabulary</button>
+    </div>
+    <div class="asl-sub" id="asl-cats" role="group" aria-label="Vocabulary category" hidden>
+      <button type="button" data-cat="Greetings" aria-pressed="true">Greetings</button>
+      <button type="button" data-cat="People" aria-pressed="false">People</button>
+      <button type="button" data-cat="Questions" aria-pressed="false">Questions</button>
+      <button type="button" data-cat="Feelings" aria-pressed="false">Feelings</button>
+      <button type="button" data-cat="Everyday" aria-pressed="false">Everyday</button>
+      <button type="button" data-cat="Actions" aria-pressed="false">Actions</button>
+    </div>
+    <div class="asl-field">
+      <label for="asl-filter">Filter this list</label>
+      <input id="asl-filter" type="search" placeholder="Letter, number, or word" autocomplete="off">
+    </div>
+    <p id="asl-learn-empty" class="feedback" hidden>Nothing in this list matches the filter.</p>
+    <div id="asl-learn-body">
+      <div class="asl-learn">
+        <div class="asl-stage-wrap" id="asl-stage" tabindex="-1"></div>
+        <div class="asl-read">
+          <p class="kicker" id="asl-kicker">Alphabet</p>
+          <h2 id="asl-label">A</h2>
+          <dl class="params">
+            <div><dt>Handshape</dt><dd id="asl-handshape"></dd></div>
+            <div><dt>Location</dt><dd id="asl-location"></dd></div>
+            <div><dt>Movement</dt><dd id="asl-movement"></dd></div>
+            <div><dt>Palm</dt><dd id="asl-palm"></dd></div>
+          </dl>
+          <p class="asl-note" id="asl-note" hidden></p>
+          <div class="asl-pager">
+            <button type="button" id="asl-prev">Previous</button>
+            <span class="count" id="asl-count"></span>
+            <button type="button" id="asl-next">Next</button>
+          </div>
+        </div>
+      </div>
+      <div class="asl-grid" id="asl-grid"></div>
+    </div>
+  </section>
+
+  <section id="panel-cards" role="tabpanel" aria-labelledby="tab-cards" tabindex="-1" hidden>
+    <h2 class="asl-panel-title" tabindex="-1">Flashcards</h2>
+    <p class="feedback" id="asl-due-line"></p>
+    <div class="asl-field">
+      <label for="asl-deck">Deck</label>
+      <select id="asl-deck">
+        <option value="due">Due now</option>
+        <option value="alphabet">Alphabet</option>
+        <option value="numbers">Numbers</option>
+        <option value="vocabulary">Vocabulary</option>
+        <option value="all">Everything</option>
+      </select>
+    </div>
+    <ul class="boxes" id="asl-boxes-cards" aria-label="Leitner boxes"></ul>
+    <p id="asl-card-empty" class="feedback" hidden>Nothing left in this round. Due cards come back when their box interval is up. New cards start in box 1.</p>
+    <div class="asl-actions" id="asl-card-empty-actions">
+      <button type="button" id="asl-card-next-round">Another round</button>
+    </div>
+    <div class="asl-card" id="asl-card-face">
+      <p class="kicker" id="asl-card-kicker">Alphabet</p>
+      <p class="mini" id="asl-card-box">New</p>
+      <div class="asl-stage-wrap" id="asl-card-stage"></div>
+      <h2 id="asl-card-prompt">What is this?</h2>
+      <p class="feedback" id="asl-card-detail" hidden></p>
+      <div class="asl-actions">
+        <button type="button" id="asl-flip">Show answer</button>
+        <button type="button" id="asl-again" hidden>Don't know</button>
+        <button type="button" id="asl-know" hidden>Know</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-quiz" role="tabpanel" aria-labelledby="tab-quiz" tabindex="-1" hidden>
+    <h2 class="asl-panel-title" tabindex="-1">Quiz</h2>
+    <div class="asl-sub" role="group" aria-label="Quiz type">
+      <button type="button" data-quiz="recognize" aria-pressed="true">Recognize</button>
+      <button type="button" data-quiz="recall" aria-pressed="false">Recall</button>
+      <button type="button" data-quiz="reader" aria-pressed="false">Reader</button>
+      <button type="button" data-quiz="spell" aria-pressed="false">Spell it</button>
+    </div>
+    <div class="asl-field" id="asl-quiz-set-wrap">
+      <label for="asl-quiz-set">Set</label>
+      <select id="asl-quiz-set">
+        <option value="letters">Alphabet</option>
+        <option value="numbers">Numbers</option>
+        <option value="vocabulary">Vocabulary</option>
+      </select>
+    </div>
+
+    <div class="quiz-card" id="quiz-recognize">
+      <p class="mini" id="recog-meta">A handshape, then four answers.</p>
+      <div class="asl-stage-wrap" id="recog-stage"></div>
+      <div class="choice-grid" id="recog-choices"></div>
+      <p class="feedback" id="recog-feedback"></p>
+      <div class="asl-actions">
+        <button type="button" id="recog-start">Start round</button>
+        <button type="button" id="recog-next" class="quiz-next" hidden>Next</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-recall" hidden>
+      <p class="mini" id="recall-meta">A word or letter, then four handshapes.</p>
+      <p class="prompt-word" id="recall-prompt"></p>
+      <div class="hand-grid" id="recall-choices"></div>
+      <p class="feedback" id="recall-feedback"></p>
+      <div class="asl-actions">
+        <button type="button" id="recall-start">Start round</button>
+        <button type="button" id="recall-next" class="quiz-next" hidden>Next</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-reader" hidden>
+      <p class="mini">A word is spelled one letter at a time. Type what you saw.</p>
+      <div class="speed-row">
+        <label for="reader-speed">Seconds per letter</label>
+        <input id="reader-speed" type="range" min="0.4" max="2.5" step="0.1" value="1">
+        <span id="reader-speed-val">1.0 s</span>
+      </div>
+      <div class="asl-stage-wrap" id="reader-stage"></div>
+      <p class="slots" id="reader-slots" aria-live="polite">_ _ _</p>
+      <div class="asl-field">
+        <label for="reader-input">Type the word</label>
+        <input id="reader-input" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="done">
+      </div>
+      <p class="feedback" id="reader-feedback"></p>
+      <div class="asl-actions">
+        <button type="button" id="reader-play" aria-pressed="false">Play</button>
+        <button type="button" id="reader-check">Check</button>
+        <button type="button" id="reader-new">New word</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quiz-spell" hidden>
+      <p class="mini" id="spell-meta">The word stays visible. Match each letter.</p>
+      <div class="spell-word" id="spell-word" aria-live="polite">A word appears. Match each letter to its handshape.</div>
+      <div class="hand-grid" id="spell-choices"></div>
+      <p class="feedback" id="spell-feedback"></p>
+      <div class="asl-actions">
+        <button type="button" id="spell-start">New word</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="panel-progress" role="tabpanel" aria-labelledby="tab-progress" tabindex="-1" hidden>
+    <h2 class="asl-panel-title" tabindex="-1">Progress</h2>
+    <div class="progress-card">
+      <dl class="stats" id="asl-progress-stats"></dl>
+      <ul class="boxes" id="asl-boxes" aria-label="Leitner boxes"></ul>
+      <p class="asl-note">Box 1 is reviewed again the same day. Box 2 waits a day, then 3 days, 7, and 16. A miss sends the card back to box 1. A day of practice adds to the streak.</p>
+      <div class="asl-actions">
+        <button type="button" id="asl-save">Save to a file</button>
+        <label class="file-btn">Load a file
+          <input id="asl-load" type="file" accept=".txt,text/plain,application/json">
+        </label>
+        <button type="button" id="asl-reset">Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="band">Check the movement on video</p>
+  <div class="refs">
+    <h2>Free references</h2>
+    <ul>
+      <li><a href="https://gallaudet.edu/" rel="noopener noreferrer">Gallaudet University</a> — a bilingual university where ASL is a language of instruction. This page does not embed their media.</li>
+      <li><a href="https://www.handspeak.com/" rel="noopener noreferrer">Handspeak</a> — a sign dictionary with video. Use it to check movement. Nothing from that site is copied here.</li>
+      <li><a href="https://www.lifeprint.com/" rel="noopener noreferrer">Lifeprint</a> — Dr. Bill Vicars’s free ASL lessons, including fingerspelling and numbers.</li>
+      <li><a href="https://www.nidcd.nih.gov/health/american-sign-language" rel="noopener noreferrer">NIDCD — American Sign Language</a> — a short public overview of ASL as a complete language.</li>
+      <li><a href="https://www.nad.org/" rel="noopener noreferrer">National Association of the Deaf</a> — Deaf community and advocacy. Not a lesson source for these drawings.</li>
+    </ul>
+  </div>
+  <p class="honest">The drawings are original and simplified. J and Z move. Numbers 11–20 move. Most vocabulary signs move. An arrow or a numbered frame is not timing, and it is not facial expression. If a diagram and a reference video disagree, trust the video and a Deaf teacher. Regional signs differ. This set leaves out anything the page is not sure of.</p>
+  <noscript><p class="honest">The drills need JavaScript. The note above, and the reference links, still stand.</p></noscript>
+
+  {% include footer.html %}
+</div>
+
+<div id="asl-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="asl-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="asl-help-title">ASL trainer</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A beginner aid. ASL is a full language with its own grammar, used by Deaf communities. These diagrams are not a class and not a substitute for Deaf instructors.</p>
+    <h3>Modes</h3>
+    <table>
+      <caption>Modes</caption>
+      <tbody>
+        <tr><th scope="row">Learn</th><td>Alphabet, numbers 0–20, and vocabulary by category. The large picture sits with handshape, location, movement, and palm. Previous and Next, or the grid.</td></tr>
+        <tr><th scope="row">Flashcards</th><td>Leitner boxes. Show the answer, then Know or Don't know. Know moves the card up a box. Don't know sends it back to box 1. Due now is a round of up to 20 cards.</td></tr>
+        <tr><th scope="row">Recognize</th><td>See a handshape. Pick the letter, number, or word. Keys 1–4.</td></tr>
+        <tr><th scope="row">Recall</th><td>See the letter or word. Pick the handshape. Keys 1–4.</td></tr>
+        <tr><th scope="row">Reader</th><td>A word is spelled one letter at a time. Set the seconds per letter, press Play, then type the word. J and Z include a motion arrow.</td></tr>
+        <tr><th scope="row">Spell it</th><td>The target word stays on screen. For each highlighted letter, pick the handshape.</td></tr>
+        <tr><th scope="row">Progress</th><td>Streak, accuracy, and box counts. Save downloads a text file. Load reads that file back. Reset asks first. Nothing is uploaded.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keys</h3>
+    <table>
+      <caption>Keys</caption>
+      <tbody>
+        <tr><th scope="row">Learn</th><td>Left and right arrows move through the current list.</td></tr>
+        <tr><th scope="row">Cards</th><td>Space or Enter shows the answer. Then 1 is Don't know and 2 is Know.</td></tr>
+        <tr><th scope="row">Quiz</th><td>1 through 4 pick a choice, when you are not typing in a field.</td></tr>
+        <tr><th scope="row">Help</th><td>Question mark opens this dialog. Escape closes it.</td></tr>
+      </tbody>
+    </table>
+    <h3>How to read a diagram</h3>
+    <p>Palm toward you, the signer's right hand, thumb on the right of the drawing, unless the text says the palm faces in, down, or to the side. A dot on the small figure is the location: forehead, chin, chest, and so on. Arrows and numbered frames stand in for movement. If your system asks for less motion, the arrows stay still.</p>
+    <p>The same handshape can be a letter and a number. V and 2, O and 0, F and 9. The label says which set you are in. The quizzes do not mix those sets.</p>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<div id="asl-reset-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="asl-reset-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="asl-reset-title">Erase progress?</h2>
+      <button type="button" data-reset-close>Cancel</button>
+    </div>
+    <p class="help-lead">This clears letters, numbers, vocabulary, streaks, and quiz scores stored in this browser. A file you already saved is not deleted.</p>
+    <div class="asl-actions" style="padding:14px">
+      <button type="button" id="asl-reset-yes">Erase progress</button>
+      <button type="button" class="asl-text-btn" data-reset-close>Keep it</button>
+    </div>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/languages/asl/hands.js" defer></script>
+<script src="/languages/asl/signs.js" defer></script>
+<script src="/languages/asl/app.js" defer></script>
+</body>
+</html>
