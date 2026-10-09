@@ -1,0 +1,937 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roche limit — why a moon shreds into a ring — Steven Philley</title>
+<meta name="description" content="Interactive Roche desk: the fluid limit d ≈ 2.44 R (ρ_primary/ρ_satellite)^(1/3) and the rigid limit with 1.26. Saturn–Rhea, Earth–Moon, and Mars–Phobos use NASA fact-sheet densities, radii, and mean orbits. Rhea and the Moon sit outside both. Phobos sits between them. Classroom schematic, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/roche/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Roche limit — why a moon shreds into a ring">
+<meta property="og:description" content="Two distances, fluid and rigid, from NASA fact-sheet densities and radii. Rhea and the Moon sit outside both. Phobos sits between them. Not a mission tool.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/roche/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Roche limit — why a moon shreds into a ring">
+<meta name="twitter:description" content="Pick Saturn–Rhea, Earth–Moon, or Mars–Phobos. Fluid and rigid Roche distances, in km and in primary radii. Schematic, not an ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:66ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.pri{width:12px;height:12px;border:0;border-top:0;border-radius:50%;background:#ffe6b0}
+.swatch.sat{width:8px;height:8px;border:0;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.orbit{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.fluid{border-top-style:solid;border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.swatch.rigid{border-top-style:dashed;border-top-color:var(--ink,#e8e6e1)}
+.swatch.rings{width:18px;height:8px;border:0;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row input[type="range"]{flex:1 1 160px;min-width:140px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.ratio-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:8ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.play-btn:hover,.presets button:focus-visible,.play-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.play-btn[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(15px,2.2vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.02em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.themes{display:flex;border:1px solid var(--line,#2c303a)}
+.themes button{appearance:none;background:transparent;border:0;border-right:1px solid var(--line,#2c303a);color:var(--muted,#63666e);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);padding:5px 10px;cursor:pointer;text-transform:uppercase}
+.themes button:last-child{border-right:0}
+.themes button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/" aria-current="page">Roche</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The critical distance</p>
+  <h1>Roche<br>inside this distance, a moon shreds</h1>
+  <p class="lede">A moon that comes too close can be pulled apart, and the pieces can stay in orbit as a ring. The fluid Roche limit, the classic spherical form, is <strong>d ≈ 2.44 R · (ρ<sub>primary</sub> / ρ<sub>satellite</sub>)<sup>1/3</sup></strong>. The rigid-body variant uses <strong>1.26</strong> in place of 2.44. Read them as a band, not as one magic line. Presets use <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA fact-sheet</a> mean densities, volumetric mean radii, and mean orbital distances. For Saturn and Rhea the fluid distance is <strong>116,698 km</strong> (2.004 volumetric radii) and the rigid distance is <strong>60,262 km</strong> (1.035). Rhea’s semimajor axis is <strong>527,040 km</strong>, outside both. Earth–Moon gives a fluid distance of <strong>18,364 km</strong>; the Moon’s semimajor axis is <strong>384,400 km</strong>. Mars–Phobos gives fluid <strong>10,541 km</strong> and rigid <strong>5,443 km</strong>; Phobos’s mean orbital distance is <strong>9,378 km</strong>, between them. The <a href="/science/astronomy/tides/">tides</a> desk is the near-side and far-side difference. The <a href="/science/astronomy/lagrange/">Lagrange</a> desk is the five points that keep station.</p>
+  <p class="note-schematic">Classroom schematic. One plane, top-down from the north, so the orbit runs counterclockwise. In each panel the primary disk, the two Roche arcs, and the orbit share one radial scale. When the moon is far outside, the lower panel magnifies the neighborhood of the primary, and that panel has its own scale. The satellite mark is not the moon’s radius. On Saturn, the band is the rings fact sheet’s span from 66,900 km to 136,780 km, not a photograph. Densities are means. Compressed where a moon sits far out. Not an ephemeris. Not a mission tool.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Two limits</span>
+    <button type="button" class="help-q" id="roche-help" aria-haspopup="dialog" aria-controls="roche-help-dialog" aria-expanded="false" aria-label="How this Roche desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">From the north · orbit counterclockwise · schematic</p>
+      <canvas id="orbit" width="880" height="720" role="img" aria-label="Schematic of Saturn and Rhea. Rhea’s orbit is outside the fluid and rigid Roche arcs. Not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch pri" aria-hidden="true"></span> Primary</li>
+        <li><span class="swatch sat" aria-hidden="true"></span> Satellite</li>
+        <li><span class="swatch orbit" aria-hidden="true"></span> Mean orbit</li>
+        <li><span class="swatch fluid" aria-hidden="true"></span> Fluid</li>
+        <li><span class="swatch rigid" aria-hidden="true"></span> Rigid</li>
+        <li><span class="swatch rings" aria-hidden="true"></span> Rings, Saturn</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Pair</p>
+        <div class="presets" role="group" aria-label="Planet and moon">
+          <button type="button" data-pair="saturn-rhea" aria-pressed="true">Saturn–Rhea</button>
+          <button type="button" data-pair="earth-moon" aria-pressed="false">Earth–Moon</button>
+          <button type="button" data-pair="mars-phobos" aria-pressed="false">Mars–Phobos</button>
+        </div>
+        <p class="pick-label" id="ratio-note">Density ratio · ρ primary / ρ satellite · fact sheet</p>
+        <div class="slider-row">
+          <label for="ratio">Ratio</label>
+          <input type="range" id="ratio" min="0.25" max="4" step="0.001" value="0.554" aria-valuemin="0.25" aria-valuemax="4" aria-valuetext="0.554, fact sheet, Saturn and Rhea">
+          <span class="ratio-val" id="ratio-val">0.554</span>
+        </div>
+        <div class="presets" role="group" aria-label="Density ratio shortcuts">
+          <button type="button" id="btn-sheet" aria-pressed="true">Fact-sheet ratio</button>
+          <button type="button" id="btn-equal" aria-pressed="false">Equal density</button>
+          <button type="button" class="play-btn" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Saturn–Rhea · fact sheet · schematic</p>
+      <h2 id="r-title">Saturn–Rhea</h2>
+      <p class="range" id="r-range">Outside both limits</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Fluid · 2.44 R</p>
+          <p class="face" id="c-fluid">116,698 km</p>
+          <p class="sub" id="c-fluid-sub">2.004 volumetric radii</p>
+        </div>
+        <div class="clock">
+          <p class="k">Rigid · 1.26 R</p>
+          <p class="face" id="c-rigid">60,262 km</p>
+          <p class="sub" id="c-rigid-sub">1.035 volumetric radii</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Primary radius</span><span class="v" id="r-radius">58,232 km · volumetric mean</span></li>
+        <li><span class="k">Primary density</span><span class="v" id="r-rhop">687 kg/m³</span></li>
+        <li><span class="k">Satellite density</span><span class="v" id="r-rhos">1,240 kg/m³ · fact sheet</span></li>
+        <li><span class="k">Density ratio</span><span class="v" id="r-ratio">687 / 1,240 = 0.554</span></li>
+        <li><span class="k">Fluid distance</span><span class="v" id="r-fluid">116,698 km · 2.004 R</span></li>
+        <li><span class="k">Rigid distance</span><span class="v" id="r-rigid">60,262 km · 1.035 R</span></li>
+        <li><span class="k">Mean orbit</span><span class="v" id="r-orbit">527,040 km · 9.051 R</span></li>
+        <li><span class="k">Verdict</span><span class="v" id="r-verdict">Outside</span></li>
+      </ul>
+      <p class="why" id="r-why">Saturn’s volumetric mean radius is 58,232 km and its mean density is 687 kg/m³. Rhea’s mean density is 1,240 kg/m³. The fluid distance is 116,698 km and the rigid distance is 60,262 km. Rhea’s semimajor axis, 527,040 km, is outside both. The rings fact sheet puts the A ring’s outer edge at 136,780 km. That edge is outside Rhea’s fluid distance and inside the equal-density fluid distance, 142,086 km.</p>
+      <p class="cadence" id="r-cadence">Paused. Play walks the satellite mark around the mean orbit. About 12 seconds per turn. A time-lapse, not the real period. Schematic, not an ephemeris, not a mission tool.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Rings are not leftover paint">
+    <p class="tag">Not leftover paint</p>
+    <h2>A ring is material that cannot become a moon</h2>
+    <p>Rings are not paint left over from the planet’s making, sitting there because nobody cleaned up. Inside the Roche distance, loose material cannot gather into a moon. A body that wanders in can be pulled apart, and the pieces stay in orbit as a ring. Saturn’s bright rings are that kind of material. Rhea is not. Its mean orbit is hundreds of thousands of kilometers outside both limits computed for its density. The Moon is farther outside still. Phobos is the awkward one: the fact-sheet orbit sits between the rigid distance and the fluid one, and Phobos is irregular and a rubble body, so the formulas are a classroom comparison, not a forecast. The <a href="/science/astronomy/tides/">tides</a> desk is a gentler version of the same unequal pull. The <a href="/science/gravity/">gravity</a> desk is the pull itself.</p>
+  </aside>
+
+  <p class="band">The formulas</p>
+  <div class="means">
+    <p><strong>d ≈ 2.44 R · (ρ<sub>primary</sub> / ρ<sub>satellite</sub>)<sup>1/3</sup>.</strong> This is the fluid Roche limit in the classic spherical form. R is the primary’s volumetric mean radius. The densities are the fact-sheet means, in kg/m³, so the ratio has no units. A fluid moon has no strength. Inside this distance its own gravity cannot hold it together against the primary’s tide. The coefficient 2.44 already assumes a sphere. It is a classroom constant, not a fitted measurement from a spacecraft.</p>
+    <p><strong>d ≈ 1.26 R · (ρ<sub>primary</sub> / ρ<sub>satellite</sub>)<sup>1/3</sup>.</strong> The same cube root, with 1.26 in place of 2.44. This is the rigid-body variant: a body that can bear some stress, still idealized as a sphere. It sits closer to the primary than the fluid distance. The gap between the two numbers is the band. A moon outside the fluid distance is outside both. A moon inside the rigid distance is inside both. A moon between them is inside the fluid limit and outside the rigid one.</p>
+    <p><strong>The inputs.</strong> Saturn: volumetric mean radius 58,232 km, mean density 687 kg/m³. Rhea: mean density 1,240 kg/m³, semimajor axis 527.04 × 10³ km. Earth: volumetric mean radius 6,371.000 km, mean density 5,513 kg/m³. The Moon fact sheet’s Earth column prints 5,514; this desk uses the Earth Fact Sheet’s 5,513. Moon: mean density 3,344 kg/m³, semimajor axis 0.3844 × 10<sup>6</sup> km. Mars: volumetric mean radius 3,389.5 km, mean density 3,934 kg/m³. Phobos: mean density 1,900 kg/m³, mean orbital distance 9,378 km. The slider clamps the density ratio from 0.25 to 4 and leaves the orbit and the primary radius where the sheets put them. Equal density sets the ratio to 1.</p>
+    <p><strong>Saturn’s rings, as a comparison.</strong> The rings fact sheet lists the D ring’s inner edge at 66,900 km and the A ring’s outer edge at 136,780 km. Those kilometers are from Saturn’s center. The same sheet’s “Saturn radii” column divides by the equatorial radius 60,268 km, so the A edge is 2.270 equatorial radii. This desk’s R is the volumetric mean, 58,232 km, so the same edge is 2.349 volumetric radii. For Rhea’s density the fluid distance is 116,698 km, and the outer A ring sits outside that number. For equal density the fluid distance is 2.44 × 58,232 km = 142,086 km, and the A edge sits inside it. The classroom point is that icy material near Saturn cannot gather into a moon. It is not that every ring particle has Rhea’s density.</p>
+  </div>
+
+  <p class="band">Where this shows up</p>
+  <div class="means">
+    <p><strong>Saturn and Rhea.</strong> Rhea’s semimajor axis is 527,040 km, which the moon sheet also prints as 8.7449 Saturn radii using the equatorial radius. In volumetric radii that orbit is 9.051 R, far outside both limits for Rhea’s density. The axes on the sheet are 765 × 763 × 762 km. This page’s 763 km figure is the cube root of that product, labeled as derived. The ring band on the drawing is the fact-sheet span, drawn to the same scale as the arcs.</p>
+    <p><strong>Earth and the Moon.</strong> The fluid distance is 18,364 km, 2.882 Earth radii. The rigid distance is 9,483 km, 1.488 Earth radii. The Moon’s semimajor axis is 384,400 km, 60.336 Earth radii. The Moon is not close. The sheet also says the distance from Earth ranges roughly from 357,000 km to 407,000 km. Even the near end of that range is far outside 18,364 km. The Moon’s own volumetric mean radius, 1,737.4 km, is not an input to the formula. It is printed so the moon has a size on the page.</p>
+    <p><strong>Mars and Phobos.</strong> The fluid distance is 10,541 km, 3.110 Mars radii. The rigid distance is 5,443 km, 1.606 Mars radii. Phobos’s mean orbital distance is 9,378 km, 2.767 Mars radii. That is inside the fluid limit and outside the rigid one: between. The sheet gives three axes, 13.0 × 11.4 × 9.1 km, and a mean density of 1,900 kg/m³. Phobos is irregular. The formulas assume a sphere. Treat the verdict as a schematic comparison of those published means, not as a claim that Phobos is about to come apart.</p>
+  </div>
+
+  <p class="band">Literacy · a band, not a line</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Roche limit</dt><dd>The distance inside which a satellite cannot hold together against the primary’s tide. This page prints two of them. The fluid number uses 2.44. The rigid number uses 1.26. Both scale with the cube root of the density ratio.</dd></div>
+    <div class="gloss"><dt>Fluid</dt><dd>A strengthless sphere. Its own gravity is the only thing holding it. The classic equal-density case, ratio 1, puts the fluid limit at 2.44 primary radii. For Saturn’s volumetric radius that is 142,086 km, outside the A ring’s 136,780 km edge.</dd></div>
+    <div class="gloss"><dt>Rigid</dt><dd>The same cube root, closer in, for a body that can bear some stress. Still a sphere in the formula. Real rubble, spin, and internal strength move the true distance. This page does not add a strength model.</dd></div>
+    <div class="gloss"><dt>Inside, between, outside</dt><dd>Outside: the mean orbit is beyond the fluid distance, so it is beyond both. Between: inside the fluid distance and outside the rigid one. Inside: inside the rigid distance, so inside both. Phobos, on the fact-sheet ratio, is between. Rhea and the Moon are outside.</dd></div>
+    <div class="gloss"><dt>Density ratio</dt><dd>ρ<sub>primary</sub> / ρ<sub>satellite</sub>. Saturn over Rhea is 687 / 1,240. Earth over the Moon is 5,513 / 3,344. Mars over Phobos is 3,934 / 1,900. The slider runs from 0.25 to 4. Equal density is 1. Moving it does not move the moon. It only moves the two arcs.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the circles leave out</dt><dd>Eccentricity, the barycenter, spin, internal strength, and every other body. Orbits are drawn as circles centered on the primary. Body disks use the volumetric mean radius; the satellite mark does not. Saturn’s band is a fact-sheet radial span, not a picture of the rings. Phobos is rubble and irregular. The lower panel, when it appears, has its own scale. Mean densities, compressed where a moon is far away. Not an ephemeris. Not a mission tool.</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the per-body sheets. Radii below are volumetric mean radii unless the sheet prints three axes. Densities are the published mean densities in kg/m³.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturn Fact Sheet</a> — Volumetric mean radius 58,232 km. Mean density 687 kg/m³. Equatorial radius (1 bar) 60,268 km, which the rings sheet uses as its Saturn radius. Last updated 18 March 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturniansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturnian Satellite Fact Sheet</a> — Rhea: axes 765 × 763 × 762 km, mean density 1,240 kg/m³, semimajor axis 527.04 × 10³ km, also printed as 8.7449 Saturn radii. The sheet notes uncertainties in most radii, with regular-satellite values rounded from Thomas, Icarus, 2010. Last updated 22 July 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/satringfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturnian Rings Fact Sheet</a> — D inner edge 66,900 km. A outer edge 136,780 km (2.270 equatorial radii, equator 60,268 km). Last updated 19 April 2022.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Volumetric mean radius 6,371.000 km. Mean density 5,513 kg/m³. Last updated 15 November 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — Volumetric mean radius 1,737.4 km. Mean density 3,344 kg/m³. Semimajor axis 0.3844 × 10<sup>6</sup> km. The Earth column on that sheet prints density 5,514. This desk uses the Earth Fact Sheet’s 5,513. The distance from Earth roughly ranges from 357,000 km to 407,000 km. Last updated 11 January 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — Volumetric mean radius 3,389.5 km. Mean density 3,934 kg/m³. Phobos, in the satellites table: mean orbital distance 9,378 km, axes 13.0 × 11.4 × 9.1 km, mean density 1,900 kg/m³. The footnote calls 9,378 km the mean orbital distance from the center of Mars. Last updated 19 May 2025.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of the Roche band. Fluid distance 2.44 R times the cube root of the density ratio. Rigid distance 1.26 R times the same cube root. Saturn–Rhea: 116,698 km and 60,262 km, Rhea at 527,040 km, outside. Earth–Moon: 18,364 km and 9,483 km, the Moon at 384,400 km, outside. Mars–Phobos: 10,541 km and 5,443 km, Phobos at 9,378 km, between. The A ring’s outer edge, 136,780 km, sits inside the equal-density fluid distance for Saturn, 142,086 km. Mean densities, spherical formulas, circles about the primary. Not an ephemeris, and not a mission tool. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/tides/"><p class="n">The difference</p><h3>Tides</h3><p>The same unequal pull, gentle enough to bulge an ocean. Two bulges, not a tide table.</p></a>
+    <a href="/science/astronomy/lagrange/"><p class="n">The five points</p><h3>Lagrange</h3><p>L1 through L5. Sun–Earth L2 is 1,501,538 km from Earth. A different equilibrium.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Weight, Newton, Einstein — the force that both holds a moon and can shred it.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Saturn, Earth, and Mars sit. Day and local time, still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="roche-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="roche-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="roche-help-title">Roche desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Two Roche distances for a planet and a moon, drawn as arcs around the primary. The numbers come from NASA fact-sheet densities, radii, and mean orbits. The picture is a classroom schematic, not an ephemeris and not a mission tool.</p>
+    <h3>Choose the pair</h3>
+    <table>
+      <caption>Choose the pair</caption>
+      <tbody>
+        <tr><th scope="row">Saturn–Rhea</th><td>The default. Saturn 58,232 km and 687 kg/m³. Rhea 1,240 kg/m³, orbit 527,040 km. Fluid 116,698 km. Rigid 60,262 km. Outside both. The ring band runs from 66,900 km to 136,780 km.</td></tr>
+        <tr><th scope="row">Earth–Moon</th><td>Earth 6,371.000 km and 5,513 kg/m³. Moon 3,344 kg/m³, orbit 384,400 km. Fluid 18,364 km. Rigid 9,483 km. The Moon is far outside. The lower panel is there because the arcs would otherwise hug the disk.</td></tr>
+        <tr><th scope="row">Mars–Phobos</th><td>Mars 3,389.5 km and 3,934 kg/m³. Phobos 1,900 kg/m³, mean orbit 9,378 km. Fluid 10,541 km. Rigid 5,443 km. Between: inside the fluid limit, outside the rigid one. Phobos is irregular and rubble. Schematic only.</td></tr>
+      </tbody>
+    </table>
+    <h3>Ratio, play, and the drawing</h3>
+    <table>
+      <caption>Ratio, play, and the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Ratio slider</th><td>ρ primary / ρ satellite, clamped from 0.25 to 4. The orbit and the primary radius stay on the fact sheet. Only the two arcs move. The label says “what-if” once you leave the fact-sheet ratio.</td></tr>
+        <tr><th scope="row">Fact-sheet ratio</th><td>Puts the slider back on the published densities for this pair.</td></tr>
+        <tr><th scope="row">Equal density</th><td>Sets the ratio to 1. For Saturn that fluid distance is 142,086 km, which is outside the A ring’s 136,780 km edge. That is the classroom comparison for the rings.</td></tr>
+        <tr><th scope="row">Play</th><td>Walks the satellite mark counterclockwise, as seen from the north. About 12 seconds per turn. A time-lapse, not the moon’s period. Press again to pause.</td></tr>
+        <tr><th scope="row">Full view</th><td>Primary at the center, to its volumetric radius. Dashed circle: the mean orbit. Solid arc: fluid. Dashed arc: rigid. On Saturn, the band is the rings span. The satellite mark is not the moon’s radius.</td></tr>
+        <tr><th scope="row">Lower panel</th><td>Appears when the moon is far outside the arcs. Magnified, own scale, and it does not spin with Play. It is there so the two arcs are readable when the orbit is huge.</td></tr>
+        <tr><th scope="row">N</th><td>North, the view. Motion runs counterclockwise, the same sense as the other top-down desks.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Fluid and rigid faces</th><td>The two distances in kilometers. The line under each face is that distance in volumetric radii of the primary. Rounded to the nearest kilometer from the formulas above.</td></tr>
+        <tr><th scope="row">Mean orbit</th><td>The fact-sheet semimajor axis, or Phobos’s mean orbital distance. Also in volumetric radii. Rhea’s sheet also prints 8.7449 equatorial Saturn radii. This page’s 9.051 uses 58,232 km, not 60,268 km.</td></tr>
+        <tr><th scope="row">Verdict</th><td>Outside, between, or inside. Between means inside the fluid distance and outside the rigid one. The words follow the numbers. They are not a prediction.</td></tr>
+        <tr><th scope="row">Satellite size</th><td>The Moon has a published volumetric mean radius, 1,737.4 km. Rhea and Phobos have three axes. The single kilometer figure for those two is the cube root of the product, and it is labeled derived. Size is not an input to the formula.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* Classroom Roche desk.
+     d_fluid = 2.44 * R * (rho_p / rho_s)^(1/3)
+     d_rigid = 1.26 * R * (rho_p / rho_s)^(1/3)
+     R, densities, and orbits: NASA NSSDCA fact sheets.
+     Slider clamps the density ratio. It does not move the orbit.
+     Not an ephemeris. Not a mission tool. */
+  var TAU = Math.PI * 2;
+  var LAP_MS = 12000;
+  var FLUID_K = 2.44;
+  var RIGID_K = 1.26;
+  var RATIO_MIN = 0.25;
+  var RATIO_MAX = 4;
+
+  var PAIRS = {
+    "saturn-rhea": {
+      id: "saturn-rhea",
+      title: "Saturn–Rhea",
+      primary: "Saturn",
+      satellite: "Rhea",
+      R: 58232,
+      RLabel: "58,232 km",
+      rhoP: 687,
+      rhoS: 1240,
+      rhoPLabel: "687 kg/m³",
+      rhoSLabel: "1,240 kg/m³",
+      orbit: 527040,
+      orbitLabel: "527,040 km",
+      axes: [765, 763, 762],
+      axesLabel: "765 × 763 × 762 km",
+      priFill: "#ffe6b0",
+      satFill: "#d5d0c6",
+      rings: { inner: 66900, outer: 136780 },
+      extra: "The moon sheet also prints Rhea’s orbit as 8.7449 equatorial Saturn radii. This page’s radii use the volumetric mean, 58,232 km, so the same 527,040 km is 9.051 R. The 763 km size is the cube root of 765 × 763 × 762, derived from the axes, not a separate sheet line."
+    },
+    "earth-moon": {
+      id: "earth-moon",
+      title: "Earth–Moon",
+      primary: "Earth",
+      satellite: "Moon",
+      R: 6371,
+      RLabel: "6,371.000 km",
+      rhoP: 5513,
+      rhoS: 3344,
+      rhoPLabel: "5,513 kg/m³",
+      rhoSLabel: "3,344 kg/m³",
+      orbit: 384400,
+      orbitLabel: "384,400 km",
+      meanRadiusLabel: "1,737.4 km volumetric mean",
+      priFill: "#8eb4c9",
+      satFill: "#c5c7ce",
+      rings: null,
+      extra: "The Moon’s volumetric mean radius is 1,737.4 km. It is not an input. The Moon fact sheet’s Earth column prints density 5,514 kg/m³. This desk uses the Earth Fact Sheet’s 5,513. The sheet says the distance from Earth roughly ranges from 357,000 km to 407,000 km. Both ends are outside the fluid distance."
+    },
+    "mars-phobos": {
+      id: "mars-phobos",
+      title: "Mars–Phobos",
+      primary: "Mars",
+      satellite: "Phobos",
+      R: 3389.5,
+      RLabel: "3,389.5 km",
+      rhoP: 3934,
+      rhoS: 1900,
+      rhoPLabel: "3,934 kg/m³",
+      rhoSLabel: "1,900 kg/m³",
+      orbit: 9378,
+      orbitLabel: "9,378 km",
+      axes: [13.0, 11.4, 9.1],
+      axesLabel: "13.0 × 11.4 × 9.1 km",
+      priFill: "#c4784a",
+      satFill: "#b7b1a8",
+      rings: null,
+      extra: "Phobos is irregular and a rubble body. The formulas assume a sphere of the sheet’s mean density. The 11.0 km size is the cube root of 13.0 × 11.4 × 9.1, derived from the axes. The verdict is a classroom comparison, not a forecast."
+    }
+  };
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("orbit");
+  var playBtn = document.getElementById("btn-play");
+  var sheetBtn = document.getElementById("btn-sheet");
+  var equalBtn = document.getElementById("btn-equal");
+  var ratioInput = document.getElementById("ratio");
+  var pairBtns = [].slice.call(document.querySelectorAll("[data-pair]"));
+  var state = { pair: "saturn-rhea", mode: "sheet", custom: null, angle: 0, playing: false };
+  var raf = 0;
+  var lastT = 0;
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function group(n, digits){
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function fmtKm(km){
+    if (!isFinite(km)) return "—";
+    return group(Math.round(km), 0) + " km";
+  }
+  function fmtRho(n){
+    return group(n, 0) + " kg/m³";
+  }
+  function sheetRatio(p){ return p.rhoP / p.rhoS; }
+  function activeRatio(p){
+    if (state.mode === "equal") return 1;
+    if (state.mode === "custom") return clamp(state.custom, RATIO_MIN, RATIO_MAX);
+    return sheetRatio(p);
+  }
+  function limits(p, ratio){
+    var c = Math.pow(ratio, 1 / 3);
+    return {
+      ratio: ratio,
+      cbrt: c,
+      fluid: FLUID_K * p.R * c,
+      rigid: RIGID_K * p.R * c
+    };
+  }
+  function verdictOf(orbit, fluid, rigid){
+    if (orbit < rigid) return "inside";
+    if (orbit < fluid) return "between";
+    return "outside";
+  }
+  function verdictShort(v){
+    if (v === "inside") return "Inside both limits";
+    if (v === "between") return "Between the two limits";
+    return "Outside both limits";
+  }
+  function verdictLong(v){
+    if (v === "inside") return "Inside. The mean orbit is inside the rigid distance, so it is inside both limits.";
+    if (v === "between") return "Between. Inside the fluid limit, outside the rigid one.";
+    return "Outside. The mean orbit is beyond the fluid distance, so it is beyond both limits.";
+  }
+  function sizeText(p){
+    if (p.axes){
+      var g = Math.pow(p.axes[0] * p.axes[1] * p.axes[2], 1 / 3);
+      var shown = g >= 100 ? group(Math.round(g), 0) : g.toFixed(1);
+      return p.axesLabel + " · " + shown + " km derived from the axes";
+    }
+    return p.meanRadiusLabel;
+  }
+  function modeLabel(){
+    if (state.mode === "equal") return "equal density · what-if";
+    if (state.mode === "custom") return "slider · what-if";
+    return "fact sheet";
+  }
+
+  function scenario(){
+    var p = PAIRS[state.pair];
+    var ratio = activeRatio(p);
+    var lim = limits(p, ratio);
+    var v = verdictOf(p.orbit, lim.fluid, lim.rigid);
+    var equal = limits(p, 1);
+    return {
+      p: p,
+      ratio: ratio,
+      sheet: sheetRatio(p),
+      fluid: lim.fluid,
+      rigid: lim.rigid,
+      equalFluid: equal.fluid,
+      equalRigid: equal.rigid,
+      verdict: v,
+      fluidR: lim.fluid / p.R,
+      rigidR: lim.rigid / p.R,
+      orbitR: p.orbit / p.R
+    };
+  }
+
+  function setPressed(sc){
+    pairBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-pair") === state.pair));
+    });
+    sheetBtn.setAttribute("aria-pressed", String(state.mode === "sheet"));
+    equalBtn.setAttribute("aria-pressed", String(state.mode === "equal"));
+    playBtn.setAttribute("aria-pressed", String(state.playing));
+    var shown = state.mode === "sheet" ? sc.sheet : sc.ratio;
+    ratioInput.value = String(clamp(shown, RATIO_MIN, RATIO_MAX));
+    ratioInput.setAttribute("aria-valuetext", shown.toFixed(3) + ", " + modeLabel() + ", " + sc.p.title);
+    ratioInput.setAttribute("aria-valuenow", shown.toFixed(3));
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function toScreen(cx, cy, scale, xKm, yKm){
+    return { x: cx + xKm * scale, y: cy - yKm * scale };
+  }
+  function disk(ctx, x, y, r, fill){
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(1.5, r), 0, TAU);
+    ctx.fillStyle = fill;
+    ctx.fill();
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+  }
+  function ringArc(ctx, cx, cy, r, color, dashed, width){
+    if (!(r > 2)) return;
+    var gap = 0.42;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, gap, TAU - gap);
+    ctx.setLineDash(dashed ? [5, 4] : []);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  function annulus(ctx, cx, cy, r0, r1, color){
+    if (!(r1 > r0 + 0.5)) return;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r1, 0, TAU);
+    ctx.arc(cx, cy, Math.max(0, r0), 0, TAU, true);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  function paintReadout(sc){
+    var p = sc.p;
+    var why = p.primary + "’s volumetric mean radius is " + p.RLabel + " and its mean density is " + p.rhoPLabel + ". ";
+    why += p.satellite + "’s mean density is " + p.rhoSLabel + ". ";
+    why += "The fact-sheet ratio is " + fmtRho(p.rhoP).replace(" kg/m³", "") + " / " + fmtRho(p.rhoS).replace(" kg/m³", "") + " = " + sc.sheet.toFixed(3) + ". ";
+    if (state.mode !== "sheet"){
+      why += "The arcs are using " + sc.ratio.toFixed(3) + ", a classroom what-if. The orbit stays on the fact sheet. ";
+    }
+    why += "Fluid distance " + fmtKm(sc.fluid) + " (" + sc.fluidR.toFixed(3) + " R). Rigid distance " + fmtKm(sc.rigid) + " (" + sc.rigidR.toFixed(3) + " R). ";
+    why += "Mean orbit " + p.orbitLabel + " (" + sc.orbitR.toFixed(3) + " R). " + verdictLong(sc.verdict) + " ";
+    if (sc.rigid < p.R) why += "The rigid distance is inside the volumetric radius, so that arc sits under the disk. ";
+    why += "Satellite size: " + sizeText(p) + ". ";
+    if (p.rings){
+      why += "The rings fact sheet runs from " + fmtKm(p.rings.inner) + " to " + fmtKm(p.rings.outer) + ". ";
+      why += "The A-ring outer edge is " + (p.rings.outer < sc.fluid ? "inside" : "outside") + " this fluid distance. ";
+      why += "Equal density, ratio 1, puts the fluid distance at " + fmtKm(sc.equalFluid) + " (" + (sc.equalFluid / p.R).toFixed(3) + " R), and the A edge is " + (p.rings.outer < sc.equalFluid ? "inside" : "outside") + " that one. ";
+    } else {
+      why += "Equal density would put the fluid distance at " + fmtKm(sc.equalFluid) + ". ";
+    }
+    why += p.extra;
+
+    var ratioLine = state.mode === "sheet"
+      ? fmtRho(p.rhoP).replace(" kg/m³", "") + " / " + fmtRho(p.rhoS).replace(" kg/m³", "") + " = " + sc.sheet.toFixed(3)
+      : sc.ratio.toFixed(3) + " · " + modeLabel();
+
+    document.getElementById("r-tier").textContent = p.title + " · " + modeLabel() + " · schematic";
+    document.getElementById("r-title").textContent = p.title;
+    document.getElementById("r-range").textContent = verdictShort(sc.verdict);
+    document.getElementById("c-fluid").textContent = fmtKm(sc.fluid);
+    document.getElementById("c-rigid").textContent = fmtKm(sc.rigid);
+    document.getElementById("c-fluid-sub").textContent = sc.fluidR.toFixed(3) + " volumetric radii";
+    document.getElementById("c-rigid-sub").textContent = sc.rigidR.toFixed(3) + " volumetric radii";
+    document.getElementById("r-radius").textContent = p.RLabel + " · volumetric mean";
+    document.getElementById("r-rhop").textContent = p.rhoPLabel;
+    document.getElementById("r-rhos").textContent = p.rhoSLabel + (state.mode === "sheet" ? " · fact sheet" : " · fact sheet, arcs use the slider");
+    document.getElementById("r-ratio").textContent = ratioLine;
+    document.getElementById("r-fluid").textContent = fmtKm(sc.fluid) + " · " + sc.fluidR.toFixed(3) + " R";
+    document.getElementById("r-rigid").textContent = fmtKm(sc.rigid) + " · " + sc.rigidR.toFixed(3) + " R";
+    document.getElementById("r-orbit").textContent = p.orbitLabel + " · " + sc.orbitR.toFixed(3) + " R";
+    document.getElementById("r-verdict").textContent = verdictLong(sc.verdict);
+    document.getElementById("r-why").textContent = why;
+    document.getElementById("ratio-note").textContent = "Density ratio · ρ primary / ρ satellite · " + modeLabel();
+    document.getElementById("ratio-val").textContent = (state.mode === "sheet" ? sc.sheet : sc.ratio).toFixed(3);
+    var coast = state.playing
+      ? "Playing. About 12 seconds per turn. A time-lapse, not the real period. Schematic, not an ephemeris, not a mission tool."
+      : "Paused. Play walks the satellite mark around the mean orbit. About 12 seconds per turn. A time-lapse, not the real period. Schematic, not an ephemeris, not a mission tool.";
+    document.getElementById("r-cadence").textContent = coast;
+    document.getElementById("orbit-hint").textContent = state.playing
+      ? "Turning · from the north · schematic"
+      : "From the north · orbit counterclockwise · schematic";
+    canvas.setAttribute("aria-label", "Schematic of " + p.title + ". Fluid distance " + fmtKm(sc.fluid) + ". Rigid distance " + fmtKm(sc.rigid) + ". Mean orbit " + p.orbitLabel + ". " + verdictLong(sc.verdict) + " Not an ephemeris.");
+  }
+
+  function drawPanel(ctx, sc, box, inset){
+    var p = sc.p;
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var reach = inset
+      ? Math.max(sc.fluid, sc.rigid, p.R * 1.2, p.rings ? p.rings.outer : 0) * 1.28
+      : Math.max(p.orbit, sc.fluid, sc.rigid, p.rings ? p.rings.outer : 0) * 1.16;
+    var scale = Math.min(box.w, box.h) * 0.42 / reach;
+    var cx = box.x + box.w * 0.5;
+    var cy = box.y + box.h * 0.52;
+    function P(kmx, kmy){ return toScreen(cx, cy, scale, kmx, kmy); }
+
+    if (!inset){
+      text(ctx, "N", cx, box.y + 12, { align: "center", size: 11, color: soft });
+    }
+
+    if (p.rings){
+      ctx.save();
+      ctx.globalAlpha = 0.28;
+      annulus(ctx, cx, cy, p.rings.inner * scale, p.rings.outer * scale, accent);
+      ctx.restore();
+    }
+
+    if (!inset || p.orbit <= reach){
+      ctx.beginPath();
+      ctx.arc(cx, cy, p.orbit * scale, 0, TAU);
+      ctx.setLineDash([4, 5]);
+      ctx.strokeStyle = soft;
+      ctx.lineWidth = 1.15;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    if (!inset && p.orbit * scale > 28){
+      var a0 = state.angle + 0.35;
+      var tip = P(Math.cos(a0) * p.orbit, Math.sin(a0) * p.orbit);
+      var back = P(Math.cos(a0 - 0.12) * p.orbit, Math.sin(a0 - 0.12) * p.orbit);
+      ctx.beginPath();
+      ctx.moveTo(back.x, back.y);
+      ctx.lineTo(tip.x, tip.y);
+      ctx.strokeStyle = muted;
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+
+    ringArc(ctx, cx, cy, sc.fluid * scale, accent, false, 2.25);
+    ringArc(ctx, cx, cy, sc.rigid * scale, ink, true, 1.35);
+
+    disk(ctx, cx, cy, p.R * scale, p.priFill);
+
+    var showSat = !inset || p.orbit <= reach * 0.92;
+    if (showSat){
+      var sat = P(Math.cos(state.angle) * p.orbit, Math.sin(state.angle) * p.orbit);
+      disk(ctx, sat.x, sat.y, 5.5, p.satFill);
+      var out = P(Math.cos(state.angle) * (p.orbit + reach * 0.08), Math.sin(state.angle) * (p.orbit + reach * 0.08));
+      text(ctx, p.satellite, out.x, out.y, {
+        align: out.x >= cx ? "left" : "right",
+        size: 11,
+        color: ink
+      });
+    }
+
+    text(ctx, p.primary, cx, cy + Math.max(14, p.R * scale + 12), { align: "center", size: 11, color: ink });
+
+    function tag(km, label, ang, color){
+      if (!(km * scale > 8)) return;
+      var pt = P(Math.cos(ang) * km, Math.sin(ang) * km);
+      var nudge = P(Math.cos(ang) * (km + reach * 0.06), Math.sin(ang) * (km + reach * 0.06));
+      text(ctx, label, nudge.x, nudge.y, {
+        align: nudge.x >= cx ? "left" : "right",
+        size: 10,
+        color: color
+      });
+    }
+    tag(sc.fluid, "fluid", 0.95, accent);
+    tag(sc.rigid, "rigid", 2.35, ink);
+    if (p.rings && p.rings.outer * scale > 16){
+      tag(p.rings.outer, "A outer", -0.7, muted);
+    }
+
+    if (inset && !showSat){
+      text(ctx, p.satellite + "’s orbit is off this panel", cx, box.y + box.h - 12, { align: "center", size: 10, color: muted });
+    }
+  }
+
+  function render(){
+    var sc = scenario();
+    setPressed(sc);
+    paintReadout(sc);
+    var p = sc.p;
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = clamp(cssW, 280, 760);
+    var showInset = sc.fluid < p.orbit * 0.72 && sc.rigid < p.orbit * 0.72;
+    var cssH = Math.round(clamp(cssW * (showInset ? 1.16 : 0.92), showInset ? 460 : 340, 760));
+    var ctx = fitCanvas(cssW, cssH);
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    if (!showInset){
+      drawPanel(ctx, sc, { x: 8, y: 8, w: cssW - 16, h: cssH - 16 }, false);
+      return;
+    }
+    var split = Math.round(cssH * 0.58);
+    drawPanel(ctx, sc, { x: 8, y: 4, w: cssW - 16, h: split - 8 }, false);
+    ctx.beginPath();
+    ctx.moveTo(12, split);
+    ctx.lineTo(cssW - 12, split);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    text(ctx, "Near " + p.primary + " · magnified · own scale", 12, split + 14, { size: 10, color: muted });
+    drawPanel(ctx, sc, { x: 8, y: split + 22, w: cssW - 16, h: cssH - split - 28 }, true);
+  }
+
+  function stopPlay(){
+    state.playing = false;
+    lastT = 0;
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+  }
+  function frame(now){
+    if (!state.playing) return;
+    if (!lastT) lastT = now;
+    var dt = Math.min(48, now - lastT);
+    lastT = now;
+    state.angle = (state.angle + TAU * dt / LAP_MS) % TAU;
+    render();
+    raf = requestAnimationFrame(frame);
+  }
+
+  pairBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.pair = b.getAttribute("data-pair");
+      state.mode = "sheet";
+      state.custom = null;
+      render();
+    });
+  });
+  sheetBtn.addEventListener("click", function(){
+    state.mode = "sheet";
+    state.custom = null;
+    render();
+  });
+  equalBtn.addEventListener("click", function(){
+    state.mode = "equal";
+    state.custom = 1;
+    render();
+  });
+  ratioInput.addEventListener("input", function(){
+    state.mode = "custom";
+    state.custom = clamp(parseFloat(ratioInput.value), RATIO_MIN, RATIO_MAX);
+    if (Math.abs(state.custom - 1) < 0.0005) state.mode = "equal";
+    var sheet = sheetRatio(PAIRS[state.pair]);
+    if (Math.abs(state.custom - sheet) < 0.0005){
+      state.mode = "sheet";
+      state.custom = null;
+    }
+    render();
+  });
+  playBtn.addEventListener("click", function(){
+    if (state.playing){ stopPlay(); render(); return; }
+    state.playing = true;
+    lastT = 0;
+    render();
+    raf = requestAnimationFrame(frame);
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    new ResizeObserver(function(){ render(); }).observe(canvas.parentElement || canvas);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+
+  var check = {
+    "saturn-rhea": { fluid: 116698, rigid: 60262, verdict: "outside" },
+    "earth-moon": { fluid: 18364, rigid: 9483, verdict: "outside" },
+    "mars-phobos": { fluid: 10541, rigid: 5443, verdict: "between" }
+  };
+  Object.keys(check).forEach(function(id){
+    var p = PAIRS[id];
+    var lim = limits(p, sheetRatio(p));
+    var expect = check[id];
+    if (Math.round(lim.fluid) !== expect.fluid || Math.round(lim.rigid) !== expect.rigid || verdictOf(p.orbit, lim.fluid, lim.rigid) !== expect.verdict){
+      console.warn("Roche check failed", id, Math.round(lim.fluid), Math.round(lim.rigid));
+    }
+  });
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("roche-help");
+  var helpDialog = document.getElementById("roche-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
