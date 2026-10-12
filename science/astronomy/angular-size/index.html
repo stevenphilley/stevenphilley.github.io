@@ -1,0 +1,967 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angular size — why the Moon and Sun look the same size — Steven Philley</title>
+<meta name="description" content="Interactive angular-size desk: δ = 2·arctan(d / 2D), with d/D in radians beside it. Mean-perigee Moon 32.880′. Aphelion Sun 31.448′. Ratio above 1 can be total; below 1 is annular. NASA fact sheets. Classroom schematic, not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/angular-size/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Angular size — why the Moon and Sun look the same size">
+<meta property="og:description" content="A mean-perigee Moon is 32.880′. An aphelion Sun is 31.448′. Ratio 1.0455 can cover the Sun. An apogee Moon at 29.458′ leaves a ring. Fact-sheet distances. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/angular-size/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Angular size — why the Moon and Sun look the same size">
+<meta name="twitter:description" content="Sliders for diameter and distance. Moon perigee and apogee, Sun perihelion and aphelion, from NASA fact sheets. Ratio above 1 can be total; below 1 is annular.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage,.compare{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border-radius:50%;background:var(--ink,#e8e6e1);flex:0 0 auto}
+.swatch.moon{background:#d5d8e0}
+.swatch.sun{background:#ffe6b0}
+.swatch.ref{background:transparent;border:2px dashed var(--accent,#c8b48a);box-sizing:border-box}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:8.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.num,.unit{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);min-height:44px;padding:0 10px}
+.num{width:12ch;min-width:0}
+.unit{text-transform:uppercase;letter-spacing:.08em;font-size:var(--fs-10,10px)}
+.num:focus-visible,.unit:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:0 0 12px}
+.clocks.pair{grid-template-columns:1fr 1fr}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(15px,2.2vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.02em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.stats li.is-on .v{color:var(--accent,#c8b48a)}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.inside{margin:12px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.55);color:var(--accent,#c8b48a)}
+.inside[hidden]{display:none}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.compare,.glossary,.more{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .clocks,.clocks.pair{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/" aria-current="page">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Apparent size</p>
+  <h1>Angular size<br>why the Moon and Sun match</h1>
+  <p class="lede">A disc’s apparent size is an angle. For a sphere of physical diameter <strong>d</strong> at distance <strong>D</strong> from the observer to the center, that angle is <strong>δ = 2·arctan(d / 2D)</strong>. The small-angle line beside it is <strong>d/D</strong> in radians. The Moon’s volumetric mean diameter, twice the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">Moon Fact Sheet</a> radius 1,737.4 km, is <strong>3,474.8 km</strong>. At mean perigee, <strong>0.3633 × 10<sup>6</sup> km</strong>, the disc is <strong>32.880′</strong> (0.5480°). The Sun’s volumetric mean diameter, twice the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> radius 695,700 km, is <strong>1,391,400 km</strong>. At Earth’s aphelion, <strong>152.100 × 10<sup>6</sup> km</strong> on the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a>, the solar disc is <strong>31.448′</strong> (0.5241°). That Moon is wider: ratio <strong>1.0455</strong>, so a perfect lineup can be total. At mean apogee, <strong>0.4055 × 10<sup>6</sup> km</strong>, the Moon is <strong>29.458′</strong> and a perihelion Sun is <strong>32.518′</strong>. Ratio <strong>0.9059</strong>. The Moon no longer covers it, and the lineup is annular. The tilt that makes most new Moons miss is the <a href="/science/astronomy/eclipses/">eclipses</a> desk. The phase that night is the <a href="/science/astronomy/moon/">Moon</a> desk. The peek past the limb is <a href="/science/astronomy/libration/">libration</a>.</p>
+  <p class="note-schematic">Classroom schematic. One angle, drawn as a disc scaled to δ. A dashed ring, when the angle is small enough to share the frame, is 0.5°. The discs are the angle, not a photograph and not a map. Fact-sheet presets use the published radii and distances named above. Thumb, coin, and the half-degree mark are approximate examples, not measurements. Not an ephemeris. Not a prediction of the next eclipse.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · The angle</span>
+    <button type="button" class="help-q" id="ang-help" aria-haspopup="dialog" aria-controls="ang-help-dialog" aria-expanded="false" aria-label="How this angular-size desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Disc scaled to the angle · dashed ring is 0.5°</p>
+      <canvas id="orbit" width="880" height="560" role="img" aria-label="A disc the angular size of the Moon at mean perigee, 32.880 arcminutes, beside a 0.5 degree ring. Classroom schematic, not a photograph."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch moon" aria-hidden="true"></span> This disc</li>
+        <li><span class="swatch ref" aria-hidden="true"></span> 0.5° ring</li>
+      </ul>
+      <div class="controls">
+        <div class="slider-row">
+          <label for="d-slider">Diameter d</label>
+          <input type="range" id="d-slider" min="0" max="10000" step="1" value="7440" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="7440" aria-valuetext="3,474.8 km">
+          <input type="text" class="num" id="d-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="3474.8" aria-label="Diameter value" aria-invalid="false">
+          <select class="unit" id="d-unit" aria-label="Diameter unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+            <option value="km" selected>km</option>
+          </select>
+        </div>
+        <p class="field-error" id="d-err" hidden>Enter a diameter greater than zero.</p>
+        <div class="slider-row">
+          <label for="D-slider">Distance D</label>
+          <input type="range" id="D-slider" min="0" max="10000" step="1" value="6780" aria-valuemin="0" aria-valuemax="10000" aria-valuenow="6780" aria-valuetext="363,300 km">
+          <input type="text" class="num" id="D-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="363300" aria-label="Distance value" aria-invalid="false">
+          <select class="unit" id="D-unit" aria-label="Distance unit">
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+            <option value="km" selected>km</option>
+          </select>
+        </div>
+        <p class="field-error" id="D-err" hidden>Enter a distance greater than zero.</p>
+        <p class="pick-label">Fact sheet</p>
+        <div class="presets" role="group" aria-label="Fact-sheet presets">
+          <button type="button" data-preset="moon-perigee" aria-pressed="true">Moon perigee</button>
+          <button type="button" data-preset="moon-apogee" aria-pressed="false">Moon apogee</button>
+          <button type="button" data-preset="moon-mean" aria-pressed="false">Moon mean</button>
+          <button type="button" data-preset="sun-perihelion" aria-pressed="false">Sun perihelion</button>
+          <button type="button" data-preset="sun-aphelion" aria-pressed="false">Sun aphelion</button>
+          <button type="button" data-preset="sun-mean" aria-pressed="false">Sun mean</button>
+        </div>
+        <p class="pick-label">Approximate examples</p>
+        <div class="presets" role="group" aria-label="Approximate everyday examples">
+          <button type="button" data-preset="thumb" aria-pressed="false">Thumb, approx.</button>
+          <button type="button" data-preset="coin" aria-pressed="false">Coin, approx.</button>
+          <button type="button" data-preset="half-degree" aria-pressed="false">0.5° rule</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Moon fact sheet · mean perigee</p>
+      <h2 id="r-title">Moon at mean perigee</h2>
+      <p class="range" id="r-range">δ = 2·arctan(d / 2D)</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Degrees</p>
+          <p class="face" id="c-deg">0.5480°</p>
+          <p class="sub" id="c-sex">0° 32′ 52.81″</p>
+        </div>
+        <div class="clock">
+          <p class="k">Arcminutes</p>
+          <p class="face" id="c-arcmin">32.880′</p>
+          <p class="sub">60′ = 1°</p>
+        </div>
+        <div class="clock">
+          <p class="k">Arcseconds</p>
+          <p class="face" id="c-arcsec">1972.81″</p>
+          <p class="sub">60″ = 1′</p>
+        </div>
+      </div>
+      <div class="clocks pair">
+        <div class="clock">
+          <p class="k">Exact · radians</p>
+          <p class="face" id="c-exact">0.00956447 rad</p>
+          <p class="sub">2·arctan(d / 2D)</p>
+        </div>
+        <div class="clock">
+          <p class="k">Small angle · d/D</p>
+          <p class="face" id="c-approx">0.00956455 rad</p>
+          <p class="sub" id="c-rel">d/D sits 0.0008% above the exact angle.</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Diameter d</span><span class="v" id="r-d">3,474.8 km</span></li>
+        <li><span class="k">Distance D</span><span class="v" id="r-D">363,300 km</span></li>
+      </ul>
+      <p class="why" id="r-why">Diameter 3,474.8 km, twice the volumetric mean radius 1,737.4 km. Distance 0.3633 × 10⁶ km, the table’s mean perigee.</p>
+      <p class="inside" id="r-inside" hidden>This distance is inside the sphere. The formula is the angular diameter seen from outside. The drawing is still the arithmetic.</p>
+      <p class="cadence">Sliders are logarithmic. One step is about 0.3%. The number fields hold the typed figure, including a fact-sheet value the slider step does not land on. Buttons marked approx. are everyday examples, not NASA numbers. Left and Right move the presets when focus is on a preset button.</p>
+    </aside>
+  </div>
+
+  <div class="band">
+    <span class="band-label">Moon beside the Sun</span>
+  </div>
+  <div class="compare">
+    <div class="diagram">
+      <p class="hint" id="cmp-hint">Same scale · side by side · then on one center</p>
+      <canvas id="compare" width="880" height="420" role="img" aria-label="The Moon at mean perigee beside the Sun at perihelion, drawn to angular size. Ratio 1.0111, wide enough to cover."></canvas>
+      <ul class="legend" aria-label="Comparison key">
+        <li><span class="swatch moon" aria-hidden="true"></span> Moon</li>
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Moon distance · diameter fixed at 3,474.8 km</p>
+        <div class="presets" role="group" aria-label="Moon distance">
+          <button type="button" data-moon="perigee" aria-pressed="true">Perigee</button>
+          <button type="button" data-moon="mean" aria-pressed="false">Mean</button>
+          <button type="button" data-moon="apogee" aria-pressed="false">Apogee</button>
+        </div>
+        <p class="pick-label">Sun distance · diameter fixed at 1,391,400 km</p>
+        <div class="presets" role="group" aria-label="Sun distance">
+          <button type="button" data-sun="perihelion" aria-pressed="true">Perihelion</button>
+          <button type="button" data-sun="mean" aria-pressed="false">Mean</button>
+          <button type="button" data-sun="aphelion" aria-pressed="false">Aphelion</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="cmp-readout" aria-live="polite">
+      <p class="tier" id="cmp-tier">Fact sheets · angular diameters</p>
+      <h2 id="cmp-title">Perigee Moon · perihelion Sun</h2>
+      <p class="range" id="cmp-range">Moon / Sun = 1.0111</p>
+      <div class="clocks pair">
+        <div class="clock">
+          <p class="k">Moon</p>
+          <p class="face" id="cmp-moon">32.880′</p>
+          <p class="sub" id="cmp-moon-sub">0.5480° · 1972.81″</p>
+        </div>
+        <div class="clock">
+          <p class="k">Sun</p>
+          <p class="face" id="cmp-sun">32.518′</p>
+          <p class="sub" id="cmp-sun-sub">0.5420° · 1951.08″</p>
+        </div>
+      </div>
+      <ul class="stats" id="corners">
+        <li class="is-on" data-corner="perigee-perihelion"><span class="k">Perigee / perihelion</span><span class="v">1.0111 · total</span></li>
+        <li data-corner="perigee-aphelion"><span class="k">Perigee / aphelion</span><span class="v">1.0455 · total</span></li>
+        <li data-corner="apogee-perihelion"><span class="k">Apogee / perihelion</span><span class="v">0.9059 · annular</span></li>
+        <li data-corner="apogee-aphelion"><span class="k">Apogee / aphelion</span><span class="v">0.9367 · annular</span></li>
+      </ul>
+      <p class="why" id="cmp-why"><span id="cmp-kind">Ratio 1.0111. Greater than 1: the Moon’s disc can cover the Sun. A perfect lineup is a total solar eclipse.</span> Whether that lineup happens is the <a href="/science/astronomy/eclipses/">eclipses</a> desk. The phase is the <a href="/science/astronomy/moon/">Moon</a> desk.</p>
+      <p class="cadence" id="cmp-match">These discs match when the Moon is 367,346 km away and the Sun stays at perihelion, 147.095 × 10⁶ km. Mean perigee, 363,300 km, is closer, so the Moon covers. Mean apogee, 405,500 km, is farther than the aphelion match at 379,846 km, so a ring remains.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Perigee and apogee full Moon">
+    <p class="tag">Same Moon, two distances</p>
+    <h2>Supermoon and micromoon</h2>
+    <p>A full Moon near perigee is sometimes called a supermoon, and one near apogee a micromoon. Those are popular names, not fact-sheet terms. The size difference here is computed from the Moon Fact Sheet, not quoted from memory. Mean perigee is 0.3633 × 10<sup>6</sup> km and the disc is <strong id="super-peri">32.880′</strong>. Mean apogee is 0.4055 × 10<sup>6</sup> km and the disc is <strong id="super-apo">29.458′</strong>. The angular-diameter ratio is <strong id="super-ratio">1.1162</strong>, so the perigee disc is <strong id="super-pct">11.616%</strong> wider. Area scales with the square of that ratio, so the perigee disc covers <strong id="super-area">24.580%</strong> more of the sky.</p>
+    <p>The sheet’s footnote says the distance roughly ranges from 357,000 km to 407,000 km over the year, wider than the table’s mean perigee and mean apogee. The same diameter at those two footnote distances makes the nearer disc <strong id="super-foot">14.005%</strong> wider. That is a different pair of numbers. This page’s 11.616% uses the table.</p>
+  </aside>
+
+  <p class="band">The formula</p>
+  <div class="means">
+    <p><strong>δ = 2·arctan(d / 2D).</strong> d is the physical diameter. D is the distance from the observer to the center. The result is in radians, then converted to degrees, arcminutes, and arcseconds. This is the exact angular diameter of a sphere seen from outside.</p>
+    <p><strong>δ ≈ d/D.</strong> The small-angle line, in radians. For the Moon at mean perigee it sits 0.0008% above the exact angle. It is the right classroom shortcut near half a degree. It drifts when the object fills more of the view: if d = D, the exact angle is 53.1301° and d/D is 1 radian, 57.2958°, several percent high.</p>
+    <p><strong>The inputs.</strong> Moon volumetric mean radius 1,737.4 km, so the diameter used here is 3,474.8 km. Equatorial radius 1,738.1 km is on the same sheet and is not the diameter in the presets. Mean perigee 0.3633 × 10<sup>6</sup> km. Mean apogee 0.4055 × 10<sup>6</sup> km. Semimajor axis 0.3844 × 10<sup>6</sup> km. Sun volumetric mean radius 695,700 km, so the diameter is 1,391,400 km. Earth perihelion 147.095 × 10<sup>6</sup> km. Aphelion 152.100 × 10<sup>6</sup> km. Semimajor axis 149.598 × 10<sup>6</sup> km. At the two semimajor axes the Moon is 31.075′ and the Sun is 31.974′. Ratio 0.9719, slightly under 1. They look the same size, and a mean lineup is annular.</p>
+    <p><strong>Ratio greater than 1, and less than 1.</strong> Divide the Moon’s angular diameter by the Sun’s. Above 1, the Moon can cover the photosphere: a total solar eclipse along the center of a perfect lineup. Below 1, a ring of Sun remains: an annular eclipse. With these mean perigee and apogee distances, every perigee pairing on the card is total and every apogee pairing is annular. The discs match at 367,346 km when the Sun is at perihelion, and at 379,846 km when the Sun is at aphelion. Angular size does not say whether the new Moon is on the line. The orbit is tilted about 5°. That question is the <a href="/science/astronomy/eclipses/">eclipses</a> desk.</p>
+    <p><strong>Approximate examples.</strong> A thumb about 2 cm wide at about 57 cm is 2.0102°. A coin about 2.4 cm across at about 70 cm is 1.9642°. A 5 mm mark at about 57 cm is 0.5026°, the half-degree rule of thumb. 57 cm is the convenient length where 1 cm subtends about 1°, because 1° is about 1/57 of a radian. None of these is a measured hand or a mint specification. They are classroom marks, so a 2° thumb reads as about four times the Moon.</p>
+    <p><strong>The sheet’s own apparent diameters.</strong> The Moon sheet prints 1,896″ at 378,000 km. This diameter gives 1,896.09″, which rounds to that line. The Sun sheet prints a maximum of 1,952″, a minimum of 1,887″, and 1,919″ at 1 AU. This radius at Earth’s perihelion, aphelion, and semimajor axis gives 1,951.08″, 1,886.88″, and 1,918.44″. The minimum rounds to the sheet’s 1,887″. The other two sit under the sheet’s integers by less than 1″. The presets use the radii and the distances. They do not adjust a radius to force the integer.</p>
+  </div>
+
+  <p class="band">Literacy · an angle, not a forecast</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Angular diameter</dt><dd>The angle from one limb to the other. δ = 2·arctan(d / 2D). A bigger world farther away can match a smaller world nearby. That is the Moon and the Sun.</dd></div>
+    <div class="gloss"><dt>Small angle</dt><dd>d/D in radians. Near half a degree it matches the exact angle to a thousandth of a percent. The gap shows up when d is a large fraction of D.</dd></div>
+    <div class="gloss"><dt>Total</dt><dd>Moon / Sun angular diameter greater than 1. The Moon’s disc can cover the Sun. Mean perigee does that against both perihelion and aphelion, on these fact-sheet distances.</dd></div>
+    <div class="gloss"><dt>Annular</dt><dd>Ratio less than 1. The Moon is too small and a ring of Sun remains. Mean apogee does that against both ends of Earth’s orbit. The semimajor-axis pair, ratio 0.9719, is annular too.</dd></div>
+    <div class="gloss"><dt>Supermoon</dt><dd>A popular name for a full Moon near perigee. From the table’s mean perigee and mean apogee, the perigee disc is 11.616% wider and 24.580% larger in area. The footnote’s 357,000 km to 407,000 km span is 14.005% in angular diameter. Different pair.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the discs leave out</dt><dd>The 5° tilt, the nodes, the shadow on Earth, and the exact distance of a given month. A ratio above 1 is permission for a total eclipse, not a date. Everyday sizes are approximate on purpose. Not an ephemeris. Not a photograph. Earthrise preview: NASA / Bill Anders (public domain).</dd></div>
+  </dl>
+
+  <p class="band">Sources · public NASA pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the per-body sheets. Diameters on this page are twice the volumetric mean radius. Distances are the orbital-parameter lines named below.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — Volumetric mean radius 1,737.4 km. Equatorial radius 1,738.1 km, cited and not used as the preset diameter. Semimajor axis 0.3844 × 10<sup>6</sup> km. Perigee 0.3633 × 10<sup>6</sup> km. Apogee 0.4055 × 10<sup>6</sup> km. The footnote calls those mean perigee and mean apogee, and gives a rougher yearly span of about 357,000 km to 407,000 km. Apparent diameter 1,896″ at 378,000 km.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — Volumetric mean radius 695,700 km. Apparent diameter from Earth: 1,919″ at 1 AU, maximum 1,952″, minimum 1,887″. Distance from Earth on that sheet: mean 149.6 × 10<sup>6</sup> km, minimum 147.1 × 10<sup>6</sup> km, maximum 152.1 × 10<sup>6</sup> km. Those are the rounded companions of the Earth sheet’s semimajor axis, perihelion, and aphelion.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Perihelion 147.095 × 10<sup>6</sup> km. Aphelion 152.100 × 10<sup>6</sup> km. Semimajor axis 149.598 × 10<sup>6</sup> km. The Sun-distance presets use these three lines.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of angular size. δ = 2·arctan(d / 2D), and d/D beside it. Moon at mean perigee: 32.880′, 0.5480°, 1,972.81″. Moon at mean apogee: 29.458′. Sun at perihelion: 32.518′, 1,951.08″. Sun at aphelion: 31.448′, 1,886.88″. Perigee Moon over perihelion Sun is 1.0111, total. Apogee Moon over perihelion Sun is 0.9059, annular. The perigee disc is 11.616% wider than the apogee disc. Thumb, coin, and the 5 mm mark are approximate. Not an ephemeris, and not a forecast. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/eclipses/"><p class="n">The shadow</p><h3>Eclipses</h3><p>Why a new or full Moon is not an eclipse. The orbit is tilted about 5°. This page only says whether a perfect lineup is total or annular.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">The phase</p><h3>Moon</h3><p>New through full. Angular size is a separate question from how much of the disc is lit.</p></a>
+    <a href="/science/astronomy/libration/"><p class="n">The limbs</p><h3>Libration</h3><p>The same face stays toward Earth. An eccentric orbit and a tilt let us peek past the edge.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the Sun, Earth, and Moon sit. Still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="ang-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="ang-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="ang-help-title">Angular size</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One angle, δ = 2·arctan(d / 2D), and the small-angle d/D beside it. Fact-sheet presets use NASA radii and distances. Thumb, coin, and the half-degree mark are approximate examples. A classroom schematic, not an ephemeris and not an eclipse forecast.</p>
+    <h3>Sliders and fields</h3>
+    <table>
+      <caption>Sliders and fields</caption>
+      <tbody>
+        <tr><th scope="row">Diameter d</th><td>Physical diameter. The slider runs from 1 mm to 2 million km, logarithmic, about 0.3% per step. The number field is the exact figure. Units: mm, cm, m, km.</td></tr>
+        <tr><th scope="row">Distance D</th><td>Distance from the observer to the center. The slider runs from 5 cm to 300 million km. Same units. A fact-sheet value stays exact in the field even when the slider step is nearby rather than on it.</td></tr>
+        <tr><th scope="row">Degrees</th><td>The exact angle, δ, in decimal degrees.</td></tr>
+        <tr><th scope="row">Arcminutes</th><td>The same angle in arcminutes. 60′ = 1°. The Moon and the Sun sit near 30′.</td></tr>
+        <tr><th scope="row">Arcseconds</th><td>The same angle in arcseconds. 60″ = 1′. 3,600″ = 1°.</td></tr>
+        <tr><th scope="row">Exact radians</th><td>2·arctan(d / 2D). This is the angle the degrees, arcminutes, and arcseconds come from.</td></tr>
+        <tr><th scope="row">d/D</th><td>The small-angle approximation, in radians. For the Moon it is a fraction of a thousandth of a percent high. It drifts when d is a large share of D.</td></tr>
+      </tbody>
+    </table>
+    <h3>Presets</h3>
+    <table>
+      <caption>Presets</caption>
+      <tbody>
+        <tr><th scope="row">Moon perigee</th><td>Diameter 3,474.8 km. Distance 363,300 km, the sheet’s mean perigee, 0.3633 × 10<sup>6</sup> km. 32.880′.</td></tr>
+        <tr><th scope="row">Moon apogee</th><td>Same diameter. Distance 405,500 km, mean apogee, 0.4055 × 10<sup>6</sup> km. 29.458′.</td></tr>
+        <tr><th scope="row">Moon mean</th><td>Same diameter. Semimajor axis 384,400 km, 0.3844 × 10<sup>6</sup> km. 31.075′.</td></tr>
+        <tr><th scope="row">Sun perihelion</th><td>Diameter 1,391,400 km. Earth’s perihelion, 147.095 × 10<sup>6</sup> km. 32.518′. 1,951.08″.</td></tr>
+        <tr><th scope="row">Sun aphelion</th><td>Same solar diameter. Earth’s aphelion, 152.100 × 10<sup>6</sup> km. 31.448′. 1,886.88″, which rounds to the Sun sheet’s minimum of 1,887″.</td></tr>
+        <tr><th scope="row">Sun mean</th><td>Same solar diameter. Earth’s semimajor axis, 149.598 × 10<sup>6</sup> km. 31.974′. 1,918.44″.</td></tr>
+        <tr><th scope="row">Thumb, approx.</th><td>About 2 cm at about 57 cm. 2.0102°. Approximate example, not a measured hand. 57 cm is where 1 cm subtends about 1°.</td></tr>
+        <tr><th scope="row">Coin, approx.</th><td>About 2.4 cm at about 70 cm. 1.9642°. Approximate example, not a mint specification. Several times the Moon.</td></tr>
+        <tr><th scope="row">0.5° rule</th><td>A 5 mm mark at about 57 cm. 0.5026°. Approximate example of the half-degree rule: about the Moon, about the Sun.</td></tr>
+      </tbody>
+    </table>
+    <h3>Moon beside the Sun</h3>
+    <table>
+      <caption>Moon beside the Sun</caption>
+      <tbody>
+        <tr><th scope="row">Two discs</th><td>Moon and Sun drawn at one scale, so a few percent of angular size is visible. Arcminutes are printed under each.</td></tr>
+        <tr><th scope="row">Same center</th><td>The third drawing puts them on one center. A dashed gold circle is the Sun’s edge. If the Moon is larger, it covers. If the Moon is smaller, a gold ring remains.</td></tr>
+        <tr><th scope="row">Ratio</th><td>Moon angular diameter divided by Sun angular diameter. Greater than 1: a perfect lineup can be total. Less than 1: annular. The four corners of mean perigee, mean apogee, perihelion, and aphelion are listed on the card.</td></tr>
+        <tr><th scope="row">Distances</th><td>Perigee, mean, and apogee for the Moon. Perihelion, mean, and aphelion for the Sun. Diameters stay at the fact-sheet values. These buttons do not move the sliders above.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard, touch, and the drawing</h3>
+    <table>
+      <caption>Keyboard, touch, and the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Tab to a button. Enter or Space selects it. Left and Right step through the fact-sheet presets, or through the approximate examples, when focus is on one of those buttons. The pressed button is marked aria-pressed.</td></tr>
+        <tr><th scope="row">Sliders</th><td>Arrow keys nudge the focused slider. The number field is where a fact-sheet figure is typed exactly. Shift is not a special step.</td></tr>
+        <tr><th scope="row">Touch</th><td>Preset buttons, the question mark, Close, the number fields, and the unit menus are at least 44 pixels on a side. The drawing does not drag.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+        <tr><th scope="row">0.5° ring</th><td>Drawn when the angle is at most 2.5°, on the same scale as the disc. Wider angles scale to fit, and the caption says so. The readout stays the true angle.</td></tr>
+        <tr><th scope="row">Inside</th><td>If D is less than or equal to d/2, you are inside the sphere. The card says so. The formula is for an outside view.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/angular-size/angular-size.js"></script>
+<script>
+(function(){
+  "use strict";
+  var A = window.AngularSize;
+  if (!A) return;
+  var F = A.FACT;
+  var root = document.documentElement;
+  var canvas = document.getElementById("orbit");
+  var cmpCanvas = document.getElementById("compare");
+  var dSlider = document.getElementById("d-slider");
+  var DSlider = document.getElementById("D-slider");
+  var dNum = document.getElementById("d-num");
+  var DNum = document.getElementById("D-num");
+  var dUnit = document.getElementById("d-unit");
+  var DUnit = document.getElementById("D-unit");
+  var dErr = document.getElementById("d-err");
+  var DErr = document.getElementById("D-err");
+  var presetBtns = [].slice.call(document.querySelectorAll("[data-preset]"));
+  var moonBtns = [].slice.call(document.querySelectorAll("[data-moon]"));
+  var sunBtns = [].slice.call(document.querySelectorAll("[data-sun]"));
+  var factIds = ["moon-perigee", "moon-apogee", "moon-mean", "sun-perihelion", "sun-aphelion", "sun-mean"];
+  var approxIds = ["thumb", "coin", "half-degree"];
+  var state = {
+    dM: A.kmToM(F.moonDiameterKm),
+    DM: A.kmToM(F.moonPerigeeKm),
+    dUnit: "km",
+    DUnit: "km",
+    preset: "moon-perigee",
+    moonDist: "perigee",
+    sunDist: "perihelion"
+  };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(el, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (el.width !== pw || el.height !== ph){
+      el.width = pw;
+      el.height = ph;
+    }
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function disk(ctx, x, y, r, fill){
+    ctx.beginPath();
+    ctx.arc(x, y, Math.max(1.25, r), 0, Math.PI * 2);
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  function findDist(list, id){
+    for (var i = 0; i < list.length; i++){
+      if (list[i].id === id) return list[i];
+    }
+    return list[0];
+  }
+  function discFill(){
+    if (!state.preset) return cssVar("--ink", "#e8e6e1");
+    if (state.preset.indexOf("sun") === 0) return "#ffe6b0";
+    if (state.preset.indexOf("moon") === 0) return "#d5d8e0";
+    return cssVar("--accent", "#c8b48a");
+  }
+  function syncSliders(){
+    var dPos = A.valueToPos(state.dM, A.DIAM_MIN_M, A.DIAM_MAX_M);
+    var DPos = A.valueToPos(state.DM, A.DIST_MIN_M, A.DIST_MAX_M);
+    dSlider.value = String(dPos);
+    DSlider.value = String(DPos);
+    dSlider.max = String(A.SLIDER_MAX);
+    DSlider.max = String(A.SLIDER_MAX);
+  }
+  function syncNumbers(force){
+    if (force || document.activeElement !== dNum) dNum.value = A.inputString(state.dM, state.dUnit);
+    if (force || document.activeElement !== DNum) DNum.value = A.inputString(state.DM, state.DUnit);
+    dUnit.value = state.dUnit;
+    DUnit.value = state.DUnit;
+  }
+  function setPressed(){
+    presetBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-preset") === state.preset));
+    });
+    moonBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-moon") === state.moonDist));
+    });
+    sunBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-sun") === state.sunDist));
+    });
+  }
+  function showErr(el, on){
+    el.hidden = !on;
+  }
+  function kindSentence(pair){
+    var r = A.formatRatio(pair.ratio);
+    if (pair.kind === "total"){
+      return "Ratio " + r + ". Greater than 1: the Moon’s disc can cover the Sun. A perfect lineup is a total solar eclipse.";
+    }
+    if (pair.kind === "annular"){
+      return "Ratio " + r + ". Less than 1: the Moon’s disc leaves a ring of Sun. A perfect lineup is an annular eclipse.";
+    }
+    return "Ratio " + r + ". The discs match. That is the boundary between total and annular.";
+  }
+  function cornerKey(){
+    return state.moonDist + "-" + state.sunDist;
+  }
+
+  function drawExplorer(view){
+    var cssW = canvas.clientWidth || 640;
+    var cssH = Math.max(300, Math.round(Math.min(520, cssW * 0.7)));
+    var ctx = fitCanvas(canvas, cssW, cssH);
+    var deg = Math.abs(view.exact.deg);
+    var fit = deg > 2.5;
+    var scaleDeg = fit ? Math.max(deg, 0.2) : 2.5;
+    var discTop = 18;
+    var discH = cssH - 28;
+    var minDim = Math.min(cssW - 24, discH);
+    var pxPerDeg = (0.72 * minDim) / scaleDeg;
+    var cx = cssW / 2;
+    var cy = discTop + discH * 0.42;
+    var r = Math.max(2, (deg / 2) * pxPerDeg);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    if (!fit){
+      var rRef = (0.5 / 2) * pxPerDeg;
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(2, rRef), 0, Math.PI * 2);
+      ctx.setLineDash([5, 4]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      text(ctx, "0.5°", cx + rRef + 8, cy - rRef, { size: 11, color: accent, align: "left" });
+    }
+    disk(ctx, cx, cy, r, discFill());
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+    text(ctx, view.exact.arcminText, cx, cy + r + 18, { size: 13, color: ink, align: "center" });
+    var cap = fit ? "Scaled to fit. The readout is the true angle." : "Dashed ring is 0.5°, on this same scale.";
+    text(ctx, cap, 12, cssH - 14, { size: 11, color: cssVar("--muted", "#63666e"), align: "left" });
+    var hint = document.getElementById("orbit-hint");
+    if (hint) hint.textContent = fit ? "Scaled to fit this angle · readout is exact" : "Disc scaled to the angle · dashed ring is 0.5°";
+    canvas.setAttribute("aria-label", "Disc of angular size " + view.exact.arcminText + (fit ? ", scaled to fit." : ", with a 0.5 degree ring.") + " Classroom schematic, not a photograph.");
+  }
+
+  function drawStack(ctx, cx, cy, moonR, sunR){
+    disk(ctx, cx, cy, sunR, "#ffe6b0");
+    disk(ctx, cx, cy, moonR, "#d5d8e0");
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1.25, sunR), 0, Math.PI * 2);
+    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = "#c4a15a";
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(1.25, moonR), 0, Math.PI * 2);
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+  }
+
+  function drawCompare(pair){
+    var cssW = cmpCanvas.clientWidth || 640;
+    var narrow = cssW < 560;
+    var cssH = Math.max(narrow ? 460 : 300, Math.round(cssW * (narrow ? 1.05 : 0.56)));
+    var ctx = fitCanvas(cmpCanvas, cssW, cssH);
+    var moonDeg = Math.abs(pair.moon.exact.deg);
+    var sunDeg = Math.abs(pair.sun.exact.deg);
+    var maxDeg = Math.max(moonDeg, sunDeg, 0.2);
+    var cols = narrow ? 2 : 3;
+    var rows = narrow ? 2 : 1;
+    var cellW = cssW / cols;
+    var cellH = cssH / rows;
+    var avail = Math.min(cellW, cellH - 52) * 0.78;
+    var pxPerDeg = avail / maxDeg;
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    function one(col, row, deg, fill, name, sub){
+      var cx = cellW * (col + 0.5);
+      var cy = cellH * row + (cellH - 40) * 0.42;
+      var r = Math.max(2, (deg / 2) * pxPerDeg);
+      disk(ctx, cx, cy, r, fill);
+      text(ctx, name, cx, cy + r + 16, { size: 12, color: ink, align: "center" });
+      text(ctx, sub, cx, cy + r + 32, { size: 11, color: muted, align: "center" });
+    }
+    one(0, 0, moonDeg, "#d5d8e0", "Moon", pair.moon.exact.arcminText);
+    one(1, 0, sunDeg, "#ffe6b0", "Sun", pair.sun.exact.arcminText);
+    var sx = narrow ? cssW / 2 : cellW * 2.5;
+    var sy = narrow ? cellH + (cellH - 40) * 0.42 : (cellH - 40) * 0.42;
+    drawStack(ctx, sx, sy, Math.max(2, (moonDeg / 2) * pxPerDeg), Math.max(2, (sunDeg / 2) * pxPerDeg));
+    var verdict = pair.kind === "total" ? "Covers" : (pair.kind === "annular" ? "Ring remains" : "Match");
+    text(ctx, "Lined up", sx, sy + Math.max(moonDeg, sunDeg) / 2 * pxPerDeg + 16, { size: 12, color: ink, align: "center" });
+    text(ctx, verdict, sx, sy + Math.max(moonDeg, sunDeg) / 2 * pxPerDeg + 32, { size: 11, color: muted, align: "center" });
+    cmpCanvas.setAttribute("aria-label", "Moon " + pair.moon.exact.arcminText + " beside Sun " + pair.sun.exact.arcminText + ". Ratio " + A.formatRatio(pair.ratio) + ", " + pair.kind + ".");
+  }
+
+  function render(){
+    var view = A.describe(state.dM, state.DM);
+    if (!view.ok) return;
+    var preset = state.preset ? A.presetById(state.preset) : null;
+    document.getElementById("r-tier").textContent = preset ? preset.tier : "Custom diameter and distance";
+    document.getElementById("r-title").textContent = preset ? preset.title : "Custom";
+    document.getElementById("c-deg").textContent = view.exact.degText;
+    document.getElementById("c-sex").textContent = view.exact.sexText;
+    document.getElementById("c-arcmin").textContent = view.exact.arcminText;
+    document.getElementById("c-arcsec").textContent = view.exact.arcsecText;
+    document.getElementById("c-exact").textContent = view.exact.radText;
+    document.getElementById("c-approx").textContent = view.approx.radText;
+    document.getElementById("c-rel").textContent = A.relSentence(view.relPct);
+    document.getElementById("r-d").textContent = A.formatMeters(state.dM);
+    document.getElementById("r-D").textContent = A.formatMeters(state.DM);
+    document.getElementById("r-why").textContent = preset ? preset.note : "Custom diameter and distance. δ = 2·arctan(d / 2D). A fact-sheet button puts the published figures back.";
+    document.getElementById("r-inside").hidden = !view.inside;
+    var dText = A.formatMeters(state.dM);
+    var DText = A.formatMeters(state.DM);
+    dSlider.setAttribute("aria-valuenow", dSlider.value);
+    DSlider.setAttribute("aria-valuenow", DSlider.value);
+    dSlider.setAttribute("aria-valuetext", dText);
+    DSlider.setAttribute("aria-valuetext", DText);
+    drawExplorer(view);
+
+    var moon = findDist(A.MOON_DISTANCES, state.moonDist);
+    var sun = findDist(A.SUN_DISTANCES, state.sunDist);
+    var pair = A.comparePair(moon.km, sun.km);
+    document.getElementById("cmp-title").textContent = moon.label + " Moon · " + sun.label.toLowerCase() + " Sun";
+    document.getElementById("cmp-range").textContent = "Moon / Sun = " + A.formatRatio(pair.ratio);
+    document.getElementById("cmp-moon").textContent = pair.moon.exact.arcminText;
+    document.getElementById("cmp-moon-sub").textContent = pair.moon.exact.degText + " · " + pair.moon.exact.arcsecText;
+    document.getElementById("cmp-sun").textContent = pair.sun.exact.arcminText;
+    document.getElementById("cmp-sun-sub").textContent = pair.sun.exact.degText + " · " + pair.sun.exact.arcsecText;
+    document.getElementById("cmp-kind").textContent = kindSentence(pair);
+    var active = cornerKey();
+    [].slice.call(document.querySelectorAll("[data-corner]")).forEach(function(li){
+      li.classList.toggle("is-on", li.getAttribute("data-corner") === active);
+    });
+    var match = Math.round(pair.matchKm);
+    document.getElementById("cmp-match").textContent = "These discs match when the Moon is " + A.formatKm(match) + " away and the Sun stays at " + sun.sheet + ". Closer than that, the Moon covers. Farther, a ring remains. Mean perigee is 363,300 km. Mean apogee is 405,500 km. The aphelion match is 379,846 km.";
+    drawCompare(pair);
+
+    var note = A.moonSizeNote();
+    document.getElementById("super-peri").textContent = note.perigee.exact.arcminText;
+    document.getElementById("super-apo").textContent = note.apogee.exact.arcminText;
+    document.getElementById("super-ratio").textContent = A.formatRatio(note.diameterRatio);
+    document.getElementById("super-pct").textContent = A.formatPct(note.diameterPct, 3);
+    document.getElementById("super-area").textContent = A.formatPct(note.areaPct, 3);
+    document.getElementById("super-foot").textContent = A.formatPct(note.footnotePct, 3);
+  }
+
+  function applyPreset(id){
+    var p = A.presetById(id);
+    if (!p) return;
+    state.preset = id;
+    state.dM = A.kmToM(p.dKm);
+    state.DM = A.kmToM(p.DKm);
+    state.dUnit = p.dUnit;
+    state.DUnit = p.DUnit;
+    showErr(dErr, false);
+    showErr(DErr, false);
+    dNum.setAttribute("aria-invalid", "false");
+    DNum.setAttribute("aria-invalid", "false");
+    syncSliders();
+    syncNumbers(true);
+    setPressed();
+    render();
+  }
+
+  dSlider.addEventListener("input", function(){
+    state.dM = A.posToValue(Number(dSlider.value), A.DIAM_MIN_M, A.DIAM_MAX_M);
+    state.preset = null;
+    showErr(dErr, false);
+    dNum.setAttribute("aria-invalid", "false");
+    syncNumbers(true);
+    setPressed();
+    render();
+  });
+  DSlider.addEventListener("input", function(){
+    state.DM = A.posToValue(Number(DSlider.value), A.DIST_MIN_M, A.DIST_MAX_M);
+    state.preset = null;
+    showErr(DErr, false);
+    DNum.setAttribute("aria-invalid", "false");
+    syncNumbers(true);
+    setPressed();
+    render();
+  });
+  dNum.addEventListener("input", function(){
+    var m = A.parseToMeters(dNum.value, state.dUnit);
+    if (!m){
+      dNum.setAttribute("aria-invalid", "true");
+      showErr(dErr, true);
+      return;
+    }
+    dNum.setAttribute("aria-invalid", "false");
+    showErr(dErr, false);
+    state.dM = m;
+    state.preset = null;
+    syncSliders();
+    setPressed();
+    render();
+  });
+  DNum.addEventListener("input", function(){
+    var m = A.parseToMeters(DNum.value, state.DUnit);
+    if (!m){
+      DNum.setAttribute("aria-invalid", "true");
+      showErr(DErr, true);
+      return;
+    }
+    DNum.setAttribute("aria-invalid", "false");
+    showErr(DErr, false);
+    state.DM = m;
+    state.preset = null;
+    syncSliders();
+    setPressed();
+    render();
+  });
+  dUnit.addEventListener("change", function(){
+    state.dUnit = dUnit.value;
+    syncNumbers(true);
+  });
+  DUnit.addEventListener("change", function(){
+    state.DUnit = DUnit.value;
+    syncNumbers(true);
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyPreset(b.getAttribute("data-preset")); });
+  });
+  moonBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.moonDist = b.getAttribute("data-moon");
+      setPressed();
+      render();
+    });
+  });
+  sunBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.sunDist = b.getAttribute("data-sun");
+      setPressed();
+      render();
+    });
+  });
+
+  function stepList(ids, current, dir){
+    var idx = ids.indexOf(current);
+    if (idx < 0) idx = 0;
+    return ids[(idx + dir + ids.length) % ids.length];
+  }
+  document.addEventListener("keydown", function(ev){
+    var help = document.getElementById("ang-help-dialog");
+    if (help && !help.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t) return;
+    var tag = t.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    if (t.getAttribute && t.getAttribute("data-preset")){
+      var id = t.getAttribute("data-preset");
+      var list = factIds.indexOf(id) >= 0 ? factIds : approxIds;
+      ev.preventDefault();
+      var nextId = stepList(list, id, dir);
+      applyPreset(nextId);
+      var nextBtn = document.querySelector('[data-preset="' + nextId + '"]');
+      if (nextBtn) nextBtn.focus();
+      return;
+    }
+    if (t.getAttribute && t.getAttribute("data-moon")){
+      ev.preventDefault();
+      var order = ["perigee", "mean", "apogee"];
+      state.moonDist = stepList(order, state.moonDist, dir);
+      setPressed();
+      render();
+      var nb = document.querySelector('[data-moon="' + state.moonDist + '"]');
+      if (nb) nb.focus();
+      return;
+    }
+    if (t.getAttribute && t.getAttribute("data-sun")){
+      ev.preventDefault();
+      var orderS = ["perihelion", "mean", "aphelion"];
+      state.sunDist = stepList(orderS, state.sunDist, dir);
+      setPressed();
+      render();
+      var sb = document.querySelector('[data-sun="' + state.sunDist + '"]');
+      if (sb) sb.focus();
+    }
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+    if (cmpCanvas.parentElement) ro.observe(cmpCanvas.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  syncSliders();
+  syncNumbers(true);
+  setPressed();
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("ang-help");
+  var helpDialog = document.getElementById("ang-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
