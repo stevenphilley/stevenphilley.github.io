@@ -1,0 +1,1008 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rocket equation — why Δv costs propellant mass — Steven Philley</title>
+<meta name="description" content="Interactive rocket-equation desk: Δv = ve · ln(m0/mf) = Isp · g0 · ln(m0/mf), with g0 = 9.80665 m/s². At 3.178 km/s and a classroom 450 s, mf/m0 = 0.4867. Ideal rocket, no gravity losses, no drag. Not a mission.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/rocket/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Rocket equation — why Δv costs propellant mass">
+<meta property="og:description" content="Δv = ve · ln(m0/mf). At the Oberth desk’s 3.178 km/s and a classroom 450 s, 0.4867 of the initial mass remains. Ideal rocket. Not a mission.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/rocket/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rocket equation — why Δv costs propellant mass">
+<meta name="twitter:description" content="Ideal rocket, constant exhaust speed. The same Δv the Oberth and Hohmann desks already print, turned into a mass ratio. Not a mission planner.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;border:0;flex:0 0 auto;background:var(--muted,#63666e)}
+.swatch.prop{background:var(--accent,#c8b48a)}
+.swatch.dry{background:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:9.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(15px,2.2vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.02em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a,.compare-note a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.compare-note{margin:-4px 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96);max-width:78ch}
+.compare-wrap{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:8px 12px 12px;overflow-x:auto}
+.compare{width:100%;border-collapse:collapse;min-width:640px}
+.compare caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.compare th,.compare td{text-align:left;padding:8px 10px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.compare thead th{border-top:0;color:var(--muted,#63666e);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.compare tbody th{color:var(--ink,#e8e6e1)}
+.compare td{color:var(--ink-soft,#9b9a96)}
+.compare tr.is-on th,.compare tr.is-on td{color:var(--ink,#e8e6e1);background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/" aria-current="page">Rocket</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The propellant</p>
+  <h1>Rocket<br>equation</h1>
+  <p class="lede">A change of speed costs propellant, and the cost is exponential. For one ideal stage with constant exhaust speed, <strong>Δv = v<sub>e</sub> · ln(m<sub>0</sub>/m<sub>f</sub>)</strong>. The same line written with specific impulse is <strong>Δv = I<sub>sp</sub> · g<sub>0</sub> · ln(m<sub>0</sub>/m<sub>f</sub>)</strong>, because <strong>v<sub>e</sub> = I<sub>sp</sub> · g<sub>0</sub></strong>. Standard gravity in that definition is <strong>g<sub>0</sub> = 9.80665 m/s²</strong> exactly. It is not Earth’s surface gravity. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists mean surface gravity 9.820 m/s², and the <a href="/science/astronomy/escape/">Escape</a> desk prints that figure at altitude 0. Turn the equation around and the mass ratio is <strong>R = m<sub>0</sub>/m<sub>f</sub> = exp(Δv/v<sub>e</sub>)</strong>. The fraction that remains, dry mass and payload together, is <strong>m<sub>f</sub>/m<sub>0</sub> = exp(−Δv/v<sub>e</sub>)</strong>. Propellant is the rest, <strong>m<sub>p</sub>/m<sub>0</sub> = 1 − 1/R</strong>. This page does not choose a new mission Δv. Escape from a classroom circle 400 km up is the <strong>3.178 km/s</strong> the <a href="/science/astronomy/oberth/">Oberth</a> desk already prints, from the fact-sheet GM and volumetric radius. Earth to Mars, as a single impulsive total, is the <strong>5.594 km/s</strong> the <a href="/science/astronomy/hohmann/">Hohmann</a> desk already prints. Speed on the coast between those burns is <a href="/science/astronomy/vis-viva/">vis-viva</a>. The 300 s and 450 s buttons are a classroom example each. They are not a named engine and not a fact-sheet line.</p>
+  <p class="note-schematic">Classroom schematic. Ideal rocket, constant exhaust speed, one stage. No gravity losses, no drag, no steering losses, and no atmosphere. The burn is already summarized as a Δv. Where that burn happens, and why the same Δv buys more energy deep in a well, is the Oberth desk, not this one. Not a mission planner. The stack is initial mass split into propellant and whatever remains. It is not a vehicle, and the pale band is dry mass plus payload together. It does not say how much of that remainder is payload.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · One Δv, one exhaust speed</span>
+    <button type="button" class="help-q" id="rocket-help" aria-haspopup="dialog" aria-controls="rocket-help-dialog" aria-expanded="false" aria-label="How this rocket desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="stack-hint">Mass stack · m0 at ignition · not a vehicle</p>
+      <canvas id="stack" width="880" height="640" role="img" aria-label="A stack of initial mass. Part is propellant. The rest is dry mass and payload together. Classroom schematic, not a mission."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch prop" aria-hidden="true"></span> Propellant · m<sub>p</sub></li>
+        <li><span class="swatch dry" aria-hidden="true"></span> Remains · m<sub>f</sub></li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Printed Δv · not a new mission</p>
+        <div class="presets" role="group" aria-label="Delta-v presets from the sister desks">
+          <button type="button" data-dv="esc400" aria-pressed="true">3.178 km/s · 400 km escape</button>
+          <button type="button" data-dv="emars" aria-pressed="false">5.594 km/s · Earth–Mars</button>
+        </div>
+        <div class="slider-row">
+          <label for="dv-slider">Δv</label>
+          <input type="range" id="dv-slider" min="0" max="1000" step="1" value="212" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="212" aria-valuetext="3.178 km/s">
+          <input type="text" class="num" id="dv-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="3.178" aria-label="Delta-v in kilometers per second" aria-invalid="false">
+        </div>
+        <p class="pick-label">Classroom Isp · not an engine datasheet</p>
+        <div class="presets" role="group" aria-label="Classroom specific-impulse examples">
+          <button type="button" data-isp="chem300" aria-pressed="false">300 s · classroom chemical</button>
+          <button type="button" data-isp="lox450" aria-pressed="true">450 s · classroom LOX/LH2</button>
+        </div>
+        <div class="slider-row">
+          <label for="isp-slider">Isp</label>
+          <input type="range" id="isp-slider" min="0" max="1000" step="1" value="389" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="389" aria-valuetext="450 s">
+          <input type="text" class="num" id="isp-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="450" aria-label="Specific impulse in seconds" aria-invalid="false">
+        </div>
+        <div class="slider-row">
+          <label for="ve-slider">ve</label>
+          <input type="range" id="ve-slider" min="0" max="1000" step="1" value="379" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="379" aria-valuetext="4.413 km/s">
+          <input type="text" class="num" id="ve-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="4.413" aria-label="Exhaust speed in kilometers per second" aria-invalid="false">
+        </div>
+        <p class="field-error" id="field-err" hidden>Enter a Δv of zero or greater, and an Isp or exhaust speed greater than zero.</p>
+      </div>
+    </div>
+    <div class="detail">
+      <p class="tier" id="r-tier">Ideal rocket · one stage</p>
+      <h2 id="r-title">3.178 km/s at 450 s</h2>
+      <p class="range" id="r-range">ve = Isp · 9.80665 m/s²</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Mass ratio · m0/mf</p>
+          <p class="face" id="c-ratio">2.055</p>
+          <p class="sub" id="c-ratio-sub">exp(Δv/ve)</p>
+        </div>
+        <div class="clock">
+          <p class="k">Exhaust speed · ve</p>
+          <p class="face" id="c-ve">4.413 km/s</p>
+          <p class="sub" id="c-ve-sub">4,412.9925 m/s</p>
+        </div>
+        <div class="clock">
+          <p class="k">Propellant · mp/m0</p>
+          <p class="face" id="c-prop">51.33%</p>
+          <p class="sub" id="c-prop-sub">1 − 1/R</p>
+        </div>
+        <div class="clock">
+          <p class="k">Remains · mf/m0</p>
+          <p class="face" id="c-dry">48.67%</p>
+          <p class="sub" id="c-dry-sub">exp(−Δv/ve)</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Δv</span><span class="v" id="s-dv">3.178 km/s</span></li>
+        <li><span class="k">Isp</span><span class="v" id="s-isp">450 s</span></li>
+        <li><span class="k">ve</span><span class="v" id="s-ve">4.413 km/s</span></li>
+        <li><span class="k">g0</span><span class="v" id="s-g0">9.80665 m/s²</span></li>
+        <li><span class="k">Δv/ve</span><span class="v" id="s-x">0.7201</span></li>
+        <li><span class="k">R = m0/mf</span><span class="v" id="s-r">2.055</span></li>
+        <li><span class="k">mp/m0</span><span class="v" id="s-mp">0.5133</span></li>
+        <li><span class="k">mf/m0</span><span class="v" id="s-mf">0.4867</span></li>
+      </ul>
+      <p class="why" id="r-why">At 3.178 km/s and a classroom 450 s, mf/m0 = exp(−3.178 / (450 × 0.00980665)) = 0.4867.</p>
+      <p class="cadence" id="r-cadence">The gold band is propellant. The pale band is dry mass and payload together. Ideal rocket. No gravity losses. No drag.</p>
+    </div>
+  </div>
+
+  <p class="band">Classroom comparison</p>
+  <p class="compare-note">Two Δv figures this site already prints, at two specific impulses that are each a classroom example. The 3.178 km/s row is escape from the Oberth desk’s 400 km circle. The 5.594 km/s row is the Hohmann desk’s Earth-to-Mars total. Neither row is a propellant load for a flight. A highlighted row is where the slider sits, when it lands on one of these four.</p>
+  <div class="compare-wrap">
+    <table class="compare" id="compare">
+      <caption>Mass ratio for the printed 3.178 km/s and 5.594 km/s at classroom 300 s and 450 s</caption>
+      <thead>
+        <tr>
+          <th scope="col">Δv</th>
+          <th scope="col">Isp</th>
+          <th scope="col">ve</th>
+          <th scope="col">R</th>
+          <th scope="col">mp/m0</th>
+          <th scope="col">mf/m0</th>
+        </tr>
+      </thead>
+      <tbody id="compare-body">
+        <tr>
+          <th scope="row">3.178 km/s · 400 km escape</th>
+          <td>300 s</td>
+          <td>2.942 km/s</td>
+          <td>2.945</td>
+          <td>66.05%</td>
+          <td>0.3395</td>
+        </tr>
+        <tr class="is-on">
+          <th scope="row">3.178 km/s · 400 km escape</th>
+          <td>450 s</td>
+          <td>4.413 km/s</td>
+          <td>2.055</td>
+          <td>51.33%</td>
+          <td>0.4867</td>
+        </tr>
+        <tr>
+          <th scope="row">5.594 km/s · Earth–Mars</th>
+          <td>300 s</td>
+          <td>2.942 km/s</td>
+          <td>6.695</td>
+          <td>85.06%</td>
+          <td>0.1494</td>
+        </tr>
+        <tr>
+          <th scope="row">5.594 km/s · Earth–Mars</th>
+          <td>450 s</td>
+          <td>4.413 km/s</td>
+          <td>3.552</td>
+          <td>71.85%</td>
+          <td>0.2815</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">What the formula is</p>
+  <div class="means">
+    <p><strong>Δv = v<sub>e</sub> · ln(m<sub>0</sub>/m<sub>f</sub>).</strong> m<sub>0</sub> is the mass at ignition, propellant included. m<sub>f</sub> is the mass when the burn is over. The logarithm is why the curve bends. Twice the Δv does not take twice the propellant. It squares the mass ratio, because exp(2x) = [exp(x)]². Exhaust speed v<sub>e</sub> is constant in this model. A real engine’s speed changes a little with throttle and altitude. That change is not on this page.</p>
+    <p><strong>v<sub>e</sub> = I<sub>sp</sub> · g<sub>0</sub>, with g<sub>0</sub> = 9.80665 m/s².</strong> Specific impulse in seconds is exhaust speed divided by standard gravity, so the seconds cancel back into a speed. g<sub>0</sub> is a conventional exact value, the standard acceleration of gravity. It is not a reading from Earth. The Earth Fact Sheet’s mean surface gravity is 9.820 m/s². The <a href="/science/astronomy/escape/">Escape</a> desk uses that 9.820, from GM and the volumetric radius. Using 9.820 here would be a different definition, and it would not be the Isp in a textbook table. This desk uses 9.80665.</p>
+    <p><strong>R = m<sub>0</sub>/m<sub>f</sub> = exp(Δv/v<sub>e</sub>).</strong> Propellant fraction m<sub>p</sub>/m<sub>0</sub> = 1 − 1/R. Remaining fraction m<sub>f</sub>/m<sub>0</sub> = exp(−Δv/v<sub>e</sub>). m<sub>f</sub> holds the engine, the tanks, and the payload in one number. A high mass ratio can still leave a tiny payload if the dry mass is most of m<sub>f</sub>. This page does not split that remainder.</p>
+    <p><strong>The Δv has to be chosen before the equation can say anything about mass.</strong> Escape from the 400 km classroom circle costs 3.178 km/s on the <a href="/science/astronomy/oberth/">Oberth</a> desk, because circular speed there is 7.673 km/s and local escape is 10.851 km/s. The <a href="/science/astronomy/hohmann/">Hohmann</a> desk’s Earth-to-Mars total is 5.594 km/s, two heliocentric impulses added together, after the craft is already on Earth’s orbit. Putting either number into this equation is a classroom comparison. It is not the propellant a flight would load. Launch from the ground, gravity losses, and drag are not inside those two figures, and this equation does not add them.</p>
+  </div>
+
+  <div class="myth">
+    <p class="tag">The check</p>
+    <h2>3.178 km/s at a classroom 450 s</h2>
+    <p>g<sub>0</sub> is 9.80665 m/s². At a classroom 450 s, v<sub>e</sub> = 450 × 9.80665 m/s² = 4,412.9925 m/s, which is 4.413 km/s to three decimals. The mass fraction uses the unrounded product. m<sub>f</sub>/m<sub>0</sub> = exp(−3.178 / (450 × 0.00980665)) = 0.4867. The mass ratio is 2.055. Propellant is 0.5133 of the initial mass. The 3.178 km/s figure is the one the Oberth desk prints for escape from a 400 km classroom circle. It is not recomputed here. The 400 km altitude is an example. The Earth Fact Sheet does not print it.</p>
+    <p>The Hohmann desk prints 5.594 km/s for the Earth-to-Mars total. At the same classroom 450 s, m<sub>f</sub>/m<sub>0</sub> = 0.2815 and the mass ratio is 3.552. At a classroom 300 s, v<sub>e</sub> = 300 × 9.80665 m/s² = 2,941.995 m/s, and that same 5.594 km/s leaves m<sub>f</sub>/m<sub>0</sub> = 0.1494, mass ratio 6.695. The 300 s and 450 s figures are each a classroom example. They are not lines on a fact sheet and not a named engine. Not a mission.</p>
+  </div>
+
+  <p class="band">Words</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Ideal rocket</dt><dd>Constant exhaust speed, no outside forces. Momentum the exhaust carries one way is momentum the rocket gains the other way. The equation that follows is Δv = v<sub>e</sub> · ln(m<sub>0</sub>/m<sub>f</sub>). One stage. The empty tanks stay in m<sub>f</sub>.</dd></div>
+    <div class="gloss"><dt>Isp and ve</dt><dd>Specific impulse in seconds, times g<sub>0</sub> = 9.80665 m/s², is exhaust speed. The slider and the field stay tied to that product. g<sub>0</sub> is standard gravity. Earth’s fact-sheet mean surface gravity, 9.820 m/s², is a different number.</dd></div>
+    <div class="gloss"><dt>Mass ratio</dt><dd>R = m<sub>0</sub>/m<sub>f</sub> = exp(Δv/v<sub>e</sub>). How many times heavier the rocket is with propellant than without it. At 3.178 km/s and a classroom 450 s, R = 2.055. At 5.594 km/s and a classroom 300 s, R = 6.695.</dd></div>
+    <div class="gloss"><dt>Propellant fraction</dt><dd>m<sub>p</sub>/m<sub>0</sub> = 1 − 1/R. The share of the ignition mass that leaves as exhaust. The gold band on the stack.</dd></div>
+    <div class="gloss"><dt>What remains</dt><dd>m<sub>f</sub>/m<sub>0</sub> = exp(−Δv/v<sub>e</sub>). Dry mass and payload, not separated. The pale band. Calling it a payload fraction would claim a split this page does not make.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the picture leaves out</dt><dd>Gravity losses, drag, steering, a finite burn, boil-off, residuals, and every extra stage. A second stage throws the empty first stage away and starts the equation again. This page is one stage. It also leaves out where you burn. The same Δv deep in a well changes orbital energy by v·Δv + ½(Δv)², which is the <a href="/science/astronomy/oberth/">Oberth</a> desk. The Δv itself, for a circle and for escape, is the <a href="/science/astronomy/escape/">Escape</a> desk. The 5.594 km/s comparison is the <a href="/science/astronomy/hohmann/">Hohmann</a> total, not a trajectory. Not a mission planner.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?gn" rel="noopener" target="_blank">NIST — standard acceleration of gravity</a> — g<sub>n</sub> = 9.80665 m/s² exactly. This desk uses that conventional value as g<sub>0</sub> in v<sub>e</sub> = I<sub>sp</sub> · g<sub>0</sub>. It is not Earth’s surface gravity.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 6,371.000 km. Surface gravity (mean) 9.820 m/s². Escape velocity 11.186 km/s. The Escape and Oberth desks use the GM and the radius. This page does not replace g<sub>0</sub> with 9.820. Last updated 15 November 2024. The 400 km altitude is not on this sheet.</li>
+      <li><a href="/science/astronomy/oberth/">Oberth desk</a> — from a 400 km classroom circle, with that GM, Δv to escape is 3.178 km/s. Circular speed 7.673 km/s, local escape 10.851 km/s. This page reuses 3.178 km/s as a printed figure. It does not recompute it.</li>
+      <li><a href="/science/astronomy/escape/">Escape desk</a> — circular speed √(GM/r) and escape speed √(2GM/r). At altitude 0 the escape speed is 11.186 km/s, the figure the Earth Fact Sheet lists. The 3.178 km/s on the Oberth desk is the gap between those two speeds at r = 6,771 km.</li>
+      <li><a href="/science/astronomy/hohmann/">Hohmann desk</a> — Earth to Mars, from the fact-sheet kilometer semimajor axes and the Sun’s GM, is 258.88 days and 5.594 km/s. This page reuses 5.594 km/s as that printed total. It is not a propellant budget, and it does not include launch.</li>
+      <li><a href="/science/astronomy/vis-viva/">Vis-viva desk</a> — speed anywhere on one Keplerian ellipse, v = √[μ (2/r − 1/a)]. The rocket equation does not replace that speed. It only prices a Δv you have already chosen.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of one ideal stage. At the Oberth desk’s 3.178 km/s and a classroom 450 s, m<sub>f</sub>/m<sub>0</sub> = 0.4867. At the Hohmann desk’s 5.594 km/s and the same 450 s, m<sub>f</sub>/m<sub>0</sub> = 0.2815. g<sub>0</sub> = 9.80665 m/s². Constant exhaust speed. No gravity losses. No drag. The 300 s and 450 s figures are each a classroom example, not a fact-sheet line. Not a mission. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/escape/"><p class="n">The speed</p><h3>Escape</h3><p>Circular orbit and escape at one altitude. √2 apart. The 3.178 km/s on this page is the gap the Oberth desk computes from those two speeds.</p></a>
+    <a href="/science/astronomy/hohmann/"><p class="n">The coast</p><h3>Hohmann</h3><p>Two burns and half an ellipse. Earth to Mars is 5.594 km/s. That printed total is the other comparison here. Not a mission.</p></a>
+    <a href="/science/astronomy/oberth/"><p class="n">The burn</p><h3>Oberth</h3><p>The same Δv buys more energy where the craft is already fast. This page only prices the Δv. It does not say where to spend it.</p></a>
+    <a href="/science/astronomy/vis-viva/"><p class="n">The ellipse</p><h3>Vis-viva</h3><p>Speed anywhere on the coast. v = √[μ (2/r − 1/a)]. Not the propellant.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="rocket-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="rocket-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="rocket-help-title">Rocket desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One ideal stage. Δv = v<sub>e</sub> · ln(m<sub>0</sub>/m<sub>f</sub>), and v<sub>e</sub> = I<sub>sp</sub> · g<sub>0</sub> with g<sub>0</sub> = 9.80665 m/s². No gravity losses and no drag. The picture is a mass stack, not a vehicle, and not a trajectory to fly.</p>
+    <h3>The formula</h3>
+    <table>
+      <caption>The formula</caption>
+      <tbody>
+        <tr><th scope="row">Δv</th><td>v<sub>e</sub> times the natural log of m<sub>0</sub>/m<sub>f</sub>. The burn is already a single change of speed. This page does not integrate thrust over time.</td></tr>
+        <tr><th scope="row">Mass ratio</th><td>R = m<sub>0</sub>/m<sub>f</sub> = exp(Δv/v<sub>e</sub>). m<sub>0</sub> is the mass at ignition. m<sub>f</sub> is the mass after the propellant in this stage is gone.</td></tr>
+        <tr><th scope="row">Propellant</th><td>m<sub>p</sub>/m<sub>0</sub> = 1 − 1/R. The gold band.</td></tr>
+        <tr><th scope="row">What remains</th><td>m<sub>f</sub>/m<sub>0</sub> = exp(−Δv/v<sub>e</sub>). Dry mass and payload together. The pale band. Not a payload fraction by itself.</td></tr>
+      </tbody>
+    </table>
+    <h3>Isp and exhaust speed</h3>
+    <table>
+      <caption>Isp and exhaust speed</caption>
+      <tbody>
+        <tr><th scope="row">The link</th><td>v<sub>e</sub> = I<sub>sp</sub> · 9.80665 m/s². Move either control and the other follows. The fraction uses that product before the km/s figure is rounded to three decimals.</td></tr>
+        <tr><th scope="row">g<sub>0</sub></th><td>Standard gravity, 9.80665 m/s² exactly, the conventional factor in the definition of specific impulse. The Earth Fact Sheet’s mean surface gravity is 9.820 m/s². The Escape desk prints 9.820. This desk does not use it as g<sub>0</sub>.</td></tr>
+        <tr><th scope="row">300 s</th><td>A classroom example near a storable chemical specific impulse. Not an engine datasheet and not a fact-sheet line.</td></tr>
+        <tr><th scope="row">450 s</th><td>A classroom example near a LOX/LH2 vacuum-class specific impulse. Not an engine datasheet and not a fact-sheet line.</td></tr>
+      </tbody>
+    </table>
+    <h3>The printed Δv figures</h3>
+    <table>
+      <caption>The printed delta-v figures</caption>
+      <tbody>
+        <tr><th scope="row">3.178 km/s</th><td>Escape from a circular orbit 400 km above Earth’s volumetric mean radius, as printed on the Oberth desk. The Escape desk is the two speeds. Their difference at that radius is this Δv. The 400 km altitude is a classroom example. The fact sheet does not print it.</td></tr>
+        <tr><th scope="row">5.594 km/s</th><td>The Earth-to-Mars total the Hohmann desk prints, 2.945 km/s plus 2.649 km/s. Using it here compares mass ratios for that one number. It is not the propellant to fly to Mars. Those burns start after you are already on a heliocentric circle.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>With a Δv preset focused, Left and Right move between the two printed figures. With an Isp preset focused, they move between 300 s and 450 s. They do nothing while a field is focused, and nothing while this dialog is open.</td></tr>
+      </tbody>
+    </table>
+    <h3>The stack</h3>
+    <table>
+      <caption>The stack</caption>
+      <tbody>
+        <tr><th scope="row">Whole column</th><td>Initial mass m<sub>0</sub>. The height is 100 percent. It does not stand for a particular rocket.</td></tr>
+        <tr><th scope="row">Gold</th><td>Propellant. It grows as Δv rises or Isp falls.</td></tr>
+        <tr><th scope="row">Pale</th><td>What remains. Dry mass and payload, still together.</td></tr>
+      </tbody>
+    </table>
+    <h3>What it leaves out</h3>
+    <table>
+      <caption>What it leaves out</caption>
+      <tbody>
+        <tr><th scope="row">Losses</th><td>Gravity losses, drag, and steering. A real launch spends Δv on those and still has to reach the circle. This equation does not add them.</td></tr>
+        <tr><th scope="row">Stages</th><td>One stage. Dropping an empty stage and lighting another is a second use of the same equation. It is not drawn here.</td></tr>
+        <tr><th scope="row">Where you burn</th><td>Oberth. The same Δv changes orbital energy more where you are already fast. This page prices the Δv. It does not choose the place.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keys</h3>
+    <table>
+      <caption>Keys</caption>
+      <tbody>
+        <tr><th scope="row">?</th><td>Opens this dialog. Escape closes it. Tab stays inside until it closes.</td></tr>
+        <tr><th scope="row">Escape</th><td>Closes the dialog and returns focus to the ? button.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/rocket/rocket.js"></script>
+<script>
+(function(){
+  "use strict";
+  var R = window.Rocket;
+  if (!R) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("stack");
+  var dvSlider = document.getElementById("dv-slider");
+  var ispSlider = document.getElementById("isp-slider");
+  var veSlider = document.getElementById("ve-slider");
+  var dvNum = document.getElementById("dv-num");
+  var ispNum = document.getElementById("isp-num");
+  var veNum = document.getElementById("ve-num");
+  var err = document.getElementById("field-err");
+  var dvBtns = [].slice.call(document.querySelectorAll("[data-dv]"));
+  var ispBtns = [].slice.call(document.querySelectorAll("[data-isp]"));
+  var dvIds = dvBtns.map(function(b){ return b.getAttribute("data-dv"); });
+  var ispIds = ispBtns.map(function(b){ return b.getAttribute("data-isp"); });
+  var editing = null;
+  var DV_CAP = 30;
+  var ISP_CAP = 5000;
+  var ISP_FLOOR = 20;
+
+  var state = {
+    dv: R.PRINTED.escapeFrom400KmS,
+    isp: 450,
+    dvMax: 15,
+    ispMin: 100,
+    ispMax: 1000
+  };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function clamp(v, a, b){ return Math.max(a, Math.min(b, v)); }
+  function showErr(on, msg){
+    err.hidden = !on;
+    if (msg) err.textContent = msg;
+  }
+  function parseNum(text){
+    if (text == null) return NaN;
+    var s = String(text).replace(/,/g, "").replace(/−/g, "-").trim();
+    if (!s) return NaN;
+    var n = Number(s);
+    return isFinite(n) ? n : NaN;
+  }
+  function pos(min, max, value){
+    if (!(max > min)) return 0;
+    return Math.round((value - min) / (max - min) * 1000);
+  }
+  function fromPos(min, max, p){
+    if (!(max > min)) return min;
+    return min + (Number(p) / 1000) * (max - min);
+  }
+  function veMin(){ return R.veFromIsp(state.ispMin); }
+  function veMax(){ return R.veFromIsp(state.ispMax); }
+  function nearDv(a, b){ return Math.abs(a - b) < 5e-4; }
+  function nearIsp(a, b){ return Math.abs(a - b) < 5e-3; }
+  function fieldIsp(isp){
+    var label = R.fmtIsp(isp);
+    return label === "—" ? "" : label.replace(/ s$/, "");
+  }
+  function presetDv(){
+    var i, d;
+    for (i = 0; i < R.DV_PRESETS.length; i++){
+      d = R.DV_PRESETS[i];
+      if (nearDv(state.dv, d.dv)) return d;
+    }
+    return null;
+  }
+  function presetIsp(){
+    var i, s;
+    for (i = 0; i < R.CLASSROOM_ISP.length; i++){
+      s = R.CLASSROOM_ISP[i];
+      if (nearIsp(state.isp, s.isp)) return s;
+    }
+    return null;
+  }
+
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.width = cssW + "px";
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+
+  function whyText(m){
+    var bits = [];
+    var dvPreset = presetDv();
+    var ispPreset = presetIsp();
+    bits.push("Δv = ve · ln(m0/mf). ve = Isp · g0, and g0 is 9.80665 m/s² exactly, standard gravity, not the fact sheet’s 9.820 m/s².");
+    if (m.overflow){
+      bits.push("This Δv is so large beside this exhaust speed that the mass ratio leaves the range this page will print. Raise Isp or lower Δv. The stack would be propellant almost from end to end.");
+      return bits.join(" ");
+    }
+    bits.push("Isp is " + R.fmtIsp(m.isp) + ", so ve = " + R.fmtVeMS(m.veMS) + ", which rounds to " + R.fmtVe(m.ve) + ". The fraction uses the unrounded product.");
+    bits.push("Δv/ve = " + R.fmtExponent(m.exponent) + ". The mass ratio R = exp(Δv/ve) = " + R.fmtRatio(m.ratio) + ". mf/m0 = exp(−Δv/ve) = " + R.fmtFrac(m.remaining) + ". mp/m0 = 1 − 1/R = " + R.fmtFrac(m.propellant) + ".");
+    if (m.dv === 0){
+      bits.push("Δv is zero. The ideal rocket burns nothing. The mass ratio is 1, and the whole column remains.");
+    } else if (dvPreset && dvPreset.id === "esc400" && ispPreset && ispPreset.id === "lox450"){
+      bits.push("This is the check. mf/m0 = exp(−3.178 / (450 × 0.00980665)) = 0.4867. The 3.178 km/s figure is the Oberth desk’s Δv to escape a 400 km classroom circle. The 450 s figure is a classroom example, not an engine datasheet.");
+    } else if (dvPreset && dvPreset.id === "emars"){
+      bits.push("5.594 km/s is the Hohmann desk’s Earth-to-Mars total, reused as a mass-ratio comparison. It is not the propellant to fly to Mars. Those impulses start after the craft is already on Earth’s heliocentric orbit.");
+      if (ispPreset) bits.push(ispPreset.note);
+    } else if (dvPreset && dvPreset.id === "esc400"){
+      bits.push("3.178 km/s is the Oberth desk’s Δv to escape a 400 km classroom circle. It is not recomputed on this page.");
+      if (ispPreset) bits.push(ispPreset.note);
+    } else if (ispPreset){
+      bits.push(ispPreset.note + " The Δv is no longer one of the two printed figures.");
+    } else {
+      bits.push("The Δv and the Isp have both left the presets. g0 is still 9.80665 m/s². The two printed Δv buttons put 3.178 km/s and 5.594 km/s back.");
+    }
+    bits.push("Of each kilogram at ignition, " + R.fmtFrac(m.propellant) + " kg is propellant and " + R.fmtFrac(m.remaining) + " kg remains, dry mass and payload together. One stage. No gravity losses. No drag. Not a mission.");
+    return bits.join(" ");
+  }
+
+  function paint(m){
+    var dvPreset = presetDv();
+    var ispPreset = presetIsp();
+    var title = R.fmtDv(m.dv).replace(" km/s", "") + " km/s at " + R.fmtIsp(m.isp);
+    if (dvPreset && ispPreset) title = dvPreset.label.split(" · ")[0] + " at " + R.fmtIsp(m.isp);
+    document.getElementById("r-tier").textContent = "Ideal rocket · one stage";
+    document.getElementById("r-title").textContent = title;
+    document.getElementById("r-range").textContent = m.overflow ? "Mass ratio past this page’s print" : ("ve = " + R.fmtVeMS(m.veMS));
+    document.getElementById("c-ratio").textContent = R.fmtRatio(m.ratio);
+    document.getElementById("c-ratio-sub").textContent = m.overflow ? "exp(Δv/ve) overflowed" : "exp(Δv/ve)";
+    document.getElementById("c-ve").textContent = R.fmtVe(m.ve);
+    document.getElementById("c-ve-sub").textContent = R.fmtVeMS(m.veMS);
+    document.getElementById("c-prop").textContent = m.overflow ? "≈ 100%" : R.fmtPct(m.propellant);
+    document.getElementById("c-prop-sub").textContent = "1 − 1/R";
+    document.getElementById("c-dry").textContent = m.overflow ? "≈ 0%" : R.fmtPct(m.remaining);
+    document.getElementById("c-dry-sub").textContent = "exp(−Δv/ve)";
+    document.getElementById("s-dv").textContent = R.fmtDv(m.dv);
+    document.getElementById("s-isp").textContent = R.fmtIsp(m.isp);
+    document.getElementById("s-ve").textContent = R.fmtVe(m.ve);
+    document.getElementById("s-g0").textContent = "9.80665 m/s²";
+    document.getElementById("s-x").textContent = m.overflow ? "—" : R.fmtExponent(m.exponent);
+    document.getElementById("s-r").textContent = R.fmtRatio(m.ratio);
+    document.getElementById("s-mp").textContent = m.overflow ? "—" : R.fmtFrac(m.propellant);
+    document.getElementById("s-mf").textContent = m.overflow ? "—" : R.fmtFrac(m.remaining);
+    document.getElementById("r-why").textContent = whyText(m);
+    var cadence = "The gold band is propellant. The pale band is dry mass and payload together.";
+    if (m.propellant > 0.9) cadence += " Almost all of the initial mass is propellant.";
+    if (m.dv === 0) cadence += " Nothing is burned.";
+    cadence += " Ideal rocket. No gravity losses. No drag.";
+    document.getElementById("r-cadence").textContent = cadence;
+    var aria = "Mass stack for " + R.fmtDv(m.dv) + " at " + R.fmtIsp(m.isp) + ". Exhaust speed " + R.fmtVe(m.ve) + ". ";
+    if (m.overflow) aria += "The mass ratio is past what this page prints. ";
+    else aria += "Mass ratio " + R.fmtRatio(m.ratio) + ". Propellant " + R.fmtPct(m.propellant) + ". Remaining " + R.fmtPct(m.remaining) + ". ";
+    aria += "Classroom schematic, not a mission.";
+    canvas.setAttribute("aria-label", aria);
+  }
+
+  function paintTable(m){
+    var body = document.getElementById("compare-body");
+    var html = "";
+    var rows = R.classroomRows();
+    var i, row, res, on, matched = false;
+    for (i = 0; i < rows.length; i++){
+      row = rows[i];
+      res = row.result;
+      on = nearDv(m.dv, row.dv) && nearIsp(m.isp, row.isp);
+      if (on) matched = true;
+      html += '<tr' + (on ? ' class="is-on"' : "") + ">" +
+        "<th scope=\"row\">" + row.dvLabel + "</th>" +
+        "<td>" + R.fmtIsp(row.isp) + "</td>" +
+        "<td>" + R.fmtVe(res.ve) + "</td>" +
+        "<td>" + R.fmtRatio(res.ratio) + "</td>" +
+        "<td>" + R.fmtPct(res.propellant) + "</td>" +
+        "<td>" + R.fmtFrac(res.remaining) + "</td></tr>";
+    }
+    if (!matched && !m.overflow){
+      html += '<tr class="is-on"><th scope="row">This slider · ' + R.fmtDv(m.dv) + "</th>" +
+        "<td>" + R.fmtIsp(m.isp) + "</td>" +
+        "<td>" + R.fmtVe(m.ve) + "</td>" +
+        "<td>" + R.fmtRatio(m.ratio) + "</td>" +
+        "<td>" + R.fmtPct(m.propellant) + "</td>" +
+        "<td>" + R.fmtFrac(m.remaining) + "</td></tr>";
+    }
+    body.innerHTML = html;
+  }
+
+  function syncControls(m){
+    var dp = pos(0, state.dvMax, m.dv);
+    dvSlider.value = String(dp);
+    dvSlider.setAttribute("aria-valuenow", String(dp));
+    dvSlider.setAttribute("aria-valuetext", R.fmtDv(m.dv));
+    var ip = pos(state.ispMin, state.ispMax, m.isp);
+    ispSlider.value = String(ip);
+    ispSlider.setAttribute("aria-valuenow", String(ip));
+    ispSlider.setAttribute("aria-valuetext", R.fmtIsp(m.isp));
+    var vp = pos(veMin(), veMax(), m.ve);
+    veSlider.value = String(vp);
+    veSlider.setAttribute("aria-valuenow", String(vp));
+    veSlider.setAttribute("aria-valuetext", R.fmtVe(m.ve));
+    if (editing !== "dv") dvNum.value = R.group(m.dv, 3);
+    if (editing !== "isp") ispNum.value = fieldIsp(m.isp);
+    if (editing !== "ve") veNum.value = R.group(m.ve, 3);
+    dvNum.setAttribute("aria-invalid", "false");
+    ispNum.setAttribute("aria-invalid", "false");
+    veNum.setAttribute("aria-invalid", "false");
+    dvBtns.forEach(function(b){
+      var id = b.getAttribute("data-dv");
+      var d = null;
+      var i;
+      for (i = 0; i < R.DV_PRESETS.length; i++) if (R.DV_PRESETS[i].id === id) d = R.DV_PRESETS[i];
+      b.setAttribute("aria-pressed", d && nearDv(m.dv, d.dv) ? "true" : "false");
+    });
+    ispBtns.forEach(function(b){
+      var id = b.getAttribute("data-isp");
+      var s = null;
+      var i;
+      for (i = 0; i < R.CLASSROOM_ISP.length; i++) if (R.CLASSROOM_ISP[i].id === id) s = R.CLASSROOM_ISP[i];
+      b.setAttribute("aria-pressed", s && nearIsp(m.isp, s.isp) ? "true" : "false");
+    });
+  }
+
+  function draw(m){
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = Math.max(280, Math.min(760, cssW));
+    var cssH = Math.round(Math.max(280, Math.min(520, cssW * 0.72)));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var base = cssVar("--base-2", "#14161c");
+    var prop = m.overflow ? 1 : clamp(m.propellant, 0, 1);
+    var top = 28;
+    var bot = cssH - 28;
+    var h = bot - top;
+    var w = Math.min(148, cssW * 0.28);
+    var x = Math.round(cssW * 0.34 - w / 2);
+    var propH = h * prop;
+    var split = top + propH;
+    ctx.fillStyle = soft;
+    ctx.globalAlpha = 0.9;
+    ctx.fillRect(x, split, w, bot - split);
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.92;
+    ctx.fillRect(x, top, w, Math.max(0, propH));
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.25;
+    ctx.strokeRect(x + 0.5, top + 0.5, w - 1, h - 1);
+    if (prop > 0.004 && prop < 0.996){
+      ctx.beginPath();
+      ctx.moveTo(x, split);
+      ctx.lineTo(x + w, split);
+      ctx.strokeStyle = base;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    text(ctx, "m0", x + w / 2, top - 12, { align: "center", size: 12, color: ink });
+    text(ctx, "ignition", x - 12, top + 4, { align: "right", size: 10, color: muted });
+    text(ctx, "after", x - 12, bot - 4, { align: "right", size: 10, color: muted });
+    if (propH >= 22){
+      text(ctx, m.overflow ? "propellant" : R.fmtPct(m.propellant), x + w + 12, top + propH / 2, { align: "left", size: 12, color: accent });
+    } else if (prop > 0){
+      text(ctx, R.fmtPct(m.propellant), x + w + 12, top + 8, { align: "left", size: 11, color: accent });
+    }
+    if (h - propH >= 22){
+      text(ctx, m.overflow ? "—" : R.fmtPct(m.remaining), x + w + 12, split + (bot - split) / 2, { align: "left", size: 12, color: soft });
+    } else if (!m.overflow && m.remaining > 0){
+      text(ctx, R.fmtPct(m.remaining), x + w + 12, bot - 8, { align: "left", size: 11, color: soft });
+    }
+    document.getElementById("stack-hint").textContent = "Mass stack · m0 at ignition · not a vehicle";
+  }
+
+  function render(){
+    var m = R.evaluate(state.dv, state.isp);
+    if (!m) return;
+    showErr(false);
+    syncControls(m);
+    paint(m);
+    paintTable(m);
+    draw(m);
+  }
+
+  function setDv(dv){
+    if (!isFinite(dv) || dv < 0){
+      dvNum.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter a Δv of zero or greater, in km/s.");
+      return;
+    }
+    if (dv > DV_CAP){
+      dvNum.setAttribute("aria-invalid", "true");
+      showErr(true, "This desk stops at 30 km/s. That is enough to see the exponential.");
+      return;
+    }
+    if (dv > state.dvMax) state.dvMax = dv;
+    state.dv = dv;
+    showErr(false);
+    render();
+  }
+  function setIsp(isp){
+    if (!(isp > 0) || !isFinite(isp)){
+      ispNum.setAttribute("aria-invalid", "true");
+      veNum.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter an Isp greater than zero, in seconds, or an exhaust speed greater than zero.");
+      return;
+    }
+    if (isp < ISP_FLOOR){
+      ispNum.setAttribute("aria-invalid", "true");
+      showErr(true, "This desk starts at 20 s. Below that the mass ratio stops being a classroom picture.");
+      return;
+    }
+    if (isp > ISP_CAP){
+      ispNum.setAttribute("aria-invalid", "true");
+      showErr(true, "This desk stops at 5,000 s. The ideal equation is the same above that. The picture is not.");
+      return;
+    }
+    if (isp < state.ispMin) state.ispMin = Math.floor(isp);
+    if (isp > state.ispMax) state.ispMax = Math.ceil(isp);
+    state.isp = isp;
+    showErr(false);
+    render();
+  }
+
+  dvSlider.addEventListener("input", function(){
+    editing = null;
+    setDv(fromPos(0, state.dvMax, dvSlider.value));
+  });
+  ispSlider.addEventListener("input", function(){
+    editing = null;
+    setIsp(fromPos(state.ispMin, state.ispMax, ispSlider.value));
+  });
+  veSlider.addEventListener("input", function(){
+    editing = null;
+    setIsp(R.ispFromVe(fromPos(veMin(), veMax(), veSlider.value)));
+  });
+  dvNum.addEventListener("focus", function(){ editing = "dv"; });
+  ispNum.addEventListener("focus", function(){ editing = "isp"; });
+  veNum.addEventListener("focus", function(){ editing = "ve"; });
+  [dvNum, ispNum, veNum].forEach(function(el){
+    el.addEventListener("blur", function(){
+      editing = null;
+      render();
+    });
+  });
+  dvNum.addEventListener("input", function(){
+    var n = parseNum(dvNum.value);
+    editing = "dv";
+    if (!isFinite(n)){
+      dvNum.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter a Δv of zero or greater, in km/s.");
+      return;
+    }
+    setDv(n);
+  });
+  ispNum.addEventListener("input", function(){
+    var n = parseNum(ispNum.value);
+    editing = "isp";
+    if (!isFinite(n)){
+      ispNum.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter an Isp greater than zero, in seconds.");
+      return;
+    }
+    setIsp(n);
+  });
+  veNum.addEventListener("input", function(){
+    var n = parseNum(veNum.value);
+    editing = "ve";
+    if (!isFinite(n) || n <= 0){
+      veNum.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter an exhaust speed greater than zero, in km/s. ve = Isp × 0.00980665 km/s².");
+      return;
+    }
+    setIsp(R.ispFromVe(n));
+  });
+
+  function applyDvPreset(id){
+    var i;
+    for (i = 0; i < R.DV_PRESETS.length; i++){
+      if (R.DV_PRESETS[i].id === id){
+        editing = null;
+        setDv(R.DV_PRESETS[i].dv);
+        return;
+      }
+    }
+  }
+  function applyIspPreset(id){
+    var i;
+    for (i = 0; i < R.CLASSROOM_ISP.length; i++){
+      if (R.CLASSROOM_ISP[i].id === id){
+        editing = null;
+        setIsp(R.CLASSROOM_ISP[i].isp);
+        return;
+      }
+    }
+  }
+  dvBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyDvPreset(b.getAttribute("data-dv")); });
+  });
+  ispBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyIspPreset(b.getAttribute("data-isp")); });
+  });
+  document.addEventListener("keydown", function(ev){
+    var help = document.getElementById("rocket-help-dialog");
+    if (help && !help.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var tag = t.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    if (t.getAttribute("data-dv")){
+      ev.preventDefault();
+      var id = t.getAttribute("data-dv");
+      var idx = dvIds.indexOf(id);
+      if (idx < 0) idx = 0;
+      var next = dvIds[(idx + dir + dvIds.length) % dvIds.length];
+      applyDvPreset(next);
+      var nb = document.querySelector('[data-dv="' + next + '"]');
+      if (nb) nb.focus();
+    } else if (t.getAttribute("data-isp")){
+      ev.preventDefault();
+      var iid = t.getAttribute("data-isp");
+      var j = ispIds.indexOf(iid);
+      if (j < 0) j = 0;
+      var nisp = ispIds[(j + dir + ispIds.length) % ispIds.length];
+      applyIspPreset(nisp);
+      var ib = document.querySelector('[data-isp="' + nisp + '"]');
+      if (ib) ib.focus();
+    }
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("rocket-help");
+  var helpDialog = document.getElementById("rocket-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden){
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))){
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
