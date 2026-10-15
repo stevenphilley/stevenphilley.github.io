@@ -148,18 +148,23 @@ def section_for(url: str) -> str:
 def keyword_list(value) -> list[str]:
     if value is None:
         return []
-    if isinstance(value, str):
+    # A stored list is kept phrase-by-phrase. Splitting "circuit maker"
+    # would drop the keyword the previous index was written to preserve.
+    # A string (a freshly generated title) is split on whitespace, and
+    # edge punctuation is removed so "apparent," does not become a token.
+    generated = isinstance(value, str)
+    if generated:
         parts = value.split()
     elif isinstance(value, list):
-        parts = []
-        for item in value:
-            parts.extend(str(item).split())
+        parts = [str(item) for item in value]
     else:
         parts = [str(value)]
     out = []
     seen = set()
     for part in parts:
         token = part.strip().lower()
+        if generated:
+            token = token.strip(".,;:!?\"'`()[]{}")
         if len(token) < 2 or token in STOP or token in seen:
             continue
         seen.add(token)
