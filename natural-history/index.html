@@ -1,0 +1,59 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natural History — AI-generated images (Grok Imagine) — Steven Philley</title>
+<meta name="description" content="A daily gallery of AI-generated natural history images made with Grok Imagine: Cambrian seas, dinosaurs, Ice Age megafauna, living fossils and speculative survivors. Artistic reconstructions, not photographs.">
+<link rel="canonical" href="https://stevenphilley.com/natural-history/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Natural History — AI-generated images">
+<meta property="og:url" content="https://stevenphilley.com/natural-history/">
+<meta property="og:image" content="https://stevenphilley.com/natural-history/img/001-cambrian-anomalocaris.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="stylesheet" href="/style.css">
+<style>
+.nh-wrap{max-width:1200px;margin:0 auto;padding:24px 18px 60px}
+.nh-note{border:1px solid var(--line,#2c303a);padding:10px 14px;color:var(--ink-soft,#9b9a96);font-size:14px}
+.nh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;margin-top:22px;padding:0;list-style:none}
+.nh-card{border:1px solid var(--line,#2c303a);background:color-mix(in srgb,var(--ink,#e8e6e1) 3%,transparent)}
+.nh-card img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.nh-card .b{padding:10px 12px 14px}
+.nh-card h2{margin:0 0 6px;font-size:18px}
+.nh-card p{margin:0 0 6px;font-size:14px;color:var(--ink-soft,#9b9a96)}
+.nh-ai{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--accent,#c8b48a);padding:2px 6px}
+</style>
+</head>
+<body>
+{% include nav.html %}
+<main class="nh-wrap">
+  <p><a href="/science/">Science</a> · <a href="/wallpapers/">Wallpapers</a></p>
+  <h1>Natural History</h1>
+  <p>One new image a day, from Cambrian seas and dinosaurs to Ice Age megafauna, living fossils and speculative survivors.</p>
+  <p class="nh-note"><strong>Every image on this page is AI-generated with Grok Imagine.</strong> They are artistic reconstructions, not photographs, and are not scientifically exact.</p>
+  <ul class="nh-grid" id="nh-grid"></ul>
+  <noscript><p>This gallery needs JavaScript. The image list is in <a href="/natural-history/manifest.json">manifest.json</a>.</p></noscript>
+</main>
+<script>
+fetch('/natural-history/manifest.json').then(r=>r.json()).then(m=>{
+  const g=document.getElementById('nh-grid');
+  m.items.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.n-a.n).forEach(it=>{
+    const li=document.createElement('li');li.className='nh-card';
+    const a=document.createElement('a');a.href=it.image;
+    const img=document.createElement('img');img.src=it.thumb;img.loading='lazy';img.width=640;img.height=360;
+    img.alt=it.title+' (AI-generated image): '+it.caption;a.appendChild(img);
+    const b=document.createElement('div');b.className='b';
+    const h=document.createElement('h2');h.textContent=it.title;
+    const p=document.createElement('p');p.textContent=it.caption;
+    const meta=document.createElement('p');meta.innerHTML='<span class="nh-ai">AI-generated · Grok Imagine</span> ';
+    meta.appendChild(document.createTextNode(it.date));
+    b.append(h,p,meta);li.append(a,b);g.appendChild(li);
+  });
+});
+</script>
+</body>
+</html>
