@@ -1,0 +1,81 @@
+/* Annual Dial skin — Day of Dignity (scoped; annual-dial-theme)
+   Background: /themes/dial/day-of-dignity-bg.jpg — AI-generated with Grok Imagine (16:9).
+   Contrast on --page-2 #2A1430: text #F5EEDC 14.9:1, accent #E3B95C 9.0:1, dim text ~7:1 (WCAG AA+). */
+html[data-theme="day-of-dignity"]{
+  --page-1:#4A2448; --page-2:#2A1430; --page-3:#170A1C;
+  --plate-0:#3C1E3E; --plate-1:#28132C; --plate-2:#170A1C;
+  --rim:rgba(227,185,92,.52);
+  --hair:rgba(245,238,220,.24);
+  --sector:rgba(156,92,140,.22);
+  --cell-wd:rgba(227,185,92,.16);
+  --cell-we:rgba(156,92,140,.26);
+  --cell-ev:#E3B95C;
+  --cell-now:#F5EEDC;
+  --accent:#E3B95C; --accent-lit:#F6DFA4; --second:#C79BC0;
+  --text:#F5EEDC; --text-dim:rgba(245,238,220,.68);
+  --hub:#170A1C; --on-accent:#170A1C;
+  --panel:rgba(42,20,48,.70); --field:rgba(227,185,92,.09);
+  --display:"IM Fell English",Georgia,serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:var(--font-body,"IBM Plex Sans",system-ui,sans-serif);
+  --title-track:.06em; --ui-track:.14em; --grain:0;
+  --glow:0 0 14px rgba(227,185,92,.38);
+  --aura:radial-gradient(38% 34% at 50% 48%, rgba(246,223,164,.22), transparent 70%);
+}
+/* Still: dawn horizon under a plum veil so the dial and labels stay readable. */
+html[data-theme="day-of-dignity"] body{
+  background:
+    linear-gradient(rgba(23,10,28,.50), rgba(23,10,28,.66)),
+    url("/themes/dial/day-of-dignity-bg.jpg") center / cover no-repeat fixed,
+    #2A1430;
+}
+/* Animated layer 1: breathing glow (body::before carries --aura). transform + opacity only. */
+@keyframes dignityBreathe{
+  0%,100%{opacity:.55;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+html[data-theme="day-of-dignity"] body::before{
+  will-change:transform,opacity;
+  animation:dignityBreathe 28s ease-in-out infinite;
+}
+/* Animated layer 2: a few faint rising light motes. */
+@keyframes dignityMotes{
+  0%{transform:translate3d(0,6vh,0);opacity:0}
+  20%{opacity:.8}
+  80%{opacity:.6}
+  100%{transform:translate3d(1.5vw,-14vh,0);opacity:0}
+}
+html[data-theme="day-of-dignity"]::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(3px 3px at 18% 72%, rgba(246,223,164,.85), transparent 70%),
+    radial-gradient(2px 2px at 31% 58%, rgba(245,238,220,.75), transparent 70%),
+    radial-gradient(3px 3px at 64% 80%, rgba(246,223,164,.80), transparent 70%),
+    radial-gradient(2px 2px at 77% 62%, rgba(245,238,220,.70), transparent 70%),
+    radial-gradient(2px 2px at 86% 84%, rgba(246,223,164,.70), transparent 70%),
+    radial-gradient(3px 3px at 9% 88%, rgba(245,238,220,.65), transparent 70%);
+  will-change:transform,opacity;
+  animation:dignityMotes 34s linear infinite;
+}
+html[data-theme="day-of-dignity"] .now{animation:dignityBreathe 6s ease-in-out infinite}
+html[data-theme="day-of-dignity"] .mark em{color:var(--accent-lit)}
+/* Credit (only visible in this theme) */
+.theme-credit{display:none}
+html[data-theme="day-of-dignity"] .theme-credit{
+  display:block;position:fixed;right:.6rem;bottom:.4rem;margin:0;z-index:6;
+  font:400 .66rem/1.2 var(--mono);letter-spacing:.04em;color:var(--text-dim);
+  pointer-events:none;
+}
+@media (prefers-reduced-motion: reduce){
+  html[data-theme="day-of-dignity"] body::before,
+  html[data-theme="day-of-dignity"]::before,
+  html[data-theme="day-of-dignity"] .now{animation:none}
+  html[data-theme="day-of-dignity"]::before{opacity:.5}
+}
+/* Wide screens: the image's glow sits right of centre; enlarge slightly and shift so it lands behind the dial. */
+@media (min-width: 1100px) and (min-aspect-ratio: 16/10){
+  html[data-theme="day-of-dignity"] body{
+    background-size: auto, max(112vw, 199vh) auto, auto;
+    background-position: center, 68% 50%, center;
+  }
+}
