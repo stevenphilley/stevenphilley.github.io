@@ -1,0 +1,1086 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eccentricity — how e shapes periapsis and apoapsis — Steven Philley</title>
+<meta name="description" content="Interactive eccentricity desk: r_p = a(1−e) and r_a = a(1+e), and vis-viva speeds at both ends. Earth’s e is 0.0167, so 30.286 km/s and 29.291 km/s. Mercury’s e is 0.2056. Halley’s is 0.967. Fact-sheet GM. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/eccentricity/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Eccentricity — how e shapes periapsis and apoapsis">
+<meta property="og:description" content="r_p = a(1−e). r_a = a(1+e). Earth’s e is 0.0167. Periapsis is faster. Mercury’s e is 0.2056. Halley’s is 0.967. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/eccentricity/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Eccentricity — how e shapes periapsis and apoapsis">
+<meta name="twitter:description" content="How e sets the near and far ends of a Keplerian ellipse, and the vis-viva speeds there. Fact-sheet a and e. Classroom schematic, not an ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.orbit{border-top-style:solid;border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.swatch.circ{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.peri{border-top-style:solid;border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.swatch.apo{border-top-style:solid;border-top-color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:9.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.ticks{display:flex;flex-wrap:wrap;gap:8px 14px;margin:0;padding:0;list-style:none}
+.ticks li{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.06em);text-transform:uppercase;color:var(--muted,#63666e)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 14px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(15px,2.2vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.02em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.cadence{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.myth a,.refs a,.page-credit a,.glossary a,.cadence a,.why a,.compare-note a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.compare-note{margin:-4px 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96);max-width:78ch}
+.compare-wrap{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:8px 12px 12px;overflow-x:auto}
+.compare{width:100%;border-collapse:collapse;min-width:720px}
+.compare caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.compare th,.compare td{text-align:left;padding:8px 10px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.compare thead th{border-top:0;color:var(--muted,#63666e);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.compare tbody th{color:var(--ink,#e8e6e1)}
+.compare td{color:var(--ink-soft,#9b9a96)}
+.compare tr.is-on th,.compare tr.is-on td{color:var(--ink,#e8e6e1);background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/" aria-current="page">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The shape</p>
+  <h1>Orbital<br>eccentricity</h1>
+  <p class="lede">Eccentricity is the number that turns a circle into a long ellipse. For a bound Keplerian orbit, <strong>0 ≤ e &lt; 1</strong>. Periapsis, the near end, is <strong>r<sub>p</sub> = a(1 − e)</strong>. Apoapsis, the far end, is <strong>r<sub>a</sub> = a(1 + e)</strong>. Their ratio is <strong>r<sub>a</sub> / r<sub>p</sub> = (1 + e) / (1 − e)</strong>. When <strong>e = 0</strong>, both ends equal <strong>a</strong> and the path is a circle. As <strong>e</strong> approaches 1 the ellipse grows long and skinny, still bound, with the Sun at one focus. Speed is <a href="/science/astronomy/vis-viva/">vis-viva</a>, <strong>v = √[μ (2/r − 1/a)]</strong>. The same <strong>a</strong> and a smaller <strong>r</strong> make a larger speed, so periapsis is faster than apoapsis. Around the Sun, μ is the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> GM, 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Earth’s orbital table prints <strong>a = 149.598 × 10<sup>6</sup> km</strong> and <strong>e = 0.0167</strong>, so <strong>r<sub>p</sub> = 147.100 × 10<sup>6</sup> km</strong>, <strong>r<sub>a</sub> = 152.096 × 10<sup>6</sup> km</strong>, <strong>v<sub>p</sub> = 30.286 km/s</strong>, and <strong>v<sub>a</sub> = 29.291 km/s</strong>. The sheet lists 30.29 km/s and 29.29 km/s. Mercury’s e is 0.2056. Halley’s, on the comet fact sheet, is 0.967. The year still comes from <strong>a</strong> alone, which is the <a href="/science/astronomy/kepler/">Kepler</a> desk. The speed that does not come back is <a href="/science/astronomy/escape/">escape</a>. The half-ellipse between two circles is <a href="/science/astronomy/hohmann/">Hohmann</a>. A hyperbolic excess is <a href="/science/astronomy/c3/">C3</a>. A flyby that turns a v<sub>∞</sub> is a <a href="/science/astronomy/gravity-assist/">gravity assist</a>. Where a moon shreds is <a href="/science/astronomy/roche/">Roche</a>. Where a planet dominates is <a href="/science/astronomy/hill/">Hill</a>. The <a href="/science/astronomy/">solar map</a> is where the bodies sit on a date. This page is only the shape.</p>
+  <p class="note-schematic">Classroom cartoon. One ellipse, one focus, no other planets pulling. Top-down from the north, so motion runs counterclockwise. The Sun is a mark, not to scale, unless the hint says the radius is drawn. Arrow length is speed, not a vector to fly. Inclination is omitted: Halley’s comet sheet lists 162.2°, and this drawing stays in one plane. Not a JPL Horizons ephemeris. Not a perturbation model. Not a mission.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · One ellipse, two ends</span>
+    <button type="button" class="help-q" id="ecc-help" aria-haspopup="dialog" aria-controls="ecc-help-dialog" aria-expanded="false" aria-label="How this eccentricity desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">From the north · Sun at the focus · body not to scale</p>
+      <canvas id="orbit" width="880" height="640" role="img" aria-label="Ellipse of Earth around the Sun. Eccentricity 0.0167. Periapsis and apoapsis are labeled. Classroom schematic, not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch orbit" aria-hidden="true"></span> Ellipse</li>
+        <li><span class="swatch circ" aria-hidden="true"></span> Circle of radius a</li>
+        <li><span class="swatch peri" aria-hidden="true"></span> v at periapsis</li>
+        <li><span class="swatch apo" aria-hidden="true"></span> v at apoapsis</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Eccentricity</p>
+        <div class="slider-row">
+          <label for="e-slider">e</label>
+          <input type="range" id="e-slider" min="0" max="9670" step="1" value="167" aria-valuemin="0" aria-valuemax="0.967" aria-valuenow="0.0167" aria-valuetext="0.0167">
+          <input type="text" class="num" id="e-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.0167" aria-label="Eccentricity" aria-invalid="false">
+        </div>
+        <p class="pick-label">Semi-major axis</p>
+        <div class="slider-row">
+          <label for="a-slider">a</label>
+          <input type="range" id="a-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0.30" aria-valuemax="20" aria-valuenow="1" aria-valuetext="1.000001 AU">
+          <input type="text" class="num" id="a-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1.000001" aria-label="Semi-major axis in astronomical units" aria-invalid="false">
+        </div>
+        <ul class="ticks" aria-label="Approximate semi-major axis ticks">
+          <li>≈ 0.39 Mercury</li>
+          <li>≈ 1 Earth</li>
+          <li>≈ 1.5 Mars</li>
+          <li>≈ 18 Halley</li>
+        </ul>
+        <p class="pick-label">Those ticks are approximate. Presets use the printed figures.</p>
+        <p class="field-error" id="field-err" hidden>Enter an eccentricity from 0 up to 0.999, and a semi-major axis from 0.05 AU to 40 AU.</p>
+        <div class="presets" role="group" aria-label="Fact-sheet presets">
+          <button type="button" data-preset="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-preset="mercury" aria-pressed="false">Mercury</button>
+          <button type="button" data-preset="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-preset="halley" aria-pressed="false">Halley</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail">
+      <p class="tier" id="r-tier">Sun · Earth · fact sheet</p>
+      <h2 id="r-title">Earth</h2>
+      <p class="range" id="r-range">e = 0.0167</p>
+      <div class="clocks">
+        <div class="clock"><p class="k">Periapsis r_p</p><p class="face" id="c-rp">147.100 × 10⁶ km</p><p class="sub" id="c-rp-sub">a(1 − e)</p></div>
+        <div class="clock"><p class="k">Apoapsis r_a</p><p class="face" id="c-ra">152.096 × 10⁶ km</p><p class="sub" id="c-ra-sub">a(1 + e)</p></div>
+        <div class="clock"><p class="k">Speed v_p</p><p class="face" id="c-vp">30.286 km/s</p><p class="sub" id="c-vp-sub">Faster end</p></div>
+        <div class="clock"><p class="k">Speed v_a</p><p class="face" id="c-va">29.291 km/s</p><p class="sub" id="c-va-sub">Slower end</p></div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">a</span><span class="v" id="r-a">149.598 × 10⁶ km</span></li>
+        <li><span class="k">e</span><span class="v" id="r-e">0.0167</span></li>
+        <li><span class="k">r_a / r_p</span><span class="v" id="r-ratio">1.034</span></li>
+        <li><span class="k">μ</span><span class="v" id="r-mu">132,712 × 10⁶ km³/s²</span></li>
+      </ul>
+      <p class="why" id="r-why">Earth’s orbital table prints semimajor axis 149.598 × 10⁶ km and eccentricity 0.0167. Vis-viva at the two ends is 30.286 km/s and 29.291 km/s. The sheet lists 30.29 km/s and 29.29 km/s.</p>
+      <p class="cadence" id="r-cadence">Drag e. The ellipse stretches, and the periapsis arrow grows against the apoapsis arrow.</p>
+    </div>
+  </div>
+
+  <p class="band">The formulas</p>
+  <div class="means">
+    <p><strong>r<sub>p</sub> = a(1 − e)</strong> and <strong>r<sub>a</sub> = a(1 + e)</strong>. a is the semimajor axis, half the long axis. e is the eccentricity. The Sun, for these heliocentric presets, sits at one focus, a distance <strong>ae</strong> from the center. The empty focus is the same distance on the other side. Their average is still a: (r<sub>p</sub> + r<sub>a</sub>) / 2 = a.</p>
+    <p><strong>r<sub>a</sub> / r<sub>p</sub> = (1 + e) / (1 − e)</strong>. The semimajor axis cancels. Earth’s 0.0167 gives 1.034. Mercury’s 0.2056 gives 1.518. Halley’s 0.967 gives 59.606. A circle, e = 0, gives 1.</p>
+    <p><strong>v = √[μ (2/r − 1/a)]</strong>. μ is the Sun Fact Sheet GM, 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>, on every preset here. At periapsis, r is smaller, so 2/r is larger, so v<sub>p</sub> is larger than v<sub>a</sub>. When e = 0, r is a everywhere and both speeds are <strong>√(μ/a)</strong>. The <a href="/science/astronomy/vis-viva/">vis-viva</a> desk slides r between the ends. This desk stays on the ends and moves e and a.</p>
+    <p><strong>The year does not use e.</strong> <strong>P = 2π √(a³/μ)</strong> is Kepler’s period for this point-mass Sun. The <a href="/science/astronomy/kepler/">Kepler</a> desk writes the same idea as P² = a³ in years and AU, for a circle. A skinny ellipse with the same a takes the same time and is much faster at the near end.</p>
+  </div>
+
+  <div class="myth">
+    <p class="tag">What e is not</p>
+    <h2>Not a clock, and not a launch</h2>
+    <p>e = 0 is a circle. A small e, such as Earth’s 0.0167, is still nearly a circle: the two ends differ by a few percent, and the two speeds round to the sheet’s 30.29 km/s and 29.29 km/s. A large e, such as Halley’s 0.967, is a long ellipse. It is still bound. e = 1 would be a parabola, which is escape, and e &gt; 1 would be a hyperbola. This slider does not go there.</p>
+    <p>Nothing here is a position for tonight, a perturbation from Jupiter, or a trajectory a spacecraft could fly. The <a href="/science/astronomy/">solar map</a> moves worlds by date. This page only scales the ends with e and a.</p>
+  </div>
+
+  <p class="band">Words</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Eccentricity</dt><dd>How far the orbit is from a circle. 0 is a circle. Toward 1, a long skinny ellipse, still closed. The focus sits a distance ae from the center, so e is also that offset divided by a.</dd></div>
+    <div class="gloss"><dt>Periapsis and apoapsis</dt><dd>The nearest and farthest points from the focus. Around the Sun the names are perihelion and aphelion. r<sub>p</sub> = a(1−e) and r<sub>a</sub> = a(1+e). This desk prints those formula ends, then sets the fact sheet’s printed distances beside them when a preset is on.</dd></div>
+    <div class="gloss"><dt>Why periapsis is faster</dt><dd>Vis-viva. v = √[μ (2/r − 1/a)]. Closer to the focus, 2/r is larger, so the speed is larger. The arrow at periapsis is the long one. The arrow at apoapsis shrinks by v<sub>a</sub> / v<sub>p</sub>.</dd></div>
+    <div class="gloss"><dt>Which a</dt><dd>Planet presets use the orbital-parameters semimajor axis in 10<sup>6</sup> km, because μ is in km<sup>3</sup>/s<sup>2</sup>. The J2000 AU line is labeled beside it and is not substituted into r<sub>p</sub> = a(1−e). Halley has no kilometer line on the comet sheet. Its a is 17.94 AU times the IAU unit, 149,597,870.7 km.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the ellipse leaves out</dt><dd>Other planets, the Sun’s finite size except as a warning when periapsis falls inside 695,700 km, inclination, and any date. Halley’s 162.2° tilt is a fact-sheet number this flat drawing does not show. Not Horizons. Not a mission. The <a href="/science/astronomy/escape/">escape</a> desk is the speed that does not return. <a href="/science/astronomy/c3/">C3</a> is a hyperbolic excess. <a href="/science/astronomy/hohmann/">Hohmann</a> assumes the circles this page is stretching.</dd></div>
+  </dl>
+
+  <p class="band">Four printed orbits</p>
+  <p class="compare-note">Each row is a(1±e) and vis-viva at those ends, with the Sun’s GM. Planet a and e are the orbital-parameter tables. Halley’s a and e are the comet fact sheet, converted with the IAU astronomical unit. The sheet’s own perihelion, aphelion, and velocities are in the readout, not forced into these cells. Educational comparison, not an ephemeris.</p>
+  <div class="compare-wrap">
+    <table class="compare">
+      <caption>Eccentricity presets from NASA fact sheets</caption>
+      <thead>
+        <tr>
+          <th scope="col">Body</th>
+          <th scope="col">a</th>
+          <th scope="col">e</th>
+          <th scope="col">r_p</th>
+          <th scope="col">r_a</th>
+          <th scope="col">v_p</th>
+          <th scope="col">v_a</th>
+          <th scope="col">r_a/r_p</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr data-row="earth" class="is-on">
+          <th scope="row">Earth</th>
+          <td>149.598 × 10⁶ km</td>
+          <td>0.0167</td>
+          <td>147.100 × 10⁶ km</td>
+          <td>152.096 × 10⁶ km</td>
+          <td>30.286 km/s</td>
+          <td>29.291 km/s</td>
+          <td>1.034</td>
+        </tr>
+        <tr data-row="mercury">
+          <th scope="row">Mercury</th>
+          <td>57.909 × 10⁶ km</td>
+          <td>0.2056</td>
+          <td>46.003 × 10⁶ km</td>
+          <td>69.815 × 10⁶ km</td>
+          <td>58.974 km/s</td>
+          <td>38.860 km/s</td>
+          <td>1.518</td>
+        </tr>
+        <tr data-row="mars">
+          <th scope="row">Mars</th>
+          <td>227.956 × 10⁶ km</td>
+          <td>0.0935</td>
+          <td>206.642 × 10⁶ km</td>
+          <td>249.270 × 10⁶ km</td>
+          <td>26.501 km/s</td>
+          <td>21.969 km/s</td>
+          <td>1.206</td>
+        </tr>
+        <tr data-row="halley">
+          <th scope="row">Halley</th>
+          <td>17.94 AU</td>
+          <td>0.967</td>
+          <td>0.592020 AU</td>
+          <td>35.288 AU</td>
+          <td>54.291 km/s</td>
+          <td>0.911 km/s</td>
+          <td>59.606</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — GM 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 695,700 km. Every heliocentric speed on this page uses that GM. The radius is only a warning when a typed periapsis falls inside the Sun.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — index of the per-body sheets. Planet a, e, perihelion, and aphelion on this page are the orbital-parameter tables, in 10<sup>6</sup> km. The J2000 AU line is labeled and is not the a in r<sub>p</sub> = a(1−e).</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Semimajor axis 149.598 × 10<sup>6</sup> km. Semimajor axis (AU) 1.00000011. Perihelion 147.095 × 10<sup>6</sup> km. Aphelion 152.100 × 10<sup>6</sup> km. Orbit eccentricity 0.0167. Max. orbital velocity 30.29 km/s. Min. orbital velocity 29.29 km/s. Sidereal orbit period 365.256 days.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mercury Fact Sheet</a> — Semimajor axis 57.909 × 10<sup>6</sup> km. Semimajor axis (AU) 0.38709893. Perihelion 46.000 × 10<sup>6</sup> km. Aphelion 69.818 × 10<sup>6</sup> km. Orbit eccentricity 0.2056. The J2000 block also prints orbital eccentricity 0.20563069. This desk uses 0.2056, the orbital-parameters line, the same figure the Kepler desk cites. Max. orbital velocity 58.97 km/s. Min. orbital velocity 38.86 km/s. Sidereal orbit period 87.969 days.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — Semimajor axis 227.956 × 10<sup>6</sup> km. Semimajor axis (AU) 1.52366231. Perihelion 206.650 × 10<sup>6</sup> km. Aphelion 249.261 × 10<sup>6</sup> km. Orbit eccentricity 0.0935. Max. orbital velocity 26.50 km/s. Min. orbital velocity 21.97 km/s. Sidereal orbit period 686.980 days.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/cometfact.html" rel="noopener" target="_blank">NASA NSSDCA — Comet Fact Sheet</a> — 1P Halley: orbital period 76.1 yrs, perihelion date 1986-02-09, perihelion distance 0.587 AU, semi-major axis 17.94 AU, orbital eccentricity 0.967, orbital inclination 162.2 deg. The sheet does not print a kilometer line or an orbital velocity. Last updated 04 January 2016.</li>
+      <li><a href="https://science.nasa.gov/solar-system/comets/1p-halley/" rel="noopener" target="_blank">NASA Science — 1P/Halley</a> — One passage, not the rounded elements above. At aphelion in 1948, 35.25 AU and 0.91 kilometers per second. At perihelion on 9 February 1986, 0.5871 AU and 54.55 kilometers per second. The period has been as short as 74.42 years (1835–1910) and as long as 79.25 years (451–530). This desk does not substitute those speeds for vis-viva of 17.94 AU and 0.967.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — The astronomical unit is exactly 149,597,870,700 m, so 149,597,870.7 km. Halley’s 17.94 AU is multiplied by that length. The <a href="/science/astronomy/">solar map</a> uses the same kilometer length. Planet presets do not. They use the printed 10<sup>6</sup> km line.</li>
+      <li><a href="/science/astronomy/vis-viva/">Vis-viva desk</a> — the same formula anywhere on the ellipse. Earth’s printed perihelion there is 30.287 km/s. This page’s Earth speed is vis-viva at a(1−e), 30.286 km/s. Both round to the sheet’s 30.29 km/s.</li>
+      <li><a href="/science/astronomy/kepler/">Kepler desk</a> — P² = a³ in years and AU for a circular solar orbit. The period on this page is 2π √(a³/μ) from the kilometer a and the Sun’s GM. It does not depend on e.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of one ellipse. Earth’s a(1−e), with the Sun’s GM, is 30.286 km/s at periapsis and 29.291 km/s at apoapsis. The Earth Fact Sheet lists 30.29 km/s and 29.29 km/s. Point-mass, two-body. Not a Horizons ephemeris, not perturbations, and not a mission. The approximate AU ticks are landmarks, not fact-sheet lines. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU. The period comes from a. This page is the shape e gives that same a.</p></a>
+    <a href="/science/astronomy/vis-viva/"><p class="n">The speed</p><h3>Vis-viva</h3><p>v = √[μ (2/r − 1/a)] anywhere on the ellipse, not only at the two ends. Earth’s perihelion rounds to 30.29 km/s.</p></a>
+    <a href="/science/astronomy/escape/"><p class="n">Leaving</p><h3>Escape</h3><p>Circular orbit and escape at one altitude. √2 apart. e = 1 is the parabola this slider does not draw.</p></a>
+    <a href="/science/astronomy/hohmann/"><p class="n">The coast</p><h3>Hohmann</h3><p>Half an ellipse between two circles. Earth to Mars is 258.88 days and 5.594 km/s. Those circles set e aside.</p></a>
+    <a href="/science/astronomy/c3/"><p class="n">The departure</p><h3>C3</h3><p>C3 = v∞². At 400 km, C3 = 0 is a 3.178 km/s burn. A hyperbola, not this bound ellipse.</p></a>
+    <a href="/science/astronomy/gravity-assist/"><p class="n">The flyby</p><h3>Gravity assist</h3><p>An unpowered hyperbola. Its eccentricity is 1 + r_p v∞² / μ, which is not this orbit’s e.</p></a>
+    <a href="/science/astronomy/roche/"><p class="n">The shred</p><h3>Roche</h3><p>Fluid and rigid limits. A distance from a planet, not the stretch of a solar ellipse.</p></a>
+    <a href="/science/astronomy/hill/"><p class="n">The sphere</p><h3>Hill</h3><p>Where a secondary dominates a test particle. Earth’s sphere is 1,496,565 km. This page stays on the solar ellipse.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the eight planets sit. Day and local time, still a schematic, still not this slider.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="ecc-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="ecc-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="ecc-help-title">Eccentricity desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One ellipse around one focus. e and a move. The readout is r_p, r_a, and the vis-viva speeds at those two ends. The picture is a classroom schematic. It is not an ephemeris.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Eccentricity</th><td>The slider runs from 0 to 0.967, Halley’s printed eccentricity. 0 is a circle. A typed value may go up to 0.999, still short of a parabola. 1 and above are rejected.</td></tr>
+        <tr><th scope="row">Semi-major axis</th><td>Log slider from 0.30 AU to 20 AU, so Mercury and Halley share the control. A typed value may run from 0.05 AU to 40 AU. 1 AU in that field is the IAU length, 149,597,870.7 km.</td></tr>
+        <tr><th scope="row">Approximate ticks</th><td>≈ 0.39 Mercury, ≈ 1 Earth, ≈ 1.5 Mars, ≈ 18 Halley. Landmarks only. They are not the fact-sheet lines. The preset buttons are.</td></tr>
+        <tr><th scope="row">Earth</th><td>a = 149.598 × 10<sup>6</sup> km, e = 0.0167. The J2000 AU, 1.00000011, is labeled and is not the a in the formula. Speeds at a(1±e) are 30.286 km/s and 29.291 km/s. The sheet lists 30.29 and 29.29.</td></tr>
+        <tr><th scope="row">Mercury</th><td>a = 57.909 × 10<sup>6</sup> km, e = 0.2056. Vis-viva rounds to the sheet’s 58.97 km/s and 38.86 km/s. The J2000 eccentricity 0.20563069 is not the button.</td></tr>
+        <tr><th scope="row">Mars</th><td>a = 227.956 × 10<sup>6</sup> km, e = 0.0935. Vis-viva rounds to the sheet’s 26.50 km/s and 21.97 km/s.</td></tr>
+        <tr><th scope="row">Halley</th><td>Comet fact sheet: a = 17.94 AU, e = 0.967. Kilometers use the IAU unit. a(1−e) is 0.592020 AU. The sheet’s perihelion distance is 0.587 AU. Those differ because the printed a and e are rounded.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>With a preset button focused, Left and Right move through Earth, Mercury, Mars, and Halley. They do nothing while a field is focused, and nothing while this dialog is open.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Ellipse</th><td>The orbit. The Sun is at the focus closer to periapsis, on the right. The empty focus is marked when e is large enough to see.</td></tr>
+        <tr><th scope="row">Dashed circle</th><td>A circle of radius a, centered on the ellipse, not on the Sun. At e = 0 it lies on the orbit. As e grows, the ellipse stays inside it and still meets it at the two ends.</td></tr>
+        <tr><th scope="row">Arrows</th><td>Speed at periapsis and apoapsis. The periapsis arrow is the long one. Lengths compare v_p and v_a. They are not a scale in km/s per pixel across different orbits.</td></tr>
+        <tr><th scope="row">North</th><td>Top of the canvas. Motion is counterclockwise. Periapsis velocity points up. Apoapsis velocity points down.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keys</h3>
+    <table>
+      <caption>Keys</caption>
+      <tbody>
+        <tr><th scope="row">?</th><td>Opens this dialog. Escape closes it. Tab stays inside until it closes.</td></tr>
+        <tr><th scope="row">Escape</th><td>Closes the dialog and returns focus to the ? button.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script>
+(function(){
+  "use strict";
+  /* r_p = a(1-e), r_a = a(1+e), v = sqrt(mu*(2/r-1/a)).
+     Sun GM: Sun Fact Sheet, 132,712 × 10^6 km^3/s^2.
+     Planet a and e: orbital-parameter tables, kilometers.
+     Halley a and e: Comet Fact Sheet, 17.94 AU and 0.967.
+     Halley kilometers: IAU 2012 astronomical unit, 149,597,870.7 km.
+     Classroom schematic. Point-mass, two-body. Not an ephemeris. */
+  var AU_KM = 149597870.7;
+  var MU = 132712 * 1e6;
+  var MU_TEXT = "132,712 × 10⁶ km³/s²";
+  var SUN_R = 695700;
+  var A_MIN = 0.30;
+  var A_MAX = 20;
+  var A_TYPE_MIN = 0.05;
+  var A_TYPE_MAX = 40;
+  var E_SLIDER_MAX = 0.967;
+  var E_TYPE_MAX = 0.999;
+  var A_STEPS = 1000;
+  var E_STEPS = 9670;
+  var YEAR_DAYS = 365.256;
+
+  var PRESETS = [
+    {
+      id: "earth",
+      name: "Earth",
+      aKm: 149.598 * 1e6,
+      e: 0.0167,
+      auLine: "1.00000011",
+      sheetRpKm: 147.095 * 1e6,
+      sheetRaKm: 152.100 * 1e6,
+      sheetVp: "30.29",
+      sheetVa: "29.29",
+      sheetDays: "365.256"
+    },
+    {
+      id: "mercury",
+      name: "Mercury",
+      aKm: 57.909 * 1e6,
+      e: 0.2056,
+      auLine: "0.38709893",
+      sheetRpKm: 46.000 * 1e6,
+      sheetRaKm: 69.818 * 1e6,
+      sheetVp: "58.97",
+      sheetVa: "38.86",
+      sheetDays: "87.969"
+    },
+    {
+      id: "mars",
+      name: "Mars",
+      aKm: 227.956 * 1e6,
+      e: 0.0935,
+      auLine: "1.52366231",
+      sheetRpKm: 206.650 * 1e6,
+      sheetRaKm: 249.261 * 1e6,
+      sheetVp: "26.50",
+      sheetVa: "21.97",
+      sheetDays: "686.980"
+    },
+    {
+      id: "halley",
+      name: "Halley",
+      aKm: 17.94 * AU_KM,
+      e: 0.967,
+      auLine: "17.94",
+      sheetQAu: 0.587,
+      sheetYears: "76.1"
+    }
+  ];
+
+  function presetById(id){
+    var i;
+    for (i = 0; i < PRESETS.length; i++) if (PRESETS[i].id === id) return PRESETS[i];
+    return null;
+  }
+  function speed(mu, r, a){
+    if (!(mu > 0) || !(r > 0) || !(a > 0)) return NaN;
+    var arg = 2 / r - 1 / a;
+    if (!(arg > 0)) return NaN;
+    return Math.sqrt(mu * arg);
+  }
+  function evaluate(aKm, e){
+    var rp = aKm * (1 - e);
+    var ra = aKm * (1 + e);
+    return {
+      aKm: aKm,
+      e: e,
+      rp: rp,
+      ra: ra,
+      vp: speed(MU, rp, aKm),
+      va: speed(MU, ra, aKm),
+      ratio: (1 + e) / (1 - e),
+      days: 2 * Math.PI * Math.sqrt(aKm * aKm * aKm / MU) / 86400,
+      au: aKm / AU_KM
+    };
+  }
+  function groupFixed(n, digits){
+    if (!isFinite(n)) return "—";
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return (neg ? "−" : "") + parts.join(".");
+  }
+  function fmtSpeed(v){ return groupFixed(v, 3) + " km/s"; }
+  function fmtMkm(km){ return groupFixed(km / 1e6, 3) + " × 10⁶ km"; }
+  function fmtAu(au){
+    if (!isFinite(au)) return "—";
+    if (au >= 10){
+      var hundredths = Math.abs(au - Number(au.toFixed(2)));
+      if (hundredths < 5e-4) return groupFixed(au, 2);
+      return groupFixed(au, 3);
+    }
+    return groupFixed(au, 6);
+  }
+  function fmtE(e){
+    var s = e.toFixed(4).replace(/0+$/, "").replace(/\.$/, "");
+    if (s.indexOf(".") < 0) s += ".0";
+    return s;
+  }
+  function fmtRatio(r){ return groupFixed(r, 3); }
+  function fmtDays(days){
+    if (days >= 1000) return groupFixed(days / YEAR_DAYS, 3) + " years of 365.256 days";
+    return groupFixed(days, 3) + " days";
+  }
+  function parseNum(text){
+    if (text == null) return NaN;
+    var s = String(text).replace(/,/g, "").trim();
+    if (!s) return NaN;
+    var n = Number(s);
+    return isFinite(n) ? n : NaN;
+  }
+  function logPos(min, max, value, steps){
+    if (!(value > 0) || !(max > min)) return 0;
+    var t = (Math.log(value) - Math.log(min)) / (Math.log(max) - Math.log(min));
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return Math.round(t * steps);
+  }
+  function logValue(min, max, pos, steps){
+    var t = pos / steps;
+    return Math.exp(Math.log(min) + t * (Math.log(max) - Math.log(min)));
+  }
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("orbit");
+  var aSlider = document.getElementById("a-slider");
+  var eSlider = document.getElementById("e-slider");
+  var aNum = document.getElementById("a-num");
+  var eNum = document.getElementById("e-num");
+  var err = document.getElementById("field-err");
+  var presetBtns = [].slice.call(document.querySelectorAll("[data-preset]"));
+  var presetIds = presetBtns.map(function(b){ return b.getAttribute("data-preset"); });
+  var editing = null;
+  var first = presetById("earth");
+  var state = { presetId: first.id, aKm: first.aKm, e: first.e, aMin: A_MIN, aMax: A_MAX, eMax: E_SLIDER_MAX };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function showErr(on, msg){
+    err.hidden = !on;
+    aNum.setAttribute("aria-invalid", on && msg && msg.indexOf("semi-major") >= 0 ? "true" : "false");
+    eNum.setAttribute("aria-invalid", on && msg && msg.indexOf("ccentricity") >= 0 ? "true" : "false");
+    if (on && msg) err.textContent = msg;
+  }
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.width = cssW + "px";
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function arrow(ctx, x, y, dx, dy, len, color){
+    var ex = x + dx * len;
+    var ey = y + dy * len;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(ex, ey);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+    var wing = 7;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - dx * wing - dy * wing * 0.55, ey - dy * wing + dx * wing * 0.55);
+    ctx.lineTo(ex - dx * wing + dy * wing * 0.55, ey - dy * wing - dx * wing * 0.55);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    return { x: ex, y: ey };
+  }
+
+  function whyText(m, p){
+    var bits = [];
+    if (p && p.id === "earth"){
+      bits.push("Earth’s orbital table prints semimajor axis " + fmtMkm(p.aKm) + " and eccentricity " + fmtE(p.e) + ". The J2000 line prints " + p.auLine + " AU. This formula uses the kilometer line, because μ is in km³/s². μ is the Sun Fact Sheet GM, " + MU_TEXT + ".");
+      bits.push("r_p = a(1−e) is " + fmtMkm(m.rp) + " and v_p is " + fmtSpeed(m.vp) + ". r_a = a(1+e) is " + fmtMkm(m.ra) + " and v_a is " + fmtSpeed(m.va) + ".");
+      bits.push("The sheet lists perihelion " + fmtMkm(p.sheetRpKm) + ", aphelion " + fmtMkm(p.sheetRaKm) + ", maximum orbital velocity " + p.sheetVp + " km/s, and minimum " + p.sheetVa + " km/s. The printed 0.0167 is rounded, so a(1±e) is not those distances. Vis-viva at the printed perihelion is " + fmtSpeed(speed(MU, p.sheetRpKm, p.aKm)) + ". Both perihelion readings still round to 30.29 km/s.");
+      bits.push("r_a/r_p = (1+e)/(1−e) = " + fmtRatio(m.ratio) + ". The period 2π√(a³/μ) is " + fmtDays(m.days) + ". The sheet lists " + p.sheetDays + " days. The year does not depend on e.");
+    } else if (p && p.id === "mercury"){
+      bits.push("Mercury’s orbital table prints semimajor axis " + fmtMkm(p.aKm) + " and eccentricity " + fmtE(p.e) + ". The J2000 block prints semimajor axis " + p.auLine + " AU and orbital eccentricity 0.20563069. This button uses 0.2056, the orbital-parameters line. μ is the Sun’s GM, " + MU_TEXT + ".");
+      bits.push("r_p = a(1−e) is " + fmtMkm(m.rp) + " and v_p is " + fmtSpeed(m.vp) + ". The sheet lists perihelion " + fmtMkm(p.sheetRpKm) + " and a maximum orbital velocity of " + p.sheetVp + " km/s. r_a is " + fmtMkm(m.ra) + " and v_a is " + fmtSpeed(m.va) + ". The sheet lists aphelion " + fmtMkm(p.sheetRaKm) + " and " + p.sheetVa + " km/s.");
+      bits.push("Rounded to the hundredth, the formula speeds are the sheet’s 58.97 km/s and 38.86 km/s. r_a/r_p = " + fmtRatio(m.ratio) + ". The period is " + fmtDays(m.days) + ". The sheet lists " + p.sheetDays + " days.");
+    } else if (p && p.id === "mars"){
+      bits.push("Mars’s orbital table prints semimajor axis " + fmtMkm(p.aKm) + " and eccentricity " + fmtE(p.e) + ". The J2000 line prints " + p.auLine + " AU and is not the a in the formula. μ is the Sun’s GM, " + MU_TEXT + ".");
+      bits.push("r_p = a(1−e) is " + fmtMkm(m.rp) + " and v_p is " + fmtSpeed(m.vp) + ". The sheet lists perihelion " + fmtMkm(p.sheetRpKm) + " and " + p.sheetVp + " km/s. r_a is " + fmtMkm(m.ra) + " and v_a is " + fmtSpeed(m.va) + ". The sheet lists aphelion " + fmtMkm(p.sheetRaKm) + " and " + p.sheetVa + " km/s.");
+      bits.push("Rounded to the hundredth, those speeds are the sheet’s 26.50 km/s and 21.97 km/s. The printed eccentricity is rounded, so a(1±e) is not the printed perihelion and aphelion. r_a/r_p = " + fmtRatio(m.ratio) + ". The period is " + fmtDays(m.days) + ". The sheet lists " + p.sheetDays + " days.");
+    } else if (p && p.id === "halley"){
+      bits.push("The NSSDCA Comet Fact Sheet prints Halley’s semimajor axis 17.94 AU, eccentricity 0.967, perihelion distance 0.587 AU, and period 76.1 yrs. It does not print kilometers. This desk multiplies 17.94 AU by the IAU astronomical unit, 149,597,870.7 km. μ is the Sun’s GM, " + MU_TEXT + ".");
+      bits.push("r_p = a(1−e) is " + fmtAu(m.rp / AU_KM) + " AU (" + fmtMkm(m.rp) + ") and v_p is " + fmtSpeed(m.vp) + ". r_a is " + fmtAu(m.ra / AU_KM) + " AU (" + fmtMkm(m.ra) + ") and v_a is " + fmtSpeed(m.va) + ". The sheet’s 0.587 AU is not a(1−e). 17.94 and 0.967 are rounded. r_a/r_p = " + fmtRatio(m.ratio) + ".");
+      bits.push("NASA Science records one passage: perihelion on 9 February 1986 at 0.5871 AU and 54.55 km/s, and aphelion in 1948 at 35.25 AU and 0.91 km/s. Those are that apparition, not vis-viva of these rounded elements. 2π√(a³/μ) here is " + fmtDays(m.days) + ". The comet sheet lists 76.1 yrs. NASA Science says the period has been as short as 74.42 years and as long as 79.25 years. Inclination on the comet sheet is 162.2°. This drawing stays flat.");
+    } else {
+      bits.push("Custom ellipse. Not a fact-sheet body. μ is still the Sun’s GM, " + MU_TEXT + ". Semimajor axis " + fmtMkm(m.aKm) + " (" + fmtAu(m.au) + " AU, IAU). Eccentricity " + fmtE(m.e) + ".");
+      bits.push("r_p = a(1−e) is " + fmtMkm(m.rp) + " and v_p is " + fmtSpeed(m.vp) + ". r_a = a(1+e) is " + fmtMkm(m.ra) + " and v_a is " + fmtSpeed(m.va) + ". r_a/r_p = " + fmtRatio(m.ratio) + ". The period is " + fmtDays(m.days) + ", and it does not depend on e. A preset button puts a fact-sheet pair back.");
+    }
+    if (m.e === 0) bits.push("e = 0, so r_p = r_a = a and both speeds are √(μ/a), " + fmtSpeed(m.vp) + ".");
+    if (m.rp < SUN_R) bits.push("Periapsis is inside the Sun Fact Sheet volumetric mean radius, 695,700 km. The formula still returns a number. A real body would have met the Sun.");
+    return bits.join(" ");
+  }
+  function cadence(m){
+    if (m.e === 0) return "e = 0. The path is a circle of radius a, and the two arrows are the same length.";
+    var drop = m.vp > 0 ? (m.vp - m.va) / m.vp * 100 : 0;
+    var scaled = m.vp > 0 && (m.va / m.vp) * 70 >= 5;
+    var arrow = scaled
+      ? "The apoapsis arrow shortens by that same fraction."
+      : "The apoapsis arrow is held to a short stub so the label can sit on it. The speed ratio is smaller than that stub.";
+    return "From periapsis to apoapsis the speed falls by " + groupFixed(drop, 1) + " percent. " + arrow + " r_a/r_p = " + fmtRatio(m.ratio) + ".";
+  }
+
+  function paint(m){
+    var p = state.presetId ? presetById(state.presetId) : null;
+    document.getElementById("r-tier").textContent = p ? "Sun · " + p.name + " · fact sheet" : "Sun · custom · schematic";
+    document.getElementById("r-title").textContent = p ? p.name : "Custom ellipse";
+    document.getElementById("r-range").textContent = "e = " + fmtE(m.e);
+    document.getElementById("c-rp").textContent = fmtMkm(m.rp);
+    document.getElementById("c-rp-sub").textContent = fmtAu(m.rp / AU_KM) + " AU · a(1 − e)";
+    document.getElementById("c-ra").textContent = fmtMkm(m.ra);
+    document.getElementById("c-ra-sub").textContent = fmtAu(m.ra / AU_KM) + " AU · a(1 + e)";
+    document.getElementById("c-vp").textContent = fmtSpeed(m.vp);
+    document.getElementById("c-vp-sub").textContent = m.e === 0 ? "√(μ/a)" : "Faster end";
+    document.getElementById("c-va").textContent = fmtSpeed(m.va);
+    document.getElementById("c-va-sub").textContent = m.e === 0 ? "√(μ/a)" : "Slower end";
+    var aLine = fmtMkm(m.aKm);
+    if (p) aLine += p.id === "halley" ? " · sheet " + p.auLine + " AU" : " · J2000 " + p.auLine + " AU";
+    else aLine += " · " + fmtAu(m.au) + " AU";
+    document.getElementById("r-a").textContent = aLine;
+    document.getElementById("r-e").textContent = fmtE(m.e);
+    document.getElementById("r-ratio").textContent = fmtRatio(m.ratio);
+    document.getElementById("r-mu").textContent = MU_TEXT;
+    document.getElementById("r-why").textContent = whyText(m, p);
+    document.getElementById("r-cadence").textContent = cadence(m);
+    var toScale = SUN_R / m.aKm > 0.04;
+    document.getElementById("orbit-hint").textContent = "From the north · Sun at the focus · " + (toScale ? "solar radius to scale" : "Sun not to scale") + " · arrows are speed";
+    canvas.setAttribute("aria-label", (p ? p.name : "Custom ellipse") + ". Eccentricity " + fmtE(m.e) + ". Periapsis " + fmtMkm(m.rp) + " at " + fmtSpeed(m.vp) + ". Apoapsis " + fmtMkm(m.ra) + " at " + fmtSpeed(m.va) + ". Classroom schematic, not an ephemeris.");
+    [].slice.call(document.querySelectorAll("[data-row]")).forEach(function(row){
+      row.classList.toggle("is-on", row.getAttribute("data-row") === state.presetId);
+    });
+  }
+  function syncSliders(m){
+    var aPos = logPos(state.aMin, state.aMax, m.au, A_STEPS);
+    aSlider.min = "0";
+    aSlider.max = String(A_STEPS);
+    aSlider.value = String(aPos);
+    aSlider.setAttribute("aria-valuemin", String(state.aMin));
+    aSlider.setAttribute("aria-valuemax", String(state.aMax));
+    aSlider.setAttribute("aria-valuenow", String(aPos));
+    aSlider.setAttribute("aria-valuetext", fmtAu(m.au) + " AU");
+    var eMax = state.eMax;
+    var eSteps = Math.round(eMax * 10000);
+    var ePos = Math.round(m.e / eMax * eSteps);
+    if (ePos < 0) ePos = 0;
+    if (ePos > eSteps) ePos = eSteps;
+    eSlider.min = "0";
+    eSlider.max = String(eSteps);
+    eSlider.value = String(ePos);
+    eSlider.setAttribute("aria-valuemin", "0");
+    eSlider.setAttribute("aria-valuemax", String(eMax));
+    eSlider.setAttribute("aria-valuenow", fmtE(m.e));
+    eSlider.setAttribute("aria-valuetext", fmtE(m.e));
+  }
+  function syncNumbers(m){
+    if (editing !== "a") aNum.value = fmtAu(m.au);
+    if (editing !== "e") eNum.value = fmtE(m.e);
+  }
+  function setPressed(){
+    presetBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-preset") === state.presetId ? "true" : "false");
+    });
+  }
+  function draw(m){
+    var cssW = canvas.parentElement ? canvas.parentElement.clientWidth - 24 : 640;
+    cssW = Math.max(280, Math.min(760, cssW));
+    var cssH = Math.round(Math.max(320, Math.min(560, cssW * 0.72)));
+    var ctx = fitCanvas(cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var e = m.e;
+    var a = m.aKm;
+    var bAxis = a * Math.sqrt(Math.max(0, 1 - e * e));
+    var x0 = -a * (1 + e);
+    var x1 = a * (1 - e);
+    var yHalf = Math.max(a, bAxis);
+    var pad = 46;
+    var scale = Math.min((cssW - pad * 2) / (x1 - x0), (cssH - pad * 2) / (2 * yHalf));
+    var midX = (x0 + x1) / 2;
+    function xy(xKm, yKm){
+      return { x: cssW / 2 + (xKm - midX) * scale, y: cssH / 2 - yKm * scale };
+    }
+    var center = xy(-a * e, 0);
+    var focus = xy(0, 0);
+    var empty = xy(-2 * a * e, 0);
+    var peri = xy(a * (1 - e), 0);
+    var apo = xy(-a * (1 + e), 0);
+
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, a * scale, 0, Math.PI * 2);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    var i, E, pt;
+    for (i = 0; i <= 240; i++){
+      E = Math.PI * 2 * i / 240;
+      pt = xy(-a * e + a * Math.cos(E), bAxis * Math.sin(E));
+      if (i === 0) ctx.moveTo(pt.x, pt.y);
+      else ctx.lineTo(pt.x, pt.y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2.4;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(apo.x, apo.y);
+    ctx.lineTo(peri.x, peri.y);
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.7;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+
+    var bodyPx = SUN_R * scale;
+    var disc = bodyPx >= 8 ? bodyPx : 6;
+    ctx.beginPath();
+    ctx.arc(focus.x, focus.y, disc, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.stroke();
+
+    if (e > 0.04){
+      ctx.beginPath();
+      ctx.arc(empty.x, empty.y, 3.5, 0, Math.PI * 2);
+      ctx.strokeStyle = muted;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(center.x, center.y, 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = muted;
+      ctx.fill();
+    }
+
+    var ref = Math.max(m.vp, 1e-9);
+    var periLen = 70;
+    var apoLen = periLen * (m.va / ref);
+    if (m.e === 0) apoLen = periLen;
+    if (apoLen < 5) apoLen = 5;
+    var periTip = arrow(ctx, peri.x, peri.y, 0, -1, periLen, ink);
+    var apoTip = arrow(ctx, apo.x, apo.y, 0, 1, apoLen, soft);
+
+    ctx.beginPath();
+    ctx.arc(peri.x, peri.y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = ink;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(apo.x, apo.y, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = soft;
+    ctx.fill();
+
+    function apart(p, q, min){
+      return Math.hypot(p.x - q.x, p.y - q.y) >= min;
+    }
+    text(ctx, "N", cssW / 2, 16, { align: "center", size: 11, color: soft });
+    text(ctx, "Sun", focus.x, Math.min(cssH - 14, focus.y + disc + 12), { align: "center", size: 10, color: muted });
+    var periLabel = apart(peri, focus, 36) ? { x: peri.x, y: peri.y - 14, align: "center" } : { x: periTip.x + 8, y: periTip.y - 14, align: "left" };
+    text(ctx, "periapsis", periLabel.x, periLabel.y, { align: periLabel.align, size: 10, color: muted });
+    text(ctx, "apoapsis", apo.x, Math.max(28, apo.y - 14), { align: "center", size: 10, color: muted });
+    text(ctx, "v_p", Math.min(cssW - 36, periTip.x + 8), periTip.y, { align: "left", size: 11, color: ink });
+    text(ctx, "v_a", Math.min(cssW - 36, apoTip.x + 8), Math.min(cssH - 12, apoTip.y + 12), { align: "left", size: 11, color: soft });
+    if (e > 0.08 && apart(empty, apo, 48) && apart(empty, focus, 36)){
+      text(ctx, "empty focus", empty.x, empty.y + 14, { align: "center", size: 10, color: muted });
+    }
+    if (e > 0.08 && apart(center, focus, 28) && apart(center, peri, 36) && apart(center, apo, 36)){
+      text(ctx, "center", center.x, center.y - 12, { align: "center", size: 10, color: muted });
+    }
+  }
+  function render(){
+    var m = evaluate(state.aKm, state.e);
+    setPressed();
+    syncSliders(m);
+    syncNumbers(m);
+    paint(m);
+    draw(m);
+  }
+  function leavePreset(){ state.presetId = null; }
+  function applyPreset(id){
+    var p = presetById(id);
+    if (!p) return;
+    state.presetId = p.id;
+    state.aKm = p.aKm;
+    state.e = p.e;
+    state.aMin = A_MIN;
+    state.aMax = A_MAX;
+    state.eMax = E_SLIDER_MAX;
+    showErr(false);
+    editing = null;
+    render();
+  }
+  function commitA(au){
+    if (!(au >= A_TYPE_MIN && au <= A_TYPE_MAX)){
+      showErr(true, "Enter a semi-major axis from 0.05 AU to 40 AU.");
+      return;
+    }
+    showErr(false);
+    if (fmtAu(au) === fmtAu(state.aKm / AU_KM)){
+      render();
+      return;
+    }
+    state.aKm = au * AU_KM;
+    state.aMin = Math.min(A_MIN, au);
+    state.aMax = Math.max(A_MAX, au);
+    leavePreset();
+    render();
+  }
+  function commitE(e){
+    if (!(e >= 0 && e <= E_TYPE_MAX)){
+      showErr(true, "Enter an eccentricity from 0 up to 0.999. This desk stays on a bound ellipse.");
+      return;
+    }
+    showErr(false);
+    if (fmtE(e) === fmtE(state.e)){
+      render();
+      return;
+    }
+    state.e = e;
+    state.eMax = Math.max(E_SLIDER_MAX, e);
+    leavePreset();
+    render();
+  }
+
+  aSlider.addEventListener("input", function(){
+    var au = logValue(state.aMin, state.aMax, Number(aSlider.value), A_STEPS);
+    state.aKm = au * AU_KM;
+    leavePreset();
+    showErr(false);
+    editing = null;
+    render();
+  });
+  eSlider.addEventListener("input", function(){
+    var steps = Number(eSlider.max) || E_STEPS;
+    state.e = (Number(eSlider.value) / steps) * state.eMax;
+    if (state.e < 1e-6) state.e = 0;
+    leavePreset();
+    showErr(false);
+    editing = null;
+    render();
+  });
+  aNum.addEventListener("focus", function(){ editing = "a"; });
+  eNum.addEventListener("focus", function(){ editing = "e"; });
+  aNum.addEventListener("input", function(){
+    editing = "a";
+    var n = parseNum(aNum.value);
+    if (!isFinite(n)) return;
+    commitA(n);
+    editing = "a";
+  });
+  eNum.addEventListener("input", function(){
+    editing = "e";
+    var n = parseNum(eNum.value);
+    if (!isFinite(n)) return;
+    commitE(n);
+    editing = "e";
+  });
+  aNum.addEventListener("blur", function(){
+    editing = null;
+    var n = parseNum(aNum.value);
+    if (!isFinite(n)) showErr(true, "Enter a semi-major axis from 0.05 AU to 40 AU.");
+    else commitA(n);
+  });
+  eNum.addEventListener("blur", function(){
+    editing = null;
+    var n = parseNum(eNum.value);
+    if (!isFinite(n)) showErr(true, "Enter an eccentricity from 0 up to 0.999. This desk stays on a bound ellipse.");
+    else commitE(n);
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyPreset(b.getAttribute("data-preset")); });
+  });
+  document.addEventListener("keydown", function(ev){
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    if (helpDialog && !helpDialog.hidden) return;
+    var tag = ev.target && ev.target.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA") return;
+    if (!ev.target || !ev.target.getAttribute || !ev.target.getAttribute("data-preset")) return;
+    ev.preventDefault();
+    var idx = presetIds.indexOf(state.presetId);
+    if (idx < 0) idx = 0;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    var next = presetIds[(idx + dir + presetIds.length) % presetIds.length];
+    applyPreset(next);
+    var nb = document.querySelector('[data-preset="' + next + '"]');
+    if (nb) nb.focus();
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  render();
+
+  var helpBtn = document.getElementById("ecc-help");
+  var helpDialog = document.getElementById("ecc-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden){
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))){
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var firstNode = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === firstNode || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      firstNode.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
