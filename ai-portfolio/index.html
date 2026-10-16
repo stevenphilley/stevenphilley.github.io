@@ -1,0 +1,108 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Image Generation Portfolio (Grok Imagine) — Steven Philley</title>
+<meta name="description" content="Steven Philley's AI image generation portfolio: images and short videos he created with Grok Imagine. AI-generated artwork, not photographs.">
+<link rel="canonical" href="https://stevenphilley.com/ai-portfolio/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AI Image Generation Portfolio — Steven Philley">
+<meta property="og:url" content="https://stevenphilley.com/ai-portfolio/">
+<meta property="og:image" content="https://stevenphilley.com/ai-portfolio/media/01.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="stylesheet" href="/style.css">
+<style>
+.ap-wrap{max-width:1300px;margin:0 auto;padding:24px 18px 60px}
+.ap-note{border:1px solid var(--line,#2c303a);padding:10px 14px;color:var(--ink-soft,#9b9a96);font-size:14px}
+.ap-chips{display:flex;gap:8px;margin:18px 0 0;flex-wrap:wrap}
+.ap-chips button{font:inherit;font-size:14px;padding:6px 14px;border:1px solid var(--line,#2c303a);background:transparent;color:var(--ink,#e8e6e1);border-radius:999px;cursor:pointer}
+.ap-chips button[aria-pressed=true]{background:var(--accent,#c8b48a);color:#111;border-color:var(--accent,#c8b48a)}
+.ap-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-top:22px;padding:0;list-style:none}
+.ap-card{border:1px solid var(--line,#2c303a);background:color-mix(in srgb,var(--ink,#e8e6e1) 3%,transparent)}
+.ap-card[hidden]{display:none}
+.ap-media{display:block;position:relative;cursor:zoom-in;background:#000;aspect-ratio:4/5;overflow:hidden;border:0;padding:0;width:100%}
+.ap-media img,.ap-media video{display:block;width:100%;height:100%;object-fit:cover}
+.ap-badge{position:absolute;top:8px;left:8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;background:rgba(0,0,0,.65);color:#fff;padding:2px 7px}
+.ap-card .b{padding:10px 12px 14px}
+.ap-card h2{margin:0 0 6px;font-size:18px}
+.ap-card p{margin:0 0 6px;font-size:14px;color:var(--ink-soft,#9b9a96)}
+.ap-ai{display:inline-block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--accent,#c8b48a);padding:2px 6px}
+.ap-lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;z-index:1000;align-items:center;justify-content:center;flex-direction:column;padding:16px}
+.ap-lb.open{display:flex}
+.ap-lb img,.ap-lb video{max-width:94vw;max-height:80vh;object-fit:contain}
+.ap-lb .cap{color:#ddd;max-width:800px;text-align:center;margin-top:10px;font-size:14px}
+.ap-lb button{position:absolute;background:rgba(255,255,255,.12);color:#fff;border:0;font-size:28px;width:48px;height:48px;cursor:pointer;border-radius:50%}
+.ap-lb .x{top:14px;right:14px}.ap-lb .pv{left:12px;top:50%}.ap-lb .nx{right:12px;top:50%}
+</style>
+</head>
+<body>
+{% include nav.html %}
+<main class="ap-wrap" id="sp-after-nav">
+  <p><a href="/">Photography</a> · <a href="/wallpapers/">Wallpapers</a> · <a href="/natural-history/">Natural History</a></p>
+  <h1>AI Image Generation Portfolio</h1>
+  <p>Images and short videos by <strong>Steven Philley</strong>, created with <strong>Grok Imagine</strong>.</p>
+  <p class="ap-note"><strong>This is my AI image generation work.</strong> Every piece here was created by Steven Philley using Grok Imagine. They are AI-generated artworks, not photographs.</p>
+  <div class="ap-chips" role="group" aria-label="Filter">
+    <button type="button" data-f="all" aria-pressed="true">All</button>
+    <button type="button" data-f="image" aria-pressed="false">Images</button>
+    <button type="button" data-f="video" aria-pressed="false">Video</button>
+  </div>
+  <ul class="ap-grid" id="ap-grid"></ul>
+  <noscript><p>This gallery needs JavaScript. The list is in <a href="/ai-portfolio/manifest.json">manifest.json</a>.</p></noscript>
+</main>
+<div class="ap-lb" id="ap-lb" role="dialog" aria-modal="true" aria-label="Viewer">
+  <button class="x" aria-label="Close">×</button><button class="pv" aria-label="Previous">‹</button><button class="nx" aria-label="Next">›</button>
+  <div id="ap-lb-m"></div><p class="cap" id="ap-lb-c"></p>
+</div>
+<script>
+(function(){
+let items=[],shown=[],cur=0;
+const g=document.getElementById('ap-grid'),lb=document.getElementById('ap-lb'),lm=document.getElementById('ap-lb-m'),lc=document.getElementById('ap-lb-c');
+const hover=matchMedia('(hover:hover)').matches;
+const io='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{const v=e.target;if(e.isIntersecting){v.play().catch(()=>{})}else v.pause()}),{threshold:.4}):null;
+function card(it,i){
+  const li=document.createElement('li');li.className='ap-card';li.dataset.type=it.type;
+  const a=document.createElement('button');a.className='ap-media';a.type='button';a.setAttribute('aria-label','Open '+it.title);
+  if(it.type==='video'){
+    const v=document.createElement('video');v.muted=true;v.loop=true;v.playsInline=true;v.autoplay=!hover;v.preload='none';v.poster=it.thumb;v.src=it.video;
+    v.setAttribute('muted','');v.setAttribute('playsinline','');v.setAttribute('aria-label',it.title+' (AI-generated video)');
+    a.appendChild(v);
+    if(hover){a.addEventListener('mouseenter',()=>v.play().catch(()=>{}));a.addEventListener('mouseleave',()=>v.pause());}
+    else if(io) io.observe(v);
+    const s=document.createElement('span');s.className='ap-badge';s.textContent='▶ Video';a.appendChild(s);
+  }else{
+    const img=document.createElement('img');img.src=it.thumb;img.loading='lazy';img.alt=it.title+' (AI-generated image): '+it.description;a.appendChild(img);
+  }
+  a.addEventListener('click',()=>openLb(it));
+  const b=document.createElement('div');b.className='b';
+  const h=document.createElement('h2');h.textContent=it.title;
+  const p=document.createElement('p');p.textContent=it.description;
+  const m=document.createElement('p');m.innerHTML='<span class="ap-ai">AI-generated · Grok Imagine</span> ';m.appendChild(document.createTextNode('by '+(it.creator||'Steven Philley')));
+  b.append(h,p,m);li.append(a,b);return li;
+}
+function openLb(it){shown=items.filter(x=>!g.dataset.f||g.dataset.f==='all'||x.type===g.dataset.f);cur=shown.indexOf(it);render();lb.classList.add('open');document.body.style.overflow='hidden'}
+function render(){const it=shown[cur];lm.innerHTML='';
+  if(it.type==='video'){const v=document.createElement('video');v.src=it.video;v.poster=it.poster;v.controls=true;v.autoplay=true;v.loop=true;v.muted=true;v.playsInline=true;lm.appendChild(v)}
+  else{const im=document.createElement('img');im.src=it.image;im.alt=it.title;lm.appendChild(im)}
+  lc.textContent=it.title+' — '+it.description+' · AI-generated by Steven Philley with Grok Imagine';}
+function close(){lb.classList.remove('open');lm.innerHTML='';document.body.style.overflow=''}
+lb.querySelector('.x').onclick=close;
+lb.querySelector('.pv').onclick=()=>{cur=(cur-1+shown.length)%shown.length;render()};
+lb.querySelector('.nx').onclick=()=>{cur=(cur+1)%shown.length;render()};
+lb.addEventListener('click',e=>{if(e.target===lb)close()});
+addEventListener('keydown',e=>{if(!lb.classList.contains('open'))return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')lb.querySelector('.pv').click();if(e.key==='ArrowRight')lb.querySelector('.nx').click()});
+document.querySelectorAll('.ap-chips button').forEach(bt=>bt.onclick=()=>{
+  document.querySelectorAll('.ap-chips button').forEach(x=>x.setAttribute('aria-pressed',x===bt));
+  const f=bt.dataset.f;g.dataset.f=f;g.querySelectorAll('.ap-card').forEach(c=>c.hidden=!(f==='all'||c.dataset.type===f));
+});
+fetch('/ai-portfolio/manifest.json').then(r=>r.json()).then(m=>{items=m.items;items.forEach((it,i)=>g.appendChild(card(it,i)))});
+})();
+</script>
+{% include footer.html %}
+</body>
+</html>
