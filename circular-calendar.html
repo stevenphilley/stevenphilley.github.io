@@ -34,6 +34,8 @@
 <link rel="stylesheet" href="/themes/dial/hallow.css">
 <link rel="stylesheet" href="/themes/dial/xmas.css">
 <link rel="stylesheet" href="/themes/dial/neon.css">
+<!-- Day of Dignity skin: /themes/dial/dignity.css. Background image is AI-generated with Grok Imagine. -->
+<link rel="stylesheet" href="/themes/dial/dignity.css">
 <style>
   /* Theme tokens + skin overrides live in /themes/dial/*.css (scoped annual-dial-theme) */
 
@@ -304,6 +306,8 @@
         <button class="theme" data-theme-id="hallow" aria-pressed="false">Halloween</button>
         <button class="theme" data-theme-id="xmas" aria-pressed="false">Christmas</button>
         <button class="theme" data-theme-id="neon" aria-pressed="false">Neon</button>
+        <!-- Day of Dignity theme (background: AI-generated with Grok Imagine) -->
+        <button class="theme" data-theme-id="day-of-dignity" aria-pressed="false">Day of Dignity</button>
         <div class="hue-control">
           <label for="hue">Hue</label>
           <input type="range" id="hue" min="0" max="360" step="1" value="0"
@@ -393,6 +397,7 @@
       </div>
     </aside>
   </main>
+  <p class="theme-credit" aria-hidden="false">Background: AI-generated with Grok Imagine</p>
 </div>
 <div class="tip" id="tip"></div>
 <div class="due-alert" id="dueAlert" role="alert" aria-hidden="true">
@@ -477,6 +482,7 @@
 
   // Neon '80s: hot pink / cyan / violet / magenta — stripe cycle for readable glow bands.
   const NEON = [328, 190, 275, 310]; // hot pink, electric cyan, violet, magenta
+  const DIGNITY = [42, 300, 36, 280]; // dawn gold, plum, amber, aubergine
 
   // Vapor colors the year like the sun's arc: lavender at the cold ends,
   // pink through orange at midsummer. Dec and Jan meet on the same hue.
@@ -507,6 +513,11 @@
       const red = d % 2 === 1;
       return 'hsla('+spinHue(red?353:145)+','+(red?76:54)+'%,'+(weekend?58:46)+'%,'+(weekend?.55:.34)+')';
     }
+    if(th === 'day-of-dignity'){
+      const base = DIGNITY[(m + d) % 4];
+      const warm = base < 90;
+      return 'hsla('+spinHue(base)+','+(warm?66:38)+'%,'+(weekend?58:46)+'%,'+(weekend?.46:.28)+')';
+    }
     if(th === 'neon'){
       const h = spinHue(NEON[(m + d) % 4]);
       return 'hsla('+h+',100%,'+(weekend?58:48)+'%,'+(weekend?.48:.30)+')';
@@ -520,6 +531,7 @@
     if(th === 'hallow') return 'hsla('+spinHue(HALLOW[(m+d)%5])+',92%,70%,.55)';
     if(th === 'xmas')   return 'hsla('+spinHue(d%2?353:145)+',70%,68%,.5)';
     if(th === 'neon')   return 'hsla('+spinHue(NEON[(m+d)%4])+',100%,72%,.55)';
+    if(th === 'day-of-dignity') return 'hsla('+spinHue(DIGNITY[(m+d)%4])+',60%,74%,.45)';
     return 'var(--hair)';
   }
   function monthLabelColor(m){
@@ -528,18 +540,19 @@
     if(state.theme==='hallow')return 'hsl('+spinHue(HALLOW[m%5])+',92%,66%)';
     if(state.theme==='xmas')  return m%2 ? 'var(--second)' : 'var(--accent-lit)';
     if(state.theme==='neon')  return 'hsl('+spinHue(NEON[m%4])+',100%,72%)';
+    if(state.theme==='day-of-dignity') return 'hsl('+spinHue(DIGNITY[m%4] < 90 ? DIGNITY[m%4] : 42)+',68%,'+(m%2?80:70)+'%)';
     return 'var(--accent)';
   }
 
   /* ---------- theme ids (shared; skins in /themes/dial/*.css) ---------- */
-  const THEME_ORDER = ['brass','led','vapor','columbus','hallow','xmas','neon'];
+  const THEME_ORDER = ['brass','led','vapor','columbus','hallow','xmas','neon','day-of-dignity'];
   function normalizeTheme(id){
     return THEME_ORDER.includes(id) ? id : 'brass';
   }
   /* Site-wide share/theme contract:
    *  Most pages use ?theme=<neon|emerald|dusk|sage|tide|sand> for sp-theme.
    *  This dial page keeps ?theme= for dial skins
-   *  (brass|led|vapor|columbus|hallow|xmas|neon) under annual-dial-theme.
+   *  (brass|led|vapor|columbus|hallow|xmas|neon|day-of-dignity) under annual-dial-theme.
    *  Neon collides with the site theme name, so we do NOT
    *  load /js/sp-theme-boot.js here. Page Share uses dial ?theme= via sp-share.js.
    */
@@ -1057,6 +1070,15 @@
         '<span class="formula">d odd  → hsl(353, 76%, L)\nd even → hsl(145, 54%, L)\nL = weekend ? 58% : 46%</span>' +
         '<p>The string overhead is drawn as five quadratic swags. Each bulb is placed by evaluating the curve at fixed <em>t</em>, then rotated to the curve\'s normal so it sits square to the cord the way a real socket does.</p>' +
         '<p>Every bulb casts two blurred circles set to <code>mix-blend-mode: screen</code> — a tight one at the glass and a 104px pool below it. That\'s what actually lights the dial: the colors underneath are being added to, not covered up. Each bulb pulses on its own offset delay so the string never blinks in unison.</p>';
+    } else if(state.theme === 'day-of-dignity'){
+      const chips = DIGNITY.map(h=>'<i style="background:hsl('+spinHue(h)+',56%,52%)"></i>').join('');
+      note.innerHTML =
+        '<h4>Day of Dignity · dawn light</h4>' +
+        '<p>A calm, respectful palette: deep plum and aubergine for the night giving way, warm dawn gold for light, ivory for the text.</p>' +
+        '<span class="formula">hue = DIGNITY[(m + d) mod 4]\nDIGNITY = [42, 300, 36, 280]</span>' +
+        '<div class="ramp">'+chips+'</div>' +
+        '<div class="ramp-key"><span>GOLD</span><span>PLUM</span><span>AMBER</span><span>AUBERGINE</span></div>' +
+        '<p>The dawn horizon behind the dial is AI-generated with Grok Imagine. A slow breathing glow and a few rising light motes are CSS-only and switch off when your system asks for reduced motion.</p>';
     } else if(state.theme === 'neon'){
       const chips = NEON.map(h=>'<i style="background:hsl('+spinHue(h)+',100%,58%)"></i>').join('');
       const k = (state.month + 1) % 4;
