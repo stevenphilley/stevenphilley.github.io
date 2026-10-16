@@ -1,0 +1,1128 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twilight — sunrise, sunset, and the three twilights — Steven Philley</title>
+<meta name="description" content="Interactive twilight desk: astronomical dawn at −18°, nautical at −12°, civil at −6°, and sunrise at the standard −0.833°. NOAA’s solar calculator, in the browser. Golden hour and blue hour are approximate. Classroom, not an almanac.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/twilight/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Twilight — sunrise, sunset, and the three twilights">
+<meta property="og:description" content="Astronomical, nautical, and civil twilight, plus sunrise at −0.833°. NOAA’s solar calculator in the browser. A 24-hour sky band, a Sun-altitude curve, and a year of day length.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/twilight/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Twilight — sunrise, sunset, and the three twilights">
+<meta name="twitter:description" content="When the sky gets dark, and why. NOAA solar calculator, three twilights, and an approximate golden hour and blue hour.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.panel{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px 16px 14px;min-width:0}
+.panel .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.panel canvas{display:block;width:100%;height:auto;background:#10141c;touch-action:manipulation}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:10px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:14px;height:10px;flex:0 0 auto;border:1px solid rgba(255,255,255,.18)}
+.controls{display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.date-row,.custom-fields{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.date-row label,.custom-fields label{flex:1 1 140px;display:flex;flex-direction:column;gap:4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.date-row input,.custom-fields input{min-height:44px;font-size:16px;padding:8px 10px;background:rgba(0,0,0,.35);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);letter-spacing:0;text-transform:none;width:100%;box-sizing:border-box}
+.date-row input:focus-visible,.custom-fields input:focus-visible{outline:1px solid var(--accent,#c8b48a);border-color:var(--accent,#c8b48a)}
+.date-row input[aria-invalid="true"],.custom-fields input[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.text-btn{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.text-btn:hover,.presets button:focus-visible,.text-btn:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.zone-line,.status-line{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.status-line{color:var(--ink,#e8e6e1)}
+.stage{display:grid;grid-template-columns:minmax(280px,1.15fr) minmax(260px,.85fr);gap:12px;align-items:stretch;margin-top:12px}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px 16px 14px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.times{width:100%;border-collapse:collapse;margin:0 0 12px}
+.times caption{caption-side:top;text-align:left;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--muted,#63666e);padding:0 0 6px}
+.times th,.times td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400}
+.times th{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.times td{color:var(--ink,#e8e6e1)}
+.times .miss{color:var(--muted,#63666e)}
+.stats{margin:0;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.year-readout{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.means a,.refs a,.page-credit a,.glossary a,.zone-line a,.status-line a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.foot{margin-top:36px;padding-top:18px;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track,.1em);display:flex;gap:16px;flex-wrap:wrap}
+.foot a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.stack{display:flex;flex-direction:column;gap:12px}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/" aria-current="page">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · The sky’s clock</p>
+  <h1>Twilight<br>dawn through night</h1>
+  <p class="lede">The sky does not go dark at sunset. The Sun sinks through three named bands. <strong>Astronomical dawn</strong> is the center of the Sun <strong>18°</strong> below the horizon. <strong>Nautical dawn</strong> is <strong>12°</strong>. <strong>Civil dawn</strong> is <strong>6°</strong>. <strong>Sunrise</strong> on this desk is the standard <strong>−0.833°</strong>: the upper limb at the horizon, with about 34′ of refraction and about 16′ of solar semi-diameter already folded into that altitude. Then the day, sunset, and the same three bands in reverse — civil dusk, nautical dusk, astronomical dusk — and night, when the Sun is below −18°. Civil twilight is bright enough for outdoor activity without lights. Nautical twilight is when the sea horizon stays visible for navigation. Astronomical twilight is the last pale sky before faint-object observing. <strong>Golden hour</strong> and <strong>blue hour</strong> are informal photography names, not almanac terms. Drawn here as approximate altitude bands: golden hour roughly −4° to +6°, blue hour roughly −6° to −4°. The clock is <a href="https://gml.noaa.gov/grad/solcalc/" rel="noopener" target="_blank">NOAA’s solar calculator</a>, the Meeus equations NOAA publishes, run in this browser. The year’s swing in day length is the tilt on the <a href="/science/astronomy/seasons/">seasons</a> desk. The minutes by which the true Sun misses mean noon are the <a href="/science/astronomy/analemma/">analemma</a>. The day being divided is the mean solar day, set beside the shorter star day on the <a href="/science/astronomy/sidereal/">sidereal</a> desk.</p>
+  <p class="note-schematic">Classroom solar position. NOAA’s equations, for a level horizon and average air. NOAA says the sunrise time is good to about a minute between ±72° latitude, and can be off by more near the poles, where the Sun moves almost sideways. It is not a weather forecast, not a navigation instrument, and not a substitute for an official almanac. Refraction changes with temperature and pressure. Golden hour and blue hour are approximate labels. The <a href="/science/astronomy/seasons/">seasons</a> desk’s day-length strip leaves refraction out on purpose. This page puts it back, as the fixed −0.833°.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · One place, one day</span>
+    <button type="button" class="help-q" id="tw-help" aria-haspopup="dialog" aria-controls="tw-help-dialog" aria-expanded="false" aria-label="How this twilight desk works">?</button>
+  </div>
+
+  <div class="stack">
+    <div class="panel">
+      <div class="controls">
+        <p class="pick-label">Date</p>
+        <div class="date-row">
+          <label>Calendar day
+            <input type="date" id="tw-date" value="2026-10-16" aria-describedby="tw-err">
+          </label>
+          <button type="button" class="text-btn" id="tw-today">Today</button>
+        </div>
+        <p class="pick-label">Place</p>
+        <div class="presets" role="group" aria-label="Location presets">
+          <button type="button" data-preset="campbell" aria-pressed="true">Campbell, CA</button>
+          <button type="button" data-preset="equator" aria-pressed="false">Equator</button>
+          <button type="button" data-preset="london" aria-pressed="false">London</button>
+          <button type="button" data-preset="reykjavik" aria-pressed="false">Reykjavík</button>
+          <button type="button" data-preset="tromso" aria-pressed="false">Tromsø</button>
+          <button type="button" data-preset="south-pole" aria-pressed="false">South Pole</button>
+        </div>
+        <div class="custom-fields">
+          <label>Latitude
+            <input type="text" id="tw-lat" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="37.287" aria-label="Latitude, north positive" aria-invalid="false">
+          </label>
+          <label>Longitude
+            <input type="text" id="tw-lon" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="-121.950" aria-label="Longitude, east positive" aria-invalid="false">
+          </label>
+          <button type="button" class="text-btn" id="tw-loc">Use my location</button>
+        </div>
+        <p class="field-error" id="tw-err" hidden>Enter a latitude from −90 to 90 and a longitude from −180 to 180.</p>
+        <p class="zone-line" id="tw-zone" aria-live="polite">Times in Campbell civil time.</p>
+        <p class="status-line" id="tw-status" aria-live="polite">The Sun rises and sets.</p>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="hint" id="tw-band-hint">24-hour sky · geometric altitude of the Sun’s center</p>
+      <canvas id="tw-band" width="960" height="140" role="img" aria-label="Twenty-four hour timeline of night, twilight, and day."></canvas>
+      <ul class="legend" aria-label="Sky bands">
+        <li><span class="swatch" style="background:#080a10" aria-hidden="true"></span> Night</li>
+        <li><span class="swatch" style="background:#1a2d52" aria-hidden="true"></span> Astronomical</li>
+        <li><span class="swatch" style="background:#2a5584" aria-hidden="true"></span> Nautical</li>
+        <li><span class="swatch" style="background:#c47c48" aria-hidden="true"></span> Civil</li>
+        <li><span class="swatch" style="background:#f0d59a" aria-hidden="true"></span> Day</li>
+        <li><span class="swatch" style="background:#e0a040" aria-hidden="true"></span> Golden, approx.</li>
+        <li><span class="swatch" style="background:#5a8cc4" aria-hidden="true"></span> Blue, approx.</li>
+      </ul>
+    </div>
+
+    <div class="stage">
+      <div class="panel">
+        <p class="hint" id="tw-alt-hint">Sun altitude through the clock day</p>
+        <canvas id="tw-alt" width="880" height="420" role="img" aria-label="Sun altitude against time, with lines at −0.833, −6, −12, and −18 degrees."></canvas>
+      </div>
+      <div class="detail">
+        <p class="tier" id="tw-tier">Campbell, CA</p>
+        <h2 id="tw-title">21 June</h2>
+        <table class="times" id="tw-table">
+          <caption id="tw-cap">Clock times</caption>
+          <thead>
+            <tr><th scope="col">Phase</th><th scope="col">Rising</th><th scope="col">Setting</th></tr>
+          </thead>
+          <tbody id="tw-body"></tbody>
+        </table>
+        <table class="times" id="tw-photo">
+          <caption>Photography bands, approximate</caption>
+          <thead>
+            <tr><th scope="col">Band</th><th scope="col">When</th></tr>
+          </thead>
+          <tbody id="tw-photo-body"></tbody>
+        </table>
+        <ul class="stats" id="tw-stats"></ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="hint" id="tw-year-hint">Year · day length and twilight at this latitude</p>
+      <canvas id="tw-year" width="960" height="280" tabindex="0" role="img" aria-label="Day length and twilight duration across the year at this latitude. Click a day to select it."></canvas>
+      <p class="year-readout" id="tw-year-read"></p>
+    </div>
+  </div>
+  <noscript><p class="note-schematic">This desk computes the times in the browser. With JavaScript off, the definitions above still stand. The clocks do not run.</p></noscript>
+
+  <p class="band">What each band is for</p>
+  <div class="means">
+    <p><strong>Civil twilight, −6° to −0.833°.</strong> The brightest twilight. The horizon is clear, and outdoor work can go on without artificial light. Streetlights are not required for seeing the ground. In the morning this is civil dawn, from −6° up to sunrise. In the evening it is civil dusk, from sunset down to −6°.</p>
+    <p><strong>Nautical twilight, −12° to −6°.</strong> The sea horizon is still visible against the sky, which is the condition a navigator uses to take a star sight. Bright stars are out. The coast and the horizon can be told apart. Ashore, the landscape is a silhouette.</p>
+    <p><strong>Astronomical twilight, −18° to −12°.</strong> The sky looks dark to the eye, and most stars are visible. A faint glow remains in the direction of the Sun. Faint-object observing — galaxies, dim nebulae — waits until the Sun is below −18°, which is the end of astronomical dusk and the start of night. The reverse, in the morning, is astronomical dawn.</p>
+    <p><strong>Sunrise and sunset, −0.833°.</strong> The upper limb of the Sun on a level horizon, for average air. About 34′ of that allowance is refraction, which lifts the Sun. About 16′ is the semi-diameter, so the center is still below the horizon when the top edge appears to touch it. NOAA’s calculator uses a zenith of 90.833°, which is this same altitude. The curve on this page is the geometric altitude of the center, the number those lines are drawn against.</p>
+    <p><strong>Golden hour, roughly −4° to +6°. Blue hour, roughly −6° to −4°.</strong> Informal photography terms. They are altitude guesses, not a clock hour and not a NOAA definition. Golden hour is the warm, low Sun, including a little of civil twilight and the first or last part of the day. Blue hour is the deep blue of late civil twilight, between −6° and −4°. Both are marked approximate. A hill, a city, or a cloud will move the look of the hour without moving these angles.</p>
+    <p><strong>Polar day, polar night, and twilight all night.</strong> If the Sun stays above −0.833° all day, it is polar day: midnight sun, and no twilight. If it stays below −0.833° all day, it is polar night. The Sun may still climb through civil, nautical, or astronomical twilight without rising. Twilight all night is the other case: the Sun does set, but it never reaches −18°, so there is no true night. London near the June solstice is that case. Reykjavík’s June night stays in civil twilight. Tromsø’s June is polar day.</p>
+  </div>
+
+  <p class="band">Words</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Geometric altitude</dt><dd>The angle of the Sun’s center above a level horizon, before the air bends the ray. Negative means below the horizon. The four lines on the curve are this number: −0.833°, −6°, −12°, and −18°.</dd></div>
+    <div class="gloss"><dt>−0.833°</dt><dd>NOAA’s sunrise standard. 0.833° is 50′. About 34′ is refraction and about 16′ is the Sun’s apparent radius. The upper limb then sits on the horizon. Real air can shift the minute.</dd></div>
+    <div class="gloss"><dt>Solar noon</dt><dd>The moment the Sun is highest, on the meridian. It is not always 12:00 on the clock. The difference is the longitude inside the time zone, plus the equation of time. That sideways minute is the <a href="/science/astronomy/analemma/">analemma</a>.</dd></div>
+    <div class="gloss"><dt>Declination</dt><dd>How far north or south of the celestial equator the Sun sits. It runs about ±23.44° through the year, the same obliquity as the <a href="/science/astronomy/seasons/">seasons</a> desk. Day length follows from latitude and this angle.</dd></div>
+    <div class="gloss"><dt>Time zone</dt><dd>Presets use the place’s civil zone, including daylight time, when the browser knows that zone. A typed latitude and longitude has no zone on its own, so the clocks then use this browser’s zone and say so. “Use my location” uses the device’s zone, which is the civil time where you are standing.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the picture leaves out</dt><dd>Mountains, your elevation, and the weather. A high horizon hides the Sun early. Thin air refracts less. The South Pole row uses New Zealand civil time because that is the clock Amundsen–Scott keeps. The Sun’s altitude there barely changes through a clock day. This is not a pointing aid for a telescope, and it is not the <a href="/science/astronomy/local-sky/">local sky</a> chart.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://gml.noaa.gov/grad/solcalc/" rel="noopener" target="_blank">NOAA Global Monitoring Laboratory — Solar calculator</a> — the sunrise, sunset, and solar-position calculator this desk follows. Equations from Jean Meeus, <em>Astronomical Algorithms</em>. The page states the results are theoretically accurate to within a minute for locations between ±72° latitude, and within 10 minutes outside that.</li>
+      <li><a href="https://gml.noaa.gov/grad/solcalc/calcdetails.html" rel="noopener" target="_blank">NOAA — Solar calculation details</a> — sunrise and sunset assume 0.833° of atmospheric refraction, the correction for refraction at the horizon and the size of the solar disk. The same note describes the refraction model used for a general solar elevation. This desk’s event times use the fixed −0.833°, −6°, −12°, and −18° geometric altitudes. The curve is that geometric altitude.</li>
+      <li><a href="https://gml.noaa.gov/grad/solcalc/solareqns.PDF" rel="noopener" target="_blank">NOAA — Solar equations (PDF)</a> — equation of time, declination, hour angle, and the sunrise formula with zenith 90.833°. Longitude in that note is positive east, which is the sign this page uses.</li>
+      <li><a href="https://aa.usno.navy.mil/data/RS_OneDay" rel="noopener" target="_blank">U.S. Naval Observatory — Complete Sun and Moon Data for One Day</a> — rise, set, and civil twilight for a date and a place. The Campbell and London checks on this desk were read against that service. Nautical and astronomical twilight are the same geometry at 12° and 18°.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom clock of one geometric altitude. For Campbell, California, 37.287° N, 121.950° W, on 21 June 2024, this NOAA calculation gives sunrise 05:48 PDT and sunset 20:32 PDT, civil twilight 05:17 to 21:03, and solar noon 13:10. Those four match the U.S. Naval Observatory to the minute. Astronomical twilight that day is 03:54 to 22:25. The December pair, in Pacific Standard Time, is sunrise 07:18 and sunset 16:54. London on 21 June 2024 never reaches −18°, so the night is twilight all night. Tromsø that day is polar day. Not a forecast and not for navigation. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/analemma/"><p class="n">Noon Sun</p><h3>Analemma</h3><p>Why solar noon is not 12:00. Declination and the equation of time — the same two numbers this clock is built on.</p></a>
+    <a href="/science/astronomy/sidereal/"><p class="n">The day</p><h3>Sidereal</h3><p>The mean solar day this page divides is 24.0000 hours. One spin against the stars is 23.9345. The stars rise about four minutes earlier.</p></a>
+    <a href="/science/astronomy/seasons/"><p class="n">Tilt</p><h3>Seasons</h3><p>Why the day-length stripe on the year chart grows and shrinks. Axial tilt, held parallel. That desk’s hour-angle strip ignores refraction.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>Which stars the dark hours put overhead. Campbell is the default there too. This desk does not point them.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits among the planets. Day and local time, still a schematic.</p></a>
+    <a href="/science/astronomy/eclipses/"><p class="n">Shadows</p><h3>Eclipses</h3><p>A new or full Moon is not an eclipse. The Moon’s orbit is tilted about 5°. A different angle from this daily sinking Sun.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="tw-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="tw-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tw-help-title">Twilight desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One date, one latitude and longitude, and the Sun’s geometric altitude through that clock day. The times are NOAA’s solar calculator. The picture is a classroom clock. It is not an almanac to navigate by.</p>
+    <h3>Choose the day and the place</h3>
+    <table>
+      <caption>Choose the day and the place</caption>
+      <tbody>
+        <tr><th scope="row">Date</th><td>The calendar day in the time zone named under the fields. Today jumps to that zone’s current date.</td></tr>
+        <tr><th scope="row">Campbell, CA</th><td>37.287° N, 121.950° W. The default. Civil time is America/Los_Angeles, Pacific Standard or Pacific Daylight.</td></tr>
+        <tr><th scope="row">Equator</th><td>0° N, 0° E, in the Gulf of Guinea. Clocks in UTC. Day length stays near 12 hours.</td></tr>
+        <tr><th scope="row">London</th><td>51.507° N, 0.128° W. Europe/London. Near the June solstice the Sun sets and never reaches −18°. Twilight all night.</td></tr>
+        <tr><th scope="row">Reykjavík</th><td>64.147° N, 21.942° W. Atlantic/Reykjavik, UTC all year. June nights stay in civil twilight.</td></tr>
+        <tr><th scope="row">Tromsø</th><td>69.649° N, 18.956° E. Europe/Oslo. Midnight sun around the June solstice. Polar night in December, with twilight in the middle of the day.</td></tr>
+        <tr><th scope="row">South Pole</th><td>90° S. Amundsen–Scott keeps New Zealand civil time, so the zone is Pacific/Auckland. Around June the Sun stays below −18°. Around December it stays up.</td></tr>
+        <tr><th scope="row">Latitude and longitude</th><td>North and east are positive. Campbell’s longitude is negative. Typing a coordinate leaves the preset. The clocks then use this browser’s time zone, and the line under the fields says so.</td></tr>
+        <tr><th scope="row">Use my location</th><td>Asks the browser for a location. The clocks use this device’s time zone, which is the civil time where you are. If permission is refused, type a latitude and longitude or pick a preset.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>With a preset button focused, Left and Right move through the presets. They do nothing while a field is focused, and nothing while this dialog is open.</td></tr>
+      </tbody>
+    </table>
+    <h3>Read the picture</h3>
+    <table>
+      <caption>Read the picture</caption>
+      <tbody>
+        <tr><th scope="row">Sky band</th><td>One clock day, left to right. Night, astronomical twilight, nautical, civil, and day. The thin bar under it is the approximate golden hour and blue hour.</td></tr>
+        <tr><th scope="row">Altitude curve</th><td>Geometric altitude of the Sun’s center. Dashed lines at −0.833°, −6°, −12°, and −18°. Dotted lines at −4° and +6° are the approximate photo bounds.</td></tr>
+        <tr><th scope="row">Rising and setting</th><td>The moment the Sun crosses that altitude going up, and going down. “Does not occur” means the Sun stays on one side of the line all day, or the crossing is not inside this clock day.</td></tr>
+        <tr><th scope="row">Durations</th><td>How long the Sun spends in each band, both ends added together. The five sky bands add to 24 hours.</td></tr>
+        <tr><th scope="row">Year</th><td>Each stripe is one day at this latitude. From the bottom: night, astronomical, nautical, civil, day. Click a stripe, or focus the chart and use Left and Right, to set the date. Longitude barely changes these lengths.</td></tr>
+        <tr><th scope="row">Now</th><td>If the date is today in the named zone, a mark sits at the current minute.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keys</h3>
+    <table>
+      <caption>Keys</caption>
+      <tbody>
+        <tr><th scope="row">?</th><td>Opens this dialog. Escape closes it. Tab stays inside until it closes.</td></tr>
+        <tr><th scope="row">Escape</th><td>Closes the dialog and returns focus to the ? button.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/twilight/twilight.js"></script>
+<script>
+(function(){
+  "use strict";
+  var T = window.Twilight;
+  if (!T) return;
+  var root = document.documentElement;
+  var dateInput = document.getElementById("tw-date");
+  var latInput = document.getElementById("tw-lat");
+  var lonInput = document.getElementById("tw-lon");
+  var err = document.getElementById("tw-err");
+  var presetBtns = [].slice.call(document.querySelectorAll("[data-preset]"));
+  var presetIds = presetBtns.map(function(b){ return b.getAttribute("data-preset"); });
+  var bandCanvas = document.getElementById("tw-band");
+  var altCanvas = document.getElementById("tw-alt");
+  var yearCanvas = document.getElementById("tw-year");
+  var editing = null;
+  var yearHover = -1;
+  var yearCache = { key: "", rows: [] };
+  var lastReport = null;
+
+  var COLORS = {
+    night: "#080a10",
+    astronomical: "#1a2d52",
+    nautical: "#2a5584",
+    civil: "#c47c48",
+    day: "#f0d59a",
+    golden: "#e0a040",
+    blue: "#5a8cc4"
+  };
+
+  var PHASE_ROWS = [
+    { name: "Astronomical · −18°", rise: "astronomicalDawn", set: "astronomicalDusk", alt: T.ALT.astronomical },
+    { name: "Nautical · −12°", rise: "nauticalDawn", set: "nauticalDusk", alt: T.ALT.nautical },
+    { name: "Civil · −6°", rise: "civilDawn", set: "civilDusk", alt: T.ALT.civil },
+    { name: "Sunrise / sunset · −0.833°", rise: "sunrise", set: "sunset", alt: T.ALT.sunrise }
+  ];
+
+  function browserTz(){
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"; }
+    catch (e) { return "UTC"; }
+  }
+  function isoInZone(tz, utcMs){
+    try {
+      return new Intl.DateTimeFormat("en-CA", {
+        timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit"
+      }).format(new Date(utcMs));
+    } catch (e) {
+      return new Date(utcMs).toISOString().slice(0, 10);
+    }
+  }
+  function parseIso(s){
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || ""));
+    if (!m) return null;
+    var y = +m[1], mo = +m[2], d = +m[3];
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    var check = new Date(Date.UTC(y, mo - 1, d));
+    if (check.getUTCFullYear() !== y || check.getUTCMonth() !== mo - 1 || check.getUTCDate() !== d) return null;
+    return { y: y, m: mo, d: d };
+  }
+  function isoFromState(){
+    var m = state.month < 10 ? "0" + state.month : String(state.month);
+    var d = state.day < 10 ? "0" + state.day : String(state.day);
+    return state.year + "-" + m + "-" + d;
+  }
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function showErr(on, msg){
+    err.hidden = !on;
+    if (msg) err.textContent = msg;
+    latInput.setAttribute("aria-invalid", on ? "true" : "false");
+    lonInput.setAttribute("aria-invalid", on ? "true" : "false");
+  }
+
+  var campbell = T.presetById("campbell");
+  var startTz = campbell.tz;
+  var startIso = isoInZone(startTz, Date.now());
+  var startParts = parseIso(startIso) || { y: 2026, m: 10, d: 16 };
+  var state = {
+    presetId: "campbell",
+    zoneMode: "place",
+    year: startParts.y,
+    month: startParts.m,
+    day: startParts.d,
+    lat: campbell.lat,
+    lon: campbell.lon
+  };
+
+  function activeZone(){
+    if (state.presetId) {
+      var p = T.presetById(state.presetId);
+      if (p && p.tz) return { tz: p.tz, mode: "place", note: p.note || "", label: p.label };
+    }
+    var tz = browserTz();
+    if (state.zoneMode === "device") return { tz: tz, mode: "device", note: "", label: "your location" };
+    return { tz: tz, mode: "browser", note: "", label: "typed coordinates" };
+  }
+  function noonOffset(tz, y, m, d){
+    var guess = Date.UTC(y, m - 1, d, 12, 0, 0);
+    var off = T.zoneOffsetHours(tz, guess);
+    if (!isFinite(off)) return null;
+    var noonUtc = guess - off * 3600000;
+    var off2 = T.zoneOffsetHours(tz, noonUtc);
+    if (!isFinite(off2)) off2 = off;
+    return off2;
+  }
+  function zoneSentence(zone, offset, utcMs){
+    var abbr = T.zoneAbbrev(zone.tz, utcMs);
+    var off = T.offsetLabel(offset);
+    var clock = abbr + " · " + off;
+    var base;
+    if (zone.mode === "place") base = "Times in " + zone.label + " civil time (" + clock + ").";
+    else if (zone.mode === "device") base = "Times in this device’s time zone (" + clock + "), from your location.";
+    else base = "Times in this browser’s time zone (" + clock + "). That is not the civil time at the typed coordinates.";
+    if (zone.note) base += " " + zone.note + ".";
+    return base;
+  }
+  function statusSentence(r){
+    var min = r.altitudeMin.toFixed(1);
+    var max = r.altitudeMax.toFixed(1);
+    if (r.flags.polarDay) return "Polar day. The Sun stays above −0.833° all day. The lowest it gets is " + min + "°. No sunrise, no sunset, and no twilight.";
+    if (r.flags.polarNight && r.altitudeMax < T.ALT.astronomical) return "Polar night. The Sun stays below −18° all day. The highest it gets is " + max + "°. No twilight.";
+    if (r.flags.polarNight) return "Polar night. The Sun stays below −0.833° all day, so it never rises. It still climbs to " + max + "°, inside " + bandWord(r.altitudeMax) + ".";
+    if (r.flags.civilAllNight) return "Twilight all night. The Sun sets, and the darkest it gets is " + min + "°, still civil twilight. It never reaches −6°.";
+    if (r.flags.nauticalAllNight) return "Twilight all night. The Sun sets and leaves civil twilight. The darkest it gets is " + min + "°, inside nautical twilight. It never reaches −12°.";
+    if (r.flags.astronomicalAllNight) return "Twilight all night. The Sun sets, and the darkest it gets is " + min + "°, inside astronomical twilight. It never reaches −18°, so there is no true night.";
+    return "The Sun rises and sets, and for part of the night it is below −18°. The darkest altitude is " + min + "°.";
+  }
+  function bandWord(alt){
+    if (alt >= T.ALT.sunrise) return "day";
+    if (alt >= T.ALT.civil) return "civil twilight";
+    if (alt >= T.ALT.nautical) return "nautical twilight";
+    if (alt >= T.ALT.astronomical) return "astronomical twilight";
+    return "night";
+  }
+  function missingReason(r, altitude){
+    if (r.altitudeMax < altitude) return "Sun stays below this";
+    if (r.altitudeMin >= altitude) return "Sun stays above this";
+    return "Not on this clock day";
+  }
+  function cell(minutes, r, altitude){
+    if (minutes == null) return '<span class="miss">' + missingReason(r, altitude) + "</span>";
+    return T.formatClock(minutes);
+  }
+  function placeLabel(){
+    var p = state.presetId ? T.presetById(state.presetId) : null;
+    if (p) return p.label;
+    var ns = state.lat >= 0 ? "N" : "S";
+    var ew = state.lon >= 0 ? "E" : "W";
+    return Math.abs(state.lat).toFixed(3) + "° " + ns + ", " + Math.abs(state.lon).toFixed(3) + "° " + ew;
+  }
+  function monthName(m){
+    return ["January","February","March","April","May","June","July","August","September","October","November","December"][m - 1];
+  }
+  function fitCanvas(canvas, cssW, cssH){
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    canvas.style.width = cssW + "px";
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return ctx;
+  }
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#10141c";
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || "#c8c6c0";
+    ctx.fillText(str, x, y);
+  }
+  function panelWidth(canvas){
+    var parent = canvas.parentElement;
+    var w = parent ? parent.clientWidth - 32 : 640;
+    return Math.max(280, w);
+  }
+  function nowMinutes(zone, offset){
+    var utc = Date.now();
+    var today = isoInZone(zone.tz, utc);
+    if (today !== isoFromState()) return null;
+    var local = utc + offset * 3600000;
+    var d = new Date(local);
+    return d.getUTCHours() * 60 + d.getUTCMinutes() + d.getUTCSeconds() / 60;
+  }
+
+  function paintTables(r, zoneLabel){
+    document.getElementById("tw-tier").textContent = placeLabel();
+    document.getElementById("tw-title").textContent = r.day + " " + monthName(r.month);
+    document.getElementById("tw-cap").textContent = "Clock times · " + zoneLabel;
+    var body = PHASE_ROWS.map(function(row){
+      return "<tr><th scope=\"row\">" + row.name + "</th><td>" +
+        cell(r.events[row.rise], r, row.alt) + "</td><td>" +
+        cell(r.events[row.set], r, row.alt) + "</td></tr>";
+    }).join("");
+    document.getElementById("tw-body").innerHTML = body;
+    var photo = [];
+    function addIntervals(list, name){
+      if (!list.length) {
+        photo.push("<tr><th scope=\"row\">" + name + "</th><td><span class=\"miss\">Sun misses this band</span></td></tr>");
+        return;
+      }
+      list.forEach(function(iv){
+        var mid = (iv.start + iv.end) / 2;
+        var side = iv.start < r.solarNoonLocal && iv.end > r.solarNoonLocal
+          ? "through midday"
+          : (mid < r.solarNoonLocal ? "morning" : "evening");
+        photo.push("<tr><th scope=\"row\">" + name + "</th><td>" +
+          T.formatClock(iv.start) + " – " + T.formatClock(iv.end) + " · " + side + "</td></tr>");
+      });
+    }
+    addIntervals(r.goldenIntervals, "Golden hour · −4° to +6°");
+    addIntervals(r.blueIntervals, "Blue hour · −6° to −4°");
+    document.getElementById("tw-photo-body").innerHTML = photo.join("");
+    var stats = [
+      ["Solar noon", T.formatClock(r.solarNoonLocal)],
+      ["Noon altitude", T.formatSigned(r.altitudeNoon, 2, "°")],
+      ["Lowest / highest", T.formatSigned(r.altitudeMin, 1, "°") + "  /  " + T.formatSigned(r.altitudeMax, 1, "°")],
+      ["Day length", T.formatDuration(r.durations.day)],
+      ["Civil twilight", T.formatDuration(r.durations.civil)],
+      ["Nautical twilight", T.formatDuration(r.durations.nautical)],
+      ["Astronomical twilight", T.formatDuration(r.durations.astronomical)],
+      ["Night · below −18°", T.formatDuration(r.durations.night)],
+      ["Golden hour, approx.", T.formatDuration(r.durations.golden)],
+      ["Blue hour, approx.", T.formatDuration(r.durations.blue)],
+      ["Declination", T.formatSigned(r.declination, 2, "°")],
+      ["Equation of time", T.formatSigned(r.equationOfTime, 1, " min")]
+    ];
+    document.getElementById("tw-stats").innerHTML = stats.map(function(pair){
+      return "<li><span class=\"k\">" + pair[0] + "</span><span class=\"v\">" + pair[1] + "</span></li>";
+    }).join("");
+  }
+
+  function drawBand(r, nowMin){
+    var cssW = panelWidth(bandCanvas);
+    var cssH = 132;
+    var ctx = fitCanvas(bandCanvas, cssW, cssH);
+    ctx.fillStyle = "#10141c";
+    ctx.fillRect(0, 0, cssW, cssH);
+    var padL = 36;
+    var padR = 12;
+    var top = 16;
+    var barH = 36;
+    var photoH = 12;
+    var inner = cssW - padL - padR;
+    function xOf(min){ return padL + (min / 1440) * inner; }
+    r.segments.forEach(function(seg){
+      ctx.fillStyle = COLORS[seg.band] || COLORS.night;
+      var x = xOf(seg.start);
+      ctx.fillRect(x, top, Math.max(0.6, xOf(seg.end) - x), barH);
+    });
+    var py = top + barH + 6;
+    ctx.fillStyle = "#1a1e28";
+    ctx.fillRect(padL, py, inner, photoH);
+    r.blueIntervals.forEach(function(iv){
+      ctx.fillStyle = COLORS.blue;
+      var x = xOf(iv.start);
+      ctx.fillRect(x, py, Math.max(0.6, xOf(iv.end) - x), photoH);
+    });
+    r.goldenIntervals.forEach(function(iv){
+      ctx.fillStyle = COLORS.golden;
+      var x = xOf(iv.start);
+      ctx.fillRect(x, py, Math.max(0.6, xOf(iv.end) - x), photoH);
+    });
+    ctx.strokeStyle = "rgba(243,235,221,0.35)";
+    ctx.lineWidth = 1;
+    [0, 6, 12, 18, 24].forEach(function(h){
+      var x = xOf(h * 60);
+      ctx.beginPath();
+      ctx.moveTo(x, top + barH);
+      ctx.lineTo(x, top + barH + 5);
+      ctx.stroke();
+      text(ctx, (h < 10 ? "0" : "") + h, x, py + photoH + 14, { align: "center", size: 10, color: "#9b9a96" });
+    });
+    if (nowMin != null) {
+      var nx = xOf(Math.max(0, Math.min(1440, nowMin)));
+      ctx.strokeStyle = cssVar("--accent", "#c8b48a");
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(nx, top - 4);
+      ctx.lineTo(nx, py + photoH);
+      ctx.stroke();
+      text(ctx, "now", nx, 8, { align: "center", size: 10, color: cssVar("--accent", "#c8b48a") });
+    }
+    var rise = r.events.sunrise;
+    var set = r.events.sunset;
+    var summary = "Twenty-four hour sky. ";
+    if (r.flags.polarDay) summary += "Polar day. The band is daylight for the whole clock day.";
+    else if (r.flags.polarNight && r.altitudeMax < T.ALT.astronomical) summary += "Polar night. The band stays night.";
+    else if (r.flags.polarNight) summary += "Polar night. The Sun never rises. Twilight still appears where the Sun climbs.";
+    else summary += "Sunrise " + (rise == null ? "does not occur" : T.formatClock(rise)) + ". Sunset " + (set == null ? "does not occur" : T.formatClock(set)) + ".";
+    if (r.flags.twilightAllNight) summary += " Twilight lasts all night.";
+    bandCanvas.setAttribute("aria-label", summary);
+  }
+
+  function drawAlt(r, nowMin){
+    var cssW = panelWidth(altCanvas);
+    var cssH = Math.round(Math.max(240, Math.min(380, cssW * 0.48)));
+    var ctx = fitCanvas(altCanvas, cssW, cssH);
+    ctx.fillStyle = "#10141c";
+    ctx.fillRect(0, 0, cssW, cssH);
+    var padL = 44;
+    var padR = 58;
+    var padT = 16;
+    var padB = 28;
+    var plotW = cssW - padL - padR;
+    var plotH = cssH - padT - padB;
+    var yMin = Math.min(r.altitudeMin, -20);
+    var yMax = Math.max(r.altitudeMax, 8);
+    if (yMax - yMin < 36) {
+      var mid = (yMax + yMin) / 2;
+      yMin = mid - 18;
+      yMax = mid + 18;
+    }
+    function xOf(min){ return padL + (min / 1440) * plotW; }
+    function yOf(alt){ return padT + (yMax - alt) / (yMax - yMin) * plotH; }
+    ctx.strokeStyle = "rgba(243,235,221,0.12)";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#9b9a96";
+    [0, 6, 12, 18, 24].forEach(function(h){
+      var x = xOf(h * 60);
+      ctx.beginPath();
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + plotH);
+      ctx.stroke();
+      text(ctx, (h < 10 ? "0" : "") + h, x, padT + plotH + 12, { align: "center", size: 10, color: "#9b9a96" });
+    });
+    var lines = [
+      { alt: T.ALT.astronomical, label: "−18°", dash: [4, 3] },
+      { alt: T.ALT.nautical, label: "−12°", dash: [4, 3] },
+      { alt: T.ALT.civil, label: "−6°", dash: [4, 3] },
+      { alt: T.ALT.sunrise, label: "−0.833°", dash: [5, 3] },
+      { alt: T.ALT.goldenLow, label: "−4°", dash: [1, 3] },
+      { alt: T.ALT.goldenHigh, label: "+6°", dash: [1, 3] }
+    ];
+    lines.forEach(function(line){
+      if (line.alt < yMin || line.alt > yMax) return;
+      var y = yOf(line.alt);
+      ctx.beginPath();
+      ctx.setLineDash(line.dash);
+      ctx.strokeStyle = line.alt === T.ALT.goldenLow || line.alt === T.ALT.goldenHigh
+        ? "rgba(224,160,64,0.7)" : "rgba(243,235,221,0.45)";
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + plotW, y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      text(ctx, line.label, padL + plotW + 6, y, { align: "left", size: 10, color: "#c8c6c0" });
+    });
+    ctx.beginPath();
+    r.curve.forEach(function(pt, i){
+      var x = xOf(pt.t);
+      var y = yOf(pt.alt);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.strokeStyle = cssVar("--accent", "#c8b48a");
+    ctx.lineWidth = 1.75;
+    ctx.stroke();
+    if (nowMin != null) {
+      var nx = xOf(Math.max(0, Math.min(1440, nowMin)));
+      ctx.strokeStyle = cssVar("--ink", "#e8e6e1");
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(nx, padT);
+      ctx.lineTo(nx, padT + plotH);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    text(ctx, "altitude", 8, 10, { align: "left", size: 10, color: "#9b9a96" });
+    altCanvas.setAttribute("aria-label",
+      "Sun altitude through the day at " + placeLabel() +
+      ". Noon altitude " + T.formatSigned(r.altitudeNoon, 1, " degrees") +
+      ". Lines at −0.833, −6, −12, and −18 degrees.");
+  }
+
+  function yearRows(){
+    var key = state.year + "|" + state.lat + "|" + state.lon;
+    if (yearCache.key !== key) {
+      yearCache = { key: key, rows: T.yearSeries(state.year, state.lat, state.lon) };
+    }
+    return yearCache.rows;
+  }
+  function dayIndex(rows){
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      if (rows[i].month === state.month && rows[i].date === state.day) return i;
+    }
+    return 0;
+  }
+  function drawYear(rows){
+    var cssW = panelWidth(yearCanvas);
+    var cssH = Math.round(Math.max(200, Math.min(280, cssW * 0.32)));
+    var ctx = fitCanvas(yearCanvas, cssW, cssH);
+    ctx.fillStyle = "#10141c";
+    ctx.fillRect(0, 0, cssW, cssH);
+    var padL = 36;
+    var padR = 10;
+    var padT = 12;
+    var padB = 26;
+    var plotW = cssW - padL - padR;
+    var plotH = cssH - padT - padB;
+    var n = rows.length;
+    var barW = plotW / n;
+    var selected = dayIndex(rows);
+    var hover = yearHover;
+    var stack = ["night", "astronomical", "nautical", "civil", "day"];
+    var i, row, x, y, h, s;
+    for (i = 0; i < n; i++) {
+      row = rows[i];
+      x = padL + i * barW;
+      y = padT + plotH;
+      for (s = 0; s < stack.length; s++) {
+        h = (row[stack[s]] / 1440) * plotH;
+        y -= h;
+        ctx.fillStyle = COLORS[stack[s]];
+        ctx.fillRect(x, y, Math.max(barW + 0.4, 1), Math.max(h, 0));
+      }
+    }
+    function mark(index, color){
+      if (index < 0 || index >= n) return;
+      var mx = padL + index * barW;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = Math.max(1.25, barW);
+      ctx.beginPath();
+      ctx.moveTo(mx + barW / 2, padT);
+      ctx.lineTo(mx + barW / 2, padT + plotH);
+      ctx.stroke();
+    }
+    if (hover >= 0 && hover !== selected) mark(hover, "rgba(243,235,221,0.45)");
+    mark(selected, cssVar("--accent", "#c8b48a"));
+    ctx.fillStyle = "#9b9a96";
+    ctx.font = "10px IBM Plex Mono, monospace";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    [0, 6, 12, 18, 24].forEach(function(h){
+      var yy = padT + plotH - (h / 24) * plotH;
+      ctx.fillText(String(h), padL - 6, yy);
+    });
+    var months = ["J","F","M","A","M","J","J","A","S","O","N","D"];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    var seen = {};
+    rows.forEach(function(row, idx){
+      if (row.date !== 1 || seen[row.month]) return;
+      seen[row.month] = true;
+      text(ctx, months[row.month - 1], padL + idx * barW + 8, padT + plotH + 8, { align: "left", size: 10, color: "#9b9a96" });
+    });
+    var focusRow = hover >= 0 ? rows[hover] : rows[selected];
+    var read = focusRow.date + " " + monthName(focusRow.month) +
+      " · day " + T.formatDuration(focusRow.day) +
+      " · civil " + T.formatDuration(focusRow.civil) +
+      " · nautical " + T.formatDuration(focusRow.nautical) +
+      " · astronomical " + T.formatDuration(focusRow.astronomical) +
+      " · night " + T.formatDuration(focusRow.night);
+    document.getElementById("tw-year-read").textContent = read;
+    document.getElementById("tw-year-hint").textContent = "Year " + state.year + " · " + placeLabel();
+    yearCanvas.setAttribute("aria-label",
+      "Year " + state.year + " at " + placeLabel() + ". " + read + ". Click a day, or use the arrow keys, to select it.");
+  }
+
+  function render(){
+    var zone = activeZone();
+    var utcNoon = Date.UTC(state.year, state.month - 1, state.day, 12, 0, 0);
+    var offset = noonOffset(zone.tz, state.year, state.month, state.day);
+    var zoneFallback = false;
+    if (offset == null) {
+      offset = Math.max(-12, Math.min(14, Math.round(state.lon / 15)));
+      zoneFallback = true;
+    }
+    var r = T.dayReport({
+      year: state.year,
+      month: state.month,
+      day: state.day,
+      lat: state.lat,
+      lon: state.lon,
+      utcOffsetHours: offset
+    });
+    lastReport = r;
+    var zoneText = zoneFallback
+      ? "Times in an approximate longitude offset (" + T.offsetLabel(offset) + "). Not civil time, and no daylight saving."
+      : zoneSentence(zone, offset, utcNoon - offset * 3600000);
+    document.getElementById("tw-zone").textContent = zoneText;
+    document.getElementById("tw-status").textContent = statusSentence(r);
+    if (editing !== "date") dateInput.value = isoFromState();
+    if (editing !== "lat") latInput.value = state.lat.toFixed(3);
+    if (editing !== "lon") lonInput.value = state.lon.toFixed(3);
+    presetBtns.forEach(function(b){
+      b.setAttribute("aria-pressed", b.getAttribute("data-preset") === state.presetId ? "true" : "false");
+    });
+    paintTables(r, zoneFallback ? T.offsetLabel(offset) : T.zoneAbbrev(zone.tz, utcNoon));
+    var nowMin = zoneFallback ? null : nowMinutes(zone, offset);
+    drawBand(r, nowMin);
+    drawAlt(r, nowMin);
+    drawYear(yearRows());
+  }
+
+  function applyDate(iso){
+    var p = parseIso(iso);
+    if (!p || p.y < 1900 || p.y > 2100) {
+      dateInput.setAttribute("aria-invalid", "true");
+      showErr(true, "Enter a date from 1900 through 2100.");
+      return;
+    }
+    dateInput.setAttribute("aria-invalid", "false");
+    showErr(false);
+    state.year = p.y;
+    state.month = p.m;
+    state.day = p.d;
+    render();
+  }
+  function readCoords(){
+    var lat = Number(String(latInput.value).trim());
+    var lon = Number(String(lonInput.value).trim());
+    if (!isFinite(lat) || !isFinite(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      showErr(true, "Enter a latitude from −90 to 90 and a longitude from −180 to 180. North and east are positive.");
+      return;
+    }
+    showErr(false);
+    var changed = Math.abs(lat - state.lat) > 1e-9 || Math.abs(lon - state.lon) > 1e-9;
+    state.lat = lat;
+    state.lon = lon;
+    if (changed && editing) {
+      state.presetId = null;
+      if (state.zoneMode === "place") state.zoneMode = "browser";
+    }
+    render();
+  }
+  function applyPreset(id){
+    var p = T.presetById(id);
+    if (!p) return;
+    state.presetId = p.id;
+    state.zoneMode = "place";
+    state.lat = p.lat;
+    state.lon = p.lon;
+    editing = null;
+    showErr(false);
+    var iso = isoInZone(p.tz, Date.now());
+    var stay = parseIso(dateInput.value);
+    if (!stay) {
+      var parts = parseIso(iso);
+      if (parts) { state.year = parts.y; state.month = parts.m; state.day = parts.d; }
+    }
+    render();
+  }
+
+  dateInput.addEventListener("focus", function(){ editing = "date"; });
+  latInput.addEventListener("focus", function(){ editing = "lat"; });
+  lonInput.addEventListener("focus", function(){ editing = "lon"; });
+  dateInput.addEventListener("change", function(){ editing = null; applyDate(dateInput.value); });
+  dateInput.addEventListener("input", function(){ applyDate(dateInput.value); });
+  latInput.addEventListener("input", readCoords);
+  lonInput.addEventListener("input", readCoords);
+  latInput.addEventListener("blur", function(){ editing = null; render(); });
+  lonInput.addEventListener("blur", function(){ editing = null; render(); });
+  document.getElementById("tw-today").addEventListener("click", function(){
+    var zone = activeZone();
+    var iso = isoInZone(zone.tz, Date.now());
+    editing = null;
+    applyDate(iso);
+  });
+  presetBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyPreset(b.getAttribute("data-preset")); });
+  });
+  document.getElementById("tw-loc").addEventListener("click", function(){
+    if (!navigator.geolocation) {
+      showErr(true, "This browser has no location service. Type a latitude and longitude, or pick a preset.");
+      return;
+    }
+    showErr(false);
+    navigator.geolocation.getCurrentPosition(function(pos){
+      state.lat = pos.coords.latitude;
+      state.lon = pos.coords.longitude;
+      state.presetId = null;
+      state.zoneMode = "device";
+      editing = null;
+      showErr(false);
+      render();
+    }, function(){
+      showErr(true, "Location permission was denied. Type a latitude and longitude, or pick a preset.");
+    }, { enableHighAccuracy: false, timeout: 8000, maximumAge: 60000 });
+  });
+  document.addEventListener("keydown", function(ev){
+    var help = document.getElementById("tw-help-dialog");
+    if (help && !help.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    if (t === yearCanvas) {
+      ev.preventDefault();
+      var rows = yearRows();
+      var idx = dayIndex(rows);
+      var dir = ev.key === "ArrowRight" ? 1 : -1;
+      var next = rows[(idx + dir + rows.length) % rows.length];
+      editing = null;
+      applyDate(state.year + "-" + (next.month < 10 ? "0" : "") + next.month + "-" + (next.date < 10 ? "0" : "") + next.date);
+      return;
+    }
+    var tag = t.tagName;
+    if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+    if (!t.getAttribute("data-preset")) return;
+    ev.preventDefault();
+    var step = ev.key === "ArrowRight" ? 1 : -1;
+    var id = t.getAttribute("data-preset");
+    var i = presetIds.indexOf(id);
+    if (i < 0) i = 0;
+    var nid = presetIds[(i + step + presetIds.length) % presetIds.length];
+    applyPreset(nid);
+    var nb = document.querySelector('[data-preset="' + nid + '"]');
+    if (nb) nb.focus();
+  });
+
+  function yearIndexFromEvent(ev){
+    var rect = yearCanvas.getBoundingClientRect();
+    var cssW = panelWidth(yearCanvas);
+    var padL = 36;
+    var padR = 10;
+    var x = (ev.clientX - rect.left) * (cssW / rect.width);
+    var rows = yearRows();
+    var plotW = cssW - padL - padR;
+    var idx = Math.floor((x - padL) / plotW * rows.length);
+    if (idx < 0 || idx >= rows.length) return -1;
+    return idx;
+  }
+  yearCanvas.addEventListener("mousemove", function(ev){
+    var idx = yearIndexFromEvent(ev);
+    if (idx !== yearHover) {
+      yearHover = idx;
+      if (lastReport) drawYear(yearRows());
+    }
+  });
+  yearCanvas.addEventListener("mouseleave", function(){
+    yearHover = -1;
+    if (lastReport) drawYear(yearRows());
+  });
+  yearCanvas.addEventListener("click", function(ev){
+    var idx = yearIndexFromEvent(ev);
+    if (idx < 0) return;
+    var row = yearRows()[idx];
+    editing = null;
+    var m = row.month < 10 ? "0" + row.month : String(row.month);
+    var d = row.date < 10 ? "0" + row.date : String(row.date);
+    applyDate(state.year + "-" + m + "-" + d);
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(function(){ render(); });
+    ro.observe(bandCanvas.parentElement);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  render();
+  window.setInterval(function(){
+    if (lastReport) render();
+  }, 60000);
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("tw-help");
+  var helpDialog = document.getElementById("tw-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey) {
+        var tag = ev.target && ev.target.tagName;
+        if (tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA") return;
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
