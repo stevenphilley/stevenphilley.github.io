@@ -1,0 +1,946 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Redshift — Doppler shift and cosmic expansion — Steven Philley</title>
+<meta name="description" content="Interactive redshift desk: z = (λ_obs − λ_rest)/λ_rest. At z = 1, relativistic β = 0.6, while c·z is not a speed. Cosmological redshift is 1+z = a_now/a_then. Nearby Hubble toy: Planck 2018 H0 = 67.4 and SH0ES 2022 H0 = 73.04. Not a catalog spectrum.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/redshift/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Redshift — Doppler shift and cosmic expansion">
+<meta property="og:description" content="Slide z and watch cited lines leave the visible window. At z = 1 the relativistic β is 0.6, while c·z is the speed of light and is not a speed. Hubble’s law is the nearby toy.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/redshift/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Redshift — Doppler shift and cosmic expansion">
+<meta name="twitter:description" content="z = (λ_obs − λ_rest)/λ_rest. At z = 1, relativistic β = 0.6. c·z is not a cosmological speed. Planck 67.4 and SH0ES 73.04 on a nearby Hubble toy.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.obs{border-top-style:solid;border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.swatch.rest{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.vis{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 35%,transparent)}
+.swatch.planck{border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.swatch.shoes{border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.line-wrap{margin-top:12px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:8px 12px 12px;overflow-x:auto}
+.lines{width:100%;border-collapse:collapse;min-width:520px}
+.lines caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.lines th,.lines td{text-align:left;padding:8px 10px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.lines thead th{border-top:0;color:var(--muted,#63666e);font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.lines tbody th{color:var(--ink,#e8e6e1)}
+.lines td{color:var(--ink-soft,#9b9a96)}
+.lines tr.is-vis th,.lines tr.is-vis td{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.hubble-note{margin:0 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96);max-width:78ch}
+.hubble-note a{color:var(--ink,#e8e6e1)}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/redshift/" aria-current="page">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Spectra</p>
+  <h1>Redshift<br>lines on the move</h1>
+  <p class="lede">A spectrum carries a ruler. The same line, measured at a longer wavelength, has redshift <strong>z = (λ<sub>obs</sub> − λ<sub>rest</sub>) / λ<sub>rest</sub></strong>. Slide z and the cited lines walk across a visible strip. Two speeds are printed beside that number: the non-relativistic product <strong>v ≈ c z</strong>, and the special-relativistic Doppler speed from <strong>1 + z = √((1+β)/(1−β))</strong>. At <strong>z = 1</strong>, that second formula gives <strong>β = 0.6</strong>, while c z is the speed of light and is not a speed. Cosmological redshift is a third statement: <strong>1 + z = a<sub>now</sub> / a<sub>then</sub></strong>, the scale factor of the expansion. A large-z “velocity” is not a Doppler speed through space. The temperature ladder that sets the continuum under these lines is the <a href="/science/astronomy/blackbody/">blackbody</a> desk. The wavelength ladder is the <a href="/science/em-spectrum/">electromagnetic spectrum</a>.</p>
+  <p class="note-schematic">Classroom schematic. Lines are drawn at the cited rest wavelength times (1+z). They are not a measured spectrum of the preset object, and they have no flux. Optical rest wavelengths are NIST air values; Lyman-alpha is vacuum. A catalog redshift is reduced to vacuum. The shaded band is the NASA Imagine classroom optical window, about 400–700 nm. Hubble’s law on this page is <strong>v = H<sub>0</sub> d</strong> for a made-up nearby distance, not a distance to Andromeda, NGC 4258, 3C 273, or GN-z11. Not a cosmological calculator. Not an ephemeris.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Shift the lines</span>
+    <button type="button" class="help-q" id="z-help" aria-haspopup="dialog" aria-controls="z-help-dialog" aria-expanded="false" aria-label="How this redshift desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="spec-hint">Observed wavelength, log scale · dashed marks are the rest wavelengths · 400–700 nm shaded</p>
+      <canvas id="spec" width="880" height="360" role="img" aria-label="Rest-frame spectral lines at redshift 0. H-alpha is in the visible window."></canvas>
+      <ul class="legend">
+        <li><span class="swatch obs" aria-hidden="true"></span> Shifted</li>
+        <li><span class="swatch rest" aria-hidden="true"></span> Rest</li>
+        <li><span class="swatch vis" aria-hidden="true"></span> 400–700 nm</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Cited presets · each note says where the number comes from</p>
+        <div class="presets" id="presets" role="group" aria-label="Redshift presets">
+          <button type="button" data-preset="rest" aria-pressed="true">Rest</button>
+          <button type="button" data-preset="m31" aria-pressed="false">Andromeda</button>
+          <button type="button" data-preset="n4258" aria-pressed="false">NGC 4258</button>
+          <button type="button" data-preset="3c273" aria-pressed="false">3C 273</button>
+          <button type="button" data-preset="gnz11" aria-pressed="false">GN-z11</button>
+        </div>
+        <div class="slider-row">
+          <label for="z-slider">Redshift</label>
+          <input type="range" id="z-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="-0.01" aria-valuemax="11" aria-valuenow="0" aria-valuetext="redshift 0">
+          <input type="text" class="num" id="z-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0" aria-label="Redshift z" aria-invalid="false">
+          <span class="unit-tag">z</span>
+        </div>
+        <p class="field-error" id="z-err" hidden>Enter a redshift from −0.01 to 11. z = −1 is where the relativistic formula breaks.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Classroom · rest frame</p>
+      <h2 id="d-name">Rest</h2>
+      <p class="range" id="d-range">z = 0</p>
+      <ul class="stats">
+        <li><span class="k">z</span><span class="v" id="d-z">0</span></li>
+        <li><span class="k">c · z</span><span class="v" id="d-cz">0 km/s</span></li>
+        <li><span class="k">Relativistic β</span><span class="v" id="d-beta">0</span></li>
+        <li><span class="k">Relativistic v</span><span class="v" id="d-vrel">0 km/s</span></li>
+        <li><span class="k">|c z| vs |v|</span><span class="v" id="d-gap">0%</span></li>
+        <li><span class="k">a_then / a_now</span><span class="v" id="d-scale">1</span></li>
+      </ul>
+      <p class="why" id="d-why">At z = 0 the shifted lines sit on the rest marks. c z and the relativistic speed are both zero.</p>
+      <p class="why" id="d-note">No object. The lines are the NIST rest wavelengths.</p>
+    </aside>
+  </div>
+
+  <div class="line-wrap">
+    <table class="lines">
+      <caption>Observed wavelength of each cited line at the current redshift</caption>
+      <thead>
+        <tr>
+          <th scope="col">Line</th>
+          <th scope="col">Rest</th>
+          <th scope="col">Observed</th>
+          <th scope="col">Band</th>
+        </tr>
+      </thead>
+      <tbody id="line-body">
+        <tr><th scope="row">Lyα</th><td>121.567 nm vacuum</td><td>121.567 nm</td><td>Ultraviolet</td></tr>
+        <tr><th scope="row">Ca II K</th><td>393.366 nm air</td><td>393.366 nm</td><td>Ultraviolet</td></tr>
+        <tr><th scope="row">Ca II H</th><td>396.847 nm air</td><td>396.847 nm</td><td>Ultraviolet</td></tr>
+        <tr class="is-vis"><th scope="row">Hβ</th><td>486.132 nm air</td><td>486.132 nm</td><td>Visible</td></tr>
+        <tr class="is-vis"><th scope="row">Hα</th><td>656.280 nm air</td><td>656.280 nm</td><td>Visible</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <noscript>
+    <p class="note-schematic">The slider needs JavaScript. The anchors are still below. z = (λ_obs − λ_rest) / λ_rest. At z = 1, β = 0.6 and c z = c. NIST rest wavelengths used here: Lyα 121.567 nm (vacuum), Ca II K 393.36614 nm and H 396.84673 nm (air), Hβ 486.132 nm and Hα 656.280 nm (air). The visible window is about 400–700 nm. Planck 2018 base-ΛCDM gives H0 = 67.4 ± 0.5 km/s/Mpc. Riess et al. 2022 give H0 = 73.04 ± 1.04 km/s/Mpc. At 10 Mpc those central values are 674 km/s and 730.4 km/s.</p>
+  </noscript>
+
+  <p class="band">Nearby toy · Hubble’s law</p>
+  <p class="hubble-note">For small redshift, <strong>z ≈ v / c = H<sub>0</sub> d / c</strong> and <strong>v = H<sub>0</sub> d</strong>. Hogg’s notes say this is only true for small redshifts. The slider stops at 100 Mpc. With the Planck central value, z at that far end is still under 0.03. The two lines are the two cited central values. The gap between them is the tension: same distance, two published H<sub>0</sub> figures. This is not a distance to any preset above, and it is the wrong tool for Andromeda, which is blueshifted.</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="hub-hint">Velocity versus distance · both cited H0 values · marker on the selected one</p>
+      <canvas id="hubble" width="880" height="320" role="img" aria-label="Hubble law toy. At 10 megaparsecs, Planck 2018 gives 674 kilometers per second and SH0ES 2022 gives 730.4."></canvas>
+      <ul class="legend">
+        <li><span class="swatch planck" aria-hidden="true"></span> Planck 67.4</li>
+        <li><span class="swatch shoes" aria-hidden="true"></span> SH0ES 73.04</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Select which H0 drives the marker</p>
+        <div class="presets" id="h0-picks" role="group" aria-label="Hubble constant">
+          <button type="button" data-h0="planck" aria-pressed="true">Planck 67.4</button>
+          <button type="button" data-h0="shoes" aria-pressed="false">SH0ES 73.04</button>
+        </div>
+        <div class="slider-row">
+          <label for="d-slider">Distance</label>
+          <input type="range" id="d-slider" min="0" max="100" step="0.1" value="10" aria-valuemin="0" aria-valuemax="100" aria-valuenow="10" aria-valuetext="10 megaparsecs">
+          <input type="text" class="num" id="d-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="10" aria-label="Distance in megaparsecs" aria-invalid="false">
+          <span class="unit-tag">Mpc</span>
+        </div>
+        <p class="field-error" id="d-err" hidden>Enter a distance from 0 to 100 Mpc.</p>
+      </div>
+    </div>
+    <aside class="detail" id="hubble-detail">
+      <p class="tier">Low redshift only</p>
+      <h2 id="h-name">Planck 2018</h2>
+      <p class="range" id="h-range">67.4 ± 0.5 km/s/Mpc</p>
+      <ul class="stats">
+        <li><span class="k">Distance</span><span class="v" id="h-d">10 Mpc</span></li>
+        <li><span class="k">v = H0 d</span><span class="v" id="h-v">674 km/s</span></li>
+        <li><span class="k">z ≈ v / c</span><span class="v" id="h-z">0.002248</span></li>
+        <li><span class="k">Other H0</span><span class="v" id="h-other">730.4 km/s</span></li>
+        <li><span class="k">Tension, same d</span><span class="v" id="h-gap">56.4 km/s</span></li>
+      </ul>
+      <p class="why" id="h-why">At 10 Mpc the Planck central value gives 674 km/s. The SH0ES central value gives 730.4 km/s. The difference is 56.4 km/s. Both are v = H0 d with the published central values. Neither is a measured speed of a named galaxy.</p>
+    </aside>
+  </div>
+
+  <div class="myth">
+    <p class="tag">The number is not the speed</p>
+    <h2>Three different uses of one z.</h2>
+    <p>The measured redshift is the wavelength ratio. Hogg writes z = λ_obs / λ_rest − 1. That definition does not say why the wavelength changed. A laboratory source moving along the line of sight follows the special-relativistic Doppler formula, 1 + z = √((1+β)/(1−β)), with β = v/c positive when the source recedes. Solving it gives β = ((1+z)² − 1) / ((1+z)² + 1). At z = 1 that is 3/5, so β = 0.6. The familiar v ≈ c z is the small-speed limit of that formula. At z = 0.1 it is already about 5% high. At z = 1, c z equals c, which is not a speed the formula will return.</p>
+    <p>Cosmological redshift is the expansion. Hogg’s equation is 1 + z = a(t_now) / a(t_then). He also writes that the special-relativistic velocity formula is not the one used in the usual cosmological coordinates, and that the linear Hubble law z ≈ v/c = H0 d / c holds only at small redshift. Galaxy surveys still print c z as a “velocity” because it is a convenient label. Past the nearby universe that label is not a Doppler speed, and it is allowed to exceed c without anything traveling faster than light.</p>
+    <p>Andromeda is the local counterexample. SIMBAD’s adopted heliocentric redshift is negative: the Local Group companion is approaching, and a Hubble-flow distance is the wrong reading. NGC 4258 is redshifted and nearby enough that peculiar motion still matters; its place in the SH0ES ladder is a geometric maser anchor, not this slider. 3C 273 and GN-z11 are expansion redshifts. GN-z11’s published Lyman-alpha line is offset from the systemic redshift; this page shifts every line by the systemic z only.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the slider</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Spectroscopic z</dt><dd>z = (λ_obs − λ_rest) / λ_rest, so λ_obs = λ_rest (1+z). A blueshift is a negative z. This desk multiplies the cited NIST rest wavelength by (1+z). It does not convert air wavelengths to vacuum.</dd></div>
+    <div class="gloss"><dt>c · z</dt><dd>The non-relativistic product, with c = 299,792.458 km/s exactly. Useful while |z| is tiny. It is the number many catalogs print as a velocity. When |z| reaches 1 it equals c, and beyond that it is larger than c. That does not mean a faster-than-light object.</dd></div>
+    <div class="gloss"><dt>Relativistic Doppler</dt><dd>1 + z = √((1+β)/(1−β)). β = ((1+z)² − 1) / ((1+z)² + 1). Positive β recedes. This is a special-relativistic line-of-sight speed. Applying it to a cosmological redshift is a math exercise, not the expansion.</dd></div>
+    <div class="gloss"><dt>Scale factor</dt><dd>1 + z = a_now / a_then. The readout is a_then / a_now = 1/(1+z). At z = 1 the universe was half its present scale factor. At GN-z11’s z = 10.6034 the ratio is 1/11.6034.</dd></div>
+    <div class="gloss"><dt>Hubble’s law</dt><dd>v = H0 d, and z ≈ v/c, nearby only. This toy offers two cited central values: Planck 2018 base-ΛCDM, 67.4 ± 0.5 km/s/Mpc, and the SH0ES 2022 baseline, 73.04 ± 1.04 km/s/Mpc. The uncertainties are printed. The marker uses the central value.</dd></div>
+    <div class="gloss gloss-wide"><dt>Visible window</dt><dd>400–700 nm, the NASA Imagine classroom optical band, the same cut as the blackbody desk. Ca II H and K sit just short of 400 nm at rest, so a small redshift can carry them in. Hα leaves the window once (1+z) × 656.280 nm passes 700 nm. Lyman-alpha, at 121.567 nm, needs z around 2.3 before it reaches 400 nm, and it has left again before z = 5.</dd></div>
+  </dl>
+
+  <p class="band">Sources · NIST, Hogg, Planck, SH0ES, SIMBAD</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://www.nist.gov/pml/atomic-spectroscopy-compendium-basic-ideas-notation-data-and-formulas/atomic-spectroscopy-atomic" rel="noopener" target="_blank">NIST — Atomic spectroscopy compendium, hydrogenic series</a> — customary unresolved wavelengths: Lyman-alpha 1215.67 Å, Hβ 4861.32 Å, Hα 6562.80 Å. Wavelengths below 2000 Å are vacuum; values above 2000 Å are air. This desk uses 121.567 nm, 486.132 nm, and 656.280 nm.</li>
+      <li><a href="https://physics.nist.gov/PhysRefData/Handbook/Tables/calciumtable4.htm" rel="noopener" target="_blank">NIST — Persistent lines of Ca II</a> — 3933.6614 Å (4s <sup>2</sup>S<sub>1/2</sub> – 4p <sup>2</sup>P°<sub>3/2</sub>) and 3968.4673 Å (4s <sup>2</sup>S<sub>1/2</sub> – 4p <sup>2</sup>P°<sub>1/2</sub>), air. This desk uses 393.36614 nm and 396.84673 nm.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1086/128904" rel="noopener" target="_blank">Linsky and Avrett 1970, PASP 82, 485</a> — the solar Ca II resonance lines near 3933 Å and 3968 Å were designated K and H by Fraunhofer. The wavelengths on the chart are the NIST figures, not the 1970 rounding.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST CODATA — speed of light in vacuum</a> — c = 299,792,458 m/s exactly, so 299,792.458 km/s. Every c z and every β c on this page uses that value.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/9905116" rel="noopener" target="_blank">Hogg 1999, “Distance measures in cosmology,” arXiv:astro-ph/9905116</a> — eq. 8, z = λ_obs/λ_rest − 1; eq. 9, the special-relativistic 1+z = √((1+β)/(1−β)); eq. 11, z ≈ v/c = d/D_H only for small redshift, and the note that surveys still print v = c z; eq. 12, 1+z = a(t_now)/a(t_then). He writes that eq. 9 is not the relation in the usual cosmological coordinates.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — abstract, base-ΛCDM: H0 = (67.4 ± 0.5) km s<sup>−1</sup> Mpc<sup>−1</sup>. The toy uses the central value 67.4.</li>
+      <li><a href="https://arxiv.org/abs/2112.04510" rel="noopener" target="_blank">Riess et al. 2022, ApJL 934, L7</a> (arXiv:2112.04510) — baseline SH0ES result H0 = 73.04 ± 1.04 km s<sup>−1</sup> Mpc<sup>−1</sup>, including systematics. The toy uses the central value 73.04. The same paper names masers in NGC 4258 as one of three geometric anchors. This desk does not copy a distance from that anchor.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/science/toolbox/spectrum_chart.html" rel="noopener" target="_blank">NASA Imagine the Universe — Wavelength, frequency, and energy</a> — classroom optical band about 400–700 nm. Boundaries are conventions. The same chart is the visible slice on the <a href="/science/em-spectrum/">EM spectrum</a> and <a href="/science/astronomy/blackbody/">blackbody</a> desks.</li>
+      <li><a href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=M31" rel="noopener" target="_blank">SIMBAD — M31</a> — adopted heliocentric redshift −0.001000 ± 0.000013, cz = −299.85 ± 4.00 km/s, radial velocity −300.0 ± 4.0 km/s, referenced to <a href="https://ui.adsabs.harvard.edu/abs/2012AJ....144....4M" rel="noopener" target="_blank">McConnachie 2012, AJ 144, 4</a>. This desk sets z = −0.001. Its own c z is −299.79 km/s, inside the ±4 km/s. A Hubble-flow distance does not apply.</li>
+      <li><a href="https://www.bass-survey.com/dr2.html" rel="noopener" target="_blank">BASS DR2 data table</a> — NGC 4258 listed at redshift 0.00158. The catalog paper is <a href="https://iopscience.iop.org/article/10.3847/1538-4365/ac6c05" rel="noopener" target="_blank">Koss et al. 2022, ApJS 261, 2</a>. This desk sets z = 0.00158 and does not invent a distance. c z at that redshift is 473.67 km/s.</li>
+      <li><a href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=3C+273" rel="noopener" target="_blank">SIMBAD — 3C 273</a> — adopted redshift 0.15756751 ± 0.0005, radial velocity 43,555 ± 150 km/s, cz = 47,237.5511 ± 150 km/s, referenced to Koss et al. 2022, ApJS 261, 2. This desk prints a relativistic speed of 43,555.49 km/s and c z of 47,237.55 km/s, both inside that ±150 km/s.</li>
+      <li><a href="https://arxiv.org/abs/2302.07256" rel="noopener" target="_blank">Bunker et al. 2023, arXiv:2302.07256</a> — GN-z11 systemic redshift z = 10.6034 ± 0.0013 from emission lines other than Lyman-alpha. The paper’s Lyman-alpha centroid is offset by 555 ± 32 km/s from that systemic redshift. This slider uses 10.6034 for every line and does not add the offset.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a shift. z = (λ_obs − λ_rest)/λ_rest. At z = 1, β = 0.6. c z is not a cosmological speed. 1+z = a_now/a_then. The Hubble toy is v = H0 d with two cited central values, nearby only. Not a catalog. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/blackbody/"><p class="n">Continuum</p><h3>Blackbody</h3><p>The Planck curve under a stellar spectrum. These lines are the cuts this page does not draw there.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Home</p><h3>Galaxy</h3><p>The Milky Way these redshifts are measured from. Andromeda is the neighbor that approaches.</p></a>
+    <a href="/science/astronomy/exoplanets/"><p class="n">A smaller shift</p><h3>Exoplanets</h3><p>The radial-velocity method is a periodic Doppler wobble of a star, meters per second, not a galaxy redshift.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>Spectral type is which lines are strong. This page moves those lines. It does not reclassify the star.</p></a>
+    <a href="/science/em-spectrum/"><p class="n">Ladder</p><h3>EM spectrum</h3><p>Radio to gamma. The visible sliver on both desks is the 400–700 nm classroom window.</p></a>
+    <a href="/science/waves/"><p class="n">Another wave</p><h3>Waves</h3><p>Ocean waves, not light. The shared word is the reason for the link. The Doppler formula is not derived there.</p></a>
+    <a href="/science/astronomy/"><p class="n">Map</p><h3>Solar map</h3><p>The neighborhood. Redshift starts to matter once the map runs out.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="z-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="z-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="z-help-title">Redshift desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom picture. Cited rest wavelengths times (1+z). Not a catalog spectrum. Not a distance calculator.</p>
+    <h3>The chart</h3>
+    <table>
+      <caption>The spectrum chart</caption>
+      <tbody>
+        <tr><th scope="row">Axis</th><td>Observed wavelength, logarithmic, from 80 nm to 10,000 nm. Dashed marks are the rest wavelengths. Solid marks are those wavelengths times (1+z).</td></tr>
+        <tr><th scope="row">Shade</th><td>400–700 nm, the NASA Imagine classroom optical window.</td></tr>
+        <tr><th scope="row">Lines</th><td>Lyα, Ca II K, Ca II H, Hβ, Hα. Identity colors are labels, not a flux calibration. A line past the edge of the axis is marked off-chart in the table.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Redshift</th><td>Slider from −0.01 to 11, stretched so small z and GN-z11 are both reachable. The number field accepts the same range. Arrow keys nudge the slider.</td></tr>
+        <tr><th scope="row">Presets</th><td>Rest, Andromeda, NGC 4258, 3C 273, GN-z11. Each button sets a cited z. The note names the source. Left and Right move through the buttons when one of them has focus.</td></tr>
+        <tr><th scope="row">Hubble toy</th><td>Separate from the spectrum. Distance 0 to 100 Mpc. Planck 67.4 or SH0ES 73.04. Both lines stay on the chart. The marker follows the selected central value.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">c · z</th><td>299,792.458 km/s times z. Not a cosmological speed.</td></tr>
+        <tr><th scope="row">β and v</th><td>The special-relativistic inversion. At z = 1, β = 0.6. Still not the expansion speed.</td></tr>
+        <tr><th scope="row">Scale factor</th><td>a_then / a_now = 1/(1+z). The cosmological reading of the same number.</td></tr>
+        <tr><th scope="row">Tension</th><td>(73.04 − 67.4) times the distance. The difference of the two cited central values. Not a new measurement.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Sliders</th><td>Arrow keys nudge the focused slider. The number field is where a cited figure is typed exactly.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. Left and Right step through a group. The pressed button is aria-pressed.</td></tr>
+        <tr><th scope="row">Touch</th><td>Buttons, the question mark, Close, and the fields are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/redshift/redshift.js"></script>
+<script>
+(function(){
+  "use strict";
+  var Z = window.Redshift;
+  if (!Z) return;
+  var root = document.documentElement;
+  var spec = document.getElementById("spec");
+  var hubble = document.getElementById("hubble");
+  var zSlider = document.getElementById("z-slider");
+  var zNum = document.getElementById("z-num");
+  var zErr = document.getElementById("z-err");
+  var dSlider = document.getElementById("d-slider");
+  var dNum = document.getElementById("d-num");
+  var dErr = document.getElementById("d-err");
+  var lineBody = document.getElementById("line-body");
+  var rest = Z.presetById("rest");
+  var state = { z: rest.z, preset: "rest", h0: "planck", d: 10 };
+  var NOTES = {
+    rest: "No object. The marks are the NIST rest wavelengths. Air for the optical lines, vacuum for Lyman-alpha.",
+    m31: "SIMBAD’s adopted heliocentric redshift for M31 is −0.001000 ± 0.000013, with cz = −299.85 ± 4.00 km/s and radial velocity −300.0 ± 4.0 km/s (McConnachie 2012, AJ 144, 4). This desk uses z = −0.001. The c·z readout is −299.79 km/s, inside that ±4 km/s. Andromeda is approaching. Hubble’s law does not apply.",
+    n4258: "The BASS DR2 table lists NGC 4258 (M106) at redshift 0.00158 (Koss et al. 2022, ApJS 261, 2). This desk sets that z and does not assign a distance. c·z is 473.67 km/s. Peculiar motion still matters this nearby. Riess et al. 2022 use masers in NGC 4258 as a geometric H0 anchor, which is not this redshift.",
+    "3c273": "SIMBAD’s adopted redshift for 3C 273 is 0.15756751 ± 0.0005, referenced to Koss et al. 2022, ApJS 261, 2. SIMBAD lists radial velocity 43,555 ± 150 km/s and cz = 47,237.5511 ± 150 km/s. This desk prints 43,555.49 km/s and 47,237.55 km/s, both inside that ±150 km/s. This is a quasar redshift, not a rocket.",
+    gnz11: "Bunker et al. 2023 measure GN-z11 at systemic z = 10.6034 ± 0.0013 from lines other than Lyman-alpha. Their Lyman-alpha is offset by 555 ± 32 km/s, which this slider does not add. c·z is about 10.6 times c and is not a speed. The scale-factor readout is 1/11.6034."
+  };
+  var LINE_COLOR = { lya: "#9bb6ff", cak: "#7ec8c3", cah: "#8fd18a", hb: "#6aa8ff", ha: "#e07070" };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value){
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw){
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(el, on){
+    if (!el) return;
+    el.hidden = !on;
+  }
+  function paintText(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(canvas, cssH){
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function matchPreset(){
+    var list = Z.presets();
+    var i;
+    for (i = 0; i < list.length; i++){
+      if (Math.abs(list[i].z - state.z) <= 1e-8) return list[i].id;
+    }
+    return "";
+  }
+  function syncPresetButtons(){
+    state.preset = matchPreset();
+    var buttons = document.querySelectorAll("#presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++){
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-preset") === state.preset));
+    }
+  }
+  function syncH0Buttons(){
+    var buttons = document.querySelectorAll("#h0-picks button");
+    var i;
+    for (i = 0; i < buttons.length; i++){
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-h0") === state.h0));
+    }
+  }
+  function syncZControls(){
+    var u = Z.unitFromZ(state.z);
+    zSlider.value = String(Math.min(1000, Math.max(0, u * 1000)));
+    zSlider.setAttribute("aria-valuenow", Z.formatZ(state.z));
+    zSlider.setAttribute("aria-valuetext", "redshift " + Z.formatZ(state.z));
+    if (document.activeElement !== zNum) zNum.value = Z.formatZ(state.z);
+    zNum.setAttribute("aria-invalid", "false");
+    showErr(zErr, false);
+  }
+  function syncDControls(){
+    dSlider.value = String(state.d);
+    dSlider.setAttribute("aria-valuenow", String(state.d));
+    dSlider.setAttribute("aria-valuetext", state.d + " megaparsecs");
+    if (document.activeElement !== dNum) dNum.value = String(state.d);
+    dNum.setAttribute("aria-invalid", "false");
+    showErr(dErr, false);
+  }
+  function bandWord(band){
+    if (band === "visible") return "Visible";
+    if (band === "ultraviolet") return "Ultraviolet";
+    return "Infrared";
+  }
+  function renderTable(){
+    if (!lineBody) return;
+    var rows = Z.lineState(state.z);
+    var html = "";
+    var i;
+    for (i = 0; i < rows.length; i++){
+      var row = rows[i];
+      var where = bandWord(row.band);
+      if (!row.onAxis) where += ", off the chart";
+      html += "<tr" + (row.band === "visible" ? " class=\"is-vis\"" : "") + ">";
+      html += "<th scope=\"row\">" + row.name + "</th>";
+      html += "<td>" + Z.formatNm(row.restNm) + " " + row.medium + "</td>";
+      html += "<td>" + Z.formatNm(row.obsNm) + "</td>";
+      html += "<td>" + where + "</td>";
+      html += "</tr>";
+    }
+    lineBody.innerHTML = html;
+  }
+  function visibleNames(){
+    var rows = Z.lineState(state.z);
+    var names = [];
+    var i;
+    for (i = 0; i < rows.length; i++){
+      if (rows[i].band === "visible" && rows[i].onAxis) names.push(rows[i].name);
+    }
+    if (!names.length) return "No cited line is inside 400 to 700 nm.";
+    return names.join(", ") + (names.length === 1 ? " is" : " are") + " inside 400 to 700 nm.";
+  }
+  function caution(z){
+    var gap = Z.speedGap(z);
+    var bits = [];
+    if (z === 0){
+      bits.push("At z = 0 the shifted lines sit on the rest marks. c·z and the relativistic speed are both zero.");
+    } else {
+      var larger = gap > 0 ? "larger" : "smaller";
+      bits.push("The magnitude of c·z is " + Z.formatGap(gap) + " " + larger + " than the special-relativistic Doppler speed.");
+    }
+    if (Math.abs(Z.czKmS(z)) >= Z.C_KM_S){
+      bits.push("c·z is at least the speed of light. That product is not a speed through space.");
+    } else if (Math.abs(z) >= 0.1){
+      bits.push("At this redshift the linear Doppler shortcut is already a poor speed. For a distant galaxy the cosmological reading is the scale factor, not β.");
+    }
+    return bits.join(" ");
+  }
+  function renderReadout(){
+    var preset = state.preset ? Z.presetById(state.preset) : null;
+    var beta = Z.relativisticBeta(state.z);
+    var gap = Z.speedGap(state.z);
+    setText("d-tier", preset && preset.object ? "Cited object" : (preset ? "Classroom · rest frame" : "Custom redshift"));
+    setText("d-name", preset ? preset.name : "Custom");
+    setText("d-range", "z = " + Z.formatZ(state.z));
+    setText("d-z", Z.formatZ(state.z));
+    setText("d-cz", Z.formatSpeed(Z.czKmS(state.z)));
+    setText("d-beta", Z.formatBeta(beta));
+    setText("d-vrel", Z.formatSpeed(Z.relativisticKmS(state.z)));
+    setText("d-gap", state.z === 0 ? "0%" : Z.formatGap(gap));
+    setText("d-scale", Z.formatScale(Z.scaleThenOverNow(state.z)));
+    setText("d-why", caution(state.z));
+    setText("d-note", preset ? NOTES[preset.id] : "Typed or slid off a preset. The formulas are the same. The note no longer belongs to a named object.");
+    if (spec){
+      spec.setAttribute("aria-label", "Spectral lines at redshift " + Z.formatZ(state.z) + ". " + visibleNames());
+    }
+  }
+  function drawSpec(){
+    var box = fit(spec, window.innerWidth < 720 ? 280 : 340);
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    var padL = 16;
+    var padR = 16;
+    var padT = 22;
+    var padB = 36;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var lamMin = Z.AXIS_MIN_NM;
+    var lamMax = Z.AXIS_MAX_NM;
+    function xOf(nm){
+      var t = (Math.log(nm) - Math.log(lamMin)) / (Math.log(lamMax) - Math.log(lamMin));
+      return padL + t * plotW;
+    }
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    ctx.fillStyle = "rgba(200,180,138,0.16)";
+    var x0 = xOf(Z.VIS_MIN_NM);
+    var x1 = xOf(Z.VIS_MAX_NM);
+    ctx.fillRect(x0, padT, Math.max(1, x1 - x0), plotH);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    var rows = Z.lineState(state.z);
+    var showRest = Math.abs(state.z) > 1e-8;
+    var i;
+    if (showRest){
+      ctx.save();
+      ctx.setLineDash([3, 4]);
+      for (i = 0; i < rows.length; i++){
+        var rx = xOf(rows[i].restNm);
+        if (rx < padL || rx > padL + plotW) continue;
+        ctx.beginPath();
+        ctx.moveTo(rx, padT);
+        ctx.lineTo(rx, padT + plotH);
+        ctx.strokeStyle = muted;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+    for (i = 0; i < rows.length; i++){
+      var row = rows[i];
+      if (!row.onAxis) continue;
+      var x = xOf(row.obsNm);
+      var color = LINE_COLOR[row.id] || ink;
+      ctx.beginPath();
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + plotH);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      var labelY = padT + 12 + (i % 3) * 14;
+      var align = x > w - 70 ? "right" : "left";
+      var lx = align === "right" ? x - 4 : x + 4;
+      paintText(ctx, row.name, lx, labelY, { size: 10, color: color, align: align });
+    }
+    var ticks = plotW < 460 ? [100, 400, 700, 2000, 8000] : [100, 400, 700, 1000, 2000, 5000];
+    ticks.forEach(function(nm){
+      var x = xOf(nm);
+      ctx.beginPath();
+      ctx.moveTo(x, padT + plotH);
+      ctx.lineTo(x, padT + plotH + 5);
+      ctx.strokeStyle = muted;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      paintText(ctx, String(nm), x, padT + plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    paintText(ctx, "nm", w - padR, h - 6, { size: 10, align: "right", color: muted, base: "bottom" });
+  }
+  function h0ById(id){
+    var list = Z.h0Choices();
+    var i;
+    for (i = 0; i < list.length; i++){
+      if (list[i].id === id) return list[i];
+    }
+    return list[0];
+  }
+  function renderHubble(){
+    var chosen = h0ById(state.h0);
+    var other = h0ById(state.h0 === "planck" ? "shoes" : "planck");
+    var v = Z.hubbleVelocity(chosen.h0, state.d);
+    var vOther = Z.hubbleVelocity(other.h0, state.d);
+    var zH = Z.hubbleZ(chosen.h0, state.d);
+    setText("h-name", chosen.name);
+    setText("h-range", chosen.h0 + " ± " + chosen.err + " km/s/Mpc");
+    setText("h-d", Z.formatZ(state.d) === "0" ? "0 Mpc" : (trimNum(state.d) + " Mpc"));
+    setText("h-v", Z.formatSpeed(v));
+    setText("h-z", Z.formatZ(zH));
+    setText("h-other", other.name + " · " + Z.formatSpeed(vOther));
+    setText("h-gap", Z.formatSpeed(Math.abs(v - vOther)));
+    setText("h-why", "At " + trimNum(state.d) + " Mpc, " + chosen.name + " gives " + Z.formatSpeed(v) + ". " + other.name + " gives " + Z.formatSpeed(vOther) + ". The difference of the central values is " + Z.formatSpeed(Math.abs(Z.H0_SHOES - Z.H0_PLANCK) * state.d) + ". z ≈ v/c is " + Z.formatZ(zH) + " for the selected H0. Not a named galaxy.");
+    if (hubble){
+      hubble.setAttribute("aria-label", "Hubble law toy at " + trimNum(state.d) + " megaparsecs. " + chosen.name + " gives " + Z.formatSpeed(v) + ". " + other.name + " gives " + Z.formatSpeed(vOther) + ".");
+    }
+    drawHubble(chosen, other);
+  }
+  function trimNum(n){
+    var s = (Math.round(n * 1000) / 1000).toFixed(3);
+    return s.replace(/0+$/, "").replace(/\.$/, "");
+  }
+  function drawHubble(chosen, other){
+    var box = fit(hubble, window.innerWidth < 720 ? 240 : 280);
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    var padL = 44;
+    var padR = 12;
+    var padT = 16;
+    var padB = 32;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var dMax = Z.D_MAX_MPC;
+    var vMax = Z.H0_SHOES * dMax * 1.08;
+    function xOf(d){ return padL + (d / dMax) * plotW; }
+    function yOf(v){ return padT + (1 - v / vMax) * plotH; }
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    function strokeLaw(h0, color){
+      ctx.beginPath();
+      ctx.moveTo(xOf(0), yOf(0));
+      ctx.lineTo(xOf(dMax), yOf(Z.hubbleVelocity(h0, dMax)));
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+    strokeLaw(Z.H0_PLANCK, ink);
+    strokeLaw(Z.H0_SHOES, accent);
+    var ticksD = plotW < 420 ? [0, 50, 100] : [0, 25, 50, 75, 100];
+    ticksD.forEach(function(d){
+      var x = xOf(d);
+      ctx.beginPath();
+      ctx.moveTo(x, padT + plotH);
+      ctx.lineTo(x, padT + plotH + 5);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, String(d), x, padT + plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    [0, 2000, 4000, 6000].forEach(function(v){
+      if (v > vMax) return;
+      var y = yOf(v);
+      paintText(ctx, String(v), padL - 6, y, { size: 10, align: "right", color: muted });
+    });
+    paintText(ctx, "Mpc", w - padR, h - 4, { size: 10, align: "right", color: muted, base: "bottom" });
+    function mark(h0, color, filled){
+      var v = Z.hubbleVelocity(h0, state.d);
+      var x = xOf(state.d);
+      var y = yOf(v);
+      ctx.beginPath();
+      ctx.arc(x, y, 4.5, 0, Math.PI * 2);
+      if (filled){
+        ctx.fillStyle = color;
+        ctx.fill();
+      } else {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    }
+    mark(other.h0, other.id === "planck" ? ink : accent, false);
+    mark(chosen.h0, chosen.id === "planck" ? ink : accent, true);
+  }
+  function render(){
+    syncPresetButtons();
+    syncH0Buttons();
+    syncZControls();
+    syncDControls();
+    renderReadout();
+    renderTable();
+    renderHubble();
+    drawSpec();
+  }
+  function setZ(z, fromField){
+    state.z = z;
+    if (!fromField) syncZControls();
+    render();
+  }
+  zSlider.addEventListener("input", function(){
+    setZ(Z.zFromUnit(Number(zSlider.value) / 1000), false);
+  });
+  zNum.addEventListener("input", function(){
+    var v = parseNum(zNum.value);
+    if (!Z.zOk(v)){
+      zNum.setAttribute("aria-invalid", "true");
+      showErr(zErr, true);
+      return;
+    }
+    state.z = v;
+    zNum.setAttribute("aria-invalid", "false");
+    showErr(zErr, false);
+    render();
+  });
+  dSlider.addEventListener("input", function(){
+    state.d = Number(dSlider.value);
+    render();
+  });
+  dNum.addEventListener("input", function(){
+    var v = parseNum(dNum.value);
+    if (!Z.dOk(v)){
+      dNum.setAttribute("aria-invalid", "true");
+      showErr(dErr, true);
+      return;
+    }
+    state.d = v;
+    dNum.setAttribute("aria-invalid", "false");
+    showErr(dErr, false);
+    render();
+  });
+  document.getElementById("presets").addEventListener("click", function(ev){
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var p = Z.presetById(btn.getAttribute("data-preset"));
+    if (!p) return;
+    state.z = p.z;
+    render();
+  });
+  document.getElementById("presets").addEventListener("keydown", function(ev){
+    if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+    var buttons = Array.prototype.slice.call(document.querySelectorAll("#presets button"));
+    var i = buttons.indexOf(document.activeElement);
+    if (i < 0) return;
+    ev.preventDefault();
+    var next = buttons[(i + (ev.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length];
+    next.focus();
+    var p = Z.presetById(next.getAttribute("data-preset"));
+    if (p){ state.z = p.z; render(); }
+  });
+  document.getElementById("h0-picks").addEventListener("click", function(ev){
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    state.h0 = btn.getAttribute("data-h0");
+    render();
+  });
+  document.getElementById("h0-picks").addEventListener("keydown", function(ev){
+    if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+    var buttons = Array.prototype.slice.call(document.querySelectorAll("#h0-picks button"));
+    var i = buttons.indexOf(document.activeElement);
+    if (i < 0) return;
+    ev.preventDefault();
+    var next = buttons[(i + (ev.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length];
+    next.focus();
+    state.h0 = next.getAttribute("data-h0");
+    render();
+  });
+
+  var helpBtn = document.getElementById("z-help");
+  var helpDialog = document.getElementById("z-help-dialog");
+  var scrollLock = "";
+  var previously = null;
+  function focusables(){
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    previously = document.activeElement;
+    scrollLock = document.body.style.overflow;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp(){
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden){
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))){
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", render);
+  new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  render();
+})();
+</script>
+</body>
+</html>
