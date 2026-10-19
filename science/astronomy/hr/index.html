@@ -1,0 +1,1046 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HR diagram — temperature and luminosity — Steven Philley</title>
+<meta name="description" content="Interactive Hertzsprung–Russell desk: effective temperature, hot on the left, against luminosity L/L☉. Stefan–Boltzmann iso-radius lines use the CODATA σ and the IAU 2015 nominal Sun. Cited presets for the Sun, Proxima, Vega, Sirius A, Sirius B, Betelgeuse, and Rigel. Schematic main sequence, giants, and white dwarfs. Not a Gaia catalog.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/hr/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="HR diagram — temperature and luminosity">
+<meta property="og:description" content="Hot on the left, bright up. Main sequence, giants, and white dwarfs as a classroom cartoon. Cited stars. Radius lines from L = 4πR²σT⁴. Not a catalog.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/hr/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HR diagram — temperature and luminosity">
+<meta name="twitter:description" content="Teff versus L/L☉, hot on the left. Iso-radius lines from Stefan–Boltzmann. Cited stars, including Sirius B. Not a Gaia catalog.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:crosshair}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.radius{border-top-style:solid;border-top-color:var(--muted,#63666e)}
+.swatch.ms{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 35%,transparent)}
+.swatch.giants{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent)}
+.swatch.wd{height:10px;border-top:0;background:color-mix(in srgb,var(--ink,#e8e6e1) 28%,transparent)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:12ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.chip{height:28px;border:1px solid var(--line,#2c303a);margin:0 0 8px;background:#fff1ea}
+.chip-cap{margin:0 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:1.45;color:var(--muted,#63666e)}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats li[hidden]{display:none !important}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.chip-cap a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/" aria-current="page">HR diagram</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Stellar diagram</p>
+  <h1>HR diagram<br>hot and bright</h1>
+  <p class="lede">The Hertzsprung–Russell diagram plots <strong>effective temperature</strong> across and <strong>luminosity</strong> up. Hot is on the left, the astronomy convention, so a hotter main-sequence star sits up and left of a cooler one. Luminosity is <strong>L/L☉</strong>, logarithmic. The right-hand scale is <strong>bolometric magnitude</strong>, which runs backwards: a smaller number is brighter. Slide the point, or tap a cited star. Radius lines are <strong>L = 4πR²σT⁴</strong>. The letters OBAFGKM live on the <a href="/science/astronomy/stars/">stars</a> desk. The curve behind σT⁴ is the <a href="/science/astronomy/blackbody/">blackbody</a> desk. How bright a star looks from Earth is <a href="/science/astronomy/magnitude/">magnitude</a>. Distance, which absolute magnitude assumes, is <a href="/science/astronomy/parallax/">parallax</a>, and the nearest of these stars are on <a href="/science/astronomy/nearest-stars/">nearest stars</a>.</p>
+  <p class="note-schematic">Classroom schematic. The shaded regions are an educational cartoon — main sequence, giants and supergiants, white dwarfs — not a Gaia catalog, not an ephemeris, and not a luminosity-class boundary. Markers are cited central values. Error bars are the cited uncertainties, clipped to the frame. The color chip is the blackbody desk’s sRGB approximation. Not a stellar-atmosphere model.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Temperature versus luminosity</span>
+    <button type="button" class="help-q" id="hr-help" aria-haspopup="dialog" aria-controls="hr-help-dialog" aria-expanded="false" aria-label="How this HR diagram works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Hot left · bright up · tap a star or the plot · radius lines are blackbodies</p>
+      <canvas id="plot" width="880" height="520" tabindex="0" role="img" aria-label="Hertzsprung–Russell diagram. The Sun is at 5772 kelvin and 1 solar luminosity. Hot is left. Bright is up."></canvas>
+      <ul class="legend">
+        <li><span class="swatch radius" aria-hidden="true"></span> Radius</li>
+        <li><span class="swatch ms" aria-hidden="true"></span> Main sequence</li>
+        <li><span class="swatch giants" aria-hidden="true"></span> Giants</li>
+        <li><span class="swatch wd" aria-hidden="true"></span> White dwarfs</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Cited presets · tap to place the marker</p>
+        <div class="presets" id="presets" role="group" aria-label="Star presets">
+          <button type="button" data-preset="sun" aria-pressed="true">Sun</button>
+          <button type="button" data-preset="proxima" aria-pressed="false">Proxima</button>
+          <button type="button" data-preset="vega" aria-pressed="false">Vega</button>
+          <button type="button" data-preset="sirius-a" aria-pressed="false">Sirius A</button>
+          <button type="button" data-preset="sirius-b" aria-pressed="false">Sirius B</button>
+          <button type="button" data-preset="betelgeuse" aria-pressed="false">Betelgeuse</button>
+          <button type="button" data-preset="rigel" aria-pressed="false">Rigel</button>
+        </div>
+        <div class="presets" role="group" aria-label="Diagram layers">
+          <button type="button" id="toggle-radii" aria-pressed="true">Radius lines</button>
+          <button type="button" id="toggle-regions" aria-pressed="true">Regions</button>
+        </div>
+        <div class="slider-row">
+          <label for="t-slider">Temp</label>
+          <input type="range" id="t-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="2500" aria-valuemax="40000" aria-valuetext="5772 kelvin">
+          <input type="text" class="num" id="t-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="5772" aria-label="Effective temperature in kelvin" aria-invalid="false">
+          <span class="unit-tag">K</span>
+        </div>
+        <div class="slider-row">
+          <label for="l-slider">L / L☉</label>
+          <input type="range" id="l-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="0.0001" aria-valuemax="1000000" aria-valuetext="1 solar luminosity">
+          <input type="text" class="num" id="l-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Luminosity in solar luminosities" aria-invalid="false">
+          <span class="unit-tag">L☉</span>
+        </div>
+        <p class="field-error" id="hr-err" hidden>Enter a temperature from 2,500 K to 40,000 K, and a luminosity from 0.0001 to 1,000,000 solar luminosities.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Nominal solar · IAU 2015 B3</p>
+      <h2 id="d-name">Sun</h2>
+      <p class="range" id="d-range">5772 K · 1 L☉</p>
+      <div class="chip" id="star-chip" role="img" aria-label="Approximate sRGB color for a 5772 kelvin blackbody."></div>
+      <p class="chip-cap" id="chip-cap">Approximation. Same sRGB chromaticity as the blackbody desk, scaled to the screen, not the star’s luminance.</p>
+      <ul class="stats">
+        <li><span class="k">Teff</span><span class="v" id="d-teff">5772 K</span></li>
+        <li><span class="k">L / L☉</span><span class="v" id="d-lum">1</span></li>
+        <li><span class="k">Bolometric M</span><span class="v" id="d-mbol">+4.74</span></li>
+        <li id="row-mv"><span class="k">Visual M<sub>V</sub></span><span class="v" id="d-mv">+4.83</span></li>
+        <li><span class="k">Cited radius</span><span class="v" id="d-rcite">1 R☉</span></li>
+        <li><span class="k">Blackbody radius</span><span class="v" id="d-rbb">1 R☉</span></li>
+        <li><span class="k">Region</span><span class="v" id="d-region">Main sequence</span></li>
+      </ul>
+      <p class="why" id="d-why">The nominal Sun is the zero of this diagram.</p>
+      <p class="why" id="d-note">IAU 2015 Resolution B3 defines the nominal solar effective temperature as exactly 5772 K.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The plot needs JavaScript. The cited anchors are still below. The nominal Sun is 5772 K and 1 L☉ (IAU 2015). Proxima Centauri is 2980 ± 80 K and 0.00151 ± 0.00008 L☉ (Ribas et al. 2017). Vega is 9560 ± 30 K and 44 ± 2 L☉ (Hill, Gulliver, and Adelman 2010). Sirius A is 9845 ± 64 K and 24.74 ± 0.70 L☉; Sirius B is 25,369 ± 46 K and 0.02448 ± 0.00033 L☉ (Bond et al. 2017). Betelgeuse is 3500 ± 200 K and log(L/L☉) = 5.10 ± 0.22 (Dolan et al. 2016). Rigel is 12,100 ± 150 K and log(L/L☉) = 5.08 (Moravveji et al. 2012). σ is the CODATA value 5.670374419… × 10⁻⁸ W m⁻² K⁻⁴.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Three families</p>
+    <h2>Hotter dwarfs are brighter. Giants are large. White dwarfs are tiny.</h2>
+    <p>On the main sequence, hydrogen is fusing in the core. A hotter dwarf is usually a more massive one, and it is brighter. The Sun sits in the middle of this page. Proxima is down and to the right: cool, small, faint. Vega and Sirius A are up and to the left: hotter, and more luminous.</p>
+    <p>Giants and supergiants are large. Betelgeuse is cooler than the Sun and still vastly more luminous, because the radius is hundreds of solar radii. Rigel is hot and large, so it sits with the supergiants rather than with the dwarfs at that temperature. The shaded box is a cartoon around those two cited stars, not a catalog of every giant.</p>
+    <p>A white dwarf is the exposed core of a star that has already shed its envelope. Sirius B is hotter than Sirius A and far fainter than the Sun. The temperature is high. The radius is under a hundredth of the Sun’s, so the area cannot make up for it. The <a href="/science/astronomy/stars/">stars</a> desk is the life path that ends there. This page does not draw that path.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the axes</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Hertzsprung–Russell</dt><dd>Temperature across, luminosity up. Hot on the left is the usual astronomical plot, so the main sequence runs from cool and faint at the lower right toward hot and bright at the upper left. This page’s primary axes are effective temperature and L/L☉. Spectral type would run the same direction, O toward M, left to right. The <a href="/science/astronomy/stars/">stars</a> desk is where those letters are taught.</dd></div>
+    <div class="gloss"><dt>Stefan–Boltzmann</dt><dd>L = 4πR²σT⁴. Surface flux is σT⁴. σ = 2π⁵k⁴ / (15h³c²) = 5.670374419… × 10⁻⁸ W m⁻² K⁻⁴, the CODATA exact value. A radius line is every temperature and luminosity that share one radius. The same law is the luminosity readout on the <a href="/science/astronomy/blackbody/">blackbody</a> desk.</dd></div>
+    <div class="gloss"><dt>Two solar luminosities</dt><dd>A radius line divides by the Stefan–Boltzmann formula at the IAU nominal solar radius and nominal effective temperature, so the Sun preset sits on the 1 R☉ line at 1 L☉. The IAU nominal luminosity, 3.828 × 10²⁶ W, is the other zero. At those nominal inputs the two agree at the digits this desk prints.</dd></div>
+    <div class="gloss"><dt>Bolometric magnitude</dt><dd>M<sub>bol</sub> = 4.74 − 2.5 log<sub>10</sub>(L/L☉), with 4.74 the IAU 2015 nominal solar bolometric magnitude. Brighter is smaller, and the brightest stars go negative. That is the right-hand axis. It is not visual absolute magnitude.</dd></div>
+    <div class="gloss gloss-wide"><dt>Visual M<sub>V</sub></dt><dd>Visual absolute magnitude is how bright the star would look, in the V band, from 10 parsecs. The <a href="/science/astronomy/magnitude/">magnitude</a> desk is that scale. The Sun’s fact-sheet value is +4.83. The bolometric number on this page is +4.74. They differ because the eye does not collect the whole spectrum. Sirius A’s visual figure is the magnitude desk’s arithmetic from Ducati V = −1.46 and the ESA parallax 0.37921″, not a second catalog.</dd></div>
+    <div class="gloss gloss-wide"><dt>The cartoons</dt><dd>Main sequence, giants and supergiants, and white dwarfs are labeled regions so the eye can find the three families. The polygons were drawn so the cited presets fall in the family the caption names. They are not a Gaia selection, not a mass track, and not a boundary you could publish.</dd></div>
+  </dl>
+
+  <p class="band">Sources · CODATA, IAU, and the papers</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?sigma" rel="noopener" target="_blank">NIST CODATA — Stefan–Boltzmann constant</a> — σ = 5.670374419… × 10⁻⁸ W m⁻² K⁻⁴, exact, from the defined h, c, and k. This desk computes σ = 2π⁵k⁴ / (15h³c²) using h = 6.62607015 × 10⁻³⁴ J·s, c = 299792458 m/s, and k = 1.380649 × 10⁻²³ J/K. The same computation is the blackbody desk.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolutions B2 and B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar radius 6.957 × 10⁸ m, nominal solar luminosity 3.828 × 10²⁶ W, nominal solar effective temperature 5772 K, nominal solar bolometric magnitude 4.74. Conversion constants, exact, not a measurement of the Sun. The resolution text is also at the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU archive</a>.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — absolute magnitude +4.83. That visual figure is the magnitude desk’s, printed here beside the bolometric 4.74 so the two are not mixed.</li>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2017/07/aa30582-17/aa30582-17.html" rel="noopener" target="_blank">Ribas et al. 2017, A&amp;A 603, A58</a> — Proxima Centauri: T<sub>eff</sub> = 2980 ± 80 K, R = 0.146 ± 0.007 R☉, L = 0.00151 ± 0.00008 L☉.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1088/0004-637X/712/1/250" rel="noopener" target="_blank">Hill, Gulliver, and Adelman 2010, ApJ 712, 250</a> — Vega: mean T<sub>eff</sub> = 9560 ± 30 K, equatorial radius 2.75 ± 0.01 R☉, polar radius 2.40 ± 0.02 R☉, luminosity 44 ± 2 L☉. Seen nearly pole-on.</li>
+      <li><a href="https://iopscience.iop.org/article/10.3847/1538-4357/aa6af8" rel="noopener" target="_blank">Bond et al. 2017, ApJ 840, 70</a> — Sirius A, adopting Davis et al. 2011 adjusted to their parallax: T<sub>eff</sub> = 9845 ± 64 K, R = 1.7144 ± 0.0090 R☉, L = 24.74 ± 0.70 L☉. Classical type A1 V. Sirius B, from their STIS fits: T<sub>eff</sub> = 25,369 ± 46 K, R = 0.008098 ± 0.000046 R☉, L = 0.02448 ± 0.00033 L☉, type DA2. They note the Sirius B uncertainties are internal and omit modestly larger systematics. Davis et al. 2011 is <a href="https://doi.org/10.1071/as10010" rel="noopener" target="_blank">PASA 28, 58</a>.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1088/0004-637X/747/2/108" rel="noopener" target="_blank">Moravveji et al. 2012, ApJ 747, 108</a> — Rigel: T<sub>eff</sub> = 12,100 ± 150 K, R = 78.9 ± 7.4 R☉, log(L/L☉) = 5.08 with uncertainties +0.07 and −0.10.</li>
+      <li><a href="https://iopscience.iop.org/article/10.3847/0004-637X/819/1/7" rel="noopener" target="_blank">Dolan et al. 2016, ApJ 819, 7</a> — Betelgeuse, adopted: T<sub>eff</sub> = 3500 ± 200 K, R = 887 ± 203 R☉, log(L/L☉) = 5.10 ± 0.22. The radius uncertainty follows the distance 197 ± 45 pc in Harper, Brown, and Guinan 2008, AJ 135, 1430.</li>
+      <li><a href="https://simbad.cds.unistra.fr/simbad/sim-basic?Ident=alf+CMa" rel="noopener" target="_blank">SIMBAD — * alf CMa</a> — V = −1.46 from Ducati’s 2002 catalogue of Johnson photometry, the same figure the magnitude desk uses. The visual absolute magnitude here is that V minus the distance modulus at the ESA parallax, not a SIMBAD absolute magnitude.</li>
+      <li><a href="https://sci.esa.int/web/education/-/35616-stellar-distances" rel="noopener" target="_blank">ESA Science &amp; Technology — Stellar distances</a> — Sirius parallax 0.37921″, the figure on the <a href="/science/astronomy/parallax/">parallax</a> and <a href="/science/astronomy/magnitude/">magnitude</a> desks. d(parsec) = 1 / p(arcsecond).</li>
+      <li><a href="https://science.nasa.gov/universe/stars/types/" rel="noopener" target="_blank">NASA Science — Star types</a> — main sequence, red giants, and white dwarfs as the families named on this cartoon. The shapes are not taken from that page.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of the Hertzsprung–Russell diagram. Hot on the left. L = 4πR²σT⁴ with the CODATA constant, compared with the IAU 2015 nominal Sun. Bolometric magnitude uses M<sub>bol,☉</sub> = 4.74. The regions are a cartoon. Not a Gaia catalog and not an ephemeris. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>OBAFGKM and the life paths. The cartoon on that page is the sketch. This one has the cited points.</p></a>
+    <a href="/science/astronomy/blackbody/"><p class="n">Curve</p><h3>Blackbody</h3><p>Planck’s curve and L = 4πR²σT⁴. The radius lines on this plot are that law.</p></a>
+    <a href="/science/astronomy/magnitude/"><p class="n">Brightness</p><h3>Magnitude</h3><p>Apparent m and absolute M. Luminosity is not how bright a star looks from Earth.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima and Sirius, the neighbors this diagram puts on the main sequence and among the white dwarfs.</p></a>
+    <a href="/science/astronomy/parallax/"><p class="n">Yardstick</p><h3>Parallax</h3><p>The angle that becomes a parsec. Absolute magnitude assumes that distance.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The nominal Sun this diagram starts on, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="hr-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="hr-help-title">HR diagram</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom picture. Hot on the left, bright up. The shaded regions are a cartoon. Not a Gaia catalog and not an ephemeris.</p>
+    <h3>The plot</h3>
+    <table>
+      <caption>The plot</caption>
+      <tbody>
+        <tr><th scope="row">Across</th><td>Effective temperature, logarithmic, from 2,500 K to 40,000 K. Hot is left.</td></tr>
+        <tr><th scope="row">Up</th><td>Luminosity in solar units, logarithmic, from 10⁻⁴ to 10⁶. Bright is up.</td></tr>
+        <tr><th scope="row">Right</th><td>Bolometric magnitude from the IAU zero point, M<sub>bol</sub> = 4.74 − 2.5 log<sub>10</sub>(L/L☉). The number runs backwards. Hidden on a narrow screen. The readout stays.</td></tr>
+        <tr><th scope="row">Regions</th><td>Main sequence, giants and supergiants, white dwarfs. A sketch that puts the cited presets in the named family. Not a boundary.</td></tr>
+        <tr><th scope="row">Radius lines</th><td>L = 4πR²σT⁴ at 0.01, 0.1, 1, 10, 100, and 1,000 solar radii. A cited star also draws its own radius, dashed, when that radius is not already one of those lines.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Sun, Proxima, Vega, Sirius A, Sirius B, Betelgeuse, Rigel. Each button places the cited temperature and luminosity. Left and Right move through the buttons when one of them has focus.</td></tr>
+        <tr><th scope="row">Plot</th><td>Tap empty space to drop a custom marker. Tap a star to select it. Drag empty space to move the custom marker. A cited star does not drag off its paper.</td></tr>
+        <tr><th scope="row">Sliders</th><td>Temperature and luminosity, both logarithmic. The number fields accept the same ranges. Typing or sliding leaves the preset.</td></tr>
+        <tr><th scope="row">Layers</th><td>Radius lines and regions toggle. Both start on.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">L / L☉</th><td>The marker. For a preset, the paper’s luminosity, including 10^5.10 and 10^5.08 where the paper quotes a logarithm.</td></tr>
+        <tr><th scope="row">Bolometric M</th><td>The IAU formula applied to that luminosity. Not a measured magnitude.</td></tr>
+        <tr><th scope="row">Visual M<sub>V</sub></th><td>Shown for the Sun (+4.83, fact sheet) and Sirius A (the magnitude desk’s arithmetic). Hidden when this page has no cited visual figure.</td></tr>
+        <tr><th scope="row">Cited radius</th><td>The paper’s radius. Blank for a custom point.</td></tr>
+        <tr><th scope="row">Blackbody radius</th><td>The radius whose Stefan–Boltzmann line passes through the marker, using the IAU nominal Sun as the zero.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Plot</th><td>The canvas takes focus. Arrow keys nudge a custom point. Shift is a coarser step.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/hr/hr.js"></script>
+<script src="/science/astronomy/blackbody/blackbody.js"></script>
+<script>
+(function(){
+  "use strict";
+  var HR = window.HR;
+  if (!HR) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("plot");
+  var tSlider = document.getElementById("t-slider");
+  var lSlider = document.getElementById("l-slider");
+  var tNum = document.getElementById("t-num");
+  var lNum = document.getElementById("l-num");
+  var errEl = document.getElementById("hr-err");
+  var radiiBtn = document.getElementById("toggle-radii");
+  var regionsBtn = document.getElementById("toggle-regions");
+  var sun = HR.presetById("sun");
+  var state = { T: sun.T, L: sun.L, preset: "sun", radii: true, regions: true };
+  var editing = null;
+  var geom = null;
+  var SUP = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex){
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n)) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a){
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value){
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw){
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function tempOk(v){ return isFinite(v) && v >= HR.T_MIN && v <= HR.T_MAX; }
+  function lumOk(v){ return isFinite(v) && v >= HR.L_MIN && v <= HR.L_MAX; }
+  function showErr(on){
+    if (!errEl) return;
+    errEl.hidden = !on;
+  }
+  function paintText(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function sup(n){
+    return String(n).split("").map(function(ch){ return SUP[ch] || ch; }).join("");
+  }
+  function pow10Label(exp){
+    return "10" + sup(exp);
+  }
+  function commaInt(n){
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function fit(cssH){
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function layout(w, h){
+    var narrow = w < 520;
+    var padL = 46;
+    var padR = narrow ? 12 : 48;
+    var padT = 16;
+    var padB = 42;
+    return {
+      padL: padL,
+      padR: padR,
+      padT: padT,
+      padB: padB,
+      plotW: Math.max(40, w - padL - padR),
+      plotH: Math.max(40, h - padT - padB),
+      mag: !narrow
+    };
+  }
+  function xOf(box, T){
+    return box.padL + HR.xFrac(T) * box.plotW;
+  }
+  function yOf(box, L){
+    return box.padT + HR.yFrac(L) * box.plotH;
+  }
+  function pointFromXY(x, y){
+    if (!geom) return null;
+    var f = (x - geom.padL) / geom.plotW;
+    var g = (y - geom.padT) / geom.plotH;
+    if (f < 0 || f > 1 || g < 0 || g > 1) return null;
+    return { T: HR.tFromXFrac(f), L: HR.lFromYFrac(g) };
+  }
+  function hitPreset(x, y){
+    var list = HR.presets();
+    var best = null;
+    var bestD = 18 * 18;
+    var i;
+    for (i = 0; i < list.length; i++){
+      var px = xOf(geom, list[i].T);
+      var py = yOf(geom, list[i].L);
+      var d = (px - x) * (px - x) + (py - y) * (py - y);
+      if (d <= bestD){
+        bestD = d;
+        best = list[i].id;
+      }
+    }
+    return best;
+  }
+  function matchPreset(){
+    var list = HR.presets();
+    var i;
+    for (i = 0; i < list.length; i++){
+      var p = list[i];
+      if (HR.formatTemp(state.T) === HR.formatTemp(p.T) && Math.abs(state.L - p.L) / p.L < 2e-4) return p.id;
+    }
+    return "";
+  }
+  function syncPresetButtons(){
+    state.preset = matchPreset();
+    var buttons = document.querySelectorAll("#presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++){
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-preset") === state.preset));
+    }
+  }
+  function syncSliders(){
+    tSlider.value = String(HR.logUnmap(state.T, HR.T_MIN, HR.T_MAX) * 1000);
+    lSlider.value = String(HR.logUnmap(state.L, HR.L_MIN, HR.L_MAX) * 1000);
+    tSlider.setAttribute("aria-valuetext", HR.formatTemp(state.T) + " kelvin");
+    lSlider.setAttribute("aria-valuetext", HR.formatL(state.L) + " solar luminosities");
+    tSlider.setAttribute("aria-valuenow", HR.formatTemp(state.T));
+    lSlider.setAttribute("aria-valuenow", HR.formatL(state.L));
+  }
+  function radiusSamples(R){
+    var out = [];
+    var steps = 80;
+    var i;
+    var prev = null;
+    for (i = 0; i <= steps; i++){
+      var u = i / steps;
+      var T = Math.exp(Math.log(HR.T_MIN) + u * (Math.log(HR.T_MAX) - Math.log(HR.T_MIN)));
+      var L = HR.luminosityRatio(T, R);
+      var inside = L >= HR.L_MIN && L <= HR.L_MAX;
+      if (inside){
+        if (prev && !prev.inside){
+          var edgeL = prev.L < HR.L_MIN ? HR.L_MIN : HR.L_MAX;
+          var frac = (Math.log(edgeL) - Math.log(prev.L)) / (Math.log(L) - Math.log(prev.L));
+          var Te = Math.exp(Math.log(prev.T) + frac * (Math.log(T) - Math.log(prev.T)));
+          out.push({ T: Te, L: edgeL, breakBefore: out.length > 0 });
+        }
+        out.push({ T: T, L: L, breakBefore: false });
+      } else if (prev && prev.inside){
+        var edgeL2 = L < HR.L_MIN ? HR.L_MIN : HR.L_MAX;
+        var frac2 = (Math.log(edgeL2) - Math.log(prev.L)) / (Math.log(L) - Math.log(prev.L));
+        var Te2 = Math.exp(Math.log(prev.T) + frac2 * (Math.log(T) - Math.log(prev.T)));
+        out.push({ T: Te2, L: edgeL2, breakBefore: false });
+      }
+      prev = { T: T, L: L, inside: inside };
+    }
+    return out;
+  }
+  function drawRadius(ctx, box, R, opt){
+    opt = opt || {};
+    var samples = radiusSamples(R);
+    if (!samples.length) return;
+    ctx.beginPath();
+    var i;
+    var started = false;
+    for (i = 0; i < samples.length; i++){
+      var s = samples[i];
+      var x = xOf(box, s.T);
+      var y = yOf(box, s.L);
+      if (!started || s.breakBefore){
+        ctx.moveTo(x, y);
+        started = true;
+      } else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = opt.color;
+    ctx.lineWidth = opt.width || 1;
+    ctx.setLineDash(opt.dash || []);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (!opt.label) return;
+    var anchor = samples[Math.min(3, samples.length - 1)];
+    var lx = Math.min(box.padL + box.plotW - 6, Math.max(box.padL + 6, xOf(box, anchor.T) - 4));
+    var ly = Math.min(box.padT + box.plotH - 8, Math.max(box.padT + 8, yOf(box, anchor.L)));
+    paintText(ctx, opt.label, lx, ly, { size: 10, color: opt.color, align: "right" });
+  }
+  function drawPoly(ctx, box, poly, fill){
+    ctx.beginPath();
+    var i;
+    for (i = 0; i < poly.length; i++){
+      var T = Math.pow(10, poly[i][0]);
+      var L = Math.pow(10, poly[i][1]);
+      var x = xOf(box, T);
+      var y = yOf(box, L);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = fill;
+    ctx.fill();
+  }
+  function regionLabel(ctx, box, region, color){
+    var spot = region.label;
+    var T;
+    var L;
+    if (spot){
+      T = Math.pow(10, spot[0]);
+      L = Math.pow(10, spot[1]);
+    } else {
+      var poly = region.poly;
+      var sx = 0;
+      var sy = 0;
+      var i;
+      for (i = 0; i < poly.length; i++){
+        sx += poly[i][0];
+        sy += poly[i][1];
+      }
+      T = Math.pow(10, sx / poly.length);
+      L = Math.pow(10, sy / poly.length);
+    }
+    var x = Math.min(box.padL + box.plotW - 8, Math.max(box.padL + 8, xOf(box, T)));
+    var y = Math.min(box.padT + box.plotH - 8, Math.max(box.padT + 8, yOf(box, L)));
+    paintText(ctx, region.short || region.name, x, y, { size: 11, color: color, align: "center" });
+  }
+  function drawError(ctx, box, p, color){
+    var x = xOf(box, p.T);
+    var y = yOf(box, p.L);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    if (p.dT){
+      var x0 = xOf(box, Math.max(HR.T_MIN, p.T - p.dT));
+      var x1 = xOf(box, Math.min(HR.T_MAX, p.T + p.dT));
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
+    }
+    var err = HR.lError(p);
+    if (err){
+      var y0 = yOf(box, Math.max(HR.L_MIN, err.lo));
+      var y1 = yOf(box, Math.min(HR.L_MAX, err.hi));
+      ctx.beginPath();
+      ctx.moveTo(x, y0);
+      ctx.lineTo(x, y1);
+      ctx.stroke();
+    }
+  }
+  function draw(){
+    var boxCss = fit(window.innerWidth < 720 ? 420 : 500);
+    var ctx = boxCss.ctx;
+    var w = boxCss.w;
+    var h = boxCss.h;
+    var box = layout(w, h);
+    geom = box;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(box.padL, box.padT, box.plotW, box.plotH);
+    ctx.clip();
+    if (state.regions){
+      var regs = HR.regions();
+      var fills = { ms: rgba(accent, 0.14), giants: rgba(accent, 0.22), wd: rgba(ink, 0.1) };
+      regs.forEach(function(region){
+        drawPoly(ctx, box, region.poly, fills[region.id] || rgba(accent, 0.12));
+      });
+    }
+    if (state.radii){
+      HR.RADIUS_LINES.forEach(function(R){
+        var label = HR.formatRadius(R) + " R☉";
+        drawRadius(ctx, box, R, { color: muted, width: 1, label: label });
+      });
+      var active = state.preset ? HR.presetById(state.preset) : null;
+      if (active && active.R){
+        var round = HR.RADIUS_LINES.some(function(R){ return Math.abs(active.R - R) / R < 0.02; });
+        if (!round){
+          drawRadius(ctx, box, active.R, {
+            color: accent,
+            width: 1.25,
+            dash: [4, 4],
+            label: HR.formatRadius(active.R) + " R☉"
+          });
+        }
+      }
+    }
+    ctx.restore();
+    if (state.regions && box.plotW > 280){
+      HR.regions().forEach(function(region){
+        regionLabel(ctx, box, region, soft);
+      });
+    }
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(box.padL + 0.5, box.padT + 0.5, box.plotW - 1, box.plotH - 1);
+    var lTicks = [-4, -2, 0, 2, 4, 6];
+    lTicks.forEach(function(exp){
+      var L = Math.pow(10, exp);
+      var y = yOf(box, L);
+      ctx.beginPath();
+      ctx.moveTo(box.padL - 4, y);
+      ctx.lineTo(box.padL, y);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, pow10Label(exp), box.padL - 6, y, { size: 10, align: "right", color: muted });
+      if (box.mag){
+        paintText(ctx, HR.formatMag(HR.bolometricMagnitude(L)), box.padL + box.plotW + 6, y, { size: 10, align: "left", color: muted });
+      }
+    });
+    [3000, 5000, 10000, 20000, 30000].forEach(function(T){
+      if (T < HR.T_MIN || T > HR.T_MAX) return;
+      var x = xOf(box, T);
+      ctx.beginPath();
+      ctx.moveTo(x, box.padT + box.plotH);
+      ctx.lineTo(x, box.padT + box.plotH + 5);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, commaInt(T), x, box.padT + box.plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    paintText(ctx, "hot", box.padL, h - 4, { size: 10, align: "left", color: muted, base: "bottom" });
+    paintText(ctx, "cool", box.padL + box.plotW, h - 4, { size: 10, align: "right", color: muted, base: "bottom" });
+    paintText(ctx, "L/L☉", 4, box.padT - 2, { size: 10, align: "left", color: muted, base: "bottom" });
+    if (box.mag){
+      paintText(ctx, "Mbol", w - 4, box.padT - 2, { size: 10, align: "right", color: muted, base: "bottom" });
+    }
+    var list = HR.presets();
+    list.forEach(function(p){
+      if (p.id === state.preset) return;
+      drawError(ctx, box, p, rgba(muted, 0.9));
+      var x = xOf(box, p.T);
+      var y = yOf(box, p.L);
+      ctx.beginPath();
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = soft;
+      ctx.fill();
+    });
+    var markerColor = accent;
+    if (window.Blackbody && window.Blackbody.color){
+      try { markerColor = window.Blackbody.color(state.T).hex || accent; } catch (e) {}
+    }
+    var activeP = state.preset ? HR.presetById(state.preset) : null;
+    if (activeP) drawError(ctx, box, activeP, ink);
+    var mx = xOf(box, state.T);
+    var my = yOf(box, state.L);
+    ctx.beginPath();
+    ctx.arc(mx, my, 7, 0, Math.PI * 2);
+    ctx.fillStyle = markerColor;
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = ink;
+    ctx.stroke();
+    var name = activeP ? activeP.name : "Custom";
+    var labelX = mx + 10;
+    var align = "left";
+    if (labelX > box.padL + box.plotW - 70){
+      labelX = mx - 10;
+      align = "right";
+    }
+    paintText(ctx, name, labelX, my - 12, { size: 12, color: ink, align: align });
+  }
+  function visualMv(preset){
+    if (!preset) return null;
+    if (preset.id === "sun") return HR.SUN_MV;
+    if (preset.id === "sirius-a") return HR.siriusVisualAbsolute();
+    return null;
+  }
+  function render(){
+    syncPresetButtons();
+    syncSliders();
+    if (editing !== tNum) tNum.value = HR.formatTemp(state.T);
+    if (editing !== lNum) lNum.value = HR.formatL(state.L);
+    var preset = state.preset ? HR.presetById(state.preset) : null;
+    var region = HR.regionAt(state.T, state.L);
+    var chip = document.getElementById("star-chip");
+    var col = null;
+    if (window.Blackbody && window.Blackbody.color){
+      try { col = window.Blackbody.color(state.T); } catch (e) { col = null; }
+    }
+    if (chip && col){
+      chip.style.background = col.hex;
+      var chipLabel = "Approximate sRGB color " + col.hex + " for a " + HR.formatTemp(state.T) + " kelvin blackbody.";
+      if (col.clipped) chipLabel += " Part of the spectrum is outside the sRGB gamut and was clipped.";
+      chip.setAttribute("aria-label", chipLabel);
+      var cap = "Approximation · " + col.hex + " · same sRGB chromaticity as the blackbody desk, scaled to the screen, not the star’s luminance.";
+      if (col.clipped) cap += " Clipped to the sRGB gamut.";
+      setText("chip-cap", cap);
+    }
+    setText("d-tier", preset ? preset.tier : "Custom point");
+    setText("d-name", preset ? preset.name : "Custom");
+    var lLabel = HR.formatLLabel(preset, state.L);
+    setText("d-range", HR.formatTemp(state.T) + " K · " + lLabel + " L☉");
+    setText("d-teff", HR.formatTemp(state.T) + " K");
+    setText("d-lum", lLabel);
+    setText("d-mbol", HR.formatMag(HR.bolometricMagnitude(state.L)));
+    var mv = visualMv(preset);
+    var mvRow = document.getElementById("row-mv");
+    if (mvRow) mvRow.hidden = mv == null;
+    if (mv != null) setText("d-mv", HR.formatMag(mv));
+    var cite = document.getElementById("d-rcite");
+    if (cite){
+      var row = cite.parentNode;
+      if (preset && preset.R){
+        row.hidden = false;
+        cite.textContent = HR.formatRadius(preset.R) + " R☉";
+      } else row.hidden = true;
+    }
+    setText("d-rbb", HR.formatRadius(HR.radiusFromLuminosity(state.T, state.L)) + " R☉");
+    setText("d-region", region ? region.name : "Between the cartoons");
+    setText("d-why", HR.whyFor(state.T, state.L, preset));
+    setText("d-note", preset ? preset.note : "Custom temperature and luminosity. The radius in the readout is the blackbody radius of this point. A named preset is a cited star; this one is just the plot.");
+    var regionName = region ? region.name : "between the cartoons";
+    canvas.setAttribute("aria-label", (preset ? preset.name : "Custom point") + " at " + HR.formatTemp(state.T) + " kelvin and luminosity " + lLabel + " solar, " + regionName + ". Hot is left. Bright is up. Bolometric magnitude " + HR.formatMag(HR.bolometricMagnitude(state.L)) + ".");
+    tNum.setAttribute("aria-invalid", "false");
+    lNum.setAttribute("aria-invalid", "false");
+    showErr(false);
+    draw();
+  }
+  function commitTemp(fromSlider){
+    var v = fromSlider ? HR.logMap(Number(tSlider.value) / 1000, HR.T_MIN, HR.T_MAX) : parseNum(tNum.value);
+    if (!tempOk(v)){
+      tNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.T = v;
+    editing = fromSlider ? null : tNum;
+    render();
+  }
+  function commitLum(fromSlider){
+    var v = fromSlider ? HR.logMap(Number(lSlider.value) / 1000, HR.L_MIN, HR.L_MAX) : parseNum(lNum.value);
+    if (!lumOk(v)){
+      lNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.L = v;
+    editing = fromSlider ? null : lNum;
+    render();
+  }
+  tSlider.addEventListener("input", function(){ commitTemp(true); });
+  lSlider.addEventListener("input", function(){ commitLum(true); });
+  tNum.addEventListener("input", function(){ commitTemp(false); });
+  lNum.addEventListener("input", function(){ commitLum(false); });
+  tNum.addEventListener("blur", function(){ editing = null; if (tempOk(state.T)) tNum.value = HR.formatTemp(state.T); });
+  lNum.addEventListener("blur", function(){ editing = null; if (lumOk(state.L)) lNum.value = HR.formatL(state.L); });
+  tNum.addEventListener("keydown", function(ev){ if (ev.key === "Enter"){ ev.preventDefault(); tNum.blur(); } });
+  lNum.addEventListener("keydown", function(ev){ if (ev.key === "Enter"){ ev.preventDefault(); lNum.blur(); } });
+
+  function applyPreset(id){
+    var p = HR.presetById(id);
+    if (!p) return;
+    editing = null;
+    state.T = p.T;
+    state.L = p.L;
+    render();
+  }
+  document.querySelectorAll("#presets button").forEach(function(btn){
+    btn.addEventListener("click", function(){ applyPreset(btn.getAttribute("data-preset")); });
+  });
+  radiiBtn.addEventListener("click", function(){
+    state.radii = !state.radii;
+    radiiBtn.setAttribute("aria-pressed", String(state.radii));
+    render();
+  });
+  regionsBtn.addEventListener("click", function(){
+    state.regions = !state.regions;
+    regionsBtn.setAttribute("aria-pressed", String(state.regions));
+    render();
+  });
+
+  function localPoint(ev){
+    var rect = canvas.getBoundingClientRect();
+    return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+  }
+  canvas.addEventListener("pointerdown", function(ev){
+    if (!geom) return;
+    var p = localPoint(ev);
+    var hit = hitPreset(p.x, p.y);
+    if (hit){
+      applyPreset(hit);
+      return;
+    }
+    var pt = pointFromXY(p.x, p.y);
+    if (!pt) return;
+    canvas.setPointerCapture(ev.pointerId);
+    canvas.dataset.drag = "1";
+    state.T = pt.T;
+    state.L = pt.L;
+    editing = null;
+    render();
+  });
+  canvas.addEventListener("pointermove", function(ev){
+    if (canvas.dataset.drag !== "1") return;
+    var p = localPoint(ev);
+    var pt = pointFromXY(p.x, p.y);
+    if (!pt) return;
+    state.T = pt.T;
+    state.L = pt.L;
+    editing = null;
+    render();
+  });
+  function endDrag(ev){
+    if (canvas.dataset.drag === "1"){
+      canvas.dataset.drag = "";
+      try { canvas.releasePointerCapture(ev.pointerId); } catch (e) {}
+    }
+  }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("keydown", function(ev){
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight" && ev.key !== "ArrowUp" && ev.key !== "ArrowDown") return;
+    ev.preventDefault();
+    var step = ev.shiftKey ? 0.06 : 0.02;
+    var xf = HR.xFrac(state.T);
+    var yf = HR.yFrac(state.L);
+    if (ev.key === "ArrowLeft") xf -= step;
+    if (ev.key === "ArrowRight") xf += step;
+    if (ev.key === "ArrowUp") yf -= step;
+    if (ev.key === "ArrowDown") yf += step;
+    xf = Math.min(1, Math.max(0, xf));
+    yf = Math.min(1, Math.max(0, yf));
+    state.T = HR.tFromXFrac(xf);
+    state.L = HR.lFromYFrac(yf);
+    editing = null;
+    render();
+  });
+
+  var presetIds = HR.presets().map(function(p){ return p.id; });
+  document.addEventListener("keydown", function(ev){
+    var help = document.getElementById("hr-help-dialog");
+    if (help && !help.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t || !t.getAttribute || !t.getAttribute("data-preset")) return;
+    ev.preventDefault();
+    var id = t.getAttribute("data-preset");
+    var idx = presetIds.indexOf(id);
+    if (idx < 0) idx = 0;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    var next = presetIds[(idx + dir + presetIds.length) % presetIds.length];
+    applyPreset(next);
+    var nb = document.querySelector('#presets [data-preset="' + next + '"]');
+    if (nb) nb.focus();
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("hr-help");
+  var helpDialog = document.getElementById("hr-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden){
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))){
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
