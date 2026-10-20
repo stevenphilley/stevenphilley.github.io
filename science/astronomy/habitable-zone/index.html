@@ -1,0 +1,896 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Habitable zone — flux and equilibrium temperature — Steven Philley</title>
+<meta name="description" content="Interactive habitable-zone desk: stellar flux S/S⊕ = (L/L☉)/d², watts per square metre from the NASA Earth Fact Sheet solar irradiance 1361.0 W/m², and equilibrium temperature with full heat redistribution. Kopparapu et al. 2014 conservative and optimistic limits for a 1 Earth-mass planet, 2600–7200 K. Earth, Venus, Mars, Proxima b, TRAPPIST-1 e, and Kepler-452b. Not a habitability verdict.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/habitable-zone/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Habitable zone — flux and equilibrium temperature">
+<meta property="og:description" content="Slide a star, a distance, and a Bond albedo. Flux, equilibrium temperature, and the Kopparapu limits. Earth lands near 255 K. Not a habitability verdict.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/habitable-zone/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Habitable zone — flux and equilibrium temperature">
+<meta name="twitter:description" content="S/S⊕ = (L/L☉)/d², T_eq with full redistribution, and Kopparapu et al. 2014 limits. Cited presets. Not a verdict.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:ew-resize}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;flex:0 0 auto}
+.swatch.opt{background:color-mix(in srgb,var(--accent,#c8b48a) 28%,transparent)}
+.swatch.con{background:color-mix(in srgb,var(--accent,#c8b48a) 62%,transparent)}
+.swatch.planet{height:0;border-top:3px solid var(--ink,#e8e6e1);margin-top:4px}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/habitable-zone/" aria-current="page">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Insolation</p>
+  <h1>Habitable zone<br>flux and temperature</h1>
+  <p class="lede">Starlight thins with distance. At orbital distance <strong>d</strong> in AU, the flux relative to Earth’s is <strong>S/S⊕ = (L/L☉) / d²</strong>. Watts per square metre use the NASA Earth Fact Sheet solar irradiance, <strong>1361.0 W/m²</strong>. Equilibrium temperature assumes that light is shared over the whole planet and radiated as a blackbody: <strong>T<sub>eq</sub> = [F (1−A) / (4σ)]<sup>¼</sup></strong>, the same statement as <strong>T<sub>★</sub> √(R<sub>★</sub> / 2a) (1−A)<sup>¼</sup></strong>. <strong>A</strong> is the Bond albedo. The strip is the habitable zone from Kopparapu et al. 2014, conservative and optimistic, for a 1 Earth-mass planet. Luminosity and temperature are the quantities on the <a href="/science/astronomy/blackbody/">blackbody</a> desk and the <a href="/science/astronomy/hr/">HR diagram</a>. Spectral type is the <a href="/science/astronomy/stars/">stars</a> desk. The rough rings on <a href="/science/astronomy/exoplanets/">exoplanets</a> are not this calculation. Proxima is on <a href="/science/astronomy/nearest-stars/">nearest stars</a>.</p>
+  <p class="note-schematic">Classroom model. Full heat redistribution, emissivity 1, no atmosphere, no clouds, a circular orbit, and the star’s light only. A point inside the strip is not a habitable world, and a point outside is not a proof against liquid water under some other atmosphere. Mars is inside the conservative strip on this page. Venus is not. Earth’s no-greenhouse temperature is not its 288 K surface. The polynomial is for 2600 K to 7200 K and is not used outside that range.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Flux, temperature, and the zone</span>
+    <button type="button" class="help-q" id="hz-help" aria-haspopup="dialog" aria-controls="hz-help-dialog" aria-expanded="false" aria-label="How this habitable-zone desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="strip-hint">Distance, logarithmic · drag the marker · conservative inside optimistic</p>
+      <canvas id="strip" width="880" height="280" tabindex="0" role="img" aria-label="Habitable zone for the Sun. Earth is at 1 AU, inside the conservative strip."></canvas>
+      <ul class="legend">
+        <li><span class="swatch opt" aria-hidden="true"></span> Optimistic</li>
+        <li><span class="swatch con" aria-hidden="true"></span> Conservative</li>
+        <li><span class="swatch planet" aria-hidden="true"></span> Planet</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Cited systems · the star, the orbit, and a Bond albedo</p>
+        <div class="presets" id="presets" role="group" aria-label="System presets">
+          <button type="button" data-preset="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-preset="venus" aria-pressed="false">Venus</button>
+          <button type="button" data-preset="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-preset="proxima-b" aria-pressed="false">Proxima b</button>
+          <button type="button" data-preset="trappist-1-e" aria-pressed="false">TRAPPIST-1 e</button>
+          <button type="button" data-preset="kepler-452b" aria-pressed="false">Kepler-452b</button>
+        </div>
+        <p class="pick-label">Bond albedo · fact-sheet values, not a guess for an exoplanet</p>
+        <div class="presets" id="albedo-presets" role="group" aria-label="Bond albedo presets">
+          <button type="button" data-albedo="earth" aria-pressed="true">Earth 0.294</button>
+          <button type="button" data-albedo="venus" aria-pressed="false">Venus 0.77</button>
+          <button type="button" data-albedo="mars" aria-pressed="false">Mars 0.250</button>
+        </div>
+        <div class="slider-row">
+          <label for="l-slider">L / L☉</label>
+          <input type="range" id="l-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.00001" aria-valuemax="100" aria-valuetext="1 solar luminosity">
+          <input type="text" class="num" id="l-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Luminosity in solar luminosities" aria-invalid="false">
+          <span class="unit-tag">L☉</span>
+        </div>
+        <div class="slider-row">
+          <label for="t-slider">Teff</label>
+          <input type="range" id="t-slider" min="1500" max="10000" step="1" value="5772" aria-valuemin="1500" aria-valuemax="10000" aria-valuetext="5772 kelvin">
+          <input type="text" class="num" id="t-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="5772" aria-label="Effective temperature in kelvin" aria-invalid="false">
+          <span class="unit-tag">K</span>
+        </div>
+        <div class="slider-row">
+          <label for="a-slider">Distance</label>
+          <input type="range" id="a-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.005" aria-valuemax="40" aria-valuetext="1 astronomical unit">
+          <input type="text" class="num" id="a-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1.00000011" aria-label="Orbital distance in astronomical units" aria-invalid="false">
+          <span class="unit-tag">AU</span>
+        </div>
+        <div class="slider-row">
+          <label for="alb-slider">Albedo</label>
+          <input type="range" id="alb-slider" min="0" max="1" step="0.001" value="0.294" aria-valuemin="0" aria-valuemax="1" aria-valuetext="Bond albedo 0.294">
+          <input type="text" class="num" id="alb-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.294" aria-label="Bond albedo, from 0 to 1" aria-invalid="false">
+          <span class="unit-tag">A</span>
+        </div>
+        <p class="field-error" id="hz-err" hidden>Luminosity from 0.00001 to 100 L☉, temperature from 1,500 K to 10,000 K, distance from 0.005 to 40 AU, Bond albedo from 0 to 1.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Sun · Earth</p>
+      <h2 id="d-name">Earth</h2>
+      <p class="range" id="d-range">5772 K · 1 L☉ · 1.000 AU</p>
+      <ul class="stats">
+        <li><span class="k">S / S⊕</span><span class="v" id="d-ratio">1.000</span></li>
+        <li><span class="k">Flux</span><span class="v" id="d-flux">1361.0 W/m²</span></li>
+        <li><span class="k">T_eq</span><span class="v" id="d-teq">255.1 K</span></li>
+        <li><span class="k">T_eq, °C</span><span class="v" id="d-celsius">−18.0 °C</span></li>
+        <li><span class="k">Implied radius</span><span class="v" id="d-radius">1.000 R☉</span></li>
+        <li><span class="k">Zone</span><span class="v" id="d-zone">Conservative</span></li>
+        <li><span class="k">Conservative</span><span class="v" id="d-cons">—</span></li>
+        <li><span class="k">Optimistic</span><span class="v" id="d-opt">—</span></li>
+      </ul>
+      <p class="why" id="d-why">At 1 AU a solar luminosity is one Earth flux.</p>
+      <p class="why" id="d-albedo">Bond albedo 0.294, NASA Earth Fact Sheet.</p>
+      <p class="why" id="d-note">Full redistribution. No greenhouse.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The cited anchors are still below. S/S⊕ = (L/L☉) / d². The solar irradiance is 1361.0 W/m² (NASA Earth Fact Sheet). With Bond albedo 0.294 at Earth’s semimajor axis 1.00000011 AU, this full-redistribution formula gives 255.1 K. Venus, Bond albedo 0.77 at 0.72333199 AU, gives 226.6 K. Mars, Bond albedo 0.250 at 1.52366231 AU, gives 209.8 K. Earth’s average surface temperature on the same sheet is 288 K. Kopparapu et al. 2014 give the habitable-zone polynomial for 2600 K to 7200 K. TRAPPIST-1 at 2566 K is outside that range.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Not a verdict</p>
+    <h2>Inside the strip is a flux limit. It is not a living world.</h2>
+    <p>The conservative edges are the runaway greenhouse and the maximum greenhouse. The optimistic edges are recent Venus and early Mars. Kopparapu et al. 2014 print those four for a 1 Earth-mass planet, and only for effective temperatures from 2600 K to 7200 K. The runaway-greenhouse row depends on mass. This page uses the 1 Earth-mass coefficients. Recent Venus, maximum greenhouse, and early Mars are the same at every mass in that table.</p>
+    <p>Mars sits inside the conservative strip and the fact sheet’s average temperature is about 214 K, under a thin atmosphere. Venus sits closer than the recent-Venus distance, and its average temperature is 737 K. Earth’s no-greenhouse result here is 255.1 K. The same fact sheet lists the average surface temperature as 288 K (15 °C). The gap is greenhouse warming, which this model leaves out.</p>
+    <p>Equilibrium temperature assumes the absorbed starlight is shared over the whole surface and radiated with emissivity 1. A planet that keeps the heat on the dayside runs hotter. Clouds, oceans, and a different gas mixture move the real edges. Being in the strip is not a detection of liquid water, and missing the strip is not a proof against it.</p>
+  </div>
+
+  <p class="band">Literacy · the numbers on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>S / S⊕</dt><dd>Stellar flux at the planet divided by the flux at 1 AU from a star with L = L☉. The formula is (L/L☉) / d² with d in AU. It does not depend on albedo. Earth’s preset is 1.000 because the fact-sheet semimajor axis is 1.00000011 AU.</dd></div>
+    <div class="gloss"><dt>Watts per square metre</dt><dd>S/S⊕ times 1361.0 W/m², the solar irradiance on the NASA Earth Fact Sheet. Spreading the IAU nominal luminosity, 3.828 × 10²⁶ W, over a sphere of radius 1 au (149,597,870,700 m) gives 1361.17 W/m². This desk multiplies by the fact-sheet figure.</dd></div>
+    <div class="gloss"><dt>Equilibrium temperature</dt><dd>T<sub>eq</sub> = [F (1−A) / (4σ)]<sup>¼</sup>. The 4 is the whole surface emitting what a cross-section absorbs: full heat redistribution. σ is the CODATA Stefan–Boltzmann constant, the same computation as the <a href="/science/astronomy/blackbody/">blackbody</a> desk. Emissivity is 1. There is no greenhouse.</dd></div>
+    <div class="gloss gloss-wide"><dt>The radius form</dt><dd>T<sub>eq</sub> = T<sub>★</sub> √(R<sub>★</sub> / 2a) (1−A)<sup>¼</sup>. R<sub>★</sub> here is the radius implied by L = 4πR²σT⁴, using L = (L/L☉) × 3.828 × 10²⁶ W. That form and the flux form differ only because 1361.0 W/m² is not exactly the nominal luminosity spread over 1 au. At the Earth preset the gap is 0.008 K, inside the tenth this page prints.</dd></div>
+    <div class="gloss"><dt>Bond albedo</dt><dd>The fraction of incident starlight the planet reflects, over all wavelengths and all angles. Earth 0.294, Venus 0.77, Mars 0.250, from the NASA fact sheets. Geometric albedo is a different number and is not used here. Exoplanet Bond albedos are not measured on this page.</dd></div>
+    <div class="gloss"><dt>Greenhouse</dt><dd>An atmosphere can let starlight in and hold infrared on the way out. Earth’s surface is warmer than T<sub>eq</sub>. Venus is much warmer. This desk does not add that term. The fact-sheet surface temperatures are printed beside the model so the gap stays visible.</dd></div>
+    <div class="gloss gloss-wide"><dt>The four limits</dt><dd>Optimistic inner edge: recent Venus. Conservative inner edge: runaway greenhouse. Conservative outer edge: maximum greenhouse. Optimistic outer edge: early Mars. S<sub>eff</sub> = S<sub>eff☉</sub> + aT<sub>★</sub> + bT<sub>★</sub>² + cT<sub>★</sub>³ + dT<sub>★</sub>⁴, with T<sub>★</sub> = T<sub>eff</sub> − 5780 K. Distance is √((L/L☉) / S<sub>eff</sub>) AU. The zero of the polynomial is 5780 K, the solar temperature in that paper, not the IAU nominal 5772 K.</dd></div>
+    <div class="gloss gloss-wide"><dt>Outside 2600–7200 K</dt><dd>Kopparapu et al. 2014 state the coefficients for 2600 K ≤ T<sub>eff</sub> ≤ 7200 K. Below or above that, this page still computes flux and T<sub>eq</sub>, and it does not draw a zone. TRAPPIST-1’s 2566 K is the preset that shows the refusal. The endpoints 2600 K and 7200 K are inside the window.</dd></div>
+  </dl>
+
+  <p class="band">Sources · fact sheets, IAU, CODATA, and the papers</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — Bond albedo 0.294, solar irradiance 1361.0 W/m², black-body temperature 254.0 K, average temperature 288 K (15 °C), J2000 semimajor axis 1.00000011 AU. This desk’s formula with 1361.0 and 0.294 returns 255.1 K, not the sheet’s 254.0 K.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Venus Fact Sheet</a> — Bond albedo 0.77, solar irradiance 2601.3 W/m², black-body temperature 226.6 K, average temperature 737 K, J2000 semimajor axis 0.72333199 AU.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mars Fact Sheet</a> — Bond albedo 0.250, solar irradiance 586.2 W/m², black-body temperature 209.8 K, average temperature ~214 K, J2000 semimajor axis 1.52366231 AU.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar luminosity 3.828 × 10²⁶ W, nominal solar effective temperature 5772 K, nominal solar radius 6.957 × 10⁸ m. Conversion constants, not a measurement of the Sun. The resolution text is also at the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU archive</a>.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — 1 au = 149,597,870,700 m exactly. Used when the radius form of T<sub>eq</sub> is compared with the flux form.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?sigma" rel="noopener" target="_blank">NIST CODATA — Stefan–Boltzmann constant</a> — σ = 5.670374419… × 10⁻⁸ W m⁻² K⁻⁴, exact, from the defined h, c, and k. This desk computes σ = 2π⁵k⁴ / (15h³c²) using h = 6.62607015 × 10⁻³⁴ J·s, c = 299,792,458 m/s, and k = 1.380649 × 10⁻²³ J/K.</li>
+      <li><a href="https://arxiv.org/pdf/1404.5292" rel="noopener" target="_blank">Kopparapu et al. 2014, ApJL 787, L29</a> — habitable zones for 2600 K to 7200 K. Equation (4): S<sub>eff</sub> = S<sub>eff☉</sub> + aT<sub>★</sub> + bT<sub>★</sub>² + cT<sub>★</sub>³ + dT<sub>★</sub>⁴, T<sub>★</sub> = T<sub>eff</sub> − 5780 K. Equation (5): d = √((L/L☉) / S<sub>eff</sub>) AU. Table 1, 1 M⊕ row, as printed: recent Venus 1.776, 2.136×10⁻⁴, 2.533×10⁻⁸, −1.332×10⁻¹¹, −3.097×10⁻¹⁵; runaway greenhouse 1.107, 1.332×10⁻⁴, 1.58×10⁻⁸, −8.308×10⁻¹², −1.931×10⁻¹⁵; maximum greenhouse 0.356, 6.171×10⁻⁵, 1.698×10⁻⁹, −3.198×10⁻¹², −5.575×10⁻¹⁶; early Mars 0.32, 5.547×10⁻⁵, 1.526×10⁻⁹, −2.874×10⁻¹², −5.011×10⁻¹⁶. The 2013 paper is <a href="https://arxiv.org/pdf/1301.6674" rel="noopener" target="_blank">Kopparapu et al. 2013, ApJ 765, 131</a>.</li>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2017/07/aa30582-17/aa30582-17.html" rel="noopener" target="_blank">Ribas et al. 2017, A&amp;A 603, A58</a> — Proxima Centauri: T<sub>eff</sub> = 2980 ± 80 K, L = 0.00151 ± 0.00008 L☉. The same central values as the blackbody desk.</li>
+      <li><a href="https://arxiv.org/pdf/1609.03449" rel="noopener" target="_blank">Anglada-Escudé et al. 2016, Nature 536, 437</a> — Proxima b: semimajor axis 0.0485 AU, credible interval 0.0434–0.0526 AU. That paper’s star was T<sub>eff</sub> = 3050 K and L = 0.00155 L☉. This preset keeps the later stellar parameters and the discovery orbit.</li>
+      <li><a href="https://iopscience.iop.org/article/10.3847/PSJ/abd022" rel="noopener" target="_blank">Agol et al. 2021, PSJ 2, 1</a> — TRAPPIST-1: T<sub>eff</sub> = 2566 ± 26 K, planet e semimajor axis 0.02925 ± 0.00025 AU. Luminosity (5.53 ± 0.19) × 10⁻⁴ L☉ adopted from Ducrot et al. 2020. 2566 K is below 2600 K, so the zone is not drawn.</li>
+      <li><a href="https://arxiv.org/pdf/1507.06723" rel="noopener" target="_blank">Jenkins et al. 2015, AJ 150, 56</a> — Kepler-452b: T<sub>eff</sub> = 5757 ± 85 K, semimajor axis 1.046 AU (+0.019, −0.015), insolation 1.10 S⊕ (+0.29, −0.22), equilibrium temperature 265 K (+15, −13) assuming Bond albedo 0.3 and complete redistribution. L/L☉ on this preset is 1.10 × (1.046)². They compared the planet with Kopparapu et al. 2013 and called it slightly outside the conservative zone.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of insolation and a 1-D habitable zone. Full redistribution, no greenhouse. Mars can sit in the strip without a liquid-water surface. Not a catalog and not a habitability verdict. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/blackbody/"><p class="n">Curve</p><h3>Blackbody</h3><p>L = 4πR²σT⁴ and the Planck curve. The implied radius on this page is that law.</p></a>
+    <a href="/science/astronomy/hr/"><p class="n">Diagram</p><h3>HR diagram</h3><p>Where the host sits: temperature across, luminosity up. Hot on the left.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>OBAFGKM. An M dwarf’s habitable zone sits close because the star is faint.</p></a>
+    <a href="/science/astronomy/exoplanets/"><p class="n">Other suns</p><h3>Exoplanets</h3><p>Methods and a teaching set. The rings there are a cartoon. This page is the calculation.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima, the host of the closest preset on this desk.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ for a circular orbit around the Sun. Distance is the input here. Period is that desk.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="hz-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="hz-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="hz-help-title">Habitable zone</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. Full heat redistribution, no greenhouse. The strip is Kopparapu et al. 2014 for a 1 Earth-mass planet. Not a habitability verdict.</p>
+    <h3>The strip</h3>
+    <table>
+      <caption>The strip</caption>
+      <tbody>
+        <tr><th scope="row">Axis</th><td>Orbital distance in AU, logarithmic. Drag the marker, or use the distance slider.</td></tr>
+        <tr><th scope="row">Optimistic</th><td>Recent Venus to early Mars. The wider band.</td></tr>
+        <tr><th scope="row">Conservative</th><td>Runaway greenhouse to maximum greenhouse. Drawn inside the optimistic band.</td></tr>
+        <tr><th scope="row">Outside the window</th><td>If Teff is below 2600 K or above 7200 K, the bands are not drawn. Flux and T_eq still update. TRAPPIST-1 e is the preset that shows this.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Systems</th><td>Earth, Venus, Mars, Proxima b, TRAPPIST-1 e, Kepler-452b. Each sets luminosity, temperature, distance, and a starting albedo.</td></tr>
+        <tr><th scope="row">Albedo</th><td>Earth 0.294, Venus 0.77, Mars 0.250, from the NASA fact sheets. An exoplanet preset starts on Earth’s value and says so. It is not a measurement of that planet.</td></tr>
+        <tr><th scope="row">Sliders</th><td>Luminosity and distance are logarithmic. Temperature and albedo are linear. Typing a number leaves the preset.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">S / S⊕</th><td>(L/L☉) / d². Albedo does not enter.</td></tr>
+        <tr><th scope="row">Flux</th><td>That ratio times 1361.0 W/m².</td></tr>
+        <tr><th scope="row">T_eq</th><td>[F (1−A) / (4σ)]<sup>¼</sup>, in kelvin and in °C. Full redistribution. No greenhouse.</td></tr>
+        <tr><th scope="row">Implied radius</th><td>The radius that satisfies L = 4πR²σT⁴ for the luminosity and temperature you set.</td></tr>
+        <tr><th scope="row">Zone</th><td>Where the distance sits among the four limits, for the central values only. Uncertainties are in the note, not in the label.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Strip</th><td>The canvas takes focus. Left and Right nudge the distance. Shift is a coarser step.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/habitable-zone/hz.js"></script>
+<script>
+(function () {
+  "use strict";
+  var HZ = window.HZ;
+  if (!HZ) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("strip");
+  var lSlider = document.getElementById("l-slider");
+  var tSlider = document.getElementById("t-slider");
+  var aSlider = document.getElementById("a-slider");
+  var albSlider = document.getElementById("alb-slider");
+  var lNum = document.getElementById("l-num");
+  var tNum = document.getElementById("t-num");
+  var aNum = document.getElementById("a-num");
+  var albNum = document.getElementById("alb-num");
+  var errEl = document.getElementById("hz-err");
+  var earth = HZ.presetById("earth");
+  var state = { L: earth.L, T: earth.T, a: earth.a, A: earth.A, preset: "earth", albedo: "earth" };
+  var editing = null;
+  var geom = null;
+
+  var ZONE = {
+    hotter: "Inside recent Venus",
+    "optimistic-inner": "Optimistic only",
+    conservative: "Conservative",
+    "optimistic-outer": "Optimistic only",
+    colder: "Outside early Mars"
+  };
+  var ZONE_WHY = {
+    hotter: "Closer than the recent-Venus limit. More starlight than the optimistic inner edge.",
+    "optimistic-inner": "Between recent Venus and the runaway greenhouse. The optimistic strip, on the hot side.",
+    conservative: "Between the runaway greenhouse and the maximum greenhouse. The conservative strip, for these central values.",
+    "optimistic-outer": "Between the maximum greenhouse and early Mars. The optimistic strip, on the cold side.",
+    colder: "Farther than the early-Mars limit. Less starlight than the optimistic outer edge."
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n)) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a) {
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function lumOk(v) { return isFinite(v) && v >= HZ.L_MIN && v <= HZ.L_MAX; }
+  function tempOk(v) { return isFinite(v) && v >= HZ.T_MIN && v <= HZ.T_MAX; }
+  function auOk(v) { return isFinite(v) && v >= HZ.A_MIN && v <= HZ.A_MAX; }
+  function albOk(v) { return isFinite(v) && v >= HZ.ALBEDO_MIN && v <= HZ.ALBEDO_MAX; }
+  function showErr(on) {
+    if (!errEl) return;
+    errEl.hidden = !on;
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function sliderFrom(v, min, max, log) {
+    var t = log ? HZ.logUnmap(v, min, max) : (v - min) / (max - min);
+    return String(Math.min(1000, Math.max(0, t * 1000)));
+  }
+  function valueFromSlider(el, min, max, log) {
+    var t = Number(el.value) / 1000;
+    return log ? HZ.logMap(t, min, max) : min + t * (max - min);
+  }
+  function markPresets() {
+    document.querySelectorAll("#presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === state.preset));
+    });
+    document.querySelectorAll("#albedo-presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-albedo") === state.albedo));
+    });
+  }
+  function albedoSentence(preset) {
+    var match = null;
+    HZ.albedoPresets().forEach(function (p) {
+      if (Math.abs(p.A - state.A) < 1e-9) match = p;
+    });
+    if (preset && preset.albedoMeasured && match && match.id === preset.id) {
+      return "Bond albedo " + match.A + ", NASA " + match.name + " Fact Sheet.";
+    }
+    if (preset && !preset.albedoMeasured) {
+      if (match && match.id === "earth") return "Bond albedo is not measured for this planet. 0.294 is Earth’s fact-sheet value, used here for comparison.";
+      if (match) return "Bond albedo " + match.A + " is the " + match.name + " fact-sheet value, not a measurement of this planet.";
+      return "Bond albedo " + HZ.formatLum(state.A) + " was typed. It is not a measurement of this planet.";
+    }
+    if (match) return "Bond albedo " + match.A + ", NASA " + match.name + " Fact Sheet.";
+    return "Bond albedo " + trimAlb(state.A) + ", typed. Not a catalog value.";
+  }
+  function trimAlb(a) {
+    return String(Math.round(a * 1000) / 1000);
+  }
+  function axisRange(au, zone) {
+    var lo = au;
+    var hi = au;
+    if (zone) {
+      lo = Math.min(lo, zone.recentVenus);
+      hi = Math.max(hi, zone.earlyMars);
+    }
+    var logLo = Math.log10(lo) - 0.18;
+    var logHi = Math.log10(hi) + 0.18;
+    if (logHi - logLo < 0.7) {
+      var mid = (logHi + logLo) / 2;
+      logLo = mid - 0.35;
+      logHi = mid + 0.35;
+    }
+    return { lo: Math.pow(10, logLo), hi: Math.pow(10, logHi) };
+  }
+  function xOf(box, au) {
+    var f = (Math.log10(au) - Math.log10(box.lo)) / (Math.log10(box.hi) - Math.log10(box.lo));
+    return box.padL + Math.min(1, Math.max(0, f)) * box.plotW;
+  }
+  function auOf(box, x) {
+    var f = (x - box.padL) / box.plotW;
+    f = Math.min(1, Math.max(0, f));
+    var logLo = Math.log10(box.lo);
+    var logHi = Math.log10(box.hi);
+    return Math.pow(10, logLo + f * (logHi - logLo));
+  }
+  function draw() {
+    var view = fit(280);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var zone = HZ.habitableZone(state.T, state.L);
+    var range = axisRange(state.a, zone);
+    var padL = 12;
+    var padR = 12;
+    var box = { padL: padL, plotW: Math.max(40, w - padL - padR), lo: range.lo, hi: range.hi, y: 78, thick: 44 };
+    geom = box;
+    var x0 = box.padL;
+    var x1 = box.padL + box.plotW;
+    ctx.fillStyle = rgba(line, 0.55);
+    ctx.fillRect(x0, box.y, box.plotW, box.thick);
+    if (zone) {
+      var xa = xOf(box, zone.recentVenus);
+      var xb = xOf(box, zone.earlyMars);
+      var xc = xOf(box, zone.runaway);
+      var xd = xOf(box, zone.maximumGreenhouse);
+      ctx.fillStyle = rgba(accent, 0.28);
+      ctx.fillRect(xa, box.y, Math.max(1, xb - xa), box.thick);
+      ctx.fillStyle = rgba(accent, 0.62);
+      ctx.fillRect(xc, box.y, Math.max(1, xd - xc), box.thick);
+      var ticks = [
+        [zone.recentVenus, "Recent Venus"],
+        [zone.runaway, "Runaway"],
+        [zone.maximumGreenhouse, "Max. greenhouse"],
+        [zone.earlyMars, "Early Mars"]
+      ];
+      var lastRight = -1e9;
+      ticks.forEach(function (tick) {
+        var x = xOf(box, tick[0]);
+        ctx.beginPath();
+        ctx.moveTo(x, box.y + box.thick);
+        ctx.lineTo(x, box.y + box.thick + 8);
+        ctx.strokeStyle = muted;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        var labelW = ctx.measureText ? 0 : 0;
+        ctx.font = "10px IBM Plex Mono, ui-monospace, monospace";
+        labelW = ctx.measureText(tick[1]).width;
+        var left = x - labelW / 2;
+        if (left < lastRight + 6) return;
+        if (left < 0 || left + labelW > w) return;
+        paintText(ctx, tick[1], x, box.y + box.thick + 20, { size: 10, align: "center", color: muted });
+        lastRight = left + labelW;
+      });
+    } else {
+      var side = state.T < HZ.HZ_T_MIN ? "below" : "above";
+      paintText(ctx, "No zone", w / 2, box.y + box.thick / 2, { size: 12, align: "center", color: soft });
+      paintText(ctx, "Teff is " + side + " 2600–7200 K", w / 2, box.y + box.thick + 22, { size: 11, align: "center", color: muted });
+    }
+    var xp = xOf(box, state.a);
+    ctx.beginPath();
+    ctx.moveTo(xp, box.y - 16);
+    ctx.lineTo(xp, box.y + box.thick + 6);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(xp, box.y + box.thick / 2, 5, 0, Math.PI * 2);
+    ctx.fillStyle = ink;
+    ctx.fill();
+    var name = state.preset ? (HZ.presetById(state.preset) || {}).name : "Custom";
+    if (!name) name = "Custom";
+    paintText(ctx, name, Math.min(w - 8, Math.max(8, xp)), box.y - 26, { size: 12, align: xp < 70 ? "left" : xp > w - 70 ? "right" : "center", color: ink });
+    paintText(ctx, HZ.formatAu(range.lo) + " AU", x0, h - 16, { size: 10, align: "left", color: muted });
+    paintText(ctx, HZ.formatAu(range.hi) + " AU", x1, h - 16, { size: 10, align: "right", color: muted });
+    paintText(ctx, "closer", x0, h - 4, { size: 10, align: "left", color: muted, base: "bottom" });
+    paintText(ctx, "farther", x1, h - 4, { size: 10, align: "right", color: muted, base: "bottom" });
+  }
+  function ariaFor(place) {
+    var bits = [state.preset ? (HZ.presetById(state.preset) || {}).name || "Custom" : "Custom"];
+    bits.push(HZ.formatAu(state.a) + " AU");
+    bits.push("flux " + HZ.formatRatio(HZ.fluxRatio(state.L, state.a)) + " Earth");
+    bits.push("equilibrium temperature " + HZ.formatTemp(HZ.equilibriumTemperature(state.L, state.a, state.A)) + " kelvin");
+    if (!place.ok) bits.push("habitable zone not drawn, temperature " + place.reason + " the 2600 to 7200 kelvin window");
+    else bits.push(ZONE[place.code] || "");
+    return bits.join(". ") + ".";
+  }
+  function render() {
+    var place = HZ.classify(state.T, state.L, state.a);
+    var preset = state.preset ? HZ.presetById(state.preset) : null;
+    var ratio = HZ.fluxRatio(state.L, state.a);
+    var flux = HZ.fluxWm2(state.L, state.a);
+    var teq = HZ.equilibriumTemperature(state.L, state.a, state.A);
+    var radius = HZ.radiusSolar(state.L, state.T);
+    if (editing !== "l") lNum.value = HZ.formatLum(state.L);
+    if (editing !== "t") tNum.value = String(Math.round(state.T));
+    if (editing !== "a") aNum.value = HZ.formatAu(state.a);
+    if (editing !== "alb") albNum.value = trimAlb(state.A);
+    if (editing !== "l") lSlider.value = sliderFrom(state.L, HZ.L_MIN, HZ.L_MAX, true);
+    if (editing !== "t") tSlider.value = String(Math.round(state.T));
+    if (editing !== "a") aSlider.value = sliderFrom(state.a, HZ.A_MIN, HZ.A_MAX, true);
+    if (editing !== "alb") albSlider.value = String(state.A);
+    lSlider.setAttribute("aria-valuetext", HZ.formatLum(state.L) + " solar luminosities");
+    tSlider.setAttribute("aria-valuetext", Math.round(state.T) + " kelvin");
+    aSlider.setAttribute("aria-valuetext", HZ.formatAu(state.a) + " astronomical units");
+    albSlider.setAttribute("aria-valuetext", "Bond albedo " + trimAlb(state.A));
+    lNum.setAttribute("aria-invalid", "false");
+    tNum.setAttribute("aria-invalid", "false");
+    aNum.setAttribute("aria-invalid", "false");
+    albNum.setAttribute("aria-invalid", "false");
+    showErr(false);
+    setText("d-tier", preset ? preset.tier : "Custom");
+    setText("d-name", preset ? preset.name : "Custom");
+    setText("d-range", Math.round(state.T) + " K · " + HZ.formatLum(state.L) + " L☉ · " + HZ.formatAu(state.a) + " AU");
+    setText("d-ratio", HZ.formatRatio(ratio));
+    setText("d-flux", HZ.formatFlux(flux) + " W/m²");
+    setText("d-teq", HZ.formatTemp(teq) + " K");
+    setText("d-celsius", HZ.formatCelsius(teq) + " °C");
+    setText("d-radius", HZ.formatRadius(radius) + " R☉");
+    if (!place.ok) {
+      setText("d-zone", "Not drawn");
+      setText("d-cons", "Teff " + place.reason + " 2600–7200 K");
+      setText("d-opt", "Not extrapolated");
+      setText("d-why", preset && preset.why ? preset.why : "Kopparapu et al. 2014 give the polynomial for 2600 K to 7200 K. This temperature is " + place.reason + " that window, so the strip stays blank. Flux and T_eq do not use the polynomial.");
+    } else {
+      setText("d-zone", ZONE[place.code]);
+      setText("d-cons", HZ.formatAu(place.zone.runaway) + "–" + HZ.formatAu(place.zone.maximumGreenhouse) + " AU");
+      setText("d-opt", HZ.formatAu(place.zone.recentVenus) + "–" + HZ.formatAu(place.zone.earlyMars) + " AU");
+      setText("d-why", preset && preset.why ? preset.why : ZONE_WHY[place.code]);
+    }
+    setText("d-albedo", albedoSentence(preset));
+    setText("d-note", preset && preset.note ? preset.note : "L/L☉ and Teff are what you set. The edges, when drawn, use the 1 Earth-mass coefficients. Full redistribution, no greenhouse.");
+    markPresets();
+    draw();
+    canvas.setAttribute("aria-label", ariaFor(place));
+  }
+  function commitLum(fromSlider) {
+    var v = fromSlider ? valueFromSlider(lSlider, HZ.L_MIN, HZ.L_MAX, true) : parseNum(lNum.value);
+    if (!lumOk(v)) {
+      lNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.L = v;
+    state.preset = null;
+    render();
+  }
+  function commitTemp(fromSlider) {
+    var v = fromSlider ? Number(tSlider.value) : parseNum(tNum.value);
+    if (!tempOk(v)) {
+      tNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.T = v;
+    state.preset = null;
+    render();
+  }
+  function commitAu(fromSlider) {
+    var v = fromSlider ? valueFromSlider(aSlider, HZ.A_MIN, HZ.A_MAX, true) : parseNum(aNum.value);
+    if (!auOk(v)) {
+      aNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.a = v;
+    state.preset = null;
+    render();
+  }
+  function commitAlb(fromSlider) {
+    var v = fromSlider ? Number(albSlider.value) : parseNum(albNum.value);
+    if (!albOk(v)) {
+      albNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.A = v;
+    state.albedo = null;
+    HZ.albedoPresets().forEach(function (p) {
+      if (Math.abs(p.A - v) < 1e-9) state.albedo = p.id;
+    });
+    render();
+  }
+  lSlider.addEventListener("input", function () { editing = null; commitLum(true); });
+  tSlider.addEventListener("input", function () { editing = null; commitTemp(true); });
+  aSlider.addEventListener("input", function () { editing = null; commitAu(true); });
+  albSlider.addEventListener("input", function () { editing = null; commitAlb(true); });
+  lNum.addEventListener("input", function () { editing = "l"; commitLum(false); });
+  tNum.addEventListener("input", function () { editing = "t"; commitTemp(false); });
+  aNum.addEventListener("input", function () { editing = "a"; commitAu(false); });
+  albNum.addEventListener("input", function () { editing = "alb"; commitAlb(false); });
+  lNum.addEventListener("blur", function () { editing = null; render(); });
+  tNum.addEventListener("blur", function () { editing = null; render(); });
+  aNum.addEventListener("blur", function () { editing = null; render(); });
+  albNum.addEventListener("blur", function () { editing = null; render(); });
+  [lNum, tNum, aNum, albNum].forEach(function (el) {
+    el.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") { ev.preventDefault(); el.blur(); }
+    });
+  });
+
+  function applyPreset(id) {
+    var p = HZ.presetById(id);
+    if (!p) return;
+    editing = null;
+    state.L = p.L;
+    state.T = p.T;
+    state.a = p.a;
+    state.A = p.A;
+    state.preset = p.id;
+    state.albedo = null;
+    HZ.albedoPresets().forEach(function (a) {
+      if (Math.abs(a.A - p.A) < 1e-9) state.albedo = a.id;
+    });
+    render();
+  }
+  document.querySelectorAll("#presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () { applyPreset(btn.getAttribute("data-preset")); });
+  });
+  document.querySelectorAll("#albedo-presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-albedo");
+      var found = null;
+      HZ.albedoPresets().forEach(function (p) { if (p.id === id) found = p; });
+      if (!found) return;
+      editing = null;
+      state.A = found.A;
+      state.albedo = found.id;
+      render();
+    });
+  });
+
+  function localX(ev) {
+    var rect = canvas.getBoundingClientRect();
+    return ev.clientX - rect.left;
+  }
+  function setAuFromX(x) {
+    if (!geom) return;
+    var au = auOf(geom, x);
+    au = Math.min(HZ.A_MAX, Math.max(HZ.A_MIN, au));
+    state.a = au;
+    state.preset = null;
+    render();
+  }
+  canvas.addEventListener("pointerdown", function (ev) {
+    canvas.setPointerCapture(ev.pointerId);
+    canvas.dataset.drag = "1";
+    setAuFromX(localX(ev));
+  });
+  canvas.addEventListener("pointermove", function (ev) {
+    if (canvas.dataset.drag !== "1") return;
+    setAuFromX(localX(ev));
+  });
+  function endDrag() { canvas.dataset.drag = ""; }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var step = ev.shiftKey ? 0.08 : 0.02;
+    var log = Math.log(state.a);
+    var next = Math.exp(log + (ev.key === "ArrowRight" ? step : -step));
+    next = Math.min(HZ.A_MAX, Math.max(HZ.A_MIN, next));
+    state.a = next;
+    state.preset = null;
+    render();
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  render();
+
+  var helpBtn = document.getElementById("hz-help");
+  var helpDialog = document.getElementById("hz-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) {
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
