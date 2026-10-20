@@ -1,0 +1,1116 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transit and radial velocity — depth and the wobble — Steven Philley</title>
+<meta name="description" content="Interactive transit and radial-velocity desk. Depth is (Rp/R*)². Geometric transit probability is about R*/a. Circular-orbit K uses m sin i. Earth–Sun is 83.86 ppm and 8.95 cm/s. Jupiter–Sun is 1.010% and 12.46 m/s. Cited presets. Not a catalog.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/transit/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Transit and radial velocity — depth and the wobble">
+<meta property="og:description" content="How deep the dip is, how likely a transit is, and how fast the star wobbles. Earth–Sun and Jupiter–Sun are computed, not pasted. Not a catalog.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/transit/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Transit and radial velocity — depth and the wobble">
+<meta name="twitter:description" content="(Rp/R*)², R*/a, and the circular K formula. Earth–Sun is 83.86 ppm and 8.95 cm/s. Not a fitted light curve.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.curve-label{margin:10px 0 4px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink,#e8e6e1);flex:0 0 auto}
+.swatch.rv{border-top-color:var(--accent,#c8b48a)}
+.swatch.win{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 35%,transparent)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:4.5ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats li[hidden]{display:none}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/" aria-current="page">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Detection</p>
+  <h1>Transit<br>and the wobble</h1>
+  <p class="lede">Two measurements, from the same orbit. If the planet crosses the star, the star dims by the area ratio <strong>δ ≈ (R<sub>p</sub> / R<sub>★</sub>)²</strong>. A random orientation transits with probability about <strong>R<sub>★</sub> / a</strong>. The crossing itself lasts about <strong>(P / π) (R<sub>★</sub> + R<sub>p</sub>) / a</strong> when it is central. Whether or not it crosses, the star still orbits the balance point. For a circular orbit the toward-and-away speed is <strong>K = (2πG / P)<sup>1/3</sup> (M<sub>p</sub> sin i) / (M<sub>★</sub> + M<sub>p</sub>)<sup>2/3</sup></strong>. Period and distance stay tied by the same pull, <strong>P² ∝ a³ / (M<sub>★</sub> + M<sub>p</sub>)</strong>, the general form of the <a href="/science/astronomy/kepler/">Kepler</a> desk. The methods, without these numbers, are on <a href="/science/astronomy/exoplanets/">exoplanets</a>. The star’s size and mass sit on <a href="/science/astronomy/stars/">stars</a>. Where that orbit falls in the starlight is the <a href="/science/astronomy/habitable-zone/">habitable zone</a>. The pull itself is <a href="/science/gravity/">gravity</a>.</p>
+  <p class="note-schematic">Classroom model. One star, one planet, a circular orbit, and a star that is equally bright from center to limb. No limb darkening, no eccentricity, no starspots, no atmosphere on the planet, and no second planet tugging the clock. A dip drawn here is the geometric chord, not a fitted light curve. Not a catalog and not a discovery.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Dip and wobble</span>
+    <button type="button" class="help-q" id="tr-help" aria-haspopup="dialog" aria-controls="tr-help-dialog" aria-expanded="false" aria-label="How this transit desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="curve-hint">Light curve zoomed on the crossing · radial velocity is one full orbit</p>
+      <p class="curve-label">Light curve</p>
+      <canvas id="light" width="880" height="220" tabindex="0" role="img" aria-label="Transit light curve for an edge-on Earth. The dip is 83.86 parts per million."></canvas>
+      <p class="curve-label">Radial velocity</p>
+      <canvas id="rv" width="880" height="200" tabindex="0" role="img" aria-label="Radial-velocity curve. The star’s toward-and-away speed is a sine wave of amplitude 8.95 centimeters per second. It crosses zero at mid-transit."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> Light</li>
+        <li><span class="swatch rv" aria-hidden="true"></span> Wobble</li>
+        <li><span class="swatch win" aria-hidden="true"></span> Transit window</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Cited systems · Earth and Jupiter are the external edge-on view</p>
+        <div class="presets" id="presets" role="group" aria-label="System presets">
+          <button type="button" data-preset="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-preset="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-preset="hd-209458-b" aria-pressed="false">HD 209458 b</button>
+          <button type="button" data-preset="51-peg-b" aria-pressed="false">51 Peg b</button>
+          <button type="button" data-preset="trappist-1-e" aria-pressed="false">TRAPPIST-1 e</button>
+          <button type="button" data-preset="gj-1214-b" aria-pressed="false">GJ 1214 b</button>
+        </div>
+        <p class="pick-label">Planet units · the star stays in solar units</p>
+        <div class="presets" id="units" role="group" aria-label="Planet units">
+          <button type="button" data-unit="earth" aria-pressed="true">Earth units</button>
+          <button type="button" data-unit="jupiter" aria-pressed="false">Jupiter units</button>
+        </div>
+        <p class="pick-label">Motion · the dip is a short slice of the orbit</p>
+        <div class="presets" role="group" aria-label="Curve motion">
+          <button type="button" id="mode-dip" aria-pressed="true">Dip</button>
+          <button type="button" id="mode-orbit" aria-pressed="false">Full orbit</button>
+          <button type="button" id="play-toggle" aria-pressed="true">Pause</button>
+        </div>
+        <div class="slider-row">
+          <label for="rs-slider">R★</label>
+          <input type="range" id="rs-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.05" aria-valuemax="10" aria-valuetext="1 solar radius">
+          <input type="text" class="num" id="rs-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Star radius in solar radii" aria-invalid="false">
+          <span class="unit-tag">R☉</span>
+        </div>
+        <div class="slider-row">
+          <label for="ms-slider">M★</label>
+          <input type="range" id="ms-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.02" aria-valuemax="5" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="ms-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Star mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <div class="slider-row">
+          <label for="rp-slider">Rp</label>
+          <input type="range" id="rp-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.2" aria-valuemax="30" aria-valuetext="1 Earth radius">
+          <input type="text" class="num" id="rp-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Planet radius" aria-invalid="false" aria-describedby="rp-note">
+          <span class="unit-tag" id="rp-unit">R⊕</span>
+        </div>
+        <p class="pick-label" id="rp-note">Blank radius means it was not measured. The dip stays undrawn.</p>
+        <div class="slider-row">
+          <label for="mp-slider">Mp</label>
+          <input type="range" id="mp-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.05" aria-valuemax="5000" aria-valuetext="1 Earth mass">
+          <input type="text" class="num" id="mp-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Planet mass" aria-invalid="false">
+          <span class="unit-tag" id="mp-unit">M⊕</span>
+        </div>
+        <div class="slider-row">
+          <label for="p-slider">Period</label>
+          <input type="range" id="p-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.2" aria-valuemax="20000" aria-valuetext="365.256 days">
+          <input type="text" class="num" id="p-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="365.256" aria-label="Orbital period in days" aria-invalid="false">
+          <span class="unit-tag">days</span>
+        </div>
+        <div class="slider-row">
+          <label for="a-slider">a</label>
+          <input type="range" id="a-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="0.003" aria-valuemax="40" aria-valuetext="1 astronomical unit">
+          <input type="text" class="num" id="a-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Semi-major axis in astronomical units" aria-invalid="false">
+          <span class="unit-tag">AU</span>
+        </div>
+        <div class="slider-row">
+          <label for="i-slider">i</label>
+          <input type="range" id="i-slider" min="0" max="90" step="0.01" value="90" aria-valuemin="0" aria-valuemax="90" aria-valuetext="90 degrees, edge-on">
+          <input type="text" class="num" id="i-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="90" aria-label="Inclination in degrees, 90 is edge-on" aria-invalid="false">
+          <span class="unit-tag">deg</span>
+        </div>
+        <p class="field-error" id="tr-err" hidden>Check the ranges under the sliders. A blank planet radius is allowed. It means the radius was not measured.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Sun · Earth, seen edge-on</p>
+      <h2 id="d-name">Earth</h2>
+      <p class="range" id="d-range">1 R☉ · 1 M☉ · 90°</p>
+      <ul class="stats">
+        <li><span class="k">Depth</span><span class="v" id="d-depth">0.008386%</span></li>
+        <li><span class="k">Depth, ppm</span><span class="v" id="d-ppm">83.86 ppm</span></li>
+        <li><span class="k">R★ / a</span><span class="v" id="d-prob">0.4650% · 1 in 215</span></li>
+        <li id="row-full"><span class="k">(R★ + Rp) / a</span><span class="v" id="d-full">—</span></li>
+        <li><span class="k">Impact b</span><span class="v" id="d-b">0.00 R★</span></li>
+        <li><span class="k">This view</span><span class="v" id="d-view">Transits</span></li>
+        <li id="row-dur"><span class="k">Duration</span><span class="v" id="d-dur">13.10 h</span></li>
+        <li><span class="k">K</span><span class="v" id="d-k">8.95 cm/s</span></li>
+        <li><span class="k">m sin i</span><span class="v" id="d-msini">1.000 M⊕</span></li>
+        <li><span class="k">Period</span><span class="v" id="d-p">365.256 days</span></li>
+        <li><span class="k">Kepler a</span><span class="v" id="d-a">1.0000 AU</span></li>
+      </ul>
+      <p class="why" id="d-why">An external observer who sees Earth cross the Sun.</p>
+      <p class="why" id="d-note">Fact-sheet radii and GM. Inclination is 90°.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The cited anchors are still below. With the fact-sheet volumetric radii, an edge-on Earth blocks 83.86 ppm of the Sun (0.008386%). The circular formula with the fact-sheet GM values and a 365.256-day period gives K = 8.95 cm/s. R★/a is 0.4650%, about 1 in 215. The central crossing lasts 13.10 h. Jupiter, same assumptions, blocks 1.010% (10,098 ppm) and wobbles the Sun by 12.46 m/s. That crossing lasts 32.56 h. R★/a is about 1 in 1,119.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Why the numbers look like that</p>
+    <h2>Small stars, missed orbits, and a mass that is only a minimum.</h2>
+    <p>Depth is an area. Shrink the star and the same planet covers a larger fraction of it. TRAPPIST-1 is about a tenth of the Sun’s radius, so an Earth-size planet is a dip of thousands of parts per million instead of tens. The wobble grows too, because K scales roughly as M<sub>p</sub> / M<sub>★</sub><sup>2/3</sup> and as P<sup>−1/3</sup>. A light star on a short orbit is tugged harder, as seen from here, than the Sun is by Earth.</p>
+    <p>Most systems never transit. R★/a for the Earth–Sun preset is 0.4650%, about 1 in 215 random orientations. Jupiter is closer to 1 in 1,119 because it is farther out. A hot Jupiter can be closer to 1 in 10, which is why the early finds were close-in giants. The probability is not the same thing as this page’s inclination. 51 Pegasi b has a measured tilt of 49.8°, so this line of sight misses the star even though a random observer would have had a fair chance.</p>
+    <p>The sine wave measures M<sub>p</sub> sin i, not M<sub>p</sub>. Face-on, sin i is 0 and the star’s speed along our line of sight is zero, whatever the planet weighs. Edge-on, sin i is 1 and K is the true mass. Anything between is a minimum: the true mass is larger by 1 / sin i. 51 Pegasi b was announced that way. The m sin i line on the card is the mass this K would imply if you did not already know i.</p>
+    <p>Instruments, at the precision their papers actually quote. HARPS, in its first-results report, reached a short-term precision of 0.2 m/s during one night and a long-term precision of order 1 m/s (Rupprecht, Pepe, Mayor, Queloz et al., SPIE 5492). An Earth at 9 cm/s is under that long-term floor. ESPRESSO was designed for 10 cm/s. Pepe et al. 2021 demonstrate better than 25 cm/s in a single night and 50 cm/s over months, and they call that performance compatible with a 10 cm/s instrument. At high signal-to-noise they reach 10 cm/s on M stars and 10–20 cm/s on K and G dwarfs. Kepler’s photometer was designed for 20 ppm in 6.5 hours on a 12th-magnitude star, and Caldwell et al. 2010 describe an Earth–Sun equivalent transit as an 80 ppm signal. This desk’s Earth preset, from the fact-sheet radii, is 83.86 ppm.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the card</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Depth</dt><dd>δ = (R<sub>p</sub> / R<sub>★</sub>)². The fraction of the star’s disk the planet covers, for a uniform disk and a planet fully in front. Parts per million are that fraction times 10<sup>6</sup>. No limb darkening, so the dip is flat-bottomed when the planet is smaller than the star and fully on the disk.</dd></div>
+    <div class="gloss"><dt>R★ / a</dt><dd>The chance a randomly oriented circular orbit transits, if the planet is treated as a point. Including the planet’s radius gives (R<sub>★</sub> + R<sub>p</sub>) / a. Both are geometry, not a statement about the inclination you set.</dd></div>
+    <div class="gloss"><dt>Impact parameter</dt><dd>b = (a cos i) / R<sub>★</sub>. Zero is a central crossing. The planet misses when |b| is greater than 1 + R<sub>p</sub>/R<sub>★</sub>. i = 90° is edge-on. i = 0° is face-on.</dd></div>
+    <div class="gloss"><dt>Duration</dt><dd>First contact to fourth, for a circular orbit: (P / π) times the arcsin of (R<sub>★</sub> / a) √((1 + k)² − b²) / sin i, with k = R<sub>p</sub>/R<sub>★</sub>. A central transit is close to (P / π) (R<sub>★</sub> + R<sub>p</sub>) / a. This is the geometric chord, not a fitted light curve.</dd></div>
+    <div class="gloss gloss-wide"><dt>K and m sin i</dt><dd>K is the semi-amplitude of the star’s toward-and-away speed. For e = 0 it is (2πG/P)<sup>1/3</sup> (M<sub>p</sub> sin i) / (M<sub>★</sub> + M<sub>p</sub>)<sup>2/3</sup>. This desk writes that with the fact-sheet GM values, so G never has to be chosen. m sin i is M<sub>p</sub> times sin i, in the planet’s mass unit. It is what a measured K returns when the tilt is unknown.</dd></div>
+    <div class="gloss gloss-wide"><dt>One orbit, two clocks</dt><dd>Editing the period recomputes the distance. Editing the distance recomputes the period. Either way, P = 2π √(a³ / (GM<sub>★</sub> + GM<sub>p</sub>)). Around the Sun, in years and AU, that is the P² = a³ of the Kepler desk, plus the planet’s own GM, which is small for Earth and visible for Jupiter. The fact-sheet semimajor axis is quoted in the note. The card uses the two-body distance so the period and the distance cannot disagree.</dd></div>
+  </dl>
+
+  <p class="band">Sources · fact sheets, the archive, and the papers</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — GM 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 695,700 km. The same GM the vis-viva and Kepler desks use.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — GM 0.39860 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 6,371.0 km. Sidereal orbit period 365.256 days. Semimajor axis 149.598 × 10<sup>6</sup> km. Orbit inclination 0.000° is to the ecliptic. This preset’s 90° is an external edge-on view.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — GM 126.687 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 69,911 km. Sidereal orbit period 4,332.589 days. Semimajor axis 778.479 × 10<sup>6</sup> km. The sheet’s 1.304° is to the ecliptic.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — 1 au = 149,597,870,700 m exactly. Used when a period is turned into an AU.</li>
+      <li><a href="https://arxiv.org/abs/1001.2010" rel="noopener" target="_blank">Winn 2010, “Transits and Occultations,” arXiv:1001.2010</a> — the circular-orbit geometry on this page: a uniform-disk depth (R<sub>p</sub>/R<sub>★</sub>)², impact parameter b = a cos i / R<sub>★</sub>, the R<sub>★</sub>/a approximation and the (R<sub>★</sub> + R<sub>p</sub>)/a probability, and the first-to-fourth-contact duration.</li>
+      <li><a href="https://exoplanetarchive.ipac.caltech.edu/overview/HD%20209458" rel="noopener" target="_blank">NASA Exoplanet Archive — HD 209458</a>, Bonomo et al. 2017 column (<a href="https://ui.adsabs.harvard.edu/abs/2017A&amp;A...602A.107B/abstract" rel="noopener" target="_blank">A&amp;A 602, A107</a>) — M<sub>★</sub> = 1.119 ± 0.033 M☉, R<sub>★</sub> = 1.155 (+0.014, −0.016) R☉, M<sub>p</sub> = 0.682 (+0.014, −0.015) M<sub>Jup</sub>, R<sub>p</sub> = 1.359 (+0.016, −0.019) R<sub>Jup</sub>, P = 3.52474859 ± 0.00000038 days, i = 86.710 ± 0.050°, a = 0.04707 (+0.00045, −0.00047) AU, K = 84.27 (+0.69, −0.70) m/s, e &lt; 0.0081.</li>
+      <li><a href="https://arxiv.org/pdf/2605.23582" rel="noopener" target="_blank">Cont et al. 2026, A&amp;A 710, A345</a> — 51 Pegasi b, Table 1: M<sub>p</sub> = 0.61 (+0.06, −0.05) M<sub>Jup</sub>, i = 49.8 (+5.8, −5.7)°, P = 4.2307966 ± 0.0000027 days, stellar K = 55.77 ± 0.15 m/s. Stellar mass 1.07 ± 0.05 M☉, stellar radius 1.19 ± 0.03 R☉, and a = 0.052 AU are taken there from Rosenthal et al. 2021. The planet does not transit at that inclination.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1995Natur.378..355M/abstract" rel="noopener" target="_blank">Mayor and Queloz 1995, Nature 378, 355</a> — the discovery of 51 Pegasi b. The archive lists that paper’s minimum mass as 0.47 ± 0.02 M<sub>Jup</sub>. This desk does not load a planet radius for the preset. The archive marks the composite radius as a calculated value.</li>
+      <li><a href="https://arxiv.org/pdf/2010.01074" rel="noopener" target="_blank">Agol et al. 2021, PSJ 2, 1</a> — TRAPPIST-1 e: R = 0.920 (+0.013, −0.012) R⊕, M = 0.692 ± 0.022 M⊕, P = 6.101013 ± 0.000035 days, i = 89.793 ± 0.048°, a = 0.02925 ± 0.00025 AU. Stellar radius 0.1192 ± 0.0013 R☉. Stellar mass 0.0898 ± 0.0023 M☉, adopted from Mann et al.</li>
+      <li><a href="https://arxiv.org/html/2402.05991" rel="noopener" target="_blank">Mahajan, Eastman, and Kirk 2024, ApJL 963, L37</a> — GJ 1214 b, Table 3 central values: M<sub>★</sub> = 0.1820 M☉, R<sub>★</sub> = 0.2162 R☉, P = 1.580404531 days, R<sub>p</sub> = 2.733 R⊕, M<sub>p</sub> = 8.41 M⊕, a = 0.01505 AU, i = 88.980°, K = 14.38 m/s, (R<sub>p</sub>/R<sub>★</sub>)² = 0.013430, e = 0.0062. Kepler-22 b is not a preset here. GJ 1214 b is the small-star case with a published mass and radius.</li>
+      <li><a href="https://www.eso.org/sci/facilities/lasilla/instruments/harps/science/papers/5492-15.pdf" rel="noopener" target="_blank">Rupprecht, Pepe, Mayor, Queloz et al., SPIE 5492</a> — HARPS abstract: a short-term precision of 0.2 m/s during one night and a long-term precision of the order of 1 m/s, using the simultaneous thorium reference.</li>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2021/01/aa38306-20/aa38306-20.html" rel="noopener" target="_blank">Pepe et al. 2021, A&amp;A 645, A96</a> — ESPRESSO was designed for 10 cm/s. They demonstrate better than 25 cm/s in a single night and 50 cm/s over several months, limited by photon noise and stellar jitter, and call that compatible with an instrumental precision of 10 cm/s. At S/N = 430, 10 cm/s is reached for M stars, and K and G dwarfs fall between 10 and 20 cm/s.</li>
+      <li><a href="https://ntrs.nasa.gov/api/citations/20190028937/downloads/20190028937.pdf" rel="noopener" target="_blank">Caldwell et al. 2010, Kepler instrument performance</a> — the mission is designed to detect the 80 ppm signal of an Earth–Sun equivalent transit, and the photometer is designed for 20 ppm on a 12th-magnitude star in 6.5 hours. This page’s Earth depth is computed from the fact-sheet radii. It is not their 80 ppm pasted in.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a transit and a circular-orbit wobble. Uniform disk, no limb darkening, no eccentricity. Earth–Sun, from the fact sheets and i = 90°, is 83.86 ppm and 8.95 cm/s. Jupiter–Sun is 1.010% and 12.46 m/s. Not a catalog and not a fitted light curve. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/exoplanets/"><p class="n">Other suns</p><h3>Exoplanets</h3><p>The methods in words, and a teaching set. This page is the arithmetic behind the dip and the wobble.</p></a>
+    <a href="/science/astronomy/habitable-zone/"><p class="n">Insolation</p><h3>Habitable zone</h3><p>The same star and the same distance, turned into flux and equilibrium temperature.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ for a circular orbit around the Sun. Here the star’s mass, and the planet’s, stay in the law.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>Why an M dwarf is small. A small star is why a small planet can be seen.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>The wobble is that pull, shared between the star and the planet.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Earth and Jupiter, from inside the system. This desk looks at them from outside.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="tr-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="tr-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tr-help-title">Transit and wobble</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. Circular orbit, uniform star, no limb darkening. The curves are the formulas, not a fitted light curve.</p>
+    <h3>The curves</h3>
+    <table>
+      <caption>The curves</caption>
+      <tbody>
+        <tr><th scope="row">Light</th><td>Zoomed on the crossing so the dip is visible. A year-long orbit would hide an Earth-size dip in one pixel. The vertical scale is the depth, labeled in ppm or in percent.</td></tr>
+        <tr><th scope="row">Wobble</th><td>One full orbit. Mid-transit is the center, where the sine wave crosses zero. Positive is the star receding. The shaded band, when there is a transit, is the same window as the light curve.</td></tr>
+        <tr><th scope="row">No dip</th><td>If this inclination misses the star, the light curve is flat and the duration is blank. The geometric probability stays, because that is about a random observer.</td></tr>
+        <tr><th scope="row">No radius</th><td>51 Pegasi b loads no planet radius. Depth and duration stay blank until you type one. Typing leaves the preset.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Earth, Jupiter, HD 209458 b, 51 Pegasi b, TRAPPIST-1 e, GJ 1214 b. Earth and Jupiter are edge-on external views. The others use the cited inclination.</td></tr>
+        <tr><th scope="row">Units</th><td>Earth or Jupiter for the planet’s radius and mass. The star stays in solar units. Switching units keeps the same planet.</td></tr>
+        <tr><th scope="row">Period and a</th><td>Kepler’s third law with both masses. The last one you edit wins. The other updates.</td></tr>
+        <tr><th scope="row">Inclination</th><td>0° is face-on. 90° is edge-on. K scales with sin i. The transit, if there is one, requires i near 90°.</td></tr>
+        <tr><th scope="row">Motion</th><td>Dip sweeps the crossing. Full orbit runs the year, and the light-curve marker is only in frame while the planet is crossing. Pause holds mid-transit.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Depth</th><td>(Rp/R★)², in percent and in ppm. Computed from the radii, not copied from a paper.</td></tr>
+        <tr><th scope="row">R★ / a</th><td>The point-planet geometric probability, also as “1 in N”.</td></tr>
+        <tr><th scope="row">K</th><td>The circular formula. Compared, in the note, with a published K when the paper measured one.</td></tr>
+        <tr><th scope="row">m sin i</th><td>Planet mass times sin i. The minimum mass a wobble alone would give.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Light curve</th><td>The canvas takes focus. Left and Right change the inclination. Shift is a coarser step.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/transit/transit.js"></script>
+<script>
+(function () {
+  "use strict";
+  var T = window.Transit;
+  if (!T) return;
+  var root = document.documentElement;
+  var light = document.getElementById("light");
+  var rv = document.getElementById("rv");
+  var errEl = document.getElementById("tr-err");
+  var rpNote = document.getElementById("rp-note");
+  var earth = T.presetById("earth");
+  var reduced = false;
+  try { reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (e) { reduced = false; }
+  var state = {
+    rStar: earth.rStar,
+    mStar: earth.mStar,
+    rp: earth.rp,
+    mp: earth.mp,
+    unit: earth.unit,
+    inclDeg: earth.inclDeg,
+    periodDays: earth.periodDays,
+    axisAU: 1,
+    driver: "period",
+    preset: "earth",
+    mode: "dip",
+    playing: !reduced
+  };
+  var editing = null;
+  var raf = 0;
+  var clock = 0;
+  var shownPhase = 0;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n)) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a) {
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(on) {
+    if (!errEl) return;
+    errEl.hidden = !on;
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(canvas, cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function current() {
+    return T.solve({
+      rStar: state.rStar,
+      mStar: state.mStar,
+      rp: state.rp,
+      mp: state.mp,
+      unit: state.unit,
+      inclDeg: state.inclDeg,
+      periodDays: state.periodDays,
+      axisAU: state.axisAU,
+      driver: state.driver
+    });
+  }
+  function earthRadius(value, unit) {
+    if (value == null || !isFinite(value)) return null;
+    var meters = value * (unit === "jupiter" ? T.R_JUPITER_M : T.R_EARTH_M);
+    return meters / T.R_EARTH_M;
+  }
+  function earthMass(value, unit) {
+    var gm = value * (unit === "jupiter" ? T.GM_JUPITER : T.GM_EARTH);
+    return gm / T.GM_EARTH;
+  }
+  function close(a, b) {
+    if (a == null || b == null) return a == null && b == null;
+    var scale = Math.max(Math.abs(a), Math.abs(b), 1e-12);
+    return Math.abs(a - b) / scale < 2e-4;
+  }
+  function matchPreset() {
+    var list = T.presets();
+    var i;
+    for (i = 0; i < list.length; i++) {
+      var p = list[i];
+      if (!close(state.rStar, p.rStar) || !close(state.mStar, p.mStar)) continue;
+      if (!close(state.periodDays, p.periodDays) || !close(state.inclDeg, p.inclDeg)) continue;
+      if (!close(earthMass(state.mp, state.unit), earthMass(p.mp, p.unit))) continue;
+      if ((state.rp == null) !== (p.rp == null)) continue;
+      if (state.rp != null && !close(earthRadius(state.rp, state.unit), earthRadius(p.rp, p.unit))) continue;
+      return p.id;
+    }
+    return "";
+  }
+  function unitTags() {
+    var rp = document.getElementById("rp-unit");
+    var mp = document.getElementById("mp-unit");
+    if (state.unit === "jupiter") {
+      if (rp) rp.textContent = "RJup";
+      if (mp) mp.textContent = "MJup";
+    } else {
+      if (rp) rp.textContent = "R⊕";
+      if (mp) mp.textContent = "M⊕";
+    }
+  }
+  function sliderFrom(v, min, max, log) {
+    var t = log ? T.logUnmap(v, min, max) : (v - min) / (max - min);
+    return String(Math.min(1000, Math.max(0, t * 1000)));
+  }
+  function valueFromSlider(el, min, max, log) {
+    var t = Number(el.value) / 1000;
+    return log ? T.logMap(t, min, max) : min + t * (max - min);
+  }
+  function markButtons() {
+    document.querySelectorAll("#presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === state.preset));
+    });
+    document.querySelectorAll("#units button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-unit") === state.unit));
+    });
+    document.getElementById("mode-dip").setAttribute("aria-pressed", String(state.mode === "dip"));
+    document.getElementById("mode-orbit").setAttribute("aria-pressed", String(state.mode === "orbit"));
+    document.getElementById("play-toggle").setAttribute("aria-pressed", String(state.playing));
+    document.getElementById("play-toggle").textContent = state.playing ? "Pause" : "Play";
+  }
+  function massUnitWord() {
+    return state.unit === "jupiter" ? "MJup" : "M⊕";
+  }
+  function kSentence(result) {
+    if (result.kMs < 1) return T.formatCmPerSecond(result.kMs) + " cm/s";
+    return T.formatMetersPerSecond(result.kMs) + " m/s";
+  }
+  function windowHours(result) {
+    if (!(result.durationHours > 0)) return null;
+    return Math.max(result.durationHours * 2.2, 0.4);
+  }
+  function phaseNow(now, result) {
+    if (!state.playing) return 0;
+    var elapsed = (now - clock) / 1000;
+    if (state.mode === "dip" && result.durationHours) {
+      var spanDays = (windowHours(result) * 2) / 24;
+      var u = (elapsed % 8) / 8;
+      return (u - 0.5) * (spanDays / result.periodDays);
+    }
+    return ((elapsed % 14) / 14) - 0.5;
+  }
+  function drawLight(result, phase) {
+    var view = fit(light, 210);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var accent = cssVar("--accent", "#c8b48a");
+    var padL = 44;
+    var padR = 12;
+    var padT = 16;
+    var padB = 28;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var halfH = windowHours(result);
+    var zoom = !!(result.transits && result.rpKnown && halfH);
+    var x0 = zoom ? -halfH : -result.periodDays / 2;
+    var x1 = zoom ? halfH : result.periodDays / 2;
+    var depth = result.depth || 0;
+    var yTop = 1 + Math.max(depth, 1e-4) * 0.45;
+    var yBot = 1 - Math.max(depth, 1e-4) * 1.55;
+    if (!result.rpKnown || !result.transits) {
+      yTop = 1.02;
+      yBot = 0.98;
+    }
+    function xOf(hoursOrDays) {
+      return padL + (hoursOrDays - x0) / (x1 - x0) * plotW;
+    }
+    function yOf(flux) {
+      return padT + (yTop - flux) / (yTop - yBot) * plotH;
+    }
+    ctx.strokeStyle = cssVar("--line", "#2c303a");
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    ctx.beginPath();
+    ctx.moveTo(padL, yOf(1));
+    ctx.lineTo(padL + plotW, yOf(1));
+    ctx.strokeStyle = muted;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    var steps = 240;
+    var i;
+    for (i = 0; i <= steps; i++) {
+      var xVal = x0 + (x1 - x0) * (i / steps);
+      var ph = zoom ? (xVal / 24) / result.periodDays : xVal / result.periodDays;
+      var f = T.flux(result.rStarM, result.rPlanetM, result.axisM, result.inclDeg * Math.PI / 180, ph);
+      var x = xOf(xVal);
+      var y = yOf(f);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.75;
+    ctx.stroke();
+    var markerPhase = phase;
+    var markerXVal = zoom ? markerPhase * result.periodDays * 24 : markerPhase * result.periodDays;
+    var inFrame = markerXVal >= x0 && markerXVal <= x1;
+    if (inFrame) {
+      var mf = T.flux(result.rStarM, result.rPlanetM, result.axisM, result.inclDeg * Math.PI / 180, markerPhase);
+      ctx.beginPath();
+      ctx.arc(xOf(markerXVal), yOf(mf), 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = accent;
+      ctx.fill();
+    }
+    paintText(ctx, "1", padL - 6, yOf(1), { size: 10, align: "right", color: muted });
+    if (result.rpKnown && result.transits && result.depth) {
+      var dipLabel = result.depth >= 0.01 ? ("−" + T.formatPercent(result.depth) + "%") : ("−" + T.formatPpm(result.depth) + " ppm");
+      paintText(ctx, dipLabel, padL - 6, yOf(1 - result.depth), { size: 10, align: "right", color: muted });
+    }
+    var edge = zoom ? (T.formatHours(halfH).replace(" h", "h")) : "half orbit";
+    paintText(ctx, zoom ? ("−" + edge) : "−P/2", padL, h - 8, { size: 10, align: "left", color: muted, base: "bottom" });
+    paintText(ctx, "mid-transit", padL + plotW / 2, h - 8, { size: 10, align: "center", color: muted, base: "bottom" });
+    paintText(ctx, zoom ? ("+" + edge) : "+P/2", padL + plotW, h - 8, { size: 10, align: "right", color: muted, base: "bottom" });
+    if (!result.transits) {
+      paintText(ctx, "No dip at this inclination", padL + plotW / 2, padT + plotH / 2 - 16, { size: 12, align: "center", color: ink });
+    } else if (!result.rpKnown) {
+      paintText(ctx, "Radius not measured", padL + plotW / 2, padT + 18, { size: 12, align: "center", color: ink });
+    }
+  }
+  function drawRv(result, phase) {
+    var view = fit(rv, 190);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var accent = cssVar("--accent", "#c8b48a");
+    var padL = 52;
+    var padR = 12;
+    var padT = 16;
+    var padB = 28;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var amp = Math.max(result.kMs, 1e-6);
+    function xOf(ph) {
+      return padL + (ph + 0.5) * plotW;
+    }
+    function yOf(v) {
+      var f = 0.5 - v / (2.4 * amp);
+      return padT + Math.min(1, Math.max(0, f)) * plotH;
+    }
+    ctx.strokeStyle = cssVar("--line", "#2c303a");
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    if (result.durationHours && result.transits) {
+      var halfPhase = (result.durationHours / 24) / result.periodDays / 2;
+      var xA = xOf(-halfPhase);
+      var xB = xOf(halfPhase);
+      ctx.fillStyle = rgba(accent, 0.18);
+      ctx.fillRect(xA, padT, Math.max(1, xB - xA), plotH);
+    }
+    ctx.beginPath();
+    ctx.moveTo(padL, yOf(0));
+    ctx.lineTo(padL + plotW, yOf(0));
+    ctx.strokeStyle = muted;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    var steps = 240;
+    var i;
+    for (i = 0; i <= steps; i++) {
+      var ph = -0.5 + i / steps;
+      var v = T.radialVelocity(result.kMs, ph);
+      if (i === 0) ctx.moveTo(xOf(ph), yOf(v));
+      else ctx.lineTo(xOf(ph), yOf(v));
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.75;
+    ctx.stroke();
+    var mph = Math.min(0.5, Math.max(-0.5, phase));
+    var mv = T.radialVelocity(result.kMs, mph);
+    ctx.beginPath();
+    ctx.arc(xOf(mph), yOf(mv), 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = ink;
+    ctx.fill();
+    var kLabel = result.kMs < 1 ? (T.formatCmPerSecond(amp) + " cm/s") : (T.formatMetersPerSecond(amp) + " m/s");
+    paintText(ctx, "+" + kLabel, padL - 6, yOf(amp), { size: 10, align: "right", color: muted });
+    paintText(ctx, "0", padL - 6, yOf(0), { size: 10, align: "right", color: muted });
+    paintText(ctx, "−" + kLabel, padL - 6, yOf(-amp), { size: 10, align: "right", color: muted });
+    paintText(ctx, "approaching", padL, h - 8, { size: 10, align: "left", color: muted, base: "bottom" });
+    paintText(ctx, "mid-transit", padL + plotW / 2, h - 8, { size: 10, align: "center", color: muted, base: "bottom" });
+    paintText(ctx, "receding", padL + plotW, h - 8, { size: 10, align: "right", color: muted, base: "bottom" });
+  }
+  function aria(result) {
+    var name = state.preset ? (T.presetById(state.preset) || {}).name : "Custom";
+    if (!name) name = "Custom";
+    var bits = [name];
+    if (result.rpKnown && result.depth != null) bits.push("depth " + T.formatPpm(result.depth) + " parts per million");
+    else bits.push("planet radius not set");
+    bits.push(result.transits ? "this inclination transits" : "this inclination does not transit");
+    bits.push("radial velocity semi-amplitude " + kSentence(result));
+    bits.push("geometric probability " + T.formatOdds(result.probStar));
+    light.setAttribute("aria-label", bits.join(". ") + ".");
+    rv.setAttribute("aria-label", "Radial-velocity sine wave, amplitude " + kSentence(result) + ". Zero at mid-transit.");
+  }
+  function render(phase) {
+    var result = current();
+    if (!result.ok) return;
+    if (state.driver === "period") state.axisAU = result.axisAU;
+    else state.periodDays = result.periodDays;
+    state.preset = matchPreset();
+    var rsNum = document.getElementById("rs-num");
+    var msNum = document.getElementById("ms-num");
+    var rpNum = document.getElementById("rp-num");
+    var mpNum = document.getElementById("mp-num");
+    var pNum = document.getElementById("p-num");
+    var aNum = document.getElementById("a-num");
+    var iNum = document.getElementById("i-num");
+    var rsSlider = document.getElementById("rs-slider");
+    var msSlider = document.getElementById("ms-slider");
+    var rpSlider = document.getElementById("rp-slider");
+    var mpSlider = document.getElementById("mp-slider");
+    var pSlider = document.getElementById("p-slider");
+    var aSlider = document.getElementById("a-slider");
+    var iSlider = document.getElementById("i-slider");
+    var rr = T.radiusRange(state.unit);
+    var mr = T.massRange(state.unit);
+    if (editing !== "rs") rsNum.value = T.formatMass(state.rStar);
+    if (editing !== "ms") msNum.value = T.formatMass(state.mStar);
+    if (editing !== "rp") rpNum.value = state.rp == null ? "" : T.formatMass(state.rp);
+    if (editing !== "mp") mpNum.value = T.formatMass(state.mp);
+    if (editing !== "p") pNum.value = T.formatDays(result.periodDays);
+    if (editing !== "a") aNum.value = T.formatAu(result.axisAU);
+    if (editing !== "i") iNum.value = String(Math.round(state.inclDeg * 100) / 100);
+    if (editing !== "rs") rsSlider.value = sliderFrom(state.rStar, T.R_STAR_MIN, T.R_STAR_MAX, true);
+    if (editing !== "ms") msSlider.value = sliderFrom(state.mStar, T.M_STAR_MIN, T.M_STAR_MAX, true);
+    if (editing !== "rp") rpSlider.value = state.rp == null ? "0" : sliderFrom(state.rp, rr.min, rr.max, true);
+    if (editing !== "mp") mpSlider.value = sliderFrom(state.mp, mr.min, mr.max, true);
+    if (editing !== "p") pSlider.value = sliderFrom(result.periodDays, T.P_MIN, T.P_MAX, true);
+    if (editing !== "a") aSlider.value = sliderFrom(result.axisAU, T.A_MIN, T.A_MAX, true);
+    if (editing !== "i") iSlider.value = String(state.inclDeg);
+    rsSlider.setAttribute("aria-valuetext", T.formatMass(state.rStar) + " solar radii");
+    msSlider.setAttribute("aria-valuetext", T.formatMass(state.mStar) + " solar masses");
+    rpSlider.setAttribute("aria-valuemin", String(rr.min));
+    rpSlider.setAttribute("aria-valuemax", String(rr.max));
+    mpSlider.setAttribute("aria-valuemin", String(mr.min));
+    mpSlider.setAttribute("aria-valuemax", String(mr.max));
+    rpSlider.setAttribute("aria-valuetext", state.rp == null ? "radius not set" : (T.formatMass(state.rp) + (state.unit === "jupiter" ? " Jupiter radii" : " Earth radii")));
+    mpSlider.setAttribute("aria-valuetext", T.formatMass(state.mp) + (state.unit === "jupiter" ? " Jupiter masses" : " Earth masses"));
+    pSlider.setAttribute("aria-valuetext", T.formatDays(result.periodDays) + " days");
+    aSlider.setAttribute("aria-valuetext", T.formatAu(result.axisAU) + " astronomical units");
+    iSlider.setAttribute("aria-valuetext", (Math.round(state.inclDeg * 100) / 100) + " degrees");
+    unitTags();
+    if (rpNote) {
+      rpNote.textContent = state.rp == null
+        ? "Blank radius means it was not measured. The dip stays undrawn."
+        : "Planet radius in the units selected above.";
+    }
+    var preset = state.preset ? T.presetById(state.preset) : null;
+    setText("d-tier", preset ? preset.tier : "Custom");
+    setText("d-name", preset ? preset.name : "Custom");
+    setText("d-range", T.formatMass(state.rStar) + " R☉ · " + T.formatMass(state.mStar) + " M☉ · " + (Math.round(state.inclDeg * 10) / 10) + "°");
+    if (result.depth == null) {
+      setText("d-depth", "—");
+      setText("d-ppm", "—");
+    } else {
+      setText("d-depth", T.formatPercent(result.depth) + "%");
+      setText("d-ppm", T.formatPpm(result.depth) + " ppm");
+    }
+    setText("d-prob", T.formatPercent(result.probStar) + "% · " + T.formatOdds(result.probStar));
+    var fullRow = document.getElementById("row-full");
+    if (fullRow) fullRow.hidden = result.probFull == null;
+    if (result.probFull != null) setText("d-full", T.formatPercent(result.probFull) + "% · " + T.formatOdds(result.probFull));
+    setText("d-b", T.formatImpact(result.impact) + " R★");
+    setText("d-view", result.transits ? "Transits" : "No transit");
+    var durRow = document.getElementById("row-dur");
+    if (durRow) durRow.hidden = result.durationHours == null;
+    if (result.durationHours != null) setText("d-dur", T.formatHours(result.durationHours));
+    setText("d-k", kSentence(result));
+    setText("d-msini", T.formatMass(result.mSinI) + " " + massUnitWord());
+    setText("d-p", T.formatDays(result.periodDays) + " days");
+    setText("d-a", T.formatAu(result.axisAU) + " AU");
+    setText("d-why", preset ? preset.why : "Custom radii, masses, period, and inclination. The card is the circular formulas. It is not a published system.");
+    setText("d-note", preset ? preset.note : "Period and distance are the two-body circular law with both masses. Depth ignores limb darkening. K includes sin i.");
+    var hint = document.getElementById("curve-hint");
+    if (hint) {
+      hint.textContent = state.mode === "orbit"
+        ? "Full orbit · the light-curve marker appears only during the crossing"
+        : "Light curve zoomed on the crossing · radial velocity is one full orbit";
+    }
+    markButtons();
+    showErr(false);
+    ["rs-num", "ms-num", "rp-num", "mp-num", "p-num", "a-num", "i-num"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && editing !== id.replace("-num", "")) el.setAttribute("aria-invalid", "false");
+    });
+    drawLight(result, phase);
+    drawRv(result, phase);
+    aria(result);
+    return result;
+  }
+  function okRange(v, min, max) {
+    return isFinite(v) && v >= min && v <= max;
+  }
+  function fail(id) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute("aria-invalid", "true");
+    showErr(true);
+  }
+  function clearInvalid() {
+    ["rs-num", "ms-num", "rp-num", "mp-num", "p-num", "a-num", "i-num"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.setAttribute("aria-invalid", "false");
+    });
+    showErr(false);
+  }
+  function commitStarR(fromSlider) {
+    var el = document.getElementById("rs-slider");
+    var v = fromSlider ? valueFromSlider(el, T.R_STAR_MIN, T.R_STAR_MAX, true) : parseNum(document.getElementById("rs-num").value);
+    if (!okRange(v, T.R_STAR_MIN, T.R_STAR_MAX)) { fail("rs-num"); return; }
+    state.rStar = v;
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitStarM(fromSlider) {
+    var el = document.getElementById("ms-slider");
+    var v = fromSlider ? valueFromSlider(el, T.M_STAR_MIN, T.M_STAR_MAX, true) : parseNum(document.getElementById("ms-num").value);
+    if (!okRange(v, T.M_STAR_MIN, T.M_STAR_MAX)) { fail("ms-num"); return; }
+    state.mStar = v;
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitRp(fromSlider) {
+    var rr = T.radiusRange(state.unit);
+    var raw = document.getElementById("rp-num").value;
+    if (!fromSlider && String(raw).trim() === "") {
+      state.rp = null;
+      clearInvalid();
+      render(shownPhase);
+      return;
+    }
+    var el = document.getElementById("rp-slider");
+    var v = fromSlider ? valueFromSlider(el, rr.min, rr.max, true) : parseNum(raw);
+    if (!okRange(v, rr.min, rr.max)) { fail("rp-num"); return; }
+    state.rp = v;
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitMp(fromSlider) {
+    var mr = T.massRange(state.unit);
+    var el = document.getElementById("mp-slider");
+    var v = fromSlider ? valueFromSlider(el, mr.min, mr.max, true) : parseNum(document.getElementById("mp-num").value);
+    if (!okRange(v, mr.min, mr.max)) { fail("mp-num"); return; }
+    state.mp = v;
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitP(fromSlider) {
+    var el = document.getElementById("p-slider");
+    var v = fromSlider ? valueFromSlider(el, T.P_MIN, T.P_MAX, true) : parseNum(document.getElementById("p-num").value);
+    if (!okRange(v, T.P_MIN, T.P_MAX)) { fail("p-num"); return; }
+    state.periodDays = v;
+    state.driver = "period";
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitA(fromSlider) {
+    var el = document.getElementById("a-slider");
+    var v = fromSlider ? valueFromSlider(el, T.A_MIN, T.A_MAX, true) : parseNum(document.getElementById("a-num").value);
+    if (!okRange(v, T.A_MIN, T.A_MAX)) { fail("a-num"); return; }
+    state.axisAU = v;
+    state.driver = "axis";
+    clearInvalid();
+    render(shownPhase);
+  }
+  function commitI(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("i-slider").value) : parseNum(document.getElementById("i-num").value);
+    if (!okRange(v, T.I_MIN, T.I_MAX)) { fail("i-num"); return; }
+    state.inclDeg = v;
+    clearInvalid();
+    render(shownPhase);
+  }
+  function bind(sliderId, numId, key, fn) {
+    var slider = document.getElementById(sliderId);
+    var num = document.getElementById(numId);
+    slider.addEventListener("input", function () { editing = null; fn(true); });
+    num.addEventListener("input", function () { editing = key; fn(false); });
+    num.addEventListener("blur", function () { editing = null; render(shownPhase); });
+    num.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") { ev.preventDefault(); num.blur(); }
+    });
+  }
+  bind("rs-slider", "rs-num", "rs", commitStarR);
+  bind("ms-slider", "ms-num", "ms", commitStarM);
+  bind("rp-slider", "rp-num", "rp", commitRp);
+  bind("mp-slider", "mp-num", "mp", commitMp);
+  bind("p-slider", "p-num", "p", commitP);
+  bind("a-slider", "a-num", "a", commitA);
+  bind("i-slider", "i-num", "i", commitI);
+
+  function applyPreset(id) {
+    var p = T.presetById(id);
+    if (!p) return;
+    editing = null;
+    state.rStar = p.rStar;
+    state.mStar = p.mStar;
+    state.rp = p.rp;
+    state.mp = p.mp;
+    state.unit = p.unit;
+    state.inclDeg = p.inclDeg;
+    state.periodDays = p.periodDays;
+    state.driver = "period";
+    state.preset = p.id;
+    render(shownPhase);
+  }
+  document.querySelectorAll("#presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () { applyPreset(btn.getAttribute("data-preset")); });
+  });
+  document.querySelectorAll("#units button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var next = btn.getAttribute("data-unit");
+      if (next === state.unit) return;
+      editing = null;
+      var rpEarth = state.rp == null ? null : earthRadius(state.rp, state.unit);
+      var mpEarth = earthMass(state.mp, state.unit);
+      state.unit = next;
+      if (rpEarth == null) state.rp = null;
+      else state.rp = next === "jupiter" ? rpEarth * T.R_EARTH_M / T.R_JUPITER_M : rpEarth;
+      state.mp = next === "jupiter" ? mpEarth * T.GM_EARTH / T.GM_JUPITER : mpEarth;
+      render(shownPhase);
+    });
+  });
+  document.getElementById("mode-dip").addEventListener("click", function () {
+    state.mode = "dip";
+    clock = performance.now();
+    render(shownPhase);
+  });
+  document.getElementById("mode-orbit").addEventListener("click", function () {
+    state.mode = "orbit";
+    clock = performance.now();
+    render(shownPhase);
+  });
+  document.getElementById("play-toggle").addEventListener("click", function () {
+    state.playing = !state.playing;
+    if (state.playing) start();
+    else {
+      shownPhase = 0;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+      render(0);
+    }
+  });
+
+  light.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var step = ev.shiftKey ? 2 : 0.5;
+    var next = state.inclDeg + (ev.key === "ArrowRight" ? step : -step);
+    next = Math.min(T.I_MAX, Math.max(T.I_MIN, next));
+    state.inclDeg = next;
+    editing = null;
+    render(shownPhase);
+  });
+
+  function frame(now) {
+    var result = current();
+    if (!result.ok) return;
+    shownPhase = phaseNow(now, result);
+    render(shownPhase);
+    if (state.playing) raf = requestAnimationFrame(frame);
+    else raf = 0;
+  }
+  function start() {
+    clock = performance.now();
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(frame);
+  }
+  window.addEventListener("resize", function () { render(shownPhase); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(shownPhase); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render(0);
+  if (state.playing) start();
+
+  var helpBtn = document.getElementById("tr-help");
+  var helpDialog = document.getElementById("tr-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
