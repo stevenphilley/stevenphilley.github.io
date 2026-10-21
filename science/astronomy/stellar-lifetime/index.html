@@ -1,0 +1,851 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stellar lifetime — mass, luminosity, and the main sequence — Steven Philley</title>
+<meta name="description" content="Interactive stellar-lifetime desk: a logarithmic mass slider from 0.1 to 60 solar masses, the Eker et al. 2018 piecewise mass–luminosity fit inside 0.179 to 31 solar masses, and a main-sequence lifetime scaling t ≈ 10 Gyr × M/L. End-state labels follow NASA’s rough split. The Planck age on the plot is 13.797 Gyr. Cited presets: the Sun, Proxima Centauri, Sirius A, Vega, and Rigel. Approximate scaling estimates. Not a stellar-evolution model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/stellar-lifetime/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Stellar lifetime — mass, luminosity, and the main sequence">
+<meta property="og:description" content="Mass sets an approximate luminosity and a main-sequence lifetime. Eker et al. 2018 inside 0.179 to 31 solar masses. t ≈ 10 Gyr × M/L. Not a stellar-evolution model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/stellar-lifetime/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stellar lifetime — mass, luminosity, and the main sequence">
+<meta name="twitter:description" content="A log mass slider, a piecewise mass–luminosity fit, and t ≈ 10 Gyr × M/L. The Planck age is marked. Cited stars. Approximate scaling estimates.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:crosshair}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.age{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.pub{width:8px;height:8px;border:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.wd{height:10px;border-top:0;background:color-mix(in srgb,var(--ink,#e8e6e1) 22%,transparent)}
+.swatch.ns{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 28%,transparent)}
+.swatch.bh{height:10px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:12ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats li[hidden]{display:none !important}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/" aria-current="page">Stellar lifetime</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Stellar life</p>
+  <h1>Stellar lifetime<br>mass and light</h1>
+  <p class="lede">A star’s mass sets how brightly it shines on the main sequence, and how long the core hydrogen lasts. Eker et al. 2018 fit <strong>log<sub>10</sub>(L/L☉) = a log<sub>10</sub>(M/M☉) + b</strong> in six pieces, from just above 0.179 solar masses to 31. The lifetime scaling is <strong>t ≈ 10 Gyr × (M/M☉) / (L/L☉)</strong>. Slide the mass, or tap a cited star. The rough end — white dwarf, neutron star, or black hole — is a label, and the boundaries are approximate. Where that luminosity sits against temperature is the <a href="/science/astronomy/hr/">HR diagram</a>. The curve behind a temperature and a radius is the <a href="/science/astronomy/blackbody/">blackbody</a> desk. Spectral type and the life-path cartoons are the <a href="/science/astronomy/stars/">stars</a> desk. The same luminosity, spread over an orbit, is the <a href="/science/astronomy/habitable-zone/">habitable zone</a>.</p>
+  <p class="note-schematic">Classroom scaling. Not a stellar-evolution model, not a remnant prediction, and not a catalog. The luminosity line is Eker et al. 2018, Table 4, and only inside 0.179 &lt; M/M☉ ≤ 31. The pieces are separate least-squares fits. They are not joined, and this page does not extend them. The 10 Gyr zero is the round classroom number beside NASA’s 4.6-billion-year-old Sun and about 5 billion years still on the main sequence. That sum is 9.6 billion years. It is not a published stellar-model age. End-state labels follow NASA’s classroom split. The edges are approximate and move with metallicity, rotation, and mass loss.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Mass, luminosity, lifetime</span>
+    <button type="button" class="help-q" id="lt-help" aria-haspopup="dialog" aria-controls="lt-help-dialog" aria-expanded="false" aria-label="How this stellar-lifetime desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Low mass left · long life up · the line is the fit · dots are cited M/L</p>
+      <canvas id="plot" width="880" height="480" tabindex="0" role="img" aria-label="Lifetime versus mass, logarithmic on both axes. Low mass is left. Long life is up. The Sun is at 1 solar mass and 10 billion years on the cited-luminosity scaling. A dashed line marks the Planck age, 13.8 billion years."></canvas>
+      <ul class="legend">
+        <li><span class="swatch fit" aria-hidden="true"></span> Fit</li>
+        <li><span class="swatch pub" aria-hidden="true"></span> Cited M/L</li>
+        <li><span class="swatch age" aria-hidden="true"></span> Planck age</li>
+        <li><span class="swatch wd" aria-hidden="true"></span> White dwarf</li>
+        <li><span class="swatch ns" aria-hidden="true"></span> Neutron star</li>
+        <li><span class="swatch bh" aria-hidden="true"></span> Black hole</li>
+      </ul>
+      <p class="scale-note">Formula outputs are approximate scaling estimates. They are not the cited luminosities, ages, or remnant masses.</p>
+      <div class="controls">
+        <p class="pick-label">Cited stars · the mass and the luminosity are the paper’s</p>
+        <div class="presets" id="presets" role="group" aria-label="Star presets">
+          <button type="button" data-preset="sun" aria-pressed="true">Sun</button>
+          <button type="button" data-preset="proxima" aria-pressed="false">Proxima</button>
+          <button type="button" data-preset="sirius-a" aria-pressed="false">Sirius A</button>
+          <button type="button" data-preset="vega" aria-pressed="false">Vega</button>
+          <button type="button" data-preset="rigel" aria-pressed="false">Rigel</button>
+        </div>
+        <div class="slider-row">
+          <label for="m-slider">Mass</label>
+          <input type="range" id="m-slider" min="0" max="1000" step="0.1" value="360" aria-valuemin="0.1" aria-valuemax="60" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="lt-err" hidden>Mass from 0.1 to 60 solar masses.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Nominal luminosity · mass is 1 by definition</p>
+      <h2 id="d-name">Sun</h2>
+      <p class="range" id="d-range">1 M☉ · nominal 1 L☉</p>
+      <ul class="stats">
+        <li id="row-cited-l"><span class="k">Cited L</span><span class="v" id="d-cited-l">1 L☉ · nominal</span></li>
+        <li id="row-fit-l"><span class="k">Scaling L</span><span class="v" id="d-fit-l">0.984 L☉ · approximate</span></li>
+        <li id="row-cited-t"><span class="k">Life, cited L</span><span class="v" id="d-cited-t">10 Gyr · approximate</span></li>
+        <li id="row-fit-t"><span class="k">Life, scaling L</span><span class="v" id="d-fit-t">10.16 Gyr · approximate</span></li>
+        <li><span class="k">Planck age</span><span class="v" id="d-planck">13.797 ± 0.023 Gyr</span></li>
+        <li><span class="k">Against that age</span><span class="v" id="d-vs">Shorter than 13.797 Gyr</span></li>
+        <li><span class="k">End state</span><span class="v" id="d-end">White dwarf</span></li>
+        <li><span class="k">Fit piece</span><span class="v" id="d-piece">Low mass</span></li>
+        <li id="row-age"><span class="k">Cited age</span><span class="v" id="d-age">4.6 Gyr</span></li>
+      </ul>
+      <p class="why" id="d-why">The nominal luminosity is 1 L☉. The fit at 1 M☉ is not exactly 1, because the low-mass line was not forced through the Sun. The lifetime scaling with L = 1 is exactly 10 Gyr.</p>
+      <p class="why" id="d-note">IAU 2015 Resolution B3 sets the nominal solar luminosity at 3.828 × 10²⁶ W. NASA Science calls the Sun a 4.6-billion-year-old main-sequence star and expects about another 5 billion years of core hydrogen fusion.</p>
+      <p class="why" id="d-scale">The scaling rows are approximate. They are not the cited values on this card.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The slider needs JavaScript. The cited anchors are still below. The nominal Sun is 1 M☉ and 1 L☉, so t = 10 Gyr × 1/1 is 10 Gyr. The low-mass fit at 1 M☉ is log<sub>10</sub>(L/L☉) = −0.007, about 0.984 L☉, and 10 / 0.984 is about 10.16 Gyr. Proxima Centauri is 0.120 ± 0.003 M☉ and 0.00151 ± 0.00008 L☉ (Ribas et al. 2017). That mass is below 0.179, so the fit is not applied. 10 × 0.120 / 0.00151 is about 795 Gyr, longer than the Planck age 13.797 Gyr. Sirius A is 2.063 ± 0.023 M☉ and 24.74 ± 0.70 L☉ (Bond et al. 2017); 10 × 2.063 / 24.74 is about 834 Myr. Vega is 2.15 M☉ and 44 L☉; 10 × 2.15 / 44 is about 489 Myr. Rigel is a blue supergiant at 23 M☉ with log(L/L☉) = 5.08 (Moravveji et al. 2012). Putting that luminosity into M/L is about 1.91 Myr, and it is not a main-sequence lifetime. Eker et al. 2018, Table 4, is the luminosity fit. The Planck age 13.797 ± 0.023 Gyr is the TT,TE,EE+lowE+lensing column.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Not a clock</p>
+    <h2>M/L is a scaling. It is not how long this star has left.</h2>
+    <p>The lifetime row divides a mass by a luminosity and multiplies by 10 billion years. It does not integrate a stellar model. It does not know the hydrogen fraction already burned, the mixing, or the wind. Two stars with the same mass and the same luminosity get the same number here. A real age needs the spectrum and a model grid.</p>
+    <p>The 10 Gyr zero is the classroom round number. NASA Science’s star-types page calls the Sun a 4.6-billion-year-old main-sequence star and expects about another 5 billion years before the red-giant phase. The sum is 9.6. The same page also says the Sun becomes a white dwarf in about 10 billion years, after the giant phase. Those are NASA’s sentences. This desk’s 10 is the round zero in t ≈ 10 Gyr × M/L, not either of those clocks, and not a published model age.</p>
+    <p>Stars well below about 0.45 solar masses are fully convective. They can keep feeding the core fresh hydrogen, so a larger share of the star is fuel than the solar fraction assumed here. This page does not add that correction. NASA notes that some red dwarfs around a third of a solar mass can live far longer than the age of the universe, up to about 14 trillion years. Proxima’s 795 Gyr row is only 10 × 0.120 / 0.00151. It is not that trillion-year figure, and the mass is below the fit, so there is no scaling luminosity either.</p>
+    <p>At the other end, winds remove mass. A 23-solar-mass star does not arrive at core collapse still holding 23 solar masses. Rigel has already left the main sequence. The fit at 23 M☉, about 1.01×10<sup>5</sup> L☉ and about 2.27 Myr, is the scaling for a main-sequence star of that mass. Rigel’s published log(L/L☉) = 5.08 is the supergiant. Putting 5.08 into M/L, about 1.91 Myr, is not a main-sequence lifetime.</p>
+    <p>The end-state word is NASA’s classroom split: under 8 solar masses a white dwarf, about 8 to 20 a neutron star, heavier a black hole. Heger et al. 2003 say the remnant depends on the helium core and the hydrogen envelope at death, and on metallicity through the winds. In one solar-metallicity sketch, neutron stars are typical up to about 20–25 solar masses, and fallback black holes sit higher. Rotation moves the core too. The label on this page is the NASA edge. It is not a prediction for the star in front of you. Sirius A’s white-dwarf label is the rough end for a single star of that mass. It is not a description of Sirius B.</p>
+  </div>
+
+  <p class="band">Literacy · the numbers on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Mass–luminosity fit</dt><dd>log<sub>10</sub>(L/L☉) = a log<sub>10</sub>(M/M☉) + b, Eker et al. 2018, Table 4. Six separate least-squares lines. The lower edge of each piece is exclusive and the upper edge is inclusive. Ultra low-mass, 0.179 &lt; M ≤ 0.45: a = 2.028, b = −0.976. Very low-mass, 0.45 &lt; M ≤ 0.72: a = 4.572, b = −0.102. Low mass, 0.72 &lt; M ≤ 1.05: a = 5.743, b = −0.007. Intermediate, 1.05 &lt; M ≤ 2.40: a = 4.329, b = +0.010. High mass, 2.4 &lt; M ≤ 7: a = 3.967, b = +0.093. Very high mass, 7 &lt; M ≤ 31: a = 2.865, b = +1.105. The lines are not forced to meet. At 1 M☉ the low-mass line gives log<sub>10</sub>(L/L☉) = −0.007, about 0.984, not 1.</dd></div>
+    <div class="gloss"><dt>Outside the fit</dt><dd>The slider runs from 0.1 to 60 solar masses. The fit does not. Below or at 0.179, and above 31, the scaling luminosity and the scaling lifetime say “Not calibrated.” The end-state label still follows the mass. Proxima, at 0.120 M☉, is the preset that shows the refusal.</dd></div>
+    <div class="gloss"><dt>Lifetime scaling</dt><dd>t = 10 Gyr × (M/M☉) / (L/L☉). With the nominal solar luminosity, L = 1, the Sun’s row is exactly 10 Gyr. With the fit’s 0.984 L☉ it is about 10.16 Gyr. Both are approximate. Neither is a stellar-model age.</dd></div>
+    <div class="gloss"><dt>Cited L versus scaling L</dt><dd>A preset keeps the paper’s luminosity in one row and the fit’s luminosity in another. Sirius A’s published 24.74 L☉ is not the fit at 2.063 M☉. Vega’s 44 L☉, from a rapid rotator seen nearly pole-on, sits above the mean line. Rigel’s 10<sup>5.08</sup> is a supergiant luminosity. The fit at that mass is a main-sequence scaling.</dd></div>
+    <div class="gloss gloss-wide"><dt>The Planck line</dt><dd>Planck Collaboration 2020, A&amp;A 641, A6, Table 2. The column TT,TE,EE+lowE+lensing gives an age of 13.797 ± 0.023 Gyr. The column that also uses baryon acoustic oscillations gives 13.787 ± 0.020 Gyr. The dashed line is 13.797. The label “~13.8 Gyr” is that central value rounded to one decimal. A marker lifetime longer than 13.797 Gyr has outlived that age on this scaling. Proxima’s cited-L row does. The Sun’s 10 Gyr does not.</dd></div>
+    <div class="gloss"><dt>End-state label</dt><dd>NASA Science, Star types: a main-sequence star less than eight times the Sun’s mass leaves a white dwarf; about 8 to 20 leaves a neutron star; heavier stars leave a stellar-mass black hole. Heger, Woosley, Fryer, and Langer carry typical neutron stars to about 20–25 solar masses at solar metallicity. The bands on the plot are the NASA edges. They are not sharp.</dd></div>
+    <div class="gloss"><dt>Cited age</dt><dd>Shown only when a paper prints one. The Sun’s 4.6 Gyr is NASA’s age, not M/L. Sirius A’s 237 ± 15 Myr is Bond et al.’s YREC age from the zero-age main sequence. Vega’s 700 Myr is Monnier et al.’s evolutionary age, with uncertainties −75 and +150 Myr. The M/L row for Vega, about 489 Myr, is shorter than that cited age. The two numbers are not the same quantity.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the papers, NASA, and the IAU</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://arxiv.org/abs/1807.02568" rel="noopener" target="_blank">Eker et al. 2018, MNRAS 479, 5491</a> (arXiv:1807.02568) — Table 4, classical MLR. log<sub>10</sub>(L/L☉) = a log<sub>10</sub>(M/M☉) + b. Lower edge exclusive, upper inclusive. Ultra low-mass, 0.179 &lt; M ≤ 0.45, N = 22: a = 2.028 (0.135), b = −0.976 (0.070), σ = 0.076, R² = 0.919. Very low-mass, 0.45 &lt; M ≤ 0.72, N = 35: a = 4.572 (0.319), b = −0.102 (0.076), σ = 0.109, R² = 0.857. Low mass, 0.72 &lt; M ≤ 1.05, N = 53: a = 5.743 (0.413), b = −0.007 (0.026), σ = 0.129, R² = 0.787. Intermediate, 1.05 &lt; M ≤ 2.40, N = 275: a = 4.329 (0.087), b = +0.010 (0.019), σ = 0.140, R² = 0.901. High mass, 2.4 &lt; M ≤ 7, N = 80: a = 3.967 (0.143), b = +0.093 (0.083), σ = 0.165, R² = 0.907. Very high mass, 7 &lt; M ≤ 31, N = 44: a = 2.865 (0.155), b = +1.105 (0.176), σ = 0.152, R² = 0.888. The pieces are separate lines. This page does not extrapolate.</li>
+      <li><a href="https://science.nasa.gov/universe/stars/types/" rel="noopener" target="_blank">NASA Science — Star types</a> — the Sun as a 4.6-billion-year-old main-sequence star, expected to remain one for another 5 billion years; a white dwarf after the giant phase in about 10 billion years; red giants for main-sequence stars less than eight times the Sun’s mass; neutron stars for about 8 to 20; heavier stars produce stellar-mass black holes. Some red dwarfs around a third of a solar mass can live up to about 14 trillion years. The shapes of the bands are not taken from that page.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — Table 2. Column TT,TE,EE+lowE+lensing: age 13.797 ± 0.023 Gyr. The +BAO column: 13.787 ± 0.020 Gyr. The line is 13.797. “~13.8 Gyr” rounds that central value to one decimal. The same paper’s H0 = 67.4 ± 0.5 km/s/Mpc is the number on the <a href="/science/astronomy/redshift/">redshift</a> desk.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar luminosity 3.828 × 10²⁶ W. On this page that constant is 1 L☉. It is a conversion constant, not a measurement of the Sun. The resolution text is also at the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU archive</a>.</li>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2017/07/aa30582-17/aa30582-17.html" rel="noopener" target="_blank">Ribas et al. 2017, A&amp;A 603, A58</a> — Proxima Centauri: M = 0.120 ± 0.003 M☉, L = 0.00151 ± 0.00008 L☉. The mass is from their stellar analysis, not a dynamical orbit. 0.120 is below 0.179, so the fit is not applied.</li>
+      <li><a href="https://iopscience.iop.org/article/10.3847/1538-4357/aa6af8" rel="noopener" target="_blank">Bond et al. 2017, ApJ 840, 70</a> — Sirius A: dynamical mass 2.063 ± 0.023 M☉; luminosity 24.74 ± 0.70 L☉ adopted from Davis et al. 2011 adjusted to their parallax; YREC age relative to the zero-age main sequence 237 ± 15 Myr. The age is a model age. The white-dwarf label here is the rough end for a single star of this mass, not Sirius B. Also <a href="https://arxiv.org/abs/1703.10625" rel="noopener" target="_blank">arXiv:1703.10625</a>.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1088/2041-8205/761/1/L3" rel="noopener" target="_blank">Monnier et al. 2012, ApJL 761, L3</a> — Vega: mass 2.15 M☉ with uncertainties +0.10 and −0.15, age 700 Myr with uncertainties −75 and +150, from rotating Geneva tracks. The mass is an evolutionary estimate, not a dynamical mass. The luminosity on this preset is not from this paper.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1088/0004-637X/712/1/250" rel="noopener" target="_blank">Hill, Gulliver, and Adelman 2010, ApJ 712, 250</a> — Vega: luminosity 44 ± 2 L☉. Seen nearly pole-on. The mass on this preset is Monnier et al. 2012, not this paper. Two citations on purpose.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1088/0004-637X/747/2/108" rel="noopener" target="_blank">Moravveji et al. 2012, ApJ 747, 108</a> — Rigel: log(L/L☉) = 5.08 with uncertainties +0.07 and −0.10. They adopt a mass of 23 M☉ from Przybilla et al. 2010 Geneva tracks that include rotation, and they do not print an uncertainty on 23. The mass is a track mass, not a dynamical mass. Rigel is a blue supergiant. It is not on the main sequence. The fit at 23 M☉ is a main-sequence scaling, not this luminosity.</li>
+      <li><a href="https://iopscience.iop.org/article/10.1086/375341" rel="noopener" target="_blank">Heger, Fryer, Woosley, Langer, and Hartmann 2003, ApJ 591, 288</a> — how massive single stars end. The remnant depends on the helium-core mass and the hydrogen envelope, and on metallicity through mass loss. They discuss a Fryer 1999 estimate: fallback black holes near a helium core of about 8 M☉ (about a 25 M☉ main-sequence star if there is no mass loss), and direct black holes for helium cores above about 15 M☉ (about 40 M☉ on the main sequence, no mass loss). They call those numbers uncertain.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/0211062" rel="noopener" target="_blank">Heger, Woosley, Fryer, and Langer, arXiv:astro-ph/0211062</a> — below about 8 M☉, white dwarfs only. Up to about 20–25 M☉, neutron stars are the typical solar-metallicity outcome in their sketch. Higher masses can leave fallback black holes. Mass loss, metallicity, and rotation move the boundaries. This page still labels with NASA’s 8 and 20.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of mass, luminosity, and a main-sequence lifetime. The fit is Eker et al. 2018, Table 4, inside its printed window. t ≈ 10 Gyr × M/L uses the round 10, next to NASA’s 4.6 plus about 5. End states are NASA’s rough split, with Heger et al. 2003 on why the edges move. Preset masses and luminosities are the cited central values. Formula outputs are approximate scaling estimates. Not a stellar-evolution model and not a catalog. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/hr/"><p class="n">Diagram</p><h3>HR diagram</h3><p>Temperature across, luminosity up, hot on the left. The same cited stars, placed by light rather than by lifetime.</p></a>
+    <a href="/science/astronomy/blackbody/"><p class="n">Curve</p><h3>Blackbody</h3><p>L = 4πR²σT⁴. Luminosity on the main sequence is this law. The mass–luminosity fit is a different relation.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>OBAFGKM and the life-path cartoons. The 8 and 20 solar-mass labels on this page are the same NASA split.</p></a>
+    <a href="/science/astronomy/habitable-zone/"><p class="n">Insolation</p><h3>Habitable zone</h3><p>That luminosity at an orbital distance. A short-lived massive star and a long-lived red dwarf do not offer the same clock.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima and Sirius, two of the presets. Distance is that desk. Mass and lifetime are this one.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The nominal Sun this desk starts on, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="lt-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="lt-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="lt-help-title">Stellar lifetime</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom scaling. The curve is Eker et al. 2018 inside 0.179 to 31 solar masses. Lifetime is 10 Gyr times mass over luminosity. Not a stellar-evolution model.</p>
+    <h3>The plot</h3>
+    <table>
+      <caption>The plot</caption>
+      <tbody>
+        <tr><th scope="row">Across</th><td>Mass, logarithmic, from 0.1 to 60 solar masses. Low mass is left.</td></tr>
+        <tr><th scope="row">Up</th><td>Lifetime, logarithmic, from 100,000 years to 3,000 Gyr. Long life is up.</td></tr>
+        <tr><th scope="row">Curve</th><td>Six separate pieces. They are not joined. Nothing is drawn outside the fit.</td></tr>
+        <tr><th scope="row">Dots</th><td>Cited mass and the lifetime from the cited luminosity. The Sun’s dot uses L = 1, so it sits at 10 Gyr. A custom mass sits on the curve when the fit applies.</td></tr>
+        <tr><th scope="row">Dashed line</th><td>Planck 2018 age, 13.797 Gyr, labeled ~13.8 Gyr. The BAO column, 13.787 ± 0.020, is in the sources.</td></tr>
+        <tr><th scope="row">Bands</th><td>NASA’s rough end states: white dwarf below 8, neutron star from 8 to 20, black hole above 20. Approximate.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Sun, Proxima Centauri, Sirius A, Vega, Rigel. Each button places the cited mass. Sirius A and Vega sit close together on the plot. Use the buttons to tell them apart.</td></tr>
+        <tr><th scope="row">Plot</th><td>Tap or drag to set a custom mass from the horizontal position. That leaves the preset. It does not snap to a star.</td></tr>
+        <tr><th scope="row">Slider</th><td>Mass, logarithmic, from 0.1 to 60. The number field accepts the same range. Typing or sliding leaves the preset. Outside 0.179 to 31 the scaling rows say “Not calibrated.”</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Cited L</th><td>The paper’s luminosity, or the IAU nominal 1 L☉ for the Sun. Hidden for a custom mass.</td></tr>
+        <tr><th scope="row">Scaling L</th><td>The Eker line at this mass. Approximate. “Not calibrated” outside the fit. At 1 M☉ it is 0.984, not 1.</td></tr>
+        <tr><th scope="row">Life, cited L</th><td>10 Gyr × M/L using the cited luminosity. Still a scaling. For Rigel it is not a main-sequence lifetime.</td></tr>
+        <tr><th scope="row">Life, scaling L</th><td>The same formula with the fit’s luminosity. Approximate. Hidden in the sense that it reads “Not calibrated” outside the window.</td></tr>
+        <tr><th scope="row">Against that age</th><td>Compares the marker lifetime with 13.797 Gyr. Presets use the cited luminosity. A custom mass uses the fit, and only inside the window.</td></tr>
+        <tr><th scope="row">Cited age</th><td>Shown when a source prints one: Sun 4.6 Gyr, Sirius A 237 ± 15 Myr, Vega 700 Myr. A model age or a NASA age, not this scaling.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Plot</th><td>The canvas takes focus. Left and Right nudge the mass. Shift is a coarser step.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/stellar-lifetime/lifetime.js"></script>
+<script>
+(function () {
+  "use strict";
+  var LT = window.Lifetime;
+  if (!LT) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("plot");
+  var mSlider = document.getElementById("m-slider");
+  var mNum = document.getElementById("m-num");
+  var errEl = document.getElementById("lt-err");
+  var sun = LT.presetById("sun");
+  var state = { m: sun.M, preset: "sun" };
+  var editing = false;
+  var geom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n) || h.length < 6) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a) {
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function massOk(v) {
+    return isFinite(v) && v >= LT.M_MIN && v <= LT.M_MAX;
+  }
+  function showErr(on) {
+    if (!errEl) return;
+    errEl.hidden = !on;
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function sliderFrom(m) {
+    return String(LT.logUnmap(m, LT.M_MIN, LT.M_MAX) * 1000);
+  }
+  function massFromSlider() {
+    return LT.logMap(Number(mSlider.value) / 1000, LT.M_MIN, LT.M_MAX);
+  }
+  function markPresets() {
+    document.querySelectorAll("#presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === state.preset));
+    });
+  }
+  function massPhrase(p) {
+    if (!p) return LT.formatMass(state.m) + " M\u2609";
+    if (p.id === "vega") return p.massText + " M\u2609 (+0.10, \u22120.15)";
+    if (p.dMPlus > 0 && p.dMPlus === p.dMMinus) return p.massText + " \u00b1 " + p.dMPlus + " M\u2609";
+    return p.massText + " M\u2609";
+  }
+  function lumPhrase(p) {
+    if (p.logL) return "log(L/L\u2609) = " + p.logL;
+    if (p.lumKind === "nominal") return "nominal " + p.lumText + " L\u2609";
+    return p.lumText + " L\u2609";
+  }
+  function versus(t, basis) {
+    if (!(t > 0) || !isFinite(t)) return "No scaling lifetime";
+    var word = t > LT.AGE_UNIVERSE_GYR ? "Longer than " : "Shorter than ";
+    return word + "13.797 Gyr, on the " + basis;
+  }
+
+  function draw() {
+    var view = fit(460);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var padL = 58;
+    var padR = 14;
+    var padT = 22;
+    var padB = 36;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    geom = { padL: padL, padT: padT, plotW: plotW, plotH: plotH };
+    function xOf(m) { return padL + LT.xFrac(m) * plotW; }
+    function yOf(t) { return padT + LT.yFrac(t) * plotH; }
+
+    var bands = [
+      [LT.M_MIN, LT.WD_LIMIT, ink, 0.06, "WD"],
+      [LT.WD_LIMIT, LT.NS_LIMIT, accent, 0.12, "NS"],
+      [LT.NS_LIMIT, LT.M_MAX, accent, 0.22, "BH"]
+    ];
+    bands.forEach(function (b) {
+      var x0 = xOf(b[0]);
+      var x1 = xOf(b[1]);
+      ctx.fillStyle = rgba(b[2], b[3]);
+      ctx.fillRect(x0, padT, Math.max(1, x1 - x0), plotH);
+      if (x1 - x0 > 28) {
+        paintText(ctx, b[4], (x0 + x1) / 2, padT + 11, { align: "center", size: 10, color: muted });
+      }
+    });
+    [LT.WD_LIMIT, LT.NS_LIMIT].forEach(function (edge) {
+      var x = xOf(edge);
+      ctx.beginPath();
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + plotH);
+      ctx.strokeStyle = rgba(muted, 0.45);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    var lifeTicks = [0.001, 0.01, 0.1, 1, 10, 100, 1000];
+    lifeTicks.forEach(function (t) {
+      var y = yOf(t);
+      ctx.beginPath();
+      ctx.moveTo(padL, y);
+      ctx.lineTo(padL + plotW, y);
+      ctx.strokeStyle = rgba(line, 0.9);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      paintText(ctx, LT.formatLifeTick(t), padL - 6, y, { align: "right", size: 10, color: muted });
+    });
+    var massTicks = [0.1, 1, 10, 60];
+    massTicks.forEach(function (m, i) {
+      var x = xOf(m);
+      ctx.beginPath();
+      ctx.moveTo(x, padT);
+      ctx.lineTo(x, padT + plotH);
+      ctx.strokeStyle = rgba(line, 0.7);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      var align = i === 0 ? "left" : (i === massTicks.length - 1 ? "right" : "center");
+      paintText(ctx, String(m), x, padT + plotH + 14, { align: align, size: 10, color: muted });
+    });
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(padL, padT, plotW, plotH);
+    ctx.clip();
+    var yAge = yOf(LT.AGE_UNIVERSE_GYR);
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(padL, yAge);
+    ctx.lineTo(padL + plotW, yAge);
+    ctx.strokeStyle = soft;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    paintText(ctx, "~13.8 Gyr", padL + plotW - 6, yAge - 9, { align: "right", size: 10, color: soft });
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = accent;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    LT.curveSegments(48).forEach(function (seg) {
+      ctx.beginPath();
+      seg.points.forEach(function (pt, i) {
+        var x = xOf(pt.m);
+        var y = yOf(pt.t);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    });
+
+    var preset = state.preset ? LT.presetById(state.preset) : null;
+    var hx = xOf(state.m);
+    ctx.beginPath();
+    ctx.moveTo(hx, padT);
+    ctx.lineTo(hx, padT + plotH);
+    ctx.strokeStyle = rgba(ink, 0.28);
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    LT.presets().forEach(function (p) {
+      var t = LT.publishedLifetime(p);
+      var x = xOf(p.M);
+      var y = yOf(t);
+      var active = preset && preset.id === p.id;
+      ctx.beginPath();
+      ctx.arc(x, y, active ? 6 : (p.id === "sun" ? 4 : 3), 0, Math.PI * 2);
+      ctx.fillStyle = active ? ink : soft;
+      ctx.fill();
+      if (active) {
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = accent;
+        ctx.stroke();
+      }
+    });
+    if (!preset && LT.inFit(state.m)) {
+      var ft = LT.scalingLifetime(state.m);
+      var cx = xOf(state.m);
+      var cy = yOf(ft);
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+      ctx.fillStyle = ink;
+      ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = accent;
+      ctx.stroke();
+    }
+
+    function labelY(y, preferBelow) {
+      if (preferBelow) return y + 14;
+      if (Math.abs(y - yAge) < 16) return y + 14;
+      if (y < padT + 40) return y + 14;
+      return y - 12;
+    }
+    if (!preset || preset.id !== "sun") {
+      var sunT = LT.publishedLifetime(sun);
+      var sx = xOf(sun.M);
+      var sy = yOf(sunT);
+      paintText(ctx, "Sun", sx + 8, labelY(sy, true), { align: "left", size: 11, color: ink });
+    }
+    if (preset) {
+      var ax = xOf(preset.M);
+      var ay = yOf(LT.publishedLifetime(preset));
+      var name = preset.id === "sirius-a" ? "Sirius A" : preset.name;
+      paintText(ctx, name, ax + 8, labelY(ay, preset.id === "sun"), { align: "left", size: 11, color: ink });
+    } else if (LT.inFit(state.m)) {
+      var fx = xOf(state.m);
+      var fy = yOf(LT.scalingLifetime(state.m));
+      paintText(ctx, "Scaling", fx + 8, labelY(fy, false), { align: "left", size: 11, color: ink });
+    }
+    ctx.restore();
+  }
+
+  function render() {
+    var preset = state.preset ? LT.presetById(state.preset) : null;
+    var m = state.m;
+    markPresets();
+    if (!editing) {
+      mNum.value = preset ? preset.massText : LT.formatMass(m);
+      mNum.setAttribute("aria-invalid", "false");
+    }
+    mSlider.value = sliderFrom(m);
+    var shown = preset ? preset.massText : LT.formatMass(m);
+    mSlider.setAttribute("aria-valuetext", shown + " solar masses");
+    mSlider.setAttribute("aria-valuenow", shown);
+    showErr(false);
+
+    var piece = LT.pieceFor(m);
+    var end = LT.endState(m);
+    var fitL = LT.scalingLuminosity(m);
+    var fitT = LT.scalingLifetime(m);
+    var citedT = preset ? LT.publishedLifetime(preset) : NaN;
+    var markerT = preset ? citedT : fitT;
+    var basis = preset ? "cited luminosity" : "scaling luminosity";
+
+    setText("d-tier", preset ? preset.tier : (piece ? piece.name + " \u00b7 scaling only" : "Outside the mass\u2013luminosity fit"));
+    setText("d-name", preset ? preset.name : "Custom mass");
+    setText("d-range", preset ? (massPhrase(preset) + " \u00b7 " + lumPhrase(preset)) : (LT.formatMass(m) + " M\u2609 \u00b7 custom"));
+
+    var rowCitedL = document.getElementById("row-cited-l");
+    var rowCitedT = document.getElementById("row-cited-t");
+    var rowAge = document.getElementById("row-age");
+    if (rowCitedL) rowCitedL.hidden = !preset;
+    if (rowCitedT) rowCitedT.hidden = !preset;
+    if (rowAge) rowAge.hidden = !(preset && preset.ageText);
+    if (preset) {
+      var citedKind = preset.lumKind === "nominal" ? " \u00b7 nominal" : " \u00b7 published";
+      var citedLum = preset.logL ? ("10^" + preset.logL + " L\u2609" + citedKind) : (preset.lumText + " L\u2609" + citedKind);
+      setText("d-cited-l", citedLum);
+      setText("d-cited-t", LT.formatLife(citedT) + " \u00b7 approximate");
+      setText("d-age", preset.ageText);
+    }
+    setText("d-fit-l", LT.inFit(m) ? (LT.formatLum(fitL) + " L\u2609 \u00b7 approximate") : "Not calibrated");
+    setText("d-fit-t", LT.inFit(m) ? (LT.formatLife(fitT) + " \u00b7 approximate") : "Not calibrated");
+    setText("d-vs", versus(LT.inFit(m) || preset ? markerT : NaN, basis));
+    setText("d-end", end ? end.name : "\u2014");
+    setText("d-piece", piece ? piece.name : "Outside the fit");
+    if (preset) {
+      setText("d-why", preset.why);
+      setText("d-note", preset.note);
+    } else if (LT.inFit(m)) {
+      setText("d-why", "At " + LT.formatMass(m) + " M\u2609 the scaling luminosity is the Eker et al. 2018 line, and the scaling lifetime is 10 Gyr \u00d7 M/L. Both are approximate.");
+      setText("d-note", end.why + " The 10 Gyr zero is the classroom round number, not a model age.");
+    } else {
+      setText("d-why", "At " + LT.formatMass(m) + " M\u2609 the six-piece fit does not apply. There is no scaling luminosity and no scaling lifetime.");
+      setText("d-note", end.why);
+    }
+    draw();
+  }
+
+  function commitMass(fromSlider) {
+    var v = fromSlider ? massFromSlider() : parseNum(mNum.value);
+    if (!massOk(v)) {
+      mNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.m = v;
+    state.preset = null;
+    render();
+  }
+  mSlider.addEventListener("input", function () { editing = false; commitMass(true); });
+  mNum.addEventListener("input", function () { editing = true; commitMass(false); });
+  mNum.addEventListener("blur", function () { editing = false; render(); });
+  mNum.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") { ev.preventDefault(); mNum.blur(); }
+  });
+  document.querySelectorAll("#presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = LT.presetById(btn.getAttribute("data-preset"));
+      if (!p) return;
+      editing = false;
+      state.m = p.M;
+      state.preset = p.id;
+      render();
+    });
+  });
+
+  function localX(ev) {
+    var rect = canvas.getBoundingClientRect();
+    return ev.clientX - rect.left;
+  }
+  function setMassFromX(x) {
+    if (!geom) return;
+    var f = (x - geom.padL) / geom.plotW;
+    var m = LT.mFromXFrac(f);
+    m = Math.min(LT.M_MAX, Math.max(LT.M_MIN, m));
+    editing = false;
+    state.m = m;
+    state.preset = null;
+    render();
+  }
+  canvas.addEventListener("pointerdown", function (ev) {
+    if (canvas.setPointerCapture) canvas.setPointerCapture(ev.pointerId);
+    canvas.dataset.drag = "1";
+    setMassFromX(localX(ev));
+  });
+  canvas.addEventListener("pointermove", function (ev) {
+    if (canvas.dataset.drag !== "1") return;
+    setMassFromX(localX(ev));
+  });
+  function endDrag() { canvas.dataset.drag = ""; }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var factor = ev.shiftKey ? 1.35 : 1.08;
+    if (ev.key === "ArrowLeft") factor = 1 / factor;
+    var next = state.m * factor;
+    next = Math.min(LT.M_MAX, Math.max(LT.M_MIN, next));
+    editing = false;
+    state.m = next;
+    state.preset = null;
+    render();
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+
+  var helpBtn = document.getElementById("lt-help");
+  var helpDialog = document.getElementById("lt-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) {
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
