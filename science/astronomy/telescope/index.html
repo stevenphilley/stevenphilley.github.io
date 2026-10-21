@@ -1,0 +1,1152 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telescope optics — focal ratio, magnification, and the Airy disk — Steven Philley</title>
+<meta name="description" content="Interactive telescope-optics desk. Focal ratio is focal length over aperture. Magnification is telescope focal length over eyepiece focal length. Exit pupil is aperture over magnification. True field is the apparent field divided by magnification. Light grasp uses a 7 mm comparison pupil. Rayleigh is 1.22 λ/D. Dawes is 116/D mm and 4.56/D in. A classroom 200 mm f/6 at 25 mm is 48×, Rayleigh 0.692″ at 550 nm. Not a buying guide.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/telescope/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Telescope optics — focal ratio, magnification, and the Airy disk">
+<meta property="og:description" content="Aperture, eyepiece, and a Barlow. Focal ratio, magnification, exit pupil, true field, Rayleigh’s 1.22 λ/D, and Dawes’s limit. A classroom calculator, not a buying guide.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/telescope/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Telescope optics — focal ratio, magnification, and the Airy disk">
+<meta name="twitter:description" content="Focal ratio, magnification, exit pupil, Rayleigh’s 1.22 λ/D, and Dawes’s 116/D. Classroom 200 mm f/6 at 25 mm is 48×. Not a buying guide.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint + .hint{margin-top:12px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink,#e8e6e1);flex:0 0 auto}
+.swatch.eye{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.ray{border-top-color:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:9.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input:disabled{opacity:.4}
+.num,.unit{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;min-width:0}
+.num{width:16ch}
+.unit{width:8ch}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:4.5ch}
+.num:focus-visible,.unit:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.eye-toggle{display:flex;align-items:center;gap:10px;min-height:44px;margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;color:var(--ink-soft,#9b9a96);text-transform:none;letter-spacing:0}
+.eye-toggle input{width:22px;height:22px;accent-color:var(--accent,#c8b48a);flex:0 0 auto}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats li[hidden]{display:none}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/" aria-current="page">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Optics</p>
+  <h1>Telescope<br>optics</h1>
+  <p class="lede">What an aperture, a focal length, and an eyepiece actually decide. The <strong>focal ratio</strong> is focal length divided by aperture. <strong>Magnification</strong> is the telescope’s focal length divided by the eyepiece’s, and a Barlow multiplies that effective focal length. The <strong>exit pupil</strong> is the aperture divided by the magnification. <strong>True field</strong> is about the apparent field divided by the magnification. <strong>Light grasp</strong> is the area ratio against a 7&nbsp;mm comparison pupil. <strong>Rayleigh’s criterion</strong> is 1.22&nbsp;λ/D. <strong>Dawes’s limit</strong> is the empirical 116/D millimetre form, shown beside 4.56/D in inches. How faint a star looks is the <a href="/science/astronomy/magnitude/">magnitude</a> desk. How wide something looks is <a href="/science/astronomy/angular-size/">angular size</a>. What the horizon puts overhead is the <a href="/science/astronomy/local-sky/">local sky</a>. Why the naked-eye limit moves is <a href="/science/light-pollution/">light pollution</a>.</p>
+  <p class="note-schematic">Simplified optics for a classroom. Not a buying guide. A real view depends on seeing, collimation, optical quality, coatings, a central obstruction this page ignores, the observer, and the sky. Rayleigh’s 1.22&nbsp;λ/D is a diffraction criterion for two equal point sources and a filled circular aperture. Dawes’s limit is an empirical visual rule for close, similar doubles, not a guarantee. The limiting-magnitude lines are approximations. Hubble and JWST are not eyepiece telescopes.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Aperture and eyepiece</span>
+    <button type="button" class="help-q" id="tel-help" aria-haspopup="dialog" aria-controls="tel-help-dialog" aria-expanded="false" aria-label="How this telescope desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="airy-hint">Two equal Airy disks · separation wider than Rayleigh looks split</p>
+      <canvas id="airy" width="880" height="320" tabindex="0" role="img" aria-label="Two equal point sources and the sum of their Airy patterns. The default classroom telescope is a 200 millimetre f/6 with a 25 millimetre eyepiece."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> Sum of two Airy patterns</li>
+        <li><span class="swatch ray" aria-hidden="true"></span> 1.22 λ/D from a core</li>
+      </ul>
+      <p class="hint" id="pupil-hint">Exit pupil beside a 7 mm comparison pupil</p>
+      <canvas id="pupil" width="880" height="180" tabindex="0" role="img" aria-label="Exit pupil compared with a 7 millimetre pupil."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> Exit pupil</li>
+        <li><span class="swatch eye" aria-hidden="true"></span> 7 mm comparison pupil</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Instruments</p>
+        <div class="presets" id="instrument-presets" role="group" aria-label="Instrument presets">
+          <button type="button" data-preset="bino-7x50" aria-pressed="false">7×50 classroom</button>
+          <button type="button" data-preset="refractor-80" aria-pressed="false">80 mm classroom</button>
+          <button type="button" data-preset="dob-200" aria-pressed="true">200 mm f/6 classroom</button>
+          <button type="button" data-preset="hubble" aria-pressed="false">Hubble 2.4 m</button>
+          <button type="button" data-preset="jwst" aria-pressed="false">JWST 6.5 m</button>
+        </div>
+        <p class="pick-label">Naked-eye limit of the sky</p>
+        <div class="presets" id="sky-presets" role="group" aria-label="Naked-eye limiting magnitude">
+          <button type="button" data-sky="6.5" aria-pressed="false">Ideal, faint end 6.5</button>
+          <button type="button" data-sky="6" aria-pressed="true">Ideal, bright end 6.0</button>
+          <button type="button" data-sky="4" aria-pressed="false">Inner city 4.0</button>
+        </div>
+        <p class="pick-label">Separation in the drawing</p>
+        <div class="presets" id="sep-presets" role="group" aria-label="Double-star separation">
+          <button type="button" data-sep="albireo" aria-pressed="false">Albireo 34.70″</button>
+          <button type="button" data-sep="rayleigh" aria-pressed="false">At Rayleigh</button>
+          <button type="button" data-sep="dawes" aria-pressed="false">At Dawes, 116/D</button>
+        </div>
+        <div class="slider-row">
+          <label for="ap-slider">Aperture</label>
+          <input id="ap-slider" type="range" min="0" max="1000" value="500" aria-valuemin="20" aria-valuemax="8000" aria-valuetext="200 mm">
+          <input id="ap-num" class="num" type="text" inputmode="decimal" value="200" aria-label="Aperture" aria-describedby="ap-err">
+          <select id="ap-unit" class="unit" aria-label="Aperture unit">
+            <option value="mm" selected>mm</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+        <p class="field-error" id="ap-err" hidden>Enter an aperture greater than zero.</p>
+        <div class="slider-row">
+          <label for="fl-slider">Focal length</label>
+          <input id="fl-slider" type="range" min="0" max="1000" value="500" aria-valuemin="50" aria-valuemax="150000" aria-valuetext="1200 mm">
+          <input id="fl-num" class="num" type="text" inputmode="decimal" value="1200" aria-label="Telescope focal length" aria-describedby="fl-err">
+          <select id="fl-unit" class="unit" aria-label="Focal length unit">
+            <option value="mm" selected>mm</option>
+            <option value="in">in</option>
+          </select>
+        </div>
+        <p class="field-error" id="fl-err" hidden>Enter a focal length greater than zero.</p>
+        <label class="eye-toggle"><input id="no-eye" type="checkbox"> No eyepiece — aperture and focal length only</label>
+        <div class="slider-row">
+          <label for="eye-slider">Eyepiece</label>
+          <input id="eye-slider" type="range" min="4" max="56" step="0.5" value="25" aria-valuetext="25 mm">
+          <input id="eye-num" class="num" type="text" inputmode="decimal" value="25" aria-label="Eyepiece focal length in millimetres" aria-describedby="eye-err">
+          <span class="unit-tag">mm</span>
+        </div>
+        <p class="field-error" id="eye-err" hidden>Enter an eyepiece focal length greater than zero.</p>
+        <div class="slider-row">
+          <label for="afov-slider">Apparent field</label>
+          <input id="afov-slider" type="range" min="30" max="110" step="1" value="50" aria-valuetext="50 degrees">
+          <input id="afov-num" class="num" type="text" inputmode="decimal" value="50" aria-label="Eyepiece apparent field in degrees" aria-describedby="afov-err">
+          <span class="unit-tag">deg</span>
+        </div>
+        <p class="field-error" id="afov-err" hidden>Enter an apparent field greater than zero.</p>
+        <div class="slider-row">
+          <label for="bar-slider">Barlow</label>
+          <input id="bar-slider" type="range" min="1" max="5" step="0.1" value="1" aria-valuetext="1 times">
+          <input id="bar-num" class="num" type="text" inputmode="decimal" value="1" aria-label="Barlow factor" aria-describedby="bar-err">
+          <span class="unit-tag">×</span>
+        </div>
+        <p class="field-error" id="bar-err" hidden>Enter a Barlow factor greater than zero.</p>
+        <div class="slider-row">
+          <label for="lam-slider">Wavelength</label>
+          <input id="lam-slider" type="range" min="0" max="800" value="400" aria-valuemin="350" aria-valuemax="5000" aria-valuetext="550 nm">
+          <input id="lam-num" class="num" type="text" inputmode="decimal" value="550" aria-label="Wavelength in nanometres" aria-describedby="lam-err">
+          <span class="unit-tag">nm</span>
+        </div>
+        <p class="field-error" id="lam-err" hidden>Enter a wavelength greater than zero.</p>
+        <div class="slider-row">
+          <label for="nelm-slider">Naked-eye limit</label>
+          <input id="nelm-slider" type="range" min="2" max="7.5" step="0.1" value="6" aria-valuetext="magnitude 6.0">
+          <input id="nelm-num" class="num" type="text" inputmode="decimal" value="6" aria-label="Naked-eye limiting magnitude" aria-describedby="nelm-err">
+          <span class="unit-tag">mag</span>
+        </div>
+        <p class="field-error" id="nelm-err" hidden>Enter a naked-eye limiting magnitude.</p>
+        <div class="slider-row">
+          <label for="sep-slider">Separation</label>
+          <input id="sep-slider" type="range" min="0" max="800" value="400" aria-valuemin="0.05" aria-valuemax="60" aria-valuetext="1 arcsecond">
+          <input id="sep-num" class="num" type="text" inputmode="decimal" value="1" aria-label="Star separation in arcseconds" aria-describedby="sep-err">
+          <span class="unit-tag">″</span>
+        </div>
+        <p class="field-error" id="sep-err" hidden>Enter a separation greater than zero.</p>
+      </div>
+    </div>
+    <aside class="detail">
+      <p class="tier" id="tier">Classroom · not a catalog model</p>
+      <h2 id="info-name">200 mm f/6</h2>
+      <p class="range" id="info-range" aria-live="polite">48× · exit pupil 4.17 mm · Rayleigh 0.692″</p>
+      <ul class="stats">
+        <li id="row-fr"><span class="k">Focal ratio</span><span class="v" id="v-fr">f/6</span></li>
+        <li id="row-mag"><span class="k">Magnification</span><span class="v" id="v-mag">48×</span></li>
+        <li id="row-exit"><span class="k">Exit pupil</span><span class="v" id="v-exit">4.17 mm</span></li>
+        <li id="row-field"><span class="k">True field, approx.</span><span class="v" id="v-field">1.042° · 62.5′</span></li>
+        <li id="row-ppi"><span class="k">Power per inch</span><span class="v" id="v-ppi">6.1× per inch</span></li>
+        <li id="row-grasp"><span class="k">Light grasp vs 7 mm</span><span class="v" id="v-grasp">816×</span></li>
+        <li id="row-clear" hidden><span class="k">Clear aperture vs 7 mm</span><span class="v" id="v-clear">—</span></li>
+        <li id="row-ray"><span class="k">Rayleigh, 1.22 λ/D</span><span class="v" id="v-ray">0.692″</span></li>
+        <li id="row-dawes"><span class="k">Dawes, 116/D and 4.56/D</span><span class="v" id="v-dawes">0.580″ · 0.579″</span></li>
+        <li id="row-rules"><span class="k">Rules of thumb</span><span class="v" id="v-rules">28.57× to 400×</span></li>
+        <li id="row-area"><span class="k">Limit, area only</span><span class="v" id="v-area">13.28</span></li>
+        <li id="row-bowen"><span class="k">Limit, Bowen 1947</span><span class="v" id="v-bowen">12.94</span></li>
+      </ul>
+      <p class="why" id="why-main"></p>
+      <p class="why" id="why-res"></p>
+      <p class="why" id="why-lim"></p>
+    </aside>
+  </div>
+
+  <div class="myth">
+    <p class="tag">Read this before the numbers</p>
+    <h2>Not a buying guide</h2>
+    <p>The arithmetic above is idealised. It assumes a filled circular aperture, perfect optics, no central obstruction, no coating losses, and two equal point sources. A Newtonian or a Cassegrain has a secondary in the beam. Seeing, collimation, and the observer move the real limit by more than the difference between Rayleigh and Dawes. The 50×-per-inch line and the 30×-per-inch line are rules of thumb. Tele Vue prints the 50×-per-inch claim as a myth in the sense that it is not a hard ceiling: a small refractor can look pleasant at higher power and still show no extra detail, and a large aperture often stops sooner because of the air.</p>
+    <p>The area limiting magnitude only counts photons the aperture collects, then adds that gain to the naked-eye limit you typed. It does not get fainter as you magnify, once the exit pupil fits in the eye. Magnification can still help by darkening the sky background. Bowen’s 1947 formula is the published line that includes magnification. Its constant is 6.5, from his dark-sky observations, not the sky you typed. Schaefer’s 1990 paper is why neither line is a prediction: sky brightness, magnification, throughput, age, and the observer all move the limit, and his own test set scattered by about three quarters of a magnitude. Real limits vary with seeing, observer, and optics.</p>
+  </div>
+
+  <p class="band">Words</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Focal ratio</dt><dd>Focal length divided by the clear aperture, in the same units. An f/6 mirror of 200&nbsp;mm has a 1,200&nbsp;mm focal length. A Barlow raises the effective focal ratio by its factor. The objective’s own ratio does not change.</dd></div>
+    <div class="gloss"><dt>Magnification</dt><dd>Telescope focal length divided by eyepiece focal length. A Barlow multiplies the effective focal length, so it multiplies the magnification. It does not add detail the aperture did not already collect.</dd></div>
+    <div class="gloss"><dt>Exit pupil</dt><dd>The little disk of light behind the eyepiece. Aperture divided by magnification, which is the same as eyepiece focal length divided by the effective focal ratio. If it is larger than the eye’s pupil, some of the beam misses the eye.</dd></div>
+    <div class="gloss"><dt>True field</dt><dd>The patch of sky in the eyepiece. Apparent field divided by magnification is the rough estimate. Tele Vue notes that eyepieces do not magnify evenly across the field, so a field-stop measurement is tighter. This desk has no field stop, so it uses the approximation and labels it.</dd></div>
+    <div class="gloss"><dt>Light grasp</dt><dd>Collecting area of the aperture divided by the collecting area of a 7&nbsp;mm comparison pupil. The 7&nbsp;mm figure is the traditional maximum Sky &amp; Telescope quotes, not a measurement of your eye. Real dark-adapted pupils run from nearly 9&nbsp;mm to under 4&nbsp;mm and shrink with age.</dd></div>
+    <div class="gloss"><dt>Airy disk</dt><dd>The diffraction pattern of a point source through a circular aperture. The bright core is surrounded by a dark ring at the first zero of the Bessel function J<sub>1</sub>. The drawing sums two of those patterns.</dd></div>
+    <div class="gloss gloss-wide"><dt>Rayleigh and Dawes</dt><dd>Rayleigh’s criterion puts the peak of one equal point source on the first dark ring of the other: 1.22&nbsp;λ/D, the conventional rounding of (the first zero of J<sub>1</sub>) / π. Dawes’s limit is empirical, from double-star measures, printed by Tele Vue as 4.56 arcseconds per inch of aperture. The millimetre form 116/D is that rule after multiplying by the international inch, 25.4&nbsp;mm, and rounding 115.824 to 116. Dawes does not depend on wavelength. The two printed limits meet near 461&nbsp;nm. That wavelength is computed on this page. It is not a number from Dawes.</dd></div>
+    <div class="gloss gloss-wide"><dt>Limiting magnitude</dt><dd>The area estimate is your naked-eye limit plus 5&nbsp;log<sub>10</sub> of the aperture ratio, the same magnitude rule as the magnitude desk (a factor of 100 is five magnitudes). If the exit pupil is larger than 7&nbsp;mm, only the light that fits the comparison pupil is counted. Bowen’s formula, m = 6.5 + 2.5&nbsp;log&nbsp;D + 2.5&nbsp;log&nbsp;M with D in inches, adds a magnification term and assumes his dark sky. He stated it for exit pupils from about 0.3&nbsp;inch down to about 0.03&nbsp;inch. Outside that range this page still shows the number and says so.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://skyandtelescope.org/stargazing-and-observing/stargazers-corner/simple-formulas-for-the-telescope-owner/" rel="noopener" target="_blank">Chuck Hawks, Sky &amp; Telescope — Simple formulas for the telescope owner</a> — Magnification is telescope focal length over eyepiece focal length. Focal ratio is focal length over clear aperture. True field, the easy way, is apparent field over magnification. Exit pupil is aperture over magnification, or eyepiece focal length over focal ratio. A dark-adapted pupil is “about 7mm.” He treats 50× per inch as the ceiling in excellent seeing and about 30× per inch as his average-seeing maximum. His inch is “approximately 25mm.” This desk converts with the international inch, exactly 25.4&nbsp;mm.</li>
+      <li><a href="https://www.televue.com/engine/TV3b_page.asp?id=86" rel="noopener" target="_blank">Tele Vue — Telescope formulas, and common myths</a> — The same definitions, plus Dawes’s limit as 4.56 arcseconds over the aperture in inches, and aperture gain as (objective diameter / eye pupil diameter) squared. Myth 5: 50× per inch is not a law. Myth 1: a 7&nbsp;mm exit pupil is not a universal lowest useful magnification, especially on a refractor. Myth 6: a Barlow raises the effective f/number.</li>
+      <li><a href="https://www.televue.com/engine/TV3b_page.asp?id=102" rel="noopener" target="_blank">Tele Vue — Choosing your telescope’s magnification</a> — “A rough approximation to the true field is obtained by dividing the apparent field of the eyepiece by the magnification.” Rough, because magnification is not constant across the field. The field-stop formula is the tighter one. This desk does not have a field stop.</li>
+      <li><a href="https://skyandtelescope.org/astronomy-equipment/a-pupil-primer/" rel="noopener" target="_blank">Sky &amp; Telescope — A pupil primer</a> — Exit pupil equals aperture divided by magnifying power. The traditional line is that the pupil “dilates to a maximum diameter of 7 millimeters.” The same article says some eyes reach nearly 9&nbsp;mm, some do not reach 4&nbsp;mm, and the maximum declines with age. The lowest power that uses the whole aperture is aperture divided by your pupil.</li>
+      <li><a href="https://skyandtelescope.org/observing/telescope-calculator/" rel="noopener" target="_blank">Sky &amp; Telescope — Telescope calculator</a> — “As a rule of thumb, a telescope’s maximum useful magnification is 50 times its aperture in inches (or twice its aperture in millimeters).” The exit-pupil note on that page also uses 7&nbsp;mm as the average adult dark-adapted pupil.</li>
+      <li><a href="http://hyperphysics.phy-astr.gsu.edu/hbase/phyopt/raylei.html" rel="noopener" target="_blank">HyperPhysics — Rayleigh criterion</a> — For a circular aperture the criterion is θ = 1.22&nbsp;λ/D, the angle that puts one source’s maximum on the other’s first minimum. The 1.22 is the conventional rounding. This page also computes (first positive zero of J<sub>1</sub>) / π.</li>
+      <li><a href="https://doi.org/10.1093/mnras/27.6.217" rel="noopener" target="_blank">Dawes, W. R. 1867, Monthly Notices of the Royal Astronomical Society, 27, 217</a> — Catalogue of micrometrical measurements of double stars. The empirical separating power associated with Dawes is the historical source of the limit. The arithmetic forms used here are the later printings: 4.56/D in inches (Tele Vue; also Sky &amp; Telescope’s statement of the rule) and 116/D in millimetres, the rounding of 4.56 × 25.4.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1867MmRAS..35..137D/abstract" rel="noopener" target="_blank">Dawes, W. R. 1867, Memoirs of the Royal Astronomical Society, 35, 137</a> — The Memoirs printing of the same double-star catalogue. Bibcode 1867MmRAS..35..137D.</li>
+      <li><a href="https://doi.org/10.1086/125960" rel="noopener" target="_blank">Bowen, I. S. 1947, Publications of the Astronomical Society of the Pacific, 59, 253 — Limiting visual magnitude</a> — m = 6.5 + 5&nbsp;log&nbsp;D − 2.5&nbsp;log&nbsp;E, equivalently m = 6.5 + 2.5&nbsp;log&nbsp;D + 2.5&nbsp;log&nbsp;M, with D and the exit pupil E in inches. He found it held, on clear moonless nights away from city lights, for exit pupils from about the dark-adapted eye (he used about 0.3&nbsp;inch) down to about 0.03&nbsp;inch.</li>
+      <li><a href="https://doi.org/10.1086/132629" rel="noopener" target="_blank">Schaefer, B. E. 1990, Publications of the Astronomical Society of the Pacific, 102, 212 — Telescopic limiting magnitudes</a> — Formulas of the shape constant + 5&nbsp;log&nbsp;D leave out magnification and sky brightness. His physiological formula was tested on 314 observations. The scatter was large: a half-width of about 0.75 magnitude. This desk does not implement that full algorithm. It cites the paper as the reason the two simpler lines are approximations.</li>
+      <li><a href="https://www.nist.gov/pml/special-publication-811/nist-guide-si-appendix-b-conversion-factors/nist-guide-si-appendix-b9" rel="noopener" target="_blank">NIST Guide to the SI, SP 811, Appendix B.9</a> — The international inch is exactly 25.4 millimetres. Apertures typed in inches use that factor. Dawes’s 4.56 × 25.4 = 115.824, which the 116/D form rounds.</li>
+      <li><a href="http://www.cvrl.org/" rel="noopener" target="_blank">Colour &amp; Vision Research Laboratory — CIE luminous-efficiency tables</a> — The CIE 1931 photopic V(λ) peaks at 555&nbsp;nm. The CIE 1951 scotopic V′(λ) peaks at 507&nbsp;nm. This desk’s default wavelength is 550&nbsp;nm, five nanometres short of the photopic peak, a round visual-band choice. It is not a measured constant, and it is not the scotopic peak.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/ask_astro/night_sky.html" rel="noopener" target="_blank">NASA GSFC Imagine the Universe — night-sky answers</a> — Under ideal conditions the average person should see stars as faint as magnitude 6.0 to 6.5. The sky buttons use those two edges. They are not a measurement of a particular night.</li>
+      <li><a href="https://skyandtelescope.org/get-involved/saving-dark-skies/how-dark-is-your-night-sky/" rel="noopener" target="_blank">Sky &amp; Telescope — How dark is your night sky?</a> — Bortle class 9, an inner-city sky, has a limiting magnitude of 4.0 or less. The inner-city button uses 4.0 and is marked approximate. The idea of that limit is the <a href="/science/light-pollution/">light-pollution</a> desk. The scale itself is the <a href="/science/astronomy/magnitude/">magnitude</a> desk.</li>
+      <li><a href="https://hst-docs.stsci.edu/hsp/the-hubble-space-telescope-primer-for-cycle-34/hst-primer-optical-performance-guiding-performance-and-observing-efficiency" rel="noopener" target="_blank">STScI — Hubble primer, optical performance</a> — Ritchey–Chrétien. Aperture 2.4&nbsp;m. Focal ratio f/24. PSF FWHM at 5000&nbsp;Å is 0.043 arcsec, their figure, not this desk’s Rayleigh angle. The preset focal length is 24 × 2.4&nbsp;m = 57.6&nbsp;m. Wavelength is set to 500&nbsp;nm for that line.</li>
+      <li><a href="https://science.nasa.gov/mission/hubble/overview/about-hubble/" rel="noopener" target="_blank">NASA Science — About Hubble</a> — Primary mirror diameter 94.5 inches (2.4&nbsp;m). 94.5 inches is the rounded companion of 2.4&nbsp;m at 25.4&nbsp;mm per inch (2.4 / 0.0254 = 94.49).</li>
+      <li><a href="https://science.nasa.gov/mission/hubble/overview/hubble-by-the-numbers/" rel="noopener" target="_blank">NASA Science — Hubble by the numbers</a> — Focal length printed as 189 feet (56.7&nbsp;m). The same page says the primary collects 40,000 times as much light as the human eye. This desk’s (2.4&nbsp;m / 7&nbsp;mm)² is a different comparison. Both numbers are shown. They are not the same claim.</li>
+      <li><a href="https://science.nasa.gov/mission/webb/fact-sheet/" rel="noopener" target="_blank">NASA Science — James Webb Space Telescope fact sheet</a> — Primary diameter about 6.5&nbsp;m. Focal length 131.4&nbsp;m. Clear aperture 25&nbsp;m². Coverage 0.6–28.5&nbsp;μm. Optical resolution about 0.1 arcsec, their figure. The preset uses 6.5&nbsp;m, 131.4&nbsp;m, and 600&nbsp;nm, the short edge of that coverage. The clear-aperture line uses 25&nbsp;m².</li>
+      <li><a href="https://jwst-docs.stsci.edu/jwst-observatory-hardware/jwst-telescope" rel="noopener" target="_blank">STScI — JWST telescope</a> — Effective focal ratio f/20. Effective focal length 131.4&nbsp;m. Eighteen hexagonal segments acting as a mirror about 6.5&nbsp;m across. Unobscured collecting area 25.4&nbsp;m². The preset does not substitute 25.4 for the fact sheet’s 25, and it does not force the focal ratio to 20. Dividing the two fact-sheet numbers is this page’s f/20.22.</li>
+      <li><a href="https://doi.org/10.1086/323920" rel="noopener" target="_blank">Mason, Wycoff, Hartkopf, Douglass, and Worley 2001, Astronomical Journal, 122, 3466</a> — The Washington Double Star Catalog. <a href="https://vizier.cds.unistra.fr/viz-bin/VizieR-3?-source=B/wds/wds&amp;WDS=19307%2B2758" rel="noopener" target="_blank">VizieR B/wds</a>, WDS 19307+2758, component STFA&nbsp;43 AB: the later separation on the row consulted for this page is 34.70 arcsec (Obs2 year 2024), with magnitudes 3.190 and 4.68. A catalog row can move when the catalog is updated. The drawing puts two equal points at 34.70″. It does not paint those magnitudes. Rayleigh’s criterion assumes equal points, and this pair is not equal.</li>
+      <li><a href="https://skyandtelescope.org/stargazing-and-observing/will-the-real-albireo-please-stand-up/" rel="noopener" target="_blank">Bob King, Sky &amp; Telescope — Will the real Albireo please stand up?</a> — The familiar pair described as 34″ apart. That is the round figure. The button uses the catalog’s 34.70″.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of an ideal telescope. The 200&nbsp;mm, 1,200&nbsp;mm, 25&nbsp;mm, 50° example is f/6, 48×, exit pupil 4.17&nbsp;mm, true field 1.042° (62.5′), light grasp 816× against a 7&nbsp;mm pupil, Rayleigh 0.692″ at 550&nbsp;nm, Dawes 0.580″ by 116/D and 0.579″ by 4.56/D. The area estimate at naked-eye magnitude 6.0 is 13.28. Bowen’s formula gives 12.94, and the exit pupil is inside the range he stated. Those figures are computed from the formulas on this page. The 7×50, 80&nbsp;mm, and 200&nbsp;mm sets are round classroom numbers, not catalog models. Hubble and JWST use the cited apertures and focal lengths and have no eyepiece. Not a buying guide. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/angular-size/"><p class="n">The angle</p><h3>Angular size</h3><p>δ = 2·arctan(d / 2D). A telescope’s true field is an angle of that same kind. This desk only estimates the field from the eyepiece.</p></a>
+    <a href="/science/astronomy/magnitude/"><p class="n">The scale</p><h3>Magnitude</h3><p>Five magnitudes is a factor of 100. The limiting-magnitude lines here are that scale applied to an aperture, with the caveats above.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>What the horizon puts overhead. This desk does not point the telescope.</p></a>
+    <a href="/science/light-pollution/"><p class="n">Night</p><h3>Light pollution</h3><p>Why the naked-eye limit you type is brighter in town than the ideal 6.0 to 6.5.</p></a>
+    <a href="/science/astronomy/blackbody/"><p class="n">The wavelength</p><h3>Blackbody</h3><p>Where a thermal spectrum peaks. Rayleigh’s angle moves with the wavelength you type.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The sky the aperture is aimed at. Still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="tel-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="tel-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tel-help-title">Telescope desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. Ideal optics, a filled circular aperture, no obstruction, no atmosphere. Not a buying guide and not a prediction of what you will see.</p>
+    <h3>Fields</h3>
+    <table>
+      <caption>Fields</caption>
+      <tbody>
+        <tr><th scope="row">Aperture</th><td>Clear aperture. Millimetres or inches. An inch is exactly 25.4&nbsp;mm. The slider runs from 20&nbsp;mm to 8&nbsp;m. The number field accepts a wider span, including Hubble and JWST.</td></tr>
+        <tr><th scope="row">Focal length</th><td>The telescope’s focal length, same unit choice. Focal ratio is this divided by the aperture. A Barlow does not change the number you type. It changes the effective focal length used for magnification.</td></tr>
+        <tr><th scope="row">No eyepiece</th><td>Turns off magnification, exit pupil, true field, the magnification rules of thumb, and both visual limiting-magnitude lines. Hubble and JWST select this. Resolution and light grasp remain.</td></tr>
+        <tr><th scope="row">Eyepiece</th><td>Focal length in millimetres. Magnification is telescope focal length times the Barlow factor, divided by this.</td></tr>
+        <tr><th scope="row">Apparent field</th><td>The eyepiece’s apparent field, in degrees. True field is this divided by magnification. That is the rough approximation.</td></tr>
+        <tr><th scope="row">Barlow</th><td>A factor of 2 doubles the effective focal length, the magnification, and the effective focal ratio, and it halves the exit pupil and the true field. 1 means no Barlow. A factor below 1 is a reducer, same arithmetic.</td></tr>
+        <tr><th scope="row">Wavelength</th><td>Used only by Rayleigh’s criterion and the Airy drawing. Default 550&nbsp;nm, near the CIE photopic peak at 555&nbsp;nm. Night vision peaks nearer 507&nbsp;nm. Dawes’s limit does not use this field.</td></tr>
+        <tr><th scope="row">Naked-eye limit</th><td>The faintest star you can see without the telescope, typed by you. Ideal-sky buttons are NASA’s 6.0 and 6.5. Inner city is Sky &amp; Telescope’s Bortle class 9 figure, 4.0 or less, entered as 4.0. The light-pollution desk is the essay. This number feeds only the area limiting-magnitude line.</td></tr>
+        <tr><th scope="row">Separation</th><td>Angular separation of the two equal points in the drawing. Albireo sets 34.70″ from the Washington Double Star Catalog row cited on the page. “At Rayleigh” and “At Dawes” set the separation to the limit just computed for the current aperture.</td></tr>
+      </tbody>
+    </table>
+    <h3>Presets</h3>
+    <table>
+      <caption>Presets</caption>
+      <tbody>
+        <tr><th scope="row">7×50, 80 mm, 200 mm</th><td>Round classroom numbers, not products. 50&nbsp;mm and 175&nbsp;mm with a 25&nbsp;mm eyepiece is 7×. 80&nbsp;mm and 560&nbsp;mm with a 20&nbsp;mm eyepiece is f/7 and 28×. 200&nbsp;mm and 1,200&nbsp;mm with a 25&nbsp;mm eyepiece is f/6 and 48×. The 50° apparent field is Hawks’s round Plössl example, typed in, not a measurement.</td></tr>
+        <tr><th scope="row">Hubble</th><td>2.4&nbsp;m and f/24 from the STScI primer, so 57.6&nbsp;m. Wavelength 500&nbsp;nm. No eyepiece. NASA’s 189 feet (56.7&nbsp;m), the 40,000× light comparison, and the 0.043″ FWHM are quoted beside the computed lines. They are not pasted into the formulas.</td></tr>
+        <tr><th scope="row">JWST</th><td>Fact-sheet 6.5&nbsp;m and 131.4&nbsp;m. Wavelength 600&nbsp;nm, the short edge of 0.6–28.5&nbsp;μm. An extra line uses the fact-sheet clear aperture, 25&nbsp;m². The mirror is segmented. Rayleigh here still assumes a filled circle of the fact-sheet diameter.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Sliders</th><td>Arrow keys nudge the focused slider. The number field is where a cited figure is typed exactly. A fact-sheet value can sit off the slider step. The field keeps it.</td></tr>
+        <tr><th scope="row">Presets</th><td>Enter or Space selects. Left and Right step through that group. The pressed button is aria-pressed.</td></tr>
+        <tr><th scope="row">Touch</th><td>Buttons, the question mark, Close, the fields, and the unit menus are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/telescope/telescope.js"></script>
+<script>
+(function(){
+  "use strict";
+  var T = window.Telescope;
+  if (!T) return;
+  var root = document.documentElement;
+  var airy = document.getElementById("airy");
+  var pupil = document.getElementById("pupil");
+  var apSlider = document.getElementById("ap-slider");
+  var apNum = document.getElementById("ap-num");
+  var apUnit = document.getElementById("ap-unit");
+  var flSlider = document.getElementById("fl-slider");
+  var flNum = document.getElementById("fl-num");
+  var flUnit = document.getElementById("fl-unit");
+  var eyeSlider = document.getElementById("eye-slider");
+  var eyeNum = document.getElementById("eye-num");
+  var afovSlider = document.getElementById("afov-slider");
+  var afovNum = document.getElementById("afov-num");
+  var barSlider = document.getElementById("bar-slider");
+  var barNum = document.getElementById("bar-num");
+  var lamSlider = document.getElementById("lam-slider");
+  var lamNum = document.getElementById("lam-num");
+  var nelmSlider = document.getElementById("nelm-slider");
+  var nelmNum = document.getElementById("nelm-num");
+  var sepSlider = document.getElementById("sep-slider");
+  var sepNum = document.getElementById("sep-num");
+  var noEye = document.getElementById("no-eye");
+  var instrumentBtns = [].slice.call(document.querySelectorAll("[data-preset]"));
+  var skyBtns = [].slice.call(document.querySelectorAll("[data-sky]"));
+  var sepBtns = [].slice.call(document.querySelectorAll("[data-sep]"));
+  var instrumentIds = ["bino-7x50", "refractor-80", "dob-200", "hubble", "jwst"];
+
+  var AP_MIN = 20, AP_MAX = 8000, AP_STEPS = 1000;
+  var FL_MIN = 50, FL_MAX = 150000, FL_STEPS = 1000;
+  var LAM_MIN = 350, LAM_MAX = 5000, LAM_STEPS = 800;
+  var SEP_MIN = 0.05, SEP_MAX = 60, SEP_STEPS = 800;
+
+  var state = {
+    apertureMm: 200,
+    focalMm: 1200,
+    eyeMm: 25,
+    afov: 50,
+    barlow: 1,
+    lambdaNm: 550,
+    nelm: 6,
+    sepArcsec: 1,
+    eyepiece: true,
+    apUnit: "mm",
+    flUnit: "mm",
+    preset: "dob-200",
+    sky: "6",
+    sepMode: ""
+  };
+  var result = null;
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function logPos(value, min, max, steps){
+    var v = Math.min(max, Math.max(min, value));
+    var t = Math.log(v / min) / Math.log(max / min);
+    if (!isFinite(t)) t = 0;
+    return Math.round(Math.min(1, Math.max(0, t)) * steps);
+  }
+  function logVal(pos, min, max, steps){
+    var t = Number(pos) / steps;
+    return min * Math.pow(max / min, t);
+  }
+  function parseNum(el){
+    var raw = String(el.value).trim().replace(",", ".");
+    if (raw === "" || raw === "-" || raw === "." || raw === "-.") return null;
+    var n = Number(raw);
+    if (!isFinite(n)) return null;
+    return n;
+  }
+  function showErr(id, on){
+    var el = document.getElementById(id);
+    if (el) el.hidden = !on;
+  }
+  function setPressed(buttons, attr, value){
+    buttons.forEach(function(b){
+      b.setAttribute("aria-pressed", String(b.getAttribute(attr) === value));
+    });
+  }
+  function text(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fitCanvas(el, cssH){
+    var cssW = el.clientWidth || el.parentElement.clientWidth || 640;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (el.width !== pw || el.height !== ph){
+      el.width = pw;
+      el.height = ph;
+    }
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function eyeFields(){
+    var off = !state.eyepiece;
+    eyeSlider.disabled = off;
+    eyeNum.disabled = off;
+    afovSlider.disabled = off;
+    afovNum.disabled = off;
+    barSlider.disabled = off;
+    barNum.disabled = off;
+    noEye.checked = off;
+  }
+  function syncSliders(){
+    apSlider.value = String(logPos(state.apertureMm, AP_MIN, AP_MAX, AP_STEPS));
+    apSlider.setAttribute("aria-valuetext", T.formatMm(state.apertureMm));
+    flSlider.value = String(logPos(state.focalMm, FL_MIN, FL_MAX, FL_STEPS));
+    flSlider.setAttribute("aria-valuetext", T.formatMm(state.focalMm));
+    var eye = Math.min(56, Math.max(4, state.eyeMm));
+    eyeSlider.value = String(eye);
+    eyeSlider.setAttribute("aria-valuetext", T.formatMm(state.eyeMm));
+    afovSlider.value = String(Math.min(110, Math.max(30, state.afov)));
+    afovSlider.setAttribute("aria-valuetext", state.afov + " degrees");
+    barSlider.value = String(Math.min(5, Math.max(1, state.barlow)));
+    barSlider.setAttribute("aria-valuetext", state.barlow + " times");
+    lamSlider.value = String(logPos(state.lambdaNm, LAM_MIN, LAM_MAX, LAM_STEPS));
+    lamSlider.setAttribute("aria-valuetext", T.formatNm(state.lambdaNm));
+    nelmSlider.value = String(Math.min(7.5, Math.max(2, state.nelm)));
+    nelmSlider.setAttribute("aria-valuetext", "magnitude " + state.nelm);
+    sepSlider.value = String(logPos(state.sepArcsec, SEP_MIN, SEP_MAX, SEP_STEPS));
+    sepSlider.setAttribute("aria-valuetext", T.formatArcsec(state.sepArcsec));
+  }
+  function syncNumbers(force){
+    if (force || document.activeElement !== apNum) apNum.value = T.inputString(state.apertureMm, state.apUnit);
+    if (force || document.activeElement !== flNum) flNum.value = T.inputString(state.focalMm, state.flUnit);
+    if (force || document.activeElement !== eyeNum) eyeNum.value = trimPlain(state.eyeMm);
+    if (force || document.activeElement !== afovNum) afovNum.value = trimPlain(state.afov);
+    if (force || document.activeElement !== barNum) barNum.value = trimPlain(state.barlow);
+    if (force || document.activeElement !== lamNum) lamNum.value = trimPlain(state.lambdaNm);
+    if (force || document.activeElement !== nelmNum) nelmNum.value = trimPlain(state.nelm);
+    if (force || document.activeElement !== sepNum) sepNum.value = trimPlain(state.sepArcsec);
+    apUnit.value = state.apUnit;
+    flUnit.value = state.flUnit;
+  }
+  function trimPlain(v){
+    if (Math.abs(v - Math.round(v)) < 1e-6) return String(Math.round(v));
+    var t = Number(v).toFixed(4);
+    return t.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function readSpec(){
+    var errs = {
+      ap: !(state.apertureMm > 0),
+      fl: !(state.focalMm > 0),
+      eye: state.eyepiece && !(state.eyeMm > 0),
+      afov: state.eyepiece && !(state.afov > 0),
+      bar: state.eyepiece && !(state.barlow > 0),
+      lam: !(state.lambdaNm > 0),
+      nelm: !isFinite(state.nelm),
+      sep: !(state.sepArcsec > 0)
+    };
+    showErr("ap-err", errs.ap);
+    showErr("fl-err", errs.fl);
+    showErr("eye-err", errs.eye);
+    showErr("afov-err", errs.afov);
+    showErr("bar-err", errs.bar);
+    showErr("lam-err", errs.lam);
+    showErr("nelm-err", errs.nelm);
+    showErr("sep-err", errs.sep);
+    apNum.setAttribute("aria-invalid", String(errs.ap));
+    flNum.setAttribute("aria-invalid", String(errs.fl));
+    eyeNum.setAttribute("aria-invalid", String(errs.eye));
+    afovNum.setAttribute("aria-invalid", String(errs.afov));
+    barNum.setAttribute("aria-invalid", String(errs.bar));
+    lamNum.setAttribute("aria-invalid", String(errs.lam));
+    nelmNum.setAttribute("aria-invalid", String(errs.nelm));
+    sepNum.setAttribute("aria-invalid", String(errs.sep));
+    var bad = errs.ap || errs.fl || errs.eye || errs.afov || errs.bar || errs.lam || errs.nelm || errs.sep;
+    if (bad) return null;
+    var preset = T.presetById(state.preset);
+    return {
+      apertureMm: state.apertureMm,
+      focalMm: state.focalMm,
+      eyeMm: state.eyeMm,
+      afov: state.afov,
+      barlow: state.barlow,
+      lambdaNm: state.lambdaNm,
+      nelm: state.nelm,
+      sepArcsec: state.sepArcsec,
+      eyepiece: state.eyepiece,
+      clearAreaM2: preset && preset.clearAreaM2 ? preset.clearAreaM2 : null
+    };
+  }
+  function put(id, value){
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function hideRow(id, hidden){
+    var el = document.getElementById(id);
+    if (el) el.hidden = hidden;
+  }
+  function rel(sep, limit){
+    if (!(limit > 0)) return "";
+    if (sep > limit * 1.005) return "wider than";
+    if (sep < limit * 0.995) return "tighter than";
+    return "at";
+  }
+  function paintCopy(sol){
+    var preset = T.presetById(state.preset);
+    document.getElementById("tier").textContent = preset ? preset.tier : "Custom";
+    document.getElementById("info-name").textContent = preset ? preset.name : "Custom";
+    var bits = [];
+    if (sol.eyepiece) bits.push(T.formatMag(sol.magnification), "exit pupil " + T.formatMm(sol.exitPupilMm));
+    bits.push("Rayleigh " + T.formatArcsec(sol.rayleighArcsec));
+    document.getElementById("info-range").textContent = bits.join(" · ");
+    var fr = T.formatFocalRatio(sol.focalRatio);
+    if (sol.eyepiece && Math.abs(sol.barlow - 1) > 1e-6){
+      fr += " objective · " + T.formatFocalRatio(sol.effectiveFocalRatio) + " with Barlow";
+    }
+    put("v-fr", fr);
+    hideRow("row-mag", !sol.eyepiece);
+    hideRow("row-exit", !sol.eyepiece);
+    hideRow("row-field", !sol.eyepiece);
+    hideRow("row-ppi", !sol.eyepiece);
+    hideRow("row-rules", !sol.eyepiece);
+    hideRow("row-area", !sol.eyepiece);
+    hideRow("row-bowen", !sol.eyepiece);
+    if (sol.eyepiece){
+      put("v-mag", T.formatMag(sol.magnification));
+      var exit = T.formatMm(sol.exitPupilMm);
+      if (sol.graspClipped) exit += " · larger than 7 mm";
+      put("v-exit", exit);
+      put("v-field", T.formatDeg(sol.trueFieldDeg) + " · " + T.formatArcmin(sol.trueFieldDeg));
+      put("v-ppi", T.formatPower(sol.powerPerInch));
+      put("v-rules", T.formatMag(sol.ruleMin) + " at a 7 mm pupil · " + T.formatMag(sol.ruleMaxInch) + " at 50×/in · " + T.formatMag(sol.ruleMaxMm) + " at 2×/mm · " + T.formatMag(sol.ruleAvgInch) + " at 30×/in");
+      var area = T.formatLim(sol.areaLimit);
+      if (sol.graspClipped) area += " · pupil clips the beam";
+      put("v-area", area);
+      var bow = T.formatLim(sol.bowenLimit);
+      bow += sol.bowenInRange ? " · inside his exit-pupil range" : " · outside his 0.03–0.3 in exit-pupil range";
+      put("v-bowen", bow);
+    }
+    var grasp = T.formatGrasp(sol.geometricGrasp) + " · (D / 7 mm)²";
+    if (sol.graspClipped) grasp += " · accepted " + T.formatGrasp(sol.acceptedGrasp);
+    put("v-grasp", grasp);
+    hideRow("row-clear", !(sol.clearGrasp > 0));
+    if (sol.clearGrasp > 0) put("v-clear", T.formatGrasp(sol.clearGrasp) + " · 25 m² / a 7 mm pupil");
+    put("v-ray", T.formatArcsec(sol.rayleighArcsec) + " at " + T.formatNm(sol.lambdaNm));
+    put("v-dawes", T.formatArcsec(sol.dawesMmArcsec) + " · " + T.formatArcsec(sol.dawesInchArcsec));
+
+    var main = preset ? preset.note : "Typed numbers. The formulas are the same ones the presets use.";
+    document.getElementById("why-main").textContent = main;
+
+    var mid = T.pairIntensity(0, sol.sepArcsec, sol.lambdaNm, sol.apertureMm);
+    var peak = T.pairIntensity((sol.sepArcsec * 0.5) / T.ARCSEC_PER_RAD, sol.sepArcsec, sol.lambdaNm, sol.apertureMm);
+    var pct = peak > 0 ? Math.round(100 * mid / peak) : 0;
+    var dip = pct <= 1
+      ? "The middle of the cut is dark, so the two cores are separate on this scale."
+      : "The middle of the cut is " + pct + "% of a peak.";
+    document.getElementById("why-res").textContent =
+      "Separation " + T.formatArcsec(sol.sepArcsec) + " is " + rel(sol.sepArcsec, sol.rayleighArcsec) +
+      " Rayleigh (" + T.formatArcsec(sol.rayleighArcsec) + ") and " + rel(sol.sepArcsec, sol.dawesMmArcsec) +
+      " the 116/D Dawes line (" + T.formatArcsec(sol.dawesMmArcsec) + "). The inch form is " +
+      T.formatArcsec(sol.dawesInchArcsec) + ". The two printed limits are equal at " + T.formatNm(sol.crossoverNm) +
+      ", computed here because the aperture cancels. 1.22 rounds (first zero of J1) / π, which this page computes as " +
+      T.RAYLEIGH_EXACT.toFixed(4) + ". " + dip;
+
+    var lim;
+    if (!sol.eyepiece){
+      lim = "No eyepiece, so there is no magnification, no exit pupil, and no visual limiting magnitude. Rayleigh still describes the diffraction scale of a filled circular aperture of this diameter. Dawes’s limit is an empirical rule for the eye at a telescope, not a camera specification. ";
+      if (state.preset === "hubble"){
+        lim += "NASA’s numbers page says the mirror collects 40,000 times as much light as the human eye. This desk’s area ratio against a 7 mm pupil is " + T.formatGrasp(sol.geometricGrasp) + ". The STScI primer’s PSF FWHM at 5000 Å is 0.043″, their figure. The Rayleigh angle above is not that FWHM.";
+      } else if (state.preset === "jwst"){
+        lim += "NASA’s fact sheet prints an optical resolution of about 0.1″. The Rayleigh angle above is 1.22 λ/D at 600 nm for a filled 6.5 m circle. The fact-sheet clear aperture is 25 m², drawn as its own light-grasp line. STScI’s unobscured area is 25.4 m², not substituted here. A segmented mirror is not the filled circle this formula assumes.";
+      }
+    } else {
+      lim = "Light grasp " + T.formatGrasp(sol.geometricGrasp) + " is (D / 7 mm)². ";
+      if (sol.graspClipped){
+        lim += "The exit pupil is larger than 7 mm, so a 7 mm pupil accepts " + T.formatMm(sol.acceptedApertureMm) + " of aperture and the area estimate uses that. ";
+      } else {
+        lim += "The exit pupil fits inside the 7 mm comparison pupil, so that pupil can take the whole beam. ";
+      }
+      lim += "The area estimate adds 5 log10 of that ratio to naked-eye magnitude " + trimPlain(sol.nelm) + ", giving " + T.formatLim(sol.areaLimit) + ". It does not get fainter when you magnify further. Bowen’s formula, with his constant 6.5 rather than the typed sky, gives " + T.formatLim(sol.bowenLimit);
+      lim += sol.bowenInRange ? ", inside the exit-pupil range he stated." : ", outside the exit-pupil range he stated, so read it as the formula only.";
+      lim += " Rules of thumb, not laws: " + T.formatMag(sol.ruleMin) + " puts the exit pupil at 7 mm. Sky & Telescope’s 50× per inch is " + T.formatMag(sol.ruleMaxInch) + ". Their “twice the aperture in millimetres” is " + T.formatMag(sol.ruleMaxMm) + ". Hawks’s average-seeing 30× per inch is " + T.formatMag(sol.ruleAvgInch) + ". This setup is " + T.formatPower(sol.powerPerInch) + ".";
+    }
+    document.getElementById("why-lim").textContent = lim;
+  }
+  function drawAiry(sol){
+    var box = fitCanvas(airy, 300);
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    var half = Math.max(sol.sepArcsec * 0.65, sol.rayleighArcsec * 4, 0.15);
+    var imgH = Math.round(h * 0.62);
+    var plotTop = imgH + 16;
+    var plotH = h - plotTop - 18;
+    var corePx = sol.rayleighArcsec * w / (2 * half);
+    var yMid = imgH * 0.5;
+    var xOf = function(arcsec){ return (arcsec + half) / (2 * half) * w; };
+    var maxI = 0;
+    var samples = [];
+    var n = Math.min(900, Math.max(240, Math.round(w)));
+    var i, th, val, xs;
+    for (i = 0; i <= n; i++){
+      th = -half + (2 * half) * i / n;
+      val = T.pairIntensity(th / T.ARCSEC_PER_RAD, sol.sepArcsec, sol.lambdaNm, sol.apertureMm);
+      if (val > maxI) maxI = val;
+      samples.push(th);
+    }
+    [-sol.sepArcsec * 0.5, sol.sepArcsec * 0.5].forEach(function(c){
+      samples.push(c, c - sol.rayleighArcsec, c + sol.rayleighArcsec);
+    });
+    samples.sort(function(a, b){ return a - b; });
+    var uniq = [];
+    samples.forEach(function(s){
+      if (!uniq.length || Math.abs(s - uniq[uniq.length - 1]) > half / 20000) uniq.push(s);
+    });
+    uniq.forEach(function(s){
+      val = T.pairIntensity(s / T.ARCSEC_PER_RAD, sol.sepArcsec, sol.lambdaNm, sol.apertureMm);
+      if (val > maxI) maxI = val;
+    });
+    if (!(maxI > 0)) maxI = 1;
+    var step = Math.max(1, Math.round(w / 280));
+    var yy, xx, inten, shade;
+    for (xx = 0; xx < w; xx += step){
+      for (yy = 0; yy < imgH; yy += step){
+        var dx = (xx + step * 0.5) / w * 2 * half - half;
+        var dy = ((yy + step * 0.5) - yMid) / w * 2 * half;
+        var x1 = dx - sol.sepArcsec * 0.5;
+        var x2 = dx + sol.sepArcsec * 0.5;
+        var r1 = Math.sqrt(x1 * x1 + dy * dy);
+        var r2 = Math.sqrt(x2 * x2 + dy * dy);
+        inten = T.airyIntensity(r1 / T.ARCSEC_PER_RAD, sol.lambdaNm, sol.apertureMm) +
+          T.airyIntensity(r2 / T.ARCSEC_PER_RAD, sol.lambdaNm, sol.apertureMm);
+        shade = Math.max(0, Math.min(1, inten / maxI));
+        shade = Math.pow(shade, 0.45);
+        ctx.fillStyle = "rgba(232,230,225," + shade.toFixed(3) + ")";
+        ctx.fillRect(xx, yy, step, step);
+      }
+    }
+    if (corePx < 2.2){
+      ctx.fillStyle = ink;
+      [-sol.sepArcsec * 0.5, sol.sepArcsec * 0.5].forEach(function(c){
+        if (Math.abs(c) > half) return;
+        ctx.beginPath();
+        ctx.arc(xOf(c), yMid, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    ctx.strokeStyle = muted;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(8, plotTop + plotH);
+    ctx.lineTo(w - 8, plotTop + plotH);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.5;
+    var started = false;
+    uniq.forEach(function(s){
+      if (s < -half || s > half) return;
+      val = T.pairIntensity(s / T.ARCSEC_PER_RAD, sol.sepArcsec, sol.lambdaNm, sol.apertureMm) / maxI;
+      xs = xOf(s);
+      yy = plotTop + plotH - Math.max(0, Math.min(1, val)) * (plotH - 8);
+      if (!started){ ctx.moveTo(xs, yy); started = true; }
+      else ctx.lineTo(xs, yy);
+    });
+    ctx.stroke();
+    [-sol.sepArcsec * 0.5, sol.sepArcsec * 0.5].forEach(function(c){
+      if (Math.abs(c) > half) return;
+      var ring = c + (c < 0 ? sol.rayleighArcsec : -sol.rayleighArcsec);
+      if (Math.abs(ring) <= half){
+        ctx.strokeStyle = accent;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(xOf(ring), plotTop);
+        ctx.lineTo(xOf(ring), plotTop + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    });
+    text(ctx, "−" + T.formatArcsec(half), 8, h - 8, { size: 10, color: muted, base: "alphabetic" });
+    text(ctx, "+" + T.formatArcsec(half), w - 8, h - 8, { size: 10, color: muted, align: "right", base: "alphabetic" });
+    text(ctx, corePx < 2.2 ? "Cores smaller than a pixel are marked" : "Equal points · filled aperture · no atmosphere", 8, 12, { size: 10, color: muted });
+    airy.setAttribute("aria-label",
+      "Two equal point sources " + T.formatArcsec(sol.sepArcsec) + " apart. Rayleigh is " +
+      T.formatArcsec(sol.rayleighArcsec) + " and Dawes 116/D is " + T.formatArcsec(sol.dawesMmArcsec) + ".");
+    document.getElementById("airy-hint").textContent =
+      "Two equal Airy disks · " + T.formatArcsec(sol.sepArcsec) + " · Rayleigh " + T.formatArcsec(sol.rayleighArcsec);
+  }
+  function drawPupil(sol){
+    var box = fitCanvas(pupil, 168);
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    if (!sol.eyepiece){
+      text(ctx, "No eyepiece", w * 0.5, h * 0.42, { size: 14, align: "center", color: ink });
+      text(ctx, "Exit pupil is an eyepiece quantity", w * 0.5, h * 0.62, { size: 11, align: "center", color: muted });
+      pupil.setAttribute("aria-label", "No eyepiece, so there is no exit pupil.");
+      document.getElementById("pupil-hint").textContent = "No eyepiece · exit pupil not defined";
+      return;
+    }
+    var eye = sol.pupilMm;
+    var exit = sol.exitPupilMm;
+    var maxR = Math.max(eye, exit);
+    var scale = Math.min(w * 0.22, h * 0.34) / maxR;
+    var cx1 = w * 0.32;
+    var cx2 = w * 0.68;
+    var cy = h * 0.46;
+    ctx.beginPath();
+    ctx.arc(cx1, cy, Math.max(2, exit * scale), 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(232,230,225,0.85)";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx2, cy, Math.max(2, eye * scale), 0, Math.PI * 2);
+    ctx.strokeStyle = accent;
+    ctx.setLineDash([4, 3]);
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    text(ctx, "Exit " + T.formatMm(exit), cx1, h - 16, { size: 11, align: "center", color: ink });
+    text(ctx, "Eye 7.00 mm", cx2, h - 16, { size: 11, align: "center", color: accent });
+    pupil.setAttribute("aria-label",
+      "Exit pupil " + T.formatMm(exit) + " beside the 7 millimetre comparison pupil.");
+    document.getElementById("pupil-hint").textContent = sol.graspClipped
+      ? "Exit pupil larger than the 7 mm comparison pupil"
+      : "Exit pupil inside the 7 mm comparison pupil";
+  }
+  function render(){
+    eyeFields();
+    syncSliders();
+    var spec = readSpec();
+    if (!spec) return;
+    var sol = T.solve(spec);
+    if (!sol.ok) return;
+    result = sol;
+    paintCopy(sol);
+    drawAiry(sol);
+    drawPupil(sol);
+    setPressed(instrumentBtns, "data-preset", state.preset || "");
+    setPressed(skyBtns, "data-sky", state.sky || "");
+    setPressed(sepBtns, "data-sep", state.sepMode || "");
+  }
+  function applyPreset(id){
+    var p = T.presetById(id);
+    if (!p) return;
+    state.preset = id;
+    state.apertureMm = p.apertureMm;
+    state.focalMm = p.focalMm;
+    state.lambdaNm = p.lambdaNm;
+    state.eyepiece = p.eyepiece !== false;
+    if (p.eyepiece !== false){
+      state.eyeMm = p.eyeMm;
+      state.afov = p.afov;
+      state.barlow = p.barlow;
+    }
+    syncNumbers(true);
+    render();
+  }
+  apSlider.addEventListener("input", function(){
+    state.apertureMm = logVal(apSlider.value, AP_MIN, AP_MAX, AP_STEPS);
+    state.preset = "";
+    if (document.activeElement !== apNum) apNum.value = T.inputString(state.apertureMm, state.apUnit);
+    render();
+  });
+  flSlider.addEventListener("input", function(){
+    state.focalMm = logVal(flSlider.value, FL_MIN, FL_MAX, FL_STEPS);
+    state.preset = "";
+    if (document.activeElement !== flNum) flNum.value = T.inputString(state.focalMm, state.flUnit);
+    render();
+  });
+  eyeSlider.addEventListener("input", function(){
+    state.eyeMm = Number(eyeSlider.value);
+    state.preset = "";
+    if (document.activeElement !== eyeNum) eyeNum.value = trimPlain(state.eyeMm);
+    render();
+  });
+  afovSlider.addEventListener("input", function(){
+    state.afov = Number(afovSlider.value);
+    state.preset = "";
+    if (document.activeElement !== afovNum) afovNum.value = trimPlain(state.afov);
+    render();
+  });
+  barSlider.addEventListener("input", function(){
+    state.barlow = Number(barSlider.value);
+    state.preset = "";
+    if (document.activeElement !== barNum) barNum.value = trimPlain(state.barlow);
+    render();
+  });
+  lamSlider.addEventListener("input", function(){
+    state.lambdaNm = logVal(lamSlider.value, LAM_MIN, LAM_MAX, LAM_STEPS);
+    state.preset = "";
+    if (document.activeElement !== lamNum) lamNum.value = trimPlain(state.lambdaNm);
+    render();
+  });
+  nelmSlider.addEventListener("input", function(){
+    state.nelm = Number(nelmSlider.value);
+    state.sky = "";
+    skyBtns.forEach(function(b){
+      if (Math.abs(Number(b.getAttribute("data-sky")) - state.nelm) < 0.05) state.sky = b.getAttribute("data-sky");
+    });
+    if (document.activeElement !== nelmNum) nelmNum.value = trimPlain(state.nelm);
+    render();
+  });
+  sepSlider.addEventListener("input", function(){
+    state.sepArcsec = logVal(sepSlider.value, SEP_MIN, SEP_MAX, SEP_STEPS);
+    state.sepMode = "";
+    if (document.activeElement !== sepNum) sepNum.value = trimPlain(state.sepArcsec);
+    render();
+  });
+  function bindNum(el, apply){
+    el.addEventListener("input", function(){
+      var n = parseNum(el);
+      if (n === null){
+        render();
+        return;
+      }
+      apply(n);
+      render();
+    });
+    el.addEventListener("change", function(){
+      syncNumbers(false);
+    });
+  }
+  bindNum(apNum, function(n){
+    state.apertureMm = T.toMm(n, state.apUnit);
+    state.preset = "";
+  });
+  bindNum(flNum, function(n){
+    state.focalMm = T.toMm(n, state.flUnit);
+    state.preset = "";
+  });
+  bindNum(eyeNum, function(n){ state.eyeMm = n; state.preset = ""; });
+  bindNum(afovNum, function(n){ state.afov = n; state.preset = ""; });
+  bindNum(barNum, function(n){ state.barlow = n; state.preset = ""; });
+  bindNum(lamNum, function(n){ state.lambdaNm = n; state.preset = ""; });
+  bindNum(nelmNum, function(n){
+    state.nelm = n;
+    state.sky = "";
+    skyBtns.forEach(function(b){
+      if (Math.abs(Number(b.getAttribute("data-sky")) - n) < 0.05) state.sky = b.getAttribute("data-sky");
+    });
+  });
+  bindNum(sepNum, function(n){ state.sepArcsec = n; state.sepMode = ""; });
+  apUnit.addEventListener("change", function(){
+    state.apUnit = apUnit.value;
+    syncNumbers(true);
+    render();
+  });
+  flUnit.addEventListener("change", function(){
+    state.flUnit = flUnit.value;
+    syncNumbers(true);
+    render();
+  });
+  noEye.addEventListener("change", function(){
+    state.eyepiece = !noEye.checked;
+    state.preset = "";
+    render();
+  });
+  instrumentBtns.forEach(function(b){
+    b.addEventListener("click", function(){ applyPreset(b.getAttribute("data-preset")); });
+  });
+  skyBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      state.nelm = Number(b.getAttribute("data-sky"));
+      state.sky = b.getAttribute("data-sky");
+      syncNumbers(true);
+      render();
+    });
+  });
+  sepBtns.forEach(function(b){
+    b.addEventListener("click", function(){
+      var mode = b.getAttribute("data-sep");
+      if (!result) render();
+      if (!result) return;
+      if (mode === "albireo") state.sepArcsec = T.ALBIREO_SEP_ARCSEC;
+      else if (mode === "rayleigh") state.sepArcsec = result.rayleighArcsec;
+      else if (mode === "dawes") state.sepArcsec = result.dawesMmArcsec;
+      state.sepMode = mode;
+      syncNumbers(true);
+      render();
+    });
+  });
+  document.addEventListener("keydown", function(ev){
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t || !t.getAttribute) return;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    if (t.getAttribute("data-preset")){
+      ev.preventDefault();
+      var id = t.getAttribute("data-preset");
+      var i = instrumentIds.indexOf(id);
+      if (i < 0) return;
+      var next = instrumentIds[(i + dir + instrumentIds.length) % instrumentIds.length];
+      applyPreset(next);
+      var btn = document.querySelector('[data-preset="' + next + '"]');
+      if (btn) btn.focus();
+    }
+  });
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (airy.parentElement) ro.observe(airy.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  syncNumbers(true);
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("tel-help");
+  var helpDialog = document.getElementById("tel-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden) return;
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
