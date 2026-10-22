@@ -1,0 +1,1297 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Distance ladder — modulus, parallax, Cepheids, Type Ia, Hubble flow — Steven Philley</title>
+<meta name="description" content="Interactive cosmic distance ladder. Distance modulus m − M = 5 log10(d / 10 pc), with optional extinction. Parallax d(pc) = 1/p. Cepheid M_V from Benedict et al. 2007. Type Ia mean M_B = −19.25 from Richardson et al. 2014. Low-z d ≈ cz/H0 with Planck 67.4 and SH0ES 73.04. Cited presets only. Not a catalog.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/distance-ladder/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Distance ladder — modulus, parallax, Cepheids, Type Ia, Hubble flow">
+<meta property="og:description" content="m − M = 5 log10(d / 10 pc). Parallax, a Cepheid period–luminosity line, a Type Ia mean peak, and cz/H0 with two cited Hubble constants.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/distance-ladder/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Distance ladder — modulus, parallax, Cepheids, Type Ia, Hubble flow">
+<meta name="twitter:description" content="Standard candles and the low-z Hubble toy. Cited coefficients. Approximate ranges. Not a catalog.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent;cursor:pointer}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:8px;border-top:0;flex:0 0 auto;background:var(--ink-soft,#9b9a96)}
+.swatch.plx{background:var(--ink,#e8e6e1)}
+.swatch.cep{background:var(--accent,#c8b48a)}
+.swatch.sn{background:var(--ink-soft,#9b9a96)}
+.swatch.hub{background:var(--muted,#63666e)}
+.swatch.you{width:0;height:12px;background:transparent;border-left:2px solid var(--accent,#c8b48a)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.panel[hidden],.slider-row[hidden]{display:none !important}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/" aria-current="page">Distance ladder</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Standard candles</p>
+  <h1>Distance ladder<br>one rung at a time</h1>
+  <p class="lede">A cosmic distance is a chain of overlapping measurements. The shared equation is the distance modulus, <strong>m − M = 5 log<sub>10</sub>(d / 10 pc)</strong>, with an optional extinction <strong>A</strong> in the same band. At 10 pc and A = 0, m = M. The first rung is parallax, <strong>d(pc) = 1 / p(″)</strong>, the same reciprocal as the <a href="/science/astronomy/parallax/">parallax</a> desk, plus the way a fractional parallax error becomes a distance error. Cepheids use Henrietta Leavitt’s period–luminosity relation: a period fixes an absolute magnitude, and an apparent mean magnitude then fixes a distance. Type Ia supernovae are the brighter candle. At low redshift, <strong>d ≈ cz / H<sub>0</sub></strong>, and the two cited Hubble constants do not give the same distance. The wavelength shift itself is the <a href="/science/astronomy/redshift/">redshift</a> desk. Brightness without the candles is <a href="/science/astronomy/magnitude/">magnitude</a>. Luminosity on the <a href="/science/astronomy/hr/">HR diagram</a> is not a distance.</p>
+  <p class="note-schematic">Educational approximation. Not a catalog and not a cosmological fit. Not a stellar-evolution model. The bars are a sketch of rough ranges, and they overlap on purpose. Extinction is optional and has to be the same band as the magnitudes. The Cepheid line is a mean of ten Galactic stars. The Type Ia number is a mean of many events, not the magnitude of one supernova. cz/H<sub>0</sub> is the low-redshift toy, and peculiar velocities matter. The Lutz–Kelker–Hanson correction is not applied. Real preset numbers are the cited ones. A typed number is arithmetic, not a new object.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Modulus, parallax, Cepheid, Type Ia, Hubble flow</span>
+    <button type="button" class="help-q" id="dl-help" aria-haspopup="dialog" aria-controls="dl-help-dialog" aria-expanded="false" aria-label="How this distance-ladder desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Log distance · approximate ranges · click a bar</p>
+      <canvas id="plot" width="880" height="440" tabindex="0" role="img" aria-label="Approximate distance ladder. Parallax, Cepheid, Type Ia, and Hubble flow on a log axis from 1 parsec to 1 gigaparsec. The ranges overlap. The marker sits at 10 parsecs."></canvas>
+      <ul class="legend">
+        <li><span class="swatch plx" aria-hidden="true"></span> Parallax</li>
+        <li><span class="swatch cep" aria-hidden="true"></span> Cepheid</li>
+        <li><span class="swatch sn" aria-hidden="true"></span> Type Ia</li>
+        <li><span class="swatch hub" aria-hidden="true"></span> Hubble flow</li>
+        <li><span class="swatch you" aria-hidden="true"></span> This distance</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Sketch, not a catalog limit. Parallax is drawn from Proxima’s 1.3 pc out to 100 pc, a stand-in for “a few hundred light-years.” NASA does not print 100 pc.</p>
+      <div class="controls">
+        <p class="pick-label">Rung</p>
+        <div class="presets" id="rungs" role="group" aria-label="Distance-ladder rung">
+          <button type="button" data-rung="modulus" aria-pressed="true">Modulus</button>
+          <button type="button" data-rung="parallax" aria-pressed="false">Parallax</button>
+          <button type="button" data-rung="cepheid" aria-pressed="false">Cepheid</button>
+          <button type="button" data-rung="sn" aria-pressed="false">Type Ia</button>
+          <button type="button" data-rung="hubble" aria-pressed="false">Hubble flow</button>
+        </div>
+        <p class="pick-label">Presets · cited objects only</p>
+        <div class="presets" id="presets" role="group" aria-label="Cited presets">
+          <button type="button" data-preset="sun-10pc" aria-pressed="true">Sun 10 pc</button>
+          <button type="button" data-preset="sirius" aria-pressed="false">Sirius</button>
+          <button type="button" data-preset="delta-cep-plx" aria-pressed="false">δ Cep π</button>
+          <button type="button" data-preset="delta-cep" aria-pressed="false">δ Cep</button>
+          <button type="button" data-preset="sn2011fe" aria-pressed="false">SN 2011fe</button>
+          <button type="button" data-preset="coma" aria-pressed="false">Coma</button>
+        </div>
+
+        <div id="panel-modulus">
+          <p class="pick-label">Solve for</p>
+          <div class="presets" id="solve" role="group" aria-label="Which modulus quantity to solve">
+            <button type="button" data-solve="d" aria-pressed="true">Distance</button>
+            <button type="button" data-solve="m" aria-pressed="false">Apparent m</button>
+            <button type="button" data-solve="M" aria-pressed="false">Absolute M</button>
+          </div>
+          <div class="slider-row" id="row-m">
+            <label for="m-slider">m</label>
+            <input type="range" id="m-slider" min="-30" max="30" step="0.01" value="4.83" aria-valuemin="-30" aria-valuemax="30" aria-valuetext="apparent magnitude +4.83">
+            <input type="text" class="num" id="m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="4.83" aria-label="Apparent magnitude m" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <div class="slider-row" id="row-M">
+            <label for="M-slider">M</label>
+            <input type="range" id="M-slider" min="-30" max="30" step="0.01" value="4.83" aria-valuemin="-30" aria-valuemax="30" aria-valuetext="absolute magnitude +4.83">
+            <input type="text" class="num" id="M-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="4.83" aria-label="Absolute magnitude M" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <div class="slider-row" id="row-A">
+            <label for="A-slider">A</label>
+            <input type="range" id="A-slider" min="0" max="5" step="0.01" value="0" aria-valuemin="0" aria-valuemax="5" aria-valuetext="extinction 0">
+            <input type="text" class="num" id="A-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0" aria-label="Extinction A, optional, same band" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <div class="slider-row" id="row-d" hidden>
+            <label for="d-slider">d</label>
+            <input type="range" id="d-slider" min="0" max="1000" step="0.1" value="0" aria-valuetext="10 parsecs">
+            <input type="text" class="num" id="d-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="10" aria-label="Distance" aria-invalid="false">
+            <span class="unit-tag" id="d-unit-tag">pc</span>
+          </div>
+          <p class="pick-label">Distance unit · input when distance is known</p>
+          <div class="presets" id="dist-unit" role="group" aria-label="Distance unit">
+            <button type="button" data-unit="pc" aria-pressed="true">pc</button>
+            <button type="button" data-unit="ly" aria-pressed="false">ly</button>
+            <button type="button" data-unit="mpc" aria-pressed="false">Mpc</button>
+          </div>
+          <p class="field-error" id="mod-err" hidden>Magnitudes from −30 to 30. Extinction from 0 to 5. Distance from 0.1 pc to 2 billion pc.</p>
+        </div>
+
+        <div id="panel-parallax" hidden>
+          <p class="pick-label">Parallax unit</p>
+          <div class="presets" id="p-unit" role="group" aria-label="Parallax unit">
+            <button type="button" data-punit="mas" aria-pressed="false">mas</button>
+            <button type="button" data-punit="arcsec" aria-pressed="true">arcsec</button>
+          </div>
+          <div class="slider-row">
+            <label for="p-slider">p</label>
+            <input type="range" id="p-slider" min="0" max="1000" step="0.1" value="500" aria-valuetext="0.37921 arcsec">
+            <input type="text" class="num" id="p-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.37921" aria-label="Parallax" aria-invalid="false">
+            <span class="unit-tag" id="p-unit-tag">″</span>
+          </div>
+          <div class="slider-row">
+            <label for="sig-num">σ</label>
+            <input type="text" class="num" id="sig-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="" aria-label="Parallax uncertainty, optional, same unit" aria-invalid="false" placeholder="none">
+            <span class="unit-tag">optional</span>
+          </div>
+          <p class="field-error" id="par-err" hidden>Parallax has to be positive. Leave σ empty when the source prints none.</p>
+        </div>
+
+        <div id="panel-cepheid" hidden>
+          <div class="slider-row">
+            <label for="per-slider">Period</label>
+            <input type="range" id="per-slider" min="2" max="60" step="0.00001" value="5.36627" aria-valuemin="2" aria-valuemax="60" aria-valuetext="5.36627 days">
+            <input type="text" class="num" id="per-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="5.36627" aria-label="Cepheid period in days" aria-invalid="false">
+            <span class="unit-tag">days</span>
+          </div>
+          <div class="slider-row">
+            <label for="v-num">⟨V⟩</label>
+            <input type="text" class="num" id="v-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="3.960" aria-label="Mean apparent Johnson V magnitude" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <div class="slider-row">
+            <label for="av-num">A_V</label>
+            <input type="text" class="num" id="av-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.23" aria-label="Visual extinction A_V" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <p class="field-error" id="cep-err" hidden>Period from 2 to 60 days. Mean magnitude from −5 to 25. A_V from 0 to 5.</p>
+        </div>
+
+        <div id="panel-sn" hidden>
+          <div class="slider-row">
+            <label for="b-num">B peak</label>
+            <input type="text" class="num" id="b-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="10.00" aria-label="Apparent peak B magnitude" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <div class="slider-row">
+            <label for="ab-num">A_B</label>
+            <input type="text" class="num" id="ab-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.11" aria-label="B-band extinction A_B" aria-invalid="false">
+            <span class="unit-tag">mag</span>
+          </div>
+          <p class="field-error" id="sn-err" hidden>Peak B from −5 to 30. A_B from 0 to 5. M_B stays at −19.25.</p>
+        </div>
+
+        <div id="panel-hubble" hidden>
+          <div class="slider-row">
+            <label for="cz-slider">cz</label>
+            <input type="range" id="cz-slider" min="0" max="1000" step="0.1" value="500" aria-valuetext="6853 km/s">
+            <input type="text" class="num" id="cz-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="6853" aria-label="cz in kilometers per second" aria-invalid="false">
+            <span class="unit-tag">km/s</span>
+          </div>
+          <p class="pick-label">Marker · both distances stay on the card</p>
+          <div class="presets" id="h0-pick" role="group" aria-label="Which cited H0 the marker follows">
+            <button type="button" data-h0="planck" aria-pressed="true">Planck 67.4</button>
+            <button type="button" data-h0="shoes" aria-pressed="false">SH0ES 73.04</button>
+          </div>
+          <p class="field-error" id="hub-err" hidden>cz from 200 to 30,000 km/s. This is the low-redshift toy.</p>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Definition · absolute magnitude</p>
+      <h2 id="d-name">Sun at 10 pc</h2>
+      <p class="range" id="d-range">m = M = +4.83 · A = 0</p>
+      <ul class="stats" id="d-stats">
+        <li><span class="k">Distance</span><span class="v">10 pc</span></li>
+        <li><span class="k">Light-years</span><span class="v">32.616 ly</span></li>
+        <li><span class="k">Megaparsecs</span><span class="v">0.00001 Mpc</span></li>
+      </ul>
+      <p class="why" id="d-why">At 10 parsecs the distance modulus is zero, so the apparent magnitude equals the absolute magnitude. The Sun’s fact-sheet absolute visual magnitude is +4.83. Extinction is zero, which is the magnitude desk.</p>
+      <p class="why" id="d-note">10 pc × 3.2616 = 32.616 ly. That four-decimal light-year is the same rounding as the magnitude desk. NASA and ESA round one parsec to 3.26 ly.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The anchors are still these. m = 10, M = 0, A = 0 gives d = 1000 pc exactly. A = 1 gives d = 10 × 10<sup>1.8</sup> pc. The Sun at 10 pc stays at +4.83, and 10 pc = 32.616 ly. Sirius: ESA prints p = 0.37921″ and 1/0.37921 = 2.637 pc. No uncertainty is printed there. δ Cephei parallax: 3.66 ± 0.15 mas, so d = 1000/3.66 pc, the fraction is 0.15/3.66, the near bound is 1000/3.81 pc, and the far bound is 1000/3.51 pc. Benedict et al. 2007, Table 12 column B07, Johnson V: M_V = −4.05 ± 0.02 + (−2.43 ± 0.12)(log<sub>10</sub> P − 1). P = 10 days gives M_V = −4.05. δ Cephei in that paper’s Table 2: P = 5.36627 d, ⟨V⟩ = 3.960, A_V = 0.23. Type Ia: Richardson et al. 2014 bias-corrected normal mean M_B = −19.25 ± 0.20. SN 2011fe: B max = 10.00 ± 0.02 and A_B = 0.11 ± 0.03, so μ = 29.14 and d = 10 × 10<sup>29.14/5</sup> pc. Richmond and Smith adopt (m−M) = 29.10 ± 0.15 for M101, a different number. Coma: Colless and Dunn 1996, mean cz = 6853 km s<sup>−1</sup>. Planck H0 = 67.4 gives 6853/67.4 Mpc. SH0ES H0 = 73.04 gives 6853/73.04 Mpc.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">One candle is not the ladder</p>
+    <h2>The mean line is not the star, and cz is not a ruler past the neighborhood.</h2>
+    <p>The Cepheid calculator uses Benedict et al. 2007, Table 12, column B07, with the Lutz–Kelker–Hanson correction already inside the published fit: M_V = −4.05 ± 0.02 + (−2.43 ± 0.12)(log<sub>10</sub> P − 1), Johnson V. That is a straight line through ten Galactic Cepheids. The zero-point is at log P = 1, so a 10-day period gives M_V = −4.05 exactly. Their column B07f, without LKH, is −4.03 and −2.44. This page does not switch to that column. The ±0.02 and ±0.12 are the paper’s coefficient uncertainties. They are not folded into a distance error here, because the covariance is not copied. Section 6.1 gives the standard deviation of the V residuals as 0.10 mag. A shift of 0.10 mag moves distance by a factor 10<sup>0.02</sup>. That factor is an illustration of the scatter. It is not an error bar on one star.</p>
+    <p>δ Cephei’s own parallax absolute magnitude in Table 11 is M_V = −3.47 ± 0.11, with (m−M)<sub>0</sub> = 7.19 and an LKH correction of −0.01 mag. The plain inversion d = 1000/3.66 pc is not that modulus. This desk does not apply LKH on top of 1/p. The Cepheid preset compares the mean line with that Table 11 magnitude. They are allowed to disagree. The star is one point. The line is the mean.</p>
+    <p>The Type Ia candle is Richardson, Jenkins, Wright, and Maddox 2014, Table 1, bias-corrected normal supernovae: M_B = −19.25 ± 0.20, standard deviation 0.50 mag, N = 239. The ±0.20 is the uncertainty on the mean. The 0.50 mag is the width of the distribution. One event is not known to 0.20 mag. No decline-rate correction is applied. Hillebrandt and Niemeyer 2000 quote M_B ≈ M_V ≈ −19.30 ± 0.03 + 5 log(H<sub>0</sub>/60), with a dispersion of 0.3 mag or less. That −19.30 is the value at H<sub>0</sub> = 60. It moves when H<sub>0</sub> moves. The calculator holds Richardson’s −19.25.</p>
+    <p>Hubble flow on this page is d = cz/H<sub>0</sub> with the defined speed of light, the same non-relativistic product as the redshift desk. Hogg’s notes limit that linear law to small redshift. Coma’s mean cz is 6853 km s<sup>−1</sup>, so z = 6853/c is still about 0.023. The velocity distribution is non-Gaussian, and the cluster is a merger. The dispersion σ_cz = 1082 km s<sup>−1</sup>, divided by either H<sub>0</sub>, is a larger shift than the gap between Planck and SH0ES. The smaller Hubble constant is the larger distance. Neither line is a new measurement of Coma.</p>
+  </div>
+
+  <p class="band">Literacy · the numbers on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Distance modulus</dt><dd>m − M = 5 log<sub>10</sub>(d / 10 pc) + A. ESA’s teacher notes write M = m − 5 log(D/10), with D in parsecs, and no extinction. A = 0 is that formula, and it is the <a href="/science/astronomy/magnitude/">magnitude</a> desk. A is extinction in the same band, subtracted before the modulus the way Benedict subtracts A_V from ⟨V⟩. At 10 pc and A = 0, m = M. The Sun’s absolute visual magnitude on the NASA Sun Fact Sheet is +4.83. Light-years use 3.2616 per parsec, the magnitude desk’s four-decimal rounding. 10 pc is 32.616 ly.</dd></div>
+    <div class="gloss"><dt>Parallax</dt><dd>d(pc) = 1/p(″). The fractional error σ_d/d equals σ_p/p. The inverted bounds 1/(p±σ) are not symmetric: the far side is larger. If σ ≥ p the far bound is unbounded. Sirius on ESA’s stellar-distances page is p = 0.37921″, and they print 1/0.37921 = 2.637 pc. That page gives no uncertainty, so this one does not invent one.</dd></div>
+    <div class="gloss"><dt>δ Cephei parallax</dt><dd>Benedict et al. 2007, Table 11, repeating Benedict et al. 2002: π_abs = 3.66 ± 0.15 mas. Plain inversion is 1000/3.66 pc. The fraction is 0.15/3.66. The near bound is 1000/3.81 pc and the far bound is 1000/3.51 pc. Table 11 also prints M_V = −3.47 ± 0.11, (m−M)<sub>0</sub> = 7.19, and an LKH correction of −0.01 mag. The plain modulus is not 7.19.</dd></div>
+    <div class="gloss gloss-wide"><dt>Cepheid line</dt><dd>Benedict et al. 2007, AJ 133, 1810, Table 12, column B07, Johnson V, absorption and LKH corrected: M_V = −4.05 ± 0.02 + (−2.43 ± 0.12)(log<sub>10</sub> P − 1). The ten-star window used here is FF Aql at log P = 0.6504 (section 6.1) through ℓ Car at log P = 1.5509 (Table 2). Outside that window the calculator still runs and says so. δ Cephei’s Table 2 row is P = 5.36627 d, printed log P = 0.7297, ⟨V⟩ = 3.960, A_V = 0.23. The extinction-corrected mean magnitude is 3.730. The distance uses log<sub>10</sub> of 5.36627, not a second slope.</dd></div>
+    <div class="gloss"><dt>Type Ia mean</dt><dd>Richardson et al. 2014, Table 1, bias-corrected normal Ia, B band: M_B = −19.25 ± 0.20, standard deviation 0.50 mag, N = 239. The volume-limited mean in that table is −19.26 ± 0.20. The fixed candle is −19.25. Hillebrandt and Niemeyer’s −19.30 is the H<sub>0</sub> = 60 figure, not this candle.</dd></div>
+    <div class="gloss"><dt>SN 2011fe</dt><dd>Richmond and Smith 2012, Table 5: B max = 10.00 ± 0.02, V max = 9.99 ± 0.01. They compute A_B = 0.11 ± 0.03 and A_V = 0.08 ± 0.02 from Schlegel, Finkbeiner, and Davis 1998, with the uncertainty doubled. This desk uses B and A_B with M_B = −19.25, so μ = 29.14. They adopt (m−M) = 29.10 ± 0.15 for M101 as a rough average of other work. That adopted modulus is shown beside the candle. The two are not forced to agree. The host is M101.</dd></div>
+    <div class="gloss gloss-wide"><dt>Hubble flow</dt><dd>d ≈ cz/H<sub>0</sub>, with c = 299792.458 km/s. Planck Collaboration 2020, base-ΛCDM, H<sub>0</sub> = 67.4 ± 0.5. Riess et al. 2022, SH0ES, H<sub>0</sub> = 73.04 ± 1.04. Both central values are drawn. The marker follows the one you select. Colless and Dunn 1996: the main Coma cluster, centered on NGC 4874, has mean cz = 6853 km s<sup>−1</sup> and σ_cz = 1082 km s<sup>−1</sup>. The smaller H<sub>0</sub> is the larger distance. The dispersion scale is larger than that H<sub>0</sub> gap. The full redshift treatment, including why cz is not a speed at large z, is the <a href="/science/astronomy/redshift/">redshift</a> desk.</dd></div>
+    <div class="gloss gloss-wide"><dt>Ladder sketch</dt><dd>Approximate ranges, not catalog limits. Parallax: 1.3 pc, the NASA Hubble caption for Proxima, out to 100 pc. 100 × 3.2616 = 326.16 ly, a sketch of NASA’s “a few hundred light-years.” NASA does not print 100 pc. Cepheid: from the δ Cephei plain inversion, which is a point on the rung and not “where Cepheids begin,” out to ∼40 Mpc. Type Ia: from the distance of Richmond and Smith’s adopted M101 modulus 29.10, a sketch near that galaxy, out to 600 Mpc. Hubble flow: ∼100 to 600 Mpc. The tildes on 40, 100, and 600 Mpc are Scolnic and Vincenzi’s. The bars overlap.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the coefficients and the presets</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://sci.esa.int/documents/34439/36575/1567255185947-Teacher%27s-Notes-Booklet-3.pdf" rel="noopener" target="_blank">ESA Science &amp; Technology — Teacher’s notes, stellar distances</a> — M = m − 5 log(D/10), D in parsecs. A = 0 on this desk is that relation. The <a href="/science/astronomy/magnitude/">magnitude</a> desk uses it with extinction left out.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — absolute magnitude +4.83. The 10 pc button. Apparent magnitude at that distance is the same number.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the parsec is (648000/π) AU. The light-year count here is 3.2616, the four-decimal rounding used on the magnitude desk. NASA and ESA round the same length to 3.26 ly.</li>
+      <li><a href="https://sci.esa.int/web/education/-/35616-stellar-distances" rel="noopener" target="_blank">ESA Science &amp; Technology — Stellar distances</a> — d(parsec) = 1 / p(arcsecond). Sirius is the worked example: parallax 0.37921 arcseconds, distance 1/0.37921 = 2.637 parsecs. No uncertainty is printed on that page.</li>
+      <li><a href="https://science.nasa.gov/image-detail/a-sparkling-galactic-neighbour/" rel="noopener" target="_blank">NASA Science — Hubble image of ESO 300-16</a> — Proxima Centauri at 1.3 parsecs. The left edge of the parallax bar. One parsec is 3.26 light-years on that caption.</li>
+      <li><a href="https://science.nasa.gov/missions/hubble/hubble-stretches-stellar-tape-measure-10-times-farther-into-space/" rel="noopener" target="_blank">NASA Science — Hubble stretches the stellar tape measure</a> — parallax works for stars within a few hundred light-years. The right edge of the parallax bar is drawn at 100 pc, which is 326.16 ly on this desk’s light-year. That 100 pc is a sketch of the sentence. NASA does not print 100 pc.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/0612465" rel="noopener" target="_blank">Benedict et al. 2007, AJ 133, 1810</a> (arXiv:astro-ph/0612465) — Table 12, column B07, Johnson V: M_V = −4.05 ± 0.02 + (−2.43 ± 0.12)(log<sub>10</sub> P − 1), with LKH. Column B07f, without LKH, is −4.03 and −2.44. Table 2: δ Cephei P = 5.36627 d, log P = 0.7297, ⟨V⟩ = 3.960, A_V = 0.23; ℓ Car log P = 1.5509. Table 11: δ Cephei π_abs = 3.66 ± 0.15 mas, M_V = −3.47 ± 0.11, (m−M)<sub>0</sub> = 7.19, LKH correction −0.01 mag. Section 6.1: FF Aql log P = 0.6504, and the standard deviation of the V residuals is 0.10 mag. The parallax row repeats Benedict et al. 2002, AJ 124, 1695.</li>
+      <li><a href="https://arxiv.org/abs/1403.5755" rel="noopener" target="_blank">Richardson, Jenkins, Wright, and Maddox 2014, AJ 147, 118</a> (arXiv:1403.5755) — Table 1, bias-corrected normal Type Ia: M_B = −19.25 ± 0.20, standard deviation 0.50 mag, N = 239. Volume-limited M_B = −19.26 ± 0.20. The candle is −19.25.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/2000ARA%26A..38..191H" rel="noopener" target="_blank">Hillebrandt and Niemeyer 2000, ARA&amp;A 38, 191</a> — eq. (1): M_B ≈ M_V ≈ −19.30 ± 0.03 + 5 log(H<sub>0</sub>/60), dispersion σ_M ≤ 0.3, citing Hamuy et al. 1996b. The −19.30 is the value at H<sub>0</sub> = 60. It is not the candle on the calculator.</li>
+      <li><a href="https://arxiv.org/abs/1203.4013" rel="noopener" target="_blank">Richmond and Smith 2012, arXiv:1203.4013</a> — SN 2011fe in M101. Table 5: B max = 10.00 ± 0.02, V max = 9.99 ± 0.01. Extinction from Schlegel, Finkbeiner, and Davis 1998, uncertainty doubled: A_B = 0.11 ± 0.03, A_V = 0.08 ± 0.02. They adopt (m−M)<sub>M101</sub> = 29.10 ± 0.15 as a rough average of other work. Δm<sub>15</sub>(B) = 1.21 ± 0.03. This desk does not apply a decline-rate correction.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/9508070" rel="noopener" target="_blank">Colless and Dunn 1996, ApJ 458, 435</a> (arXiv:astro-ph/9508070) — abstract: the main Coma cluster, centered on NGC 4874, mean cz = 6853 km s<sup>−1</sup>, σ_cz = 1082 km s<sup>−1</sup>. A separate NGC 4839 group is not the preset. The velocity distribution is non-Gaussian. This page does not assign a velocity frame the paper’s abstract does not state.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — abstract, base-ΛCDM: H<sub>0</sub> = (67.4 ± 0.5) km s<sup>−1</sup> Mpc<sup>−1</sup>. The central value is the Planck line.</li>
+      <li><a href="https://arxiv.org/abs/2112.04510" rel="noopener" target="_blank">Riess et al. 2022, ApJL 934, L7</a> (arXiv:2112.04510) — baseline SH0ES H<sub>0</sub> = 73.04 ± 1.04 km s<sup>−1</sup> Mpc<sup>−1</sup>. The central value is the SH0ES line.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/9905116" rel="noopener" target="_blank">Hogg 1999, arXiv:astro-ph/9905116</a> — the linear Hubble law holds at small redshift. The product cz/H<sub>0</sub> on this page is that toy. The shift, the relativistic Doppler speed, and the scale-factor statement are the <a href="/science/astronomy/redshift/">redshift</a> desk.</li>
+      <li><a href="https://arxiv.org/abs/2311.16830" rel="noopener" target="_blank">Scolnic and Vincenzi, arXiv:2311.16830</a> — HST Cepheids limited to ∼40 Mpc. Hubble flow ∼100 to 600 Mpc. The tildes are theirs. The Type Ia bar is drawn out to that 600 Mpc figure, and the Hubble-flow bar uses both ends. Those edges are the sketch, not a new limit.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom distance ladder. m − M = 5 log10(d / 10 pc) + A. Parallax d(pc) = 1/p(″), with the asymmetric bounds 1/(p±σ). Cepheid M_V from Benedict et al. 2007, Table 12, column B07. Type Ia M_B = −19.25 from Richardson et al. 2014. Hubble flow d = cz/H0 with Planck 67.4 and SH0ES 73.04. Presets use the cited central values only. The bars are approximate ranges. Not a catalog. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/parallax/"><p class="n">First rung</p><h3>Parallax</h3><p>The angle. d(pc) = 1/p(″). This page starts from that reciprocal and keeps going.</p></a>
+    <a href="/science/astronomy/magnitude/"><p class="n">The scale</p><h3>Magnitude</h3><p>Apparent m and absolute M. Extinction is left out there. The modulus here can add A.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. This page only borrows cz/H0 for the nearby toy.</p></a>
+    <a href="/science/astronomy/hr/"><p class="n">Not a distance</p><h3>HR diagram</h3><p>Temperature and luminosity. A bright star can be close or far. The ladder is what turns M into a distance.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>The parallax rung’s neighborhood. Proxima’s 1.3 pc is the left edge of the sketch.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Home</p><h3>Galaxy</h3><p>The Milky Way these rungs are measured from. Coma is far past that map.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="dl-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="dl-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="dl-help-title">Distance ladder</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom ladder. The bars are approximate ranges and they overlap. Presets are cited objects. A typed number is not a new catalog entry.</p>
+    <h3>The diagram</h3>
+    <table>
+      <caption>The diagram</caption>
+      <tbody>
+        <tr><th scope="row">Axis</th><td>Log distance, from 1 pc to 1 Gpc. Ticks at 1 pc, 1 kpc, 1 Mpc, and 1 Gpc.</td></tr>
+        <tr><th scope="row">Bars</th><td>Parallax, Cepheid, Type Ia, Hubble flow. Click a bar to select that rung. The ranges are a sketch.</td></tr>
+        <tr><th scope="row">Marker</th><td>The distance the current rung computes. On Hubble flow, a second tick shows the other H0.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Modulus</th><td>Solve for distance, apparent m, or absolute M. A is optional extinction in the same band. Empty A is zero. Distance can be read in pc, ly, or Mpc.</td></tr>
+        <tr><th scope="row">Parallax</th><td>d = 1/p. Switch mas or arcsec. Leave σ empty when the source prints none. The far bound is unbounded when σ ≥ p.</td></tr>
+        <tr><th scope="row">Cepheid</th><td>Period from 2 to 60 days. M_V comes from the Benedict B07 line. Distance uses ⟨V⟩ and A_V. Outside the ten-star window, the card says so.</td></tr>
+        <tr><th scope="row">Type Ia</th><td>Peak apparent B and A_B. M_B stays at −19.25.</td></tr>
+        <tr><th scope="row">Hubble flow</th><td>cz from 200 to 30,000 km/s. Both cited H0 distances stay on the card. The marker follows Planck or SH0ES.</td></tr>
+        <tr><th scope="row">Presets</th><td>Sun at 10 pc, Sirius, δ Cephei parallax, δ Cephei as a Cepheid, SN 2011fe, and the Coma cluster. Editing a field leaves the preset. Switching H0 on Coma keeps it.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Diagram</th><td>The canvas takes focus. Left and Right change the rung. Click or tap a bar to select it.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/distance-ladder/distance-ladder.js"></script>
+<script>
+(function () {
+  "use strict";
+  var DL = window.DistanceLadder;
+  if (!DL) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("plot");
+  var RUNGS = ["modulus", "parallax", "cepheid", "sn", "hubble"];
+  var AXIS_LO = 1;
+  var AXIS_HI = 1e9;
+  var state = {
+    rung: "modulus",
+    preset: "sun-10pc",
+    solve: "d",
+    m: DL.SUN_MV,
+    M: DL.SUN_MV,
+    A: 0,
+    dPc: 10,
+    distUnit: "pc",
+    pArcsec: 1,
+    sigmaArcsec: null,
+    pUnit: "arcsec",
+    period: 10,
+    vMean: 0,
+    aV: 0,
+    bPeak: 15,
+    aB: 0,
+    cz: 1000,
+    h0: "planck"
+  };
+  var editing = {};
+  var geom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n) || h.length < 6) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a) {
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function parseOptional(raw) {
+    var t = String(raw == null ? "" : raw).trim();
+    if (!t) return null;
+    return parseNum(t);
+  }
+  function showErr(id, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (!msg) {
+      el.hidden = true;
+      return;
+    }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+  function markInvalid(id, on) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute("aria-invalid", on ? "true" : "false");
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function xOf(dPc, left, width) {
+    var f = (Math.log10(dPc) - Math.log10(AXIS_LO)) / (Math.log10(AXIS_HI) - Math.log10(AXIS_LO));
+    return left + Math.min(1, Math.max(0, f)) * width;
+  }
+  function magOk(v) { return isFinite(v) && v >= -30 && v <= 30; }
+  function extOk(v) { return isFinite(v) && v >= 0 && v <= 5; }
+  function distOk(dPc) { return isFinite(dPc) && dPc >= DL.D_MIN_PC && dPc <= DL.D_MAX_PC; }
+  function h0Value() { return state.h0 === "shoes" ? DL.H0_SHOES : DL.H0_PLANCK; }
+  function clearPreset() { state.preset = null; }
+  function dInUnit(dPc) {
+    if (state.distUnit === "ly") return DL.lyFromPc(dPc);
+    if (state.distUnit === "mpc") return DL.mpcFromPc(dPc);
+    return dPc;
+  }
+  function dFromUnit(v) {
+    if (!(v > 0)) return NaN;
+    if (state.distUnit === "ly") return DL.pcFromLy(v);
+    if (state.distUnit === "mpc") return DL.pcFromMpc(v);
+    return v;
+  }
+  function pDisplay(arcsec) {
+    if (!(arcsec > 0)) return NaN;
+    return state.pUnit === "mas" ? arcsec * 1000 : arcsec;
+  }
+  function pFromDisplay(v) {
+    if (!(v > 0)) return NaN;
+    return state.pUnit === "mas" ? v / 1000 : v;
+  }
+  function unitWord() {
+    if (state.distUnit === "ly") return "light-years";
+    if (state.distUnit === "mpc") return "megaparsecs";
+    return "parsecs";
+  }
+
+  function modulusModel() {
+    var dPc;
+    var m = state.m;
+    var M = state.M;
+    if (state.solve === "d") dPc = DL.distancePc(state.m, state.M, state.A);
+    else if (state.solve === "m") {
+      dPc = state.dPc;
+      m = DL.apparentMag(state.M, state.dPc, state.A);
+    } else {
+      dPc = state.dPc;
+      M = DL.absoluteMag(state.m, state.dPc, state.A);
+    }
+    if (!(dPc > 0) || !isFinite(m) || !isFinite(M)) return null;
+    return { dPc: dPc, m: m, M: M, A: state.A, mu: DL.modulusObserved(dPc, state.A) };
+  }
+  function parallaxModel() {
+    return DL.parallaxError(state.pArcsec, state.sigmaArcsec);
+  }
+  function cepheidModel() {
+    var Mv = DL.cepheidMV(state.period);
+    var dPc = DL.distancePc(state.vMean, Mv, state.aV);
+    if (!isFinite(Mv) || !(dPc > 0)) return null;
+    return {
+      Mv: Mv,
+      dPc: dPc,
+      inSample: DL.cepheidInSample(state.period),
+      logP: Math.log10(state.period),
+      m0: state.vMean - state.aV
+    };
+  }
+  function snModel() {
+    var dPc = DL.distancePc(state.bPeak, DL.SN_MB, state.aB);
+    if (!(dPc > 0)) return null;
+    return {
+      dPc: dPc,
+      mu: state.bPeak - state.aB - DL.SN_MB,
+      m101: DL.m101Pc()
+    };
+  }
+  function hubbleModel() {
+    var dP = DL.hubbleMpc(state.cz, DL.H0_PLANCK);
+    var dS = DL.hubbleMpc(state.cz, DL.H0_SHOES);
+    if (!(dP > 0) || !(dS > 0)) return null;
+    return {
+      dP: dP,
+      dS: dS,
+      z: DL.zFromCz(state.cz),
+      markerMpc: state.h0 === "shoes" ? dS : dP
+    };
+  }
+  function markerPc() {
+    if (state.rung === "modulus") {
+      var mod = modulusModel();
+      return mod ? mod.dPc : NaN;
+    }
+    if (state.rung === "parallax") {
+      var par = parallaxModel();
+      return par ? par.dPc : NaN;
+    }
+    if (state.rung === "cepheid") {
+      var cep = cepheidModel();
+      return cep ? cep.dPc : NaN;
+    }
+    if (state.rung === "sn") {
+      var sn = snModel();
+      return sn ? sn.dPc : NaN;
+    }
+    var hub = hubbleModel();
+    return hub ? DL.pcFromMpc(hub.markerMpc) : NaN;
+  }
+
+  function draw(dMarker) {
+    var view = fit(420);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var left = 86;
+    var right = 16;
+    var width = Math.max(40, w - left - right);
+    var bars = DL.ladder();
+    var colors = { parallax: ink, cepheid: accent, sn: soft, hubble: muted };
+    var top = 36;
+    var bottom = h - 28;
+    var gap = 10;
+    var barH = Math.max(16, (bottom - top - gap * (bars.length - 1)) / bars.length);
+    geom = { left: left, width: width, hits: [] };
+
+    ctx.strokeStyle = rgba(muted, 0.7);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(left, bottom);
+    ctx.lineTo(left + width, bottom);
+    ctx.stroke();
+
+    var ticks = [1, 1e3, 1e6, 1e9];
+    var tickLabel = { 1: "1 pc", 1000: "1 kpc", 1000000: "1 Mpc", 1000000000: "1 Gpc" };
+    var i;
+    for (i = 0; i < ticks.length; i++) {
+      var tx = xOf(ticks[i], left, width);
+      ctx.beginPath();
+      ctx.moveTo(tx, bottom);
+      ctx.lineTo(tx, bottom + 5);
+      ctx.stroke();
+      paintText(ctx, tickLabel[ticks[i]], tx, bottom + 14, { align: i === 0 ? "left" : (i === ticks.length - 1 ? "right" : "center"), size: 10, color: muted });
+    }
+
+    for (i = 0; i < bars.length; i++) {
+      var bar = bars[i];
+      var y = top + i * (barH + gap);
+      var x0 = xOf(bar.loPc, left, width);
+      var x1 = xOf(bar.hiPc, left, width);
+      if (x1 < x0) { var swap = x0; x0 = x1; x1 = swap; }
+      if (x1 - x0 < 3) x1 = x0 + 3;
+      var active = state.rung === bar.id;
+      ctx.fillStyle = rgba(colors[bar.id] || soft, active ? 0.95 : 0.45);
+      ctx.fillRect(x0, y, x1 - x0, barH);
+      if (active) {
+        ctx.strokeStyle = accent;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(x0 + 0.5, y + 0.5, x1 - x0 - 1, barH - 1);
+      }
+      paintText(ctx, bar.name, 8, y + barH / 2, { align: "left", size: 11, color: active ? ink : soft });
+      geom.hits.push({ id: bar.id, y0: y, y1: y + barH });
+    }
+
+    function drop(dPc, color, dashed) {
+      if (!(dPc > 0) || !isFinite(dPc)) return;
+      var x = xOf(dPc, left, width);
+      ctx.beginPath();
+      ctx.moveTo(x, top - 8);
+      ctx.lineTo(x, bottom);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = dashed ? 1 : 1.5;
+      ctx.setLineDash(dashed ? [3, 3] : []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    if (state.rung === "hubble") {
+      var hub = hubbleModel();
+      if (hub) {
+        var other = state.h0 === "shoes" ? DL.pcFromMpc(hub.dP) : DL.pcFromMpc(hub.dS);
+        drop(other, rgba(soft, 0.8), true);
+      }
+    }
+    drop(dMarker, accent, false);
+    if (dMarker > 0 && isFinite(dMarker)) {
+      paintText(ctx, DL.formatLead(dMarker), xOf(dMarker, left, width), 14, { align: "center", size: 11, color: ink });
+    }
+  }
+
+  function stat(k, v) {
+    return "<li><span class=\"k\">" + k + "</span><span class=\"v\">" + v + "</span></li>";
+  }
+  function writeStats(rows) {
+    var el = document.getElementById("d-stats");
+    if (el) el.innerHTML = rows.join("");
+  }
+  function distanceRows(dPc) {
+    return [
+      stat("Parsecs", DL.formatPc(dPc)),
+      stat("Light-years", DL.formatLy(dPc)),
+      stat("Megaparsecs", DL.formatMpc(dPc))
+    ];
+  }
+
+  function render() {
+    var preset = state.preset ? DL.presetById(state.preset) : null;
+    document.querySelectorAll("#rungs button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-rung") === state.rung));
+    });
+    document.querySelectorAll("#presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === state.preset));
+    });
+    document.querySelectorAll("#solve button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-solve") === state.solve));
+    });
+    document.querySelectorAll("#dist-unit button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-unit") === state.distUnit));
+    });
+    document.querySelectorAll("#p-unit button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-punit") === state.pUnit));
+    });
+    document.querySelectorAll("#h0-pick button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-h0") === state.h0));
+    });
+    RUNGS.forEach(function (id) {
+      var panel = document.getElementById("panel-" + id);
+      if (panel) panel.hidden = id !== state.rung;
+    });
+    var rowD = document.getElementById("row-d");
+    var rowM = document.getElementById("row-m");
+    var rowAbs = document.getElementById("row-M");
+    if (rowD) rowD.hidden = state.solve === "d";
+    if (rowM) rowM.hidden = state.solve === "m";
+    if (rowAbs) rowAbs.hidden = state.solve === "M";
+    setText("d-unit-tag", state.distUnit);
+    setText("p-unit-tag", state.pUnit === "mas" ? "mas" : "″");
+
+    if (!editing.m) document.getElementById("m-num").value = DL.formatInput(state.m);
+    if (!editing.M) document.getElementById("M-num").value = DL.formatInput(state.M);
+    if (!editing.A) document.getElementById("A-num").value = DL.formatInput(state.A);
+    if (!editing.d) document.getElementById("d-num").value = DL.formatInput(dInUnit(state.dPc));
+    if (!editing.p) document.getElementById("p-num").value = DL.formatInput(pDisplay(state.pArcsec));
+    if (!editing.sig) document.getElementById("sig-num").value = state.sigmaArcsec == null ? "" : DL.formatInput(pDisplay(state.sigmaArcsec));
+    if (!editing.per) document.getElementById("per-num").value = DL.formatInput(state.period);
+    if (!editing.v) document.getElementById("v-num").value = DL.formatInput(state.vMean);
+    if (!editing.av) document.getElementById("av-num").value = DL.formatInput(state.aV);
+    if (!editing.b) document.getElementById("b-num").value = DL.formatInput(state.bPeak);
+    if (!editing.ab) document.getElementById("ab-num").value = DL.formatInput(state.aB);
+    if (!editing.cz) document.getElementById("cz-num").value = DL.formatInput(state.cz);
+
+    document.getElementById("m-slider").value = String(state.m);
+    document.getElementById("M-slider").value = String(state.M);
+    document.getElementById("A-slider").value = String(Math.min(5, Math.max(0, state.A)));
+    document.getElementById("d-slider").value = String(DL.logUnmap(state.dPc, DL.D_MIN_PC, DL.D_MAX_PC) * 1000);
+    document.getElementById("p-slider").value = String(DL.logUnmap(state.pArcsec * 1000, 0.2, 2000) * 1000);
+    document.getElementById("per-slider").value = String(state.period);
+    document.getElementById("cz-slider").value = String(DL.logUnmap(state.cz, DL.CZ_MIN, DL.CZ_MAX) * 1000);
+
+    ["m-num", "M-num", "A-num", "d-num", "p-num", "sig-num", "per-num", "v-num", "av-num", "b-num", "ab-num", "cz-num"].forEach(function (id) {
+      markInvalid(id, false);
+    });
+    showErr("mod-err", "");
+    showErr("par-err", "");
+    showErr("cep-err", "");
+    showErr("sn-err", "");
+    showErr("hub-err", "");
+
+    var dMarker = markerPc();
+    var tier = preset ? preset.tier : "Custom · arithmetic, not a catalog object";
+    var name = preset ? preset.name : "Custom";
+    var range = "";
+    var why = "";
+    var note = "";
+    var rows = [];
+
+    if (state.rung === "modulus") {
+      var mod = modulusModel();
+      if (!mod) return;
+      dMarker = mod.dPc;
+      range = "m " + DL.formatMag(mod.m) + " · M " + DL.formatMag(mod.M) + " · A " + DL.formatPlain(state.A, 2);
+      rows = [
+        stat("Distance modulus", DL.formatPlain(mod.mu, 3) + " mag"),
+        stat("Extinction A", DL.formatPlain(state.A, 3) + " mag")
+      ].concat(distanceRows(mod.dPc));
+      if (preset && preset.id === "sun-10pc") {
+        why = "At 10 parsecs the distance modulus is zero, so the apparent magnitude equals the absolute magnitude. The Sun’s fact-sheet absolute visual magnitude is +4.83. Extinction is zero, which is the magnitude desk.";
+        note = "10 pc × 3.2616 = 32.616 ly. That four-decimal light-year is the same rounding as the magnitude desk. NASA and ESA round one parsec to 3.26 ly.";
+      } else {
+        why = "m − M = 5 log10(d / 10 pc) + A. A = 0 recovers the magnitude desk. A is extinction in the same band.";
+        note = "A typed magnitude is arithmetic. It is not a catalog object. The Sun button is the fact-sheet absolute magnitude at the definition distance.";
+      }
+    } else if (state.rung === "parallax") {
+      var par = parallaxModel();
+      if (!par) return;
+      dMarker = par.dPc;
+      range = state.pUnit === "mas"
+        ? (DL.formatPlain(state.pArcsec * 1000, 4) + " mas")
+        : (DL.formatPlain(state.pArcsec, 5) + "″");
+      rows = distanceRows(par.dPc);
+      if (!par.hasSigma) {
+        rows.push(stat("Uncertainty", "not cited"));
+        why = "d(pc) = 1/p(″). No σ is entered, so no distance error is printed.";
+      } else {
+        rows.push(stat("σ / p", DL.formatPlain(par.fraction, 4)));
+        rows.push(stat("Linear σ_d", DL.formatPc(par.linearSigmaPc)));
+        rows.push(stat("Near 1/(p+σ)", DL.formatPc(par.dNearPc)));
+        rows.push(stat("Far 1/(p−σ)", par.unbounded ? "unbounded" : DL.formatPc(par.dFarPc)));
+        why = par.unbounded
+          ? "σ is at least as large as p, so the far bound 1/(p−σ) is unbounded. The linear equality σ_d/d = σ_p/p still prints."
+          : "The fractional parallax error equals the fractional distance error. The inverted bounds are asymmetric, and the far error is the larger one.";
+      }
+      if (preset && preset.id === "sirius") {
+        note = "ESA prints p = 0.37921″ and 1/0.37921 = 2.637 pc. That page does not give an uncertainty. This desk does not invent one.";
+      } else if (preset && preset.id === "delta-cep-plx") {
+        note = "Table 11 prints π_abs = 3.66 ± 0.15 mas, and also (m−M)0 = 7.19 with an LKH correction of −0.01 mag. Plain 1/p is not that modulus. LKH is not applied here.";
+      } else {
+        note = "The parallax desk draws the angle. This rung is the reciprocal, and the error that reciprocal makes.";
+      }
+    } else if (state.rung === "cepheid") {
+      var cep = cepheidModel();
+      if (!cep) return;
+      dMarker = cep.dPc;
+      range = DL.formatPlain(state.period, 5) + " d · M_V " + DL.formatMag(cep.Mv);
+      rows = [
+        stat("M_V", DL.formatMag(cep.Mv)),
+        stat("log10 P", DL.formatPlain(cep.logP, 4)),
+        stat("⟨V⟩ − A_V", DL.formatPlain(cep.m0, 3) + " mag"),
+        stat("Sample", cep.inSample ? "inside the ten-star fit" : "outside the ten-star fit")
+      ].concat(distanceRows(cep.dPc));
+      rows.push(stat("0.10 mag factor", DL.formatPlain(DL.distanceFactorFromMag(DL.CEP_SCATTER_MAG), 4) + "×"));
+      why = cep.inSample
+        ? "M_V = −4.05 + (−2.43)(log10 P − 1), Benedict et al. 2007, Table 12, column B07, Johnson V. The 0.10 mag residual scatter is an illustration, not an error bar."
+        : "This period is outside the ten-star fit (log P from 0.6504 to 1.5509). The line is still evaluated. It is an extrapolation.";
+      if (preset && preset.id === "delta-cep") {
+        note = "Table 2: P = 5.36627 d, printed log P = 0.7297, ⟨V⟩ = 3.960, A_V = 0.23. Table 11’s own M_V is −3.47 ± 0.11. That is the star, not the mean line.";
+      } else {
+        note = "Coefficient uncertainties ±0.02 and ±0.12 are printed in the source. They are not combined here. Column B07f, without LKH, is −4.03 and −2.44, and it is not the calculator.";
+      }
+    } else if (state.rung === "sn") {
+      var sn = snModel();
+      if (!sn) return;
+      dMarker = sn.dPc;
+      range = "B " + DL.formatMag(state.bPeak) + " · A_B " + DL.formatPlain(state.aB, 2) + " · M_B −19.25";
+      rows = [
+        stat("M_B", DL.formatMag(DL.SN_MB) + " fixed"),
+        stat("Modulus", DL.formatPlain(sn.mu, 3) + " mag"),
+        stat("Adopted M101", "29.10 mag · " + DL.formatMpc(sn.m101))
+      ].concat(distanceRows(sn.dPc));
+      why = "The candle is Richardson et al. 2014, Table 1, bias-corrected normal Ia: M_B = −19.25 ± 0.20. The ±0.20 is the uncertainty on the mean of 239 events. The distribution width is 0.50 mag. One event is not known to 0.20. No decline-rate correction.";
+      if (preset && preset.id === "sn2011fe") {
+        note = "Richmond and Smith, Table 5: B max = 10.00 ± 0.02, A_B = 0.11 ± 0.03. μ = 10.00 − 0.11 − (−19.25) = 29.14. They adopt 29.10 ± 0.15 for M101. The candle distance and that adopted modulus are not the same number.";
+      } else {
+        note = "Hillebrandt and Niemeyer’s −19.30 is the value at H0 = 60, plus 5 log(H0/60). The calculator holds −19.25.";
+      }
+    } else {
+      var hub = hubbleModel();
+      if (!hub) return;
+      dMarker = DL.pcFromMpc(hub.markerMpc);
+      range = "cz " + DL.formatPlain(state.cz, 1) + " km/s · z " + DL.formatPlain(hub.z, 5);
+      rows = [
+        stat("Planck 67.4", DL.formatPlain(hub.dP, 2) + " Mpc"),
+        stat("SH0ES 73.04", DL.formatPlain(hub.dS, 2) + " Mpc"),
+        stat("Difference", DL.formatPlain(Math.abs(hub.dP - hub.dS), 2) + " Mpc"),
+        stat("Marker", state.h0 === "shoes" ? "SH0ES" : "Planck")
+      ].concat(distanceRows(dMarker));
+      why = "d = cz/H0. The smaller Hubble constant is the larger distance. Hogg limits the linear law to small redshift. The wavelength shift is the redshift desk.";
+      if (preset && preset.id === "coma") {
+        var peculiar = 1082 / DL.H0_PLANCK;
+        note = "Colless and Dunn 1996: main Coma cluster, mean cz = 6853 km/s, σ_cz = 1082 km/s. That dispersion over 67.4 is about " + DL.formatPlain(peculiar, 1) + " Mpc, larger than the H0 gap. The velocity distribution is non-Gaussian. z = cz/c is still the low-z toy.";
+      } else {
+        note = "A typed cz is not a cluster. Planck 67.4 ± 0.5 and SH0ES 73.04 ± 1.04 are the two cited central values. The uncertainties are not expanded into a distance band.";
+      }
+    }
+
+    setText("d-tier", tier);
+    setText("d-name", name);
+    setText("d-range", range);
+    writeStats(rows);
+    setText("d-why", why);
+    setText("d-note", note);
+    setText("scale-note", "Sketch, not a catalog limit. Bars overlap. Parallax 1.3–100 pc, Cepheids out to ∼40 Mpc, Hubble flow ∼100–600 Mpc. The marker is " + DL.formatLead(dMarker) + ".");
+    canvas.setAttribute("aria-label", "Approximate distance ladder on a log axis from 1 parsec to 1 gigaparsec. Current rung " + state.rung + ". Marker at " + DL.formatLead(dMarker) + ".");
+    draw(dMarker);
+  }
+
+  function fail(which, field, msg) {
+    markInvalid(field, true);
+    showErr(which, msg);
+  }
+
+  function commitM(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("m-slider").value) : parseNum(document.getElementById("m-num").value);
+    if (!magOk(v)) return fail("mod-err", "m-num", "Apparent magnitude from −30 to 30.");
+    state.m = v;
+    clearPreset();
+    render();
+  }
+  function commitAbs(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("M-slider").value) : parseNum(document.getElementById("M-num").value);
+    if (!magOk(v)) return fail("mod-err", "M-num", "Absolute magnitude from −30 to 30.");
+    state.M = v;
+    clearPreset();
+    render();
+  }
+  function commitA(fromSlider) {
+    var raw = document.getElementById("A-num").value;
+    var v = fromSlider ? Number(document.getElementById("A-slider").value) : (String(raw).trim() === "" ? 0 : parseNum(raw));
+    if (!extOk(v)) return fail("mod-err", "A-num", "Extinction from 0 to 5 magnitudes. Empty counts as zero.");
+    state.A = v;
+    clearPreset();
+    render();
+  }
+  function commitD(fromSlider) {
+    var v = fromSlider
+      ? DL.logMap(Number(document.getElementById("d-slider").value) / 1000, DL.D_MIN_PC, DL.D_MAX_PC)
+      : dFromUnit(parseNum(document.getElementById("d-num").value));
+    if (!distOk(v)) return fail("mod-err", "d-num", "Distance from 0.1 pc to 2 billion pc.");
+    state.dPc = v;
+    clearPreset();
+    render();
+  }
+  function commitP(fromSlider) {
+    var v = fromSlider
+      ? DL.logMap(Number(document.getElementById("p-slider").value) / 1000, 0.2, 2000) / 1000
+      : pFromDisplay(parseNum(document.getElementById("p-num").value));
+    if (!(v > 0) || v > 10) return fail("par-err", "p-num", "Parallax has to be positive, and at most 10 arcseconds.");
+    state.pArcsec = v;
+    clearPreset();
+    render();
+  }
+  function commitSig() {
+    var raw = document.getElementById("sig-num").value;
+    if (String(raw).trim() === "") {
+      state.sigmaArcsec = null;
+      clearPreset();
+      render();
+      return;
+    }
+    var shown = parseNum(raw);
+    if (!isFinite(shown) || shown < 0) return fail("par-err", "sig-num", "σ is empty, or a positive number in the same unit as p.");
+    state.sigmaArcsec = state.pUnit === "mas" ? shown / 1000 : shown;
+    clearPreset();
+    render();
+  }
+  function commitPeriod(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("per-slider").value) : parseNum(document.getElementById("per-num").value);
+    if (!(v >= DL.P_MIN_DAY && v <= DL.P_MAX_DAY)) return fail("cep-err", "per-num", "Period from 2 to 60 days.");
+    state.period = v;
+    clearPreset();
+    render();
+  }
+  function commitV() {
+    var v = parseNum(document.getElementById("v-num").value);
+    if (!isFinite(v) || v < -5 || v > 25) return fail("cep-err", "v-num", "Mean V from −5 to 25.");
+    state.vMean = v;
+    clearPreset();
+    render();
+  }
+  function commitAv() {
+    var raw = document.getElementById("av-num").value;
+    var v = String(raw).trim() === "" ? 0 : parseNum(raw);
+    if (!extOk(v)) return fail("cep-err", "av-num", "A_V from 0 to 5. Empty counts as zero.");
+    state.aV = v;
+    clearPreset();
+    render();
+  }
+  function commitB() {
+    var v = parseNum(document.getElementById("b-num").value);
+    if (!isFinite(v) || v < -5 || v > 30) return fail("sn-err", "b-num", "Peak B from −5 to 30. M_B stays at −19.25.");
+    state.bPeak = v;
+    clearPreset();
+    render();
+  }
+  function commitAb() {
+    var raw = document.getElementById("ab-num").value;
+    var v = String(raw).trim() === "" ? 0 : parseNum(raw);
+    if (!extOk(v)) return fail("sn-err", "ab-num", "A_B from 0 to 5. Empty counts as zero.");
+    state.aB = v;
+    clearPreset();
+    render();
+  }
+  function commitCz(fromSlider) {
+    var v = fromSlider
+      ? DL.logMap(Number(document.getElementById("cz-slider").value) / 1000, DL.CZ_MIN, DL.CZ_MAX)
+      : parseNum(document.getElementById("cz-num").value);
+    if (!(v >= DL.CZ_MIN && v <= DL.CZ_MAX)) return fail("hub-err", "cz-num", "cz from 200 to 30,000 km/s.");
+    state.cz = v;
+    clearPreset();
+    render();
+  }
+
+  function wire(sliderId, numId, key, fromSliderFn, fromNumFn) {
+    var slider = document.getElementById(sliderId);
+    var num = document.getElementById(numId);
+    if (slider) slider.addEventListener("input", function () { editing[key] = false; fromSliderFn(); });
+    if (!num) return;
+    num.addEventListener("input", function () { editing[key] = true; fromNumFn(); });
+    num.addEventListener("blur", function () { editing[key] = false; render(); });
+    num.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") { ev.preventDefault(); num.blur(); }
+    });
+  }
+  wire("m-slider", "m-num", "m", function () { commitM(true); }, function () { commitM(false); });
+  wire("M-slider", "M-num", "M", function () { commitAbs(true); }, function () { commitAbs(false); });
+  wire("A-slider", "A-num", "A", function () { commitA(true); }, function () { commitA(false); });
+  wire("d-slider", "d-num", "d", function () { commitD(true); }, function () { commitD(false); });
+  wire("p-slider", "p-num", "p", function () { commitP(true); }, function () { commitP(false); });
+  wire(null, "sig-num", "sig", function () {}, commitSig);
+  wire("per-slider", "per-num", "per", function () { commitPeriod(true); }, function () { commitPeriod(false); });
+  wire(null, "v-num", "v", function () {}, commitV);
+  wire(null, "av-num", "av", function () {}, commitAv);
+  wire(null, "b-num", "b", function () {}, commitB);
+  wire(null, "ab-num", "ab", function () {}, commitAb);
+  wire("cz-slider", "cz-num", "cz", function () { commitCz(true); }, function () { commitCz(false); });
+
+  document.querySelectorAll("#rungs button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.rung = btn.getAttribute("data-rung");
+      if (state.preset) {
+        var p = DL.presetById(state.preset);
+        if (!p || p.rung !== state.rung) state.preset = null;
+      }
+      render();
+    });
+  });
+  document.querySelectorAll("#solve button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var next = btn.getAttribute("data-solve");
+      if (next === state.solve) return;
+      var mod = modulusModel();
+      if (mod) {
+        state.m = mod.m;
+        state.M = mod.M;
+        state.dPc = mod.dPc;
+      }
+      state.solve = next;
+      clearPreset();
+      render();
+    });
+  });
+  document.querySelectorAll("#dist-unit button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.distUnit = btn.getAttribute("data-unit");
+      editing.d = false;
+      render();
+    });
+  });
+  document.querySelectorAll("#p-unit button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.pUnit = btn.getAttribute("data-punit");
+      editing.p = false;
+      editing.sig = false;
+      render();
+    });
+  });
+  document.querySelectorAll("#h0-pick button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.h0 = btn.getAttribute("data-h0");
+      render();
+    });
+  });
+  document.querySelectorAll("#presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = DL.presetById(btn.getAttribute("data-preset"));
+      if (!p) return;
+      editing = {};
+      state.preset = p.id;
+      state.rung = p.rung;
+      if (p.id === "sun-10pc") {
+        state.solve = "d";
+        state.m = p.m;
+        state.M = p.M;
+        state.A = p.A;
+        state.dPc = p.dPc;
+      } else if (p.id === "sirius") {
+        state.pArcsec = p.pArcsec;
+        state.sigmaArcsec = null;
+        state.pUnit = "arcsec";
+      } else if (p.id === "delta-cep-plx") {
+        state.pArcsec = p.pMas / 1000;
+        state.sigmaArcsec = p.sigmaMas / 1000;
+        state.pUnit = "mas";
+      } else if (p.id === "delta-cep") {
+        state.period = p.periodDays;
+        state.vMean = p.vMean;
+        state.aV = p.aV;
+      } else if (p.id === "sn2011fe") {
+        state.bPeak = p.bPeak;
+        state.aB = p.aB;
+      } else if (p.id === "coma") {
+        state.cz = p.cz;
+      }
+      render();
+    });
+  });
+
+  function localPoint(ev) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+  }
+  canvas.addEventListener("pointerdown", function (ev) {
+    if (!geom) return;
+    var pt = localPoint(ev);
+    var i;
+    for (i = 0; i < geom.hits.length; i++) {
+      var hit = geom.hits[i];
+      if (pt.y >= hit.y0 && pt.y <= hit.y1) {
+        state.rung = hit.id;
+        if (state.preset) {
+          var p = DL.presetById(state.preset);
+          if (!p || p.rung !== state.rung) state.preset = null;
+        }
+        render();
+        break;
+      }
+    }
+  });
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var idx = RUNGS.indexOf(state.rung);
+    if (idx < 0) idx = 0;
+    idx += ev.key === "ArrowRight" ? 1 : -1;
+    if (idx < 0) idx = RUNGS.length - 1;
+    if (idx >= RUNGS.length) idx = 0;
+    state.rung = RUNGS[idx];
+    if (state.preset) {
+      var p = DL.presetById(state.preset);
+      if (!p || p.rung !== state.rung) state.preset = null;
+    }
+    render();
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+
+  var helpBtn = document.getElementById("dl-help");
+  var helpDialog = document.getElementById("dl-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) {
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
