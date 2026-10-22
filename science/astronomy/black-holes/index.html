@@ -1,0 +1,774 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Black holes — Schwarzschild radius, photon sphere, and ISCO — Steven Philley</title>
+<meta name="description" content="Interactive black-hole desk for a non-rotating Schwarzschild hole. A log mass slider from 1 to 10 billion solar masses. r_s = 2GM/c². The photon sphere is 1.5 r_s. The ISCO is 3 r_s. The nominal solar mass gives r_s = 2.953 km. A hovering clock reads √(1 − r_s/r). The horizon tide across 2 m is 2GM L/r³. Hawking temperature and an evaporation time are order-of-magnitude figures. Presets: 1 and 10 solar masses, Cygnus X-1 (Miller-Jones et al. 2021), Sagittarius A* (GRAVITY Collaboration 2022), and M87* (EHT 2019). Real holes spin.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/black-holes/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Black holes — Schwarzschild radius, photon sphere, and ISCO">
+<meta property="og:description" content="A non-rotating hole. r_s = 2GM/c². Photon sphere 1.5 r_s. ISCO 3 r_s. The nominal solar mass is 2.953 km. Real holes spin.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/black-holes/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Black holes — Schwarzschild radius, photon sphere, and ISCO">
+<meta name="twitter:description" content="Log mass from 1 to 10 billion solar masses. Horizon, photon sphere, ISCO, a hovering clock, and a horizon tide. Cited masses. Schwarzschild only.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:crosshair}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.horizon{width:10px;height:10px;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.photon{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.isco{border-top-style:solid;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.you{width:8px;height:8px;border-top:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/black-holes/" aria-current="page">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Horizon</p>
+  <h1>Black holes<br>one radius</h1>
+  <p class="lede">A non-rotating black hole has one length that sets the rest. The Schwarzschild radius is <strong>r<sub>s</sub> = 2GM/c²</strong>. Light can circle, unstably, at the photon sphere, <strong>1.5 r<sub>s</sub></strong>. The innermost stable circular orbit for a massive particle is the ISCO, <strong>3 r<sub>s</sub></strong>. Slide the mass from one solar mass to ten billion. The drawing is in units of r<sub>s</sub>, so the circles keep their shape and the kilometers change. A second control places a hovering observer. That clock runs at <strong>√(1 − r<sub>s</sub>/r)</strong> compared with a clock far away. The stretch across a 2 m body at the horizon is <strong>2GM L / r³</strong>. Hawking temperature and an evaporation time are order-of-magnitude figures. Newtonian escape speed reaches c at this same radius — the <a href="/science/astronomy/escape/">escape</a> desk. A high-mass star’s rough end is the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk. Curvature, named without these radii, is <a href="/science/gravity/">gravity</a>. A wavelength shift from motion or expansion is <a href="/science/astronomy/redshift/">redshift</a>.</p>
+  <p class="note-schematic">Schwarzschild geometry. Educational approximation. Real astrophysical black holes spin, so the spacetime is Kerr and the photon orbit and the ISCO move. Bardeen, Press, and Teukolsky 1972 put the photon orbit at 3M when the spin is zero, and at M (prograde) or 4M (retrograde) when the spin is maximal. Their zero-spin stability condition is r &gt; 6M, which is 3 r<sub>s</sub>. This page holds the two orbits at 1.5 r<sub>s</sub> and 3 r<sub>s</sub>. It does not draw a disk, a jet, or a shadow. The 1 and 10 solar-mass buttons are computed anchors. Named masses are cited central values. Radii, the tide, and the temperature use the IAU nominal GM☉. Density and the evaporation time also divide by the CODATA value of G.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Mass, orbits, and a hovering clock</span>
+    <button type="button" class="help-q" id="bh-help" aria-haspopup="dialog" aria-controls="bh-help-dialog" aria-expanded="false" aria-label="How this black-hole desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Horizon, photon sphere, ISCO · drag the observer</p>
+      <canvas id="plot" width="880" height="480" tabindex="0" role="img" aria-label="Schwarzschild diagram in units of r_s. The horizon is the filled disk. The photon sphere is the dashed circle at 1.5 r_s. The ISCO is the outer circle at 3 r_s. The observer marker sits at 10 r_s."></canvas>
+      <ul class="legend">
+        <li><span class="swatch horizon" aria-hidden="true"></span> Horizon</li>
+        <li><span class="swatch photon" aria-hidden="true"></span> Photon sphere</li>
+        <li><span class="swatch isco" aria-hidden="true"></span> ISCO</li>
+        <li><span class="swatch you" aria-hidden="true"></span> Observer</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Units of r<sub>s</sub>. Mass changes the kilometers. This picture keeps its shape. At 1 M☉, r<sub>s</sub> is 2.953 km.</p>
+      <div class="controls">
+        <p class="pick-label">Presets · computed anchors and cited central masses</p>
+        <div class="presets" id="presets" role="group" aria-label="Mass presets">
+          <button type="button" data-preset="m1" aria-pressed="true">1 M☉</button>
+          <button type="button" data-preset="m10" aria-pressed="false">10 M☉</button>
+          <button type="button" data-preset="cyg-x1" aria-pressed="false">Cyg X-1</button>
+          <button type="button" data-preset="sgr-a" aria-pressed="false">Sgr A*</button>
+          <button type="button" data-preset="m87" aria-pressed="false">M87*</button>
+        </div>
+        <div class="slider-row">
+          <label for="m-slider">Mass</label>
+          <input type="range" id="m-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="1" aria-valuemax="10000000000" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="m-err" hidden>Mass from 1 to 10 billion solar masses.</p>
+        <div class="slider-row">
+          <label for="r-slider">Observer</label>
+          <input type="range" id="r-slider" min="1.2" max="30" step="0.01" value="10" aria-valuemin="1.2" aria-valuemax="30" aria-valuenow="10" aria-valuetext="10 Schwarzschild radii">
+          <input type="text" class="num" id="r-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="10" aria-label="Observer distance in Schwarzschild radii" aria-invalid="false">
+          <span class="unit-tag">r<sub>s</sub></span>
+        </div>
+        <p class="field-error" id="r-err" hidden>Observer from 1.2 to 30 Schwarzschild radii, outside the horizon.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Computed · nominal solar mass parameter</p>
+      <h2 id="d-name">1 solar mass</h2>
+      <p class="range" id="d-range">1 M☉ · nominal</p>
+      <ul class="stats">
+        <li><span class="k">Horizon r_s</span><span class="v" id="d-rs">2.953 km</span></li>
+        <li><span class="k">Photon sphere</span><span class="v" id="d-ph">4.430 km</span></li>
+        <li><span class="k">ISCO</span><span class="v" id="d-isco">8.860 km</span></li>
+        <li><span class="k">Mean density</span><span class="v" id="d-rho">1.843×10^19 kg/m³ · 1.843×10^16 × water</span></li>
+        <li><span class="k">Observer</span><span class="v" id="d-obs">10 r_s</span></li>
+        <li><span class="k">Clock factor</span><span class="v" id="d-dil">0.9487</span></li>
+        <li><span class="k">Horizon tide</span><span class="v" id="d-tide">2.061×10^10 m/s² · 2.102×10^9 g</span></li>
+        <li><span class="k">Hawking T</span><span class="v" id="d-temp">6.170×10^-8 K</span></li>
+        <li><span class="k">Evaporation</span><span class="v" id="d-evap">2.095×10^67 yr · order of magnitude</span></li>
+      </ul>
+      <p class="why" id="d-why">One nominal solar mass. r_s = 2GM☉/c². The IAU nominal solar mass parameter and the exact speed of light fix that length. The Sun does not become a black hole.</p>
+      <p class="why" id="d-note">IAU 2015 Resolution B3 sets GM☉ = 1.3271244 × 10²⁰ m³ s⁻². NASA Science’s star-types page puts a main-sequence star under eight solar masses on the white-dwarf path. This button is a computed anchor.</p>
+      <p class="why" id="d-clock">A hovering clock at 10 r_s advances 0.9487 s while a far clock advances 1 s. Light climbing out from there has a gravitational redshift z = 0.05409. The redshift desk is the Doppler and expansion page.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The one-solar-mass anchor is still this: GM☉ = 1.3271244 × 10²⁰ m³ s⁻² and c = 299792458 m/s, so r_s = 2.953 km, the photon sphere is 4.430 km, and the ISCO is 8.860 km. At 10 r_s the clock factor √(1 − 1/10) is 0.9487. The horizon tide across 2 m is 2.061×10^10 m/s². The Hawking temperature is 6.170×10^-8 K. The horizon-area evaporation time is 2.095×10^67 Julian years, an order of magnitude. Mean density inside r_s, using CODATA G = 6.67430 × 10⁻¹¹, is 1.843×10^19 kg/m³. Ten solar masses multiplies every length by 10. Cygnus X-1 is 21.2 ± 2.2 M☉ (Miller-Jones et al. 2021). Sagittarius A* is 4.297 × 10⁶ M☉, statistical uncertainty 0.012 × 10⁶, systematics about 40,000 M☉ (GRAVITY Collaboration 2022). M87* is 6.5 × 10⁹ M☉, ±0.2 statistical and ±0.7 systematic (EHT 2019, Paper VI).</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Spin, tides, and a cold glow</p>
+    <h2>The picture is Schwarzschild. The holes in the sky spin.</h2>
+    <p>Kerr’s geometry has mass and spin. The photon orbit and the ISCO depend on that spin and on whether the orbit turns with the hole or against it. Bardeen, Press, and Teukolsky 1972 give the zero-spin photon orbit at 3M and the maximal-spin photon orbit at M or 4M. The zero-spin ISCO is 6M. This desk does not evaluate the Kerr formula, and it does not assign a spin to Cygnus X-1, Sagittarius A*, or M87*. The EHT 2022 comparison for Sagittarius A* disfavors a non-spinning hole. The mass on the button is still the GRAVITY central value, and the radii are still the non-spinning ones.</p>
+    <p>The tide is 2GM L / r³ at r = r_s, with L = 2 m. That is the Newtonian difference in acceleration across a body about two metres tall. At one solar mass it is about two billion g. At Sagittarius A* it is a small fraction of one g. At M87* it is tiny. “Spaghettified at the horizon” is a stellar-mass story. A static observer’s proper tidal field diverges as the horizon is approached. This page does not compute that divergence. A traveler who falls in crosses the horizon in finite proper time. The clock factor on this page is for someone trying to hover.</p>
+    <p>Hawking temperature is ħ c³ / (8 π G M k). It scales as 1/M. A solar-mass hole is far colder than the cosmic microwave background, so it would absorb that bath faster than it radiates. The evaporation row assumes nothing falls in. It uses the horizon area as a blackbody, A = 4π r_s², which integrates to t = 5120 π G² M³ / (ħ c⁴). Page 1976 counted greybodies and other massless species and got a different power. The number here is an order of magnitude, and it scales as M³.</p>
+    <p>Mean density is the mass divided by the volume of the horizon sphere. It is an accounting figure, and it scales as 1/M². The mass is not a uniform ball of material. At M87* that quotient sits below the density of water, 1000 kg/m³. The comparison with water is the classroom 1000 kg/m³, and the comparison in g uses the conventional standard gravity 9.80665 m/s².</p>
+  </div>
+
+  <p class="band">Literacy · the numbers on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Schwarzschild radius</dt><dd>r<sub>s</sub> = 2GM/c². In geometric units the horizon is r = 2M, so M = r<sub>s</sub>/2. One nominal solar mass uses the IAU 2015 mass parameter GM☉ = 1.3271244 × 10²⁰ m³ s⁻² and c = 299792458 m/s. That product is 2.953 km. G does not appear separately, because the mass parameter is already GM.</dd></div>
+    <div class="gloss"><dt>Photon sphere</dt><dd>The unstable circular orbit for light, at 1.5 r<sub>s</sub> (3M) when the hole does not spin. A slight nudge and the ray falls in or escapes. The shadow a telescope might see is larger than this circle, because of light bending. This page draws the orbit, not the shadow.</dd></div>
+    <div class="gloss"><dt>ISCO</dt><dd>Innermost stable circular orbit. For Schwarzschild it is 3 r<sub>s</sub> (6M). Inside it, a circular orbit is unstable and a slight inward nudge becomes a plunge. Gas in a thin disk is often described as drifting in until it reaches this orbit. Spin moves the orbit.</dd></div>
+    <div class="gloss"><dt>Clock factor</dt><dd>√(1 − r<sub>s</sub>/r) is dτ/dt for a static observer, relative to proper time at infinity. At 10 r<sub>s</sub> it is √0.9 = 0.9487. The same factor is a gravitational redshift, z = 1/f − 1. The <a href="/science/astronomy/redshift/">redshift</a> desk uses z = (λ<sub>obs</sub> − λ<sub>rest</sub>)/λ<sub>rest</sub> for motion and for cosmic expansion. That z is a different measurement.</dd></div>
+    <div class="gloss"><dt>Horizon tide</dt><dd>2GM L / r³ at r = r<sub>s</sub>, L = 2 m. Because r<sub>s</sub> scales with M, the tide scales as 1/M². The “g” column divides by 9.80665 m/s², the conventional standard gravity. It is a comparison, not a second measurement of the hole.</dd></div>
+    <div class="gloss"><dt>Mean density</dt><dd>M / (⁴⁄₃ π r<sub>s</sub>³), with M = GM☉ / G and G = 6.67430 × 10⁻¹¹ m³ kg⁻¹ s⁻², the 2022 CODATA central value. “× water” divides by 1000 kg/m³. The quotient falls as 1/M². It is not the density of any material at the horizon.</dd></div>
+    <div class="gloss gloss-wide"><dt>Hawking temperature and evaporation</dt><dd>T = ħ c³ / (8 π k GM). ħ = h/(2π), with h and k the exact SI constants. The lifetime row is t = 5120 π G² M³ / (ħ c⁴), reported in Julian years of 31,557,600 s. That coefficient is the horizon-area Stefan–Boltzmann estimate. It is an order of magnitude. A hole colder than the cosmic microwave background gains energy from that radiation while the bath is warmer than T.</dd></div>
+    <div class="gloss"><dt>1 and 10 solar masses</dt><dd>Computed. The Sun’s nominal mass parameter, and ten times it. NASA’s classroom split leaves a white dwarf below about 8 solar masses and a neutron star from about 8 to 20. Neither button is a claim that such a hole exists at that mass.</dd></div>
+    <div class="gloss"><dt>Cited holes</dt><dd>Cygnus X-1, 21.2 ± 2.2 M☉, Miller-Jones et al. 2021. Sagittarius A*, (4.297 ± 0.012) × 10⁶ M☉ statistical, systematics about 40,000 M☉, GRAVITY Collaboration 2022. M87*, 6.5 ± 0.2 (stat) ± 0.7 (sys) × 10⁹ M☉, EHT 2019 Paper VI. The readout uses the central value.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the constants and the masses</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar mass parameter GM☉ = 1.3271244 × 10²⁰ m³ s⁻². A conversion constant, chosen near the 2015 estimates, not a new measurement of the Sun. The same resolution’s nominal luminosity is the zero on the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk. The resolution text is also at the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU archive</a>.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m. Used when a radius is easier to read in AU.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA recommended value G = 6.67430 × 10⁻¹¹ m³ kg⁻¹ s⁻², standard uncertainty 0.00015 × 10⁻¹¹. Used for mean density and the evaporation time. Radii, the tide, and the Hawking temperature use GM and do not divide by G. c = 299,792,458 m/s, h = 6.62607015 × 10⁻³⁴ J s, and k = 1.380649 × 10⁻²³ J/K are exact SI defining constants. ħ = h/(2π).</li>
+      <li><a href="https://doi.org/10.1086/151796" rel="noopener" target="_blank">Bardeen, Press, and Teukolsky 1972, ApJ 178, 347</a> — photon orbit at 3M when a = 0, and at M (direct) or 4M (retrograde) when a = M. The zero-spin stability condition reduces to r² − 6Mr &gt; 0, so the ISCO is 6M. This page stops there and does not evaluate their Kerr formula.</li>
+      <li><a href="https://doi.org/10.1007/BF02345020" rel="noopener" target="_blank">Hawking 1975, Commun. Math. Phys. 43, 199</a> — particle creation by black holes. The temperature used here is T = ħ κ / (2π k) with surface gravity κ = c⁴ / (4GM), which is ħ c³ / (8 π G M k). The 1974 announcement is <a href="https://doi.org/10.1038/248030a0" rel="noopener" target="_blank">Nature 248, 30</a>.</li>
+      <li><a href="https://doi.org/10.1103/PhysRevD.13.198" rel="noopener" target="_blank">Page 1976, Phys. Rev. D 13, 198</a> — emission rates for massless particles from a non-rotating, uncharged hole, including greybodies. For M ≫ 10¹⁷ g he gives a total power of order 2 × 10⁻⁴ ħ c⁶ /(G² M²), mostly neutrinos in the particle content he used. This page’s lifetime is the simpler horizon-area estimate, not that integral. The coefficient 5120π is what A = 4π r<sub>s</sub>² and the Stefan–Boltzmann law integrate to.</li>
+      <li><a href="https://doi.org/10.1126/science.abb3363" rel="noopener" target="_blank">Miller-Jones et al. 2021, Science 371, 1046</a> — Cygnus X-1 black-hole mass 21.2 ± 2.2 M☉. Distance 2.22 kpc with uncertainties +0.18 and −0.17. Also <a href="https://arxiv.org/abs/2102.09091" rel="noopener" target="_blank">arXiv:2102.09091</a>.</li>
+      <li><a href="https://doi.org/10.1051/0004-6361/202142465" rel="noopener" target="_blank">GRAVITY Collaboration 2022, A&amp;A 657, L12</a> — Sagittarius A*, M• = (4.297 ± 0.012) × 10⁶ M☉, statistical errors. Systematics about 40,000 M☉ on the mass and about 30 pc on R₀ = (8277 ± 9) pc. The preset uses 4.297 × 10⁶.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ac6674" rel="noopener" target="_blank">EHT Collaboration 2022, ApJL 930, L12</a> — first Sagittarius A* results, Paper I. A ring of diameter 51.8 ± 2.3 μas, consistent with a Kerr hole of mass ∼4 × 10⁶ M☉ from stellar orbits. The paper’s model comparison disfavors a non-spinning hole. This desk still quotes the GRAVITY mass and the Schwarzschild radii.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ab1141" rel="noopener" target="_blank">EHT Collaboration 2019, ApJL 875, L6</a> — M87* Paper VI. M = 6.5 ± 0.2 (stat) ± 0.7 (sys) × 10⁹ M☉. Distance 16.8 Mpc with uncertainties +0.8 and −0.7. The preset uses 6.5 × 10⁹.</li>
+      <li><a href="https://science.nasa.gov/universe/stars/types/" rel="noopener" target="_blank">NASA Science — Star types</a> — under eight solar masses, a white dwarf; about 8 to 20, a neutron star; heavier stars can leave a stellar-mass black hole. The 1 and 10 solar-mass buttons are labeled against that split. The shapes of the boundaries are the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk.</li>
+      <li><a href="https://science.nasa.gov/universe/black-holes/" rel="noopener" target="_blank">NASA Science — Black holes</a> — stellar-mass holes and the supermassive holes in galaxy centers, as observed astronomy. The <a href="/science/gravity/">gravity</a> desk uses the same door for the cartoon. This page is the radius arithmetic.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom Schwarzschild arithmetic. r<sub>s</sub> = 2GM/c² with the IAU 2015 nominal GM☉ and the exact speed of light. Photon sphere 1.5 r<sub>s</sub>. ISCO 3 r<sub>s</sub>. The clock factor is √(1 − r<sub>s</sub>/r). The horizon tide is 2GM L/r³ across 2 m. Hawking temperature uses ħ, c, k, and GM. The evaporation time is the horizon-area order of magnitude, in Julian years. Density uses 2022 CODATA G. Named masses are the cited central values. Real holes spin. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/escape/"><p class="n">The speed</p><h3>Escape</h3><p>Newtonian escape is √(2GM/r). It equals c at r = 2GM/c². That desk stays with fact-sheet planets. This one starts at that radius.</p></a>
+    <a href="/science/astronomy/stellar-lifetime/"><p class="n">The path</p><h3>Stellar lifetime</h3><p>Mass, a mass–luminosity fit, and t ≈ 10 Gyr × M/L. The black-hole label there is NASA’s rough end for a heavy star.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>Weight, Newton, and Einstein. The black-hole card there is a definition. The radii are here.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. At z = 1 the relativistic β is 0.6. Gravitational redshift is the clock factor on this page, written as z = 1/f − 1.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>OBAFGKM and the life-path cartoons. The high-mass path is the one that can leave a hole.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The nominal Sun this desk starts from, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="bh-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="bh-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="bh-help-title">Black holes</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A non-rotating hole. The drawing is in units of r_s, so every mass looks the same and the readout carries the kilometers. Real holes spin.</p>
+    <h3>The diagram</h3>
+    <table>
+      <caption>The diagram</caption>
+      <tbody>
+        <tr><th scope="row">Horizon</th><td>Filled disk. Radius 1, in units of r_s.</td></tr>
+        <tr><th scope="row">Photon sphere</th><td>Dashed circle at 1.5 r_s.</td></tr>
+        <tr><th scope="row">ISCO</th><td>Solid circle at 3 r_s.</td></tr>
+        <tr><th scope="row">Observer</th><td>The marker. Drag it, or use the observer slider. It stays outside the horizon, from 1.2 r_s to 30 r_s.</td></tr>
+        <tr><th scope="row">Scale</th><td>The frame fits the ISCO and the observer. Mass does not redraw the circles. It changes the kilometer note.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>1 M☉ and 10 M☉ are computed from the IAU nominal GM☉. Cygnus X-1, Sagittarius A*, and M87* place the cited central mass. The observer stays where you left it.</td></tr>
+        <tr><th scope="row">Mass</th><td>Logarithmic, from 1 to 10 billion solar masses. Typing or sliding leaves the preset.</td></tr>
+        <tr><th scope="row">Observer</th><td>Distance in Schwarzschild radii, from 1.2 to 30. The clock factor needs a static observer outside the horizon.</td></tr>
+        <tr><th scope="row">Diagram</th><td>Tap or drag to set the observer from the distance to the center. It does not change the mass.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">r_s, photon, ISCO</th><td>2GM/c², 1.5 r_s, and 3 r_s. Kilometers, or AU when that is the readable unit.</td></tr>
+        <tr><th scope="row">Mean density</th><td>Mass over the volume inside r_s. The water column uses 1000 kg/m³.</td></tr>
+        <tr><th scope="row">Clock factor</th><td>√(1 − r_s/r). At 10 r_s it is 0.9487. The sentence under the card turns that into a gravitational redshift.</td></tr>
+        <tr><th scope="row">Horizon tide</th><td>2GM L / r³ at the horizon, L = 2 m, also in units of standard gravity 9.80665 m/s².</td></tr>
+        <tr><th scope="row">Hawking T</th><td>ħ c³ / (8 π k GM). Colder as the hole gets heavier.</td></tr>
+        <tr><th scope="row">Evaporation</th><td>5120 π G² M³ / (ħ c⁴), in Julian years. Labeled an order of magnitude.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Diagram</th><td>The canvas takes focus. Left and Right nudge the observer. Shift is a coarser step.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/black-holes/black-holes.js"></script>
+<script>
+(function () {
+  "use strict";
+  var BH = window.BlackHole;
+  if (!BH) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("plot");
+  var mSlider = document.getElementById("m-slider");
+  var mNum = document.getElementById("m-num");
+  var mErr = document.getElementById("m-err");
+  var rSlider = document.getElementById("r-slider");
+  var rNum = document.getElementById("r-num");
+  var rErr = document.getElementById("r-err");
+  var anchor = BH.presetById("m1");
+  var state = { m: anchor.M, r: BH.R_DEFAULT, preset: "m1" };
+  var editingM = false;
+  var editingR = false;
+  var geom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    var h = String(hex || "").replace("#", "");
+    if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+    var n = parseInt(h, 16);
+    if (!isFinite(n) || h.length < 6) return { r: 200, g: 180, b: 138 };
+    return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+  }
+  function rgba(hex, a) {
+    var c = hexToRgb(hex);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(el, on) {
+    if (!el) return;
+    el.hidden = !on;
+  }
+  function formatR(v) {
+    var t = (Math.round(v * 100) / 100).toFixed(2);
+    return t.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function massOk(v) {
+    return isFinite(v) && v >= BH.M_MIN && v <= BH.M_MAX;
+  }
+  function radiusOk(v) {
+    return isFinite(v) && v >= BH.R_MIN && v <= BH.R_MAX;
+  }
+  function sliderFromMass(m) {
+    return String(BH.logUnmap(m, BH.M_MIN, BH.M_MAX) * 1000);
+  }
+  function massFromSlider() {
+    return BH.logMap(Number(mSlider.value) / 1000, BH.M_MIN, BH.M_MAX);
+  }
+  function markPresets() {
+    document.querySelectorAll("#presets button").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === state.preset));
+    });
+  }
+  function massPhrase(p) {
+    if (!p) return BH.formatMass(state.m) + " M\u2609";
+    if (p.id === "cyg-x1") return "21.2 \u00b1 2.2 M\u2609";
+    if (p.id === "sgr-a") return "4.297 \u00b1 0.012 \u00d7 10^6 M\u2609";
+    if (p.id === "m87") return "6.5 \u00d7 10^9 M\u2609";
+    return p.massText + " M\u2609";
+  }
+
+  function draw() {
+    var view = fit(440);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var maxU = Math.max(BH.ISCO_FACTOR, state.r) * 1.28;
+    var cx = Math.max(78, Math.min(w * 0.42, w - 96));
+    var cy = h * 0.46;
+    var room = Math.max(36, Math.min(cx - 16, cy - 22, w - cx - 16, h - cy - 28));
+    var pxPer = room / maxU;
+    geom = { cx: cx, cy: cy, pxPer: pxPer };
+
+    function rad(units) { return units * pxPer; }
+    function ring(units, color, width, dash) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad(units), 0, Math.PI * 2);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.setLineDash(dash || []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    ring(BH.ISCO_FACTOR, rgba(soft, 0.95), 1.5, []);
+    ring(BH.PHOTON_FACTOR, accent, 1.5, [5, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, rad(1), 0, Math.PI * 2);
+    ctx.fillStyle = rgba(ink, 0.92);
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = accent;
+    ctx.stroke();
+
+    var ox = cx + rad(state.r);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(ox, cy);
+    ctx.strokeStyle = rgba(accent, 0.55);
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(ox, cy, 5.5, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = ink;
+    ctx.stroke();
+
+    paintText(ctx, "ISCO  3", cx - rad(BH.ISCO_FACTOR) - 8, cy - rad(BH.ISCO_FACTOR) + 2, { align: "right", size: 11, color: soft });
+    paintText(ctx, "photon  1.5", cx + 8, cy - rad(BH.PHOTON_FACTOR) - 10, { align: "left", size: 11, color: accent });
+    if (rad(1) > 36) {
+      paintText(ctx, "horizon", cx, cy, { align: "center", size: 11, color: cssVar("--base-2", "#14161c") });
+    } else {
+      paintText(ctx, "horizon", cx, cy + rad(1) + 12, { align: "center", size: 11, color: ink });
+    }
+    var obsLabelX = ox + 10;
+    var obsAlign = "left";
+    if (obsLabelX > w - 72) {
+      obsLabelX = ox - 10;
+      obsAlign = "right";
+    }
+    paintText(ctx, "you  " + formatR(state.r), obsLabelX, cy - 14, { align: obsAlign, size: 11, color: ink });
+  }
+
+  function render() {
+    var preset = state.preset ? BH.presetById(state.preset) : null;
+    var model = BH.compute(state.m, state.r);
+    markPresets();
+    if (!editingM) {
+      mNum.value = preset ? preset.massText : BH.formatMass(state.m);
+      mNum.setAttribute("aria-invalid", "false");
+    }
+    if (!editingR) {
+      rNum.value = formatR(state.r);
+      rNum.setAttribute("aria-invalid", "false");
+    }
+    mSlider.value = sliderFromMass(state.m);
+    var shown = preset ? preset.massText : BH.formatMass(state.m);
+    mSlider.setAttribute("aria-valuetext", shown + " solar masses");
+    mSlider.setAttribute("aria-valuenow", shown);
+    rSlider.value = String(state.r);
+    rSlider.setAttribute("aria-valuenow", formatR(state.r));
+    rSlider.setAttribute("aria-valuetext", formatR(state.r) + " Schwarzschild radii");
+    showErr(mErr, false);
+    showErr(rErr, false);
+    if (!model) return;
+
+    var z = 1 / model.dilation - 1;
+    setText("d-tier", preset ? preset.tier : "Custom mass · Schwarzschild");
+    setText("d-name", preset ? preset.name : "Custom mass");
+    setText("d-range", preset ? massPhrase(preset) : (BH.formatMass(state.m) + " M\u2609"));
+    setText("d-rs", BH.formatLength(model.rs));
+    setText("d-ph", BH.formatLength(model.photon));
+    setText("d-isco", BH.formatLength(model.isco));
+    setText("d-rho", BH.formatDensity(model.density));
+    setText("d-obs", formatR(state.r) + " r_s");
+    setText("d-dil", BH.formatFactor(model.dilation));
+    setText("d-tide", BH.formatTide(model.tidal));
+    setText("d-temp", BH.formatTemp(model.temperature));
+    setText("d-evap", BH.formatYears(model.evaporationYears) + " \u00b7 order of magnitude");
+    if (preset) {
+      setText("d-why", preset.why);
+      setText("d-note", preset.note);
+    } else {
+      setText("d-why", "At " + BH.formatMass(state.m) + " M\u2609 every Schwarzschild length is that multiple of the nominal solar value. The orbits stay at 1.5 r_s and 3 r_s.");
+      setText("d-note", "A typed mass uses the same constants as the 1 M\u2609 button. It is not a catalog object. The central values for Cygnus X-1, Sagittarius A*, and M87* are the preset buttons.");
+    }
+    setText("d-clock", "A hovering clock at " + formatR(state.r) + " r_s advances " + BH.formatFactor(model.dilation) + " s while a far clock advances 1 s. Light climbing out from there has a gravitational redshift z = " + BH.formatFactor(z) + ". The redshift desk is the Doppler and expansion page.");
+    setText("scale-note", "Units of r_s. Mass changes the kilometers. This picture keeps its shape. r_s here is " + BH.formatLength(model.rs) + ".");
+    canvas.setAttribute("aria-label", "Schwarzschild diagram in units of r_s. Horizon, photon sphere at 1.5, ISCO at 3, observer at " + formatR(state.r) + ". r_s is " + BH.formatLength(model.rs) + ".");
+    draw();
+  }
+
+  function commitMass(fromSlider) {
+    var v = fromSlider ? massFromSlider() : parseNum(mNum.value);
+    if (!massOk(v)) {
+      mNum.setAttribute("aria-invalid", "true");
+      showErr(mErr, true);
+      return;
+    }
+    state.m = v;
+    state.preset = null;
+    render();
+  }
+  function commitRadius(fromSlider) {
+    var v = fromSlider ? Number(rSlider.value) : parseNum(rNum.value);
+    if (!radiusOk(v)) {
+      rNum.setAttribute("aria-invalid", "true");
+      showErr(rErr, true);
+      return;
+    }
+    state.r = v;
+    render();
+  }
+  mSlider.addEventListener("input", function () { editingM = false; commitMass(true); });
+  mNum.addEventListener("input", function () { editingM = true; commitMass(false); });
+  mNum.addEventListener("blur", function () { editingM = false; render(); });
+  mNum.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") { ev.preventDefault(); mNum.blur(); }
+  });
+  rSlider.addEventListener("input", function () { editingR = false; commitRadius(true); });
+  rNum.addEventListener("input", function () { editingR = true; commitRadius(false); });
+  rNum.addEventListener("blur", function () { editingR = false; render(); });
+  rNum.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") { ev.preventDefault(); rNum.blur(); }
+  });
+  document.querySelectorAll("#presets button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = BH.presetById(btn.getAttribute("data-preset"));
+      if (!p) return;
+      editingM = false;
+      state.m = p.M;
+      state.preset = p.id;
+      render();
+    });
+  });
+
+  function localPoint(ev) {
+    var rect = canvas.getBoundingClientRect();
+    return { x: ev.clientX - rect.left, y: ev.clientY - rect.top };
+  }
+  function setRadiusFromPoint(pt) {
+    if (!geom || !(geom.pxPer > 0)) return;
+    var dx = pt.x - geom.cx;
+    var dy = pt.y - geom.cy;
+    var units = Math.sqrt(dx * dx + dy * dy) / geom.pxPer;
+    units = Math.min(BH.R_MAX, Math.max(BH.R_MIN, units));
+    editingR = false;
+    state.r = units;
+    render();
+  }
+  canvas.addEventListener("pointerdown", function (ev) {
+    if (canvas.setPointerCapture) canvas.setPointerCapture(ev.pointerId);
+    canvas.dataset.drag = "1";
+    setRadiusFromPoint(localPoint(ev));
+  });
+  canvas.addEventListener("pointermove", function (ev) {
+    if (canvas.dataset.drag !== "1") return;
+    setRadiusFromPoint(localPoint(ev));
+  });
+  function endDrag() { canvas.dataset.drag = ""; }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var step = ev.shiftKey ? 0.5 : 0.1;
+    if (ev.key === "ArrowLeft") step = -step;
+    var next = state.r + step;
+    next = Math.min(BH.R_MAX, Math.max(BH.R_MIN, next));
+    editingR = false;
+    state.r = next;
+    render();
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+
+  var helpBtn = document.getElementById("bh-help");
+  var helpDialog = document.getElementById("bh-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) {
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
