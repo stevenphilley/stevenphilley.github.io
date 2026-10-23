@@ -1,0 +1,974 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmology — age, lookback, and the distances — Steven Philley</title>
+<meta name="description" content="Interactive cosmology desk. Integrate the Friedmann equation, radiation left out, and read the age, the lookback time, and the comoving, luminosity, and angular-diameter distances. Planck 2018 Table 2, TT,TE,EE+lowE+lensing: H0 = 67.36, Ωm = 0.3153, ΩΛ = 0.6847. The no-radiation age is 13.801 Gyr. SH0ES H0 = 73.04 keeps those densities. Angular-diameter distance peaks near z = 1.6.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/cosmology/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Cosmology — age, lookback, and the distances">
+<meta property="og:description" content="One redshift, several distances. Age, lookback, comoving, luminosity, and angular-diameter distance from the Friedmann equation. Planck 2018 and a SH0ES H0. Radiation left out.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/cosmology/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cosmology — age, lookback, and the distances">
+<meta name="twitter:description" content="Slide z. Read the age, the lookback, and three distances. Planck 2018 gives 13.801 Gyr with radiation left out. Angular-diameter distance peaks near z = 1.6.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink,#e8e6e1);flex:0 0 auto}
+.swatch.dc{border-top-color:var(--ink,#e8e6e1);border-top-width:2px}
+.swatch.dl{border-top-color:var(--accent,#c8b48a);border-top-width:2px}
+.swatch.da{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96);border-top-width:2px}
+.swatch.you{width:0;height:12px;border-top:0;border-left:2px solid var(--accent,#c8b48a)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="range"]:disabled{opacity:.4}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.num:disabled{opacity:.55}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/" aria-current="page">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Cosmology</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · Expansion</p>
+  <h1>Cosmology<br>several distances</h1>
+  <p class="lede">A redshift is not yet a distance. The same <strong>z</strong> is an age, a lookback time, a comoving ruler, a luminosity distance, and an angular-diameter distance. They are different integrals of one expansion history. Slide z from 0 to 20, or type a higher one. The default model is flat <strong>Planck 2018</strong>, Table 2, column TT,TE,EE+lowE+lensing: <strong>H<sub>0</sub> = 67.36</strong>, <strong>Ω<sub>m</sub> = 0.3153</strong>, <strong>Ω<sub>Λ</sub> = 0.6847</strong>. A second button sets the <strong>SH0ES</strong> Hubble constant, <strong>73.04</strong>, and keeps those densities, because that paper measures H<sub>0</sub> and not Ω<sub>m</sub>. Radiation is left out. The wavelength shift is the <a href="/science/astronomy/redshift/">redshift</a> desk. The nearby toy d ≈ cz/H<sub>0</sub> is the <a href="/science/astronomy/distance-ladder/">distance ladder</a>. The Milky Way these numbers are measured from is the <a href="/science/astronomy/galaxy/">galaxy</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Not a fit to the sky and not a catalog distance. Radiation is omitted, the way Hogg’s E(z) omits it. Peculiar velocities are not in the integral. A typed redshift is arithmetic, not a new object. With the Planck central values the no-radiation age is 13.801 Gyr. The paper’s age for that same column is 13.797 ± 0.023 Gyr, and that published age includes radiation. The two sit inside the quoted uncertainty. Angular-diameter distance for these parameters peaks near z = 1.59.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Age, lookback, and three distances</span>
+    <button type="button" class="help-q" id="cosmo-help" aria-haspopup="dialog" aria-controls="cosmo-help-dialog" aria-expanded="false" aria-label="How this cosmology desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Distance versus redshift · log Mpc · 0 to 20 · angular-diameter distance turns over</p>
+      <canvas id="plot" width="880" height="420" tabindex="0" role="img" aria-label="Comoving, luminosity, and angular-diameter distance from redshift 0 to 20. The marker is at redshift 1."></canvas>
+      <ul class="legend">
+        <li><span class="swatch dc" aria-hidden="true"></span> Comoving</li>
+        <li><span class="swatch dl" aria-hidden="true"></span> Luminosity</li>
+        <li><span class="swatch da" aria-hidden="true"></span> Angular diameter</li>
+        <li><span class="swatch you" aria-hidden="true"></span> This z</li>
+      </ul>
+      <p class="scale-note" id="scale-note">For the Planck 2018 central values, angular-diameter distance peaks near z = 1.59.</p>
+      <div class="controls">
+        <p class="pick-label">Cosmology · cited central values</p>
+        <div class="presets" id="cosmos" role="group" aria-label="Cosmological parameters">
+          <button type="button" data-cosmo="planck" aria-pressed="true">Planck 2018</button>
+          <button type="button" data-cosmo="shoes" aria-pressed="false">SH0ES 73.04</button>
+        </div>
+        <p class="pick-label">Geometry</p>
+        <div class="presets" id="geom" role="group" aria-label="Flat or curved">
+          <button type="button" data-flat="1" aria-pressed="true">Flat</button>
+          <button type="button" data-flat="0" aria-pressed="false">Curved</button>
+        </div>
+        <p class="pick-label">Objects · cited redshifts only</p>
+        <div class="presets" id="objects" role="group" aria-label="Cited redshifts">
+          <button type="button" data-object="coma" aria-pressed="false">Coma</button>
+          <button type="button" data-object="3c273" aria-pressed="false">3C 273</button>
+          <button type="button" data-object="gnz11" aria-pressed="false">GN-z11</button>
+          <button type="button" data-object="cmb" aria-pressed="false">CMB</button>
+        </div>
+        <div class="slider-row">
+          <label for="z-slider">Redshift</label>
+          <input type="range" id="z-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="0" aria-valuemax="20" aria-valuetext="redshift 1">
+          <input type="text" class="num" id="z-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Redshift z" aria-invalid="false">
+          <span class="unit-tag">z</span>
+        </div>
+        <div class="slider-row">
+          <label for="h0-slider">H0</label>
+          <input type="range" id="h0-slider" min="20" max="120" step="0.01" value="67.36" aria-valuetext="67.36 kilometers per second per megaparsec">
+          <input type="text" class="num" id="h0-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="67.36" aria-label="Hubble constant H0" aria-invalid="false">
+          <span class="unit-tag">km/s/Mpc</span>
+        </div>
+        <div class="slider-row">
+          <label for="om-slider">Ωm</label>
+          <input type="range" id="om-slider" min="0.01" max="1.5" step="0.0001" value="0.3153" aria-valuetext="matter density 0.3153">
+          <input type="text" class="num" id="om-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.3153" aria-label="Matter density Omega m" aria-invalid="false">
+          <span class="unit-tag">Ωm</span>
+        </div>
+        <div class="slider-row">
+          <label for="ol-slider">ΩΛ</label>
+          <input type="range" id="ol-slider" min="-0.5" max="1.5" step="0.0001" value="0.6847" aria-valuetext="dark energy density 0.6847" disabled>
+          <input type="text" class="num" id="ol-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.6847" aria-label="Dark energy density Omega Lambda" aria-invalid="false" disabled>
+          <span class="unit-tag">ΩΛ</span>
+        </div>
+        <p class="field-error" id="field-err" hidden>Redshift from 0 to 2000. H0 from 20 to 120. Ωm from 0.01 to 1.5. ΩΛ from −0.5 to 1.5.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Round value · not a named object</p>
+      <h2 id="d-name">z = 1</h2>
+      <p class="range" id="d-range">Planck 2018 · flat</p>
+      <ul class="stats" id="d-stats">
+        <li><span class="k">Age today</span><span class="v">13.801 Gyr</span></li>
+        <li><span class="k">Age at z</span><span class="v">5.847 Gyr</span></li>
+        <li><span class="k">Lookback</span><span class="v">7.954 Gyr</span></li>
+      </ul>
+      <p class="why" id="d-why">At z = 1 the universe was half its present scale factor. The three distances have already split. Light-travel time is the lookback. It is not the comoving distance.</p>
+      <p class="why" id="d-note">z = 1 is a round slider value, not a catalog object. Radiation is left out of the integral.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The anchors are still these. E(z) = √[Ωm(1+z)³ + Ωk(1+z)² + ΩΛ], with Ωk = 1 − Ωm − ΩΛ, and no radiation term. Comoving distance is (c/H0) times the integral of dz/E. Luminosity distance is (1+z) times the transverse comoving distance. Angular-diameter distance divides that transverse distance by (1+z). Lookback time integrates dz/[(1+z)E]. Planck 2018 Table 2, TT,TE,EE+lowE+lensing: H0 = 67.36, Ωm = 0.3153, ΩΛ = 0.6847. The no-radiation age is 13.801 Gyr. The published age, radiation included, is 13.797 ± 0.023 Gyr. At z = 1: lookback 7.954 Gyr, age then 5.847 Gyr, comoving 3402.7 Mpc (11.10 Gly), luminosity 6805.4 Mpc (22.20 Gly), angular diameter 1701.3 Mpc (5.55 Gly), 8.248 kpc per arcsec. Angular-diameter distance peaks at z = 1.588. SH0ES H0 = 73.04 with the same densities gives an age of 12.728 Gyr. Coma uses z = 6853/c. 3C 273 is z = 0.15756751. GN-z11 is z = 10.6034. The CMB button is z* = 1089.92, not the sound horizon.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">One redshift, several distances</p>
+    <h2>The ruler today, the faintness, and the angle are not the same length.</h2>
+    <p>Comoving distance is the ruler you would lay down today between here and a galaxy that stayed in the Hubble flow. It only grows. Luminosity distance is the answer to “how far would this have to be, in a static Euclidean space, to look this faint?” Photon energy drops as 1/(1+z), and photons arrive less often by another 1/(1+z), so it is (1+z) times the transverse comoving distance. A standard candle is fainter than the comoving ruler alone would say.</p>
+    <p>Angular-diameter distance converts an angle on the sky into a proper size at the source, the size the object had when the light left. It is the transverse comoving distance divided by (1+z). The comoving piece grows with z. The division by (1+z) grows too. Past a redshift of about 1.6 in this flat model, the division wins, and the angular-diameter distance turns over. A more distant galaxy can subtend a larger angle than a nearer one of the same proper size. That peak is on the chart. It moves if you change Ωm or H0.</p>
+    <p>Lookback time is how long the light has been traveling. The age at redshift z is how old the universe was when the light left. Their sum is the age today. A lookback of 8 Gyr is 8 billion light-years of light-travel distance, because a Julian year of light is one light-year. That light-travel distance is not the comoving distance. The comoving distance is longer: space stretched while the photon was en route. cz/H0 matches the comoving distance only while z is small. The <a href="/science/astronomy/distance-ladder/">distance ladder</a> stops at that toy. This page is the integral.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>E(z)</dt><dd>Hogg’s equation 14: E(z) = √[Ω<sub>m</sub>(1+z)³ + Ω<sub>k</sub>(1+z)² + Ω<sub>Λ</sub>]. H(z) = H<sub>0</sub> E(z). Ω<sub>k</sub> = 1 − Ω<sub>m</sub> − Ω<sub>Λ</sub>. There is no radiation term. A photon’s flight and a clock both come from dividing by E(z). Flat means Ω<sub>k</sub> = 0, so the transverse distance equals the line-of-sight comoving distance.</dd></div>
+    <div class="gloss"><dt>Age</dt><dd>The age today integrates dz/[(1+z)E(z)] from 0 to infinity, times 1/H<sub>0</sub>. The age at z stops the integral at that redshift and runs it to infinity. Planck’s published 13.797 ± 0.023 Gyr includes radiation. This page does not, and it prints 13.801 Gyr for the table’s central values.</dd></div>
+    <div class="gloss"><dt>Lookback</dt><dd>Age today minus age at z. Hogg’s equation 30. It is the light-travel time. In billion light-years of light-travel distance it is the same number. It is not a comoving distance.</dd></div>
+    <div class="gloss"><dt>Comoving</dt><dd>D<sub>C</sub> = (c/H<sub>0</sub>) ∫ dz/E(z). Hogg’s equation 15. The line-of-sight ruler today. At low z it sits near cz/H<sub>0</sub>. c = 299,792.458 km/s. For H<sub>0</sub> = 67.36, c/H<sub>0</sub> = 4450.6 Mpc.</dd></div>
+    <div class="gloss"><dt>Luminosity</dt><dd>D<sub>L</sub> = (1+z) D<sub>M</sub>. Hogg’s equation 21. D<sub>M</sub> is the transverse comoving distance, equation 16. In a flat universe D<sub>M</sub> = D<sub>C</sub>. This is the distance a magnitude uses when the source is cosmological. The <a href="/science/astronomy/distance-ladder/">distance ladder</a> does not switch over to it.</dd></div>
+    <div class="gloss gloss-wide"><dt>Angular diameter</dt><dd>D<sub>A</sub> = D<sub>M</sub>/(1+z). Hogg’s equation 18. Proper size per radian at the time of emission. One arcsecond is π/(180×3600) radians, so the scale in kpc per arcsecond is D<sub>A</sub> in megaparsecs, times 1000, times that angle. The nearby version of the same angle, without redshift, is the <a href="/science/astronomy/angular-size/">angular size</a> desk. Hogg notes that D<sub>A</sub> turns over instead of growing forever. For these Planck parameters the turnover is at z = 1.588.</dd></div>
+    <div class="gloss"><dt>Flat or curved</dt><dd>Flat locks Ω<sub>Λ</sub> = 1 − Ω<sub>m</sub>. Curved lets both densities move, and Ω<sub>k</sub> is whatever is left. Positive Ω<sub>k</sub> uses sinh. Negative Ω<sub>k</sub> uses sin. If that sine goes negative, the ray has passed the antipode of a closed universe and the distances stop being a simple ruler.</dd></div>
+    <div class="gloss"><dt>Gly</dt><dd>Billion light-years, using 3.2616 light-years per parsec, the same four-decimal rounding as the magnitude and distance-ladder desks. The gigayear is different: 10⁹ Julian years of 365.25 × 86400 seconds, with the IAU parsec, so that H<sub>0</sub> becomes a time. Light-travel Gly equals lookback Gyr. Comoving Gly does not.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the parameters and the presets</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://arxiv.org/abs/astro-ph/9905116" rel="noopener" target="_blank">Hogg 1999, “Distance measures in cosmology,” arXiv:astro-ph/9905116</a> — eq. 4, D<sub>H</sub> = c/H<sub>0</sub>; eq. 14, E(z), with no radiation; eq. 15, line-of-sight comoving distance; eq. 16, transverse comoving distance; eq. 18, angular-diameter distance; eq. 21, luminosity distance; eq. 30, lookback time. He writes that the linear Hubble law holds only at small redshift. The age is the same integral as the lookback, run from z out to infinity.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — Table 2, column TT,TE,EE+lowE+lensing, 68% limits. Central values used here: H<sub>0</sub> = 67.36 ± 0.54 km s<sup>−1</sup> Mpc<sup>−1</sup>, Ω<sub>m</sub> = 0.3153 ± 0.0073, Ω<sub>Λ</sub> = 0.6847 ± 0.0073, age 13.797 ± 0.023 Gyr, z<sub>*</sub> = 1089.92 ± 0.25. The abstract rounds H<sub>0</sub> to 67.4 ± 0.5 and Ω<sub>m</sub> to 0.315 ± 0.007. The <a href="/science/astronomy/redshift/">redshift</a> and <a href="/science/astronomy/distance-ladder/">distance-ladder</a> desks use that rounded 67.4. This desk uses the table. The published age includes radiation. The integral on this page does not. The same table’s r<sub>*</sub> = 144.43 ± 0.26 Mpc is the comoving sound horizon, not the distance to last scattering, and this page does not compute it.</li>
+      <li><a href="https://arxiv.org/abs/2112.04510" rel="noopener" target="_blank">Riess et al. 2022, ApJL 934, L7</a> (arXiv:2112.04510) — baseline SH0ES H<sub>0</sub> = 73.04 ± 1.04 km s<sup>−1</sup> Mpc<sup>−1</sup>. The button uses the central value. The paper does not publish an Ω<sub>m</sub> or Ω<sub>Λ</sub> for that button. The densities stay at the Planck 2018 central values.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/9508070" rel="noopener" target="_blank">Colless and Dunn 1996, ApJ 458, 435</a> (arXiv:astro-ph/9508070) — the main Coma cluster, centered on NGC 4874, mean cz = 6853 km s<sup>−1</sup>, σ<sub>cz</sub> = 1082 km s<sup>−1</sup>. This desk sets z = cz/c with c = 299,792.458 km/s. The paper prints cz. The velocity distribution is non-Gaussian. The same mean is the Hubble-flow preset on the distance ladder.</li>
+      <li><a href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=3C+273" rel="noopener" target="_blank">SIMBAD — 3C 273</a> — adopted redshift 0.15756751 ± 0.0005, referenced to <a href="https://iopscience.iop.org/article/10.3847/1538-4365/ac6c05" rel="noopener" target="_blank">Koss et al. 2022, ApJS 261, 2</a>. The same figure is on the redshift desk. The distances here are the integrals at that z.</li>
+      <li><a href="https://arxiv.org/abs/2302.07256" rel="noopener" target="_blank">Bunker et al. 2023, arXiv:2302.07256</a> — GN-z11 systemic redshift z = 10.6034 ± 0.0013 from emission lines other than Lyman-alpha. The paper’s Lyman-alpha centroid is offset by 555 ± 32 km/s. This button uses 10.6034 and does not add the offset. The same choice as the redshift desk.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST CODATA — speed of light in vacuum</a> — c = 299,792,458 m/s exactly, so 299,792.458 km/s.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is 149,597,870,700 m. The parsec is (648000/π) AU. The gigayear uses that parsec and a Julian year of 365.25 days of 86400 seconds. The Gly column uses 3.2616 light-years per parsec, the rounding on the magnitude desk, and it is not that time conversion.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom cosmology calculator. Radiation left out. Peculiar velocities left out. Planck 2018 Table 2 central values, and SH0ES H0 = 73.04 with those densities held fixed. Object buttons use the cited redshifts only. Not a catalog. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. At z = 1 the relativistic β is 0.6. This page starts after that number is measured.</p></a>
+    <a href="/science/astronomy/distance-ladder/"><p class="n">Nearby toy</p><h3>Distance ladder</h3><p>d ≈ cz/H0, with Planck’s rounded 67.4 and SH0ES 73.04. This page is the integral those two lines approximate.</p></a>
+    <a href="/science/astronomy/galaxy/"><p class="n">Home</p><h3>Galaxy</h3><p>The Milky Way these redshifts are measured from. Coma is far past that map.</p></a>
+    <a href="/science/astronomy/angular-size/"><p class="n">The angle</p><h3>Angular size</h3><p>A nearby size and a nearby distance. The kpc-per-arcsecond line here is that same angle at D_A.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="cosmo-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="cosmo-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="cosmo-help-title">Cosmology desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom integral. Radiation is left out. Presets are cited numbers. A typed redshift is not a new object.</p>
+    <h3>The chart</h3>
+    <table>
+      <caption>The distance chart</caption>
+      <tbody>
+        <tr><th scope="row">Curves</th><td>Comoving, luminosity, and angular-diameter distance, from z = 0 to z = 20. The vertical axis is logarithmic megaparsecs, so the angular-diameter turnover stays visible beside the much larger luminosity distance.</td></tr>
+        <tr><th scope="row">Marker</th><td>The selected redshift, when it is on the chart. The CMB button is past z = 20, so the marker leaves the chart and the readout keeps the number.</td></tr>
+        <tr><th scope="row">Peak</th><td>A dot on the angular-diameter curve. For the Planck button it sits near z = 1.59. It moves when the densities move.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Redshift</th><td>The slider runs from 0 to 20 and gives more room at small z. The number field accepts 0 to 2000, so the CMB redshift fits.</td></tr>
+        <tr><th scope="row">Planck</th><td>H0 = 67.36, Ωm = 0.3153, ΩΛ = 0.6847, flat. Table 2 central values.</td></tr>
+        <tr><th scope="row">SH0ES</th><td>H0 = 73.04. Ωm and ΩΛ stay at the Planck central values.</td></tr>
+        <tr><th scope="row">Flat</th><td>ΩΛ is locked to 1 − Ωm. Curved unlocks ΩΛ. Ωk is whatever is left over.</td></tr>
+        <tr><th scope="row">Objects</th><td>Coma, 3C 273, GN-z11, and the CMB last-scattering redshift. Each note names the source.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Ages</th><td>Today, at the selected z, and the lookback, in Gyr.</td></tr>
+        <tr><th scope="row">Distances</th><td>Comoving, luminosity, and angular diameter, in Mpc and Gly.</td></tr>
+        <tr><th scope="row">Arcsecond</th><td>Proper kiloparsecs per arcsecond at that angular-diameter distance.</td></tr>
+        <tr><th scope="row">cz/H0</th><td>The nearby toy, shown beside the comoving distance so the gap is visible.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Chart</th><td>Left and Right nudge the redshift while the canvas is focused.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/cosmology/cosmology.js"></script>
+<script>
+(function () {
+  "use strict";
+  var C = window.Cosmology;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!C) return;
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("plot");
+  var state = {
+    z: 1,
+    cosmoId: "planck",
+    objectId: "",
+    flat: true,
+    H0: C.H0_PLANCK,
+    omegaM: C.OMEGA_M_PLANCK,
+    omegaL: C.OMEGA_L_PLANCK
+  };
+  var editing = {};
+
+  var OBJECT_NOTES = {
+    coma: "Colless and Dunn 1996: the main Coma cluster, centered on NGC 4874, mean cz = 6853 km/s, σ = 1082 km/s. This button sets z = cz/c. The paper prints cz, not a cosmological redshift. The dispersion, divided by H0, is larger than the gap between cz/H0 and the comoving distance. Peculiar motion is not in the integral. This is not a measured distance to Coma.",
+    "3c273": "SIMBAD’s adopted redshift for 3C 273 is 0.15756751 ± 0.0005, referenced to Koss et al. 2022. The same figure is on the redshift desk. The distances here are the integrals at that z, not a catalog distance.",
+    gnz11: "Bunker et al. 2023: GN-z11 systemic z = 10.6034 ± 0.0013, from lines other than Lyman-alpha. Their Lyman-alpha centroid is offset by 555 ± 32 km/s. This button does not add the offset. The same choice as the redshift desk.",
+    cmb: "Planck 2018 Table 2, same column: z* = 1089.92 ± 0.25, the redshift of last scattering. The distances are the photon path in this no-radiation model. They are not the sound horizon r* = 144.43 Mpc in that table."
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function trimFixed(n, digits) {
+    var s = n.toFixed(digits);
+    return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function group(n, digits) {
+    var neg = n < 0;
+    var s = Math.abs(n).toFixed(digits);
+    var parts = s.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    var out = parts[0];
+    if (digits > 0) out += "." + parts[1];
+    return (neg ? "\u2212" : "") + out;
+  }
+  function formatZ(z) {
+    if (!isFinite(z)) return "\u2014";
+    if (z === 0) return "0";
+    if (Math.abs(z - C.Z_3C273) < 1e-10) return "0.15756751";
+    if (Math.abs(z - C.Z_GNZ11) < 1e-10) return "10.6034";
+    if (Math.abs(z - C.Z_STAR) < 1e-8) return "1089.92";
+    if (Math.abs(z - C.COMA_CZ / C.C_KM_S) < 1e-12) return trimFixed(z, 6);
+    if (z >= 100) return trimFixed(z, 2);
+    if (z >= 1) return trimFixed(z, 4);
+    return trimFixed(z, 6);
+  }
+  function formatGyr(g) {
+    if (!isFinite(g)) return "\u2014";
+    if (g >= 0.01) return trimFixed(g, 3) + " Gyr";
+    if (g >= 0.0001) return trimFixed(g, 5) + " Gyr";
+    return g.toExponential(2) + " Gyr";
+  }
+  function formatDist(mpc) {
+    if (!isFinite(mpc)) return "\u2014";
+    var digits = mpc >= 100 ? 1 : 2;
+    var glyDigits = mpc >= 100 ? 2 : 3;
+    return group(mpc, digits) + " Mpc \u00b7 " + C.glyFromMpc(mpc).toFixed(glyDigits) + " Gly";
+  }
+  function formatKpc(k) {
+    if (!isFinite(k)) return "\u2014";
+    if (k >= 1) return trimFixed(k, 3) + " kpc/\u2033";
+    return trimFixed(k, 4) + " kpc/\u2033";
+  }
+  function showErr(msg) {
+    var el = document.getElementById("field-err");
+    if (!el) return;
+    if (!msg) { el.hidden = true; return; }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+  function markInvalid(id, on) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute("aria-invalid", on ? "true" : "false");
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function params() {
+    return C.params(state.H0, state.omegaM, state.omegaL);
+  }
+  function matchCosmo() {
+    var list = C.cosmologies();
+    var i;
+    for (i = 0; i < list.length; i++) {
+      var c = list[i];
+      if (Math.abs(c.H0 - state.H0) < 1e-9 &&
+          Math.abs(c.omegaM - state.omegaM) < 1e-9 &&
+          Math.abs(c.omegaL - state.omegaL) < 1e-9) return c.id;
+    }
+    return "";
+  }
+  function matchObject() {
+    var list = C.objects();
+    var i;
+    for (i = 0; i < list.length; i++) {
+      if (Math.abs(list[i].z - state.z) <= 1e-8) return list[i].id;
+    }
+    return "";
+  }
+  function press(selector, attr, value) {
+    document.querySelectorAll(selector).forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute(attr) === value));
+    });
+  }
+  function stat(k, v) {
+    return "<li><span class=\"k\">" + k + "</span><span class=\"v\">" + v + "</span></li>";
+  }
+
+  function draw(rows, markerZ, peak) {
+    var view = fit(window.innerWidth < 720 ? 280 : 360);
+    var ctx = view.ctx;
+    var w = view.w;
+    var h = view.h;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var line = cssVar("--line", "#2c303a");
+    var left = 64;
+    var right = 12;
+    var top = 16;
+    var bottom = 28;
+    var width = Math.max(40, w - left - right);
+    var height = Math.max(40, h - top - bottom);
+    var zMax = C.Z_SLIDER_MAX;
+    var positives = [];
+    rows.forEach(function (row) {
+      [row.comovingMpc, row.luminosityMpc, row.angularMpc].forEach(function (v) {
+        if (v > 0) positives.push(v);
+      });
+    });
+    var logMin = Math.log10(10);
+    var logMax = Math.log10(1000);
+    if (positives.length) {
+      logMin = Math.log10(Math.max(10, Math.min.apply(null, positives))) - 0.08;
+      logMax = Math.log10(Math.max.apply(null, positives)) + 0.06;
+    }
+    if (!(logMax > logMin)) logMax = logMin + 1;
+    function xOf(z) { return left + (z / zMax) * width; }
+    function yOf(v) {
+      var lv = Math.log10(v);
+      return top + (1 - (lv - logMin) / (logMax - logMin)) * height;
+    }
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(left + 0.5, top + 0.5, width - 1, height - 1);
+
+    var ticksZ = width < 420 ? [0, 5, 10, 15, 20] : [0, 2, 4, 6, 8, 10, 15, 20];
+    ticksZ.forEach(function (z) {
+      var x = xOf(z);
+      ctx.beginPath();
+      ctx.moveTo(x, top + height);
+      ctx.lineTo(x, top + height + 5);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, String(z), x, top + height + 16, { size: 10, align: "center", color: muted });
+    });
+    var tick = Math.ceil(logMin);
+    var tickStop = Math.floor(logMax);
+    if (tick > tickStop) tick = Math.round(logMin);
+    for (; tick <= tickStop; tick++) {
+      var y = yOf(Math.pow(10, tick));
+      if (y < top - 2 || y > top + height + 2) continue;
+      paintText(ctx, group(Math.pow(10, tick), 0), left - 6, y, { size: 10, align: "right", color: muted });
+    }
+    paintText(ctx, "log Mpc", left - 6, top - 2, { size: 10, align: "right", color: muted, base: "bottom" });
+    paintText(ctx, "z", left + width, h - 4, { size: 10, align: "right", color: muted, base: "bottom" });
+
+    function stroke(key, color, dash) {
+      ctx.beginPath();
+      var started = false;
+      rows.forEach(function (row) {
+        var v = row[key];
+        if (!(v > 0) || Math.log10(v) < logMin - 1e-9) { started = false; return; }
+        var x = xOf(row.z);
+        var y = yOf(v);
+        if (!started) { ctx.moveTo(x, y); started = true; }
+        else ctx.lineTo(x, y);
+      });
+      ctx.setLineDash(dash || []);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    stroke("comovingMpc", ink, []);
+    stroke("luminosityMpc", accent, []);
+    stroke("angularMpc", soft, [5, 4]);
+
+    if (peak && peak.z > 0 && peak.z <= zMax && peak.angularMpc > 0) {
+      ctx.beginPath();
+      ctx.arc(xOf(peak.z), yOf(peak.angularMpc), 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = soft;
+      ctx.fill();
+      paintText(ctx, "peak", xOf(peak.z) + 6, yOf(peak.angularMpc) - 10, { size: 10, color: soft });
+    }
+    if (markerZ >= 0 && markerZ <= zMax) {
+      var x = xOf(markerZ);
+      ctx.beginPath();
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, top + height);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+    }
+  }
+
+  function render() {
+    state.cosmoId = matchCosmo();
+    state.objectId = matchObject();
+    press("#cosmos button", "data-cosmo", state.cosmoId);
+    press("#objects button", "data-object", state.objectId);
+    press("#geom button", "data-flat", state.flat ? "1" : "0");
+
+    var olSlider = document.getElementById("ol-slider");
+    var olNum = document.getElementById("ol-num");
+    olSlider.disabled = state.flat;
+    olNum.disabled = state.flat;
+
+    if (!editing.z) document.getElementById("z-num").value = formatZ(state.z);
+    if (!editing.h0) document.getElementById("h0-num").value = trimFixed(state.H0, 2);
+    if (!editing.om) document.getElementById("om-num").value = trimFixed(state.omegaM, 4);
+    if (!editing.ol) document.getElementById("ol-num").value = trimFixed(state.omegaL, 4);
+
+    var zSlider = document.getElementById("z-slider");
+    zSlider.value = String(C.unitFromZ(state.z) * 1000);
+    zSlider.setAttribute("aria-valuetext", "redshift " + formatZ(state.z));
+    zSlider.setAttribute("aria-valuenow", formatZ(Math.min(state.z, C.Z_SLIDER_MAX)));
+    document.getElementById("h0-slider").value = String(state.H0);
+    document.getElementById("h0-slider").setAttribute("aria-valuetext", trimFixed(state.H0, 2) + " kilometers per second per megaparsec");
+    document.getElementById("om-slider").value = String(state.omegaM);
+    document.getElementById("om-slider").setAttribute("aria-valuetext", "matter density " + trimFixed(state.omegaM, 4));
+    olSlider.value = String(state.omegaL);
+    olSlider.setAttribute("aria-valuetext", "dark energy density " + trimFixed(state.omegaL, 4));
+
+    ["z-num", "h0-num", "om-num", "ol-num"].forEach(function (id) { markInvalid(id, false); });
+    showErr("");
+
+    var p = params();
+    var m = C.measures(state.z, p);
+    var rows = C.curve(p, C.Z_SLIDER_MAX, 81);
+    var peak = rows ? C.angularPeak(p, 8) : null;
+    var obj = state.objectId ? C.objectById(state.objectId) : null;
+    var cosmo = state.cosmoId ? C.cosmologyById(state.cosmoId) : null;
+
+    if (!m || !rows) {
+      setText("d-tier", "These densities");
+      setText("d-name", "No real expansion");
+      setText("d-range", "E(z) is not real out to this redshift");
+      document.getElementById("d-stats").innerHTML = stat("Integral", "not defined");
+      setText("d-why", "Ωm(1+z)³ + Ωk(1+z)² + ΩΛ goes negative somewhere on the path. Raise Ωm, or lower ΩΛ, or return to the Planck button.");
+      setText("d-note", "Radiation is still left out. A flat model with Ωm above 0 stays real.");
+      setText("scale-note", "The chart needs a real E(z) from 0 to 20.");
+      canvas.setAttribute("aria-label", "No distance chart. These densities do not give a real expansion out to the selected redshift.");
+      var blank = fit(window.innerWidth < 720 ? 280 : 360);
+      blank.ctx.clearRect(0, 0, blank.w, blank.h);
+      return;
+    }
+
+    var ok = m.omegaK;
+    var okText = m.flat ? "flat" : ("Ωk " + trimFixed(ok, 4));
+    var range = (cosmo ? cosmo.name : "Custom") + " · H0 " + trimFixed(state.H0, 2) + " · Ωm " + trimFixed(state.omegaM, 4) + " · ΩΛ " + trimFixed(state.omegaL, 4) + " · " + okText;
+    setText("d-range", range);
+    setText("d-tier", obj ? obj.tier : "Custom redshift · not a named object");
+    setText("d-name", obj ? obj.name : ("z = " + formatZ(state.z)));
+
+    var rowsHtml;
+    if (m.pastAntipode) {
+      rowsHtml = [
+        stat("Age today", formatGyr(m.ageTodayGyr)),
+        stat("Age at z", formatGyr(m.ageAtZGyr)),
+        stat("Lookback", formatGyr(m.lookbackGyr)),
+        stat("Distances", "past the antipode")
+      ].join("");
+    } else {
+      rowsHtml = [
+        stat("Age today", formatGyr(m.ageTodayGyr)),
+        stat("Age at z", formatGyr(m.ageAtZGyr)),
+        stat("Lookback", formatGyr(m.lookbackGyr)),
+        stat("Comoving", formatDist(m.comovingMpc)),
+        stat("Luminosity", formatDist(m.luminosityMpc)),
+        stat("Angular diameter", formatDist(m.angularMpc)),
+        stat("Per arcsec", formatKpc(m.kpcPerArcsec)),
+        stat("cz/H0 toy", formatDist(m.czOverH0Mpc))
+      ].join("");
+    }
+    document.getElementById("d-stats").innerHTML = rowsHtml;
+
+    var peakSentence = peak && !peak.atEdge
+      ? ("Angular-diameter distance peaks at z = " + trimFixed(peak.z, 3) + " for these parameters.")
+      : "Angular-diameter distance does not turn over inside z = 0 to 8 for these parameters.";
+    var why;
+    if (m.pastAntipode) {
+      why = "In this closed model the transverse distance has passed the antipode by this redshift. The ages are still the clock integral. The ruler distances are not drawn as ordinary lengths.";
+    } else if (state.z === 0) {
+      why = "z = 0 is here. Every distance is zero. The age today is the whole integral. Lookback is zero.";
+    } else {
+      why = "At this redshift the scale factor was 1/" + formatZ(1 + state.z) + " of today. Lookback is the light-travel time. Comoving distance is longer than that light-travel distance, because space stretched on the way. cz/H0 is the nearby toy from the distance ladder.";
+    }
+    setText("d-why", why);
+
+    var note;
+    if (obj) note = OBJECT_NOTES[obj.id];
+    else note = "Typed or slid off a named object. z = 1 is only a round slider value. The integral does not become a catalog entry.";
+    if (state.cosmoId === "planck") {
+      note += " Planck Table 2 publishes an age of 13.797 ± 0.023 Gyr for this column, radiation included. This integral leaves radiation out and gives " + formatGyr(m.ageTodayGyr) + ".";
+    } else if (state.cosmoId === "shoes") {
+      note += " SH0ES publishes H0 = 73.04 ± 1.04 and does not publish Ωm. The densities are still the Planck central values. A larger H0 is a younger universe and a shorter distance. The Planck age of 13.797 Gyr does not belong to this H0.";
+    } else {
+      note += " Radiation is left out. The uncertainties on the cited H0 values are not expanded into an error band.";
+    }
+    setText("d-note", note);
+    var off = state.z > C.Z_SLIDER_MAX;
+    setText("scale-note", peakSentence + (off ? " The selected redshift is past z = 20, so the marker is off the chart." : " The marker is the selected redshift."));
+    canvas.setAttribute("aria-label",
+      "Distance versus redshift from 0 to 20 megaparsec scale. " + peakSentence +
+      (off ? " Selected redshift " + formatZ(state.z) + " is off the chart." : " Marker at redshift " + formatZ(state.z) + ".") +
+      (m.pastAntipode ? " Transverse distance is past the antipode." : " Comoving " + group(m.comovingMpc, 1) + " megaparsecs."));
+    draw(rows, off ? -1 : state.z, peak);
+  }
+
+  function fail(field, msg) {
+    markInvalid(field, true);
+    showErr(msg);
+  }
+
+  function commitZ(fromSlider) {
+    var v = fromSlider
+      ? C.zFromUnit(Number(document.getElementById("z-slider").value) / 1000)
+      : parseNum(document.getElementById("z-num").value);
+    if (!C.zOk(v)) return fail("z-num", "Redshift from 0 to 2000. The slider itself stops at 20.");
+    state.z = v;
+    render();
+  }
+  function commitH0(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("h0-slider").value) : parseNum(document.getElementById("h0-num").value);
+    if (!(v >= C.H0_MIN && v <= C.H0_MAX)) return fail("h0-num", "H0 from 20 to 120 km/s/Mpc.");
+    state.H0 = v;
+    render();
+  }
+  function commitOm(fromSlider) {
+    var v = fromSlider ? Number(document.getElementById("om-slider").value) : parseNum(document.getElementById("om-num").value);
+    if (!(v >= C.OM_MIN && v <= C.OM_MAX)) return fail("om-num", "Ωm from 0.01 to 1.5.");
+    state.omegaM = v;
+    if (state.flat) state.omegaL = 1 - state.omegaM;
+    render();
+  }
+  function commitOl(fromSlider) {
+    if (state.flat) return;
+    var v = fromSlider ? Number(document.getElementById("ol-slider").value) : parseNum(document.getElementById("ol-num").value);
+    if (!(v >= C.OL_MIN && v <= C.OL_MAX)) return fail("ol-num", "ΩΛ from −0.5 to 1.5. Switch to Curved to edit it.");
+    state.omegaL = v;
+    render();
+  }
+
+  function wire(sliderId, numId, key, fromSlider, fromNum) {
+    var slider = document.getElementById(sliderId);
+    var num = document.getElementById(numId);
+    if (slider) slider.addEventListener("input", function () { editing[key] = false; fromSlider(); });
+    if (!num) return;
+    num.addEventListener("input", function () { editing[key] = true; fromNum(); });
+    num.addEventListener("blur", function () { editing[key] = false; render(); });
+    num.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") { ev.preventDefault(); num.blur(); }
+    });
+  }
+  wire("z-slider", "z-num", "z", function () { commitZ(true); }, function () { commitZ(false); });
+  wire("h0-slider", "h0-num", "h0", function () { commitH0(true); }, function () { commitH0(false); });
+  wire("om-slider", "om-num", "om", function () { commitOm(true); }, function () { commitOm(false); });
+  wire("ol-slider", "ol-num", "ol", function () { commitOl(true); }, function () { commitOl(false); });
+
+  document.getElementById("cosmos").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var c = C.cosmologyById(btn.getAttribute("data-cosmo"));
+    if (!c) return;
+    editing = {};
+    state.H0 = c.H0;
+    state.omegaM = c.omegaM;
+    state.omegaL = c.omegaL;
+    state.flat = true;
+    render();
+  });
+  document.getElementById("objects").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var o = C.objectById(btn.getAttribute("data-object"));
+    if (!o) return;
+    editing.z = false;
+    state.z = o.z;
+    render();
+  });
+  document.getElementById("geom").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var flat = btn.getAttribute("data-flat") === "1";
+    state.flat = flat;
+    if (flat) state.omegaL = 1 - state.omegaM;
+    editing.ol = false;
+    render();
+  });
+
+  function stepGroup(id, attr, dir) {
+    var buttons = Array.prototype.slice.call(document.querySelectorAll("#" + id + " button"));
+    var i = buttons.indexOf(document.activeElement);
+    if (i < 0) return;
+    var next = buttons[(i + dir + buttons.length) % buttons.length];
+    next.focus();
+    next.click();
+  }
+  ["cosmos", "objects", "geom"].forEach(function (id) {
+    document.getElementById(id).addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+      ev.preventDefault();
+      stepGroup(id, "", ev.key === "ArrowRight" ? 1 : -1);
+    });
+  });
+
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var u = C.unitFromZ(Math.min(state.z, C.Z_SLIDER_MAX));
+    u += ev.key === "ArrowRight" ? 0.02 : -0.02;
+    state.z = C.zFromUnit(u);
+    editing.z = false;
+    render();
+  });
+
+  var helpBtn = document.getElementById("cosmo-help");
+  var helpDialog = document.getElementById("cosmo-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
