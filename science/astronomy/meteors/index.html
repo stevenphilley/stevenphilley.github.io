@@ -1,0 +1,949 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meteor showers — hourly rate, radiant altitude, and the major streams — Steven Philley</title>
+<meta name="description" content="Observed hourly rate from the IMO relation HR = ZHR × sin(h) / r^(6.5 − LM) × (1 − cloud). A radiant below the horizon gives 0. IMO’s ZHR 100 table at limiting magnitude 6.5 and 30° is 50. Presets from the 2026 working list: Quadrantids, Lyrids, Eta Aquariids, Perseids, Orionids, Leonids, Geminids. Not a forecast.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/meteors/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Meteor showers — hourly rate and the major streams">
+<meta property="og:description" content="ZHR, radiant altitude, limiting magnitude, population index, and cloud. At ZHR 100, magnitude 6.5, and 30°, the rate is 50. Seven showers from the IMO 2026 working list. Not a forecast.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/meteors/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meteor showers — hourly rate and the major streams">
+<meta name="twitter:description" content="HR = ZHR × sin(h) / r^(6.5 − LM) × (1 − cloud). The IMO row at 30° is 50. Working-list presets. Not a forecast.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.dome{width:12px;height:12px;border:0;border-top:0;border-radius:50%;background:transparent;border:1px solid var(--ink,#e8e6e1)}
+.swatch.you{width:10px;height:10px;border:0;border-top:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:12ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96)}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/" aria-current="page">Meteors</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Meteors</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The shower</p>
+  <h1>Meteors<br>under a real sky</h1>
+  <p class="lede">A zenithal hourly rate is not the number you count. The IMO rate an ideal observer would see, radiant overhead and limiting magnitude <strong>+6.5</strong>, is the ZHR. The count this page prints is lower: <strong>HR = ZHR × sin(h) / r<sup>(6.5 − LM)</sup> × (1 − k)</strong>. <strong>h</strong> is the radiant’s altitude. <strong>r</strong> is the population index. <strong>LM</strong> is the faintest star you can see. <strong>k</strong> is the fraction of the field that cloud or an obstruction covers. At or below the horizon the rate is <strong>0</strong>. The page opens on the IMO table’s row: ZHR 100, magnitude 6.5, radiant at 30°, clear sky, which is <strong>50</strong> an hour. How dark the night is belongs with <a href="/science/astronomy/magnitude/">magnitude</a> and <a href="/science/light-pollution/">light pollution</a>. When the Sun is still up, the <a href="/science/astronomy/twilight/">twilight</a> desk says so. Where the radiant sits in your sky is the <a href="/science/astronomy/local-sky/">local sky</a>, not this calculator.</p>
+  <p class="note-schematic">Educational calculator. Not a forecast of tonight’s sky and not a visual-observing report. The radiant altitude is an input. This page does not compute it from a latitude. Moonlight is not its own term: it enters only as the limiting magnitude you set. Sporadic meteors are not in the rate. A personal perception correction is not in the formula. Not a forecast.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Observed hourly rate</span>
+    <button type="button" class="help-q" id="met-help" aria-haspopup="dialog" aria-controls="met-help-dialog" aria-expanded="false" aria-label="How this meteor desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Sky dome and rate versus radiant altitude · the marker is 30°</p>
+      <canvas id="sky" width="880" height="420" tabindex="0" role="img" aria-label="A sky dome with the radiant at 30 degrees, and a curve of hourly rate versus altitude. At 30 degrees the rate is 50."></canvas>
+      <ul class="legend">
+        <li><span class="swatch dome" aria-hidden="true"></span> Sky dome</li>
+        <li><span class="swatch" aria-hidden="true"></span> Rate</li>
+        <li><span class="swatch you" aria-hidden="true"></span> This altitude</li>
+      </ul>
+      <p class="scale-note" id="scale-note">The curve is the sine of altitude, scaled by the other factors. It is zero on the horizon and highest at the zenith.</p>
+      <div class="controls">
+        <p class="pick-label">Showers · IMO 2026 working list</p>
+        <div class="presets" id="showers" role="group" aria-label="Major annual showers">
+          <button type="button" data-shower="qua" aria-pressed="false">Quadrantids</button>
+          <button type="button" data-shower="lyr" aria-pressed="false">Lyrids</button>
+          <button type="button" data-shower="eta" aria-pressed="false">Eta Aquariids</button>
+          <button type="button" data-shower="per" aria-pressed="true">Perseids</button>
+          <button type="button" data-shower="ori" aria-pressed="false">Orionids</button>
+          <button type="button" data-shower="leo" aria-pressed="false">Leonids</button>
+          <button type="button" data-shower="gem" aria-pressed="false">Geminids</button>
+        </div>
+        <p class="pick-label">Sky · sets the limiting magnitude · approximate</p>
+        <div class="presets" id="skies" role="group" aria-label="Approximate sky">
+          <button type="button" data-sky="dark" aria-pressed="true">Dark · 6.5</button>
+          <button type="button" data-sky="suburban" aria-pressed="false">Suburban · 5.6</button>
+          <button type="button" data-sky="city" aria-pressed="false">City · 4.5</button>
+        </div>
+        <div class="slider-row">
+          <label for="zhr-slider">ZHR</label>
+          <input type="range" id="zhr-slider" min="0" max="500" step="1" value="100" aria-valuetext="ZHR 100">
+          <input type="text" class="num" id="zhr-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="100" aria-label="Zenithal hourly rate" aria-invalid="false">
+          <span class="unit-tag">/h</span>
+        </div>
+        <div class="slider-row">
+          <label for="alt-slider">Altitude</label>
+          <input type="range" id="alt-slider" min="0" max="90" step="1" value="30" aria-valuetext="radiant altitude 30 degrees">
+          <input type="text" class="num" id="alt-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="30" aria-label="Radiant altitude in degrees" aria-invalid="false">
+          <span class="unit-tag">deg</span>
+        </div>
+        <div class="slider-row">
+          <label for="lm-slider">LM</label>
+          <input type="range" id="lm-slider" min="0" max="8" step="0.1" value="6.5" aria-valuetext="limiting magnitude 6.5">
+          <input type="text" class="num" id="lm-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="6.5" aria-label="Limiting magnitude" aria-invalid="false">
+          <span class="unit-tag">mag</span>
+        </div>
+        <div class="slider-row">
+          <label for="r-slider">r</label>
+          <input type="range" id="r-slider" min="1" max="5" step="0.1" value="2.2" aria-valuetext="population index 2.2">
+          <input type="text" class="num" id="r-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="2.2" aria-label="Population index r" aria-invalid="false">
+          <span class="unit-tag">r</span>
+        </div>
+        <div class="slider-row">
+          <label for="cloud-slider">Cloud</label>
+          <input type="range" id="cloud-slider" min="0" max="100" step="1" value="0" aria-valuetext="cloud fraction 0 percent">
+          <input type="text" class="num" id="cloud-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0" aria-label="Cloud or obstructed fraction in percent" aria-invalid="false">
+          <span class="unit-tag">%</span>
+        </div>
+        <p class="field-error" id="field-err" hidden>ZHR from 0 to 500. Altitude from −90° to 90°. Limiting magnitude from 0 to 8. Population index from 1 to 5. Cloud from 0% to 100%.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Shower meteors · not sporadics</p>
+      <h2 id="d-name">50 an hour</h2>
+      <p class="range" id="d-range">Perseids · ZHR 100 · radiant 30°</p>
+      <ul class="stats">
+        <li><span class="k">Sine of altitude</span><span class="v" id="s-sine">0.50</span></li>
+        <li><span class="k">Magnitude factor</span><span class="v" id="s-mag">1</span></li>
+        <li><span class="k">Clear fraction</span><span class="v" id="s-clear">1</span></li>
+        <li><span class="k">Entry speed</span><span class="v" id="s-speed">59 km/s</span></li>
+        <li><span class="k">Energy per gram</span><span class="v" id="s-energy">1,740.5 kJ/g</span></li>
+        <li><span class="k">Parent</span><span class="v" id="s-parent">109P/Swift-Tuttle</span></li>
+        <li><span class="k">Peak</span><span class="v" id="s-peak">August 13</span></li>
+        <li><span class="k">Radiant</span><span class="v" id="s-rad">48°, +58°</span></li>
+      </ul>
+      <p class="why" id="d-why">The sine of 30° is 0.50, so a zenith rate of 100 becomes 50 before anything else. Limiting magnitude 6.5 is the reference, so the population index does not change the count. The field is clear, so the cloud term is 1. The result is 50 shower meteors an hour.</p>
+      <p class="why" id="d-note">One gram at the Perseids’ 59 km/s carries 1,740.5 kJ. That is ½v² with v in km/s. Faster grains carry more energy per gram. The Geminids are slower and the IMO calendar still calls them bright. Speed is not the only reason a meteor looks bright. 30° is a slider position, not a prediction for your town.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The relation is still HR = ZHR × sin(h) / r^(6.5 − LM) × (1 − k), and h at or below 0° gives 0. IMO’s major-shower table, ZHR 100 and limiting magnitude 6.5, prints 50 meteors an hour at 30°. A stated cloud coverage of 50% is a field correction of 2, which cuts that 50 to 25. Working-list peaks for 2026: Quadrantids January 3, ZHR 80, 41 km/s, r 2.1, radiant 230° +49°, λ⊙ 283.15°. Lyrids April 22, ZHR 18, 49 km/s, r 2.1, 271° +34°, λ⊙ 32.32°, parent C/1861 G1 (Thatcher). Eta Aquariids May 6, ZHR 50, 66 km/s, r 2.4, 338° −1°, λ⊙ 45.5°, parent 1P/Halley. Perseids August 13, ZHR 100, 59 km/s, r 2.2, 48° +58°, λ⊙ 140.0°, parent 109P/Swift-Tuttle. Orionids October 21, ZHR 20, 66 km/s, r 2.5, 95° +16°, λ⊙ 208°, parent 1P/Halley. Leonids November 17, ZHR about 15, 71 km/s, r 2.5, 152° +22°, λ⊙ 235.27°, parent 55P/Tempel-Tuttle. Geminids December 14, ZHR 150, 35 km/s, r 2.6, 112° +33°, λ⊙ 262.2°, parent 3200 Phaethon.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">What each factor does</p>
+    <h2>The zenith rate is the ceiling. The sky you have is the rest.</h2>
+    <p><strong>Radiant altitude.</strong> The count tracks the sine of the altitude. At 30° the sine is one half, which is why the IMO table’s ZHR of 100 becomes 50 when the limiting magnitude is still 6.5 and the field is clear. At the zenith the sine is 1. On the horizon it is 0. Below the horizon this page prints 0 rather than a negative sine.</p>
+    <p><strong>Limiting magnitude.</strong> The reference sky is +6.5. Each magnitude you lose multiplies the miss by the population index, so the formula divides by r raised to (6.5 − LM). A darker sky than 6.5, a larger LM, raises the rate. A city sky lowers it. The three sky buttons are approximate: 6.5 is the IMO reference, 5.6 is the bright end of Bortle’s suburban class 5, and 4.5 is Bortle’s city class 8 “at best.”</p>
+    <p><strong>Population index.</strong> r is how steeply the counts rise toward fainter meteors. A larger r means a bright sky costs more of the shower. At exactly magnitude 6.5 the exponent is zero and r drops out. <strong>Cloud.</strong> k is the obstructed fraction of the field you are actually watching. The expected count is multiplied by (1 − k). The IMO visual FAQ says a coverage of 50% corresponds to a correction factor of 2.0, which is 1/(1 − k). Perception is not uniform across that field, so this is the simple fraction, not a full model of where the clouds sit.</p>
+  </div>
+
+  <p class="band">Working list · seven annual showers</p>
+  <div class="sheet">
+    <table>
+      <caption>IMO 2026 Table 5, with parents</caption>
+      <thead>
+        <tr>
+          <th scope="col">Shower</th>
+          <th scope="col">Active</th>
+          <th scope="col">Peak</th>
+          <th scope="col">λ⊙</th>
+          <th scope="col">Radiant</th>
+          <th scope="col">V∞</th>
+          <th scope="col">r</th>
+          <th scope="col">ZHR</th>
+          <th scope="col">Parent</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Quadrantids · 010 QUA</th>
+          <td>Dec 28–Jan 12</td>
+          <td>January 3 · 2026 close to 21h UT</td>
+          <td>283.15°</td>
+          <td>230°, +49°</td>
+          <td>41 km/s</td>
+          <td>2.1</td>
+          <td>80</td>
+          <td>196256 (2003 EH1)</td>
+        </tr>
+        <tr>
+          <th scope="row">Lyrids · 006 LYR</th>
+          <td>Apr 14–Apr 30</td>
+          <td>April 22 · 2026 19h 40m UT</td>
+          <td>32.32°</td>
+          <td>271°, +34°</td>
+          <td>49 km/s</td>
+          <td>2.1</td>
+          <td>18</td>
+          <td>C/1861 G1 (Thatcher)</td>
+        </tr>
+        <tr>
+          <th scope="row">Eta Aquariids · 031 ETA</th>
+          <td>Apr 19–May 28</td>
+          <td>May 6</td>
+          <td>45.5°</td>
+          <td>338°, −1°</td>
+          <td>66 km/s</td>
+          <td>2.4</td>
+          <td>50</td>
+          <td>1P/Halley</td>
+        </tr>
+        <tr>
+          <th scope="row">Perseids · 007 PER</th>
+          <td>Jul 17–Aug 24</td>
+          <td>August 13 · 2026 02h–04h UT</td>
+          <td>140.0°</td>
+          <td>48°, +58°</td>
+          <td>59 km/s</td>
+          <td>2.2</td>
+          <td>100</td>
+          <td>109P/Swift-Tuttle</td>
+        </tr>
+        <tr>
+          <th scope="row">Orionids · 008 ORI</th>
+          <td>Oct 2–Nov 7</td>
+          <td>October 21</td>
+          <td>208°</td>
+          <td>95°, +16°</td>
+          <td>66 km/s</td>
+          <td>2.5</td>
+          <td>20</td>
+          <td>1P/Halley</td>
+        </tr>
+        <tr>
+          <th scope="row">Leonids · 013 LEO</th>
+          <td>Nov 6–Nov 30</td>
+          <td>November 17 · 2026 23h 45m UT</td>
+          <td>235.27°</td>
+          <td>152°, +22°</td>
+          <td>71 km/s</td>
+          <td>2.5</td>
+          <td>15</td>
+          <td>55P/Tempel-Tuttle</td>
+        </tr>
+        <tr>
+          <th scope="row">Geminids · 004 GEM</th>
+          <td>Dec 4–Dec 20</td>
+          <td>December 14 · 2026 14h UT</td>
+          <td>262.2°</td>
+          <td>112°, +33°</td>
+          <td>35 km/s</td>
+          <td>2.6</td>
+          <td>150</td>
+          <td>3200 Phaethon</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>ZHR</dt><dd>Zenithal hourly rate. The IMO calendar defines it as the calculated maximum an ideal observer would see in perfectly clear skies, reference limiting magnitude +6.5, with the radiant overhead. It is meteors per hour. It is not the number in a bright or cloudy sky, and it is not a promise for one night.</dd></div>
+    <div class="gloss"><dt>Population index</dt><dd>r, from the shower’s magnitude distribution. The 2026 calendar says r of 2.0–2.5 means a larger fraction of brighter meteors than average, and r above 3.0 is richer in faint meteors. Molau, Barentsen, and Crivello describe r as the factor by which the count rises when the limiting magnitude improves by one.</dd></div>
+    <div class="gloss"><dt>V∞</dt><dd>Pre-atmospheric velocity, km/s. The calendar’s range is about 11 km/s, very slow, to 72 km/s, very fast, with 40 km/s roughly medium. The energy line is ½v² for one gram at that speed, in kJ/g. It is not a measured fireball energy.</dd></div>
+    <div class="gloss"><dt>Radiant</dt><dd>Right ascension and declination at maximum, from Table 5. The radiant drifts on other nights. This page does not apply that drift, and it does not turn the coordinates into an altitude for your latitude. Altitude is the slider.</dd></div>
+    <div class="gloss"><dt>λ⊙</dt><dd>Solar longitude, equinox 2000.0, the Earth’s place on its orbit. Table 5 says the maximum dates are accurate only for 2026. The longitude is the stable mark. A clock time is printed only when that shower’s section gives one.</dd></div>
+    <div class="gloss gloss-wide"><dt>Speed and brightness</dt><dd>At the same mass, a faster meteor carries more kinetic energy, so it can be brighter, and a fast streak is the kind observers are asked to check for a persistent train. NASA Science calls the Leonids bright and fast, at 71 km/s in the body of that page, and says their fireballs can persist longer than an average streak. The Geminids, at 35 km/s, are the slow end of this list, and the IMO calendar still calls that shower known for bright meteors and fireballs. Particle size matters. The energy number does not replace that.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the formula and the presets</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://www.imo.net/files/meteor-shower/cal2026.pdf" rel="noopener" target="_blank">IMO 2026 Meteor Shower Calendar</a> (Rendtel and others; working list correct as of June 2025) — Table 5 supplies the activity window, the 2026 maximum date, λ⊙, radiant α and δ, V∞, r, and ZHR for the Quadrantids (010 QUA), April Lyrids (006 LYR), η-Aquariids (031 ETA), Perseids (007 PER), Orionids (008 ORI), Leonids (013 LEO), and Geminids (004 GEM). The table note says maximum dates are accurate only for 2026. Abbreviations: ZHR is the ideal rate at limiting magnitude +6.5 with the radiant overhead; r is the population index; V∞ runs from about 11 to 72 km/s. Shower sections add the clock times used here, the Lyrid note that ZHR 18 can be variable up to 90, the Orionid header’s 20+ beside the table’s 20, and the parents C/1861 G1 (Thatcher), 109P/Swift-Tuttle, and 55P/Tempel-Tuttle. The Geminid section calls that shower known for bright meteors and fireballs.</li>
+      <li><a href="https://www.imo.net/observations/methods/visual-observation/major/" rel="noopener" target="_blank">IMO — Major shower observations</a> — Table 1, meteors per hour for a ZHR of 100 at limiting magnitude 6.5: 100, 94, 77, 64, 50, 34, and 17 at altitudes 90° through 10°. Those integers are the sine of the altitude, rounded. This page’s clear-sky reference row is that 30° line, 50.</li>
+      <li><a href="https://www.imo.net/imcs/imc2014/2014-12-ivanovic-final.pdf" rel="noopener" target="_blank">Ivanovic, IMC 2014, “Software for analysis of visual meteor data”</a> — the total correction, citing Rendtel and Arlt 2008, is C = r<sup>(6.5 − lm)</sup> × F / sin(h). The hourly rate this page prints is the ZHR divided by that C.</li>
+      <li><a href="https://www.imo.net/resources/faq/" rel="noopener" target="_blank">IMO — Visual FAQ</a> — a cloud coverage of 50% corresponds to a correction factor of 2.0, so F = 1/(1 − k). The same answer says perception is stronger near the center of the field, and that a 20% cover near the edges is not a 20% loss of meteors. This page still uses the simple fraction and says so.</li>
+      <li><a href="https://www.imo.net/imcs/imc2014/2014-28-molau-final.pdf" rel="noopener" target="_blank">Molau, Barentsen, and Crivello, IMC 2014</a> — the population index is the factor by which the meteor count increases when the limiting magnitude improves by one. Their ZHR equation uses r<sup>(6.5 − LM)</sup> and a field-obstruction factor F. The zenith term there is written with a zenith exponent. This page uses exponent 1, the sine in the IMO table.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/sb/meteor_streams.html" rel="noopener" target="_blank">NASA JPL Solar System Dynamics — Meteor streams</a> — parent bodies, from the IAU Meteor Data Center and the references there: Quadrantids 196256 (2003 EH1), April Lyrids C/1861 G1 (Thatcher), eta Aquariids 1P/Halley, Perseids 109P/Swift-Tuttle, Orionids 1P/Halley, Leonids 55P/Tempel-Tuttle, Geminids 3200 Phaethon. The three parents the IMO sections already name agree. The Quadrantid, eta Aquariid, Orionid, and Geminid parents on this page are this table.</li>
+      <li><a href="https://science.nasa.gov/solar-system/meteors-meteorites/meteor-showers/" rel="noopener" target="_blank">NASA Science — Meteor showers</a> — the Leonids are associated with comet Tempel-Tuttle; the Aquariids and Orionids are linked to comet Halley; Perseids are pieces of comet Swift-Tuttle.</li>
+      <li><a href="https://science.nasa.gov/solar-system/meteors-meteorites/leonids/" rel="noopener" target="_blank">NASA Science — Leonids</a> — the body text calls Leonids bright and fast and gives 44 miles (71 kilometers) per second, the same 71 km/s as the IMO table. Fireballs can persist longer than an average streak. The fast-facts table on that page prints 69.7 km/s; this desk does not use that second figure.</li>
+      <li><a href="https://skyandtelescope.org/astronomy-resources/light-pollution-and-astronomy-the-bortle-dark-sky-scale/" rel="noopener" target="_blank">Bortle, Sky &amp; Telescope, February 2001</a> — class 4 maximum naked-eye limit 6.1 to 6.5; class 3 rural 6.6 to 7.0; class 5 suburban around 5.6 to 6.0; class 8 city, magnitude 4.5 at best; class 9 inner-city 4.0 or less. The sky buttons use 6.5, 5.6, and 4.5 and are labeled approximate. Bortle’s own essay says a naked-eye limit depends on the observer.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Educational calculator. Not a forecast. Working-list numbers are the 2026 calendar’s Table 5, and the dates are for 2026. Parents the calendar text does not name are the JPL stream table. The hourly rate omits sporadics, perception, and any zenith exponent other than 1. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/twilight/"><p class="n">The clock</p><h3>Twilight</h3><p>When the Sun is still 6°, 12°, or 18° down. A meteor watch wants the astronomical end of that, not this rate.</p></a>
+    <a href="/science/astronomy/magnitude/"><p class="n">The scale</p><h3>Magnitude</h3><p>Why a limiting magnitude of 6.5 is faint and 4.5 is bright. Five magnitudes is a factor of 100 in flux.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">The place</p><h3>Local sky</h3><p>What a latitude puts overhead. This desk does not turn a radiant’s right ascension into an altitude.</p></a>
+    <a href="/science/light-pollution/"><p class="n">The glow</p><h3>Light pollution</h3><p>Skyglow, glare, and trespass. A city limiting magnitude is the bright end of the same problem.</p></a>
+    <a href="/science/astronomy/moon/"><p class="n">The lamp</p><h3>Moon</h3><p>A bright Moon is not a separate term here. It shows up as a worse limiting magnitude.</p></a>
+    <a href="/science/astronomy/telescope/"><p class="n">The optic</p><h3>Telescope</h3><p>Aperture and the faint end. Meteor rates on this page are naked-eye rates.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="met-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="met-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="met-help-title">Meteor desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom rate. Shower meteors only. Not a forecast and not an IMO report.</p>
+    <h3>Inputs</h3>
+    <table>
+      <caption>Inputs</caption>
+      <tbody>
+        <tr><th scope="row">Shower</th><td>Sets ZHR and r from IMO 2026 Table 5. It does not set your altitude, your limiting magnitude, or the cloud.</td></tr>
+        <tr><th scope="row">Sky</th><td>Dark sets 6.5, suburban 5.6, city 4.5. Approximate Bortle anchors. Typing a different magnitude clears the button.</td></tr>
+        <tr><th scope="row">Altitude</th><td>Degrees above your horizon. The slider is 0 to 90. A typed value may go to −90. At or below 0 the rate is 0.</td></tr>
+        <tr><th scope="row">Cloud</th><td>Percent of the field that is covered. 50% halves the rate. 100% gives 0.</td></tr>
+      </tbody>
+    </table>
+    <h3>Chart</h3>
+    <table>
+      <caption>Chart</caption>
+      <tbody>
+        <tr><th scope="row">Dome</th><td>The dot sits on the meridian at the altitude you set. Zenith is the top.</td></tr>
+        <tr><th scope="row">Curve</th><td>Hourly rate from the horizon to the zenith for the other factors as they stand.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Chart</th><td>Left and Right nudge the altitude by one degree while the canvas is focused.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/meteors/meteors.js"></script>
+<script>
+(function () {
+  "use strict";
+  var M = window.Meteors;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!M) return;
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("sky");
+  var state = {
+    showerId: "per",
+    skyId: "dark",
+    zhr: 100,
+    altitudeDeg: 30,
+    limitingMag: 6.5,
+    populationIndex: 2.2,
+    cloudFraction: 0
+  };
+  var editing = {};
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function fmtTrim(n, digits) {
+    var s = n.toFixed(digits);
+    return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function inputNow() {
+    return {
+      zhr: state.zhr,
+      altitudeDeg: state.altitudeDeg,
+      limitingMag: state.limitingMag,
+      populationIndex: state.populationIndex,
+      cloudFraction: state.cloudFraction
+    };
+  }
+
+  function whyText(row, shower) {
+    var name = shower ? shower.name : "This ZHR";
+    if (row.belowHorizon) {
+      return "The radiant is below the horizon, so the expected shower rate is 0. A negative sine is not a rate. " + name + " does not change that.";
+    }
+    var bits = [];
+    bits.push("The sine of " + fmtTrim(state.altitudeDeg, 1) + "° is " + fmtTrim(row.sine, 2) + ".");
+    if (state.limitingMag === M.LM_REF) {
+      bits.push("Limiting magnitude 6.5 is the reference, so the population index does not change the count.");
+    } else if (row.magnitudeFactor > 1) {
+      bits.push("The sky is brighter than magnitude 6.5, so the count is divided by r^(6.5 − LM), which is " + fmtTrim(row.magnitudeFactor, 2) + ".");
+    } else {
+      bits.push("The sky is darker than magnitude 6.5, so the magnitude factor is " + fmtTrim(row.magnitudeFactor, 2) + " and the rate rises.");
+    }
+    if (state.cloudFraction === 0) {
+      bits.push("The field is clear, so the cloud term is 1.");
+    } else if (state.cloudFraction === 1) {
+      bits.push("The field is fully covered, so the rate is 0.");
+    } else {
+      bits.push("The clear fraction is " + fmtTrim(row.clearFraction, 2) + ". IMO’s field correction for that cover is " + fmtTrim(1 / row.clearFraction, 2) + ".");
+    }
+    bits.push("The result is " + M.fmtRate(row.hourlyRate) + " shower meteors an hour. Sporadics are not included.");
+    return bits.join(" ");
+  }
+
+  function noteText(shower) {
+    if (!shower) {
+      return "No shower button is pressed, so there is no cited speed or parent. The rate is still the formula. The altitude is yours, not a prediction.";
+    }
+    var ke = M.kineticKjPerGram(shower.speed);
+    var sky = M.skyById(state.skyId);
+    var skyBit = sky ? " " + sky.note : " The limiting magnitude is a typed value, not one of the three approximate sky buttons.";
+    return "One gram at " + shower.speed + " km/s carries " + M.fmtGrouped(ke, 1) + " kJ. That is ½v² with v in km/s. " + shower.zhrNote + " " + shower.name + " parent: " + shower.parent + ". Peak " + shower.peakDate + (shower.peakTime ? " (" + shower.peakTime + ")" : "") + ", and Table 5 dates are for 2026." + skyBit;
+  }
+
+  function draw() {
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = canvas.clientWidth || 880;
+    var cssH = Math.round(cssW * 420 / 880);
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.max(1, Math.round(cssW * dpr));
+    canvas.height = Math.max(1, Math.round(cssH * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var w = cssW;
+    var h = cssH;
+    ctx.clearRect(0, 0, w, h);
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+
+    var domeW = Math.min(w * 0.42, h - 28);
+    var cx = 16 + domeW / 2;
+    var cy = h - 36;
+    var R = domeW / 2 - 8;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, Math.PI, 0);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - R, cy);
+    ctx.lineTo(cx + R, cy);
+    ctx.strokeStyle = muted;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, cy - R);
+    ctx.strokeStyle = line;
+    ctx.stroke();
+
+    var alt = state.altitudeDeg;
+    var showAlt = alt < 0 ? 0 : (alt > 90 ? 90 : alt);
+    var rad = showAlt * Math.PI / 180;
+    var dx = cx;
+    var dy = cy - R * Math.sin(rad);
+    ctx.beginPath();
+    ctx.arc(dx, dy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.fillStyle = muted;
+    ctx.textAlign = "center";
+    ctx.fillText("zenith", cx, cy - R - 8);
+    ctx.textAlign = "left";
+    ctx.fillText("horizon", cx + R + 6, cy + 4);
+
+    var plotL = cx + R + 54;
+    var plotR = w - 16;
+    var plotT = 28;
+    var plotB = h - 36;
+    if (plotR - plotL < 80) return;
+    ctx.strokeStyle = line;
+    ctx.strokeRect(plotL, plotT, plotR - plotL, plotB - plotT);
+    var curve = M.rateCurve(inputNow(), 37);
+    if (!curve) return;
+    var maxR = 0;
+    var i;
+    for (i = 0; i < curve.length; i++) if (curve[i].hourlyRate > maxR) maxR = curve[i].hourlyRate;
+    if (maxR <= 0) maxR = 1;
+    ctx.beginPath();
+    for (i = 0; i < curve.length; i++) {
+      var px = plotL + (curve[i].altitudeDeg / 90) * (plotR - plotL);
+      var py = plotB - (curve[i].hourlyRate / maxR) * (plotB - plotT);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    var mx = plotL + (showAlt / 90) * (plotR - plotL);
+    ctx.beginPath();
+    ctx.moveTo(mx, plotT);
+    ctx.lineTo(mx, plotB);
+    ctx.strokeStyle = soft;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = muted;
+    ctx.textAlign = "left";
+    ctx.fillText("0°", plotL, plotB + 16);
+    ctx.textAlign = "right";
+    ctx.fillText("90°", plotR, plotB + 16);
+    ctx.textAlign = "left";
+    ctx.fillText(M.fmtRate(maxR) + "/h", plotL, plotT - 8);
+  }
+
+  function render() {
+    var row = M.hourlyRate(inputNow());
+    var shower = M.showerById(state.showerId);
+    var buttons = document.querySelectorAll("#showers button");
+    Array.prototype.forEach.call(buttons, function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-shower") === state.showerId));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#skies button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-sky") === state.skyId));
+    });
+    if (!editing.zhr) document.getElementById("zhr-num").value = fmtTrim(state.zhr, 1);
+    if (!editing.altitudeDeg) document.getElementById("alt-num").value = fmtTrim(state.altitudeDeg, 1);
+    if (!editing.limitingMag) document.getElementById("lm-num").value = fmtTrim(state.limitingMag, 1);
+    if (!editing.populationIndex) document.getElementById("r-num").value = fmtTrim(state.populationIndex, 1);
+    if (!editing.cloudFraction) document.getElementById("cloud-num").value = fmtTrim(state.cloudFraction * 100, 1);
+    document.getElementById("zhr-slider").value = String(Math.min(500, Math.max(0, state.zhr)));
+    document.getElementById("alt-slider").value = String(Math.min(90, Math.max(0, state.altitudeDeg)));
+    document.getElementById("lm-slider").value = String(state.limitingMag);
+    document.getElementById("r-slider").value = String(state.populationIndex);
+    document.getElementById("cloud-slider").value = String(state.cloudFraction * 100);
+    document.getElementById("zhr-slider").setAttribute("aria-valuetext", "ZHR " + fmtTrim(state.zhr, 1));
+    document.getElementById("alt-slider").setAttribute("aria-valuetext", "radiant altitude " + fmtTrim(state.altitudeDeg, 1) + " degrees");
+    document.getElementById("lm-slider").setAttribute("aria-valuetext", "limiting magnitude " + fmtTrim(state.limitingMag, 1));
+    document.getElementById("r-slider").setAttribute("aria-valuetext", "population index " + fmtTrim(state.populationIndex, 1));
+    document.getElementById("cloud-slider").setAttribute("aria-valuetext", "cloud fraction " + fmtTrim(state.cloudFraction * 100, 1) + " percent");
+
+    if (!row) return;
+    var rate = M.fmtRate(row.hourlyRate);
+    setText("d-name", rate + " an hour");
+    setText("d-tier", shower ? shower.name + " · " + shower.code : "Typed ZHR · not a named shower");
+    setText("d-range", (shower ? shower.name : "ZHR " + fmtTrim(state.zhr, 1)) + " · radiant " + fmtTrim(state.altitudeDeg, 1) + "°");
+    setText("s-sine", row.belowHorizon ? "0" : fmtTrim(row.sine, 2));
+    setText("s-mag", fmtTrim(row.magnitudeFactor, 2));
+    setText("s-clear", fmtTrim(row.clearFraction, 2));
+    setText("s-speed", shower ? shower.speed + " km/s" : "—");
+    setText("s-energy", shower ? M.fmtGrouped(M.kineticKjPerGram(shower.speed), 1) + " kJ/g" : "—");
+    setText("s-parent", shower ? shower.parent : "—");
+    setText("s-peak", shower ? shower.peakDate : "—");
+    setText("s-rad", shower ? fmtTrim(shower.ra, 0) + "°, " + M.fmtSignedDeg(shower.dec) : "—");
+    setText("d-why", whyText(row, shower));
+    setText("d-note", noteText(shower));
+    setText("plot-hint", "Sky dome and rate versus radiant altitude · the marker is " + fmtTrim(state.altitudeDeg, 1) + "°");
+    if (canvas) {
+      canvas.setAttribute("aria-label", "A sky dome with the radiant at " + fmtTrim(state.altitudeDeg, 1) + " degrees, and a curve of hourly rate versus altitude. The rate is " + rate + " an hour.");
+    }
+    draw();
+  }
+
+  function bindNumber(id, key, read, write, matchers) {
+    var el = document.getElementById(id);
+    el.addEventListener("focus", function () { editing[key] = true; });
+    el.addEventListener("input", function () {
+      editing[key] = true;
+      var n = parseNum(el.value);
+      var v = read(n);
+      if (v == null || !isFinite(v)) {
+        el.setAttribute("aria-invalid", "true");
+        document.getElementById("field-err").hidden = false;
+        return;
+      }
+      el.setAttribute("aria-invalid", "false");
+      document.getElementById("field-err").hidden = true;
+      write(v);
+      matchers();
+      render();
+    });
+    el.addEventListener("blur", function () {
+      editing[key] = false;
+      render();
+    });
+  }
+
+  function same(a, b) { return Math.abs(a - b) < 1e-9; }
+  function matchShower() {
+    var s = M.showerById(state.showerId);
+    if (s && same(s.zhr, state.zhr) && same(s.r, state.populationIndex)) return;
+    state.showerId = "";
+    M.SHOWERS.forEach(function (sh) {
+      if (same(sh.zhr, state.zhr) && same(sh.r, state.populationIndex)) state.showerId = sh.id;
+    });
+  }
+  function matchSky() {
+    state.skyId = "";
+    M.SKIES.forEach(function (sky) {
+      if (same(sky.lm, state.limitingMag)) state.skyId = sky.id;
+    });
+  }
+
+  document.getElementById("zhr-slider").addEventListener("input", function (ev) {
+    editing.zhr = false;
+    state.zhr = Number(ev.target.value);
+    matchShower();
+    render();
+  });
+  document.getElementById("alt-slider").addEventListener("input", function (ev) {
+    editing.altitudeDeg = false;
+    state.altitudeDeg = Number(ev.target.value);
+    render();
+  });
+  document.getElementById("lm-slider").addEventListener("input", function (ev) {
+    editing.limitingMag = false;
+    state.limitingMag = Number(ev.target.value);
+    matchSky();
+    render();
+  });
+  document.getElementById("r-slider").addEventListener("input", function (ev) {
+    editing.populationIndex = false;
+    state.populationIndex = Number(ev.target.value);
+    matchShower();
+    render();
+  });
+  document.getElementById("cloud-slider").addEventListener("input", function (ev) {
+    editing.cloudFraction = false;
+    state.cloudFraction = Number(ev.target.value) / 100;
+    render();
+  });
+
+  bindNumber("alt-num", "altitudeDeg", function (n) {
+    return n >= M.ALT_MIN && n <= M.ALT_MAX ? n : null;
+  }, function (v) { state.altitudeDeg = v; }, function () {});
+  bindNumber("lm-num", "limitingMag", function (n) {
+    return n >= M.LM_MIN && n <= M.LM_MAX ? n : null;
+  }, function (v) { state.limitingMag = v; }, matchSky);
+  bindNumber("r-num", "populationIndex", function (n) {
+    return n >= M.R_MIN && n <= M.R_MAX ? n : null;
+  }, function (v) { state.populationIndex = v; }, matchShower);
+  bindNumber("cloud-num", "cloudFraction", function (n) {
+    return n >= 0 && n <= 100 ? n / 100 : null;
+  }, function (v) { state.cloudFraction = v; }, function () {});
+  bindNumber("zhr-num", "zhr", function (n) {
+    return n >= M.ZHR_MIN && n <= M.ZHR_MAX ? n : null;
+  }, function (v) { state.zhr = v; }, matchShower);
+
+  document.getElementById("showers").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var s = M.showerById(btn.getAttribute("data-shower"));
+    if (!s) return;
+    editing.zhr = false;
+    editing.populationIndex = false;
+    state.showerId = s.id;
+    state.zhr = s.zhr;
+    state.populationIndex = s.r;
+    render();
+  });
+  document.getElementById("skies").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var sky = M.skyById(btn.getAttribute("data-sky"));
+    if (!sky) return;
+    editing.limitingMag = false;
+    state.skyId = sky.id;
+    state.limitingMag = sky.lm;
+    render();
+  });
+
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    var next = state.altitudeDeg + (ev.key === "ArrowRight" ? 1 : -1);
+    if (next < M.ALT_MIN) next = M.ALT_MIN;
+    if (next > M.ALT_MAX) next = M.ALT_MAX;
+    editing.altitudeDeg = false;
+    state.altitudeDeg = next;
+    render();
+  });
+
+  var helpBtn = document.getElementById("met-help");
+  var helpDialog = document.getElementById("met-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
