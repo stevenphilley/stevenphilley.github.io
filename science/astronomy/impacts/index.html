@@ -1,0 +1,910 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Impacts — asteroid and comet energy, crater scaling — Steven Philley</title>
+<meta name="description" content="Impact literacy desk. Mass and kinetic energy, megatons at 4.184×10^15 J, and the Collins, Melosh, and Marcus 2005 pi-scaling for transient and final crater diameter. Presets cite Chelyabinsk, Tunguska, Barringer, and Chicxulub. Not a hazard assessment.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/impacts/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Impacts — energy and crater scaling">
+<meta property="og:description" content="Diameter, density, speed, and angle. Collins et al. 2005 transient and final crater diameters. A Barringer-like iron case is order-of-magnitude, not a hazard map.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/impacts/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Impacts — energy and crater scaling">
+<meta name="twitter:description" content="½mv², megatons, and Collins et al. 2005 crater scaling. Not a hazard assessment.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.scale{border-top-style:dashed;border-top-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:12ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/" aria-current="page">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Impacts</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The crater</p>
+  <h1>Impacts<br>and the scale</h1>
+  <p class="lede">A diameter and a speed are an energy, and an energy is not yet a crater. The mass of a sphere is <strong>m = π/6 · ρ · L³</strong>. The kinetic energy at the speed you set is <strong>E = ½mv²</strong>. One megaton of TNT on this page is <strong>4.184 × 10<sup>15</sup> J</strong>. Collins, Melosh, and Marcus print <strong>4.18 × 10<sup>15</sup> J</strong>. The transient crater and the final rim are their pi-scaling, equations 21, 22, and 27 in the 2005 Earth Impact Effects Program paper. The angle is measured from the horizontal. <strong>45°</strong> is the most probable angle in that program. The velocity floor is escape speed: the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists <strong>11.186 km/s</strong>, and the program’s minimum template is <strong>11.2 km/s</strong>. Typical asteroid encounters in the paper are <strong>12–20 km/s</strong>. The program’s typical-asteroid template is <strong>17 km/s</strong>. The top of the slider is <strong>72 km/s</strong>, their maximum for an object bound to the Sun. Speed on an orbit is the <a href="/science/astronomy/vis-viva/">vis-viva</a> desk. The coasting speed that leaves a body is the <a href="/science/astronomy/escape/">escape</a> desk. A grain that becomes a streak, not a crater, is the <a href="/science/astronomy/meteors/">meteor</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Simplified scaling. Order-of-magnitude estimates. Not a hazard assessment, not a damage map, and not a statement that a crater forms. The paper says the leading constants are a best estimate inside 0.8 to 1.5, not known to three decimal places. This page does not compute an airburst altitude. For a real near-Earth object, use <a href="https://cneos.jpl.nasa.gov/" rel="noopener" target="_blank">NASA CNEOS</a> and the <a href="https://www.nasa.gov/planetarydefense/" rel="noopener" target="_blank">Planetary Defense Coordination Office</a>.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Energy and crater scaling</span>
+    <button type="button" class="help-q" id="imp-help" aria-haspopup="dialog" aria-controls="imp-help-dialog" aria-expanded="false" aria-label="How this impact desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="plot-hint">Final rim beside a cited length · same scale</p>
+      <canvas id="crater" width="880" height="420" tabindex="0" role="img" aria-label="A crater circle beside a familiar length, drawn at the same scale."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> This scaling</li>
+        <li><span class="swatch scale" aria-hidden="true"></span> Cited length</li>
+      </ul>
+      <p class="scale-note" id="scale-note">The page opens on a Barringer-like case: 42 m of iron at 15 km/s. The Earth Impact Database rim is 1.186 km.</p>
+      <div class="controls">
+        <p class="pick-label">Cases · cited inputs, not reconstructions</p>
+        <div class="presets" id="cases" role="group" aria-label="Cited impact cases">
+          <button type="button" data-case="chelyabinsk" aria-pressed="false">Chelyabinsk</button>
+          <button type="button" data-case="tunguska" aria-pressed="false">Tunguska · 50 m</button>
+          <button type="button" data-case="barringer" aria-pressed="true">Barringer</button>
+          <button type="button" data-case="chicxulub" aria-pressed="false">Chicxulub · 14 km</button>
+        </div>
+        <p class="pick-label">Density · program templates</p>
+        <div class="presets" id="densities" role="group" aria-label="Impactor density">
+          <button type="button" data-density="ice" aria-pressed="false">Ice · 1000</button>
+          <button type="button" data-density="porous" aria-pressed="false">Porous · 1500</button>
+          <button type="button" data-density="dense" aria-pressed="false">Dense rock · 3000</button>
+          <button type="button" data-density="iron" aria-pressed="true">Iron · 8000</button>
+        </div>
+        <p class="pick-label">Target · Collins et al. densities</p>
+        <div class="presets" id="targets" role="group" aria-label="Target type">
+          <button type="button" data-target="sedimentary" aria-pressed="true">Sedimentary · 2500</button>
+          <button type="button" data-target="crystalline" aria-pressed="false">Crystalline · 2750</button>
+          <button type="button" data-target="water" aria-pressed="false">Water · 1000</button>
+        </div>
+        <div class="slider-row">
+          <label for="dia-slider">Diameter</label>
+          <input type="range" id="dia-slider" min="0" max="1000" step="1" value="389" aria-valuetext="diameter 42 meters">
+          <input type="text" class="num" id="dia-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="42" aria-label="Impactor diameter in meters" aria-invalid="false">
+          <span class="unit-tag">m</span>
+        </div>
+        <div class="slider-row">
+          <label for="vel-slider">Speed</label>
+          <input type="range" id="vel-slider" min="11.2" max="72" step="0.1" value="15" aria-valuetext="impact speed 15 kilometers per second">
+          <input type="text" class="num" id="vel-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="15" aria-label="Impact speed in kilometers per second" aria-invalid="false">
+          <span class="unit-tag">km/s</span>
+        </div>
+        <div class="slider-row">
+          <label for="ang-slider">Angle</label>
+          <input type="range" id="ang-slider" min="5" max="90" step="1" value="45" aria-valuetext="impact angle 45 degrees from horizontal">
+          <input type="text" class="num" id="ang-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="45" aria-label="Impact angle in degrees from the horizontal" aria-invalid="false">
+          <span class="unit-tag">deg</span>
+        </div>
+        <p class="field-error" id="field-err" hidden>Diameter from 1 m to 15 km. Speed from 11.186 to 72 km/s. Angle from 5° to 90°, measured from the horizontal.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Barringer-like · simple crater · schematic</p>
+      <h2 id="d-name">1.46 km</h2>
+      <p class="range" id="d-range">Final rim · eq. 22 · sedimentary rock</p>
+      <ul class="stats">
+        <li><span class="k">Mass</span><span class="v" id="s-mass">3.103×10^8 kg</span></li>
+        <li><span class="k">Energy</span><span class="v" id="s-joule">3.491×10^16 J</span></li>
+        <li><span class="k">Megatons</span><span class="v" id="s-mt">8.34 Mt</span></li>
+        <li><span class="k">Recurrence</span><span class="v" id="s-recur">570 years</span></li>
+        <li><span class="k">Transient</span><span class="v" id="s-dtc">1.17 km</span></li>
+        <li><span class="k">Final rim</span><span class="v" id="s-dfr">1.46 km</span></li>
+        <li><span class="k">Kind</span><span class="v" id="s-kind">Simple</span></li>
+        <li><span class="k">Constant band</span><span class="v" id="s-band">1.01–1.89 km</span></li>
+      </ul>
+      <p class="why" id="d-why">Equation 21 gives a transient crater of 1.17 km at the pre-impact surface. Under 2.56 km, equation 22 multiplies by 1.25, so the final rim is 1.46 km. The Earth Impact Database rim is 1.186 km. That cited rim sits inside the paper’s 0.8–1.5 range on the leading constant.</p>
+      <p class="why" id="d-energy">8.34 Mt uses 4.184 × 10^15 J. Collins et al. 2016, as corrected by Kring, is 8.6 Mt for a heavier iron mass at the same 42 m and 15 km/s. The whole-Earth recurrence from their equation 3 is about 570 years at this energy.</p>
+      <p class="why" id="d-entry">42 m is under the 1 km cutoff, so Collins et al. would run their entry procedure. Iron is the strong end of that relation. A small, strong body can reach the ground intact in their account. This page does not compute the airburst altitude.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The relations are still m = π/6 · ρ · L³, E = ½mv², 1 Mt = 4.184 × 10^15 J, and Collins et al. 2005 equations 21, 22, and 27. Equation 3 is the recurrence, about 109 × E^0.78 years for E in megatons. For 42 m of iron at 8000 kg/m³, 15 km/s, 45°, and sedimentary rock at 2500 kg/m³, the transient crater is 1.17 km and the final rim is 1.46 km. The Earth Impact Database rim of Barringer is 1.186 km. Kring’s table of the Collins et al. 2016 model is 8.6 Mt at a slightly higher mass. Not a hazard assessment.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">What the scaling does</p>
+    <h2>A sphere, a speed, and two diameters.</h2>
+    <p><strong>Energy.</strong> The speed on the slider is the speed in ½mv². In the paper that speed, called v₀, is the speed at the top of the atmosphere. The crater formulas use the speed at the surface after the atmosphere has had its say. For a body of 1 km or larger, Collins et al. say entry has no significant influence, so the two speeds are the same in their treatment. Under 1 km, this page still drops the slider speed straight into equation 21. It does not slow the body down. The crater number is what the scaling says if that speed is the surface speed.</p>
+    <p><strong>Transient crater.</strong> Equation 21 is D<sub>tc</sub> = 1.161 (ρ<sub>i</sub>/ρ<sub>t</sub>)<sup>1/3</sup> L<sup>0.78</sup> v<sup>0.44</sup> g<sub>E</sub><sup>−0.22</sup> sin<sup>1/3</sup>θ, with L in meters, v in meters per second, and D<sub>tc</sub> in meters, measured at the pre-impact surface. g<sub>E</sub> here is 9.81 m/s². For water the 1.161 becomes 1.365. The paper says both constants are a best estimate inside 0.8 to 1.5.</p>
+    <p><strong>Final rim.</strong> If the transient crater is 2.56 km or smaller, equation 22 is D<sub>fr</sub> ≈ 1.25 D<sub>tc</sub>. Above 2.56 km, equation 27 is D<sub>fr</sub> = 1.17 D<sub>tc</sub><sup>1.13</sup> / D<sub>c</sub><sup>0.13</sup>, with D<sub>c</sub> = 3.2 km and both diameters in kilometers. The two pieces do not meet exactly at the join. Water does not get either collapse law. The program’s marine target also has a rock seafloor under a water depth. This desk has no water depth, so the water button is only the water-layer cavity.</p>
+  </div>
+
+  <p class="band">Cases · what is cited, and what is a default</p>
+  <div class="sheet">
+    <table>
+      <caption>Preset inputs and the ranges around them</caption>
+      <thead>
+        <tr>
+          <th scope="col">Button</th>
+          <th scope="col">Set on the sliders</th>
+          <th scope="col">Published range</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Chelyabinsk · 2013</th>
+          <td>18 m, dense rock 3000 kg/m³, 18.6 km/s, 45°, sedimentary. The 18 m and 18.6 km/s are the JPL additional-details estimates. The density, the angle, and the target are not.</td>
+          <td>The same JPL page updates the size to 17 m and the energy to nearly 500 kilotons, after first printing about 18 m, about 11,000 tons, and 440 kilotons. Brown et al. 2013: about 19 m, with a 17–20 m range, and 500 ± 100 kilotons. Peak brightness at 23.3 km in the JPL account. An airburst, not a crater of the scaled size.</td>
+        </tr>
+        <tr>
+          <th scope="row">Tunguska · 1908</th>
+          <td>50 m, dense rock, 17 km/s, 45°, sedimentary. 50 m is the low end of one cited diameter range. 17 km/s and 45° are program defaults, not a measured entry.</td>
+          <td>NASA/TM–2018 (NTRS 20190002302), abstract: models converged on 10–20 megatons, an airburst at about 10 km, and no crater. If the body was a stony asteroid like Chelyabinsk, the diameter was roughly 50–80 m. The same memorandum also records other diameter bands from the talks. There is no single Tunguska diameter.</td>
+        </tr>
+        <tr>
+          <th scope="row">Barringer</th>
+          <td>42 m, iron 8000 kg/m³, 15 km/s, 45°, sedimentary. 42 m and 15 km/s are the Collins et al. 2016 surface-impact case in Kring’s table. 8000 kg/m³ is the program’s iron template. 45° is the most probable angle, not a measured trajectory.</td>
+          <td>Kring (2017) corrects that model to 3.2 × 10<sup>8</sup> kg and 8.6 Mt. This button’s 8000 kg/m³ sphere is a little lighter, so the megatons are this page’s arithmetic. Earth Impact Database, via the Meteoritical Bulletin: rim 1.186 km, age 0.049 ± 0.003 Ma. USGS Astrogeology also says 1.2 km and 180 m deep, and its caption still quotes an older approximate impactor of about 30 m at 12–20 km/s and over 2 million tons of TNT. Kring’s table runs from a fraction of a megaton to over 60.</td>
+        </tr>
+        <tr>
+          <th scope="row">Chicxulub</th>
+          <td>14 km, dense rock, 17 km/s, 45°, sedimentary. 14 km is the Earth Impact Effects Program’s diameter template labeled Chicxulub. The speed, the angle, and the rock target are defaults.</td>
+          <td>Morgan et al. 2022: the structure is approximately 200 km across, the impact was oblique, and the energy is about 10<sup>23</sup> J. They do not, in that review, assign one impactor diameter. The real target was a shallow sea. This button does not model that water layer.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Megaton</dt><dd>This page divides joules by 4.184 × 10<sup>15</sup>. Collins et al. print 4.18 × 10<sup>15</sup>. Brown et al. 2013 use 4.185 × 10<sup>12</sup> J per kiloton. The three differ by about a tenth of a percent, which is smaller than the crater-scaling band.</dd></div>
+    <div class="gloss"><dt>Angle</dt><dd>Degrees from the horizontal, the way the paper measures θ. A vertical impact is 90°. Equation 21 scales the transient crater with sin<sup>1/3</sup>θ, so 45° is smaller than vertical. The program calls 15° the shallowest angle it associates with a circular crater. The slider still runs down to 5° and says the scaling is the same formula.</dd></div>
+    <div class="gloss"><dt>Recurrence</dt><dd>Equation 3, T<sub>RE</sub> ≈ 109 E<sup>0.78</sup> years, E in megatons, somewhere on Earth. It is their fit to the Near-Earth Object Science Definition Team (2003) size distribution. It is not a forecast for one place. The 2018 NASA Tunguska workshop concluded that the interval between Tunguska-class events is millennia, not centuries. This line stays the 2005 fit.</dd></div>
+    <div class="gloss"><dt>Atmosphere</dt><dd>Collins et al. apply their breakup procedure only under 1 km. Above that, they say entry does not significantly change the body’s energy. Under 1 km, breakup begins when ram pressure exceeds strength. Strength in their program rises with density from 1000 to 8000 kg/m³. Cometary ice is the weak end. Iron is the strong end, and a small, strong body can reach the ground intact. They define an airburst as the altitude where the body has spread to seven times its original diameter. This desk does not solve that altitude.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the rim leaves out</dt><dd>Drag, ablation, a strewn field, melt, ejecta, shaking, and the blast wave are all in the 2005 program and not on this page. The gravity-regime scaling is meant for craters larger than a couple of hundred meters. A final rim under that is an extrapolation. The constant band is only the paper’s 0.8–1.5 range on the leading factor, carried through the same exponents. It is not a full error bar. Comparing a fresh rim-to-rim diameter with an eroded terrestrial structure needs the caution the paper already gives.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the formulas and the presets</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1111/j.1945-5100.2005.tb00157.x" rel="noopener" target="_blank">Collins, Melosh, and Marcus, Meteoritics &amp; Planetary Science 40, 817–840 (2005)</a> — Earth Impact Effects Program. Equation 1 is the kinetic energy, π/12 · ρ · L³ · v², which is ½mv² for a sphere. They print 1 Mt = 4.18 × 10<sup>15</sup> J. Equation 3 is T<sub>RE</sub> ≈ 109 E<sup>0.78</sup> years. Equation 21 is the transient crater, constant 1.161 in rock and 1.365 in water, proportional to sin<sup>1/3</sup>θ. Equation 22 is D<sub>fr</sub> ≈ 1.25 D<sub>tc</sub> for a simple crater. Equation 27 is the complex-crater rim, used when the transient diameter is greater than 2.56 km, with D<sub>c</sub> = 3.2 km. Target densities: sedimentary 2500, crystalline 2750, water 1000, and a marine seafloor at 2700 that this page does not model. Rocky asteroids about 2000–3000 kg/m³, iron about 8000, comets about 500–1500. Asteroid speeds about 12–20 km/s. Comet speeds about 30–70 km/s. Maximum for a body bound to the Sun, 72 km/s. Their entry procedure is only for impactors under 1 km. The constants 1.161 and 1.365 are a best estimate inside 0.8 to 1.5.</li>
+      <li><a href="https://impact.ese.ic.ac.uk/ImpactEarth/ImpactEffects/" rel="noopener" target="_blank">Earth Impact Effects Program</a> — the same authors’ calculator. Density templates: 1000 ice, 1500 porous rock, 3000 dense rock, 8000 iron. Speed templates: minimum 11.2 km/s, typical asteroid 17 km/s, typical comet 51 km/s, maximum 72 km/s. Most probable angle 45°. Diameter templates used as familiar lengths here: double-decker bus 5 m, Chelyabinsk 20 m, Nelson’s Column 52 m, Queen’s Tower 87 m, Wembley Stadium 320 m, Ben Nevis 1.3 km, Jersey 10 km, Isle of Wight 20 km, and a Chicxulub template of 14 km. The program’s 20 m Chelyabinsk template is not the JPL estimate.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — escape velocity 11.186 km/s. Volumetric mean radius 6,371.000 km, so the diameter drawn as a familiar length is 12,742 km. Mean surface gravity 9.820 m/s². Equation 21 on this page uses 9.81 m/s². The −0.22 power makes that difference negligible.</li>
+      <li><a href="https://www.jpl.nasa.gov/news/additional-details-on-the-large-feb-15-fireball-over-russia/" rel="noopener" target="_blank">NASA JPL — Additional details on the 15 February 2013 fireball</a> — about 18 m, about 11,000 tons, 18.6 km/s, peak brightness at 23.3 km, about 440 kilotons. An update on the same page revises the estimate to 17 m, 10,000 tons, and nearly 500 kilotons. The fragments are ordinary chondrites. This page does not assign them a measured bulk density.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/2013Natur.503..238B/abstract" rel="noopener" target="_blank">Brown and others, Nature 503, 238–241 (2013)</a> — Chelyabinsk about 19 m, the range they print is 17–20 m, energy about 500 ± 100 kilotons. They take 1 kiloton of TNT as 4.185 × 10<sup>12</sup> J.</li>
+      <li><a href="https://ntrs.nasa.gov/citations/20190002302" rel="noopener" target="_blank">Morrison, NASA/TM–2018, Tunguska workshop (NTRS 20190002302)</a> — abstract: 10–20 megatons, airburst height about 10 km, and, for a stony body like Chelyabinsk, a diameter of roughly 50–80 m. The interval between such events is millennia, not centuries. No crater. Talks inside the same memorandum quote other diameter bands. The 50 m button is the low end of the abstract’s range, not a preferred reconstruction.</li>
+      <li><a href="https://www.lpi.usra.edu/publications/books/barringer_crater_guidebook/chapter_11.pdf" rel="noopener" target="_blank">Kring, LPI Contribution 2040, chapter 11 (2017)</a> — Barringer energies in the literature run from a fraction of a megaton to over 60. The Collins et al. 2016 row, with Kring’s mass correction, is a 42 m projectile, 15 km/s, 3.2 × 10<sup>8</sup> kg, and 8.6 Mt. Artemieva’s disruption cases in the same table are different diameters and speeds, around 10–11 Mt in the 2006 row and 7–15 Mt in 2009. This page’s iron density is the program’s 8000 kg/m³, not that 3.2 × 10<sup>8</sup> kg.</li>
+      <li><a href="https://www.lpi.usra.edu/meteor/metbull.php?code=35175" rel="noopener" target="_blank">Meteoritical Bulletin — Barringer</a> — writeup from the Earth Impact Database: D = 1.186 km, age 0.049 ± 0.003 Ma.</li>
+      <li><a href="https://www.usgs.gov/centers/astrogeology-science-center/science/meteor-crater-sample-collection" rel="noopener" target="_blank">USGS Astrogeology — Meteor Crater sample collection</a> — 1.2 km diameter, 180 m deep, formed about 50,000 years ago. The caption also gives an approximate impactor of about 30 m at 12–20 km/s and an energy of over 2 million tons of TNT. That caption and the Kring table are not the same estimate. Both are cited. The button follows the 42 m, 15 km/s model.</li>
+      <li><a href="https://doi.org/10.1038/s43017-022-00283-y" rel="noopener" target="_blank">Morgan, Bralower, Brugger, and Wünnemann, Nature Reviews Earth &amp; Environment (2022)</a> — Chicxulub is an approximately 200 km structure. The asymmetric shape suggests an oblique impact and an energy of about 10<sup>23</sup> J. The 14 km button is the program template, not a figure from this review.</li>
+      <li><a href="https://cneos.jpl.nasa.gov/" rel="noopener" target="_blank">NASA CNEOS</a> and <a href="https://www.nasa.gov/planetarydefense/" rel="noopener" target="_blank">NASA Planetary Defense</a> — where a real close approach is tracked. This desk is not that catalog.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom scaling. Not a hazard assessment. The Barringer-like rim on the opening view is equation 22 at 42 m, 8000 kg/m³, 15 km/s, 45°, and sedimentary rock. It is 1.46 km. The database rim is 1.186 km, inside the paper’s constant band for that case. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/meteors/"><p class="n">The streak</p><h3>Meteors</h3><p>A shower grain is a rate, not a crater. Collins et al. say their entry routine is the wrong tool for a visible meteor.</p></a>
+    <a href="/science/astronomy/escape/"><p class="n">The floor</p><h3>Escape</h3><p>Why the speed slider does not start at zero. Earth’s surface escape on that desk is 11.186 km/s.</p></a>
+    <a href="/science/astronomy/vis-viva/"><p class="n">The orbit</p><h3>Vis-viva</h3><p>Speed anywhere on one ellipse. An impact speed is a different reading, taken at Earth.</p></a>
+    <a href="https://cneos.jpl.nasa.gov/" rel="noopener" target="_blank"><p class="n">The catalog</p><h3>CNEOS</h3><p>NASA’s actual close-approach catalog. This page does not list hazardous objects.</p></a>
+    <a href="/science/astronomy/black-holes/"><p class="n">The well</p><h3>Black holes</h3><p>Escape equals c at one radius. Impact speeds on this desk stay Newtonian and under 72 km/s.</p></a>
+    <a href="/science/gravity/"><p class="n">The pull</p><h3>Gravity</h3><p>The same GM that sets escape speed. A crater is what happens after the body does not miss.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="imp-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="imp-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="imp-help-title">Impact desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom scaling. Not a hazard assessment and not an airburst altitude.</p>
+    <h3>Inputs</h3>
+    <table>
+      <caption>Inputs</caption>
+      <tbody>
+        <tr><th scope="row">Cases</th><td>Each button sets a cited diameter and, where the source gives one, a cited speed. Density, angle, and target stay on program defaults when the papers do not agree on a single value. The table under the calculator says which is which.</td></tr>
+        <tr><th scope="row">Density</th><td>1000, 1500, 3000, or 8000 kg/m³. Those are the program’s templates. The 2005 paper’s ranges are wider.</td></tr>
+        <tr><th scope="row">Target</th><td>Sedimentary 2500, crystalline 2750, or water 1000. Water changes the leading constant from 1.161 to 1.365 and skips the rock collapse.</td></tr>
+        <tr><th scope="row">Diameter</th><td>Log slider from 1 m to 15 km. The number field accepts the same range.</td></tr>
+        <tr><th scope="row">Speed</th><td>11.2 to 72 km/s on the slider. A typed value may sit on the fact-sheet escape speed, 11.186 km/s, and no lower.</td></tr>
+        <tr><th scope="row">Angle</th><td>5° to 90° from the horizontal. 45° is the default.</td></tr>
+      </tbody>
+    </table>
+    <h3>Drawing</h3>
+    <table>
+      <caption>Drawing</caption>
+      <tbody>
+        <tr><th scope="row">Two circles</th><td>The scaling and the nearest cited length, when they are within a factor of eight of each other. Same meters per pixel.</td></tr>
+        <tr><th scope="row">One circle</th><td>When the comparison would be a speck or would overflow. The sentence under the drawing still names the length.</td></tr>
+        <tr><th scope="row">Scale bar</th><td>A round length in meters or kilometers. It is a ruler, not a second crater.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Chart</th><td>Left and Right step the log diameter while the canvas is focused. Up and Down step the angle by one degree.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/impacts/impacts.js"></script>
+<script>
+(function () {
+  "use strict";
+  var I = window.Impacts;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!I) return;
+
+  var root = document.documentElement;
+  var canvas = document.getElementById("crater");
+  var state = {
+    caseId: "barringer",
+    densityId: "iron",
+    targetId: "sedimentary",
+    diameterM: 42,
+    velocityKms: 15,
+    angleDeg: 45
+  };
+  var editing = {};
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function inputNow() {
+    var d = I.densityById(state.densityId);
+    return {
+      diameterM: state.diameterM,
+      density: d ? d.density : 0,
+      velocityKms: state.velocityKms,
+      angleDeg: state.angleDeg,
+      targetId: state.targetId
+    };
+  }
+  function same(a, b) {
+    return Math.abs(a - b) < 1e-9;
+  }
+
+  function kindLabel(kind) {
+    if (kind === "simple") return "Simple";
+    if (kind === "complex") return "Complex";
+    if (kind === "water") return "Water cavity";
+    return "—";
+  }
+
+  function entryText(row) {
+    var entry = row.entry;
+    if (!entry) return "";
+    if (entry.regime === "entry-neglected") {
+      return "This diameter is at least 1 km. Collins et al. say atmospheric entry has no significant influence at that size, and they do not run their breakup procedure. The slider speed and the surface speed are the same in that treatment.";
+    }
+    var strength = "Dense rock sits in the middle of their strength-density relation.";
+    if (entry.strength === "weak") {
+      strength = "Ice and porous rock are the weak end. Their account often puts a small, low-density body in the air rather than on the ground as one piece.";
+    } else if (entry.strength === "strong") {
+      strength = "Iron is the strong end. They note that a small, strong impactor can reach the surface intact.";
+    }
+    return "This diameter is under 1 km, so Collins et al. would run their entry procedure. Breakup begins when ram pressure exceeds strength. " + strength + " They define an airburst where the body has spread to seven times its original diameter. This page does not compute that altitude, and the crater number assumes the slider speed is the surface speed.";
+  }
+
+  function craterText(row) {
+    var c = row.crater;
+    var band = I.fmtMeters(row.constantBand.lowM) + " to " + I.fmtMeters(row.constantBand.highM);
+    if (c.kind === "water") {
+      return "Equation 21 with the water constant 1.365 gives a transient cavity of " + I.fmtMeters(c.transientM) + ". The rock collapse laws are not applied. Collins et al. also put a rock seafloor under a water depth. This desk has no water depth. The paper’s 0.8–1.5 range on the leading constant maps this cavity to " + band + ".";
+    }
+    var law = c.kind === "complex"
+      ? "The transient crater is above 2.56 km, so equation 27 gives the final rim, " + I.fmtMeters(c.finalM) + "."
+      : "The transient crater is 2.56 km or smaller, so equation 22 multiplies by 1.25 and the final rim is " + I.fmtMeters(c.finalM) + ".";
+    var regime = row.gravityRegime
+      ? " That rim is above a couple of hundred meters, the size where they say gravity dominates crater growth."
+      : " That rim is under a couple of hundred meters. Their gravity-regime scaling was not meant for a crater that small. The number is an extrapolation.";
+    return "Equation 21 gives a transient crater of " + I.fmtMeters(c.transientM) + " at the pre-impact surface. " + law + regime + " The paper’s 0.8–1.5 range on the leading constant maps the reported diameter to " + band + ".";
+  }
+
+  function energyText(row) {
+    var bits = [];
+    bits.push(I.fmtMegatons(row.megatons) + " uses 4.184 × 10^15 J per megaton. The paper’s 4.18 × 10^15 J would print " + I.fmtMegatons(row.megatonsPaper) + ".");
+    if (row.energyRanges && row.energyRanges.length) {
+      var names = row.energyRanges.map(function (ref) { return ref.name + " (" + ref.note + ")"; });
+      bits.push("This energy sits inside " + names.join("; ") + ".");
+    }
+    if (row.energyRef && row.energyRef.ref) {
+      var ratio = row.energyRef.ratio;
+      var how = ratio >= 0.8 && ratio <= 1.25 ? "close to" : (ratio < 1 ? I.fmtTrim(1 / ratio, 1) + " times under" : I.fmtTrim(ratio, 1) + " times");
+      bits.push("Against " + row.energyRef.ref.name + ", " + row.energyRef.ref.note + ", this result is " + how + " that figure.");
+    }
+    bits.push("Equation 3, the whole-Earth recurrence, is " + I.fmtYears(row.recurrenceYears) + " at this energy. The 2018 Tunguska workshop argues that Tunguska-class intervals are millennia, not the centuries this 2005 fit can print. The line stays equation 3.");
+    return bits.join(" ");
+  }
+
+  function caseNote(preset) {
+    if (!preset) return "No case button is pressed. The numbers are the sliders. They are not a named event.";
+    if (preset.id === "chelyabinsk") {
+      return "JPL’s additional-details page prints about 18 m and 18.6 km/s, then about 440 kilotons, with peak brightness at 23.3 km. The same page’s update says 17 m and nearly 500 kilotons. Brown et al. 2013 say about 19 m (17–20 m) and 500 ± 100 kilotons. An 18 m sphere at 3000 kg/m³ is lighter than JPL’s roughly 11,000 tons, so this energy is not a copy of 440 kilotons. 45° is the most probable angle in the program, not Chelyabinsk’s trajectory. The event was an airburst. The rim is not a crater that formed.";
+    }
+    if (preset.id === "tunguska") {
+      return "The NASA workshop abstract converged on 10–20 megatons and a diameter of roughly 50–80 m if the body was stony, like Chelyabinsk, with an airburst near 10 km and no crater. This button uses 50 m, the low end of that range. 17 km/s is the program’s typical asteroid template, not a measured Tunguska speed. 45° is the most probable angle, not a measured entry angle.";
+    }
+    if (preset.id === "barringer") {
+      return "Kring’s table of Collins et al. 2016 is 42 m, 15 km/s, 3.2×10^8 kg, and 8.6 Mt. This button uses the program’s iron density, 8000 kg/m³, so the mass is a little lower and the megatons are recomputed. The Earth Impact Database rim is 1.186 km. USGS also says 1.2 km, and its caption still quotes an older approximate 30 m impactor and over 2 million tons of TNT. Published energies in Kring’s table span a fraction of a megaton to over 60. 45° is not a measured Barringer trajectory.";
+    }
+    if (preset.id === "chicxulub") {
+      return "14 km is the program’s Chicxulub diameter template. 17 km/s and 45° are the program’s typical asteroid speed and most probable angle, not a reconstruction. Morgan et al. 2022 describe an approximately 200 km structure, an oblique impact, and an energy of about 10^23 J. The real target was a shallow sea. This button uses sedimentary rock and does not model that water.";
+    }
+    return "";
+  }
+
+  function niceBar(spanM) {
+    if (!(spanM > 0)) return 1;
+    var exp = Math.floor(Math.log(spanM) / Math.LN10);
+    var base = Math.pow(10, exp);
+    var mant = spanM / base;
+    var nice = mant >= 5 ? 5 : (mant >= 2 ? 2 : 1);
+    var bar = nice * base;
+    if (bar > spanM) bar = base;
+    return bar;
+  }
+
+  function draw(shownM, scale) {
+    if (!canvas || !canvas.getContext) return;
+    var ctx = canvas.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = canvas.clientWidth || 880;
+    var cssH = Math.round(cssW * 420 / 880);
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.max(1, Math.round(cssW * dpr));
+    canvas.height = Math.max(1, Math.round(cssH * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var w = cssW;
+    var h = cssH;
+    ctx.clearRect(0, 0, w, h);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var compareM = scale ? scale.meters : shownM;
+    var ratio = shownM / compareM;
+    var both = scale && ratio > 0.125 && ratio < 8;
+    var maxM = both ? Math.max(shownM, compareM) : shownM;
+    var plotBottom = h - 46;
+    var plotTop = 28;
+    var avail = plotBottom - plotTop;
+    var gap = 28;
+    var colW = both ? (w - 36 - gap) / 2 : (w - 36);
+    var px = Math.min(colW, avail) * 0.86 / maxM;
+    function circle(cx, cy, meters, stroke, fill, width, dash) {
+      var r = Math.max(meters * px / 2, 0.5);
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = width;
+      ctx.setLineDash(dash || []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    var cy = plotTop + avail / 2;
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillStyle = muted;
+    if (both) {
+      var cx1 = 16 + colW / 2;
+      var cx2 = 16 + colW + gap + colW / 2;
+      circle(cx1, cy, shownM, accent, "rgba(200,180,138,0.16)", 1.5, []);
+      circle(cx2, cy, compareM, ink, "transparent", 1.25, [4, 4]);
+      ctx.fillText("Scaling", cx1, plotTop - 4);
+      ctx.fillText(scale.name, cx2, plotTop - 4);
+    } else {
+      var cx = w / 2;
+      circle(cx, cy, shownM, accent, "rgba(200,180,138,0.16)", 1.5, []);
+      ctx.fillText("Scaling", cx, plotTop - 4);
+    }
+    var barM = niceBar(maxM * 0.55);
+    var barPx = barM * px;
+    var bx = 16;
+    var by = h - 22;
+    ctx.beginPath();
+    ctx.moveTo(bx, by);
+    ctx.lineTo(bx + barPx, by);
+    ctx.moveTo(bx, by - 4);
+    ctx.lineTo(bx, by + 4);
+    ctx.moveTo(bx + barPx, by - 4);
+    ctx.lineTo(bx + barPx, by + 4);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = muted;
+    ctx.fillText(I.fmtMeters(barM), bx + barPx + 8, by);
+  }
+
+  function render() {
+    var row = I.compute(inputNow());
+    var preset = I.presetById(state.caseId);
+    Array.prototype.forEach.call(document.querySelectorAll("#cases button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-case") === state.caseId));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#densities button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-density") === state.densityId));
+    });
+    Array.prototype.forEach.call(document.querySelectorAll("#targets button"), function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-target") === state.targetId));
+    });
+    if (!editing.diameterM) document.getElementById("dia-num").value = I.fmtTrim(state.diameterM, state.diameterM >= 100 ? 0 : 2);
+    if (!editing.velocityKms) document.getElementById("vel-num").value = I.fmtTrim(state.velocityKms, 2);
+    if (!editing.angleDeg) document.getElementById("ang-num").value = I.fmtTrim(state.angleDeg, 1);
+    document.getElementById("dia-slider").value = String(I.sliderFromDiameter(state.diameterM));
+    document.getElementById("vel-slider").value = String(Math.min(I.V_MAX, Math.max(I.V_MIN, state.velocityKms)));
+    document.getElementById("ang-slider").value = String(state.angleDeg);
+    document.getElementById("dia-slider").setAttribute("aria-valuetext", "diameter " + I.fmtMeters(state.diameterM));
+    document.getElementById("vel-slider").setAttribute("aria-valuetext", "impact speed " + I.fmtTrim(state.velocityKms, 2) + " kilometers per second");
+    document.getElementById("ang-slider").setAttribute("aria-valuetext", "impact angle " + I.fmtTrim(state.angleDeg, 1) + " degrees from horizontal");
+    if (!row) return;
+    var shown = row.crater.finalM == null ? row.crater.transientM : row.crater.finalM;
+    var title = row.crater.kind === "water" ? "Water cavity" : (row.crater.kind === "complex" ? "Complex rim" : "Simple rim");
+    setText("d-tier", (preset ? preset.name : "Sliders") + " · " + title.toLowerCase() + " · schematic");
+    setText("d-name", I.fmtMeters(shown));
+    setText("d-range", row.crater.kind === "water" ? "Transient cavity · eq. 21 · water" : (title + " · " + (row.crater.kind === "complex" ? "eq. 27" : "eq. 22") + " · " + row.target.name.toLowerCase()));
+    setText("s-mass", I.fmtMass(row.massKg));
+    setText("s-joule", I.fmtJoules(row.joules));
+    setText("s-mt", I.fmtMegatons(row.megatons));
+    setText("s-recur", I.fmtYears(row.recurrenceYears));
+    setText("s-dtc", I.fmtMeters(row.crater.transientM));
+    setText("s-dfr", row.crater.finalM == null ? "—" : I.fmtMeters(row.crater.finalM));
+    setText("s-kind", kindLabel(row.crater.kind));
+    setText("s-band", I.fmtMeters(row.constantBand.lowM) + "–" + I.fmtMeters(row.constantBand.highM));
+    setText("d-why", craterText(row));
+    setText("d-energy", energyText(row));
+    setText("d-entry", entryText(row) + (preset ? " " + caseNote(preset) : " No case button is pressed."));
+    var scaleName = row.scale ? row.scale.name + " · " + I.fmtMeters(row.scale.meters) : "a ruler";
+    setText("plot-hint", "Scaling " + I.fmtMeters(shown) + " beside " + scaleName);
+    var fit = row.scale && shown / row.scale.meters > 0.125 && shown / row.scale.meters < 8;
+    setText("scale-note", fit
+      ? "Same scale. " + row.scale.name + " is " + I.fmtMeters(row.scale.meters) + ". The gold circle is this scaling."
+      : "The gold circle is this scaling, " + I.fmtMeters(shown) + ". Nearest cited length: " + scaleName + ". It is off the drawing because the two sizes are more than a factor of eight apart.");
+    if (canvas) {
+      canvas.setAttribute("aria-label", "Crater scaling of " + I.fmtMeters(shown) + " beside " + scaleName + ". Not a hazard map.");
+    }
+    draw(shown, row.scale);
+  }
+
+  function matchCase() {
+    state.caseId = "";
+    var d = I.densityById(state.densityId);
+    I.PRESETS.forEach(function (p) {
+      var pd = I.densityById(p.densityId);
+      if (!d || !pd) return;
+      if (same(p.diameterM, state.diameterM) && same(p.velocityKms, state.velocityKms) && same(p.angleDeg, state.angleDeg) && p.densityId === state.densityId && p.targetId === state.targetId) {
+        state.caseId = p.id;
+      }
+    });
+  }
+
+  function bindNumber(id, key, read, write) {
+    var el = document.getElementById(id);
+    el.addEventListener("focus", function () { editing[key] = true; });
+    el.addEventListener("input", function () {
+      editing[key] = true;
+      var n = parseNum(el.value);
+      var v = read(n);
+      if (v == null || !isFinite(v)) {
+        el.setAttribute("aria-invalid", "true");
+        document.getElementById("field-err").hidden = false;
+        return;
+      }
+      el.setAttribute("aria-invalid", "false");
+      document.getElementById("field-err").hidden = true;
+      write(v);
+      matchCase();
+      render();
+    });
+    el.addEventListener("blur", function () {
+      editing[key] = false;
+      render();
+    });
+  }
+
+  document.getElementById("dia-slider").addEventListener("input", function (ev) {
+    editing.diameterM = false;
+    state.diameterM = I.diameterFromSlider(Number(ev.target.value));
+    matchCase();
+    render();
+  });
+  document.getElementById("vel-slider").addEventListener("input", function (ev) {
+    editing.velocityKms = false;
+    state.velocityKms = Number(ev.target.value);
+    matchCase();
+    render();
+  });
+  document.getElementById("ang-slider").addEventListener("input", function (ev) {
+    editing.angleDeg = false;
+    state.angleDeg = Number(ev.target.value);
+    matchCase();
+    render();
+  });
+
+  bindNumber("dia-num", "diameterM", function (n) {
+    return n >= I.D_MIN && n <= I.D_MAX ? n : null;
+  }, function (v) { state.diameterM = v; });
+  bindNumber("vel-num", "velocityKms", function (n) {
+    return n >= I.V_ESCAPE_FACTSHEET && n <= I.V_MAX ? n : null;
+  }, function (v) { state.velocityKms = v; });
+  bindNumber("ang-num", "angleDeg", function (n) {
+    return n >= I.ANGLE_MIN && n <= I.ANGLE_MAX ? n : null;
+  }, function (v) { state.angleDeg = v; });
+
+  document.getElementById("cases").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    var p = I.presetById(btn.getAttribute("data-case"));
+    if (!p) return;
+    editing.diameterM = false;
+    editing.velocityKms = false;
+    editing.angleDeg = false;
+    state.caseId = p.id;
+    state.diameterM = p.diameterM;
+    state.velocityKms = p.velocityKms;
+    state.angleDeg = p.angleDeg;
+    state.densityId = p.densityId;
+    state.targetId = p.targetId;
+    render();
+  });
+  document.getElementById("densities").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    state.densityId = btn.getAttribute("data-density");
+    matchCase();
+    render();
+  });
+  document.getElementById("targets").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("button");
+    if (!btn) return;
+    state.targetId = btn.getAttribute("data-target");
+    matchCase();
+    render();
+  });
+
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+      ev.preventDefault();
+      var step = I.sliderFromDiameter(state.diameterM) + (ev.key === "ArrowRight" ? 8 : -8);
+      if (step < 0) step = 0;
+      if (step > I.SLIDER_STEPS) step = I.SLIDER_STEPS;
+      editing.diameterM = false;
+      state.diameterM = I.diameterFromSlider(step);
+      matchCase();
+      render();
+    } else if (ev.key === "ArrowUp" || ev.key === "ArrowDown") {
+      ev.preventDefault();
+      var next = state.angleDeg + (ev.key === "ArrowUp" ? 1 : -1);
+      if (next < I.ANGLE_MIN) next = I.ANGLE_MIN;
+      if (next > I.ANGLE_MAX) next = I.ANGLE_MAX;
+      editing.angleDeg = false;
+      state.angleDeg = next;
+      matchCase();
+      render();
+    }
+  });
+
+  var helpBtn = document.getElementById("imp-help");
+  var helpDialog = document.getElementById("imp-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
