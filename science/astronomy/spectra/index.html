@@ -546,21 +546,23 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
     var base = h - 36;
 
     ctx.clearRect(0, 0, w, h);
+    var bandTop = top + 34;
+    var bandH = Math.max(36, base - bandTop - 14);
     if (state.mode === "absorption") {
-      var y0 = top + 18;
-      var bh = base - y0 - 8;
       var x;
       for (x = pad; x < w - pad; x += 1) {
         var t = (x - pad) / (w - pad * 2);
         var nm = log ? Math.exp(Math.log(min) + t * (Math.log(max) - Math.log(min))) : min + t * (max - min);
         ctx.fillStyle = S.sketchRgb(nm);
-        ctx.globalAlpha = nm >= S.VIS_MIN_NM && nm <= S.VIS_MAX_NM ? 0.9 : 0.28;
-        ctx.fillRect(x, y0, 1, bh);
+        ctx.globalAlpha = nm >= S.VIS_MIN_NM && nm <= S.VIS_MAX_NM ? 0.92 : 0.34;
+        ctx.fillRect(x, bandTop, 1, bandH);
       }
       ctx.globalAlpha = 1;
     } else {
-      ctx.fillStyle = "rgba(0,0,0,0.45)";
-      ctx.fillRect(pad, top + 18, w - pad * 2, base - top - 26);
+      ctx.fillStyle = "rgba(0,0,0,0.72)";
+      ctx.fillRect(pad, bandTop, w - pad * 2, bandH);
+      ctx.strokeStyle = line;
+      ctx.strokeRect(pad + 0.5, bandTop + 0.5, w - pad * 2 - 1, bandH - 1);
     }
 
     var xVis0 = xOf(Math.max(min, S.VIS_MIN_NM), w, pad, min, max, log);
@@ -600,12 +602,23 @@ h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44
       var x = inside ? xOf(nm, w, pad, min, max, log) : (nm < min ? pad : w - pad);
       ctx.strokeStyle = state.mode === "absorption" ? "#0c0d12" : hue;
       ctx.fillStyle = ctx.strokeStyle;
-      ctx.lineWidth = selected ? 3 : 1.25;
+      ctx.lineWidth = selected ? 4 : 2.5;
       if (inside) {
         ctx.beginPath();
-        ctx.moveTo(x, top + 16);
-        ctx.lineTo(x, base);
+        ctx.moveTo(x, bandTop);
+        ctx.lineTo(x, bandTop + bandH);
         ctx.stroke();
+        if (state.mode === "emission") {
+          ctx.strokeStyle = "#f4f1ea";
+          ctx.globalAlpha = selected ? 0.85 : 0.45;
+          ctx.lineWidth = selected ? 1.25 : 0.8;
+          ctx.beginPath();
+          ctx.moveTo(x, bandTop);
+          ctx.lineTo(x, bandTop + bandH);
+          ctx.stroke();
+          ctx.globalAlpha = 1;
+          ctx.strokeStyle = hue;
+        }
       } else {
         ctx.beginPath();
         ctx.moveTo(x, base - 8);
