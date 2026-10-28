@@ -1,0 +1,920 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light time — radio delay across the solar system — Steven Philley</title>
+<meta name="description" content="Light-travel time between solar-system bodies. Pick a date and two bodies. Distance in km and AU, one-way light time, and the round-trip radio delay. c is 299,792,458 m/s exactly. 1 AU is 149,597,870,700 m exactly, 499.005 seconds, 8.317 minutes. Positions are JPL Table 1 Keplerian elements, 1800–2050. The Moon is the 384,400 km mean, with perigee and apogee labeled. Earth–Mars runs roughly 3 to 22 light-minutes. Not a JPL Horizons ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/light-time/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Light time — radio delay across the solar system">
+<meta property="og:description" content="Distance over c. 1 AU is 8.317 minutes. Earth–Mars runs roughly 3 to 22 light-minutes. The Moon’s mean round trip is about 2.5 seconds. JPL Table 1, not Horizons.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/light-time/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Light time — radio delay across the solar system">
+<meta name="twitter:description" content="One-way and round-trip light time between the Sun, the planets, the Moon, and Pluto. 1 AU is 8.317 minutes. Not Horizons.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.au{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.body{width:10px;height:10px;border:0;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num,select.num,input[type="date"].num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+input[type="date"].num{color-scheme:dark;width:auto;min-width:11.5rem}
+select.num{width:100%;background:var(--base-2,#14161c)}
+.num:focus-visible,select.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.pair-picks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pair-picks label{display:flex;flex-direction:column;gap:6px;min-width:0}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:520px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.pair-picks{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/light-time/" aria-current="page">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Light time</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The delay</p>
+  <h1>Light time<br>across the system</h1>
+  <p class="lede">Pick a date and two bodies. The distance between them is divided by the speed of light. One way is that quotient. The round trip, the wait for a radio answer, is twice it. <strong>c = 299,792,458 m/s</strong> exactly, the SI defining constant. One astronomical unit is <strong>149,597,870,700 m</strong> exactly, the IAU 2012 value, so 1 AU of light time is <strong>499.005 seconds</strong>, <strong>8.317 minutes</strong>, about 8.3 minutes. Planet places are the <a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">JPL approximate Keplerian elements</a> of Standish and Williams, Table 1, valid 1800–2050. The Moon is held at the fact-sheet mean, <strong>384,400 km</strong>, and the perigee <strong>363,300 km</strong> and apogee <strong>405,500 km</strong> are labeled, not solved. A Mars rover cannot be joysticked live: Earth–Mars runs roughly 3 to 22 light-minutes. The Moon’s mean round trip is about 2.5 seconds. The year of a circular solar orbit is the <a href="/science/astronomy/kepler/">Kepler</a> desk. The milliseconds of a station overhead are the <a href="/science/astronomy/satellites/">satellites</a> desk.</p>
+  <p class="note-schematic">Educational schematic. Not a JPL Horizons ephemeris. Earth on this page is the Earth–Moon barycenter from Table 1. The date is read as 12:00 UTC. The delay is the straight-line distance at that instant divided by c. The bodies are not moved forward by the flight time, and there is no Shapiro delay. Published heliocentric distance tolerances for 1800–2050 run from 1 × 1000 km (Mercury) to 1,500 × 1000 km (Saturn). Mars is 25 × 1000 km. Jupiter is 600 × 1000 km. A separation can miss by more than either figure. Pluto is a historical row the current table no longer prints, and the page gives it no fake tolerance. Spacecraft ranges are not stored here.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Two bodies, one date</span>
+    <button type="button" class="help-q" id="lt-help" aria-haspopup="dialog" aria-controls="lt-help-dialog" aria-expanded="false" aria-label="How this light-time desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="sky-hint">Ecliptic plane · north out of the page · true AU · the frame fits the farther body</p>
+      <canvas id="sky" width="880" height="640" tabindex="0" role="img" aria-label="Top-down solar system. Earth and the Sun, with the line between them. Approximate Keplerian positions, not a Horizons ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch" aria-hidden="true"></span> The pair</li>
+        <li><span class="swatch au" aria-hidden="true"></span> 1 AU</li>
+        <li><span class="swatch body" aria-hidden="true"></span> Other bodies</li>
+      </ul>
+      <p class="scale-note" id="scale-note">True scale in the ecliptic. Orbits outside the frame are left off. When the Moon is picked, the corner inset is the mean-distance circle and is not on the solar scale.</p>
+      <div class="controls">
+        <div class="presets" id="presets" role="group" aria-label="Body pairs">
+          <button type="button" data-a="earth" data-b="sun" aria-pressed="true">Earth – Sun</button>
+          <button type="button" data-a="earth" data-b="moon" aria-pressed="false">Earth – Moon</button>
+          <button type="button" data-a="earth" data-b="mars" aria-pressed="false">Earth – Mars</button>
+          <button type="button" data-a="earth" data-b="jupiter" aria-pressed="false">Earth – Jupiter</button>
+          <button type="button" data-a="sun" data-b="neptune" aria-pressed="false">Sun – Neptune</button>
+        </div>
+        <div class="pair-picks">
+          <label>From
+            <select class="num" id="body-a" aria-label="First body">
+              <option value="sun">Sun</option>
+              <option value="mercury">Mercury</option>
+              <option value="venus">Venus</option>
+              <option value="earth" selected>Earth</option>
+              <option value="mars">Mars</option>
+              <option value="jupiter">Jupiter</option>
+              <option value="saturn">Saturn</option>
+              <option value="uranus">Uranus</option>
+              <option value="neptune">Neptune</option>
+              <option value="moon">Moon</option>
+              <option value="pluto">Pluto (dwarf)</option>
+            </select>
+          </label>
+          <label>To
+            <select class="num" id="body-b" aria-label="Second body">
+              <option value="sun" selected>Sun</option>
+              <option value="mercury">Mercury</option>
+              <option value="venus">Venus</option>
+              <option value="earth">Earth</option>
+              <option value="mars">Mars</option>
+              <option value="jupiter">Jupiter</option>
+              <option value="saturn">Saturn</option>
+              <option value="uranus">Uranus</option>
+              <option value="neptune">Neptune</option>
+              <option value="moon">Moon</option>
+              <option value="pluto">Pluto (dwarf)</option>
+            </select>
+          </label>
+        </div>
+        <p class="pick-label">Date, read as 12:00 UTC. The slider covers 1 January 1800 through 31 December 2050.</p>
+        <div class="slider-row">
+          <label for="date-slider">Date</label>
+          <input type="range" id="date-slider" min="0" max="1" step="1" value="0" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0" aria-valuetext="Date">
+          <input class="num" id="date-input" type="date" min="1800-01-01" max="2050-12-31" aria-describedby="date-error" value="2026-10-28">
+        </div>
+        <div class="presets" role="group" aria-label="Date actions">
+          <button type="button" id="btn-today">Today</button>
+        </div>
+        <p class="field-error" id="date-error" hidden>Pick two different bodies, and a date from 1800-01-01 through 2050-12-31.</p>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Earth – Sun · 12:00 UTC</p>
+      <h2 id="r-title">8.317 min</h2>
+      <p class="range" id="r-range">1 AU is 499.005 s. This date is the barycenter’s distance, not exactly 1 AU.</p>
+      <ul class="stats">
+        <li><span class="k">Distance</span><span class="v" id="r-km">149,597,871 km</span></li>
+        <li><span class="k">Distance</span><span class="v" id="r-au">1.00000 AU</span></li>
+        <li><span class="k">One way</span><span class="v" id="r-one">8 min 19.0 s</span></li>
+        <li><span class="k">One way, minutes</span><span class="v" id="r-min">8.317 min</span></li>
+        <li><span class="k">Round trip</span><span class="v" id="r-two">16 min 38.0 s</span></li>
+        <li><span class="k">Closest in the window</span><span class="v" id="r-near">—</span></li>
+        <li><span class="k">Farthest in the window</span><span class="v" id="r-far">—</span></li>
+      </ul>
+      <p class="why" id="r-why">One astronomical unit is 8 min 19.0 s, 8.317 minutes, about 8.3 minutes. The card replaces this with the date you pick.</p>
+      <p class="why" id="r-rho">JPL’s 1800–2050 heliocentric distance tolerance for the Earth–Moon barycenter is 6 × 1000 km.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="Classroom geometry, not an ephemeris">
+    <p class="tag">Classroom geometry · not a Horizons state</p>
+    <h2>A line and a constant</h2>
+    <p>Nothing here is a launch window, a station schedule, or a spacecraft range. The positions are a Keplerian fit, adjusted for a best match over 1800–2050, and JPL says the elements are not valid outside that interval. The light time is distance over c at one instant. A real ephemeris iterates, because the target moves while the signal is on the way. <a href="https://ssd.jpl.nasa.gov/horizons/" rel="noopener" target="_blank">Horizons</a> is that ephemeris. This page is the size of the delay.</p>
+  </aside>
+
+  <p class="band">What this means</p>
+  <div class="means">
+    <p><strong>You cannot joystick a Mars rover.</strong> Earth–Mars on this model runs roughly 3 to 22 light-minutes, one way, across 1800–2050. The round trip is twice that. A stick moved now would be old news when it arrived, and the picture of what happened would be older still. Commands are sequences, written for the geometry they will meet. The card’s closest and farthest are one synodic period around the date you picked, about 780 days, not every opposition in the table.</p>
+    <p><strong>The Moon is a pause, not a blackout.</strong> At 384,400 km the round trip is 2.564 seconds, about 2.5 seconds. A sentence can be answered, and the gap before the reply starts is that long. Perigee, 363,300 km, and apogee, 405,500 km, move it by a fraction of a second. The Moon Fact Sheet also says the distance roughly ranges from 357,000 km to 407,000 km over a year. This page does not solve which of those today is. The circle is the mean.</p>
+    <p><strong>One astronomical unit is a clock.</strong> 149,597,870,700 m divided by 299,792,458 m/s is 499.005 seconds, 8 min 19.0 s, 8.317 minutes. Sunlight is that old when Earth is exactly 1 AU out. The barycenter wanders from about 8.2 to about 8.5 minutes because the orbit is eccentric. Farther out, the same constant turns a distance into a wait of hours. Jupiter’s published tolerance, 600 × 1000 km, is about 2 seconds of light beside a delay of tens of minutes.</p>
+    <p><strong>Spacecraft past the planets are not given a number here.</strong> Voyager 1 and Voyager 2 have a live range on the <a href="https://voyager.jpl.nasa.gov/mission/status/" rel="noopener" target="_blank">Voyager status page</a> and on <a href="https://science.nasa.gov/mission/voyager/" rel="noopener" target="_blank">NASA’s Voyager mission page</a>. This desk does not copy those figures. When a distance has to be exact, the tool is <a href="https://ssd.jpl.nasa.gov/horizons/" rel="noopener" target="_blank">Horizons</a>.</p>
+  </div>
+
+  <p class="band">Literacy · c, the au, and the fit</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Speed of light</dt><dd>c = 299,792,458 m/s exactly. The metre is defined by fixing that number. A radio signal in vacuum and a pulse of light take the same time. The <a href="/science/astronomy/satellites/">satellites</a> desk uses the same c for a hop straight down to the ground, which is milliseconds.</dd></div>
+    <div class="gloss"><dt>Astronomical unit</dt><dd>1 au = 149,597,870,700 m exactly, IAU 2012 Resolution B2. It is a defined length, not this year’s measured Earth–Sun distance. Light crosses it in 499.005 seconds, 8.317 minutes. The <a href="/science/astronomy/kepler/">Kepler</a> desk measures orbits in this unit.</dd></div>
+    <div class="gloss"><dt>One way and round trip</dt><dd>One way is the geometric distance divided by c. The round trip is twice that, the wait if a signal goes out and the answer comes straight back along the same line. A tracking pass is not always that straight line. This page draws the straight line.</dd></div>
+    <div class="gloss"><dt>Table 1</dt><dd>Six Keplerian elements and their rates per century, for 1800–2050, from Standish and Williams via JPL. Mean anomaly, then Kepler’s equation, then a rotation into the J2000 ecliptic. Table 2, and the extra terms that belong to it, are not used. Outside 1800–2050 the slider stops.</dd></div>
+    <div class="gloss"><dt>The Moon’s circle</dt><dd>Semimajor axis 384,400 km, sidereal period 27.3217 days, inclination 5.145° to the ecliptic. The node is held fixed, as on the solar map. That is a direction for the diagram. The Earth–Moon distance on the card does not change with the date. Perigee and apogee are the fact sheet.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the number leaves out</dt><dd>Light-time iteration, aberration, the Shapiro delay, and the few thousand kilometres between Earth’s center and the Earth–Moon barycenter. The barycenter is what Table 1 calls Earth. Pluto is the historical row the solar map already uses, semimajor axis 39.482 AU, and the current JPL page publishes no Pluto error. A spacecraft distance is a link, not a stored figure.</dd></div>
+  </dl>
+
+  <p class="band">Tolerances · JPL Table 1, 1800–2050</p>
+  <div class="sheet">
+    <table>
+      <caption>Nominal heliocentric error published with the approximate elements</caption>
+      <thead>
+        <tr>
+          <th scope="col">Body</th>
+          <th scope="col">Longitude</th>
+          <th scope="col">Latitude</th>
+          <th scope="col">Distance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Mercury</th><td>15″</td><td>1″</td><td>1 × 1000 km</td></tr>
+        <tr><th scope="row">Venus</th><td>20″</td><td>1″</td><td>4 × 1000 km</td></tr>
+        <tr><th scope="row">Earth–Moon barycenter</th><td>20″</td><td>8″</td><td>6 × 1000 km</td></tr>
+        <tr><th scope="row">Mars</th><td>40″</td><td>2″</td><td>25 × 1000 km</td></tr>
+        <tr><th scope="row">Jupiter</th><td>400″</td><td>10″</td><td>600 × 1000 km</td></tr>
+        <tr><th scope="row">Saturn</th><td>600″</td><td>25″</td><td>1,500 × 1000 km</td></tr>
+        <tr><th scope="row">Uranus</th><td>50″</td><td>2″</td><td>1,000 × 1000 km</td></tr>
+        <tr><th scope="row">Neptune</th><td>10″</td><td>1″</td><td>200 × 1000 km</td></tr>
+        <tr><th scope="row">Pluto</th><td colspan="3">Not on the current table. No tolerance is invented here.</td></tr>
+        <tr><th scope="row">Moon</th><td colspan="3">Not this table. Mean 384,400 km. The circle does not breathe.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">Sources · public pages</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://www.bipm.org/en/si-base-units/metre" rel="noopener" target="_blank">BIPM — The metre</a> — the SI base unit is defined by taking the fixed numerical value of the speed of light in vacuum to be 299,792,458 when expressed in m·s⁻¹. This page divides by that exact c.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST — speed of light in vacuum</a> — 299,792,458 m/s, exact. The same defining constant.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is a conventional unit of length equal to 149,597,870,700 m exactly. 1 AU / c on this page is 499.005 seconds, 8.317 minutes.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">NASA JPL Solar System Dynamics — Approximate Positions of the Planets</a> — Keplerian elements and rates, Table 1, valid 1800 AD – 2050 AD, from E. M. Standish and J. G. Williams. Earth is the Earth–Moon barycenter. The accuracy table on this page is the 1800–2050 block of theirs: Mercury’s distance tolerance is 1 × 1000 km, Mars 25 × 1000 km, Jupiter 600 × 1000 km, Saturn 1,500 × 1000 km. The former planet Pluto has been removed from that page. Table 2 is not used here.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — semimajor axis 0.3844 × 10<sup>6</sup> km, perigee 0.3633 × 10<sup>6</sup> km, apogee 0.4055 × 10<sup>6</sup> km, revolution period 27.3217 days. The sheet notes the distance roughly ranges from 357,000 km to 407,000 km over the year. The circle uses the semimajor axis and the period. Perigee, apogee, and that annual range are labels.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">NASA NSSDCA — Pluto Fact Sheet</a> — the solar map’s historical semimajor axis, 39.482 AU, is the figure matched to this sheet. The elements are not a current JPL Table 1 row.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/horizons/" rel="noopener" target="_blank">NASA JPL Horizons</a> — the ephemeris when the approximate elements are not enough. This page does not call it.</li>
+      <li><a href="https://voyager.jpl.nasa.gov/mission/status/" rel="noopener" target="_blank">JPL — Voyager mission status</a> — live ranges for Voyager 1 and Voyager 2. No Voyager distance is copied onto this page.</li>
+      <li><a href="https://science.nasa.gov/mission/voyager/" rel="noopener" target="_blank">NASA Science — Voyager</a> — the mission page. Same rule: the link is the number, when a number is wanted.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a straight-line delay. c is the SI constant. The astronomical unit is IAU 2012 Resolution B2. Planet positions are JPL Table 1. The Moon is a mean-distance circle with the fact-sheet range labeled. Pluto is the historical row, flagged as such. Not a JPL Horizons ephemeris. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/satellites/"><p class="n">The altitude</p><h3>Satellites</h3><p>Light time straight down from an Earth orbit. The 420 km circle is milliseconds. This page is the minutes and the hours.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU. The same AU, used there as a size and here as a clock.</p></a>
+    <a href="/science/astronomy/hohmann/"><p class="n">The coast</p><h3>Hohmann</h3><p>Earth to Mars is 258.88 days of coast. The radio delay on that trip is still minutes.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The same Table 1 elements, drawn as an orrery. Day and local time, still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="lt-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="lt-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="lt-help-title">Light-time desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Two bodies and a date. The picture is a classroom schematic. It is not a signal plan.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Earth–Sun, Earth–Moon, Earth–Mars, Earth–Jupiter, and Sun–Neptune. The date stays where you left it.</td></tr>
+        <tr><th scope="row">Bodies</th><td>Sun, Mercury through Neptune, the Moon, and Pluto. Pluto is marked dwarf. The two picks have to differ.</td></tr>
+        <tr><th scope="row">Date</th><td>The slider and the calendar run from 1 January 1800 through 31 December 2050. The instant is 12:00 UTC. Today jumps to your local calendar date, then clamps to that window.</td></tr>
+        <tr><th scope="row">Diagram</th><td>Left and Right step the date by one day. The frame fits the farther body. The Moon, when picked, gets a corner inset at its own scale.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Distance</th><td>Kilometers and astronomical units, from the straight line between the two positions.</td></tr>
+        <tr><th scope="row">One way</th><td>Distance divided by 299,792,458 m/s. Also printed in minutes.</td></tr>
+        <tr><th scope="row">Round trip</th><td>Twice the one-way time.</td></tr>
+        <tr><th scope="row">Window</th><td>For two planets, one synodic period centered on the date. For a planet and the Sun, one orbit of the planet. For Earth and the Moon, the fact-sheet perigee and apogee, because the circle does not change the distance. A window that would leave 1800–2050 is clipped, and the card says so.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed preset is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/light-time/light-time.js"></script>
+<script>
+(function () {
+  "use strict";
+  var L = window.LightTime;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!L) return;
+
+  var canvas = document.getElementById("sky");
+  var ctx = canvas.getContext("2d");
+  var bodyA = document.getElementById("body-a");
+  var bodyB = document.getElementById("body-b");
+  var slider = document.getElementById("date-slider");
+  var dateInput = document.getElementById("date-input");
+  var err = document.getElementById("date-error");
+  var startMs = Date.UTC(1800, 0, 1);
+  var endMs = Date.UTC(2050, 11, 31);
+  var spanDays = Math.round((endMs - startMs) / 86400000);
+  slider.max = String(spanDays);
+  slider.setAttribute("aria-valuemax", String(spanDays));
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function indexFromParts(y, m, d) {
+    return Math.round((Date.UTC(y, m - 1, d) - startMs) / 86400000);
+  }
+  function partsFromIndex(i) {
+    var dt = new Date(startMs + i * 86400000);
+    return { y: dt.getUTCFullYear(), m: dt.getUTCMonth() + 1, d: dt.getUTCDate() };
+  }
+  function isoFromIndex(i) {
+    var p = partsFromIndex(i);
+    return p.y + "-" + pad(p.m) + "-" + pad(p.d);
+  }
+  function clampIndex(i) {
+    if (i < 0) return 0;
+    if (i > spanDays) return spanDays;
+    return i;
+  }
+  function todayIndex() {
+    var now = new Date();
+    return clampIndex(indexFromParts(now.getFullYear(), now.getMonth() + 1, now.getDate()));
+  }
+
+  var state = { a: "earth", b: "sun", index: todayIndex() };
+
+  function cssColor(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    v = v && v.trim();
+    return v || fallback;
+  }
+
+  function showError(msg) {
+    if (!msg) {
+      err.hidden = true;
+      err.textContent = "";
+      dateInput.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    dateInput.setAttribute("aria-invalid", "true");
+  }
+
+  function setPressed() {
+    var buttons = document.querySelectorAll("#presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var b = buttons[i];
+      var on = b.getAttribute("data-a") === state.a && b.getAttribute("data-b") === state.b;
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+
+  function syncControls() {
+    bodyA.value = state.a;
+    bodyB.value = state.b;
+    slider.value = String(state.index);
+    slider.setAttribute("aria-valuenow", String(state.index));
+    var iso = isoFromIndex(state.index);
+    slider.setAttribute("aria-valuetext", iso);
+    dateInput.value = iso;
+    setPressed();
+  }
+
+  function jdNow() {
+    var p = partsFromIndex(state.index);
+    return L.julianNoonUTC(p.y, p.m, p.d);
+  }
+
+  function fitCanvas() {
+    var cssW = canvas.clientWidth || 640;
+    if (cssW < 280) cssW = 280;
+    var cssH = Math.round(cssW * 640 / 880);
+    if (cssH < 220) cssH = 220;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    canvas.style.height = cssH + "px";
+    if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: cssW, h: cssH };
+  }
+
+  function draw(hit) {
+    if (!ctx) return;
+    var box = fitCanvas();
+    var w = box.w;
+    var h = box.h;
+    var ink = cssColor("--ink", "#e8e6e1");
+    var muted = cssColor("--muted", "#63666e");
+    var accent = cssColor("--accent", "#c8b48a");
+    var line = cssColor("--line", "#2c303a");
+    ctx.clearRect(0, 0, w, h);
+    var jd = jdNow();
+    var radial = 1;
+    if (hit) radial = Math.max(Math.hypot(hit.ax, hit.ay), Math.hypot(hit.bx, hit.by), 0.2);
+    var reach = radial * 1.12;
+    var scale = (Math.min(w, h) * 0.42) / reach;
+    var cx = w * 0.5;
+    var cy = h * 0.5;
+    function proj(x, y) {
+      return { x: cx + x * scale, y: cy - y * scale };
+    }
+
+    if (reach >= 1) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, scale, 0, Math.PI * 2);
+      ctx.strokeStyle = muted;
+      ctx.globalAlpha = 0.45;
+      ctx.setLineDash([4, 5]);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    }
+
+    var ids = ["mercury", "venus", "earth", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"];
+    var i;
+    ctx.lineWidth = 1;
+    for (i = 0; i < ids.length; i++) {
+      var el = L.elements(ids[i], jd);
+      if (!el || el.a > reach * 1.05) continue;
+      var poly = L.orbitXY(ids[i], jd, 160);
+      if (!poly.length) continue;
+      ctx.beginPath();
+      var p0 = proj(poly[0].x, poly[0].y);
+      ctx.moveTo(p0.x, p0.y);
+      var k;
+      for (k = 1; k < poly.length; k++) {
+        var pk = proj(poly[k].x, poly[k].y);
+        ctx.lineTo(pk.x, pk.y);
+      }
+      var selectedOrbit = ids[i] === state.a || ids[i] === state.b;
+      ctx.strokeStyle = selectedOrbit ? accent : line;
+      ctx.globalAlpha = selectedOrbit ? 0.9 : 0.85;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    if (hit) {
+      var pa = proj(hit.ax, hit.ay);
+      var pb = proj(hit.bx, hit.by);
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    function dot(id, xAu, yAu, selected) {
+      var p = proj(xAu, yAu);
+      var color = L.COLORS[id] || ink;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, selected ? 5.5 : (id === "sun" ? 7 : 3), 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      if (selected || id === "sun") {
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = ink;
+        ctx.stroke();
+      }
+      return p;
+    }
+
+    dot("sun", 0, 0, state.a === "sun" || state.b === "sun");
+    for (i = 0; i < ids.length; i++) {
+      var pos = L.helio(ids[i], jd);
+      if (!pos) continue;
+      if (Math.hypot(pos.x, pos.y) > reach * 1.08 && ids[i] !== state.a && ids[i] !== state.b) continue;
+      var sel = ids[i] === state.a || ids[i] === state.b;
+      dot(ids[i], pos.x, pos.y, sel);
+    }
+    if (state.a === "moon" || state.b === "moon") {
+      var moon = L.helio("moon", jd);
+      if (moon) dot("moon", moon.x, moon.y, true);
+    }
+
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.fillStyle = ink;
+    ctx.textBaseline = "middle";
+    var labeled = {};
+    function labelFor(id, xAu, yAu) {
+      if (!id || labeled[id]) return;
+      labeled[id] = true;
+      var body = L.bodyById(id);
+      if (!body) return;
+      var p = proj(xAu, yAu);
+      var name = body.name;
+      var ang = Math.atan2(-yAu, xAu);
+      var lx = p.x + Math.cos(ang) * 12;
+      var ly = p.y - Math.sin(ang) * 12;
+      ctx.textAlign = Math.cos(ang) < -0.2 ? "right" : "left";
+      if (id === "sun") { lx = p.x + 10; ly = p.y - 12; ctx.textAlign = "left"; }
+      ctx.fillText(name, lx, ly);
+    }
+    labelFor("sun", 0, 0);
+    labelFor(state.a, hit ? hit.ax : 0, hit ? hit.ay : 0);
+    if (state.b !== state.a) labelFor(state.b, hit ? hit.bx : 0, hit ? hit.by : 0);
+
+    if (state.a === "moon" || state.b === "moon") drawInset(w, h, jd, ink, accent, muted, line);
+  }
+
+  function drawInset(w, h, jd, ink, accent, muted, line) {
+    var box = Math.min(168, Math.round(w * 0.34));
+    if (box < 112) return;
+    var x0 = w - box - 10;
+    var y0 = h - box - 8;
+    ctx.fillStyle = "rgba(0,0,0,0.45)";
+    ctx.fillRect(x0, y0, box, box);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x0, y0, box, box);
+    var earth = L.helio("earth", jd);
+    var moon = L.helio("moon", jd);
+    if (!earth || !moon) return;
+    var dx = moon.x - earth.x;
+    var dy = moon.y - earth.y;
+    var hyp = Math.hypot(dx, dy) || 1;
+    var s = (box * 0.34) / hyp;
+    var icx = x0 + box / 2;
+    var icy = y0 + box / 2 + 6;
+    ctx.beginPath();
+    ctx.moveTo(icx, icy);
+    ctx.lineTo(icx + dx * s, icy - dy * s);
+    ctx.strokeStyle = accent;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(icx, icy, 4, 0, Math.PI * 2);
+    ctx.fillStyle = L.COLORS.earth;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(icx + dx * s, icy - dy * s, 3, 0, Math.PI * 2);
+    ctx.fillStyle = L.COLORS.moon;
+    ctx.fill();
+    ctx.fillStyle = muted;
+    ctx.font = "10px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("Mean circle", x0 + 8, y0 + 6);
+  }
+
+  function rangeText(sp) {
+    if (!sp) return "—";
+    if (sp.kind === "moon-sheet") {
+      return L.formatKm(sp.min.km) + " · " + L.formatDelay(sp.min.oneWay) + " one way";
+    }
+    return L.formatAu(sp.min.au) + " · " + L.formatMinutes(sp.min.oneWay);
+  }
+  function rangeFar(sp) {
+    if (!sp) return "—";
+    if (sp.kind === "moon-sheet") {
+      return L.formatKm(sp.max.km) + " · " + L.formatDelay(sp.max.oneWay) + " one way";
+    }
+    return L.formatAu(sp.max.au) + " · " + L.formatMinutes(sp.max.oneWay);
+  }
+
+  function render() {
+    syncControls();
+    var jd = jdNow();
+    var iso = isoFromIndex(state.index);
+    var nameA = L.bodyById(state.a).name;
+    var nameB = L.bodyById(state.b).name;
+    if (state.a === state.b) {
+      showError("Pick two different bodies.");
+      document.getElementById("r-tier").textContent = nameA + " · " + iso;
+      document.getElementById("r-title").textContent = "Two bodies";
+      document.getElementById("r-range").textContent = "The line needs two different places.";
+      document.getElementById("r-why").textContent = L.meaning(state.a, state.b, null);
+      draw(null);
+      return;
+    }
+    var hit = L.pair(state.a, state.b, jd);
+    if (!hit) {
+      showError("That date is outside 1800-01-01 through 2050-12-31.");
+      draw(null);
+      return;
+    }
+    showError("");
+    var sp = L.span(state.a, state.b, jd);
+    document.getElementById("r-tier").textContent = nameA + " – " + nameB + " · " + iso + " · 12:00 UTC";
+    document.getElementById("r-title").textContent = hit.oneWay < 60 ? L.formatDelay(hit.oneWay) : L.formatMinutes(hit.oneWay);
+    var range = sp ? sp.label : "";
+    if (sp && sp.kind === "sample") {
+      range = sp.label + " · " + L.isoFromJD(sp.t0) + " to " + L.isoFromJD(sp.t1);
+    }
+    if (L.isEarthMoon(state.a, state.b)) {
+      range = "Mean circle. Perigee " + L.formatKm(L.MOON_PERIGEE_KM) + " · apogee " + L.formatKm(L.MOON_APOGEE_KM) + ". The sheet’s rough year is " + L.formatKm(L.MOON_YEAR_MIN_KM) + " to " + L.formatKm(L.MOON_YEAR_MAX_KM) + ".";
+    }
+    document.getElementById("r-range").textContent = range;
+    document.getElementById("r-km").textContent = L.formatKm(hit.km);
+    document.getElementById("r-au").textContent = L.formatAu(hit.au);
+    document.getElementById("r-one").textContent = L.formatDelay(hit.oneWay);
+    document.getElementById("r-min").textContent = L.formatMinutes(hit.oneWay);
+    document.getElementById("r-two").textContent = L.formatDelay(hit.roundTrip);
+    document.getElementById("r-near").textContent = rangeText(sp);
+    document.getElementById("r-far").textContent = rangeFar(sp);
+    document.getElementById("r-why").textContent = L.meaning(state.a, state.b, hit);
+    document.getElementById("r-rho").textContent = L.rhoNote(state.a, state.b);
+    var scaleNote = document.getElementById("scale-note");
+    scaleNote.textContent = "True scale in the ecliptic. The frame fits the farther of " + nameA + " and " + nameB + ". North is out of the page. " +
+      ((state.a === "moon" || state.b === "moon")
+        ? "The corner inset is the Moon’s mean-distance circle and is not on this scale."
+        : "Orbits past the frame are left off.");
+    canvas.setAttribute("aria-label", nameA + " and " + nameB + " on " + iso + ". Distance " + L.formatKm(hit.km) + ", " + L.formatAu(hit.au) + ". One way " + L.formatDelay(hit.oneWay) + ". Round trip " + L.formatDelay(hit.roundTrip) + ". Approximate positions, not a Horizons ephemeris.");
+    draw(hit);
+  }
+
+  bodyA.addEventListener("change", function () {
+    state.a = bodyA.value;
+    render();
+  });
+  bodyB.addEventListener("change", function () {
+    state.b = bodyB.value;
+    render();
+  });
+  slider.addEventListener("input", function () {
+    state.index = clampIndex(Number(slider.value));
+    render();
+  });
+  dateInput.addEventListener("change", function () {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateInput.value);
+    if (!m) {
+      showError("Use a date from 1800-01-01 through 2050-12-31.");
+      return;
+    }
+    var idx = indexFromParts(+m[1], +m[2], +m[3]);
+    if (idx < 0 || idx > spanDays) {
+      showError("Use a date from 1800-01-01 through 2050-12-31.");
+      state.index = clampIndex(idx);
+    } else {
+      state.index = idx;
+    }
+    render();
+  });
+  document.getElementById("btn-today").addEventListener("click", function () {
+    state.index = todayIndex();
+    render();
+  });
+  var presetButtons = document.querySelectorAll("#presets button");
+  var pi;
+  for (pi = 0; pi < presetButtons.length; pi++) {
+    presetButtons[pi].addEventListener("click", function (ev) {
+      state.a = ev.currentTarget.getAttribute("data-a");
+      state.b = ev.currentTarget.getAttribute("data-b");
+      render();
+    });
+  }
+
+  canvas.addEventListener("keydown", function (ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    state.index = clampIndex(state.index + (ev.key === "ArrowRight" ? 1 : -1));
+    render();
+  });
+
+  var helpBtn = document.getElementById("lt-help");
+  var helpDialog = document.getElementById("lt-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  var closers = helpDialog.querySelectorAll("[data-help-close]");
+  var c;
+  for (c = 0; c < closers.length; c++) closers[c].addEventListener("click", closeHelp);
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA" || ev.target.tagName === "SELECT"))) {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") {
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
