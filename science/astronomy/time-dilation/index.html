@@ -1,0 +1,983 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time dilation — clocks, orbits, and the GPS correction — Steven Philley</title>
+<meta name="description" content="Time dilation desk. A circular orbit’s speed is √(GM/r). The moving clock is slow by the Lorentz factor. Weaker gravity, GM(1/R − 1/r)/c², makes the higher clock fast. GM is 3.986004418×10^14 m³/s², IERS Conventions (2010), the value Ashby 2003 prints. Equatorial radius 6,378,137 m. c is 299,792,458 m/s exactly. The GPS preset, IS-GPS-200N radius 26,559,710 m, computes −7.21 μs/day from speed, +45.65 μs/day from gravity, and +38.44 μs/day net. NIST quotes 7, 45, and 38. Ashby’s printed factory offset is −4.4647×10⁻¹⁰, which is +38.58 μs in 86,400 s. A speed slider runs to 0.99c. Simplified weak-field model. Not for navigation.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/time-dilation/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Time dilation — clocks, orbits, and the GPS correction">
+<meta property="og:description" content="Speed slows a clock. Weaker gravity speeds it up. A GPS circle on this page is −7.21 μs/day from velocity and +45.65 μs/day from gravity, net +38.44. NIST quotes 7, 45, and 38. Not for navigation.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/time-dilation/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Time dilation — clocks, orbits, and the GPS correction">
+<meta name="twitter:description" content="Lorentz factor, a weak-field gravitational term, and the net drift per day. GPS computes near the cited −7 and +45 μs/day. A slider runs to 0.99c.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.slow{border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.net{border-top-color:var(--ink,#e8e6e1);border-top-width:3px}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+#btn-circular{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer
+}
+#btn-circular:hover,#btn-circular:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+#btn-circular[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on td,.sheet tr.is-on th{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/" aria-current="page">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Time dilation</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · Clocks</p>
+  <h1>Time dilation<br>and two rates</h1>
+  <p class="lede">A moving clock ticks slow. A clock higher in a gravitational well ticks fast. Both are on a GPS satellite, and they do not cancel. Pick an altitude, or type a speed. The circular speed is <strong>√(GM / r)</strong>. The Lorentz factor is <strong>γ = 1/√(1 − v²/c²)</strong>. The velocity term on the card is the exact special-relativistic rate, <strong>√(1 − v²/c²) − 1</strong>, in microseconds over 86,400 seconds. The gravitational term is the weak-field monopole, <strong>GM (1/R − 1/r) / c²</strong>, against a clock at rest on the equatorial radius. <strong>GM = 3.986004418×10¹⁴ m³/s²</strong>, the TCG-compatible value in IERS Conventions (2010) Table 1.1, which is the value <a href="https://doi.org/10.12942/lrr-2003-1" rel="noopener" target="_blank">Ashby 2003</a> prints. <strong>R = 6,378,137 m</strong>. <strong>c = 299,792,458 m/s</strong> exactly. The GPS preset uses the IS-GPS-200N radius, 26,559,710 m, and computes <strong>−7.21 μs/day</strong> from speed, <strong>+45.65 μs/day</strong> from gravity, and <strong>+38.44 μs/day</strong> net. <a href="https://www.nist.gov/atomic-clocks/a-powerful-tool-for-science/putting-einstein-test" rel="noopener" target="_blank">NIST</a> quotes 7, 45, and 38. The period of the same circle is the <a href="/science/astronomy/satellites/">satellites</a> desk. A hovering clock near a black hole is the <a href="/science/astronomy/black-holes/">black holes</a> desk. The plain-language receipt is the <a href="/science/gravity/">gravity</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Simplified weak-field model, not for navigation or engineering. No Earth rotation, no quadrupole, no eccentricity, and no Sagnac effect. The ground clock in the gravitational term is at rest at the equatorial radius, not on the rotating geoid. A day in the microsecond rates is 86,400 SI seconds.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Orbit clocks</span>
+    <button type="button" class="help-q" id="td-help" aria-haspopup="dialog" aria-controls="td-help-dialog" aria-expanded="false" aria-label="How this time-dilation desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Zero in the middle · left is slow · right is fast · microseconds per day</p>
+      <canvas id="orbit-canvas" tabindex="0" role="img" aria-label="GPS circular orbit. Velocity −7.21 microseconds per day. Gravity +45.65 microseconds per day. Net +38.44 microseconds per day."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch slow" aria-hidden="true"></span> Velocity</li>
+        <li><span class="swatch" aria-hidden="true"></span> Gravity</li>
+        <li><span class="swatch net" aria-hidden="true"></span> Net</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Orbit</p>
+        <div class="presets" id="orbit-presets" role="group" aria-label="Orbit presets">
+          <button type="button" data-orbit="iss" aria-pressed="false">ISS</button>
+          <button type="button" data-orbit="gps" aria-pressed="true">GPS</button>
+          <button type="button" data-orbit="geo" aria-pressed="false">Geostationary</button>
+          <button type="button" data-orbit="moon" aria-pressed="false">Moon</button>
+        </div>
+        <div class="slider-row">
+          <label for="alt-slider">Altitude</label>
+          <input type="range" id="alt-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" aria-valuetext="20,181.57 km">
+          <input type="text" class="num" id="alt-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="20181.57" aria-label="Altitude in kilometers" aria-describedby="alt-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="alt-err" hidden>Altitude from 0 to 410,000 km.</p>
+        <div class="slider-row">
+          <label for="spd-num">Speed</label>
+          <input type="text" class="num" id="spd-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="3.874" aria-label="Speed in kilometers per second" aria-describedby="spd-err" aria-invalid="false">
+          <button type="button" id="btn-circular" aria-pressed="true">Circular</button>
+        </div>
+        <p class="field-error" id="spd-err" hidden>Speed from 0 up to, but not including, 299,792.458 km/s.</p>
+      </div>
+      <p class="scale-note" id="orbit-scale">Opens on GPS. Radius 26,559.71 km. Circular speed 3.874 km/s. The bars are microseconds in 86,400 seconds.</p>
+    </div>
+    <aside class="detail" id="orbit-detail" aria-live="polite">
+      <p class="tier" id="o-tier">GPS · circular · computed</p>
+      <h2 id="o-name">+38.44 μs/day</h2>
+      <p class="range" id="o-range">Net · fast · 20,181.57 km</p>
+      <ul class="stats">
+        <li><span class="k">Lorentz factor</span><span class="v" id="o-gamma">1 + 8.349×10⁻¹¹</span></li>
+        <li><span class="k">Velocity</span><span class="v" id="o-vel">−7.21 μs/day</span></li>
+        <li><span class="k">Gravity</span><span class="v" id="o-grav">+45.65 μs/day</span></li>
+        <li><span class="k">Net</span><span class="v" id="o-net">+38.44 μs/day</span></li>
+        <li><span class="k">Speed</span><span class="v" id="o-spd">3.874 km/s</span></li>
+        <li><span class="k">Period</span><span class="v" id="o-per">11 h 57.95 min</span></li>
+      </ul>
+      <p class="why" id="o-why">Radius 26,559.71 km, altitude 20,181.57 km, speed 3.874 km/s. The speed is the circular-orbit speed, √(GM / r). The Lorentz factor is 1 + 8.349×10⁻¹¹. Special relativity, √(1 − v²/c²) − 1, puts the moving clock −7.21 μs/day (slow) against a clock at rest in the Earth-centered frame. The weak-field potential difference, GM (1/R − 1/r) / c², puts a clock at this radius +45.65 μs/day (fast) against a clock at rest on the equatorial radius. The net drift is +38.44 μs/day (fast). A day in these rates is 86,400 seconds. At this speed the exact factor and the second-order Doppler term −v²/(2c²) print the same microseconds. The circular period is 11 h 57.95 min.</p>
+    </aside>
+  </div>
+  <div class="sheet">
+    <table>
+      <caption>Presets · each row is the circular-orbit formulas, not a stored result</caption>
+      <thead>
+        <tr>
+          <th scope="col">Orbit</th>
+          <th scope="col">Altitude</th>
+          <th scope="col">Speed</th>
+          <th scope="col">Velocity</th>
+          <th scope="col">Gravity</th>
+          <th scope="col">Net</th>
+        </tr>
+      </thead>
+      <tbody id="preset-body">
+        <tr data-orbit="iss"><th scope="row">ISS</th><td>420 km</td><td>7.657 km/s</td><td>−28.18 μs/day</td><td>+3.71 μs/day</td><td>−24.47 μs/day</td></tr>
+        <tr data-orbit="gps" class="is-on"><th scope="row">GPS</th><td>20,181.57 km</td><td>3.874 km/s</td><td>−7.21 μs/day</td><td>+45.65 μs/day</td><td>+38.44 μs/day</td></tr>
+        <tr data-orbit="geo"><th scope="row">Geostationary</th><td>35,786.07 km</td><td>3.075 km/s</td><td>−4.54 μs/day</td><td>+50.99 μs/day</td><td>+46.45 μs/day</td></tr>
+        <tr data-orbit="moon"><th scope="row">Moon</th><td>378,021.86 km</td><td>1.018 km/s</td><td>−0.50 μs/day</td><td>+59.08 μs/day</td><td>+58.58 μs/day</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <noscript>
+    <p class="note-schematic">The buttons need JavaScript. The arithmetic is still √(GM / r) for a circular speed, √(1 − v²/c²) − 1 for the velocity rate, and GM (1/R − 1/r) / c² for the gravitational rate, each times 86,400 seconds. GPS, radius 26,559,710 m: −7.21 μs/day, +45.65 μs/day, net +38.44 μs/day. ISS at 420 km: −28.18, +3.71, net −24.47. Geostationary: −4.54, +50.99, net +46.45, altitude 35,786.07 km. A test-particle circle at 384,400 km: −0.50, +59.08, net +58.58. Not for navigation.</p>
+  </noscript>
+
+  <p class="band">A speed, and one year aboard</p>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="twin-hint">Constant speed · no turnaround · no gravity</p>
+      <canvas id="twin-canvas" tabindex="0" role="img" aria-label="At 0.80c the Lorentz factor is 1.6667. One year aboard is 1.6667 years at home."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch net" aria-hidden="true"></span> Home clock</li>
+        <li><span class="swatch" aria-hidden="true"></span> Aboard</li>
+        <li><span class="swatch slow" aria-hidden="true"></span> γ</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Fraction of c</p>
+        <div class="presets" id="beta-presets" role="group" aria-label="Speed presets">
+          <button type="button" data-beta="0.1" aria-pressed="false">0.10c</button>
+          <button type="button" data-beta="0.5" aria-pressed="false">0.50c</button>
+          <button type="button" data-beta="0.8" aria-pressed="true">0.80c</button>
+          <button type="button" data-beta="0.9" aria-pressed="false">0.90c</button>
+          <button type="button" data-beta="0.99" aria-pressed="false">0.99c</button>
+        </div>
+        <div class="slider-row">
+          <label for="beta-slider">v / c</label>
+          <input type="range" id="beta-slider" min="0" max="990" step="1" value="800" aria-valuemin="0" aria-valuemax="990" aria-valuenow="800" aria-valuetext="0.80c">
+          <input type="text" class="num" id="beta-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.80" aria-label="Speed as a fraction of c" aria-describedby="beta-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="beta-err" hidden>Fraction of c from 0 to 0.99.</p>
+      </div>
+      <p class="scale-note" id="twin-scale">The home hand sweeps a right angle. The aboard hand sweeps that angle divided by γ. The curve is γ from 0 to 0.99c.</p>
+    </div>
+    <aside class="detail" aria-live="polite">
+      <p class="tier" id="t-tier">Constant speed · special relativity</p>
+      <h2 id="t-name">1.6667 years</h2>
+      <p class="range" id="t-range">One year aboard · 0.80c</p>
+      <ul class="stats">
+        <li><span class="k">Fraction of c</span><span class="v" id="t-beta">0.80c</span></li>
+        <li><span class="k">Lorentz factor</span><span class="v" id="t-gamma">1.6667</span></li>
+        <li><span class="k">Speed</span><span class="v" id="t-spd">239,834.0 km/s</span></li>
+        <li><span class="k">One year aboard</span><span class="v" id="t-home">1.6667 years</span></li>
+      </ul>
+      <p class="why" id="t-why">A clock moving at 0.80c (239,834.0 km/s) has Lorentz factor 1.6667. One year of proper time aboard corresponds to 1.6667 years on a clock left at rest. This is the constant-speed factor γ = 1/√(1 − v²/c²). The twin paradox also turns the ship around. This slider does not draw that turnaround, and it does not add gravity.</p>
+    </aside>
+  </div>
+
+  <aside class="myth" aria-label="What this page computes and what the sources quote">
+    <p class="tag">GPS · this page and the citations</p>
+    <h2>Near −7 and +45, and not the same digits.</h2>
+    <p id="ashby-note">NIST’s public clock page says GPS satellites fall behind earthbound clocks by 7 microseconds per day because of speed, gain 45 microseconds per day because gravity is weaker, and run 38 microseconds per day fast when the two are combined. Ashby 2003, equation (35), prints 3 GM_E/(2 a c²) + Φ₀/c² = +2.5046×10⁻¹⁰ − 6.9693×10⁻¹⁰ = −4.4647×10⁻¹⁰. He reads the negative sign as the orbiting clock running fast. Over 86,400 seconds that printed offset is +38.58 μs/day. He prints GM_E = 3.986004418×10¹⁴ m³/s² and a₁ = 6.3781370×10⁶ m, and later a nominal semi-major axis a₀ = 2.656175×10⁷ m. With this page’s GM and c, 3 GM/(2 a₀ c²) is 2.5046×10⁻¹⁰, the digits he prints. In his figure the effects cancel at a ≈ 9,545 km. On this monopole the circular balance, r = 3R/2, is 9,567.21 km. This page’s GPS preset is the IS-GPS-200N radius 26,559,710 m. It computes −7.21 μs/day from speed, +45.65 μs/day from the potential difference, and +38.44 μs/day net. At Ashby’s a₀ the same formulas give −7.21 μs/day, +45.65 μs/day, and +38.44 μs/day. His 38.58 μs/day is larger than this net because his reference is the geoid. The IAU value he cites is L_G = 6.969290134×10⁻¹⁰, so Φ₀/c² = −6.969290134×10⁻¹⁰. This page’s −GM/(R c²) is −6.95349×10⁻¹⁰. Rotation and the quadrupole are in his ground clock and not in this one.</p>
+  </aside>
+
+  <p class="band">What the buttons are</p>
+  <div class="means">
+    <p><strong>ISS is the lithograph’s about 420 km.</strong> NASA’s 2023 station lithograph says an average altitude of about 420 kilometers. The button is that altitude. The card is the circle: 7.657 km/s, velocity −28.18 μs/day, gravity +3.71 μs/day, net −24.47 μs/day. Speed wins. Some NASA pages say about 400 km. This page does not average those sentences into a third altitude.</p>
+    <p><strong>GPS is a radius, not the words “about 20,200 km.”</strong> IS-GPS-200N sets AREF = 26,559,710 m when the ephemeris correction ΔA is zero. gps.gov says approximately 20,200 km and twice a day. The altitude here is AREF minus 6,378,137 m, 20,181.57 km. The popular 20,200 km is not substituted.</p>
+    <p id="limits-note"><strong>The Moon is a distance. Geostationary is a period.</strong> The Moon button is a test-particle circle at the Moon Fact Sheet semimajor axis, 384,400 km. Its circular speed on this GM is 1.018 km/s and its period is 27.452 d. The sheet’s mean orbital velocity is 1.022 km/s and its revolution period is 27.3217 days. Earth’s GM alone does not reproduce that month, so those sheet lines are not used. Geostationary on this page is 35,786.07 km, the radius whose period equals the Earth Fact Sheet sidereal rotation, 23.9345 hours, with this page’s GM. The satellites desk prints 35,786.05 km because it uses that sheet’s rounded GM, 0.39860 × 10^6 km³/s², and the same 23.9345 hours.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Lorentz factor</dt><dd>γ = 1/√(1 − v²/c²). A moving clock’s proper time is the stay-at-home time divided by γ. One year aboard is γ years at home, at constant speed. At orbital speeds γ − 1 is a few parts in 10¹⁰ or 10¹¹, so the card prints 1 + that difference.</dd></div>
+    <div class="gloss"><dt>Velocity term</dt><dd>√(1 − v²/c²) − 1, times 86,400 seconds, in microseconds. Negative means slow. Ashby’s GPS bookkeeping uses the second-order piece −v²/(2c²). At the speeds of these orbits the two print the same microseconds. They part company as v becomes an appreciable fraction of c.</dd></div>
+    <div class="gloss"><dt>Gravitational term</dt><dd>GM (1/R − 1/r) / c². The Newtonian potential is −GM/r. A higher clock is less deep in the well, so this term is positive: fast. R is the equatorial radius, 6,378,137 m. The term is zero at the surface and grows as the radius grows.</dd></div>
+    <div class="gloss"><dt>Net drift</dt><dd>The gravitational fraction plus the Lorentz fraction, over one day of 86,400 seconds. For GPS the gravity term wins, so the net is fast. For the ISS the velocity term wins, so the net is slow. They balance, on this monopole, at r = 3R/2, which is 9,567.21 km.</dd></div>
+    <div class="gloss gloss-wide"><dt>What is left out</dt><dd>Earth’s spin, the equatorial bulge, the eccentricity of a real GPS orbit, the Sagnac effect, and the Shapiro delay. Ashby’s Φ₀ is an effective potential on the rotating geoid, L_G = 6.969290134×10⁻¹⁰. This page’s surface is only −GM/(R c²). That is why his printed net, +38.58 μs/day, is 0.14 μs/day faster than the +38.44 this page computes. The factory offset he prints, −4.4647×10⁻¹⁰, is the correction applied so the satellite clock keeps geoid time. This page does not apply it. It reports the drift.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the constants and the GPS story</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST — speed of light in vacuum</a> and <a href="https://www.bipm.org/en/si-base-units/metre" rel="noopener" target="_blank">BIPM — the metre</a> — c = 299,792,458 m/s exactly. This page divides by that c.</li>
+      <li><a href="https://www.iers.org/fileadmin/SharedDocs/Publikationen/EN/IERS/Publications/tn/TechnNote36/tn36.pdf" rel="noopener" target="_blank">IERS Conventions (2010), IERS Technical Note 36</a> — Table 1.1, geocentric gravitational constant GM⊕ = 3.986004418 × 10¹⁴ m³ s⁻², marked TCG-compatible. The same table’s equatorial radius is 6,378,136.6 m. This page does not use that radius. L_G = 6.969290134 × 10⁻¹⁰ is listed there as a defining constant, d(TT)/d(TCG) = 1 − L_G, from the IAU XXIV General Assembly. The TT-compatible GM differs in the last digit and is not substituted. The difference does not move the microseconds this page prints.</li>
+      <li><a href="https://doi.org/10.12942/lrr-2003-1" rel="noopener" target="_blank">Ashby 2003, Living Reviews in Relativity 6, 1</a> — “Relativity in the Global Positioning System.” Equation (13) prints GM_E = 3.986004418 × 10¹⁴ m³ s⁻² and a₁ = 6.3781370 × 10⁶ m. Equation (35) prints 3 GM_E/(2 a c²) + Φ₀/c² = +2.5046 × 10⁻¹⁰ − 6.9693 × 10⁻¹⁰ = −4.4647 × 10⁻¹⁰, and the negative sign means the orbiting clock runs fast. He cites the IAU value Φ₀/c² = 6.969290134 × 10⁻¹⁰. Later he prints a nominal semi-major axis a₀ = 2.656175 × 10⁷ m and says the effects cancel at a ≈ 9545 km. Open copy: <a href="https://link.springer.com/article/10.12942/lrr-2003-1" rel="noopener" target="_blank">Springer</a>.</li>
+      <li><a href="https://www.nist.gov/atomic-clocks/a-powerful-tool-for-science/putting-einstein-test" rel="noopener" target="_blank">NIST — Putting Einstein to the Test</a> — GPS satellites “fall behind earthbound clocks by 7 microseconds per day,” weaker gravity “should speed them up by 45 microseconds per day,” and the clocks “run 38 microseconds per day faster.” Those are the integers on that page. This page’s GPS preset is −7.21, +45.65, and +38.44.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — equatorial radius 6,378.137 km, the radius this page uses. Sidereal rotation period 23.9345 hours, used only to place geostationary. The sheet’s GM, 0.39860 × 10⁶ km³/s², is the rounded figure on the <a href="/science/astronomy/satellites/">satellites</a> desk. It is not the GM in the arithmetic here.</li>
+      <li><a href="https://www.nasa.gov/wp-content/uploads/2023/06/lg-2023-05-010-jsc-iss-litho-updates.pdf" rel="noopener" target="_blank">NASA — International Space Station lithograph, 2023</a> — average altitude of about 420 kilometers. The ISS button is that 420 km. The rates are computed.</li>
+      <li><a href="https://www.gps.gov/sites/default/files/2025-07/IS-GPS-200N.pdf" rel="noopener" target="_blank">IS-GPS-200N</a> — AREF = 26,559,710 meters, the nominal semi-major axis when ΔA = 0. The GPS button uses that radius. <a href="https://www.gps.gov/space-segment" rel="noopener" target="_blank">GPS.gov — Space segment</a> says approximately 20,200 km. That sentence is not the radius.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — semimajor axis 0.3844 × 10⁶ km. Mean orbital velocity 1.022 km/s. Revolution period 27.3217 days. The button uses the semimajor axis as a radius. The speed and the period on the card are this page’s Earth-only GM. They are not those sheet lines.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom clocks. c is the SI constant. GM is the IERS TCG-compatible 3.986004418×10¹⁴ m³/s², the value Ashby prints. The equatorial radius is 6,378,137 m. Rates are computed. GPS on this page is −7.21, +45.65, and +38.44 μs/day. NIST quotes 7, 45, and 38. Ashby’s printed offset is +38.58 μs in 86,400 seconds. Simplified weak-field model. Not for navigation or engineering. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/satellites/"><p class="n">The altitude</p><h3>Satellites</h3><p>Period, speed, and ground track for the same circles. That desk’s GM is the fact-sheet rounding. The rates are here.</p></a>
+    <a href="/science/gravity/"><p class="n">The receipt</p><h3>Gravity</h3><p>NIST’s 7, 45, and 38, in plain words. This page is the arithmetic next to Ashby’s offset.</p></a>
+    <a href="/science/astronomy/black-holes/"><p class="n">The strong field</p><h3>Black holes</h3><p>A hovering clock reads √(1 − r_s/r). The potential term on this page is the weak-field end of that idea.</p></a>
+    <a href="/science/astronomy/light-time/"><p class="n">The delay</p><h3>Light time</h3><p>Distance over the same c. Minutes across the solar system. The microseconds here are a rate, not a light-time.</p></a>
+    <a href="/science/astronomy/"><p class="n">Map</p><h3>Solar map</h3><p>The neighborhood these orbits sit in. Day and local time, still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="td-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="td-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="td-help-title">Time dilation desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom split of speed and gravity. Not a navigation solution.</p>
+    <h3>Orbit</h3>
+    <table>
+      <caption>Orbit</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>ISS is 420 km. GPS is the interface specification’s 26,559,710 m radius. Geostationary matches a 23.9345-hour sidereal day. The Moon is a circle at 384,400 km. Each rate is computed.</td></tr>
+        <tr><th scope="row">Altitude</th><td>0 to 410,000 km, on a logarithmic slider. The number accepts the same range. Height is above the equatorial radius.</td></tr>
+        <tr><th scope="row">Speed</th><td>Kilometers per second, from 0 up to but not including c. Circular sets √(GM / r) and keeps it there while you move the altitude. Typing a speed leaves the circle.</td></tr>
+        <tr><th scope="row">Bars</th><td>Zero is the middle line. Left is slow. Right is fast. Left and Right on the chart step the altitude.</td></tr>
+      </tbody>
+    </table>
+    <h3>The speed slider</h3>
+    <table>
+      <caption>The speed slider</caption>
+      <tbody>
+        <tr><th scope="row">Range</th><td>0 to 0.99c. The buttons are 0.10c, 0.50c, 0.80c, 0.90c, and 0.99c.</td></tr>
+        <tr><th scope="row">Readout</th><td>Lorentz factor, and one year aboard as γ years at home. Gravity is not added.</td></tr>
+        <tr><th scope="row">Picture</th><td>Two clocks. The home hand sweeps a right angle. The aboard hand sweeps that angle divided by γ. The curve under them is γ. Left and Right step the fraction of c.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/time-dilation/time-dilation.js"></script>
+<script>
+(function () {
+  "use strict";
+  var T = window.TimeDilation;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!T) return;
+
+  var root = document.documentElement;
+  var orbitCanvas = document.getElementById("orbit-canvas");
+  var twinCanvas = document.getElementById("twin-canvas");
+  var altSlider = document.getElementById("alt-slider");
+  var altNum = document.getElementById("alt-num");
+  var spdNum = document.getElementById("spd-num");
+  var circBtn = document.getElementById("btn-circular");
+  var betaSlider = document.getElementById("beta-slider");
+  var betaNum = document.getElementById("beta-num");
+  var gps0 = T.presetModel("gps");
+  var state = {
+    altitudeKm: gps0.altitudeKm,
+    circular: true,
+    speedMps: gps0.speedMps,
+    beta: 0.8
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(id, fieldId, msg) {
+    var err = document.getElementById(id);
+    var field = document.getElementById(fieldId);
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      if (field) field.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (field) field.setAttribute("aria-invalid", "true");
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit(canvas, cssH) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.clientWidth;
+    if (w < 40) w = 320;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    canvas.style.height = cssH + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: cssH };
+  }
+  function altInput(km) {
+    if (Math.abs(km - Math.round(km)) < 1e-6) return String(Math.round(km));
+    return km.toFixed(2);
+  }
+  function speedInput(mps) {
+    var k = mps / 1000;
+    if (k >= 100) return k.toFixed(1);
+    return k.toFixed(3);
+  }
+  function currentRow() {
+    return T.model({
+      altitudeKm: state.altitudeKm,
+      circular: state.circular,
+      speedMps: state.speedMps
+    });
+  }
+  function matchedPreset(row) {
+    if (!row || !row.circular) return "";
+    var i;
+    var ids = ["iss", "gps", "geo", "moon"];
+    for (i = 0; i < ids.length; i++) {
+      var p = T.presetModel(ids[i]);
+      if (p && Math.abs(p.altitudeKm - row.altitudeKm) < 0.02) return ids[i];
+    }
+    return "";
+  }
+  function pressOrbit(id) {
+    var buttons = document.querySelectorAll("#orbit-presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute("data-orbit") === id ? "true" : "false");
+    }
+  }
+  function pressBeta(beta) {
+    var buttons = document.querySelectorAll("#beta-presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var b = Number(buttons[i].getAttribute("data-beta"));
+      buttons[i].setAttribute("aria-pressed", Math.abs(b - beta) < 1e-9 ? "true" : "false");
+    }
+  }
+
+  function drawBars(ctx, w, h, row, c) {
+    ctx.clearRect(0, 0, w, h);
+    var items = [
+      { label: "VELOCITY", us: row.velocityUs, color: c.soft },
+      { label: "GRAVITY", us: row.gravityUs, color: c.accent },
+      { label: "NET", us: row.netUs, color: c.ink }
+    ];
+    var max = 1;
+    var i;
+    for (i = 0; i < items.length; i++) max = Math.max(max, Math.abs(items[i].us));
+    max *= 1.08;
+    var labelW = Math.min(76, Math.max(64, w * 0.24));
+    var valueW = Math.min(112, Math.max(92, w * 0.36));
+    var padL = labelW;
+    var padR = valueW;
+    var top = 14;
+    var rowH = (h - top - 10) / 3;
+    var plot = Math.max(40, w - padL - padR);
+    var half = plot / 2;
+    var zero = padL + half;
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(zero, 8);
+    ctx.lineTo(zero, h - 6);
+    ctx.stroke();
+    ctx.font = font(w < 420 ? 9 : 10);
+    ctx.textBaseline = "middle";
+    for (i = 0; i < items.length; i++) {
+      var y = top + i * rowH + 6;
+      var bh = Math.max(12, Math.min(18, rowH * 0.42));
+      var x = zero + (items[i].us / max) * half;
+      ctx.fillStyle = items[i].color;
+      ctx.fillRect(Math.min(zero, x), y, Math.max(1, Math.abs(x - zero)), bh);
+      ctx.fillStyle = c.muted;
+      ctx.textAlign = "right";
+      ctx.fillText(items[i].label, padL - 6, y + bh / 2);
+      ctx.fillStyle = c.ink;
+      ctx.textAlign = "right";
+      ctx.fillText(T.formatUs(items[i].us), w - 2, y + bh / 2);
+    }
+  }
+
+  function drawClock(ctx, cx, cy, r, sweep, label, hand, c) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+    ctx.fillStyle = c.ink;
+    ctx.fill();
+    var ang = -Math.PI / 2 + sweep;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(ang) * (r - 8), cy + Math.sin(ang) * (r - 8));
+    ctx.strokeStyle = hand;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = c.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(label, cx, cy + r + 6);
+  }
+
+  function drawTwin(ctx, w, h, row, c) {
+    ctx.clearRect(0, 0, w, h);
+    var clockTop = 28;
+    var radius = Math.min(42, w * 0.12);
+    var gap = Math.min(w * 0.28, 120);
+    drawClock(ctx, w / 2 - gap, clockTop + radius, radius, Math.PI / 2, "HOME", c.ink, c);
+    drawClock(ctx, w / 2 + gap, clockTop + radius, radius, (Math.PI / 2) / row.gamma, "ABOARD", c.accent, c);
+    var top = clockTop + radius * 2 + 28;
+    var padL = 36;
+    var padR = 12;
+    var padB = 22;
+    var gMax = 1 / Math.sqrt(1 - T.BETA_MAX * T.BETA_MAX);
+    function xOf(beta) { return padL + (beta / T.BETA_MAX) * (w - padL - padR); }
+    function yOf(g) { return top + (1 - (g - 1) / (gMax - 1)) * (h - top - padB); }
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, top);
+    ctx.lineTo(padL, h - padB);
+    ctx.lineTo(w - padR, h - padB);
+    ctx.stroke();
+    ctx.beginPath();
+    var steps = 80;
+    var s;
+    for (s = 0; s <= steps; s++) {
+      var b = (s / steps) * T.BETA_MAX;
+      var g = 1 / Math.sqrt(1 - b * b);
+      var x = xOf(b);
+      var y = yOf(g);
+      if (s === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = c.soft;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    var mx = xOf(row.beta);
+    var my = yOf(row.gamma);
+    ctx.beginPath();
+    ctx.arc(mx, my, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = c.accent;
+    ctx.fill();
+    ctx.fillStyle = c.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("0", padL, h - padB + 4);
+    ctx.fillText("0.99c", w - padR, h - padB + 4);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText("γ", padL - 6, top + 4);
+  }
+
+  function render() {
+    var c = colors();
+    var row = currentRow();
+    var tw = T.twin(state.beta);
+    var preset = row ? matchedPreset(row) : "";
+    pressOrbit(preset);
+    pressBeta(state.beta);
+    if (circBtn) circBtn.setAttribute("aria-pressed", state.circular ? "true" : "false");
+
+    if (row) {
+      var tier = (preset ? T.presetById(preset).label : "Custom") + " · " + (row.circular ? "circular · computed" : "chosen speed");
+      var drift = row.netUs > 0 ? "fast" : (row.netUs < 0 ? "slow" : "even");
+      setText("o-tier", tier);
+      setText("o-name", T.formatUs(row.netUs));
+      setText("o-range", "Net · " + drift + " · " + T.formatKmFromM(row.altitudeM));
+      setText("o-gamma", T.formatGamma(row.gamma));
+      setText("o-vel", T.formatUs(row.velocityUs));
+      setText("o-grav", T.formatUs(row.gravityUs));
+      setText("o-net", T.formatUs(row.netUs));
+      setText("o-spd", T.formatSpeed(row.speedMps));
+      setText("o-per", row.periodS ? T.formatPeriod(row.periodS) : "Not a circular period");
+      setText("o-why", T.explainOrbit(row));
+      setText("orbit-scale", (row.circular ? "Circular speed " : "Chosen speed ") + T.formatSpeed(row.speedMps) + " at " + T.formatKmFromM(row.altitudeM) + ". The bars are microseconds in 86,400 seconds.");
+      if (altNum && document.activeElement !== altNum) altNum.value = altInput(row.altitudeKm);
+      if (spdNum && document.activeElement !== spdNum) spdNum.value = speedInput(row.speedMps);
+      if (altSlider) {
+        var step = T.unitFromAlt(row.altitudeKm);
+        if (document.activeElement !== altSlider) altSlider.value = String(Math.round(step));
+        altSlider.setAttribute("aria-valuenow", String(Math.round(step)));
+        altSlider.setAttribute("aria-valuetext", T.formatKmFromM(row.altitudeM));
+      }
+      if (orbitCanvas) {
+        var box = fit(orbitCanvas, 168);
+        drawBars(box.ctx, box.w, box.h, row, c);
+        orbitCanvas.setAttribute("aria-label", "Altitude " + T.formatKmFromM(row.altitudeM) + ". Velocity " + T.formatUs(row.velocityUs) + ". Gravity " + T.formatUs(row.gravityUs) + ". Net " + T.formatUs(row.netUs) + ".");
+      }
+      var marks = document.querySelectorAll("#preset-body tr");
+      var mi;
+      for (mi = 0; mi < marks.length; mi++) {
+        marks[mi].className = marks[mi].getAttribute("data-orbit") === preset ? "is-on" : "";
+      }
+    }
+
+    if (tw) {
+      setText("t-tier", "Constant speed · special relativity");
+      setText("t-name", T.formatYears(tw.homeYears));
+      setText("t-range", "One year aboard · " + T.formatBeta(tw.beta));
+      setText("t-beta", T.formatBeta(tw.beta));
+      setText("t-gamma", T.formatGamma(tw.gamma));
+      setText("t-spd", T.formatSpeed(tw.speedMps));
+      setText("t-home", T.formatYears(tw.homeYears));
+      setText("t-why", T.explainTwin(tw.beta));
+      if (betaNum && document.activeElement !== betaNum) betaNum.value = tw.beta.toFixed(2);
+      if (betaSlider) {
+        var bstep = Math.round(T.sliderFromBeta(tw.beta));
+        if (document.activeElement !== betaSlider) betaSlider.value = String(bstep);
+        betaSlider.setAttribute("aria-valuenow", String(bstep));
+        betaSlider.setAttribute("aria-valuetext", T.formatBeta(tw.beta));
+      }
+      if (twinCanvas) {
+        var plot = fit(twinCanvas, 280);
+        drawTwin(plot.ctx, plot.w, plot.h, tw, c);
+        twinCanvas.setAttribute("aria-label", "At " + T.formatBeta(tw.beta) + " the Lorentz factor is " + T.formatGamma(tw.gamma) + ". One year aboard is " + T.formatYears(tw.homeYears) + " at home.");
+      }
+    }
+    setText("ashby-note", T.explainAshby());
+    var limits = document.getElementById("limits-note");
+    if (limits) limits.innerHTML = "<strong>The Moon is a distance. Geostationary is a period.</strong> " + T.explainLimits();
+  }
+
+  function setAltitude(km, keepCircular) {
+    var row = T.model({ altitudeKm: km, circular: true, speedMps: 0 });
+    if (!row) {
+      showErr("alt-err", "alt-num", "Altitude from 0 to 410,000 km.");
+      return;
+    }
+    showErr("alt-err", "alt-num", "");
+    state.altitudeKm = km;
+    if (keepCircular) {
+      state.circular = true;
+      state.speedMps = row.speedMps;
+      showErr("spd-err", "spd-num", "");
+    }
+    render();
+  }
+
+  function setSpeed(kms) {
+    var mps = kms * 1000;
+    var row = T.model({ altitudeKm: state.altitudeKm, circular: false, speedMps: mps });
+    if (!row) {
+      showErr("spd-err", "spd-num", "Speed from 0 up to, but not including, 299,792.458 km/s.");
+      return;
+    }
+    showErr("spd-err", "spd-num", "");
+    state.circular = false;
+    state.speedMps = mps;
+    render();
+  }
+
+  function setBeta(beta) {
+    var row = T.twin(beta);
+    if (!row) {
+      showErr("beta-err", "beta-num", "Fraction of c from 0 to 0.99.");
+      return;
+    }
+    showErr("beta-err", "beta-num", "");
+    state.beta = beta;
+    render();
+  }
+
+  var orbitButtons = document.querySelectorAll("#orbit-presets button");
+  var bi;
+  for (bi = 0; bi < orbitButtons.length; bi++) {
+    orbitButtons[bi].addEventListener("click", function (ev) {
+      var row = T.presetModel(ev.currentTarget.getAttribute("data-orbit"));
+      if (!row) return;
+      showErr("alt-err", "alt-num", "");
+      showErr("spd-err", "spd-num", "");
+      state.altitudeKm = row.altitudeKm;
+      state.circular = true;
+      state.speedMps = row.speedMps;
+      render();
+    });
+  }
+  if (altSlider) {
+    altSlider.addEventListener("input", function () {
+      setAltitude(T.altFromUnit(Number(altSlider.value)), state.circular);
+    });
+  }
+  if (altNum) {
+    altNum.addEventListener("change", function () {
+      var n = parseNum(altNum.value);
+      if (!isFinite(n)) {
+        showErr("alt-err", "alt-num", "Altitude from 0 to 410,000 km.");
+        return;
+      }
+      setAltitude(n, state.circular);
+    });
+  }
+  if (spdNum) {
+    spdNum.addEventListener("change", function () {
+      var n = parseNum(spdNum.value);
+      if (!isFinite(n)) {
+        showErr("spd-err", "spd-num", "Speed from 0 up to, but not including, 299,792.458 km/s.");
+        return;
+      }
+      setSpeed(n);
+    });
+  }
+  if (circBtn) {
+    circBtn.addEventListener("click", function () {
+      setAltitude(state.altitudeKm, true);
+    });
+  }
+  var betaButtons = document.querySelectorAll("#beta-presets button");
+  for (bi = 0; bi < betaButtons.length; bi++) {
+    betaButtons[bi].addEventListener("click", function (ev) {
+      setBeta(Number(ev.currentTarget.getAttribute("data-beta")));
+    });
+  }
+  if (betaSlider) {
+    betaSlider.addEventListener("input", function () {
+      setBeta(T.betaFromSlider(Number(betaSlider.value)));
+    });
+  }
+  if (betaNum) {
+    betaNum.addEventListener("change", function () {
+      var n = parseNum(betaNum.value);
+      if (!isFinite(n)) {
+        showErr("beta-err", "beta-num", "Fraction of c from 0 to 0.99.");
+        return;
+      }
+      setBeta(n);
+    });
+  }
+  if (orbitCanvas) {
+    orbitCanvas.addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var step = T.unitFromAlt(state.altitudeKm);
+      step += ev.key === "ArrowRight" ? 8 : -8;
+      setAltitude(T.altFromUnit(step), state.circular);
+    });
+  }
+  if (twinCanvas) {
+    twinCanvas.addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var step = T.sliderFromBeta(state.beta) + (ev.key === "ArrowRight" ? 10 : -10);
+      setBeta(T.betaFromSlider(step));
+    });
+  }
+
+  var helpBtn = document.getElementById("td-help");
+  var helpDialog = document.getElementById("td-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    for (bi = 0; bi < closers.length; bi++) closers[bi].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
