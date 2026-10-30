@@ -1,0 +1,962 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gravitational waves — the chirp of a compact binary — Steven Philley</title>
+<meta name="description" content="Gravitational-wave desk. Leading-order Newtonian quadrupole. Chirp mass, time to coalescence, frequency evolution, a face-on strain, and a Schwarzschild ISCO marker. GW150914’s 36 and 29 solar masses compute 28.10. From 35 Hz that coalescence is 0.190 s. An equal split of GW170817’s 2.74 solar masses computes 1.193, and 100.65 s from 24 Hz. Sonification, not a recording. Not a waveform model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/gravitational-waves/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Gravitational waves — the chirp of a compact binary">
+<meta property="og:description" content="36 and 29 solar masses compute a chirp mass of 28.10. From 35 Hz the Newtonian time to coalescence is 0.190 s. Face-on strain, an ISCO marker, and a labeled sonification. Not a waveform model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/gravitational-waves/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gravitational waves — the chirp of a compact binary">
+<meta name="twitter:description" content="Leading-order chirp. GW150914 computes 28.10 solar masses. GW170817’s equal split computes 1.193. Not a waveform model.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.wave{border-top-color:var(--ink,#e8e6e1)}
+.swatch.mark{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail h2 .unit{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:.42em;letter-spacing:0;font-weight:400}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:760px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on td,.sheet tr.is-on th{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/gravitational-waves/" aria-current="page">Gravitational waves</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Gravitational waves</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The chirp</p>
+  <h1>Gravitational waves<br>and the chirp</h1>
+  <p class="lede">Two masses in a tightening orbit radiate gravitational waves, mostly at twice the orbital frequency. The leading-order sweep depends on one combination of the masses, the chirp mass <strong>(m<sub>1</sub> m<sub>2</sub>)<sup>3/5</sup> / (m<sub>1</sub> + m<sub>2</sub>)<sup>1/5</sup></strong>. Time to coalescence is the integral of the frequency derivative printed in the <a href="https://doi.org/10.1103/PhysRevLett.116.061102" rel="noopener" target="_blank">GW150914 discovery paper</a>. The face-on strain is the Newtonian quadrupole amplitude at the distance you set. <strong>c = 299,792,458 m/s</strong> exactly. A mass in solar masses uses the <a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> nominal <strong>GM☉ = 1.3271244×10<sup>20</sup> m³ s⁻²</strong>. Distance uses the parsec, <strong>(648,000/π)</strong> astronomical units, IAU 2015 Resolution B2, and the astronomical unit is <strong>149,597,870,700 m</strong>. The GW150914 button types that paper’s source-frame central values, 36 and 29 solar masses, at 410 Mpc, starting at 35 Hz. The formula returns <strong>28.10 M☉</strong>. The ISCO line is a rough end-of-inspiral marker. The radius itself is the <a href="/science/astronomy/black-holes/">black holes</a> desk. The same c, used as a clock, is the <a href="/science/astronomy/light-time/">light-time</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Leading-order Newtonian quadrupole. No spin, no higher-order post-Newtonian terms, no tides, and no detector antenna pattern. The masses are not multiplied by (1+z). The coalescence in the integral is a mathematical blow-up, not a merger. Not a waveform model and not for data analysis.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · A compact binary</span>
+    <button type="button" class="help-q" id="gw-help" aria-haspopup="dialog" aria-controls="gw-help-dialog" aria-expanded="false" aria-label="How this gravitational-wave desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="chirp-hint">Strain above · frequency below · the dashed line is the ISCO marker</p>
+      <canvas id="chirp-canvas" tabindex="0" role="img" aria-label="GW150914. Chirp mass 28.10 solar masses. Time to coalescence 0.190 seconds from 35 hertz."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch wave" aria-hidden="true"></span> Strain</li>
+        <li><span class="swatch" aria-hidden="true"></span> Frequency</li>
+        <li><span class="swatch mark" aria-hidden="true"></span> ISCO</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Published events, typed as the numbers below</p>
+        <div class="presets" id="event-presets" role="group" aria-label="Event presets">
+          <button type="button" data-event="gw150914" aria-pressed="true">GW150914</button>
+          <button type="button" data-event="gw170817" aria-pressed="false">GW170817</button>
+        </div>
+        <div class="slider-row">
+          <label for="m1-slider">Mass 1</label>
+          <input type="range" id="m1-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" aria-valuetext="36 solar masses">
+          <input type="text" class="num" id="m1-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="36" aria-label="First mass in solar masses" aria-describedby="m1-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="m1-err" hidden>Each mass from 0.5 to 200 solar masses.</p>
+        <div class="slider-row">
+          <label for="m2-slider">Mass 2</label>
+          <input type="range" id="m2-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" aria-valuetext="29 solar masses">
+          <input type="text" class="num" id="m2-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="29" aria-label="Second mass in solar masses" aria-describedby="m2-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="m2-err" hidden>Each mass from 0.5 to 200 solar masses.</p>
+        <div class="slider-row">
+          <label for="d-slider">Distance</label>
+          <input type="range" id="d-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" aria-valuetext="410 Mpc">
+          <input type="text" class="num" id="d-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="410" aria-label="Distance in megaparsecs" aria-describedby="d-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="d-err" hidden>Distance from 0.1 to 10,000 Mpc.</p>
+        <div class="slider-row">
+          <label for="f-slider">Start f</label>
+          <input type="range" id="f-slider" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="500" aria-valuetext="35 Hz">
+          <input type="text" class="num" id="f-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="35" aria-label="Starting gravitational-wave frequency in hertz" aria-describedby="f-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="f-err" hidden>Frequency from 1 to 2,000 Hz.</p>
+        <p class="pick-label">Sonification · not a detector recording</p>
+        <div class="presets" id="pitch-presets" role="group" aria-label="Sonification pitch">
+          <button type="button" data-pitch="1" aria-pressed="true">Pitch 1×</button>
+          <button type="button" data-pitch="4" aria-pressed="false">Pitch 4×</button>
+          <button type="button" data-pitch="8" aria-pressed="false">Pitch 8×</button>
+          <button type="button" id="btn-play" aria-pressed="false">Play sonification</button>
+        </div>
+        <p class="field-error" id="audio-err" hidden>This browser did not start the audio. The plot still shows the chirp.</p>
+      </div>
+      <p class="scale-note" id="chirp-scale">Opens on GW150914. The tone’s frequency is the gravitational-wave frequency times the pitch factor. Loudness is normalized so the tone is audible. It is not the physical strain, and it is not a LIGO recording.</p>
+    </div>
+    <aside class="detail" id="chirp-detail" aria-live="polite">
+      <p class="tier" id="g-tier">GW150914 · source-frame central values</p>
+      <h2 id="g-name"><span id="g-value">28.10</span> <span class="unit">M☉</span></h2>
+      <p class="range" id="g-range">0.190 s to coalescence · 35 Hz</p>
+      <ul class="stats">
+        <li><span class="k">Masses</span><span class="v" id="g-masses">36 and 29 M☉</span></li>
+        <li><span class="k">Total</span><span class="v" id="g-total">65 M☉</span></li>
+        <li><span class="k">Chirp mass</span><span class="v" id="g-chirp">28.10 M☉</span></li>
+        <li><span class="k">To coalescence</span><span class="v" id="g-tau">0.190 s</span></li>
+        <li><span class="k">To the ISCO marker</span><span class="v" id="g-tisco">0.157 s</span></li>
+        <li><span class="k">ISCO frequency</span><span class="v" id="g-fisco">67.65 Hz</span></li>
+        <li><span class="k">Strain at start</span><span class="v" id="g-h">8.054×10⁻²²</span></li>
+        <li><span class="k">Strain at ISCO</span><span class="v" id="g-hisco">1.25×10⁻²¹</span></li>
+      </ul>
+      <p class="why" id="g-why">GW150914, the discovery abstract’s source-frame central values, 36 and 29 solar masses, at 410 Mpc, starting at 35 Hz. The chirp mass is 28.10 M☉. Time to the Newtonian coalescence from 35 Hz is 0.190 s. The face-on strain at that frequency is 8.054×10⁻²². The Schwarzschild test-particle ISCO for the total mass is 67.65 Hz, 0.157 s from this start on the same integral. That marker is not a merger time. Leading-order quadrupole. Not a waveform model.</p>
+    </aside>
+  </div>
+  <div class="sheet">
+    <table>
+      <caption>Presets · each row is this page’s formulas, not a stored posterior</caption>
+      <thead>
+        <tr>
+          <th scope="col">Event</th>
+          <th scope="col">Masses</th>
+          <th scope="col">Distance</th>
+          <th scope="col">Start</th>
+          <th scope="col">Chirp</th>
+          <th scope="col">To coalescence</th>
+          <th scope="col">ISCO</th>
+          <th scope="col">Strain</th>
+        </tr>
+      </thead>
+      <tbody id="preset-body">
+        <tr data-event="gw150914" class="is-on"><th scope="row">GW150914</th><td>36 and 29 M☉</td><td>410 Mpc</td><td>35 Hz</td><td>28.10 M☉</td><td>0.190 s</td><td>67.65 Hz</td><td>8.054×10⁻²²</td></tr>
+        <tr data-event="gw170817"><th scope="row">GW170817</th><td>1.37 and 1.37 M☉</td><td>40 Mpc</td><td>24 Hz</td><td>1.193 M☉</td><td>100.65 s</td><td>1,605 Hz</td><td>3.316×10⁻²³</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <noscript>
+    <p class="note-schematic">The buttons need JavaScript. The arithmetic is still Mc = (m1 m2)^(3/5) / (m1 + m2)^(1/5), τ = (5/256) (π f)^(−8/3) (G Mc / c³)^(−5/3), and a face-on strain (4/D) (G Mc / c²)^(5/3) (π f / c)^(2/3). GW150914 at 36 and 29 solar masses is a chirp mass of 28.10, 0.190 s from 35 Hz, ISCO marker 67.65 Hz. The equal split of 2.74 solar masses is a chirp mass of 1.193 and 100.65 s from 24 Hz. Not a waveform model.</p>
+  </noscript>
+
+  <aside class="myth" aria-label="What the papers published and what this page computes">
+    <p class="tag">The buttons and the papers</p>
+    <h2>28.10 from 36 and 29. The posterior is 28.0.</h2>
+    <p id="paper-note">The GW150914 button types 36 and 29 solar masses. Their Newtonian chirp mass is 28.10 M☉. Abbott et al. 2016, the properties paper, Table I, overall column, gives a source-frame chirp mass of 28.0 solar masses, plus 2.0 and minus 1.7. The same paper’s detector-frame component medians are 38.9 and 31.6. Typed into this formula they give 30.49 M☉. The paper’s detector-frame chirp median is 30.4, plus 2.1 and minus 1.9. Marginal medians are not a joint sample, and this page does not multiply by (1+z). The discovery paper’s rough estimate from the observed frequency and its derivative is about 30 solar masses in the detector frame. From 35 Hz to 150 Hz the Newtonian integral on the button’s masses is 0.186 s. The discovery paper says the signal increases from 35 to 150 Hz in about 0.2 s, and the sweep continues to 250 Hz. The face-on strain of the button at 150 Hz is 2.125×10⁻²¹. The discovery paper’s peak strain is 1.0×10⁻²¹. That peak is the strain in the detectors. It is not this face-on formula. The GW170817 button’s Newtonian chirp mass is 1.193 M☉. The paper’s source-frame chirp mass is 1.188, plus 0.004 and minus 0.002. From 24 Hz the Newtonian time to coalescence is 100.65 s. The paper’s time in band, calculated from 24 Hz, is about 100 s.</p>
+  </aside>
+
+  <p class="band">What the sweep is</p>
+  <div class="means">
+    <p><strong>One combination.</strong> The chirp mass is the one combination of the two masses that sets the leading-order sweep. Individual masses matter at higher order, and this page does not carry those terms. A heavier chirp mass reaches coalescence sooner from the same frequency.</p>
+    <p><strong>An integral, not a merger.</strong> Time to coalescence is the integral of the discovery paper’s frequency derivative, from the frequency you set up to the Newtonian blow-up. The blow-up is not a merger. Stop reading the curve at the ISCO marker if you want the rough end of the inspiral.</p>
+    <p><strong>Face-on, and only that.</strong> The strain is the face-on Newtonian amplitude at the distance you set. It grows as frequency to the two-thirds, and it falls as one over distance. An edge-on binary and a detector’s antenna pattern are smaller. Nothing here is a matched-filter template.</p>
+    <p><strong>A marker, not the ringdown.</strong> The marker is a test particle’s innermost stable circular orbit around a non-spinning hole of the total mass, the same 6GM/c² the black-hole desk draws, read as a gravitational-wave frequency. GW150914 was observed well above that frequency. Spin and comparable masses move the real last orbit. For a neutron-star pair the stars meet before this black-hole orbit.</p>
+  </div>
+
+  <p class="band">What the buttons are</p>
+  <div class="means">
+    <p><strong>GW150914 is 36 and 29, not the posterior.</strong> The discovery abstract prints source-frame masses 36+5−4 and 29+4−4 solar masses, a luminosity distance 410+160−180 Mpc, and a sweep from 35 Hz to 250 Hz. The button types 36, 29, 410, and 35. The uncertainties stay in the citation. The properties paper’s source-frame chirp median is 28.0. This page’s 28.10 is the Newtonian combination of those two central values.</p>
+    <p><strong>GW170817 is an equal split of 2.74.</strong> The discovery paper’s best-measured mass is the chirp mass, 1.188+0.004−0.002 solar masses in the source frame. It does not publish one component pair. Under the low-spin prior the components lie between 1.17 and 1.60 solar masses and the total is 2.74+0.04−0.01. The button splits that 2.74 into 1.37 and 1.37. The paper’s figure marks an equal-mass line at 1.36. That line is not the button. The broader high-spin ranges run from 0.86 to 2.26. Distance is 40+8−14 Mpc. The in-band time is calculated from 24 Hz. The same paper puts the onset of strong tidal effects near 600 Hz. This curve has no tides.</p>
+    <p id="band-note"><strong>Two bands, both cited.</strong> Advanced LIGO’s band in Martynov et al. 2016 is about 10 Hz to 10 kHz. The LISA Consortium describes LIGO, Virgo, and KAGRA as optimized for the tens to hundreds of hertz, and LISA for millihertz waves. The LISA Definition Study Report gives LISA’s survey band as 0.1 mHz to 1 Hz. The same ISCO marker at a total mass of one million solar masses is 4.397 mHz. That line is the formula, not a detected event.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Chirp mass</dt><dd>Mc = (m1 m2)^(3/5) / (m1 + m2)^(1/5). At this order it is the mass that sets how fast the frequency rises. The discovery paper writes it that way, and also as the combination of f and f-dot that the data measure.</dd></div>
+    <div class="gloss"><dt>Time to coalescence</dt><dd>τ = (5/256) (π f)^(−8/3) (G Mc / c³)^(−5/3). Integrate df/f-dot from the frequency you set up to infinity. Infinity here is the Newtonian blow-up. f(t) = f0 (1 − t/τ)^(−3/8).</dd></div>
+    <div class="gloss"><dt>Face-on strain</dt><dd>h = (4/D) (G Mc / c²)^(5/3) (π f / c)^(2/3). The same number is 4 (G μ / c² D) (π G M f / c³)^(2/3), with μ the reduced mass and M the total. Face-on means the coefficient of both h+ and h×. Other inclinations are smaller. D is the distance you type.</dd></div>
+    <div class="gloss"><dt>ISCO marker</dt><dd>A test particle’s innermost stable circular orbit at 6GM/c². The gravitational-wave frequency is c³ / (π 6^(3/2) G M), twice the orbital frequency. The trace is allowed to continue past the dashed line so you can see that the formula has not stopped. The approximation already has.</dd></div>
+    <div class="gloss"><dt>Detector frame</dt><dd>The frequency evolution of a wave that has traveled a cosmological distance measures Mc(1+z), not the source-frame chirp mass. This page does not apply that factor. Type the detector-frame masses, 38.9 and 31.6 for GW150914, if you want the formula next to the observed sweep.</dd></div>
+    <div class="gloss gloss-wide"><dt>Sonification</dt><dd>Play turns the trace into a tone. The tone’s frequency is the gravitational-wave frequency times 1, 4, or 8. The loudness is normalized. A short fade keeps the start and the end from clicking. It is not a whitened LIGO strain, and it is not a sound the merger made in air. GW150914’s sweep, 35 Hz and up, is already in the audible band, which is why 1× is the default.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the constants and the events</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST — speed of light in vacuum</a> and <a href="https://www.bipm.org/en/si-base-units/metre" rel="noopener" target="_blank">BIPM — the metre</a> — c = 299,792,458 m/s exactly.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016) — nominal solar mass parameter 1 (GM)^N_☉ = 1.3271244 × 10²⁰ m³ s⁻². A conversion constant. This page multiplies it by the solar-mass number. The same resolution’s archive copy is the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU 2015 English PDF</a>, which also carries Resolution B2.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is 149,597,870,700 m exactly.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU 2015 Resolution B2</a> — the parsec is exactly (648,000/π) astronomical units. A megaparsec is 10⁶ of those.</li>
+      <li><a href="https://doi.org/10.1103/PhysRevLett.116.061102" rel="noopener" target="_blank">Abbott et al. 2016, Phys. Rev. Lett. 116, 061102</a> — GW150914 discovery. Source-frame masses 36+5−4 and 29+4−4 solar masses. Final mass 62+4−4. Radiated energy 3.0+0.5−0.5 solar masses. Luminosity distance 410+160−180 Mpc, redshift 0.09+0.03−0.04. The signal sweeps from 35 to 250 Hz, with a peak strain of 1.0×10⁻²¹. Over about 0.2 s it rises from 35 to 150 Hz. The chirp-mass equation in the text is the f and f-dot relation this page integrates. Their rough detector-frame estimate from that relation is about 30 solar masses. Open copy: <a href="https://arxiv.org/abs/1602.03837" rel="noopener" target="_blank">arXiv:1602.03837</a>.</li>
+      <li><a href="https://doi.org/10.1103/PhysRevLett.116.241102" rel="noopener" target="_blank">Abbott et al. 2016, Phys. Rev. Lett. 116, 241102</a> — GW150914 properties, Table I, overall column. Source-frame chirp mass 28.0+2.0−1.7. Detector-frame chirp mass 30.4+2.1−1.9. Detector-frame component medians 38.9 and 31.6. Source-frame total mass 65.0. Cited for comparison. The button does not type the detector-frame pair. Open copy: <a href="https://arxiv.org/abs/1602.03840" rel="noopener" target="_blank">arXiv:1602.03840</a>.</li>
+      <li><a href="https://doi.org/10.1103/PhysRevLett.119.161101" rel="noopener" target="_blank">Abbott et al. 2017, Phys. Rev. Lett. 119, 161101</a> — GW170817. Source-frame chirp mass 1.188+0.004−0.002. Detector-frame chirp mass 1.1977+0.0008−0.0003. Low-spin total mass 2.74+0.04−0.01, components in 1.17–1.60. High-spin components in 0.86–2.26. Luminosity distance 40+8−14 Mpc. About 100 s in band, calculated from 24 Hz. Strong tidal effects near 600 Hz. The button is half of 2.74, twice. Open copy: <a href="https://arxiv.org/abs/1710.05832" rel="noopener" target="_blank">arXiv:1710.05832</a>.</li>
+      <li><a href="https://doi.org/10.1103/PhysRevD.93.112004" rel="noopener" target="_blank">Martynov et al. 2016, Phys. Rev. D 93, 112004</a> — Advanced LIGO is designed for gravitational waves from about 10 Hz to 10 kHz. That is the LIGO sentence in the bands paragraph. It is not a Virgo number.</li>
+      <li><a href="https://www.lisamission.org/faq/how-does-lisa-differ-from-ligo-and-other-ground-based-gravitational-wave-interferometers/" rel="noopener" target="_blank">LISA Consortium — how LISA differs from LIGO, Virgo, and KAGRA</a> — ground-based detectors are optimized for the tens to hundreds of hertz. LISA is optimized for millihertz waves.</li>
+      <li><a href="https://arxiv.org/abs/2402.07571" rel="noopener" target="_blank">LISA Definition Study Report, arXiv:2402.07571</a> — LISA will survey the gravitational-wave sky from 0.1 mHz to 1 Hz.</li>
+      <li><a href="https://arxiv.org/abs/gr-qc/0501041" rel="noopener" target="_blank">Flanagan and Hughes 2005, New J. Phys. 7, 204</a> — a review of the quadrupole waveform. This page uses the leading-order face-on amplitude and checks the chirp-mass form against the reduced-mass form. It does not import a higher-order template.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom chirp. c is the SI constant. GM☉ is the IAU 2015 nominal 1.3271244×10²⁰ m³ s⁻². The parsec is IAU 2015 Resolution B2. Event buttons type published central values, or an equal split of a published total, and the formulas do the rest. Leading-order quadrupole. Not a waveform model and not for data analysis. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/black-holes/"><p class="n">The radius</p><h3>Black holes</h3><p>The ISCO on this page is that desk’s 6GM/c², read as a gravitational-wave frequency. Real holes spin.</p></a>
+    <a href="/science/astronomy/light-time/"><p class="n">The delay</p><h3>Light time</h3><p>The same c, used as a clock. 1 AU is 8.317 minutes. Here c turns a mass and a frequency into a chirp.</p></a>
+    <a href="/science/astronomy/time-dilation/"><p class="n">Clocks</p><h3>Time dilation</h3><p>Speed and a weak field, in microseconds per day. The chirp here is a different clock: orbital energy leaving as waves.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. A gravitational-wave chirp measures Mc(1+z). This page leaves that factor off unless you type it in.</p></a>
+    <a href="/science/astronomy/"><p class="n">Map</p><h3>Solar map</h3><p>The neighborhood these formulas are not about. Day and local time, still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="gw-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="gw-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="gw-help-title">Gravitational-wave desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom chirp. Not a template bank.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Events</th><td>GW150914 types 36 and 29 solar masses, 410 Mpc, and 35 Hz. GW170817 types 1.37 and 1.37, half of the published low-spin total 2.74, at 40 Mpc and 24 Hz.</td></tr>
+        <tr><th scope="row">Masses</th><td>Each from 0.5 to 200 solar masses, on a logarithmic slider. The number accepts the same range.</td></tr>
+        <tr><th scope="row">Distance</th><td>0.1 to 10,000 Mpc, logarithmic. Used as the D in the face-on strain.</td></tr>
+        <tr><th scope="row">Start f</th><td>1 to 2,000 Hz, logarithmic. The gravitational-wave frequency where the clock starts. Left and Right on the chart step it.</td></tr>
+        <tr><th scope="row">Play</th><td>A sonification of the trace on the chart. Pitch 1×, 4×, or 8× multiplies the gravitational-wave frequency. Loudness is normalized. Stop ends it. Changing a mass, the distance, or the frequency stops it too.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Chirp mass</th><td>The Newtonian combination of the two masses. The headline.</td></tr>
+        <tr><th scope="row">To coalescence</th><td>The integral from the frequency you set up to the Newtonian blow-up.</td></tr>
+        <tr><th scope="row">ISCO</th><td>The test-particle Schwarzschild gravitational-wave frequency, and the time on the same integral to reach it. If you start above it, the card says so.</td></tr>
+        <tr><th scope="row">Strain</th><td>Face-on amplitude at the start, and at the marker when the start is still below it.</td></tr>
+        <tr><th scope="row">Chart</th><td>Strain against time, then frequency against time. A long chirp shows only its last 4 seconds, where the rise is visible. The card still prints the full time.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/gravitational-waves/gravitational-waves.js"></script>
+<script>
+(function () {
+  "use strict";
+  var G = window.GravWave;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!G) return;
+
+  var canvas = document.getElementById("chirp-canvas");
+  var open = G.presetModel("gw150914");
+  var state = { m1: open.m1, m2: open.m2, distanceMpc: open.distanceMpc, fHz: open.fHz, pitch: 1 };
+  var audio = { ctx: null, source: null };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(id, fieldId, msg) {
+    var err = document.getElementById(id);
+    var field = document.getElementById(fieldId);
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      if (field) field.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (field) field.setAttribute("aria-invalid", "true");
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit(el, cssH) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = el.clientWidth;
+    if (w < 40) w = 320;
+    el.width = Math.round(w * dpr);
+    el.height = Math.round(cssH * dpr);
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: cssH };
+  }
+  function row() {
+    return G.model(state);
+  }
+  function numText(id, text) {
+    var el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = text;
+  }
+  function plainMass(m) {
+    if (Math.abs(m - Math.round(m)) < 1e-6) return String(Math.round(m));
+    return String(Number(m.toFixed(4)));
+  }
+  function plainMpc(d) {
+    if (Math.abs(d - Math.round(d)) < 1e-6) return String(Math.round(d));
+    return String(Number(d.toFixed(3)));
+  }
+  function plainHz(f) {
+    if (Math.abs(f - Math.round(f)) < 1e-6) return String(Math.round(f));
+    return String(Number(f.toFixed(3)));
+  }
+  function press(selector, attr, value) {
+    var buttons = document.querySelectorAll(selector);
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute(attr) === value ? "true" : "false");
+    }
+  }
+  function slider(id, value, text) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var shown = String(Math.round(value));
+    if (document.activeElement !== el) el.value = shown;
+    el.setAttribute("aria-valuenow", shown);
+    el.setAttribute("aria-valuetext", text);
+  }
+  function massHead(text) {
+    var cut = text.lastIndexOf(" ");
+    setText("g-value", cut < 0 ? text : text.slice(0, cut));
+  }
+
+  function draw(ctx, w, h, series, c) {
+    ctx.clearRect(0, 0, w, h);
+    if (!series || !(series.t1 > series.t0)) return;
+    var top = 18;
+    var padL = 8;
+    var padR = 10;
+    var freqH = Math.max(78, Math.round(h * 0.32));
+    var waveBottom = h - freqH - 26;
+    var mid = (top + waveBottom) / 2;
+    var span = series.t1 - series.t0;
+    var maxA = 0;
+    var i;
+    for (i = 0; i < series.amp.length; i++) if (series.amp[i] > maxA) maxA = series.amp[i];
+    if (!(maxA > 0)) maxA = 1;
+    function xOf(t) {
+      return padL + ((t - series.t0) / span) * (w - padL - padR);
+    }
+    function yWave(v) {
+      return mid - (v / maxA) * (mid - top - 6);
+    }
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, mid);
+    ctx.lineTo(w - padR, mid);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = c.ink;
+    ctx.lineWidth = 1;
+    for (i = 0; i < series.t.length; i++) {
+      var x = xOf(series.t[i]);
+      var y = yWave(series.h[i]);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = c.accent;
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.25;
+    for (i = 0; i < series.t.length; i++) {
+      var xe = xOf(series.t[i]);
+      var ye = yWave(series.amp[i]);
+      if (i === 0) ctx.moveTo(xe, ye);
+      else ctx.lineTo(xe, ye);
+    }
+    ctx.stroke();
+    ctx.beginPath();
+    for (i = 0; i < series.t.length; i++) {
+      var xl = xOf(series.t[i]);
+      var yl = mid + (mid - yWave(series.amp[i]));
+      if (i === 0) ctx.moveTo(xl, yl);
+      else ctx.lineTo(xl, yl);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    var fy0 = waveBottom + 22;
+    var fy1 = h - 16;
+    var fmin = series.f[0];
+    var fmax = series.f[series.f.length - 1];
+    if (series.fIsco > fmax) fmax = series.fIsco;
+    if (!(fmax > fmin)) fmax = fmin + 1;
+    function yF(f) {
+      return fy1 - ((f - fmin) / (fmax - fmin)) * (fy1 - fy0);
+    }
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padL, fy1);
+    ctx.lineTo(w - padR, fy1);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.5;
+    for (i = 0; i < series.t.length; i++) {
+      var xf = xOf(series.t[i]);
+      var yf = yF(series.f[i]);
+      if (i === 0) ctx.moveTo(xf, yf);
+      else ctx.lineTo(xf, yf);
+    }
+    ctx.stroke();
+
+    if (series.tIsco != null && series.tIsco >= series.t0 && series.tIsco <= series.t1) {
+      var xm = xOf(series.tIsco);
+      ctx.strokeStyle = c.soft;
+      ctx.setLineDash([3, 4]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(xm, top);
+      ctx.lineTo(xm, h - 8);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = c.muted;
+      ctx.font = font(10);
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      if (xm < w - 36) ctx.fillText("ISCO", xm + 4, top);
+    }
+    ctx.fillStyle = c.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("STRAIN", padL, 2);
+    ctx.fillText("FREQUENCY", padL, waveBottom + 6);
+  }
+
+  function visibleSeries(model) {
+    var probe = G.series(model, 80);
+    if (!probe) return null;
+    var n = 720;
+    if (probe.cycles > 12) n = Math.min(3600, Math.ceil(probe.cycles * 24));
+    return G.series(model, n);
+  }
+
+  function stopAudio() {
+    if (audio.source) {
+      try { audio.source.onended = null; audio.source.stop(); } catch (e) {}
+      audio.source = null;
+    }
+    var btn = document.getElementById("btn-play");
+    if (btn) {
+      btn.setAttribute("aria-pressed", "false");
+      btn.textContent = "Play sonification";
+    }
+  }
+
+  function playAudio(model) {
+    stopAudio();
+    showErr("audio-err", "btn-play", "");
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) {
+      showErr("audio-err", "btn-play", "This browser did not start the audio. The plot still shows the chirp.");
+      return;
+    }
+    try {
+      if (!audio.ctx) audio.ctx = new AC();
+    } catch (err) {
+      showErr("audio-err", "btn-play", "This browser did not start the audio. The plot still shows the chirp.");
+      return;
+    }
+    var tone = G.buildTone(model, { sampleRate: audio.ctx.sampleRate, pitch: state.pitch });
+    if (!tone) {
+      showErr("audio-err", "btn-play", "This browser did not start the audio. The plot still shows the chirp.");
+      return;
+    }
+    try {
+      var buffer = audio.ctx.createBuffer(1, tone.samples.length, audio.ctx.sampleRate);
+      buffer.getChannelData(0).set(tone.samples);
+      var src = audio.ctx.createBufferSource();
+      src.buffer = buffer;
+      src.connect(audio.ctx.destination);
+      src.onended = function () { stopAudio(); };
+      audio.source = src;
+    } catch (err2) {
+      showErr("audio-err", "btn-play", "This browser did not start the audio. The plot still shows the chirp.");
+      return;
+    }
+    var btn = document.getElementById("btn-play");
+    if (btn) {
+      btn.setAttribute("aria-pressed", "true");
+      btn.textContent = "Stop";
+    }
+    var started = audio.ctx.resume();
+    function begin() {
+      try { src.start(); } catch (e) { stopAudio(); }
+    }
+    if (started && typeof started.then === "function") {
+      started.then(begin, function () { stopAudio(); });
+    } else {
+      begin();
+    }
+  }
+
+  function render() {
+    var model = row();
+    if (!model) return;
+    var preset = G.matchedPreset(model);
+    press("#event-presets button", "data-event", preset);
+    press("#pitch-presets button[data-pitch]", "data-pitch", String(state.pitch));
+    var tier = preset === "gw150914"
+      ? "GW150914 · source-frame central values"
+      : (preset === "gw170817" ? "GW170817 · equal split of 2.74" : "Custom · leading order");
+    setText("g-tier", tier);
+    massHead(G.formatMass(model.chirp));
+    setText("g-range", G.formatDuration(model.tau) + " to coalescence · " + G.formatHz(model.fHz));
+    setText("g-masses", G.formatComponent(model.m1) + " and " + G.formatComponent(model.m2) + " M☉");
+    setText("g-total", G.formatMass(model.total));
+    setText("g-chirp", G.formatMass(model.chirp));
+    setText("g-tau", G.formatDuration(model.tau));
+    setText("g-tisco", model.tIsco == null ? "Already past" : G.formatDuration(model.tIsco));
+    setText("g-fisco", G.formatHz(model.fIsco));
+    setText("g-h", G.formatStrain(model.strain));
+    setText("g-hisco", model.strainIsco == null ? "—" : G.formatStrain(model.strainIsco));
+    setText("g-why", G.explain(model));
+    numText("m1-num", plainMass(model.m1));
+    numText("m2-num", plainMass(model.m2));
+    numText("d-num", plainMpc(model.distanceMpc));
+    numText("f-num", plainHz(model.fHz));
+    slider("m1-slider", G.unitFromMass(model.m1), G.formatMass(model.m1));
+    slider("m2-slider", G.unitFromMass(model.m2), G.formatMass(model.m2));
+    slider("d-slider", G.unitFromDistance(model.distanceMpc), G.formatMpc(model.distanceMpc));
+    slider("f-slider", G.unitFromFrequency(model.fHz), G.formatHz(model.fHz));
+    var marks = document.querySelectorAll("#preset-body tr");
+    var mi;
+    for (mi = 0; mi < marks.length; mi++) {
+      marks[mi].className = marks[mi].getAttribute("data-event") === preset ? "is-on" : "";
+    }
+    var series = visibleSeries(model);
+    var note = "Sonification. The tone’s frequency is the gravitational-wave frequency times " + state.pitch + ". Loudness is normalized. It is not the physical strain, and it is not a LIGO recording.";
+    if (series && series.trimmed) {
+      note = "The trace and the tone are the last 4 s, up to " + G.formatHz(series.f[series.f.length - 1]) + ". The card still prints the full time to coalescence. " + note;
+    } else if (series) {
+      note = "The trace runs from " + G.formatHz(series.f[0]) + " to " + G.formatHz(series.f[series.f.length - 1]) + ". " + note;
+    }
+    setText("chirp-scale", note);
+    if (canvas && series) {
+      var box = fit(canvas, 300);
+      draw(box.ctx, box.w, box.h, series, colors());
+      canvas.setAttribute("aria-label", G.formatMass(model.chirp) + " chirp mass. " + G.formatDuration(model.tau) + " to coalescence from " + G.formatHz(model.fHz) + ". ISCO marker " + G.formatHz(model.fIsco) + ". Face-on strain " + G.formatStrain(model.strain) + ".");
+    }
+  }
+
+  function commit(next, errId, fieldId, msg) {
+    var trial = G.model(next);
+    if (!trial) {
+      showErr(errId, fieldId, msg);
+      return;
+    }
+    showErr(errId, fieldId, "");
+    stopAudio();
+    state.m1 = trial.m1;
+    state.m2 = trial.m2;
+    state.distanceMpc = trial.distanceMpc;
+    state.fHz = trial.fHz;
+    render();
+  }
+
+  var events = document.querySelectorAll("#event-presets button");
+  var ei;
+  for (ei = 0; ei < events.length; ei++) {
+    events[ei].addEventListener("click", function (ev) {
+      var model = G.presetModel(ev.currentTarget.getAttribute("data-event"));
+      if (!model) return;
+      showErr("m1-err", "m1-num", "");
+      showErr("m2-err", "m2-num", "");
+      showErr("d-err", "d-num", "");
+      showErr("f-err", "f-num", "");
+      stopAudio();
+      state.m1 = model.m1;
+      state.m2 = model.m2;
+      state.distanceMpc = model.distanceMpc;
+      state.fHz = model.fHz;
+      render();
+    });
+  }
+  var pitches = document.querySelectorAll("#pitch-presets button[data-pitch]");
+  var pi;
+  for (pi = 0; pi < pitches.length; pi++) {
+    pitches[pi].addEventListener("click", function (ev) {
+      var was = audio.source;
+      state.pitch = Number(ev.currentTarget.getAttribute("data-pitch"));
+      render();
+      if (was) playAudio(row());
+    });
+  }
+  var playBtn = document.getElementById("btn-play");
+  if (playBtn) playBtn.addEventListener("click", function () {
+    if (audio.source) stopAudio();
+    else playAudio(row());
+  });
+
+  function bindSlider(id, key, read, errId, fieldId, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", function () {
+      var next = { m1: state.m1, m2: state.m2, distanceMpc: state.distanceMpc, fHz: state.fHz };
+      next[key] = read(Number(el.value));
+      commit(next, errId, fieldId, msg);
+    });
+  }
+  bindSlider("m1-slider", "m1", G.massFromUnit, "m1-err", "m1-num", "Each mass from 0.5 to 200 solar masses.");
+  bindSlider("m2-slider", "m2", G.massFromUnit, "m2-err", "m2-num", "Each mass from 0.5 to 200 solar masses.");
+  bindSlider("d-slider", "distanceMpc", G.distanceFromUnit, "d-err", "d-num", "Distance from 0.1 to 10,000 Mpc.");
+  bindSlider("f-slider", "fHz", G.frequencyFromUnit, "f-err", "f-num", "Frequency from 1 to 2,000 Hz.");
+
+  function onNum(id, errId, key, msg) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("change", function () {
+      var n = parseNum(el.value);
+      if (!isFinite(n)) {
+        showErr(errId, id, msg);
+        return;
+      }
+      var next = { m1: state.m1, m2: state.m2, distanceMpc: state.distanceMpc, fHz: state.fHz };
+      next[key] = n;
+      commit(next, errId, id, msg);
+    });
+  }
+  onNum("m1-num", "m1-err", "m1", "Each mass from 0.5 to 200 solar masses.");
+  onNum("m2-num", "m2-err", "m2", "Each mass from 0.5 to 200 solar masses.");
+  onNum("d-num", "d-err", "distanceMpc", "Distance from 0.1 to 10,000 Mpc.");
+  onNum("f-num", "f-err", "fHz", "Frequency from 1 to 2,000 Hz.");
+
+  if (canvas) {
+    canvas.addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var step = G.unitFromFrequency(state.fHz) + (ev.key === "ArrowRight" ? 12 : -12);
+      var next = { m1: state.m1, m2: state.m2, distanceMpc: state.distanceMpc, fHz: G.frequencyFromUnit(step) };
+      commit(next, "f-err", "f-num", "Frequency from 1 to 2,000 Hz.");
+    });
+  }
+
+  var helpBtn = document.getElementById("gw-help");
+  var helpDialog = document.getElementById("gw-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("pagehide", stopAudio);
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
