@@ -1,0 +1,931 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pulsars — spin-down and the magnetic dipole — Steven Philley</title>
+<meta name="description" content="Pulsar spin-down desk. Enter a period and a period derivative. Dipole braking, n = 3, gives a characteristic age P/(2 Ṗ), a surface field 3.2×10^19 √(P Ṗ) gauss, a spin-down luminosity 4π² I Ṗ / P³, and a light-cylinder radius c P / (2π). Crab, Vela, J0437−4715, and B1919+21 use ATNF catalogue v2.9.0. The Crab’s characteristic age is 1,257 yr. The supernova of 1054 is 972 years before 2026. Not a timing model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/pulsars/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Pulsars — spin-down and the magnetic dipole">
+<meta property="og:description" content="Period and period derivative, read with the dipole formulas. The Crab’s catalogue age is 1,257 yr. The supernova of 1054 is 972 years before 2026. Not a timing model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/pulsars/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pulsars — spin-down and the magnetic dipole">
+<meta name="twitter:description" content="P and Ṗ from the ATNF catalogue. Characteristic age, dipole field, spin-down luminosity, and the light cylinder. The Crab’s 1,257 yr is not 972.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.field{border-top-color:var(--accent,#c8b48a)}
+.swatch.death{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.now{width:10px;height:10px;border:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.swatch.cited{width:10px;height:10px;border:1.5px solid var(--ink-soft,#9b9a96);border-radius:50%;background:transparent}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:18ch;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail h2 .unit{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:.42em;letter-spacing:0;font-weight:400}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:860px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on td,.sheet tr.is-on th{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/" aria-current="page">Pulsars</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Pulsars</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The spin</p>
+  <h1>Pulsars<br>and the spin-down</h1>
+  <p class="lede">A radio pulsar is a neutron star whose beam sweeps past Earth. Two measured numbers carry the dipole story: the spin period <strong>P</strong> and how fast that period is growing, <strong>Ṗ</strong>. For magnetic-dipole braking the index is <strong>n = 3</strong>, so the characteristic age is <strong>τ = P / (2 Ṗ)</strong>. The surface dipole field in the catalogue convention is <strong>B = 3.2×10¹⁹ √(P Ṗ)</strong> gauss, with a moment of inertia <strong>I = 10⁴⁵ g cm²</strong> (10³⁸ kg m²) and a radius of <strong>10 km</strong>. The spin-down luminosity is <strong>Ė = 4π² I Ṗ / P³</strong>. The light cylinder, where a co-rotating field would move at the speed of light, is <strong>R<sub>lc</sub> = c P / (2π)</strong>. <strong>c = 299,792,458 m/s</strong> exactly. The four buttons are <strong>P0</strong> and <strong>P1</strong> printed by the <a href="https://www.atnf.csiro.au/research/pulsar/psrcat/" rel="noopener" target="_blank">ATNF Pulsar Catalogue</a> version 2.9.0 (<a href="https://doi.org/10.1086/428488" rel="noopener" target="_blank">Manchester, Hobbs, Teoh, and Hobbs 2005</a>). The Crab’s catalogue age is <strong>1,257 yr</strong>. The supernova of 1054 is <strong>972 years</strong> before 2026. A heavy star’s path to a neutron star is the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk. A horizon, if the remnant is heavier, is the <a href="/science/astronomy/black-holes/">black holes</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Idealized magnetic dipole. Braking index fixed at 3. Moment of inertia fixed at 10⁴⁵ g cm². Radius fixed at 10 km. True ages and true fields differ. The Crab’s true age is the supernova of 1054, 972 years by a count of calendar years to 2026, not the characteristic age. Catalogue periods are at the printed epoch, not a live ephemeris. Not a timing model.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Period and derivative</span>
+    <button type="button" class="help-q" id="ps-help" aria-haspopup="dialog" aria-controls="ps-help-dialog" aria-expanded="false" aria-label="How this pulsar desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="pulsar-hint">Log period across · log period derivative up · short and fast-slowing is the upper left</p>
+      <canvas id="p-canvas" tabindex="0" role="img" aria-label="P–Pdot diagram. The Crab is plotted. Characteristic age about 1,257 years. Left and right change the period. Up and down change the derivative."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch now" aria-hidden="true"></span> This point</li>
+        <li><span class="swatch cited" aria-hidden="true"></span> Cited preset</li>
+        <li><span class="swatch" aria-hidden="true"></span> Constant age</li>
+        <li><span class="swatch field" aria-hidden="true"></span> Constant B</li>
+        <li><span class="swatch death" aria-hidden="true"></span> 10¹² V sketch</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Catalogue presets · P0 and P1, ATNF v2.9.0</p>
+        <div class="presets" id="pulsar-presets" role="group" aria-label="Pulsar presets">
+          <button type="button" data-preset="crab" aria-pressed="true">Crab</button>
+          <button type="button" data-preset="vela" aria-pressed="false">Vela</button>
+          <button type="button" data-preset="j0437" aria-pressed="false">J0437−4715</button>
+          <button type="button" data-preset="b1919" aria-pressed="false">B1919+21</button>
+        </div>
+        <p class="pick-label">Period</p>
+        <div class="presets" id="unit-presets" role="group" aria-label="Period unit">
+          <button type="button" data-unit="ms" aria-pressed="true">Milliseconds</button>
+          <button type="button" data-unit="s" aria-pressed="false">Seconds</button>
+        </div>
+        <div class="slider-row">
+          <label for="p-slider">Period</label>
+          <input type="range" id="p-slider" min="0" max="1000" step="1" value="354" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="354" aria-valuetext="33.3924123 ms">
+          <input type="text" class="num" id="p-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="33.3924123" aria-label="Spin period" aria-describedby="p-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="p-err" hidden>Period from 1 ms to 20 s.</p>
+        <p class="pick-label">Period derivative · logarithmic · dimensionless</p>
+        <div class="slider-row">
+          <label for="pd-slider">Pdot</label>
+          <input type="range" id="pd-slider" min="0" max="1000" step="1" value="740" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="740" aria-valuetext="4.20972×10⁻¹³">
+          <input type="text" class="num" id="pd-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="4.20972e-13" aria-label="Period derivative, dimensionless" aria-describedby="pd-err" aria-invalid="false">
+        </div>
+        <p class="field-error" id="pd-err" hidden>Period derivative from 10⁻²² to 10⁻⁹.</p>
+      </div>
+      <p class="scale-note" id="p-scale">Opens on the Crab, B0531+21, catalogue epoch MJD 48442.5. Lines of constant age slope up to the right. Lines of constant dipole field slope down. The dashed line is a 10¹² V polar-cap sketch, not a fitted death line. Only the four cited pulsars are marked.</p>
+    </div>
+    <aside class="detail" id="pulsar-detail" aria-live="polite">
+      <p class="tier" id="s-tier">Crab · B0531+21 · MJD 48442.5</p>
+      <h2 id="s-name"><span id="s-value">1,257</span> <span class="unit" id="s-unit">yr</span></h2>
+      <p class="range" id="s-range">Characteristic age · dipole n = 3</p>
+      <ul class="stats">
+        <li><span class="k">Period</span><span class="v" id="s-period">33.3924123 ms</span></li>
+        <li><span class="k">Pdot</span><span class="v" id="s-pdot">4.20972×10⁻¹³</span></li>
+        <li><span class="k">Characteristic age</span><span class="v" id="s-age">1,257 yr</span></li>
+        <li><span class="k">True age</span><span class="v" id="s-true">972 yr, from 1054</span></li>
+        <li><span class="k">Dipole field</span><span class="v" id="s-b">3.794×10¹² G</span></li>
+        <li><span class="k">Spin-down power</span><span class="v" id="s-edot">4.463×10³¹ W</span></li>
+        <li><span class="k">erg/s</span><span class="v" id="s-erg">4.463×10³⁸ erg/s</span></li>
+        <li><span class="k">Light cylinder</span><span class="v" id="s-rlc">1,593.3 km</span></li>
+        <li><span class="k">Spin</span><span class="v" id="s-hz">29.947 Hz</span></li>
+      </ul>
+      <p class="why" id="s-why">Period 33.3924123 ms (0.0333924123 s). Period derivative 4.20972×10⁻¹³, dimensionless. B0531+21 (J0534+2200) at catalogue epoch MJD 48442.5, the P0 and P1 printed by ATNF v2.9.0 from Lyne et al. 2015. Characteristic age is P / (2 Ṗ), which is 1,257 yr. The supernova of 1054 is 972 years before 2026, a count of calendar years, not a day inside 1054. The characteristic age is longer. The formula assumes the star was born spinning much faster than it spins now, and that the braking index stays at 3. Lyne et al. 2015 is 45 years of the Crab’s rotation. This number is not that history. Surface dipole field is 3.2×10¹⁹ times the square root of P Ṗ, which is 3.794×10¹² G. The 3.2 has two figures, so the field is about that order. Moment of inertia is 10⁴⁵ g cm² and the radius in the convention is 10 km. Spin-down luminosity is 4π² I Ṗ / P³, which is 4.463×10³¹ W (4.463×10³⁸ erg/s). Light-cylinder radius is c P / (2π), which is 1,593.3 km. Spin frequency, 1/P, is 29.947 Hz. Idealized dipole. Not a timing model.</p>
+    </aside>
+  </div>
+  <div class="sheet">
+    <table>
+      <caption>ATNF v2.9.0 presets · dipole formulas on the printed P0 and P1</caption>
+      <thead>
+        <tr>
+          <th scope="col">Pulsar</th>
+          <th scope="col">P</th>
+          <th scope="col">Ṗ</th>
+          <th scope="col">Epoch</th>
+          <th scope="col">τ</th>
+          <th scope="col">B</th>
+          <th scope="col">Ė</th>
+          <th scope="col">R<sub>lc</sub></th>
+        </tr>
+      </thead>
+      <tbody id="preset-body">
+        <tr data-preset="crab" class="is-on"><th scope="row">Crab B0531+21</th><td>33.3924123 ms</td><td>4.20972×10⁻¹³</td><td>MJD 48442.5</td><td>1,257 yr</td><td>3.794×10¹² G</td><td>4.463×10³¹ W</td><td>1,593.3 km</td></tr>
+        <tr data-preset="vela"><th scope="row">Vela B0833−45</th><td>89.328385024 ms</td><td>1.25008×10⁻¹³</td><td>MJD 51559.319</td><td>11.32 kyr</td><td>3.382×10¹² G</td><td>6.924×10²⁹ W</td><td>4,262.2 km</td></tr>
+        <tr data-preset="j0437"><th scope="row">J0437−4715</th><td>5.757451941593412 ms</td><td>5.729220×10⁻²⁰</td><td>MJD 55486</td><td>1.592 Gyr</td><td>5.812×10⁸ G</td><td>1.185×10²⁷ W</td><td>274.71 km</td></tr>
+        <tr data-preset="b1919"><th scope="row">B1919+21</th><td>1.3373021601895 s</td><td>1.348207×10⁻¹⁵</td><td>MJD 48999.0</td><td>15.72 Myr</td><td>1.359×10¹² G</td><td>2.226×10²⁴ W</td><td>63,807 km</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <noscript>
+    <p class="note-schematic">The buttons need JavaScript. The arithmetic is still τ = P / (2 Ṗ), B = 3.2×10¹⁹ √(P Ṗ) gauss, Ė = 4π² I Ṗ / P³ with I = 10³⁸ kg m², and R<sub>lc</sub> = c P / (2π). Crab P0 = 0.0333924123 s and P1 = 4.20972×10⁻¹³ give 1,257 yr, 3.794×10¹² G, and 4.463×10³¹ W. The supernova of 1054 is 972 years before 2026. Vela gives 11.32 kyr. J0437−4715 gives 1.592 Gyr. B1919+21 gives 15.72 Myr. Not a timing model.</p>
+  </noscript>
+
+  <aside class="myth" aria-label="Characteristic age is not the supernova">
+    <p class="tag">A clock, not a birthday</p>
+    <h2>The Crab is 972, and the formula says 1,257.</h2>
+    <p>The guest star of 1054 is the supernova associated with the Crab Nebula. Counting calendar years from 1054 to 2026 gives 972. The catalogue period and derivative, at MJD 48442.5, give a characteristic age of 1,257 yr. The formula divides P by 2 Ṗ. That is the age only if the star was born spinning much faster than it spins now and the braking index stayed at 3 the whole time. Neither is promised. The gap is the lesson. Other pulsars on this page do not have a supernova date sitting next to the formula.</p>
+  </aside>
+
+  <p class="band">What the numbers are</p>
+  <div class="means">
+    <p id="why-spin"><strong>Two numbers, and the beam.</strong> A pulsar is a neutron star, seen when the beam swings past Earth. The catalogue period is the time for one turn. The period derivative is how much that time grows each second. It is tiny, and it is dimensionless. The Crab’s catalogue period is 33.3924123 ms and its derivative is 4.20972×10⁻¹³. J0437−4715 turns in 5.757451941593412 ms. B1919+21 takes 1.3373021601895 s.</p>
+    <p id="why-age"><strong>The age is an assumption.</strong> Characteristic age is the period divided by twice the derivative. Braking index 3 is the dipole. The Crab’s catalogue numbers give 1,257 yr. The guest star of 1054, the supernova tied to the Crab Nebula, is 972 years before 2026. The characteristic age is longer because the star was not born at a standstill, and because the braking index does not have to stay at 3. Vela’s catalogue age is 11.32 kyr. B1919+21’s is 15.72 Myr. J0437−4715’s is 1.592 Gyr, a recycling age, not the age of the star.</p>
+    <p id="why-field"><strong>Field, power, and the light cylinder.</strong> The surface dipole field on this page is 3.2×10¹⁹ √(P Ṗ) gauss. That is the ATNF BSURF convention, with I = 10⁴⁵ g cm² and R = 10 km. The Crab computes 3.794×10¹² G, order 10¹² G. J0437−4715 computes 5.812×10⁸ G. The polar field in Harding’s equation (5) is twice this, 6.4×10¹⁹ √(P Ṗ), because a dipole is stronger at the pole. Spin-down luminosity is 4π² I Ṗ / P³. The Crab’s is 4.463×10³¹ W, which is 4.463×10³⁸ erg/s. The ATNF EDOT column prints that power in erg/s, rounded. The light cylinder is c P / (2π). Inside it, a co-rotating field would still be slower than light. The Crab’s is 1,593.3 km.</p>
+  </div>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Period</dt><dd>P, the barycentric spin period, in seconds. The millisecond buttons are the same number times 1,000. One turn of the Crab’s catalogue period is 33.3924123 ms, which is 29.947 Hz.</dd></div>
+    <div class="gloss"><dt>Period derivative</dt><dd>Ṗ, how many seconds the period grows in one second. Dimensionless. The slider is logarithmic, from 10⁻²² to 10⁻⁹. A negative derivative, a glitch, or a measured Shklovskii term is outside this page.</dd></div>
+    <div class="gloss"><dt>Characteristic age</dt><dd>τ = P / (2 Ṗ). The 2 is the dipole, braking index n = 3, because τ = P / ((n − 1) Ṗ). It counts from a birth spin much faster than today’s. A year here is 365.25 × 86,400 seconds.</dd></div>
+    <div class="gloss"><dt>Dipole field</dt><dd>B = 3.2×10¹⁹ √(P Ṗ) gauss. Canonical I = 10⁴⁵ g cm² and R = 10 km. The 3.2 has two figures. This is the ATNF BSURF column, the equatorial convention. Harding’s polar field is twice it.</dd></div>
+    <div class="gloss"><dt>Spin-down luminosity</dt><dd>Ė = 4π² I Ṗ / P³. With I = 10³⁸ kg m² the result is watts. Multiply by 10⁷ for erg/s, which is how the catalogue prints EDOT, rounded. It is the rotational power, not a measured flux at Earth.</dd></div>
+    <div class="gloss gloss-wide"><dt>Light cylinder and the diagram</dt><dd>R<sub>lc</sub> = c P / (2π), with c = 299,792,458 m/s. On the log-log diagram, constant age is a line of slope +1 and constant B is a line of slope −1. Millisecond pulsars sit at short P and tiny Ṗ. The dashed line is Harding’s equation (1) at a polar-cap potential of 10¹² V, the round value Xia Zhou holds fixed in IAU Symposium 337. Chen and Ruderman call the real radio boundary a death valley, not this one line. The shaded side is that sketch. No other pulsars are plotted.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the periods and the formulas</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1086/428488" rel="noopener" target="_blank">Manchester, Hobbs, Teoh, and Hobbs 2005, AJ 129, 1993</a> — the ATNF Pulsar Catalogue. This page uses version 2.9.0, queried for P0 and P1. The catalogue stores F0 and F1 and prints P0 = 1/F0 and P1 = −F1/F0². The web catalogue is <a href="https://www.atnf.csiro.au/research/pulsar/psrcat/" rel="noopener" target="_blank">atnf.csiro.au/research/pulsar/psrcat</a>. If you use the catalogue, cite that paper and the web address, and the original timing papers where you can.</li>
+      <li><a href="https://doi.org/10.1093/mnras/stu2118" rel="noopener" target="_blank">Lyne, Jordan, Graham-Smith, Espinoza, Stappers, and Weltevrede 2015, MNRAS 446, 857</a> — “45 years of rotation of the Crab pulsar.” ATNF v2.9.0 attributes the Crab’s F0 and F1 to this paper, at epoch MJD 48442.5. Printed P0 = 0.0333924123 s, P1 = 4.20972×10⁻¹³. The catalogue’s rounded AGE, BSURF, and EDOT are 1.26×10³ yr, 3.79×10¹² G, and 4.5×10³⁸ erg/s. This page recomputes them.</li>
+      <li><a href="https://doi.org/10.1086/339068" rel="noopener" target="_blank">Dodson, McCulloch, and Lewis 2002, ApJL 564, L85</a> — the January 2000 Vela glitch. ATNF v2.9.0 attributes Vela’s F0 and F1 to this paper, at epoch MJD 51559.319, the glitch date in the paper (MJD 51559). Printed P0 = 0.089328385024 s, P1 = 1.25008×10⁻¹³.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ad614a" rel="noopener" target="_blank">Reardon and collaborators 2024, ApJL 971, L18</a> — precision timing of PSR J0437−4715. ATNF v2.9.0 attributes F0 and F1 to this paper, at epoch MJD 55486. Printed P0 = 0.005757451941593412 s, P1 = 5.729220×10⁻²⁰. Discovery of the pulsar: <a href="https://doi.org/10.1038/361613a0" rel="noopener" target="_blank">Johnston and collaborators 1993, Nature 361, 613</a>.</li>
+      <li><a href="https://doi.org/10.1111/j.1365-2966.2004.08157.x" rel="noopener" target="_blank">Hobbs, Lyne, Kramer, Martin, and Jordan 2004, MNRAS 353, 1311</a> — long-term timing of 374 pulsars. ATNF v2.9.0 attributes B1919+21’s F0 and F1 to this paper, at epoch MJD 48999.0. Printed P0 = 1.3373021601895 s, P1 = 1.348207×10⁻¹⁵. Discovery: <a href="https://doi.org/10.1038/217709a0" rel="noopener" target="_blank">Hewish, Bell, Pilkington, Scott, and Collins 1968, Nature 217, 709</a>.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1942PASP...54...91D" rel="noopener" target="_blank">Duyvendak 1942, PASP 54, 91</a> — further data bearing on the identification of the Crab Nebula with the supernova of 1054. This page counts 2026 − 1054 = 972 calendar years. It does not pick a day inside 1054. The pulsar discovery near the nebula: <a href="https://doi.org/10.1126/science.162.3861.1481" rel="noopener" target="_blank">Staelin and Reifenstein 1968, Science 162, 1481</a>. Vela’s supernova association: <a href="https://doi.org/10.1038/220340a0" rel="noopener" target="_blank">Large, Vaughan, and Mills 1968, Nature 220, 340</a>.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST — speed of light in vacuum</a> — c = 299,792,458 m/s exactly. The light cylinder divides the period by 2π and multiplies by that c.</li>
+      <li><a href="https://arxiv.org/abs/astro-ph/0209160" rel="noopener" target="_blank">Harding, astro-ph/0209160, “Radio Pulsar Death”</a> — equation (1), Φ = 6.6×10¹² V × B<sub>p,12</sub> × P⁻² × R₆³. Equation (5), B<sub>p</sub> = 6.4×10¹⁹ √(P Ṗ) G for I = 10⁴⁵ g cm² and R = 10 km. Harding writes that a constant-Φ line is the conventional sketch and that a real death line is not that one line. The polar field is twice this page’s 3.2×10¹⁹ dipole field.</li>
+      <li><a href="https://doi.org/10.1017/S1743921317009772" rel="noopener" target="_blank">Xia Zhou 2018, IAU Symposium 337</a> — sets the accelerator drop ΔV = 10¹² V so the death line’s move with the equation of state can be discussed on its own. The underlying paper is <a href="https://doi.org/10.1093/mnras/stx2114" rel="noopener" target="_blank">Zhou, Tong, Zhu, and Wang 2017, MNRAS 472, 2403</a>. This page draws that 10¹² V line with Harding’s coefficient. It is a sketch.</li>
+      <li><a href="https://doi.org/10.1086/172129" rel="noopener" target="_blank">Chen and Ruderman 1993, ApJ 402, 264</a> — “Pulsar death lines and death valley.” Turnoff is a valley in the field–period plane, not one line. The potential they build on is <a href="https://ui.adsabs.harvard.edu/abs/1975ApJ...196...51R" rel="noopener" target="_blank">Ruderman and Sutherland 1975, ApJ 196, 51</a>.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom dipole. P and Ṗ for the four buttons are ATNF Pulsar Catalogue v2.9.0, not invented and not a later ephemeris. τ = P/(2 Ṗ). B = 3.2×10¹⁹ √(P Ṗ) G. Ė = 4π² I Ṗ / P³. R<sub>lc</sub> = c P / (2π). The Crab’s characteristic age is 1,257 yr. The supernova of 1054 is 972 years before 2026. The dashed line is a 10¹² V sketch. Not a timing model. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/stellar-lifetime/"><p class="n">The path</p><h3>Stellar lifetime</h3><p>Mass, a mass–luminosity fit, and t ≈ 10 Gyr × M/L. A neutron star is one rough end for a heavy star. The spin clock is this page.</p></a>
+    <a href="/science/astronomy/black-holes/"><p class="n">The horizon</p><h3>Black holes</h3><p>Schwarzschild radius, photon sphere, and ISCO. The nominal solar mass is 2.953 km. A heavier remnant does not pulse.</p></a>
+    <a href="/science/astronomy/gravitational-waves/"><p class="n">The chirp</p><h3>Gravitational waves</h3><p>A compact binary’s leading-order sweep. 36 and 29 solar masses compute a chirp mass of 28.10. Not a waveform model.</p></a>
+    <a href="/science/astronomy/hr/"><p class="n">Diagram</p><h3>HR diagram</h3><p>Another log-log picture. Temperature across, luminosity up. This page’s axes are period and its derivative.</p></a>
+    <a href="/science/astronomy/"><p class="n">Map</p><h3>Solar map</h3><p>The neighborhood. Neutron stars are not on that orrery. The formulas are here.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="ps-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="ps-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="ps-help-title">Pulsar desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom dipole. Not a timing model. Periods are the catalogue’s, at the printed epoch.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Presets</th><td>Crab B0531+21, Vela B0833−45, PSR J0437−4715, and B1919+21. Each sets the ATNF v2.9.0 P0 and P1. Nothing else is plotted as a pulsar.</td></tr>
+        <tr><th scope="row">Period</th><td>1 ms to 20 s. The unit buttons switch the number between milliseconds and seconds. The slider is logarithmic in seconds.</td></tr>
+        <tr><th scope="row">Period derivative</th><td>10⁻²² to 10⁻⁹, logarithmic. Dimensionless. Scientific notation is accepted, for example 4.20972e-13.</td></tr>
+        <tr><th scope="row">Diagram keys</th><td>With the plot focused, Left and Right step the period by a fortieth of a decade. Up and Down step the derivative the same way. Shift steps by a tenth of a decade.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Characteristic age</th><td>P / (2 Ṗ). A year is 365.25 × 86,400 seconds. The headline is this age.</td></tr>
+        <tr><th scope="row">True age</th><td>Only the Crab has one here: 2026 − 1054 = 972. Other rows say the formula is not a birthday.</td></tr>
+        <tr><th scope="row">Dipole field</th><td>3.2×10¹⁹ √(P Ṗ) gauss. Two figures in the 3.2. I = 10⁴⁵ g cm². R = 10 km.</td></tr>
+        <tr><th scope="row">Spin-down power</th><td>4π² I Ṗ / P³ in watts, and the same power in erg/s. The catalogue rounds the erg/s figure.</td></tr>
+        <tr><th scope="row">Light cylinder</th><td>c P / (2π), with c = 299,792,458 m/s.</td></tr>
+        <tr><th scope="row">Diagram</th><td>Log P across, log Ṗ up. Age lines, field lines, and one dashed 10¹² V sketch. Millisecond pulsars are labeled at short period and small derivative. The shaded side of the sketch is an approximate death valley, not a catalogue.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/pulsars/pulsars.js"></script>
+<script>
+(function () {
+  "use strict";
+  var P = window.Pulsars;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!P) return;
+
+  var canvas = document.getElementById("p-canvas");
+  var crab = P.presetById("crab");
+  var state = { pSeconds: crab.pSeconds, pDot: crab.pDot, unit: crab.unit };
+  var SUP = {
+    "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴",
+    "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹", "-": "⁻"
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(id, fieldId, msg) {
+    var err = document.getElementById(id);
+    var field = document.getElementById(fieldId);
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      if (field) field.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (field) field.setAttribute("aria-invalid", "true");
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit(el, cssH) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = el.clientWidth;
+    if (w < 40) w = 320;
+    el.width = Math.round(w * dpr);
+    el.height = Math.round(cssH * dpr);
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: cssH };
+  }
+  function press(selector, attr, value) {
+    var buttons = document.querySelectorAll(selector);
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute(attr) === value ? "true" : "false");
+    }
+  }
+  function numText(id, text) {
+    var el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = text;
+  }
+  function sup(exp) {
+    var s = String(exp);
+    var out = "";
+    var k;
+    for (k = 0; k < s.length; k++) out += SUP[s.charAt(k)] || s.charAt(k);
+    return out;
+  }
+  function commit(next, errId, fieldId, msg) {
+    if (!P.model(next)) {
+      showErr(errId, fieldId, msg);
+      return;
+    }
+    showErr(errId, fieldId, "");
+    state = next;
+    render();
+  }
+
+  function draw(ctx, w, h, row, c) {
+    var padL = 58;
+    var padR = 12;
+    var padT = 16;
+    var padB = 36;
+    var pw = Math.max(20, w - padL - padR);
+    var ph = Math.max(20, h - padT - padB);
+    function X(p) {
+      var f = P.xFrac(p);
+      if (f < 0) f = 0;
+      if (f > 1) f = 1;
+      return padL + f * pw;
+    }
+    function Y(pd) {
+      var f = P.yFrac(pd);
+      if (f < 0) f = 0;
+      if (f > 1) f = 1;
+      return padT + f * ph;
+    }
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, pw, ph);
+
+    var death = null;
+    var lines = P.diagramLines();
+    var i;
+    for (i = 0; i < lines.length; i++) if (lines[i].kind === "death") death = lines[i];
+    if (death) {
+      ctx.beginPath();
+      ctx.moveTo(X(death.p0), Y(death.pd0));
+      ctx.lineTo(X(death.p1), Y(death.pd1));
+      ctx.lineTo(X(death.p1), Y(P.PDOT_MIN));
+      ctx.closePath();
+      ctx.fillStyle = c.accent;
+      ctx.globalAlpha = 0.08;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    var decades = [1e-20, 1e-16, 1e-12];
+    ctx.font = font(10);
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    for (i = 0; i < decades.length; i++) {
+      var yy = Y(decades[i]);
+      ctx.strokeStyle = c.line;
+      ctx.globalAlpha = 0.45;
+      ctx.beginPath();
+      ctx.moveTo(padL, yy);
+      ctx.lineTo(padL + pw, yy);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      var exp = Math.round(Math.log(decades[i]) / Math.LN10);
+      ctx.fillText("10" + sup(exp), padL - 6, yy);
+    }
+    var pTicks = [0.001, 0.01, 0.1, 1, 10];
+    var pNames = ["1 ms", "10 ms", "0.1 s", "1 s", "10 s"];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    for (i = 0; i < pTicks.length; i++) {
+      var xx = X(pTicks[i]);
+      ctx.strokeStyle = c.line;
+      ctx.globalAlpha = 0.45;
+      ctx.beginPath();
+      ctx.moveTo(xx, padT);
+      ctx.lineTo(xx, padT + ph);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = c.muted;
+      ctx.fillText(pNames[i], xx, padT + ph + 6);
+    }
+
+    var used = [];
+    function placeLabel(x, y, text, align, color) {
+      var j;
+      var yy = y;
+      for (j = 0; j < 6; j++) {
+        var hit = false;
+        var k;
+        for (k = 0; k < used.length; k++) {
+          if (Math.abs(used[k].y - yy) < 13 && Math.abs(used[k].x - x) < 72) hit = true;
+        }
+        if (!hit) break;
+        yy -= 14;
+      }
+      if (yy < padT + 8 || yy > padT + ph - 8) return;
+      used.push({ x: x, y: yy });
+      ctx.font = font(10);
+      ctx.fillStyle = color;
+      ctx.textAlign = align;
+      ctx.textBaseline = "bottom";
+      ctx.fillText(text, x, yy);
+    }
+    for (i = 0; i < lines.length; i++) {
+      var seg = lines[i];
+      ctx.beginPath();
+      ctx.moveTo(X(seg.p0), Y(seg.pd0));
+      ctx.lineTo(X(seg.p1), Y(seg.pd1));
+      ctx.lineWidth = 1.25;
+      var along = 0.72;
+      var labelColor = c.soft;
+      if (seg.kind === "death") {
+        ctx.setLineDash([5, 4]);
+        ctx.strokeStyle = c.accent;
+        along = 0.55;
+        labelColor = c.accent;
+      } else if (seg.kind === "field") {
+        ctx.setLineDash([]);
+        ctx.strokeStyle = c.accent;
+        ctx.globalAlpha = 0.9;
+        along = 0.22;
+        labelColor = c.accent;
+      } else {
+        ctx.setLineDash([]);
+        ctx.strokeStyle = c.soft;
+        ctx.globalAlpha = 0.85;
+        along = 0.78;
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      var lp = Math.exp(Math.log(seg.p0) + along * (Math.log(seg.p1) - Math.log(seg.p0)));
+      var lpd = Math.exp(Math.log(seg.pd0) + along * (Math.log(seg.pd1) - Math.log(seg.pd0)));
+      placeLabel(X(lp) + 4, Y(lpd) - 3, seg.label, "left", labelColor);
+    }
+
+    var k;
+    for (k = 0; k < P.PRESETS.length; k++) {
+      var preset = P.PRESETS[k];
+      if (row.preset && row.preset.id === preset.id) continue;
+      ctx.beginPath();
+      ctx.arc(X(preset.pSeconds), Y(preset.pDot), 3.5, 0, Math.PI * 2);
+      ctx.strokeStyle = c.soft;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.arc(X(row.pSeconds), Y(row.pDot), 6, 0, Math.PI * 2);
+    ctx.fillStyle = c.accent;
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = c.ink;
+    ctx.stroke();
+
+    ctx.font = font(11);
+    ctx.fillStyle = c.ink;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("Millisecond pulsars", X(0.0015), Y(2e-18));
+    ctx.fillStyle = c.soft;
+    ctx.fillText("Approximate death valley", X(1.2), Y(2e-21));
+
+    ctx.save();
+    ctx.translate(14, padT + ph / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.font = font(10);
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Period derivative", 0, 0);
+    ctx.restore();
+  }
+
+  function render() {
+    var row = P.model(state);
+    if (!row) return;
+    var c = colors();
+    var preset = row.preset;
+    press("#pulsar-presets button", "data-preset", preset ? preset.id : "");
+    press("#unit-presets button", "data-unit", state.unit);
+    var parts = P.ageParts(row.ageSeconds);
+    if (preset) {
+      setText("s-tier", preset.label + " · " + preset.name + " · MJD " + preset.epoch);
+    } else {
+      setText("s-tier", "Custom period · not a catalogue entry");
+    }
+    setText("s-value", parts.value);
+    setText("s-unit", parts.unit);
+    setText("s-range", "Characteristic age · dipole n = 3");
+    setText("s-period", P.formatPeriodPair(row).replace(/\s*\(.*\)$/, ""));
+    setText("s-pdot", P.formatPdot(row.pDot));
+    setText("s-age", P.formatAge(row.ageSeconds));
+    if (preset && preset.id === "crab") setText("s-true", P.CRAB_TRUE_AGE_YR + " yr, from 1054");
+    else setText("s-true", "Not a birthday");
+    setText("s-b", P.formatB(row.bGauss));
+    setText("s-edot", P.formatEdot(row.edotWatts));
+    setText("s-erg", P.formatErg(row.edotErg));
+    setText("s-rlc", P.formatKm(row.rlcM));
+    setText("s-hz", P.formatHz(row.pSeconds));
+    setText("s-why", P.explain(row));
+    var scale = preset
+      ? preset.name + " at MJD " + preset.epoch + ". " + preset.note + " Age lines slope up to the right. Field lines slope down. The dashed line is a 10¹² V sketch. Only these four cited pulsars are marked."
+      : "Custom point. Age lines slope up to the right. Field lines slope down. The dashed line is a 10¹² V sketch, not a fitted boundary. The four dots are the cited presets.";
+    setText("p-scale", scale);
+
+    numText("p-num", P.formatPeriodInput(row.pSeconds, state.unit));
+    numText("pd-num", P.formatPdotInput(row.pDot));
+    function slider(id, value, text) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      var shown = String(Math.round(value));
+      if (document.activeElement !== el) el.value = shown;
+      el.setAttribute("aria-valuenow", shown);
+      el.setAttribute("aria-valuetext", text);
+    }
+    var pText = state.unit === "ms" ? (row.pSeconds * 1000) + " ms" : row.pSeconds + " s";
+    if (preset) pText = state.unit === "ms" ? preset.pMsLabel + " ms" : preset.pLabel + " s";
+    slider("p-slider", P.unitFromLog(row.pSeconds, P.P_MIN_S, P.P_MAX_S), pText);
+    slider("pd-slider", P.unitFromLog(row.pDot, P.PDOT_MIN, P.PDOT_MAX), P.formatPdot(row.pDot));
+
+    var marks = document.querySelectorAll("#preset-body tr");
+    var mi;
+    for (mi = 0; mi < marks.length; mi++) {
+      marks[mi].className = preset && marks[mi].getAttribute("data-preset") === preset.id ? "is-on" : "";
+    }
+    if (canvas) {
+      var box = fit(canvas, 420);
+      draw(box.ctx, box.w, box.h, row, c);
+      canvas.setAttribute("aria-label", (preset ? preset.name + ". " : "Custom period. ") + "Period " + P.formatPeriodPair(row) + ". Derivative " + P.formatPdot(row.pDot) + ". Characteristic age " + P.formatAge(row.ageSeconds) + ". Field " + P.formatB(row.bGauss) + ". Left and right change the period. Up and down change the derivative.");
+    }
+  }
+
+  var presetButtons = document.querySelectorAll("#pulsar-presets button");
+  var bi;
+  for (bi = 0; bi < presetButtons.length; bi++) {
+    presetButtons[bi].addEventListener("click", function (ev) {
+      var preset = P.presetById(ev.currentTarget.getAttribute("data-preset"));
+      if (!preset) return;
+      showErr("p-err", "p-num", "");
+      showErr("pd-err", "pd-num", "");
+      state = { pSeconds: preset.pSeconds, pDot: preset.pDot, unit: preset.unit };
+      render();
+    });
+  }
+  var unitButtons = document.querySelectorAll("#unit-presets button");
+  for (bi = 0; bi < unitButtons.length; bi++) {
+    unitButtons[bi].addEventListener("click", function (ev) {
+      state.unit = ev.currentTarget.getAttribute("data-unit") === "s" ? "s" : "ms";
+      render();
+    });
+  }
+
+  var pSlider = document.getElementById("p-slider");
+  var pdSlider = document.getElementById("pd-slider");
+  if (pSlider) pSlider.addEventListener("input", function () {
+    commit({
+      pSeconds: P.logFromUnit(Number(pSlider.value), P.P_MIN_S, P.P_MAX_S),
+      pDot: state.pDot,
+      unit: state.unit
+    }, "p-err", "p-num", "Period from 1 ms to 20 s.");
+  });
+  if (pdSlider) pdSlider.addEventListener("input", function () {
+    commit({
+      pSeconds: state.pSeconds,
+      pDot: P.logFromUnit(Number(pdSlider.value), P.PDOT_MIN, P.PDOT_MAX),
+      unit: state.unit
+    }, "pd-err", "pd-num", "Period derivative from 10⁻²² to 10⁻⁹.");
+  });
+
+  var pNum = document.getElementById("p-num");
+  if (pNum) pNum.addEventListener("change", function () {
+    var n = parseNum(pNum.value);
+    if (!isFinite(n)) {
+      showErr("p-err", "p-num", "Period from 1 ms to 20 s.");
+      return;
+    }
+    commit({
+      pSeconds: P.pSecondsFromUnit(n, state.unit),
+      pDot: state.pDot,
+      unit: state.unit
+    }, "p-err", "p-num", "Period from 1 ms to 20 s.");
+  });
+  var pdNum = document.getElementById("pd-num");
+  if (pdNum) pdNum.addEventListener("change", function () {
+    var n = parseNum(pdNum.value);
+    if (!isFinite(n)) {
+      showErr("pd-err", "pd-num", "Period derivative from 10⁻²² to 10⁻⁹.");
+      return;
+    }
+    commit({
+      pSeconds: state.pSeconds,
+      pDot: n,
+      unit: state.unit
+    }, "pd-err", "pd-num", "Period derivative from 10⁻²² to 10⁻⁹.");
+  });
+
+  if (canvas) {
+    canvas.addEventListener("keydown", function (ev) {
+      var horizontal = ev.key === "ArrowLeft" || ev.key === "ArrowRight";
+      var vertical = ev.key === "ArrowUp" || ev.key === "ArrowDown";
+      if (!horizontal && !vertical) return;
+      ev.preventDefault();
+      var step = ev.shiftKey ? 0.1 : 0.025;
+      var sign = (ev.key === "ArrowRight" || ev.key === "ArrowUp") ? 1 : -1;
+      if (horizontal) {
+        var nextP = state.pSeconds * Math.pow(10, sign * step);
+        commit({ pSeconds: nextP, pDot: state.pDot, unit: state.unit }, "p-err", "p-num", "Period from 1 ms to 20 s.");
+      } else {
+        var nextD = state.pDot * Math.pow(10, sign * step);
+        commit({ pSeconds: state.pSeconds, pDot: nextD, unit: state.unit }, "pd-err", "pd-num", "Period derivative from 10⁻²² to 10⁻⁹.");
+      }
+    });
+  }
+
+  var helpBtn = document.getElementById("ps-help");
+  var helpDialog = document.getElementById("ps-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
