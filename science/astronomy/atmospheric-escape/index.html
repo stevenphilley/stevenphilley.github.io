@@ -1,0 +1,943 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which gases can a world keep? — thermal escape — Steven Philley</title>
+<meta name="description" content="Interactive thermal-escape desk. Escape speed against the mean thermal speed of H, H2, He, H2O, N2, O2, CO2, CH4, NH3, and Ar. The rough six-times rule, and Jeans’ lambda. Earth’s surface escape is 11.186 km/s. Hydrogen leaks. Nitrogen and oxygen stay. An approximation.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/atmospheric-escape/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Which gases can a world keep? — thermal escape">
+<meta property="og:description" content="Pick a world. Compare escape speed with the thermal speed of ten gases. The six-times rule is an approximation. Jeans’ lambda is the real parameter. Not a climate model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/atmospheric-escape/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Which gases can a world keep? — thermal escape">
+<meta name="twitter:description" content="Escape speed, mean thermal speed, and Jeans’ lambda. Earth loses hydrogen and keeps nitrogen and oxygen. Titan’s nitrogen sits just over the rough line. The Moon does not.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent;cursor:pointer}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--muted,#63666e);flex:0 0 auto}
+.swatch.gas{border-top-width:3px}
+.swatch.world{height:8px;width:8px;border:0;border-radius:50%;background:var(--ink-soft,#9b9a96);margin-top:1px}
+.swatch.you{height:8px;width:8px;border:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:12ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.custom-fields{display:flex;flex-direction:column;gap:10px}
+.custom-fields[hidden]{display:none}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.clocks{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}
+.clock{border:1px solid var(--line,#2c303a);padding:10px 10px 8px;min-width:0}
+.clock .k{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 4px}
+.clock .face{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:clamp(16px,2.4vw,20px);color:var(--ink,#e8e6e1);margin:0;letter-spacing:.04em}
+.clock .sub{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;line-height:1.4;color:var(--muted,#63666e);margin:4px 0 0}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.gas-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gas{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 14px;min-width:0}
+.gas-head{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.gas .sym{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:28px;letter-spacing:.04em;line-height:1;display:flex;align-items:center;gap:8px}
+.gas .sym i{display:inline-block;width:18px;height:0;border-top:3px solid var(--accent,#c8b48a);font-style:normal}
+.gas .name{margin:4px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted,#63666e)}
+.verdict{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:10px;letter-spacing:.08em;text-transform:uppercase;text-align:right}
+.verdict.held{color:var(--accent,#c8b48a)}
+.verdict.leaks{color:var(--ink,#e8e6e1)}
+.gas p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--ink-soft,#9b9a96)}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.means a,.refs a,.page-credit a,.glossary a,.note-schematic a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:900px){
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+  .help-q{width:44px;height:44px;min-width:44px;min-height:44px;font-size:18px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.clocks,.gas-list{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/" aria-current="page">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <p class="kicker">Vol. Science · Astronomy · Thermal escape</p>
+  <h1>Which gases<br>can a world keep?</h1>
+  <p class="lede">A gas molecule is always moving. The most probable speed in a Maxwell distribution is <strong>√(2kT/m)</strong>. The mean speed is <strong>√(8kT/(π m))</strong>. Leaving the world takes <strong>v<sub>esc</sub> = √(2GM/r)</strong>, the same escape speed as the <a href="/science/astronomy/escape/">escape</a> desk. A classroom rule of thumb says a gas is retained over geologic time if escape speed exceeds about <strong>six times</strong> that mean speed. It is an approximation. The Jeans parameter is the sharper number: <strong>λ = v<sub>esc</sub>² / v<sub>mp</sub>² = GMm / (kT r)</strong>. Hot, light gases leak. Cold, heavy gases stay. The temperature that belongs in the formula is the exobase, or the upper atmosphere, not the weather at the surface. How much sunlight a world receives is the <a href="/science/astronomy/habitable-zone/">habitable zone</a>. That equilibrium temperature is a different number.</p>
+  <p class="note-schematic">Classroom schematic. The six-times line is the sorting rule in Catling and Zahnle’s 2009 picture, not a measured lifetime. Thermal Jeans escape is only one leak. Solar-wind sputtering, photochemical escape, hydrodynamic escape, and impact erosion are named below and are not calculated. A gas above the line can still be missing if it was never supplied. A gas under the line can still be present if ice or chemistry keeps replacing it. Not a climate model, not an escape-rate model, and not a claim that a world is habitable.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Escape speed and ten gases</span>
+    <button type="button" class="help-q" id="ae-help" aria-haspopup="dialog" aria-controls="ae-help-dialog" aria-expanded="false" aria-label="How this thermal-escape desk works">?</button>
+  </div>
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="chart-hint">Log temperature · log escape speed · a gas line is six times the mean thermal speed</p>
+      <canvas id="chart" width="880" height="420" tabindex="0" role="img" aria-label="Escape speed against temperature. Earth is highlighted. Gas lines are the rough retention boundary."></canvas>
+      <ul class="legend" id="gas-legend">
+        <li><span class="swatch world" aria-hidden="true"></span> Other worlds</li>
+        <li><span class="swatch you" aria-hidden="true"></span> Selected</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Worlds · fact-sheet GM and radius · cited upper-atmosphere temperature</p>
+        <div class="presets" id="presets" role="group" aria-label="World presets">
+          <button type="button" data-world="mercury" aria-pressed="false">Mercury</button>
+          <button type="button" data-world="venus" aria-pressed="false">Venus</button>
+          <button type="button" data-world="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-world="moon" aria-pressed="false">Moon</button>
+          <button type="button" data-world="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-world="titan" aria-pressed="false">Titan</button>
+          <button type="button" data-world="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-world="saturn" aria-pressed="false">Saturn</button>
+          <button type="button" data-world="uranus" aria-pressed="false">Uranus</button>
+          <button type="button" data-world="neptune" aria-pressed="false">Neptune</button>
+          <button type="button" data-world="pluto" aria-pressed="false">Pluto</button>
+          <button type="button" data-world="custom" aria-pressed="false">Custom</button>
+        </div>
+        <div class="custom-fields" id="custom-fields" hidden>
+          <div class="slider-row">
+            <label for="m-slider">Mass</label>
+            <input type="range" id="m-slider" min="0" max="1000" step="0.1" value="500" aria-valuetext="5.9722 times 10 to the 24 kilograms">
+            <input type="text" class="num" id="m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="5.9722" aria-label="Mass in 10 to the 24 kilograms">
+            <span class="unit-tag">10²⁴ kg</span>
+          </div>
+          <div class="slider-row">
+            <label for="r-slider">Radius</label>
+            <input type="range" id="r-slider" min="0" max="1000" step="0.1" value="500" aria-valuetext="6371 kilometres">
+            <input type="text" class="num" id="r-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="6371" aria-label="Radius in kilometres">
+            <span class="unit-tag">km</span>
+          </div>
+        </div>
+        <div class="slider-row">
+          <label for="t-slider">Temp</label>
+          <input type="range" id="t-slider" min="0" max="1000" step="0.1" value="500" aria-valuemin="30" aria-valuemax="3000" aria-valuetext="1000 kelvin">
+          <input type="text" class="num" id="t-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1000" aria-label="Exobase or upper-atmosphere temperature in kelvin" aria-invalid="false">
+          <span class="unit-tag">K</span>
+        </div>
+        <p class="field-error" id="ae-err" hidden>Enter a temperature from 30 K to 3,000 K. In custom mode, mass runs from 0.001 to 2,000 × 10²⁴ kg and radius from 200 km to 100,000 km.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Earth · fact sheet · 1000 K</p>
+      <h2 id="d-name">Earth</h2>
+      <p class="range" id="d-range">Jeans radius · exobase</p>
+      <div class="clocks">
+        <div class="clock">
+          <p class="k">Escape · Jeans radius</p>
+          <p class="face" id="d-jeans">10.771 km/s</p>
+          <p class="sub" id="d-jeans-sub">The speed in λ and in the six-times test</p>
+        </div>
+        <div class="clock">
+          <p class="k">Escape · surface</p>
+          <p class="face" id="d-surf">11.186 km/s</p>
+          <p class="sub" id="d-surf-sub">Fact-sheet radius, no exobase added</p>
+        </div>
+      </div>
+      <ul class="stats">
+        <li><span class="k">Sheet escape</span><span class="v" id="d-sheet">11.186 km/s</span></li>
+        <li><span class="k">Jeans radius</span><span class="v" id="d-radius">6,871 km</span></li>
+        <li><span class="k">Temperature</span><span class="v" id="d-temp">1,000 K</span></li>
+        <li><span class="k">H · escape / mean</span><span class="v" id="d-h">2.35 · λ 7.03</span></li>
+        <li><span class="k">N₂ · escape / mean</span><span class="v" id="d-n2">12.4 · λ 195</span></li>
+        <li><span class="k">Above the line</span><span class="v" id="d-count">7 of 10</span></li>
+      </ul>
+      <p class="why" id="d-why">At 1,000 K, atomic hydrogen’s mean speed is 4.583 km/s. Escape at the Jeans radius is 2.35 times that, under six. Nitrogen is 12.4 times, above the line.</p>
+      <p class="why" id="d-note">Catling and Zahnle: Earth’s exobase is typically around 1000 K.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The chart needs JavaScript. The Earth anchor is still this: fact-sheet GM 0.39860 × 10⁶ km³/s² and volumetric radius 6,371 km give a surface escape speed of 11.186 km/s. At an exobase of about 500 km and 1000 K, escape is 10.771 km/s. Atomic hydrogen’s mean speed is 4.583 km/s, 2.35 times below escape, so the rough rule says it leaks. λ is 7.03. Molecular nitrogen’s mean speed is 0.869 km/s, 12.4 times below escape, so the rule says it stays. λ is 195. Oxygen is 13.2 times, λ 223.</p>
+  </noscript>
+
+  <p class="band">Ten gases · this world</p>
+  <ul class="gas-list" id="gas-list"></ul>
+
+  <div class="myth">
+    <p class="tag">Why Titan has air and the Moon does not</p>
+    <h2>Similar escape speeds. Different temperatures.</h2>
+    <p>Titan’s surface escape speed on this page is 2.641 km/s. The Moon’s is 2.375 km/s, and the Moon Fact Sheet prints 2.38 km/s. Those are close. The upper atmospheres are not. Titan’s exobase in the cited table is about 1500 km up, where escape has fallen to 2.099 km/s, and the temperature used here is 150 K. Nitrogen’s mean speed there is 0.337 km/s. Escape is 6.24 times that mean speed, just over the rough line. λ is 49.5. Methane is lighter, and on this button it sits under the line. The atmosphere that Cassini measured is mostly nitrogen. Methane is the minor gas that photochemistry and escape both eat, and something has to replace it.</p>
+    <p>The Moon has no thick-atmosphere exobase. The fact sheet’s black-body temperature is 270.4 K, and the equatorial day runs from 95 K to 390 K. At 270.4 K, nitrogen’s mean speed is 0.452 km/s and escape is only 5.25 times that. λ is 35.1. That is under six. Carbon dioxide and argon sit just over the line at 270.4 K, and the hot end of the fact-sheet range pulls them back toward it. The entire lunar atmosphere is about 25,000 kg. There is no cold, massive nitrogen column. The solar wind reaches the surface. Sputtering and a missing supply finish what the thermal tail starts.</p>
+    <p>Pluto is the caution. New Horizons found an upper atmosphere near 65–68 K, colder than the models expected, with the exobase near 1710 km. At 65 K this desk’s nitrogen ratio is 3.50 and λ is 15.6, under the rough line, and the escape speed there is 0.775 km/s. Pluto still has an atmosphere. Nitrogen ice resupplies it, and λ of about 16 is a slow Jeans leak, not a hydrodynamic wind. Gladstone and colleagues wrote that the cold upper atmosphere shuts off the enhanced escape those models had expected. The six-times line does not know about resupply.</p>
+  </div>
+
+  <p class="band">What this means</p>
+  <div class="means">
+    <p><strong>The Earth button is the sanity check.</strong> Surface escape, from the fact sheet’s GM and volumetric mean radius, is 11.186 km/s. About 11.2 km/s. At 500 km and 1000 K the Jeans escape speed is 10.771 km/s. Hydrogen’s mean speed is 4.583 km/s, a ratio of 2.35, and λ is 7.03. Catling and Kasting’s chapter gets λ about 7 for atomic hydrogen at 1000 K at the exobase. Nitrogen’s ratio is 12.4 and λ is 195. Oxygen’s ratio is 13.2 and λ is 223. Hydrogen is in the thermal tail. Nitrogen and oxygen are not.</p>
+    <p><strong>Six times the mean speed is a rule of thumb.</strong> Catling and Zahnle, Scientific American, 2009: Jeans escape is considered important if the mean thermal velocity at the exobase exceeds about a sixth of the escape speed. Their figure plots that comparison. Catling and Kasting say the same thing as “average speed,” and their schematic draws root-mean-square lines. Root-mean-square speed is √(3kT/m), a bit faster than the mean. This page uses the mean, √(8kT/(π m)), because that is the speed the six-times sentence names. Six mean speeds is λ of about 45.8, because λ divides by the most probable speed, not the mean. A world can sit near the line either way. Treat the line as a sort, not a clock.</p>
+    <p><strong>Other leaks are left out on purpose.</strong> Jeans escape is the hot tail of a Maxwell distribution above the exobase. Hydrodynamic escape is a wind: the air flows outward in bulk when heating is strong and λ is only a few. Photochemical escape is a molecule split by sunlight into atoms that are already fast enough. Sputtering is the solar wind, or a magnetosphere, knocking atoms off. Impact erosion is a collision blowing the air above a patch of the world into space. Charge exchange and the polar wind matter for Earth’s hydrogen and helium. Catling and Zahnle say Jeans escape is only about 30 percent of Earth’s hydrogen loss, and almost none of the helium. Helium on the Earth button is under the six-times line. The thermal tail is real and thin. The polar wind does most of the helium leaving.</p>
+    <p><strong>Uranus is the hot giant.</strong> Jupiter, Saturn, and Neptune hold atomic hydrogen at the temperatures on their buttons. Uranus, at the table’s 850 K, does not: the hydrogen ratio is 4.63. Molecular hydrogen, the gas the atmosphere is made of, is at 6.55, just over the line. A hot thermosphere can leak atoms and still keep the molecules. The energy that keeps the giant-planet thermospheres hotter than sunlight alone would make them is a separate problem. This page does not solve it. It only uses the cited temperature.</p>
+  </div>
+
+  <p class="band">Literacy · the speeds</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Escape speed</dt><dd>v<sub>esc</sub> = √(2GM/r). The surface figure uses the fact-sheet volumetric radius, so Earth reads 11.186 km/s. The Jeans figure adds a cited exobase altitude. For a gas giant that altitude is added to the equatorial 1-bar radius, because that is the radius the printed escape speed belongs to. Direction does not enter. Mass of the molecule does not enter. The <a href="/science/astronomy/escape/">escape</a> desk draws the orbit that goes with this speed.</dd></div>
+    <div class="gloss"><dt>Two thermal speeds</dt><dd>Most probable speed v<sub>mp</sub> = √(2kT/m). Mean speed v<sub>mean</sub> = √(8kT/(π m)), which is √(4/π) ≈ 1.128 times the most probable speed. Root-mean-square speed is √(3kT/m). The six-times rule on this page uses the mean. λ uses the most probable speed, so that λ equals GMm/(kT r).</dd></div>
+    <div class="gloss"><dt>Jeans parameter</dt><dd>λ = v<sub>esc</sub>² / v<sub>mp</sub>² = GMm / (kT r). Gravitational energy over kT. Large λ means the escape speed sits far out on the Maxwell tail, and the leak is slow. Catling and Kasting, following Chamberlain, define it this way. Hydrodynamic escape becomes the better description when λ is only a few.</dd></div>
+    <div class="gloss"><dt>The six-times line</dt><dd>A gas is marked retained when v<sub>esc</sub> is at least six times v<sub>mean</sub>. The chart draws that boundary: each gas line is v = 6 √(8kT/(π m)). A world above a line keeps that gas, by the approximation. Catling and Zahnle draw the same test the other way up, with the dot at one-sixth of escape speed and the lines as the thermal speeds. Dividing every height on this chart by six is their picture.</dd></div>
+    <div class="gloss"><dt>Exobase</dt><dd>The altitude where the air becomes thin enough that a fast upward molecule is unlikely to hit another one. Below it, collisions share the energy. Above it, a molecule on an escape trajectory leaves. The temperature in the formula is the temperature there. Mercury and the Moon have surface-bounded exospheres, so this desk uses a surface temperature and adds no altitude.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the rule leaves out</dt><dd>Supply, cold traps, chemistry, magnetic fields, and the four non-thermal paths named above. Titan’s nitrogen is just over the line and the column is huge. The Moon’s nitrogen is just under the line and the column is about 25,000 kg. Pluto’s nitrogen is under the line and the ice keeps putting it back. Equilibrium temperature on the <a href="/science/astronomy/habitable-zone/">habitable zone</a> desk is the temperature of a bare surface sharing sunlight over the whole globe. It is not this exobase temperature. Earth’s no-greenhouse equilibrium temperature is near 255 K. The exobase used here is 1000 K.</dd></div>
+  </dl>
+
+  <p class="band">Sources · fact sheets, CODATA, and the papers</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — GM and radius for the planets, the Moon, and Pluto. Presets use the printed GM, not G times mass. Earth’s GM 0.39860 × 10⁶ km³/s² and volumetric mean radius 6,371.000 km are what produce 11.186 km/s.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">Moon</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">Mercury</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">Venus</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">Jupiter</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">Saturn</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">Uranus</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">Neptune</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">Pluto</a>. The same GM and volumetric radii as the <a href="/science/astronomy/escape/">escape</a> desk, plus Pluto. Gas-giant escape speeds printed on the sheets match the equatorial 1-bar radius. This page says so when that radius is the one in the Jeans sum.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturniansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturnian Satellite Fact Sheet</a> — Titan mass 1,345.5 × 10²⁰ kg and radius 2,575 km. The sheet prints a mass, not a GM. This desk multiplies that mass by the 2022 CODATA G. The Moon’s atmosphere line, about 25,000 kg, and the 95–390 K diurnal range are on the Moon Fact Sheet. Mercury’s average exosphere temperature, 440 K, is on the Mercury Fact Sheet.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?k" rel="noopener" target="_blank">NIST CODATA — Boltzmann constant</a> — k = 1.380649 × 10⁻²³ J/K, exact since the 2019 SI. <a href="https://physics.nist.gov/cgi-bin/cuu/Value?u" rel="noopener" target="_blank">Atomic mass constant</a> u = 1.66053906892 × 10⁻²⁷ kg, 2022 CODATA. <a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">Newtonian constant of gravitation</a> G = 6.67430 × 10⁻¹¹ m³ kg⁻¹ s⁻², 2022 CODATA, used for Titan and for Custom. Planet presets use the fact sheet’s GM.</li>
+      <li><a href="https://doi.org/10.1515/pac-2019-0603" rel="noopener" target="_blank">Prohaska et al. 2022, Pure and Applied Chemistry</a> — abridged standard atomic weights. This desk uses H 1.008, He 4.0026, C 12.011, N 14.007, O 15.999, and Ar 39.95, and adds them for H₂, H₂O, N₂, O₂, CO₂, CH₄, and NH₃. A readable table is the <a href="https://iupac.org/what-we-do/periodic-table-of-elements/" rel="noopener" target="_blank">IUPAC periodic table</a>. These are conventional weights, not a measured mix of isotopes in an atmosphere.</li>
+      <li><a href="https://faculty.washington.edu/dcatling/Catling2009_SciAm.pdf" rel="noopener" target="_blank">Catling and Zahnle, Scientific American, 2009, “The Planetary Air Leak”</a> — the six-times rule, in their words: Jeans escape is considered important if the mean thermal velocity of a gas at the exobase exceeds about a sixth of a planet’s escape speed. Earth’s exobase is typically around 1000 K. For the Moon and Mercury they plot an average surface temperature. The non-thermal paths and the Titan-versus-airless-moon contrast are in the same article.</li>
+      <li><a href="https://doi.org/10.1017/9781139020558" rel="noopener" target="_blank">Catling and Kasting, Atmospheric Evolution on Inhabited and Lifeless Worlds, Cambridge, 2017, chapter 5</a> — λ = GMm/(kT r), after Chamberlain 1963. A thermosphere temperature of about 1000 K, and λ about 7 for atomic hydrogen at Earth’s exobase. Escape at that exobase is about 10.8 km/s. The rule of thumb in the chapter is the same one-sixth sentence, called average speed. Their schematic’s gas lines are root-mean-square speeds.</li>
+      <li><a href="https://arxiv.org/abs/1712.02994" rel="noopener" target="_blank">García Muñoz, Koskinen, and Lavvas, arXiv:1712.02994</a>, also <a href="https://doi.org/10.1007/978-3-319-55333-7_52" rel="noopener" target="_blank">Handbook of Exoplanets, 2018</a> — Table 1. Exobase altitudes and exospheric temperatures used here: Earth about 500 km and 500–1000 K; Venus about 220–350 km and about 300 K day / 100 K night; Mars about 180–210 km and about 200–350 K; Jupiter about 1600 km and 900–1000 K; Saturn about 2850 km and 400–600 K; Uranus about 4700 km and 850 K; Neptune about 2200 km and 600 K; Titan about 1500 km and about 150 K. Where the table gives a range, the button’s single number is labeled on the page. Saturn’s 500 K is the middle of 400–600 K, a classroom choice inside that range. Venus’s 300 km altitude is a round value inside about 220–350 km.</li>
+      <li><a href="https://doi.org/10.1029/98JE01766" rel="noopener" target="_blank">Seiff et al. 1998, JGR</a> — Galileo probe, Jupiter’s upper atmosphere, a maximum of about 900 K. That is why the Jupiter button uses 900 K, the low end of the table’s 900–1000 K, rather than a midpoint.</li>
+      <li><a href="https://doi.org/10.1016/j.icarus.2017.09.006" rel="noopener" target="_blank">Young et al. 2018, Icarus 300, 174</a> — New Horizons Alice occultation. Upper-atmosphere temperatures near 65–68 K. Exobase near a radius of about 2900 km, altitude about 1710 km. This button uses 65 K and 1710 km. <a href="https://doi.org/10.1126/science.aad8866" rel="noopener" target="_blank">Gladstone et al. 2016, Science</a> — the upper atmosphere is much colder and more compact than pre-encounter models, and that cold shuts off the enhanced escape those models expected.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of thermal escape. Escape speed from fact-sheet GM and radius. Thermal speeds from CODATA k and u and IUPAC abridged atomic weights. The six-times line is Catling and Zahnle’s approximation. λ is GMm/(kT r). Not an escape rate, and not a habitability verdict. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/escape/"><p class="n">The speed</p><h3>Escape</h3><p>Where √(2GM/r) comes from, and the circular orbit that is slower by √2. Earth’s surface escape is the same 11.186 km/s.</p></a>
+    <a href="/science/astronomy/habitable-zone/"><p class="n">The sunlight</p><h3>Habitable zone</h3><p>Flux and equilibrium temperature. That temperature is not the exobase temperature on this page.</p></a>
+    <a href="/science/atmosphere/"><p class="n">The layers</p><h3>Atmosphere</h3><p>Earth’s air, from the ground up. The exobase is the top of that stack, and it is hot.</p></a>
+    <a href="/science/astronomy/blackbody/"><p class="n">The glow</p><h3>Blackbody</h3><p>The same k, in a different formula. A world’s glow is not its exobase temperature.</p></a>
+    <a href="/science/astronomy/impacts/"><p class="n">The collision</p><h3>Impacts</h3><p>One of the non-thermal ways an atmosphere can be blown off. A different desk. Not a hazard assessment.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where these worlds sit. The temperatures on this page are not the map’s.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+<div id="ae-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="ae-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="ae-help-title">Thermal escape</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom sort. Escape speed against ten gases. The six-times line is an approximation. Not an escape-rate model.</p>
+    <h3>The chart</h3>
+    <table>
+      <caption>The chart</caption>
+      <tbody>
+        <tr><th scope="row">Axes</th><td>Temperature across, logarithmic. Escape speed up, logarithmic. The selected world is the gold point.</td></tr>
+        <tr><th scope="row">Gas lines</th><td>Each line is six times that gas’s mean thermal speed, √(8kT/(π m)). A point above a line means escape speed beats that rough test.</td></tr>
+        <tr><th scope="row">Other worlds</th><td>Smaller points, at each world’s cited temperature and Jeans escape speed. Click or tap a point to select that world.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Worlds</th><td>Mercury through Pluto, plus Titan. Each button loads a fact-sheet GM and radius and a cited temperature. Left and Right move through the buttons when one of them has focus.</td></tr>
+        <tr><th scope="row">Temperature</th><td>Log slider from 30 K to 3,000 K, and a number field. Moving it keeps the world and changes the speeds. The note says when you have left the cited value.</td></tr>
+        <tr><th scope="row">Custom</th><td>Mass in 10²⁴ kg and radius in km. GM is the 2022 CODATA G times that mass. The radius you type is r. No exobase altitude is added. Typing Earth’s mass is not the Earth button: the button uses the sheet’s GM.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Jeans escape</th><td>The speed used for λ and for the six-times test. Radius plus the cited exobase altitude, when there is one.</td></tr>
+        <tr><th scope="row">Surface escape</th><td>The same GM at the fact-sheet radius, with no altitude added. Earth is 11.186 km/s.</td></tr>
+        <tr><th scope="row">A gas row</th><td>Most probable speed, mean speed, escape divided by the mean, and λ. “Above the line” means the ratio is at least 6.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Sliders</th><td>Arrow keys nudge the focused slider. The number field is where a cited figure is typed.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Buttons are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+<script src="/science/astronomy/atmospheric-escape/atmospheric-escape.js"></script>
+<script>
+(function(){
+  "use strict";
+  var A = window.AtmosphericEscape;
+  if (!A) return;
+  var root = document.documentElement;
+  var canvas = document.getElementById("chart");
+  var tSlider = document.getElementById("t-slider");
+  var tNum = document.getElementById("t-num");
+  var mSlider = document.getElementById("m-slider");
+  var rSlider = document.getElementById("r-slider");
+  var mNum = document.getElementById("m-num");
+  var rNum = document.getElementById("r-num");
+  var customFields = document.getElementById("custom-fields");
+  var errEl = document.getElementById("ae-err");
+  var gasList = document.getElementById("gas-list");
+  var earth = A.worldById("earth");
+  var state = { id: "earth", T: earth.T, mass: 5.9722, radius: 6371 };
+  var editing = null;
+  var hits = [];
+
+  var GAS_COLOR = {
+    h: "#f2f0ea", h2: "#e0c48a", he: "#9ad0e0", h2o: "#7eb6e0", n2: "#e08a8a",
+    o2: "#8fd0a0", co2: "#e0c070", ch4: "#c8a0e0", nh3: "#80d0c0", ar: "#e09870"
+  };
+  var GAS_DASH = {
+    h: [], h2: [7, 4], he: [2, 3], h2o: [8, 3, 2, 3], n2: [4, 3],
+    o2: [1, 3], co2: [10, 3], ch4: [6, 2, 1, 2], nh3: [3, 2], ar: [12, 4]
+  };
+
+  function cssVar(name, fallback){
+    var v = getComputedStyle(root).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value){
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw){
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/−/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+]?(?:\d+\.?\d*|\.\d+)(?:e[+]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(on){
+    if (errEl) errEl.hidden = !on;
+  }
+  function activeBody(){
+    if (state.id === "custom") return A.customBody(state.mass, state.radius);
+    return A.worldById(state.id);
+  }
+  function inputsOk(){
+    if (!A.inRange(state.T, A.T_MIN, A.T_MAX)) return false;
+    if (state.id === "custom") return A.inRange(state.mass, A.M_MIN, A.M_MAX) && A.inRange(state.radius, A.R_MIN, A.R_MAX);
+    return true;
+  }
+  function paintText(ctx, str, x, y, opt){
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(cssH){
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph){
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function side(row){
+    return row.held ? "above" : "under";
+  }
+  function whyText(ev){
+    var h = A.rowById(ev, "h");
+    var n2 = A.rowById(ev, "n2");
+    var o2 = A.rowById(ev, "o2");
+    return "At " + A.formatTemp(ev.T) + " K, atomic hydrogen’s mean speed is " + A.formatKms(h.vMean) +
+      ". Escape at the Jeans radius is " + A.formatKms(ev.vJeans) + ", " + A.formatRatio(h.ratio) +
+      " times that mean speed, so hydrogen sits " + side(h) + " the rough line. Nitrogen is " +
+      A.formatRatio(n2.ratio) + " times, " + side(n2) + " the line. Oxygen is " +
+      A.formatRatio(o2.ratio) + " times. " + ev.heldCount + " of the ten gases sit on the retained side.";
+  }
+  function noteText(body){
+    var cited = body.T;
+    var moved = A.formatTemp(state.T) !== A.formatTemp(cited);
+    var head = moved ? ("Slider is " + A.formatTemp(state.T) + " K. The cited value is " + A.formatTemp(cited) + " K. ") : "";
+    return head + body.tNote + " " + body.zNote;
+  }
+  function syncPressed(){
+    var buttons = document.querySelectorAll("#presets button");
+    var i;
+    for (i = 0; i < buttons.length; i++){
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-world") === state.id));
+    }
+  }
+  function syncSliders(){
+    tSlider.value = String(A.logUnmap(state.T, A.T_MIN, A.T_MAX) * 1000);
+    tSlider.setAttribute("aria-valuetext", A.formatTemp(state.T) + " kelvin");
+    tSlider.setAttribute("aria-valuenow", A.formatTemp(state.T));
+    if (editing !== tNum) tNum.value = A.formatTemp(state.T);
+    if (state.id === "custom"){
+      mSlider.value = String(A.logUnmap(state.mass, A.M_MIN, A.M_MAX) * 1000);
+      rSlider.value = String(A.logUnmap(state.radius, A.R_MIN, A.R_MAX) * 1000);
+      mSlider.setAttribute("aria-valuetext", String(state.mass) + " times 10 to the 24 kilograms");
+      rSlider.setAttribute("aria-valuetext", A.formatKm(state.radius));
+      if (editing !== mNum) mNum.value = String(state.mass);
+      if (editing !== rNum) rNum.value = String(state.radius);
+    }
+  }
+  function renderLegend(){
+    var ul = document.getElementById("gas-legend");
+    if (!ul || ul.getAttribute("data-ready") === "1") return;
+    A.gases().forEach(function(g){
+      var li = document.createElement("li");
+      var sw = document.createElement("span");
+      sw.className = "swatch gas";
+      sw.style.borderTopColor = GAS_COLOR[g.id] || "#c8b48a";
+      sw.setAttribute("aria-hidden", "true");
+      li.appendChild(sw);
+      li.appendChild(document.createTextNode(" " + g.symbol));
+      ul.appendChild(li);
+    });
+    ul.setAttribute("data-ready", "1");
+  }
+  function renderGases(ev){
+    gasList.innerHTML = "";
+    ev.rows.forEach(function(row){
+      var li = document.createElement("li");
+      li.className = "gas";
+      var head = document.createElement("div");
+      head.className = "gas-head";
+      var sym = document.createElement("div");
+      sym.className = "sym";
+      var sw = document.createElement("i");
+      sw.style.borderTopColor = GAS_COLOR[row.id] || "#c8b48a";
+      sw.setAttribute("aria-hidden", "true");
+      sym.appendChild(sw);
+      var label = document.createElement("span");
+      label.innerHTML = row.html;
+      sym.appendChild(label);
+      var verdict = document.createElement("div");
+      verdict.className = "verdict " + (row.held ? "held" : "leaks");
+      verdict.textContent = row.held ? "Above the line" : "Under the line";
+      head.appendChild(sym);
+      head.appendChild(verdict);
+      var name = document.createElement("p");
+      name.className = "name";
+      name.textContent = row.name + " · " + row.mu + " u";
+      var speeds = document.createElement("p");
+      speeds.textContent = "Most probable " + A.formatKms(row.vMp) + " · mean " + A.formatKms(row.vMean);
+      var rest = document.createElement("p");
+      rest.textContent = "Escape / mean " + A.formatRatio(row.ratio) + " · λ " + A.formatLambda(row.lambda);
+      li.appendChild(head);
+      li.appendChild(name);
+      li.appendChild(speeds);
+      li.appendChild(rest);
+      gasList.appendChild(li);
+    });
+  }
+  function draw(ev, body){
+    var box = fit(window.innerWidth < 720 ? 300 : 380);
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    hits = [];
+    var padL = 46;
+    var padR = 16;
+    var padT = 16;
+    var padB = 32;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var t0 = A.T_MIN;
+    var t1 = A.T_MAX;
+    var v0 = 0.2;
+    var v1 = 80;
+    function consider(v){
+      if (v > 0 && isFinite(v)){
+        v0 = Math.min(v0, v / 1.4);
+        v1 = Math.max(v1, v * 1.25);
+      }
+    }
+    ev.rows.forEach(function(row){ consider(A.retentionSpeed(t0, row.mu)); consider(A.retentionSpeed(t1, row.mu)); });
+    consider(ev.vJeans);
+    A.worlds().forEach(function(world){
+      var sample = A.evaluate(world, world.T);
+      if (sample) consider(sample.vJeans);
+    });
+    v0 = Math.max(0.05, v0);
+    function xOf(T){
+      var t = (Math.log(T) - Math.log(t0)) / (Math.log(t1) - Math.log(t0));
+      return padL + Math.max(0, Math.min(1, t)) * plotW;
+    }
+    function yOf(v){
+      var t = (Math.log(v) - Math.log(v0)) / (Math.log(v1) - Math.log(v0));
+      return padT + (1 - Math.max(0, Math.min(1, t))) * plotH;
+    }
+    var line = cssVar("--line", "#2c303a");
+    var muted = cssVar("--muted", "#63666e");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    var tTicks = [30, 100, 300, 1000, 3000];
+    tTicks.forEach(function(T){
+      if (T < t0 || T > t1) return;
+      var x = xOf(T);
+      ctx.beginPath();
+      ctx.moveTo(x, padT + plotH);
+      ctx.lineTo(x, padT + plotH + 5);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, String(T), x, padT + plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    var vTicks = [0.3, 1, 3, 10, 30];
+    vTicks.forEach(function(v){
+      if (v < v0 || v > v1) return;
+      var y = yOf(v);
+      ctx.beginPath();
+      ctx.moveTo(padL - 5, y);
+      ctx.lineTo(padL, y);
+      ctx.strokeStyle = muted;
+      ctx.stroke();
+      paintText(ctx, String(v), padL - 8, y, { size: 10, align: "right", color: muted });
+    });
+    paintText(ctx, "K", padL + plotW, h - 4, { size: 10, align: "right", color: muted, base: "bottom" });
+    paintText(ctx, "km/s", 4, padT, { size: 10, align: "left", color: muted, base: "top" });
+
+    var vx = xOf(ev.T);
+    ctx.beginPath();
+    ctx.moveTo(vx, padT);
+    ctx.lineTo(vx, padT + plotH);
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    var hy = yOf(ev.vJeans);
+    ctx.beginPath();
+    ctx.moveTo(padL, hy);
+    ctx.lineTo(padL + plotW, hy);
+    ctx.setLineDash([2, 4]);
+    ctx.strokeStyle = accent;
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ev.rows.forEach(function(row){
+      ctx.beginPath();
+      var steps = 80;
+      var i;
+      for (i = 0; i <= steps; i++){
+        var T = Math.exp(Math.log(t0) + (i / steps) * (Math.log(t1) - Math.log(t0)));
+        var v = A.retentionSpeed(T, row.mu);
+        var x = xOf(T);
+        var y = yOf(v);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = GAS_COLOR[row.id] || accent;
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 1.25;
+      ctx.setLineDash(GAS_DASH[row.id] || []);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    });
+
+    A.worlds().forEach(function(world){
+      if (world.id === body.id) return;
+      var sample = A.evaluate(world, world.T);
+      var x = xOf(sample.T);
+      var y = yOf(sample.vJeans);
+      ctx.beginPath();
+      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = muted;
+      ctx.fill();
+      hits.push({ id: world.id, x: x, y: y, T: world.T });
+    });
+    var sx = xOf(ev.T);
+    var sy = yOf(ev.vJeans);
+    ctx.beginPath();
+    ctx.arc(sx, sy, 6, 0, Math.PI * 2);
+    ctx.fillStyle = accent;
+    ctx.fill();
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = ink;
+    ctx.stroke();
+    var nameX = sx + 10;
+    var align = "left";
+    if (sx > padL + plotW * 0.72){
+      nameX = sx - 10;
+      align = "right";
+    }
+    paintText(ctx, body.name, nameX, sy - 12, { size: 12, color: ink, align: align });
+    hits.push({ id: body.id, x: sx, y: sy, T: ev.T });
+  }
+  function render(){
+    syncPressed();
+    customFields.hidden = state.id !== "custom";
+    var ok = inputsOk();
+    tNum.setAttribute("aria-invalid", A.inRange(state.T, A.T_MIN, A.T_MAX) ? "false" : "true");
+    if (state.id === "custom"){
+      mNum.setAttribute("aria-invalid", A.inRange(state.mass, A.M_MIN, A.M_MAX) ? "false" : "true");
+      rNum.setAttribute("aria-invalid", A.inRange(state.radius, A.R_MIN, A.R_MAX) ? "false" : "true");
+    }
+    showErr(!ok);
+    if (!ok){
+      canvas.setAttribute("aria-label", "Thermal escape desk waiting for a temperature, and in custom mode a mass and a radius, inside the stated ranges.");
+      return;
+    }
+    syncSliders();
+    var body = activeBody();
+    var ev = A.evaluate(body, state.T);
+    var tier = body.name + " · fact sheet";
+    if (body.custom) tier = "Custom · G × mass";
+    else if (A.formatTemp(state.T) !== A.formatTemp(body.T)) tier = body.name + " · temperature moved";
+    else if (body.tEstimate) tier = body.name + " · cited range · classroom pick";
+    setText("d-tier", tier);
+    setText("d-name", body.name);
+    var range = body.exoAltKm ? ("Jeans radius · exobase " + A.formatKm(body.exoAltKm) + " up") : "Jeans radius · the radius in the formula";
+    setText("d-range", range);
+    setText("d-jeans", A.formatKms(ev.vJeans));
+    setText("d-jeans-sub", body.exoAltKm ? ("r = " + A.formatKm(ev.rJeans) + " · used for λ and the six-times test") : "The radius you are using, in λ and the six-times test");
+    setText("d-surf", A.formatKms(ev.vSurf));
+    setText("d-surf-sub", body.custom ? "G × mass, at the typed radius" : "Fact-sheet radius, no exobase added");
+    setText("d-sheet", body.sheetEsc ? (body.sheetEsc + " km/s") : "—");
+    setText("d-radius", A.formatKm(ev.rJeans));
+    setText("d-temp", A.formatTemp(ev.T) + " K");
+    var h = A.rowById(ev, "h");
+    var n2 = A.rowById(ev, "n2");
+    setText("d-h", A.formatRatio(h.ratio) + " · λ " + A.formatLambda(h.lambda));
+    setText("d-n2", A.formatRatio(n2.ratio) + " · λ " + A.formatLambda(n2.lambda));
+    setText("d-count", ev.heldCount + " of 10");
+    setText("d-why", whyText(ev));
+    setText("d-note", body.custom ? body.zNote : noteText(body));
+    renderLegend();
+    renderGases(ev);
+    draw(ev, body);
+    canvas.setAttribute("aria-label",
+      body.name + " at " + A.formatTemp(ev.T) + " kelvin. Surface escape " + A.formatKms(ev.vSurf) +
+      ". Jeans escape " + A.formatKms(ev.vJeans) + ". Hydrogen is " + side(h) +
+      " the six-times line. Nitrogen is " + side(n2) + " it. " + ev.heldCount + " of 10 gases are above the line.");
+  }
+  function commitTemp(fromSlider){
+    var v = fromSlider ? A.logMap(Number(tSlider.value) / 1000, A.T_MIN, A.T_MAX) : parseNum(tNum.value);
+    if (!A.inRange(v, A.T_MIN, A.T_MAX)){
+      tNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.T = v;
+    editing = fromSlider ? null : tNum;
+    render();
+  }
+  function commitMass(fromSlider){
+    var v = fromSlider ? A.logMap(Number(mSlider.value) / 1000, A.M_MIN, A.M_MAX) : parseNum(mNum.value);
+    if (!A.inRange(v, A.M_MIN, A.M_MAX)){
+      mNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.mass = v;
+    editing = fromSlider ? null : mNum;
+    render();
+  }
+  function commitRadius(fromSlider){
+    var v = fromSlider ? A.logMap(Number(rSlider.value) / 1000, A.R_MIN, A.R_MAX) : parseNum(rNum.value);
+    if (!A.inRange(v, A.R_MIN, A.R_MAX)){
+      rNum.setAttribute("aria-invalid", "true");
+      showErr(true);
+      return;
+    }
+    state.radius = v;
+    editing = fromSlider ? null : rNum;
+    render();
+  }
+  tSlider.addEventListener("input", function(){ commitTemp(true); });
+  tNum.addEventListener("input", function(){ commitTemp(false); });
+  mSlider.addEventListener("input", function(){ if (state.id === "custom") commitMass(true); });
+  rSlider.addEventListener("input", function(){ if (state.id === "custom") commitRadius(true); });
+  mNum.addEventListener("input", function(){ if (state.id === "custom") commitMass(false); });
+  rNum.addEventListener("input", function(){ if (state.id === "custom") commitRadius(false); });
+  tNum.addEventListener("blur", function(){ editing = null; if (A.inRange(state.T, A.T_MIN, A.T_MAX)) tNum.value = A.formatTemp(state.T); });
+  mNum.addEventListener("blur", function(){ editing = null; render(); });
+  rNum.addEventListener("blur", function(){ editing = null; render(); });
+  [tNum, mNum, rNum].forEach(function(el){
+    el.addEventListener("keydown", function(ev){ if (ev.key === "Enter"){ ev.preventDefault(); el.blur(); } });
+  });
+
+  var worldIds = A.worlds().map(function(w){ return w.id; }).concat(["custom"]);
+  function applyWorld(id){
+    editing = null;
+    state.id = id;
+    if (id === "custom"){
+      if (!A.inRange(state.T, A.T_MIN, A.T_MAX)) state.T = 1000;
+    } else {
+      var world = A.worldById(id);
+      state.T = world.T;
+    }
+    render();
+  }
+  document.querySelectorAll("#presets button").forEach(function(btn){
+    btn.addEventListener("click", function(){ applyWorld(btn.getAttribute("data-world")); });
+  });
+  document.addEventListener("keydown", function(ev){
+    var help = document.getElementById("ae-help-dialog");
+    if (help && !help.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var t = ev.target;
+    if (!t || !t.getAttribute || !t.getAttribute("data-world")) return;
+    ev.preventDefault();
+    var id = t.getAttribute("data-world");
+    var idx = worldIds.indexOf(id);
+    if (idx < 0) idx = 0;
+    var dir = ev.key === "ArrowRight" ? 1 : -1;
+    var next = worldIds[(idx + dir + worldIds.length) % worldIds.length];
+    applyWorld(next);
+    var nb = document.querySelector('#presets [data-world="' + next + '"]');
+    if (nb) nb.focus();
+  });
+
+  function pickAt(clientX, clientY){
+    var rect = canvas.getBoundingClientRect();
+    var x = clientX - rect.left;
+    var y = clientY - rect.top;
+    var best = null;
+    var bestD = 22;
+    hits.forEach(function(hit){
+      var d = Math.hypot(hit.x - x, hit.y - y);
+      if (d < bestD){ best = hit; bestD = d; }
+    });
+    if (best && best.id !== state.id) applyWorld(best.id);
+  }
+  canvas.addEventListener("click", function(ev){ pickAt(ev.clientX, ev.clientY); });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver){
+    var ro = new ResizeObserver(function(){ render(); });
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+  }
+  if (window.MutationObserver){
+    new MutationObserver(function(){ render(); }).observe(root, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var helpBtn = document.getElementById("ae-help");
+  var helpDialog = document.getElementById("ae-help-dialog");
+  if (!helpBtn || !helpDialog) return;
+  var previously = null;
+  var scrollLock = "";
+  function focusables(){
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href]")).filter(function(el){
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp(){
+    if (!helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+    else helpDialog.focus();
+  }
+  function closeHelp(){
+    if (helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else helpBtn.focus();
+  }
+  helpBtn.addEventListener("click", function(){
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function(ev){
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function(b){
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function(ev){
+    if (helpDialog.hidden){
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))){
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape"){
+      ev.preventDefault();
+      closeHelp();
+      return;
+    }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length){
+      ev.preventDefault();
+      return;
+    }
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))){
+      ev.preventDefault();
+      last.focus();
+    } else if (!ev.shiftKey && active === last){
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+})();
+</script>
+</body>
+</html>
