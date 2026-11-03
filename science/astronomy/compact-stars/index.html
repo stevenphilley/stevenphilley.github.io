@@ -1,0 +1,898 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compact stars — white dwarfs, neutron stars, and degenerate matter — Steven Philley</title>
+<meta name="description" content="Interactive compact-star desk. White-dwarf radii use Nauenberg 1972: R/R☉ = (0.0225/μ_e) times the relativistic factor, and the Chandrasekhar mass is 5.82/μ_e². For μ_e = 2 that limit is 1.455 solar masses. Neutron-star radii are the Miller et al. 2021 span at 1.4 solar masses, 11.79–13.11 km, not one equation of state. Sirius B, Procyon B, PSR J0030+0451, and PSR J0740+6620 are cited medians. Not a stellar model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/compact-stars/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Compact stars — white dwarfs, neutron stars, and degenerate matter">
+<meta property="og:description" content="Nauenberg’s 1972 white-dwarf curve shrinks toward 1.455 solar masses. Neutron-star radii stay in the measured 11.79–13.11 km span. A teaspoon mass is computed from the density on the card.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/compact-stars/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Compact stars — white dwarfs, neutron stars, and degenerate matter">
+<meta name="twitter:description" content="Electron degeneracy, the Chandrasekhar limit, and a neutron-star radius that is a measured span. Cited stars. Not an equation of state.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;background:transparent;touch-action:none}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+#mr-canvas{cursor:ew-resize}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.other{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.band{height:8px;border-top:0;background:color-mix(in srgb,var(--accent,#c8b48a) 35%,transparent)}
+.swatch.horizon{border-top-style:dashed;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.point{width:8px;height:8px;border:1.5px solid var(--ink,#e8e6e1);border-radius:50%;background:transparent}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden],.comp-row[hidden],.stats li[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/" aria-current="page">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Compact stars</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The remnant</p>
+  <h1>White dwarfs,<br>neutron stars</h1>
+  <p class="lede">A white dwarf is held up by <strong>electron degeneracy pressure</strong>. The electrons are packed so tightly that the Pauli principle, not the heat, sets how fast they move. Add mass and the star gets smaller, because more weight needs more crowding. Nauenberg’s 1972 zero-temperature relation makes that explicit. With the magnetic energy set to zero, <strong>R/R☉ = (0.0225 / μ<sub>e</sub>) √[1 − (M/M<sub>Ch</sub>)<sup>4/3</sup>] / (M/M<sub>Ch</sub>)<sup>1/3</sup></strong> and <strong>M<sub>Ch</sub>/M☉ = 5.82 / μ<sub>e</sub>²</strong>. Helium, carbon, and oxygen have μ<sub>e</sub> = 2, so the limit on this formula is <strong>1.455 M☉</strong>. That is the Chandrasekhar limit here. Iron-56 has μ<sub>e</sub> = 56/26, and the limit drops. A neutron star is the next remnant, if the core collapses and protons and electrons become neutrons. Neutron degeneracy, and the strong force, hold up a city-sized ball. This page does not pick an equation of state for that interior. The shaded band is the Miller et al. 2021 ±1σ span at 1.4 solar masses, across three frameworks: <strong>11.79–13.11 km</strong>. <strong>c = 299,792,458 m/s</strong>. One nominal solar mass uses <strong>GM☉ = 1.3271244×10²⁰ m³ s⁻²</strong>. Density divides by the 2022 CODATA <strong>G = 6.67430×10⁻¹¹</strong>. The spin of one of these stars is the <a href="/science/astronomy/pulsars/">pulsar</a> desk. If the pressure fails, the horizon is the <a href="/science/astronomy/black-holes/">black-hole</a> desk.</p>
+  <p class="note-schematic" id="limits-note">Zero-temperature white dwarfs, and a neutron-star radius that is a measured span rather than an equation of state. Nauenberg’s 1972 relation is equations (54)–(56) with the magnetic energy set to zero. It is not a cooling model. Coulomb corrections and general relativity are left out, and both move the maximum mass. Escape speed is the Newtonian square root of 2GM/R, reported as a fraction of c. It is not a general-relativistic result. The neutron-star band is Miller et al. 2021’s ±1σ span at 1.4 solar masses, 11.79–13.11 km, across three frameworks. It is not a curve of radius against mass. Named medians are the papers’. The teaspoon mass is the density on the card times one US teaspoon. Not a stellar model, not a dense-matter inference, and not a pulsar timer.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Mass, radius, and a teaspoon</span>
+    <button type="button" class="help-q" id="cs-help" aria-haspopup="dialog" aria-controls="cs-help-dialog" aria-expanded="false" aria-label="How this compact-star desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="chart-hint">Mass across · radius up, on a log scale · drag the chart</p>
+      <canvas id="mr-canvas" width="880" height="460" tabindex="0" role="img" aria-label="Mass-radius chart. A white-dwarf curve shrinks toward the Chandrasekhar limit. A neutron-star band sits near 12 km. A Schwarzschild curve is the horizon of the same mass."></canvas>
+      <ul class="legend" aria-label="Chart key">
+        <li><span class="swatch" aria-hidden="true"></span> Nauenberg, active μ<sub>e</sub></li>
+        <li><span class="swatch other" aria-hidden="true"></span> Other composition</li>
+        <li><span class="swatch band" aria-hidden="true"></span> 11.79–13.11 km</li>
+        <li><span class="swatch horizon" aria-hidden="true"></span> Schwarzschild</li>
+        <li><span class="swatch point" aria-hidden="true"></span> Cited median</li>
+      </ul>
+      <p class="scale-note">The vertical line is the Chandrasekhar mass for the composition in use. The white-dwarf curve ends before that line because the radius goes to zero there. The neutron-star band is horizontal on purpose. It is not a mass–radius relation.</p>
+      <div class="controls">
+        <p class="pick-label">Kind</p>
+        <div class="presets" role="group" aria-label="White dwarf or neutron star">
+          <button type="button" id="kind-wd" data-kind="wd" aria-pressed="true">White dwarf</button>
+          <button type="button" id="kind-ns" data-kind="ns" aria-pressed="false">Neutron star</button>
+        </div>
+        <div class="comp-row" id="comp-row">
+          <p class="pick-label">Composition · μ<sub>e</sub></p>
+          <div class="presets" role="group" aria-label="White-dwarf composition">
+            <button type="button" data-mu="heco" aria-pressed="true">He, C, or O</button>
+            <button type="button" data-mu="fe" aria-pressed="false">Iron-56</button>
+          </div>
+        </div>
+        <div class="slider-row">
+          <label for="mass-slider">Mass</label>
+          <input id="mass-slider" type="range" min="0.2" max="1.454" step="0.001" value="1.018" aria-valuemin="0.2" aria-valuemax="1.454" aria-valuenow="1.018">
+          <input class="num" id="mass-num" type="text" inputmode="decimal" value="1.018" aria-label="Mass in solar masses" aria-describedby="mass-err">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="mass-err" hidden></p>
+        <p class="pick-label">Cited objects</p>
+        <div class="presets" id="preset-row">
+          <button type="button" data-preset="sirius-b" aria-pressed="true">Sirius B</button>
+          <button type="button" data-preset="procyon-b" aria-pressed="false">Procyon B</button>
+          <button type="button" data-preset="span-14" aria-pressed="false">1.4 M☉ span</button>
+          <button type="button" data-preset="j0030" aria-pressed="false">PSR J0030+0451</button>
+          <button type="button" data-preset="j0740" aria-pressed="false">PSR J0740+6620</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail" aria-live="polite">
+      <p class="tier" id="d-tier">White dwarf · Sirius B</p>
+      <h2 id="d-title">Sirius B</h2>
+      <p class="range" id="d-range">Model radius from Nauenberg 1972 · μ<sub>e</sub> = 2</p>
+      <ul class="stats">
+        <li><span class="k">Radius</span><span class="v" id="s-radius">0.007800 R☉ · 5,427 km · 0.852 R⊕</span></li>
+        <li id="s-published-row"><span class="k">Published radius</span><span class="v" id="s-published">0.008098 R☉ · 5,634 km</span></li>
+        <li><span class="k">Mean density</span><span class="v" id="s-density">3.024×10⁶ g cm⁻³</span></li>
+        <li><span class="k">Surface gravity</span><span class="v" id="s-gravity">4.588×10⁶ m s⁻² · 4.678×10⁵ g</span></li>
+        <li><span class="k">Escape speed</span><span class="v" id="s-escape">0.024 c</span></li>
+        <li><span class="k">Compactness</span><span class="v" id="s-compact">2.77×10⁻⁴</span></li>
+        <li><span class="k">Horizon, same mass</span><span class="v" id="s-rs">3.006 km</span></li>
+        <li><span class="k">Radius / horizon</span><span class="v" id="s-ratio">1,805</span></li>
+        <li><span class="k">One teaspoon</span><span class="v" id="s-spoon">14,905 kg (14.91 t)</span></li>
+      </ul>
+      <p class="why" id="d-why">Sirius B. Bond et al. 2017 dynamical mass 1.018 ± 0.011 M☉. Nauenberg’s 1972 zero-temperature relation, μ_e = 2, the value for helium, carbon, and oxygen, gives a radius of 0.007800 R☉ · 5,427 km · 0.852 R⊕. The Chandrasekhar mass on this formula is 1.455 M☉. Mean density is 3.024×10⁶ g cm⁻³. One US teaspoon of that density is 14,905 kg (14.91 t). Surface gravity is 4.588×10⁶ m s⁻² · 4.678×10⁵ g. Escape speed is 0.024 c. Compactness GM/(Rc²) is 2.77×10⁻⁴. A black hole of this mass has compactness 0.5 and a Schwarzschild radius of 3.006 km, so this radius is 1,805 times that horizon. The horizon itself is the black-hole desk. The same paper’s STIS radius is 0.008098 R☉ · 5,634 km, internal uncertainty ±0.000046 R☉. This page’s log g from that published mass and radius is 8.629. Bond et al. print 8.629. The model radius is not that STIS radius. The curve is colder and simpler than the star.</p>
+    </div>
+  </div>
+
+  <div class="myth">
+    <p class="tag">Everyday comparison</p>
+    <h2>One teaspoon</h2>
+    <p id="d-spoon">One US teaspoon is 4.92892159375 cm³, from a gallon of 231 cubic inches, 128 fluid ounces to the gallon, and six teaspoons to the fluid ounce, with the inch at 0.0254 m. At the density on this card, that volume has a mass of 14,905 kg (14.91 t).</p>
+    <p>The mass changes when the density changes. A canned “billion tons” is not used. The number on this card is density times that volume.</p>
+  </div>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss">
+      <dt>Degenerate matter</dt>
+      <dd>Matter whose pressure comes from the Pauli principle. Two fermions cannot share a state. Pack them tighter and they must take higher momentum. That momentum is a pressure even when the temperature is zero.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Electron degeneracy</dt>
+      <dd>The pressure that holds a white dwarf up. At low mass the electrons are non-relativistic and the radius falls about as M to the power −1/3. Near the limit the electrons move near c, and the pressure does not stiffen fast enough to hold more mass.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Chandrasekhar limit</dt>
+      <dd>The greatest mass this zero-temperature electron gas can support. On Nauenberg’s printed coefficients it is 5.82 / μ<sub>e</sub>² solar masses. μ<sub>e</sub> = 2 gives 1.455. Textbooks often round that familiar limit to about 1.4. More nucleons per electron means fewer electrons for the same mass, so iron’s limit is lower. Real stars also feel Coulomb forces and general relativity, which this curve leaves out.</dd>
+    </div>
+    <div class="gloss">
+      <dt>μ<sub>e</sub></dt>
+      <dd>Nucleons per electron in a fully ionized gas, A/Z. Helium-4, carbon-12, and oxygen-16 all have A/Z = 2. Iron-56 has 56/26. The button switches only that number. It does not load a cooling track.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Compactness</dt>
+      <dd>GM/(Rc²). A Schwarzschild black hole, with R = 2GM/c², has compactness 1/2. Radius divided by that horizon is 1/(2 × compactness). The <a href="/science/astronomy/black-holes/">black-hole desk</a> keeps the photon sphere and the ISCO. This page only borrows the horizon as a ruler.</dd>
+    </div>
+    <div class="gloss gloss-wide">
+      <dt>Neutron-star radius</dt>
+      <dd>The nuclear equation of state is not settled, so this page does not draw one curve. Miller et al. 2021, after folding in NICER radii, high pulsar masses, and two gravitational-wave tidal measurements, find that the ±1σ radii at 1.4 solar masses from three different frameworks all sit inside 11.79–13.11 km. Presets replace that band with a paper’s median radius. PSR J0030+0451 and PSR J0740+6620 are those medians. Their pulses, as clocks, are the <a href="/science/astronomy/pulsars/">pulsar desk</a>.</dd>
+    </div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1086/151568" rel="noopener" target="_blank">Nauenberg 1972, ApJ 175, 417</a> — analytic mass–radius relation for a zero-temperature star. Equations (54)–(56). This page sets the magnetic energy to zero and uses the printed coefficients 0.0225 and 5.82. The relation is compared in that paper with Chandrasekhar’s numerical radii. It is not a hot-envelope model.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar mass parameter GM☉ = 1.3271244 × 10²⁰ m³ s⁻², and the nominal solar radius 6.957 × 10⁸ m. A conversion constant, not a new measurement of the Sun. The same GM is the <a href="/science/astronomy/black-holes/">black-hole</a> and <a href="/science/astronomy/lensing/">lensing</a> desks.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA G = 6.67430 × 10⁻¹¹ m³ kg⁻¹ s⁻². Used only to turn GM into kilograms for the density. Radii, gravity, escape speed, and compactness use GM and do not divide by G. c = 299,792,458 m/s is exact. Standard gravity 9.80665 m/s² is the conventional value from the 3rd CGPM (1901), for the “g” comparison only.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — volumetric mean radius 6,371 km. Used only to quote a white-dwarf radius in Earth radii. The same length is on the <a href="/science/astronomy/vis-viva/">vis-viva</a> desk.</li>
+      <li><a href="https://doi.org/10.3847/1538-4357/aa6af8" rel="noopener" target="_blank">Bond et al. 2017, ApJ 840, 70</a> — Sirius B dynamical mass 1.018 ± 0.011 M☉. STIS radius 0.008098 ± 0.000046 R☉, internal errors. log g from that mass and radius, 8.629 ± 0.007. Also <a href="https://arxiv.org/abs/1703.10625" rel="noopener" target="_blank">arXiv:1703.10625</a>. This page recomputes log g from those two numbers and the constants above. The model radius is Nauenberg’s, not the STIS radius.</li>
+      <li><a href="https://doi.org/10.1088/0004-637X/813/2/106" rel="noopener" target="_blank">Bond et al. 2015, ApJ 813, 106</a> — Procyon B dynamical mass 0.592 ± 0.006 M☉. Radius adjusted from Provencal et al. 2002 to their parallax, 0.01232 ± 0.00032 R☉. log g = 8.028 ± 0.023. Also <a href="https://arxiv.org/abs/1510.00485" rel="noopener" target="_blank">arXiv:1510.00485</a>. This page’s log g from that mass and radius is 8.029.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ab481c" rel="noopener" target="_blank">Riley et al. 2019, ApJL 887, L21</a> — PSR J0030+0451, NICER. For the favored ST+PST model, the 68% credible interval about the median is M = 1.34 (−0.16, +0.15) M☉ and R<sub>eq</sub> = 12.71 (−1.19, +1.14) km. They print compactness GM/(R<sub>eq</sub> c²) = 0.156 (−0.010, +0.008). This page uses the two medians and recomputes 0.156.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ab50c5" rel="noopener" target="_blank">Miller et al. 2019, ApJL 887, L24</a> — the companion NICER analysis of the same pulsar. Their three-oval model gives R = 13.02 (−1.06, +1.24) km and M = 1.44 (−0.14, +0.15) M☉ at 68%. Those medians are not a second preset. They are the other reduction of the same data.</li>
+      <li><a href="https://arxiv.org/abs/2104.00880" rel="noopener" target="_blank">Fonseca et al. 2021, ApJL</a> — PSR J0740+6620. Model-averaged pulsar mass 2.08 (+0.07, −0.07) M☉ at 68.3% credibility, from the Shapiro delay. arXiv:2104.00880.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ac0a81" rel="noopener" target="_blank">Riley et al. 2021, ApJL 918, L27</a> — NICER and XMM-Newton radius of PSR J0740+6620, conditioned on that radio mass. Equatorial radius 12.39 (−0.98, +1.30) km. The inferred mass is dominated by the 2.08 ± 0.07 M☉ prior. This page uses 2.08 and 12.39.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ac089b" rel="noopener" target="_blank">Miller et al. 2021, ApJL 918, L28</a> — the parallel NICER and XMM-Newton analysis, and the equation-of-state summary. Table 4 note: the final ±1σ radius range for a 1.4 M☉ star, spanning all three EOS frameworks, is 11.79–13.11 km. That span is the band. It is not one of the three curves.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom degenerate matter. The white-dwarf curve is Nauenberg 1972 with μ<sub>e</sub> = 2 or 56/26 and no magnetic energy. The neutron-star band is Miller et al. 2021 at 1.4 solar masses, 11.79–13.11 km. Named medians are Bond et al. 2017, Bond et al. 2015, Riley et al. 2019, Fonseca et al. 2021, and Riley et al. 2021. Escape speed is Newtonian. The teaspoon is the density times 4.92892159375 cm³. Not a stellar model, not a dense-matter inference, and not a pulsar timer. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/black-holes/"><p class="n">The horizon</p><h3>Black holes</h3><p>Schwarzschild radius, photon sphere, and ISCO. The nominal solar mass is 2.953 km. This page only borrows that horizon as a ruler.</p></a>
+    <a href="/science/astronomy/pulsars/"><p class="n">The spin</p><h3>Pulsars</h3><p>Period and period derivative. The Crab’s catalogue age is 1,257 yr. A pulsar is a spinning neutron star. The radius is computed here.</p></a>
+    <a href="/science/astronomy/hr/"><p class="n">The diagram</p><h3>HR diagram</h3><p>White dwarfs sit hot and faint because they are small. The radius that makes them faint is this desk.</p></a>
+    <a href="/science/astronomy/stellar-lifetime/"><p class="n">The end</p><h3>Stellar lifetime</h3><p>A rough label for what a star leaves behind. The mass–radius relation of the remnant is here.</p></a>
+    <a href="/science/astronomy/fusion/"><p class="n">The fuel</p><h3>Fusion</h3><p>The mass defect that kept the star shining. Degeneracy is what is left when the fuel is gone.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The Sun these remnants used to orbit, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="cs-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="cs-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="cs-help-title">How this desk works</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A white dwarf shrinks as you add mass. A neutron star’s radius, on this page, does not. The band is a measurement at 1.4 solar masses, not an equation of state.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Kind</th><td>White dwarf uses Nauenberg’s curve. Neutron star holds the radius at 11.79–13.11 km unless a named pulsar is selected.</td></tr>
+        <tr><th scope="row">Composition</th><td>Shown for white dwarfs. Helium, carbon, and oxygen share μ<sub>e</sub> = 2. Iron-56 uses 56/26, so the limit moves left and the star is smaller at the same mass.</td></tr>
+        <tr><th scope="row">Mass</th><td>Slider or typed solar masses. Drag the chart sideways to the same effect. The chart’s horizontal axis is mass. The vertical axis is radius, logarithmic.</td></tr>
+        <tr><th scope="row">Presets</th><td>Sirius B and Procyon B set a white-dwarf mass. The radius on the card is still the formula. The published radius is the comparison line. The two pulsars set a measured mass and a measured radius. “1.4 M☉ span” is the Miller band at the mass it was quoted for.</td></tr>
+        <tr><th scope="row">Teaspoon</th><td>4.92892159375 cm³ times the density on the card. It is not a remembered slogan.</td></tr>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/compact-stars/compact-stars.js"></script>
+<script>
+(function () {
+  "use strict";
+  var C = window.CompactStars;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!C) return;
+
+  var state = { kind: "wd", mu: C.MU_HECO, mass: 1.018, preset: "sirius-b" };
+  var box = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(msg) {
+    var err = document.getElementById("mass-err");
+    var field = document.getElementById("mass-num");
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      if (field) field.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (field) field.setAttribute("aria-invalid", "true");
+  }
+  function domainMessage() {
+    if (state.kind === "ns") return "Enter a mass from 1 to 2.2 solar masses.";
+    return "This relation needs a mass from 0.2 up to, but not including, " + C.formatMass(C.chandrasekharMass(state.mu)) + " solar masses.";
+  }
+  function fit(el, cssH) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = el.clientWidth;
+    if (w < 40) w = 320;
+    el.width = Math.round(w * dpr);
+    el.height = Math.round(cssH * dpr);
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: cssH };
+  }
+  function press(selector, attr, value) {
+    var buttons = document.querySelectorAll(selector);
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute(attr) === value ? "true" : "false");
+    }
+  }
+  function groupLabel(n) {
+    return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+  function quantize(m) {
+    var step = state.kind === "ns" ? 0.01 : 0.001;
+    return Number((Math.round(m / step) * step).toFixed(3));
+  }
+  function clampMass(m) {
+    if (state.kind === "ns") return Math.min(C.NS_MASS_MAX, Math.max(C.NS_MASS_MIN, m));
+    return Math.min(C.wdMassMax(state.mu), Math.max(C.WD_MASS_MIN, m));
+  }
+
+  function draw(sc) {
+    var canvas = document.getElementById("mr-canvas");
+    if (!canvas) return;
+    var fitd = fit(canvas, 460);
+    if (!fitd) return;
+    var ctx = fitd.ctx;
+    var w = fitd.w;
+    var h = fitd.h;
+    var col = colors();
+    ctx.clearRect(0, 0, w, h);
+    var left = 54;
+    var right = w - 14;
+    var top = 16;
+    var bottom = h - 36;
+    if (right - left < 40 || bottom - top < 40) return;
+    var m0 = 0.15;
+    var m1 = 2.35;
+    var y0 = Math.log(1.2) / Math.LN10;
+    var y1 = Math.log(30000) / Math.LN10;
+    function xOf(m) { return left + (m - m0) / (m1 - m0) * (right - left); }
+    function yOfKm(km) {
+      var y = Math.log(Math.max(km, 1.2)) / Math.LN10;
+      return bottom - (y - y0) / (y1 - y0) * (bottom - top);
+    }
+    box = { left: left, right: right, m0: m0, m1: m1, canvas: canvas };
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = col.line;
+    ctx.fillStyle = col.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    [1, 10, 100, 1000, 10000].forEach(function (km) {
+      var y = yOfKm(km);
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(right, y);
+      ctx.stroke();
+      ctx.fillText(km >= 1000 ? groupLabel(km) : String(km), left - 6, y);
+    });
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    [0.5, 1, 1.5, 2].forEach(function (m) {
+      var x = xOf(m);
+      ctx.beginPath();
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, bottom);
+      ctx.stroke();
+      ctx.fillText(m.toFixed(1), x, bottom + 8);
+    });
+
+    var xA = xOf(C.NS_MASS_MIN);
+    var xB = xOf(C.NS_MASS_MAX);
+    var yLo = yOfKm(C.NS_R_LO_KM);
+    var yHi = yOfKm(C.NS_R_HI_KM);
+    ctx.save();
+    ctx.globalAlpha = 0.2;
+    ctx.fillStyle = col.accent;
+    ctx.fillRect(xA, Math.min(yLo, yHi), xB - xA, Math.abs(yHi - yLo));
+    ctx.restore();
+    ctx.fillStyle = col.accent;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("11.79–13.11 km", xB, Math.min(yLo, yHi) - 3);
+
+    ctx.beginPath();
+    ctx.strokeStyle = col.soft;
+    ctx.setLineDash([4, 4]);
+    var m;
+    for (m = 0.2; m <= 2.3; m += 0.04) {
+      var xh = xOf(m);
+      var yh = yOfKm(C.schwarzschildRadiusM(m) / 1000);
+      if (m === 0.2) ctx.moveTo(xh, yh);
+      else ctx.lineTo(xh, yh);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    function strokeCurve(mu, color, width, dash) {
+      var pts = C.sampleWhiteDwarf(mu, 120);
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.setLineDash(dash);
+      var k;
+      for (k = 0; k < pts.length; k++) {
+        var x = xOf(pts[k].mass);
+        var y = yOfKm(pts[k].radiusM / 1000);
+        if (k === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.lineWidth = 1;
+    }
+    var activeMu = sc && sc.kind === "wd" ? sc.mu : C.MU_HECO;
+    var otherMu = activeMu === C.MU_HECO ? C.MU_FE : C.MU_HECO;
+    strokeCurve(otherMu, col.muted, 1.25, [3, 3]);
+    strokeCurve(activeMu, col.accent, 2, []);
+
+    function vline(mu, color, atTop) {
+      var x = xOf(C.chandrasekharMass(mu));
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.setLineDash([2, 3]);
+      ctx.moveTo(x, top);
+      ctx.lineTo(x, bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = color;
+      ctx.textAlign = "left";
+      if (atTop) {
+        ctx.textBaseline = "top";
+        ctx.fillText(C.formatMass(C.chandrasekharMass(mu)), x + 4, top + 2);
+      } else {
+        ctx.textBaseline = "bottom";
+        ctx.fillText(C.formatMass(C.chandrasekharMass(mu)), x + 4, bottom - 2);
+      }
+    }
+    vline(otherMu, col.muted, false);
+    vline(activeMu, col.accent, true);
+
+    function dot(x, y, filled) {
+      ctx.beginPath();
+      ctx.arc(x, y, filled ? 5 : 3.5, 0, Math.PI * 2);
+      if (filled) {
+        ctx.fillStyle = col.accent;
+        ctx.fill();
+      } else {
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = col.ink;
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+    }
+    var p;
+    for (p = 0; p < C.PRESETS.length; p++) {
+      var preset = C.PRESETS[p];
+      if (preset.observedRadiusSolar) {
+        dot(xOf(preset.mass), yOfKm(preset.observedRadiusSolar * C.R_SUN_M / 1000), false);
+      }
+      if (preset.radiusKm) {
+        var xp = xOf(preset.mass);
+        var yp = yOfKm(preset.radiusKm);
+        ctx.strokeStyle = col.ink;
+        ctx.beginPath();
+        ctx.moveTo(xp, yOfKm(preset.radiusKm - preset.radiusMinus));
+        ctx.lineTo(xp, yOfKm(preset.radiusKm + preset.radiusPlus));
+        ctx.stroke();
+        dot(xp, yp, false);
+      }
+    }
+    if (sc) {
+      var xs = xOf(sc.mass);
+      if (sc.single) dot(xs, yOfKm(sc.lo.radiusM / 1000), true);
+      else {
+        ctx.strokeStyle = col.accent;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(xs, yOfKm(C.NS_R_LO_KM));
+        ctx.lineTo(xs, yOfKm(C.NS_R_HI_KM));
+        ctx.stroke();
+        ctx.lineWidth = 1;
+      }
+    }
+  }
+
+  function render() {
+    var sc = C.scene({ kind: state.kind, mu: state.mu, mass: state.mass, preset: state.preset });
+    if (!sc) return;
+    var comp = document.getElementById("comp-row");
+    if (comp) comp.hidden = sc.kind !== "wd";
+    var slider = document.getElementById("mass-slider");
+    var num = document.getElementById("mass-num");
+    var min = sc.kind === "ns" ? C.NS_MASS_MIN : C.WD_MASS_MIN;
+    var max = sc.kind === "ns" ? C.NS_MASS_MAX : C.wdMassMax(sc.mu);
+    var step = sc.kind === "ns" ? "0.01" : "0.001";
+    if (slider) {
+      slider.min = String(min);
+      slider.max = String(max);
+      slider.step = step;
+      slider.value = String(sc.mass);
+      slider.setAttribute("aria-valuemin", String(min));
+      slider.setAttribute("aria-valuemax", String(max));
+      slider.setAttribute("aria-valuenow", String(sc.mass));
+    }
+    if (num && document.activeElement !== num) num.value = C.formatMass(sc.mass);
+    press("[data-kind]", "data-kind", sc.kind);
+    press("[data-mu]", "data-mu", sc.mu === C.MU_FE ? "fe" : "heco");
+    press("[data-preset]", "data-preset", sc.preset ? sc.preset.id : "");
+    var title = sc.preset ? sc.preset.label : (sc.kind === "ns" ? "Neutron star" : "White dwarf");
+    setText("d-tier", (sc.kind === "ns" ? "Neutron star" : "White dwarf") + (sc.preset ? " · " + sc.preset.label : " · typed mass"));
+    setText("d-title", title);
+    setText("d-range", sc.kind === "wd"
+      ? "Nauenberg 1972 · μe " + (sc.mu === C.MU_HECO ? "= 2" : "= 56/26") + " · limit " + C.formatMass(sc.mch) + " M☉"
+      : (sc.single ? "Cited median radius" : "Miller et al. 2021 span at 1.4 M☉"));
+    var row = sc.single ? sc.text : sc.rangeText;
+    setText("s-radius", row.radius);
+    setText("s-density", row.density);
+    setText("s-gravity", row.gravity);
+    setText("s-escape", row.escape);
+    setText("s-compact", row.compact);
+    setText("s-rs", row.rs);
+    setText("s-ratio", row.ratio);
+    setText("s-spoon", row.teaspoon);
+    var pub = document.getElementById("s-published-row");
+    if (pub) pub.hidden = !sc.observed;
+    if (sc.observed) setText("s-published", sc.observed.radiusText + " · log g " + sc.observed.logG);
+    setText("d-why", C.explain(sc));
+    setText("d-spoon", C.spoonLine(sc));
+    var canvas = document.getElementById("mr-canvas");
+    if (canvas) {
+      canvas.setAttribute("aria-label", title + ". Mass " + C.formatMass(sc.mass) + " solar masses. Radius " + row.radius + ". Compactness " + row.compact + ".");
+    }
+    draw(sc);
+  }
+
+  function setMass(m, fromSlider) {
+    if (!C.massAllowed(state.kind, m, state.mu)) {
+      showErr(domainMessage());
+      return;
+    }
+    showErr("");
+    state.mass = m;
+    state.preset = null;
+    if (fromSlider) {
+      var num = document.getElementById("mass-num");
+      if (num) num.value = C.formatMass(m);
+    }
+    render();
+  }
+
+  document.getElementById("kind-wd").addEventListener("click", function () {
+    state.kind = "wd";
+    state.preset = null;
+    if (!C.massAllowed("wd", state.mass, state.mu)) state.mass = Math.min(C.wdMassMax(state.mu), 0.6);
+    showErr("");
+    render();
+  });
+  document.getElementById("kind-ns").addEventListener("click", function () {
+    state.kind = "ns";
+    state.preset = null;
+    if (!C.massAllowed("ns", state.mass, null)) state.mass = C.NS_SPAN_MASS;
+    showErr("");
+    render();
+  });
+  document.querySelector("[data-mu='heco']").addEventListener("click", function () {
+    state.kind = "wd";
+    state.mu = C.MU_HECO;
+    state.preset = null;
+    showErr("");
+    render();
+  });
+  document.querySelector("[data-mu='fe']").addEventListener("click", function () {
+    state.kind = "wd";
+    state.mu = C.MU_FE;
+    state.preset = null;
+    if (!C.massAllowed("wd", state.mass, state.mu)) state.mass = C.wdMassMax(state.mu);
+    showErr("");
+    render();
+  });
+  document.getElementById("preset-row").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    var id = btn.getAttribute("data-preset");
+    var preset = C.presetById(id);
+    if (!preset) return;
+    state.preset = id;
+    state.kind = preset.kind;
+    state.mass = preset.mass;
+    state.mu = preset.mu || C.MU_HECO;
+    showErr("");
+    var num = document.getElementById("mass-num");
+    if (num) num.value = C.formatMass(preset.mass);
+    render();
+  });
+  document.getElementById("mass-slider").addEventListener("input", function (ev) {
+    setMass(Number(ev.target.value), true);
+  });
+  document.getElementById("mass-num").addEventListener("input", function (ev) {
+    var n = parseNum(ev.target.value);
+    if (!isFinite(n)) {
+      showErr("Enter a mass in solar masses.");
+      return;
+    }
+    setMass(n, false);
+  });
+
+  var canvas = document.getElementById("mr-canvas");
+  function massFromClient(clientX) {
+    if (!box) return null;
+    var rect = box.canvas.getBoundingClientRect();
+    var x = clientX - rect.left;
+    if (rect.width <= 0) return null;
+    var scale = box.canvas.clientWidth / rect.width;
+    x *= scale;
+    return box.m0 + (x - box.left) / (box.right - box.left) * (box.m1 - box.m0);
+  }
+  function dragMass(clientX) {
+    var m = massFromClient(clientX);
+    if (m == null || !isFinite(m)) return;
+    setMass(quantize(clampMass(m)), true);
+  }
+  canvas.addEventListener("pointerdown", function (ev) {
+    canvas.setPointerCapture(ev.pointerId);
+    dragMass(ev.clientX);
+  });
+  canvas.addEventListener("pointermove", function (ev) {
+    if (!canvas.hasPointerCapture(ev.pointerId)) return;
+    dragMass(ev.clientX);
+  });
+  canvas.addEventListener("keydown", function (ev) {
+    var step = state.kind === "ns" ? 0.01 : (ev.shiftKey ? 0.01 : 0.001);
+    if (ev.key === "ArrowLeft") { ev.preventDefault(); setMass(quantize(clampMass(state.mass - step)), true); }
+    else if (ev.key === "ArrowRight") { ev.preventDefault(); setMass(quantize(clampMass(state.mass + step)), true); }
+    else if (ev.key === "Home") { ev.preventDefault(); setMass(state.kind === "ns" ? C.NS_MASS_MIN : C.WD_MASS_MIN, true); }
+    else if (ev.key === "End") { ev.preventDefault(); setMass(state.kind === "ns" ? C.NS_MASS_MAX : C.wdMassMax(state.mu), true); }
+  });
+
+  var helpBtn = document.getElementById("cs-help");
+  var helpDialog = document.getElementById("cs-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
