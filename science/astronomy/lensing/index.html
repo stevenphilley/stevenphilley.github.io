@@ -1,0 +1,1150 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gravitational lensing — deflection, Einstein radius, and two images — Steven Philley</title>
+<meta name="description" content="Interactive gravitational-lensing desk. A point mass deflects light by α = 4GM/(c² b). The nominal Sun at its limb computes 1.751 arcsec. The 1919 paper quotes Einstein’s 1.75 arcsec. Flat-space Einstein radius, two images, and a Paczyński curve for OGLE-2005-BLG-390. Not a cluster model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/lensing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Gravitational lensing — deflection, Einstein radius, and two images">
+<meta property="og:description" content="α = 4GM/(c² b). The nominal Sun at its limb is 1.751″. Flat-space θ_E, two images, and a point-lens light curve. Not a cluster model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/lensing/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gravitational lensing — deflection, Einstein radius, and two images">
+<meta name="twitter:description" content="The nominal Sun at its limb computes 1.751″. The 1919 paper quotes 1.75″. Two images, an Einstein ring, and a Paczyński curve.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+#lens-canvas{cursor:ew-resize;touch-action:none}
+#def-canvas,#curve-canvas{touch-action:manipulation}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.ring{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.lens{width:8px;height:8px;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.source{width:8px;height:8px;border:1.5px solid var(--ink-soft,#9b9a96);border-radius:50%;background:transparent}
+.swatch.image{width:8px;height:8px;border-top:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.swatch.curve{border-top-color:var(--accent,#c8b48a)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:14ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+<a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/" aria-current="page">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Lensing</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The bend</p>
+  <h1>Light, bent<br>by a mass</h1>
+  <p class="lede">A point mass bends a light ray by <strong>α = 4GM / (c² b)</strong>. <strong>b</strong> is the impact parameter, the closest the undeflected ray would come. <strong>c = 299,792,458 m/s</strong> exactly. One nominal solar mass uses the IAU 2015 value <strong>GM☉ = 1.3271244×10²⁰ m³ s⁻²</strong> and the nominal solar radius <strong>6.957×10⁸ m</strong>, which is the Sun Fact Sheet’s 695,700 km. That limb ray computes <strong>1.751″</strong>. Dyson, Eddington, and Davidson 1920 quote Einstein’s limb value as <strong>1.75″</strong> and the Newtonian half as <strong>0.87″</strong>. Their Sobral 4-inch result is <strong>1.98″</strong>, probable error about <strong>0.12″</strong>. The May 29, 1919 eclipse was the test. If the source, the mass, and the observer line up, the image is a ring. The angular Einstein radius in this page’s flat small-angle formula is <strong>θ<sub>E</sub> = √(4GM/c² × D<sub>LS</sub> / (D<sub>L</sub> D<sub>S</sub>))</strong>, with <strong>D<sub>LS</sub> = D<sub>S</sub> − D<sub>L</sub></strong>. Off the line, there are two images, <strong>θ<sub>±</sub> = (β ± √(β² + 4 θ<sub>E</sub>²)) / 2</strong>. Their total magnification is <strong>A = (u² + 2) / (u √(u² + 4))</strong>, where <strong>u = β / θ<sub>E</sub></strong>. A straight track past the mass is the Paczyński curve. A horizon is the <a href="/science/astronomy/black-holes/">black holes</a> desk. The weak-field clock is <a href="/science/astronomy/time-dilation/">time dilation</a>. The geometry, without these angles, is <a href="/science/gravity/">gravity</a>.</p>
+  <p class="note-schematic" id="limits-note">Point mass. Weak field. Small angle. D_LS on this page is D_S minus D_L, in a flat line. A galaxy or a cluster is not that mass, and a cosmological lens uses angular-diameter distances, which are not this subtraction. The Einstein Cross and SDSS J1004+4112 are cited below as published separations. Their redshifts are not loaded into the calculator. The light curve is the Paczyński point-source track. No parallax, no finite source, no planet. Not a fit to the photometry.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Deflection, images, and a light curve</span>
+    <button type="button" class="help-q" id="gl-help" aria-haspopup="dialog" aria-controls="gl-help-dialog" aria-expanded="false" aria-label="How this lensing desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="def-hint">Impact parameter · the bend on the drawing is exaggerated</p>
+      <canvas id="def-canvas" width="880" height="320" tabindex="0" role="img" aria-label="Schematic of a light ray grazing a point mass. The drawn angle is exaggerated. The readout is the small-angle formula."></canvas>
+      <ul class="legend" aria-label="Deflection diagram key">
+        <li><span class="swatch lens" aria-hidden="true"></span> Mass</li>
+        <li><span class="swatch curve" aria-hidden="true"></span> Ray</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Limb presets · formula on cited GM and radius</p>
+        <div class="presets" id="def-presets" role="group" aria-label="Deflection presets">
+          <button type="button" data-preset="sun" aria-pressed="true">Sun, limb</button>
+          <button type="button" data-preset="jupiter" aria-pressed="false">Jupiter, limb</button>
+        </div>
+        <div class="slider-row">
+          <label for="def-m-slider">Mass</label>
+          <input type="range" id="def-m-slider" min="0" max="1000" step="0.1" value="211" aria-valuemin="0.0001" aria-valuemax="1000000000000000" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="def-m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Lens mass in solar masses" aria-describedby="def-m-err" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="def-m-err" hidden>Mass from 0.0001 to 10¹⁵ solar masses.</p>
+        <div class="slider-row">
+          <label for="def-b-slider">Impact</label>
+          <input type="range" id="def-b-slider" min="0" max="1000" step="0.1" value="400" aria-valuemin="10000" aria-valuemax="1000000000" aria-valuetext="695,700 km">
+          <input type="text" class="num" id="def-b-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="695700" aria-label="Impact parameter in kilometers" aria-describedby="def-b-err" aria-invalid="false">
+          <span class="unit-tag">km</span>
+        </div>
+        <p class="field-error" id="def-b-err" hidden>Impact parameter from 10,000 km to 1,000,000,000 km.</p>
+      </div>
+      <p class="scale-note" id="def-scale">Opens on the Sun’s limb. The sketch exaggerates the angle. 1.751″ is the formula, not the 1919 measurement.</p>
+    </div>
+    <aside class="detail" id="def-detail" aria-live="polite">
+      <p class="tier" id="d-def-tier">Sun · nominal limb</p>
+      <h2 id="d-def-alpha">1.751″</h2>
+      <p class="range" id="d-def-range">α = 4GM/(c² b)</p>
+      <ul class="stats">
+        <li><span class="k">Arcsec</span><span class="v" id="d-def-arcsec">1.751″</span></li>
+        <li><span class="k">Milliarcsec</span><span class="v" id="d-def-mas">1,751 mas</span></li>
+        <li><span class="k">Microarcsec</span><span class="v" id="d-def-uas">1.751×10⁶ μas</span></li>
+        <li><span class="k">Half, α/2</span><span class="v" id="d-def-half">0.8756″</span></li>
+        <li><span class="k">Impact b</span><span class="v" id="d-def-b">695,700 km</span></li>
+        <li><span class="k">In solar radii</span><span class="v" id="d-def-rsun">1.000 R☉</span></li>
+      </ul>
+      <p class="why" id="d-def-why">One nominal solar mass. Impact parameter equal to the nominal solar radius, 695,700 km. α = 4GM/(c² b) = 1.751″ (1.751″, 1,751 mas, 1.751×10⁶ μas). The 1919 paper quotes Einstein’s limb value as 1.75″ and the Newtonian half as 0.87″. This page’s half is 0.8756″. Sobral’s 4-inch result in that paper is 1.98″ with a probable error of about 0.12″. Longair’s 2015 reading of the Príncipe reductions is 1.61″ ± 0.31″.</p>
+    </aside>
+  </div>
+
+  <div class="stage" style="margin-top:12px">
+    <div class="diagram">
+      <p class="hint" id="lens-hint">Drag the source · zero is the Einstein ring</p>
+      <canvas id="lens-canvas" width="880" height="440" tabindex="0" role="img" aria-label="Point-mass lens. The dashed circle is the Einstein ring. The source is offset by half an Einstein radius. Two images sit on the line through the lens."></canvas>
+      <ul class="legend" aria-label="Image diagram key">
+        <li><span class="swatch lens" aria-hidden="true"></span> Lens</li>
+        <li><span class="swatch ring" aria-hidden="true"></span> Einstein ring</li>
+        <li><span class="swatch source" aria-hidden="true"></span> Source</li>
+        <li><span class="swatch image" aria-hidden="true"></span> Images</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Opening scale · 1 M☉, 4 kpc, 8 kpc · not a catalog lens</p>
+        <div class="presets" role="group" aria-label="Source alignment">
+          <button type="button" id="align-btn" aria-pressed="false">Aligned</button>
+        </div>
+        <div class="slider-row">
+          <label for="ein-m-slider">Mass</label>
+          <input type="range" id="ein-m-slider" min="0" max="1000" step="0.1" value="211" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="ein-m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Einstein-radius mass in solar masses" aria-describedby="ein-m-err" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="ein-m-err" hidden>Mass from 0.0001 to 10¹⁵ solar masses.</p>
+        <div class="slider-row">
+          <label for="dl-slider">Lens</label>
+          <input type="range" id="dl-slider" min="0" max="1000" step="0.1" value="400" aria-valuetext="4 kpc">
+          <input type="text" class="num" id="dl-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="4" aria-label="Lens distance in kiloparsecs" aria-describedby="dl-err" aria-invalid="false">
+          <span class="unit-tag">kpc</span>
+        </div>
+        <p class="field-error" id="dl-err" hidden>Lens distance from 0.001 kpc to 1,000,000 kpc, and closer than the source.</p>
+        <div class="slider-row">
+          <label for="ds-slider">Source</label>
+          <input type="range" id="ds-slider" min="0" max="1000" step="0.1" value="430" aria-valuetext="8 kpc">
+          <input type="text" class="num" id="ds-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="8" aria-label="Source distance in kiloparsecs" aria-describedby="ds-err" aria-invalid="false">
+          <span class="unit-tag">kpc</span>
+        </div>
+        <p class="field-error" id="ds-err" hidden>Source distance from 0.001 kpc to 1,000,000 kpc, and farther than the lens.</p>
+        <div class="slider-row">
+          <label for="u-slider">Offset</label>
+          <input type="range" id="u-slider" min="-3" max="3" step="0.001" value="0.5" aria-valuemin="-3" aria-valuemax="3" aria-valuenow="0.5" aria-valuetext="0.5 Einstein radii">
+          <input type="text" class="num" id="u-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.5" aria-label="Source offset in Einstein radii" aria-describedby="u-err" aria-invalid="false">
+          <span class="unit-tag">θ_E</span>
+        </div>
+        <p class="field-error" id="u-err" hidden>Source offset from −3 to 3 Einstein radii.</p>
+      </div>
+      <p class="scale-note" id="lens-scale">The ring radius is θ_E. Distances are a flat line, D_LS = D_S − D_L. 4 kpc and 8 kpc are round opening values, not a measured lens. Left and right arrows move the source. Home centers it.</p>
+    </div>
+    <aside class="detail" id="ein-detail" aria-live="polite">
+      <p class="tier" id="d-ein-tier">Flat space · small angle</p>
+      <h2 id="d-ein-theta">1.009 mas</h2>
+      <p class="range" id="d-ein-range">θ_E · 1 M☉ · 4 kpc · 8 kpc</p>
+      <ul class="stats">
+        <li><span class="k">Arcsec</span><span class="v" id="d-ein-arcsec">0.001009″</span></li>
+        <li><span class="k">Milliarcsec</span><span class="v" id="d-ein-mas">1.009 mas</span></li>
+        <li><span class="k">Microarcsec</span><span class="v" id="d-ein-uas">1,009 μas</span></li>
+        <li><span class="k">Source β</span><span class="v" id="d-ein-beta">0.5045 mas</span></li>
+        <li><span class="k">Image θ+</span><span class="v" id="d-ein-plus">1.292 mas</span></li>
+        <li><span class="k">Image θ−</span><span class="v" id="d-ein-minus">−0.7878 mas</span></li>
+        <li><span class="k">Magnification A</span><span class="v" id="d-ein-A">2.183</span></li>
+        <li><span class="k">Same side |μ|</span><span class="v" id="d-ein-major">1.591</span></li>
+        <li><span class="k">Opposite |μ|</span><span class="v" id="d-ein-minor">0.5914</span></li>
+      </ul>
+      <p class="why" id="d-ein-why">θ_E = sqrt(4GM/c² × D_LS/(D_L D_S)), with D_LS = D_S − D_L. Mass 1 M☉, lens 4 kpc, source 8 kpc. The angle is 1.009 mas (0.001009″, 1.009 mas, 1,009 μas). Flat space. Small angle. Not an angular-diameter distance.</p>
+      <p class="why" id="d-img-why">Source offset u = 0.5, so β = 0.5045 mas. θ+ = 1.292 mas and θ− = −0.7878 mas. Total magnification A = 2.183. The image on the source’s side, at 1.292 mas, is magnified by 1.591. The opposite image, at −0.7878 mas, is 0.5914 and has opposite parity. A = |μ+| + |μ−|, and |μ+| − |μ−| = 1.</p>
+    </aside>
+  </div>
+
+  <div class="stage" style="margin-top:12px">
+    <div class="diagram">
+      <p class="hint" id="curve-hint">Magnification against time · point lens, point source, straight track</p>
+      <canvas id="curve-canvas" width="880" height="320" tabindex="0" role="img" aria-label="Microlensing light curve. Magnification versus time for impact parameter 0.332 and Einstein crossing time 11.735 days."></canvas>
+      <ul class="legend" aria-label="Light-curve key">
+        <li><span class="swatch curve" aria-hidden="true"></span> A(t)</li>
+        <li><span class="swatch" aria-hidden="true"></span> A = 1</li>
+      </ul>
+      <div class="controls">
+        <p class="pick-label">Single-lens fit · OGLE-2005-BLG-390 · not the planetary model</p>
+        <div class="presets" id="curve-presets" role="group" aria-label="Light-curve preset">
+          <button type="button" data-curve="ogle" aria-pressed="true">OGLE-2005-BLG-390</button>
+        </div>
+        <div class="slider-row">
+          <label for="u0-slider">u0</label>
+          <input type="range" id="u0-slider" min="0.01" max="2" step="0.001" value="0.332" aria-valuemin="0.01" aria-valuemax="2" aria-valuenow="0.332" aria-valuetext="0.332 Einstein radii">
+          <input type="text" class="num" id="u0-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.332" aria-label="Minimum impact parameter in Einstein radii" aria-describedby="u0-err" aria-invalid="false">
+          <span class="unit-tag">θ_E</span>
+        </div>
+        <p class="field-error" id="u0-err" hidden>Minimum impact parameter from 0.01 to 2.</p>
+        <div class="slider-row">
+          <label for="te-slider">t_E</label>
+          <input type="range" id="te-slider" min="0" max="1000" step="0.1" value="500" aria-valuetext="11.735 days">
+          <input type="text" class="num" id="te-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="11.735" aria-label="Einstein crossing time in days" aria-describedby="te-err" aria-invalid="false">
+          <span class="unit-tag">days</span>
+        </div>
+        <p class="field-error" id="te-err" hidden>Einstein crossing time from 0.5 to 500 days.</p>
+      </div>
+      <p class="scale-note" id="curve-scale">u(t) = √(u0² + (t/t_E)²). The peak is at closest approach. OGLE’s printed Amax is 3.136 ± 0.044. This curve recomputes A. It does not include the planetary deviation.</p>
+    </div>
+    <aside class="detail" id="curve-detail" aria-live="polite">
+      <p class="tier" id="d-c-tier">OGLE-2005-BLG-390 · single lens</p>
+      <h2 id="d-c-peak">3.135</h2>
+      <p class="range" id="d-c-range">Peak A · u0 = 0.332 · t_E = 11.735 d</p>
+      <ul class="stats">
+        <li><span class="k">u0</span><span class="v" id="d-c-u0">0.332</span></li>
+        <li><span class="k">t_E</span><span class="v" id="d-c-te">11.735 days</span></li>
+        <li><span class="k">Peak A</span><span class="v" id="d-c-amax">3.135</span></li>
+        <li><span class="k">Survey Amax</span><span class="v" id="d-c-survey">3.136 ± 0.044</span></li>
+      </ul>
+      <p class="why" id="d-c-why">OGLE-2005-BLG-390, the survey’s single-lens fit: u_min = 0.332, t_E = 11.735 days. The survey prints Amax = 3.136 ± 0.044. This formula at u = 0.332 gives A = 3.135. Beaulieu et al. 2006 later fit a planet. Their binary-lens closest approach is u0 = 0.359 ± 0.005 and t_E = 11.03 ± 0.11 days. That deviation is not on this curve.</p>
+    </aside>
+  </div>
+
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The opening arithmetic is still this. Sun limb: α = 1.751″, half 0.8756″. Jupiter limb: 16.64 mas. One solar mass at 4 kpc, source at 8 kpc: θ_E = 1.009 mas. At u = 0.5, A = 2.183. OGLE-2005-BLG-390 single-lens u_min = 0.332 and t_E = 11.735 days give A = 3.135. Jupiter’s fact-sheet GM, 126.687 × 10^6 km³/s², and volumetric mean radius, 69,911 km. The same formula gives 16.64 mas (0.01664″, 16.64 mas, 16,640 μas). That is the limb deflection of a point mass with Jupiter’s GM. It is not a quoted measurement of a ray that grazed Jupiter. The source sits on the line of sight. The two solutions fall on the Einstein ring, at +1.009 mas and −1.009 mas. A point source on the axis is the whole ring, not two dots. The point-source magnification is unbounded.</p>
+  </noscript>
+
+  <div class="sheet">
+    <table>
+      <caption>Published image separations · not inputs to the point-mass calculator</caption>
+      <thead>
+        <tr>
+          <th scope="col">System</th>
+          <th scope="col">What was published</th>
+          <th scope="col">Why it is not a preset here</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Q2237+0305 · Einstein Cross</th>
+          <td>Galaxy z = 0.0394, quasar z = 1.695 (Huchra et al. 1985). Four components, largest separation 1.8″ (Yee 1988). NASA: 1.6″ between the upper and lower images.</td>
+          <td>A galaxy, four images. Not a point mass. The redshifts are not Euclidean distances.</td>
+        </tr>
+        <tr>
+          <th scope="row">SDSS J1004+4112</th>
+          <td>Maximum separation 14.62″ (Inada et al. 2003). Quasar z = 1.734, cluster z = 0.68 (Oguri et al. 2004).</td>
+          <td>A cluster. The flat subtraction D_S − D_L is the wrong distance.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <aside class="myth" aria-label="What this calculator leaves out">
+    <p class="tag">A point, not a cluster</p>
+    <h2>The ring on this page is one mass.</h2>
+    <p>The Einstein Cross is four images of one quasar around the nucleus of a nearby galaxy. Yee’s largest separation is 1.8″. NASA’s Hubble note gives 1.6″ between the upper and lower images, and says a faint fifth image is expected near the center. SDSS J1004+4112 is a quasar split by a cluster, maximum separation 14.62″. Neither system is loaded into the mass and distance sliders. A cluster’s Einstein radius uses angular-diameter distances, and the mass is not a point.</p>
+    <p>OGLE-2005-BLG-390 is on the light curve as the survey’s single-lens numbers, u_min = 0.332 and t_E = 11.735 days. Beaulieu et al. 2006 found a planet in a short deviation. Their binary-lens u0 is 0.359 ± 0.005 and their t_E is 11.03 ± 0.11 days. The median lens in that paper is about 0.22 solar masses at 6.6 ± 1.0 kpc. The source distance there is a prior, not a single measured distance, so this page does not turn those medians into a θ_E preset. The curve above is only the point-lens formula.</p>
+  </aside>
+
+  <p class="band">Literacy · the words on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Deflection</dt><dd>α = 4GM/(c² b), in radians, then converted with 648,000/π arcseconds in a radian. The 1919 paper’s 1.75″ is the limb value they attribute to Einstein. This page recomputes the formula with the IAU nominal GM☉ and the nominal solar radius. The half, α/2, is the 1911 result the same paper calls 0.87″ at the limb. This page’s half is 0.8756″.</dd></div>
+    <div class="gloss"><dt>Einstein radius</dt><dd>θ_E = √(4GM/c² × D_LS/(D_L D_S)). On this page D_LS is D_S − D_L. That is a flat line and a small angle. It is the right shape for a Galactic microlens. It is not a cosmological angular-diameter distance.</dd></div>
+    <div class="gloss"><dt>Two images</dt><dd>θ± = (β ± √(β² + 4 θ_E²))/2. They and the source lie on one line through the lens. At β = 0 the two solutions sit on the ring, and the image of a point source is the ring itself.</dd></div>
+    <div class="gloss"><dt>Magnification</dt><dd>u = β/θ_E. A = (u² + 2)/(u √(u² + 4)). The same-side image carries (A+1)/2. The opposite image carries (A−1)/2 and the opposite parity. Their absolute values add to A and differ by 1. At u = 0 the point-source formula is unbounded.</dd></div>
+    <div class="gloss"><dt>Light curve</dt><dd>u(t) = √(u0² + (t/t_E)²), with t measured from closest approach. t_E is the time to cross one Einstein radius. The plot is that formula. Parallax, the finite size of the source, and a planet are not in it.</dd></div>
+    <div class="gloss gloss-wide"><dt>Opening numbers</dt><dd>The image panel opens at 1 nominal solar mass, a lens at 4 kpc, and a source at 8 kpc. Those two distances are round values so the angle is easy to read. They are not a measured lens. The deflection panel opens on the Sun’s limb. The light curve opens on the OGLE single-lens fit.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the constants and the lenses</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar mass parameter GM☉ = 1.3271244 × 10²⁰ m³ s⁻² and nominal solar radius 6.957 × 10⁸ m. Conversion constants, not a new measurement of the Sun. The resolution text is also at the <a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU archive</a>.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m. A parsec on this page is (648,000/π) of those units.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST — speed of light in vacuum</a> — c = 299,792,458 m/s exactly.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — volumetric mean radius 695,700 km, the same length as the IAU nominal solar radius. The limb preset uses that radius with the IAU GM☉, not the sheet’s rounded GM.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — GM 126.687 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 69,911 km. The Jupiter limb button is the formula on those two numbers.</li>
+      <li><a href="https://doi.org/10.1098/rsta.1920.0009" rel="noopener" target="_blank">Dyson, Eddington, and Davidson 1920, Philosophical Transactions of the Royal Society A 220, 291</a> — the expeditions to Sobral and Príncipe for the eclipse of May 29, 1919. The paper states Einstein’s limb deflection as 1″.75 and the Newtonian value as 0″.87. The Sobral 4-inch mean is 1″.98 with a probable error of about 0″.12. The displacement is inversely proportional to distance from the Sun’s centre.</li>
+      <li><a href="https://doi.org/10.1098/rsta.2014.0287" rel="noopener" target="_blank">Longair 2015, Philosophical Transactions of the Royal Society A 373, 20140287</a> — reading of the 1920 reductions: Príncipe 1.61 ± 0.31 arcsec, and the Sobral 4-inch result 1.98 ± 0.12 arcsec. This page quotes the Príncipe figure from Longair because the 1920 summary’s digits are the ones he prints. The Sobral probable error is also in the 1920 paper itself.</li>
+      <li><a href="https://doi.org/10.1086/164140" rel="noopener" target="_blank">Paczyński 1986, ApJ 304, 1</a> — gravitational microlensing. The magnification and the straight-line track on this page are that point-lens, point-source picture.</li>
+      <li><a href="https://ogle.astrouw.edu.pl/ogle3/ews/2005/blg-390.html" rel="noopener" target="_blank">OGLE Early Warning System — OGLE-2005-BLG-390</a> — single-lens fit printed on the event page: u_min = 0.332 ± 0.005, tau = 11.735 ± 0.116 days, Amax = 3.136 ± 0.044. This page uses 0.332 and 11.735 and recomputes A.</li>
+      <li><a href="https://doi.org/10.1038/nature04441" rel="noopener" target="_blank">Beaulieu et al. 2006, Nature 439, 437</a> — the planet OGLE-2005-BLG-390Lb. Table 1 of the paper: u0 = 0.359 ± 0.005 and t_E = 11.03 ± 0.11 days for the binary-lens model. The median lens is a 0.22 solar-mass star at D_L = 6.6 ± 1.0 kpc. The source distance in that analysis is a prior. Those medians are not a θ_E preset here. Also <a href="https://arxiv.org/abs/astro-ph/0601563" rel="noopener" target="_blank">arXiv:astro-ph/0601563</a>.</li>
+      <li><a href="https://doi.org/10.1086/113777" rel="noopener" target="_blank">Huchra et al. 1985, AJ 90, 691</a> — 2237+0305, a quasar at z = 1.695 nearly centered on a galaxy at z = 0.0394.</li>
+      <li><a href="https://doi.org/10.1086/114729" rel="noopener" target="_blank">Yee 1988, AJ 95, 1331</a> — four components of 2237+030 in a cross. The largest separation of the components is 1.8″.</li>
+      <li><a href="https://science.nasa.gov/asset/hubble/the-gravitational-lens-g2237-0305/" rel="noopener" target="_blank">NASA Science — The gravitational lens G2237+0305</a> — Hubble’s Faint Object Camera image of the Einstein Cross. The angular separation between the upper and lower images is 1.6 arcseconds. The note says a faint fifth image is expected near the galaxy’s center. The quasar distance is given as approximately 8 billion light-years and the galaxy as 400 million light-years. Those approximations are not converted into the calculator.</li>
+      <li><a href="https://doi.org/10.1038/nature02153" rel="noopener" target="_blank">Inada et al. 2003, Nature 426, 810</a> — SDSS J1004+4112, maximum separation 14.62 arcsec. Also <a href="https://arxiv.org/abs/astro-ph/0312427" rel="noopener" target="_blank">arXiv:astro-ph/0312427</a>.</li>
+      <li><a href="https://doi.org/10.1086/382221" rel="noopener" target="_blank">Oguri et al. 2004, ApJ 605, 78</a> — the same system. Quasar redshift z = 1.734. Cluster redshift z = 0.68. Four images, maximum separation 14.62″.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom point mass. α = 4GM/(c² b) with the IAU 2015 nominal GM☉, the nominal solar radius, and c = 299,792,458 m/s. The Sun’s limb computes 1.751″. The 1919 paper quotes 1.75″. θ_E uses D_LS = D_S − D_L. The two images and A = (u²+2)/(u √(u²+4)) are the small-angle point lens. The light curve is the Paczyński track for a chosen u0 and t_E. OGLE-2005-BLG-390 uses the survey single-lens fit, not the planetary model. Galaxy and cluster separations are cited and not computed. Not a cosmological lens model and not a photometric fit. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/black-holes/"><p class="n">The horizon</p><h3>Black holes</h3><p>Schwarzschild radius, photon sphere, and ISCO. The nominal solar mass is 2.953 km. The light bending on this page is the weak-field ray, not that horizon.</p></a>
+    <a href="/science/gravity/"><p class="n">The geometry</p><h3>Gravity</h3><p>Weight, Newton, and Einstein. The 1919 eclipse is named there. The angle is computed here.</p></a>
+    <a href="/science/astronomy/angular-size/"><p class="n">The disc</p><h3>Angular size</h3><p>δ = 2·arctan(d / 2D). A different angle: how large a body looks, not how far a ray is bent.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. A lens can also delay and magnify. This page does not compute a time delay.</p></a>
+    <a href="/science/astronomy/cosmology/"><p class="n">The distances</p><h3>Cosmology</h3><p>Angular-diameter distance turns over. The flat subtraction on this page is not that distance.</p></a>
+    <a href="/science/astronomy/telescope/"><p class="n">The aperture</p><h3>Telescope</h3><p>Rayleigh’s 1.22 λ/D and Dawes’s 116/D. An Einstein ring of a milliarcsecond is a resolution problem.</p></a>
+    <a href="/science/astronomy/gravitational-waves/"><p class="n">The chirp</p><h3>Gravitational waves</h3><p>A compact binary’s leading-order sweep. A different ripple from the same theory. Not a lens.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The Sun this desk starts from, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="gl-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="gl-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="gl-help-title">Lensing desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A point mass. The angles are the formulas. The sketch exaggerates the bend. Galaxy and cluster lenses are cited, not computed.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Sun, limb</th><td>Mass 1 nominal solar mass. Impact parameter 695,700 km. The readout is α = 4GM/(c² b).</td></tr>
+        <tr><th scope="row">Jupiter, limb</th><td>Fact-sheet GM and volumetric radius. The same formula. Not a measured graze.</td></tr>
+        <tr><th scope="row">Mass and impact</th><td>Mass from 0.0001 to 10¹⁵ solar masses, logarithmic. Impact parameter from 10,000 km to 1,000,000,000 km, logarithmic.</td></tr>
+        <tr><th scope="row">Einstein radius</th><td>Mass, lens distance, and source distance. Distances are kiloparsecs, from 0.001 to 1,000,000. The source has to be farther than the lens. D_LS = D_S − D_L.</td></tr>
+        <tr><th scope="row">Source offset</th><td>From −3 to 3 Einstein radii. Zero is the ring. Drag the image diagram, or use Left and Right. Shift steps farther. Home centers the source.</td></tr>
+        <tr><th scope="row">Light curve</th><td>u0 from 0.01 to 2. t_E from 0.5 to 500 days, logarithmic. The OGLE button sets 0.332 and 11.735 days.</td></tr>
+      </tbody>
+    </table>
+    <h3>Readouts</h3>
+    <table>
+      <caption>Readouts</caption>
+      <tbody>
+        <tr><th scope="row">Deflection</th><td>Arcseconds, milliarcseconds, and microarcseconds. The large figure is the sensible unit. The half is α/2.</td></tr>
+        <tr><th scope="row">Images</th><td>θ+ and θ− from the quadratic. A is the total magnification. The same-side image is the larger absolute magnification.</td></tr>
+        <tr><th scope="row">Light curve</th><td>A(t) for a straight track. The horizontal line is A = 1. The survey’s printed Amax is quoted beside the recomputed peak.</td></tr>
+      </tbody>
+    </table>
+    <h3>Keyboard and touch</h3>
+    <table>
+      <caption>Keyboard and touch</caption>
+      <tbody>
+        <tr><th scope="row">Buttons</th><td>Enter or Space selects. The pressed button is aria-pressed. Targets are at least 44 pixels on a side.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/lensing/lensing.js"></script>
+<script>
+(function () {
+  "use strict";
+  var L = window.Lensing;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!L) return;
+
+  var sun = L.presetById("sun");
+  var state = {
+    mass: sun.massSolar,
+    b: sun.bMeters,
+    eMass: L.OPEN_MASS,
+    dL: L.OPEN_DL_PC,
+    dS: L.OPEN_DS_PC,
+    u: L.OPEN_U,
+    u0: L.OGLE_U0,
+    tE: L.OGLE_TE_DAYS
+  };
+  var lensGeom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(raw) {
+    var t = String(raw == null ? "" : raw).trim().replace(/,/g, "").replace(/\u2212/g, "-").replace(/\s/g, "");
+    if (!t || !/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(t)) return NaN;
+    return Number(t);
+  }
+  function showErr(id, fieldId, msg) {
+    var err = document.getElementById(id);
+    var field = document.getElementById(fieldId);
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      if (field) field.setAttribute("aria-invalid", "false");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (field) field.setAttribute("aria-invalid", "true");
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit(el, cssH) {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = el.clientWidth;
+    if (w < 40) w = 320;
+    el.width = Math.round(w * dpr);
+    el.height = Math.round(cssH * dpr);
+    el.style.height = cssH + "px";
+    var ctx = el.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: cssH };
+  }
+  function press(selector, attr, value) {
+    var buttons = document.querySelectorAll(selector);
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute(attr) === value ? "true" : "false");
+    }
+  }
+  function setField(id, text) {
+    var el = document.getElementById(id);
+    if (el && document.activeElement !== el) el.value = text;
+  }
+  function setRange(id, value, text) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.value = String(value);
+    if (text) {
+      el.setAttribute("aria-valuetext", text);
+      el.setAttribute("aria-valuenow", String(value));
+    }
+  }
+  function fieldMass(m) {
+    var ax = Math.abs(m);
+    if (ax !== 0 && (ax < 0.001 || ax >= 10000)) return m.toExponential(4).replace("e+", "e");
+    return String(Number(m.toPrecision(8)));
+  }
+  function fieldPlain(x, digits) {
+    if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+    return String(Number(x.toPrecision(digits || 8)));
+  }
+  function massIn(m) {
+    return typeof m === "number" && isFinite(m) && m >= L.MASS_MIN && m <= L.MASS_MAX;
+  }
+  function bIn(b) {
+    return typeof b === "number" && isFinite(b) && b >= L.B_MIN_M && b <= L.B_MAX_M;
+  }
+  function presetId() {
+    var i;
+    for (i = 0; i < L.PRESETS.length; i++) {
+      var p = L.PRESETS[i];
+      if (Math.abs(state.mass - p.massSolar) / p.massSolar < 1e-9 && Math.abs(state.b - p.bMeters) / p.bMeters < 1e-9) return p.id;
+    }
+    return "";
+  }
+  function curveId() {
+    if (Math.abs(state.u0 - L.OGLE_U0) < 1e-12 && Math.abs(state.tE - L.OGLE_TE_DAYS) < 1e-12) return "ogle";
+    return "";
+  }
+
+  function drawDeflection(ctx, w, h, row, c) {
+    ctx.clearRect(0, 0, w, h);
+    var body = Math.min(86, Math.min(w, h) * 0.22);
+    var cx = Math.max(body + 24, w * 0.32);
+    var cy = h * 0.62;
+    var yRay = cy - body - 3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, body, 0, Math.PI * 2);
+    ctx.fillStyle = c.ink;
+    ctx.globalAlpha = 0.9;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.muted;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx, yRay);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    var x0 = 12;
+    var x1 = w - 16;
+    var kink = Math.min(0.5, Math.max(0.14, row.arcsec / 1.751 * 0.26));
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.75;
+    ctx.beginPath();
+    ctx.moveTo(x0, yRay);
+    ctx.lineTo(cx, yRay);
+    ctx.lineTo(x1, yRay - Math.tan(kink) * (x1 - cx));
+    ctx.stroke();
+    ctx.font = font(11);
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("b", cx + 8, yRay - 2);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "bottom";
+    ctx.fillStyle = c.accent;
+    ctx.fillText(row.primary, x1, yRay - Math.tan(kink) * (x1 - cx) - 6);
+  }
+
+  function drawLens(ctx, w, h, sc, c) {
+    ctx.clearRect(0, 0, w, h);
+    var cx = w / 2;
+    var cy = h * 0.56;
+    var scale = Math.min((w - 72) / 7.2, (h - 48) / 2.5);
+    if (scale < 18) scale = 18;
+    lensGeom = { cx: cx, scale: scale };
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(8, scale), 0, Math.PI * 2);
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = sc.aligned ? 2.5 : 1.25;
+    if (!sc.aligned) ctx.setLineDash([5, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = c.ink;
+    ctx.fill();
+    ctx.font = font(11);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    if (sc.aligned) {
+      ctx.fillStyle = c.accent;
+      ctx.fillText("Einstein ring", cx, cy - scale - 16);
+      return;
+    }
+    var su = sc.u * scale;
+    var up = (sc.plusRad / sc.einstein.radians) * scale;
+    var um = (sc.minusRad / sc.einstein.radians) * scale;
+    ctx.beginPath();
+    ctx.arc(cx + su, cy - 22, 6, 0, Math.PI * 2);
+    ctx.strokeStyle = c.soft;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = c.soft;
+    ctx.fillText("source", cx + su, cy - 40);
+    function dot(x, color, r) {
+      ctx.beginPath();
+      ctx.arc(cx + x, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    }
+    dot(up, c.accent, 5.5);
+    dot(um, c.ink, 4.5);
+    ctx.fillStyle = c.muted;
+    ctx.fillText("θ+", cx + up, cy + 18);
+    ctx.fillText("θ−", cx + um, cy + 18);
+  }
+
+  function drawCurve(ctx, w, h, u0, tE, c) {
+    var pts = L.lightCurve(u0, tE, 241);
+    if (!pts) return;
+    var peak = L.magnification(u0);
+    var yMax = Math.max(1.4, peak * 1.12);
+    var padL = 48;
+    var padR = 12;
+    var padT = 16;
+    var padB = 28;
+    var pw = Math.max(20, w - padL - padR);
+    var ph = Math.max(20, h - padT - padB);
+    function X(t) {
+      return padL + ((t / tE) + 3) / 6 * pw;
+    }
+    function Y(A) {
+      var f = (A - 1) / (yMax - 1);
+      if (f < 0) f = 0;
+      if (f > 1) f = 1;
+      return padT + (1 - f) * ph;
+    }
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, pw, ph);
+    ctx.strokeStyle = c.muted;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(padL, Y(1));
+    ctx.lineTo(padL + pw, Y(1));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.75;
+    var i;
+    for (i = 0; i < pts.length; i++) {
+      var x = X(pts[i].tDays);
+      var y = Y(pts[i].A);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = c.accent;
+    ctx.beginPath();
+    ctx.arc(X(0), Y(peak), 3.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = font(10);
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText("1", padL - 6, Y(1));
+    ctx.fillText(L.formatMag(peak), padL - 6, Y(peak));
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText("−2 t_E", X(-2 * tE), padT + ph + 6);
+    ctx.fillText("0", X(0), padT + ph + 6);
+    ctx.fillText("+2 t_E", X(2 * tE), padT + ph + 6);
+  }
+
+  function render() {
+    var row = L.deflection(state.mass, state.b);
+    var sc = L.scene(state.eMass, state.dL, state.dS, state.u);
+    var peak = L.magnification(state.u0);
+    var c = colors();
+    if (row) {
+      setText("d-def-alpha", row.primary);
+      setText("d-def-arcsec", row.arcsecText);
+      setText("d-def-mas", row.masText);
+      setText("d-def-uas", row.uasText);
+      setText("d-def-half", row.halfText);
+      setText("d-def-b", L.formatKm(row.bMeters));
+      setText("d-def-rsun", L.formatSolarRadii(row.solarRadii));
+      var pid = presetId();
+      setText("d-def-tier", pid === "sun" ? "Sun · nominal limb" : (pid === "jupiter" ? "Jupiter · fact-sheet limb" : "Custom · point mass"));
+      setText("d-def-why", pid === "jupiter" ? L.explainJupiter(row) : (pid === "sun" ? L.explainSun(row) : "α = 4GM/(c² b) = " + row.primary + " (" + row.arcsecText + ", " + row.masText + ", " + row.uasText + "). Half is " + row.halfText + ". Impact parameter " + L.formatKm(row.bMeters) + ", " + L.formatSolarRadii(row.solarRadii) + ", " + L.formatAu(row.au) + "."));
+      press("#def-presets button", "data-preset", pid);
+      setRange("def-m-slider", L.toUnit(state.mass, L.MASS_MIN, L.MASS_MAX), L.formatMass(state.mass));
+      setRange("def-b-slider", L.toUnit(state.b, L.B_MIN_M, L.B_MAX_M), L.formatKm(state.b));
+      setField("def-m-num", fieldMass(state.mass));
+      setField("def-b-num", fieldPlain(state.b / 1000, 8));
+      var def = document.getElementById("def-canvas");
+      if (def) {
+        var box = fit(def, Math.max(220, Math.min(320, def.clientWidth * 0.42)));
+        if (box) drawDeflection(box.ctx, box.w, box.h, row, c);
+        def.setAttribute("aria-label", "Schematic ray. Deflection " + row.primary + ". The drawn angle is exaggerated.");
+      }
+    }
+    if (sc) {
+      var unit = L.angleUnit(sc.einstein.arcsec);
+      setText("d-ein-theta", sc.einstein.primary);
+      setText("d-ein-arcsec", sc.einstein.arcsecText);
+      setText("d-ein-mas", sc.einstein.masText);
+      setText("d-ein-uas", sc.einstein.uasText);
+      setText("d-ein-range", "θ_E · " + L.formatMass(state.eMass) + " · " + L.formatKpc(state.dL) + " · " + L.formatKpc(state.dS));
+      setText("d-ein-beta", L.formatInUnit(sc.betaRad * L.ARCSEC_PER_RAD, unit));
+      setText("d-ein-plus", L.formatInUnit(sc.plusRad * L.ARCSEC_PER_RAD, unit));
+      setText("d-ein-minus", L.formatInUnit(sc.minusRad * L.ARCSEC_PER_RAD, unit));
+      setText("d-ein-A", L.formatMag(sc.mag.total));
+      setText("d-ein-major", L.formatMag(sc.mag.plus));
+      setText("d-ein-minor", sc.aligned ? "—" : L.formatMag(sc.mag.minus));
+      setText("d-ein-why", L.explainEinstein(sc.einstein));
+      setText("d-img-why", L.explainScene(sc));
+      setText("d-ein-tier", sc.aligned ? "Aligned · Einstein ring" : "Flat space · small angle");
+      var align = document.getElementById("align-btn");
+      if (align) align.setAttribute("aria-pressed", sc.aligned ? "true" : "false");
+      setRange("ein-m-slider", L.toUnit(state.eMass, L.MASS_MIN, L.MASS_MAX), L.formatMass(state.eMass));
+      setRange("dl-slider", L.toUnit(state.dL, L.DIST_MIN_PC, L.DIST_MAX_PC), L.formatKpc(state.dL));
+      setRange("ds-slider", L.toUnit(state.dS, L.DIST_MIN_PC, L.DIST_MAX_PC), L.formatKpc(state.dS));
+      setRange("u-slider", state.u, L.formatU(state.u) + " Einstein radii");
+      setField("ein-m-num", fieldMass(state.eMass));
+      setField("dl-num", fieldPlain(state.dL / 1000, 8));
+      setField("ds-num", fieldPlain(state.dS / 1000, 8));
+      setField("u-num", L.formatU(state.u));
+      var lens = document.getElementById("lens-canvas");
+      if (lens) {
+        var boxL = fit(lens, Math.max(240, Math.min(360, lens.clientWidth * 0.48)));
+        if (boxL) drawLens(boxL.ctx, boxL.w, boxL.h, sc, c);
+        lens.setAttribute("aria-label", sc.aligned ? "Einstein ring. Source aligned with the lens. Point-source magnification unbounded." : "Point-mass lens. Source offset " + L.formatU(state.u) + " Einstein radii. Two images. Total magnification " + L.formatMag(sc.mag.total) + ".");
+      }
+    }
+    if (peak != null && isFinite(state.u0) && isFinite(state.tE)) {
+      var cid = curveId();
+      setText("d-c-peak", L.formatMag(peak));
+      setText("d-c-amax", L.formatMag(peak));
+      setText("d-c-u0", L.formatU(state.u0));
+      setText("d-c-te", L.formatU(state.tE) + " days");
+      setText("d-c-range", "Peak A · u0 = " + L.formatU(state.u0) + " · t_E = " + L.formatU(state.tE) + " d");
+      setText("d-c-tier", cid === "ogle" ? "OGLE-2005-BLG-390 · single lens" : "Point lens · straight track");
+      setText("d-c-survey", cid === "ogle" ? "3.136 ± 0.044" : "—");
+      setText("d-c-why", cid === "ogle" ? L.explainOgle() : "Point-lens track. u0 = " + L.formatU(state.u0) + ". t_E = " + L.formatU(state.tE) + " days. Peak magnification A = " + L.formatMag(peak) + ". No parallax, no finite source, no planet.");
+      press("#curve-presets button", "data-curve", cid);
+      setRange("u0-slider", state.u0, L.formatU(state.u0) + " Einstein radii");
+      setRange("te-slider", L.toUnit(state.tE, L.TE_MIN_DAYS, L.TE_MAX_DAYS), L.formatU(state.tE) + " days");
+      setField("u0-num", L.formatU(state.u0));
+      setField("te-num", L.formatU(state.tE));
+      var curve = document.getElementById("curve-canvas");
+      if (curve) {
+        var boxC = fit(curve, Math.max(200, Math.min(300, curve.clientWidth * 0.4)));
+        if (boxC) drawCurve(boxC.ctx, boxC.w, boxC.h, state.u0, state.tE, c);
+        curve.setAttribute("aria-label", "Light curve. Peak magnification " + L.formatMag(peak) + " at closest approach. Einstein crossing time " + L.formatU(state.tE) + " days.");
+      }
+    }
+  }
+
+  function onDefMass(m) {
+    if (!massIn(m)) {
+      showErr("def-m-err", "def-m-num", "Mass from 0.0001 to 10¹⁵ solar masses.");
+      return;
+    }
+    showErr("def-m-err", "def-m-num", "");
+    state.mass = m;
+    render();
+  }
+  function onDefB(km) {
+    var b = km * 1000;
+    if (!bIn(b)) {
+      showErr("def-b-err", "def-b-num", "Impact parameter from 10,000 km to 1,000,000,000 km.");
+      return;
+    }
+    showErr("def-b-err", "def-b-num", "");
+    state.b = b;
+    render();
+  }
+  function onEinstein(mass, dL, dS) {
+    if (!massIn(mass)) {
+      showErr("ein-m-err", "ein-m-num", "Mass from 0.0001 to 10¹⁵ solar masses.");
+      return;
+    }
+    showErr("ein-m-err", "ein-m-num", "");
+    if (!(dL >= L.DIST_MIN_PC && dL <= L.DIST_MAX_PC)) {
+      showErr("dl-err", "dl-num", "Lens distance from 0.001 kpc to 1,000,000 kpc, and closer than the source.");
+      render();
+      return;
+    }
+    if (!(dS > dL && dS <= L.DIST_MAX_PC)) {
+      showErr("ds-err", "ds-num", "Source distance from 0.001 kpc to 1,000,000 kpc, and farther than the lens.");
+      showErr("dl-err", "dl-num", dS > dL ? "" : "Lens distance from 0.001 kpc to 1,000,000 kpc, and closer than the source.");
+      render();
+      return;
+    }
+    showErr("dl-err", "dl-num", "");
+    showErr("ds-err", "ds-num", "");
+    state.eMass = mass;
+    state.dL = dL;
+    state.dS = dS;
+    render();
+  }
+  function onU(u) {
+    if (typeof u !== "number" || !isFinite(u) || u < L.U_MIN || u > L.U_MAX) {
+      showErr("u-err", "u-num", "Source offset from −3 to 3 Einstein radii.");
+      return;
+    }
+    showErr("u-err", "u-num", "");
+    state.u = u;
+    render();
+  }
+  function onU0(u0) {
+    if (!(u0 >= L.U0_MIN && u0 <= L.U0_MAX)) {
+      showErr("u0-err", "u0-num", "Minimum impact parameter from 0.01 to 2.");
+      return;
+    }
+    showErr("u0-err", "u0-num", "");
+    state.u0 = u0;
+    render();
+  }
+  function onTE(days) {
+    if (!(days >= L.TE_MIN_DAYS && days <= L.TE_MAX_DAYS)) {
+      showErr("te-err", "te-num", "Einstein crossing time from 0.5 to 500 days.");
+      return;
+    }
+    showErr("te-err", "te-num", "");
+    state.tE = days;
+    render();
+  }
+
+  document.getElementById("def-presets").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    var p = L.presetById(btn.getAttribute("data-preset"));
+    if (!p) return;
+    state.mass = p.massSolar;
+    state.b = p.bMeters;
+    showErr("def-m-err", "def-m-num", "");
+    showErr("def-b-err", "def-b-num", "");
+    render();
+  });
+  document.getElementById("def-m-slider").addEventListener("input", function (ev) {
+    onDefMass(L.fromUnit(Number(ev.target.value), L.MASS_MIN, L.MASS_MAX));
+  });
+  document.getElementById("def-b-slider").addEventListener("input", function (ev) {
+    onDefB(L.fromUnit(Number(ev.target.value), L.B_MIN_M, L.B_MAX_M) / 1000);
+  });
+  function bindField(id, fn) {
+    var el = document.getElementById(id);
+    function go() { fn(parseNum(el.value)); }
+    el.addEventListener("change", go);
+    el.addEventListener("keydown", function (ev) {
+      if (ev.key === "Enter") { ev.preventDefault(); go(); }
+    });
+  }
+  bindField("def-m-num", onDefMass);
+  bindField("def-b-num", onDefB);
+  document.getElementById("ein-m-slider").addEventListener("input", function (ev) {
+    onEinstein(L.fromUnit(Number(ev.target.value), L.MASS_MIN, L.MASS_MAX), state.dL, state.dS);
+  });
+  document.getElementById("dl-slider").addEventListener("input", function (ev) {
+    onEinstein(state.eMass, L.fromUnit(Number(ev.target.value), L.DIST_MIN_PC, L.DIST_MAX_PC), state.dS);
+  });
+  document.getElementById("ds-slider").addEventListener("input", function (ev) {
+    onEinstein(state.eMass, state.dL, L.fromUnit(Number(ev.target.value), L.DIST_MIN_PC, L.DIST_MAX_PC));
+  });
+  document.getElementById("u-slider").addEventListener("input", function (ev) {
+    onU(Number(ev.target.value));
+  });
+  bindField("ein-m-num", function (m) { onEinstein(m, state.dL, state.dS); });
+  bindField("dl-num", function (kpc) { onEinstein(state.eMass, kpc * 1000, state.dS); });
+  bindField("ds-num", function (kpc) { onEinstein(state.eMass, state.dL, kpc * 1000); });
+  bindField("u-num", onU);
+  document.getElementById("align-btn").addEventListener("click", function () { onU(0); });
+
+  var lensCanvas = document.getElementById("lens-canvas");
+  function uFromClient(clientX) {
+    if (!lensGeom) return null;
+    var rect = lensCanvas.getBoundingClientRect();
+    var x = clientX - rect.left;
+    return (x - lensGeom.cx) / lensGeom.scale;
+  }
+  function dragU(clientX) {
+    var u = uFromClient(clientX);
+    if (u == null || !isFinite(u)) return;
+    if (u < L.U_MIN) u = L.U_MIN;
+    if (u > L.U_MAX) u = L.U_MAX;
+    onU(u);
+  }
+  lensCanvas.addEventListener("pointerdown", function (ev) {
+    lensCanvas.setPointerCapture(ev.pointerId);
+    dragU(ev.clientX);
+  });
+  lensCanvas.addEventListener("pointermove", function (ev) {
+    if (ev.buttons === 0 && ev.pointerType !== "touch") return;
+    if (!lensCanvas.hasPointerCapture(ev.pointerId)) return;
+    dragU(ev.clientX);
+  });
+  lensCanvas.addEventListener("keydown", function (ev) {
+    var step = ev.shiftKey ? 0.25 : 0.05;
+    if (ev.key === "ArrowLeft") { ev.preventDefault(); onU(Math.max(L.U_MIN, state.u - step)); }
+    else if (ev.key === "ArrowRight") { ev.preventDefault(); onU(Math.min(L.U_MAX, state.u + step)); }
+    else if (ev.key === "Home") { ev.preventDefault(); onU(0); }
+  });
+
+  document.getElementById("curve-presets").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || btn.getAttribute("data-curve") !== "ogle") return;
+    state.u0 = L.OGLE_U0;
+    state.tE = L.OGLE_TE_DAYS;
+    showErr("u0-err", "u0-num", "");
+    showErr("te-err", "te-num", "");
+    render();
+  });
+  document.getElementById("u0-slider").addEventListener("input", function (ev) { onU0(Number(ev.target.value)); });
+  document.getElementById("te-slider").addEventListener("input", function (ev) {
+    onTE(L.fromUnit(Number(ev.target.value), L.TE_MIN_DAYS, L.TE_MAX_DAYS));
+  });
+  bindField("u0-num", onU0);
+  bindField("te-num", onTE);
+  document.getElementById("curve-canvas").addEventListener("keydown", function (ev) {
+    var step = ev.shiftKey ? 0.1 : 0.01;
+    if (ev.key === "ArrowLeft") { ev.preventDefault(); onU0(Math.max(L.U0_MIN, state.u0 - step)); }
+    else if (ev.key === "ArrowRight") { ev.preventDefault(); onU0(Math.min(L.U0_MAX, state.u0 + step)); }
+  });
+
+  var helpBtn = document.getElementById("gl-help");
+  var helpDialog = document.getElementById("gl-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
