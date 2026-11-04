@@ -1,0 +1,952 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mean-motion resonances — period ratios and conjunctions — Steven Philley</title>
+<meta name="description" content="Interactive resonance desk. A p:q ratio means the inner body completes p orbits while the outer completes q. Kepler’s third law maps it to distance, a₂/a₁ = (P₂/P₁)^(2/3). Jupiter’s fact sheet, 5.20336301 AU and 4,332.589 days, puts the 3:1 Kirkwood gap at 2.501516 AU. The 3:2 Hilda ratio computes 3.970909 AU. Io, Europa, and Ganymede use the Jovian Satellite Fact Sheet. Neptune–Pluto and TRAPPIST-1 use printed periods. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/resonances/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Mean-motion resonances — period ratios and conjunctions">
+<meta property="og:description" content="Pick a fact-sheet body and a p:q ratio. The resonant period and semi-major axis are computed from Kepler’s third law. Kirkwood gaps, the Hilda group, the Laplace resonance, and TRAPPIST-1. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/resonances/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mean-motion resonances — period ratios and conjunctions">
+<meta name="twitter:description" content="A p:q period ratio, mapped to distance by Kepler’s third law. The 3:1 Kirkwood gap computes 2.501516 AU from Jupiter’s fact sheet. Not an ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.inner{border-top-color:var(--accent,#c8b48a)}
+.swatch.ray{border-top-style:dashed;border-top-color:var(--accent,#c8b48a)}
+.swatch.gap{width:10px;height:10px;border:0;border-radius:50%;background:var(--accent,#c8b48a)}
+.swatch.hilda{width:10px;height:10px;border:1.5px solid var(--ink,#e8e6e1);border-radius:50%;background:transparent}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.select,.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px}
+.select{width:min(100%,280px);padding-right:28px}
+.num{width:8ch;min-width:0}
+.select:focus-visible,.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"],.select[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.select:disabled,.num:disabled{opacity:.55}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a,.sheet a{color:var(--ink,#e8e6e1)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.belt{margin-top:12px}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/resonances/" aria-current="page">Resonances</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Resonances</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The ratio</p>
+  <h1>The same<br>meeting point</h1>
+  <p class="lede">A mean-motion resonance is a lock between two orbital periods. Write <strong>p:q</strong> when the inner body completes <strong>p</strong> orbits in the time the outer body completes <strong>q</strong>. <a href="https://ssd.jpl.nasa.gov/diagrams/mb_hist.html" rel="noopener" target="_blank">JPL</a> states the 3:1 Kirkwood gap that way: the asteroid completes 3 orbits for every 1 of Jupiter. <a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter3-3/" rel="noopener" target="_blank">Kepler’s third law</a> turns that period ratio into a distance. For one central mass, <strong>a₂/a₁ = (P₂/P₁)<sup>2/3</sup></strong>. The <a href="/science/astronomy/kepler/">Kepler desk</a> is the one-sun form, P² = a³ in years and AU. This desk anchors the period and the semi-major axis to a fact sheet, then applies the ratio. Jupiter’s sheet, the anchor for the belt, prints <strong>5.20336301 AU</strong> and <strong>4,332.589 days</strong>. At an exact ratio, conjunctions return to the same longitudes, so the gravitational nudges keep landing in the same places.</p>
+  <p class="note-schematic" id="limits-note">Circular, coplanar, and Keplerian. A p:q ratio means the inner body completes p orbits while the outer body completes q. The resonant period is the anchor period times that ratio. The resonant semi-major axis is the anchor axis times the period ratio to the power 2/3, which is Kepler’s third law for one central mass. Fact-sheet periods are not replaced by that integer ratio. Where both periods are printed, the card shows the printed ratio beside p/q. The drawing of an exact ratio keeps conjunctions on fixed rays. A drawing that uses printed periods lets the meeting point walk. JPL’s June 2007 histogram shows the Kirkwood gaps. This page marks the computed axes and does not replot those 156,929 orbits. Not an ephemeris, not a proper-element catalog, and not a three-body integration.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Ratio, distance, and the meeting points</span>
+    <button type="button" class="help-q" id="rs-help" aria-haspopup="dialog" aria-controls="rs-help-dialog" aria-expanded="false" aria-label="How this resonance desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Two orbits · rays mark where an exact ratio keeps meeting</p>
+      <canvas id="orbit-canvas" width="880" height="640" tabindex="0" role="img" aria-label="Two bodies orbiting a central mass. Rays mark the longitudes where conjunctions of an exact period ratio repeat."></canvas>
+      <ul class="legend" aria-label="Orbit key">
+        <li><span class="swatch inner" aria-hidden="true"></span> Inner</li>
+        <li><span class="swatch" aria-hidden="true"></span> Outer</li>
+        <li><span class="swatch ray" aria-hidden="true"></span> Conjunction rays</li>
+      </ul>
+      <p class="scale-note" id="orbit-note">Schematic speed. The faster body completes one orbit in about eight seconds. It is not a clock of the real period. Sizes are not to the radius of the body.</p>
+      <div class="controls">
+        <p class="pick-label" id="anchor-label">Anchor · fact-sheet period and axis</p>
+        <div class="slider-row">
+          <label for="planet">Body</label>
+          <select class="select" id="planet" aria-describedby="ratio-err">
+            <option value="mercury">Mercury</option>
+            <option value="venus">Venus</option>
+            <option value="earth">Earth</option>
+            <option value="mars">Mars</option>
+            <option value="jupiter" selected>Jupiter</option>
+            <option value="saturn">Saturn</option>
+            <option value="uranus">Uranus</option>
+            <option value="neptune">Neptune</option>
+            <option value="pluto">Pluto</option>
+          </select>
+        </div>
+        <p class="pick-label">p:q · inner orbits, then outer orbits</p>
+        <div class="slider-row">
+          <label for="p-num">p</label>
+          <input class="num" id="p-num" type="text" inputmode="numeric" value="3" aria-label="Inner orbit count p" aria-describedby="ratio-err">
+          <label for="q-num">q</label>
+          <input class="num" id="q-num" type="text" inputmode="numeric" value="1" aria-label="Outer orbit count q" aria-describedby="ratio-err">
+        </div>
+        <div class="presets" role="group" aria-label="Interior or exterior">
+          <button type="button" id="side-in" data-side="interior" aria-pressed="true">Interior</button>
+          <button type="button" id="side-out" data-side="exterior" aria-pressed="false">Exterior</button>
+          <button type="button" id="btn-play" aria-pressed="true">Pause</button>
+        </div>
+        <p class="field-error" id="ratio-err" hidden></p>
+        <p class="pick-label">Jupiter’s belt</p>
+        <div class="presets" id="preset-belt">
+          <button type="button" data-preset="kirkwood-3-1" aria-pressed="true">3:1 gap</button>
+          <button type="button" data-preset="kirkwood-5-2" aria-pressed="false">5:2 gap</button>
+          <button type="button" data-preset="kirkwood-7-3" aria-pressed="false">7:3 gap</button>
+          <button type="button" data-preset="kirkwood-2-1" aria-pressed="false">2:1 gap</button>
+          <button type="button" data-preset="hilda" aria-pressed="false">3:2 Hilda</button>
+        </div>
+        <p class="pick-label">Printed periods</p>
+        <div class="presets" id="preset-published">
+          <button type="button" data-preset="neptune-pluto" aria-pressed="false">Neptune–Pluto</button>
+          <button type="button" data-preset="laplace-io" aria-pressed="false">Io–Europa</button>
+          <button type="button" data-preset="laplace-eu" aria-pressed="false">Europa–Ganymede</button>
+          <button type="button" data-preset="trappist-bc" aria-pressed="false">TRAPPIST-1 b–c</button>
+          <button type="button" data-preset="trappist-cd" aria-pressed="false">c–d</button>
+          <button type="button" data-preset="trappist-de" aria-pressed="false">d–e</button>
+          <button type="button" data-preset="trappist-ef" aria-pressed="false">e–f</button>
+          <button type="button" data-preset="trappist-fg" aria-pressed="false">f–g</button>
+          <button type="button" data-preset="trappist-gh" aria-pressed="false">g–h</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Kirkwood gap · 3:1</p>
+      <h2 id="d-title">3:1 with Jupiter</h2>
+      <p class="range" id="d-range">P_res / P_anchor = 0.333333</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Anchor</span><span class="v">Jupiter · 4,332.589 days · 5.20336301 AU</span></li>
+        <li><span class="k">Period ratio</span><span class="v">P_inner / P_outer = 1/3</span></li>
+        <li><span class="k">Inner period</span><span class="v">1,444.196 days · 3.9539 years</span></li>
+        <li><span class="k">Outer period</span><span class="v">4,332.589 days · 11.8618 years</span></li>
+        <li><span class="k">Inner axis</span><span class="v">2.501516 AU</span></li>
+        <li><span class="k">Outer axis</span><span class="v">5.20336301 AU</span></li>
+        <li><span class="k">Distance ratio</span><span class="v">a_inner / a_outer = 0.480750</span></li>
+        <li><span class="k">Conjunctions</span><span class="v">2 longitudes, exact 3:1</span></li>
+      </ul>
+      <p class="why" id="d-why">Jupiter’s fact sheet prints a semimajor axis of 5.20336301 AU and a sidereal orbit period of 4,332.589 days. A 3:1 ratio means the inner body completes 3 orbits while the outer body completes 1. The resonant body is interior, so its period is the anchor period times 1/3, which computes 1,444.196 days (3.9539 years of 365.256 days). Its semi-major axis is the anchor axis times (1/3) to the power 2/3, which computes 2.501516 AU. That is Kepler’s third law for one central mass: a₂/a₁ = (P₂/P₁) to the power 2/3. An exact 3:1 meets at 2 longitudes. The drawing keeps the ratio exact, so every conjunction returns to those places. JPL’s June 2007 histogram of 156,929 numbered asteroids labels a gap at this resonance. This page marks the computed axis. It does not replot those orbits.</p>
+    </div>
+  </div>
+
+  <div class="diagram belt">
+    <p class="hint">Main belt · semi-major axis from Mars to Jupiter · computed resonances, not a histogram</p>
+    <canvas id="belt-canvas" width="880" height="340" tabindex="0" role="img" aria-label="Semi-major axis from Mars to Jupiter. Marks show the computed 3:1, 5:2, 7:3, 2:1, and 3:2 resonances with Jupiter."></canvas>
+    <ul class="legend" aria-label="Belt key">
+      <li><span class="swatch gap" aria-hidden="true"></span> Kirkwood gap</li>
+      <li><span class="swatch hilda" aria-hidden="true"></span> 3:2 Hilda</li>
+      <li><span class="swatch" aria-hidden="true"></span> Mars or Jupiter</li>
+    </ul>
+    <p class="scale-note">NASA Science places most asteroids between Mars and Jupiter. Mars is at the fact-sheet 1.52366231 AU. Jupiter is at 5.20336301 AU. The five marks are this page’s formula, not a fit to counts. JPL’s June 2007 histogram of 156,929 numbered asteroids labels gaps at 3:1, 5:2, 7:3, and 2:1. The Hilda group is the population that stays near the 3:2. This chart does not replot either diagram.</p>
+  </div>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss">
+      <dt>p:q</dt>
+      <dd>The inner body completes p orbits while the outer body completes q. Mean motions are the other way up, because a shorter period is a faster mean motion. JPL’s 3:1 sentence is the asteroid completing three orbits per Jupiter orbit, so p = 3 and q = 1.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Distance from the ratio</dt>
+      <dd>a₂/a₁ = (P₂/P₁) to the power 2/3. The anchor’s period and semi-major axis stay the fact-sheet numbers. Only the ratio is applied. A year on the card, when days are divided out, is Earth’s 365.256-day sidereal period as printed on these sheets.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Conjunction</dt>
+      <dd>The two bodies share a longitude, so they and the central mass lie on one line. For an exact p:q in lowest terms, those meetings repeat at p − q fixed longitudes. A 2:1 has one. A 3:1 has two, opposite each other. The nudge at conjunction does not average away.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Kirkwood gaps</dt>
+      <dd>Depletions in the asteroid belt at Jupiter’s 3:1, 5:2, 7:3, and 2:1. JPL’s June 2007 histogram shows them and says the resonance changes the orbital elements enough to open a gap in semi-major axis. The chart marks the computed axes.</dd>
+    </div>
+    <div class="gloss">
+      <dt>Hilda group</dt>
+      <dd>Bodies that stay near Jupiter’s 3:2, interior to Jupiter and outside the 2:1 gap. The computed axis is 3.970909 AU. Ip’s 1976 study, in the NASA Technical Reports Server abstract, finds that 3:2 coupling stable for some of them. JPL’s elements diagram labels the group. This page does not replot it.</dd>
+    </div>
+    <div class="gloss gloss-wide">
+      <dt>Laplace and a near resonance</dt>
+      <dd>NASA Science describes Ganymede, Europa, and Io as one orbit, two orbits, and four. The Jovian Satellite Fact Sheet periods are 1.769138, 3.551181, and 7.154553 days. The pairwise ratios are close to 2 and 4 and are not those integers. The combination (n_Io − 3 n_Europa + 2 n_Ganymede) / n_Io equals 1 − 3 (P_Io/P_Europa) + 2 (P_Io/P_Ganymede). The card computes it. TRAPPIST-1 periods are Agol et al. 2021, Table 2. Adjacent ratios are computed here and compared with the nearest small integers. Agol and coauthors credit Luger et al. 2017 with the chain of generalized Laplace relations. A near ratio lets the meeting point walk. An exact ratio pins it.</dd>
+    </div>
+  </dl>
+
+  <p class="band">Numbers the card uses</p>
+  <div class="sheet">
+    <table>
+      <caption>Cited periods. Resonant axes in the belt table are computed on this page.</caption>
+      <thead>
+        <tr><th scope="col">Body</th><th scope="col">Period</th><th scope="col">Axis</th><th scope="col">Where it is printed</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Jupiter</th><td>4,332.589 days</td><td>5.20336301 AU</td><td>NSSDCA Jupiter Fact Sheet, sidereal orbit period and Semimajor axis (AU)</td></tr>
+        <tr><th scope="row">Mars</th><td>686.980 days</td><td>1.52366231 AU</td><td>NSSDCA Mars Fact Sheet, same two lines. The belt chart’s inner tick.</td></tr>
+        <tr><th scope="row">Neptune</th><td>60,189.018 days</td><td>30.06896348 AU</td><td>NSSDCA Neptune Fact Sheet</td></tr>
+        <tr><th scope="row">Pluto</th><td>90,560 days</td><td>39.48168677 AU</td><td>NSSDCA Pluto Fact Sheet. The 3:2 on the card is exact. These two lines are not.</td></tr>
+        <tr><th scope="row">Io</th><td>1.769138 days</td><td>421.8 × 10³ km</td><td>NSSDCA Jovian Satellite Fact Sheet</td></tr>
+        <tr><th scope="row">Europa</th><td>3.551181 days</td><td>671.1 × 10³ km</td><td>Same sheet</td></tr>
+        <tr><th scope="row">Ganymede</th><td>7.154553 days</td><td>1,070.4 × 10³ km</td><td>Same sheet</td></tr>
+        <tr><th scope="row">TRAPPIST-1 b</th><td>1.510826 days</td><td>Not loaded</td><td>Agol et al. 2021, Table 2, ±0.000006 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 c</th><td>2.421937 days</td><td>Not loaded</td><td>±0.000018 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 d</th><td>4.049219 days</td><td>Not loaded</td><td>±0.000026 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 e</th><td>6.101013 days</td><td>Not loaded</td><td>±0.000035 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 f</th><td>9.207540 days</td><td>Not loaded</td><td>±0.000032 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 g</th><td>12.352446 days</td><td>Not loaded</td><td>±0.000054 days</td></tr>
+        <tr><th scope="row">TRAPPIST-1 h</th><td>18.772866 days</td><td>Not loaded</td><td>±0.000214 days</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sheet">
+    <table>
+      <caption>Jupiter resonances computed from 5.20336301 AU and 4,332.589 days. Interior, so the period is the Jupiter period times q/p.</caption>
+      <thead>
+        <tr><th scope="col">Ratio</th><th scope="col">Computed period</th><th scope="col">Computed axis</th><th scope="col">What is observed</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">3:1</th><td>1,444.196 days</td><td>2.501516 AU</td><td>Kirkwood gap on the JPL histogram</td></tr>
+        <tr><th scope="row">5:2</th><td>1,733.036 days</td><td>2.824820 AU</td><td>Kirkwood gap</td></tr>
+        <tr><th scope="row">7:3</th><td>1,856.824 days</td><td>2.957783 AU</td><td>Kirkwood gap</td></tr>
+        <tr><th scope="row">2:1</th><td>2,166.294 days</td><td>3.277913 AU</td><td>Kirkwood gap</td></tr>
+        <tr><th scope="row">3:2</th><td>2,888.393 days</td><td>3.970909 AU</td><td>Hilda group, not a gap</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter3-3/" rel="noopener" target="_blank">NASA — Basics of Space Flight, Kepler’s third law</a> — the square of the period is proportional to the cube of the semi-major axis. This page uses a₂/a₁ = (P₂/P₁) to the power 2/3. The same statement is on the <a href="/science/astronomy/kepler/">Kepler desk</a>.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA planetary fact sheets</a> — Semimajor axis (AU) and sidereal orbit period, the same lines as the Kepler desk. Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. Earth’s 365.256 days is the year unit when a day count is divided out. Jupiter is 5.20336301 AU and 4,332.589 days. Mars is 1.52366231 AU. Neptune is 30.06896348 AU and 60,189.018 days.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">NASA NSSDCA — Pluto Fact Sheet</a> — Semimajor axis (AU) 39.48168677. Sidereal orbit period 90,560 days.</li>
+      <li><a href="https://science.nasa.gov/neptune/neptune-facts/" rel="noopener" target="_blank">NASA Science — Neptune facts</a> — for every three laps Neptune takes, Pluto makes two. That repeating pattern prevents close approaches.</li>
+      <li><a href="https://science.nasa.gov/solar-system/kuiper-belt/facts/" rel="noopener" target="_blank">NASA Science — Kuiper Belt facts</a> — Pluto is in a 3:2 resonance with Neptune: it circles the Sun twice for every three times Neptune goes around. The same page names the plutinos.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/diagrams/mb_hist.html" rel="noopener" target="_blank">JPL SSD — Asteroid main-belt distribution</a> — histogram of June 2007, 156,929 numbered asteroids with well-determined orbits. Gaps labeled 3:1, 5:2, 7:3, and 2:1. The 3:1 is where the asteroid’s period over Jupiter’s is 3/1. This page does not replot the counts.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/diagrams/elem_dist.html" rel="noopener" target="_blank">JPL SSD — Asteroid elements distribution</a> — June 2007 diagram, 159,366 numbered asteroids. Labeled groups include the Hilda group, between the main belt and the Trojans. This page does not replot it.</li>
+      <li><a href="https://ntrs.nasa.gov/citations/19770033109" rel="noopener" target="_blank">NASA NTRS 19770033109</a> — Ip, 1976, a dynamical study of the Hilda asteroids. The abstract says the 3:2 resonant coupling to Jupiter of some of these small asteroids is stable.</li>
+      <li><a href="https://science.nasa.gov/solar-system/asteroids/" rel="noopener" target="_blank">NASA Science — Asteroids</a> — most asteroids orbit the Sun between Mars and Jupiter, in the main asteroid belt. That sentence is the span of the chart. It is not a pair of sharp edges.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jovian Satellite Fact Sheet</a> — Io 1.769138 days and 421.8 × 10³ km. Europa 3.551181 days and 671.1 × 10³ km. Ganymede 7.154553 days and 1,070.4 × 10³ km.</li>
+      <li><a href="https://science.nasa.gov/jupiter/jupiter-moons/ganymede/facts/" rel="noopener" target="_blank">NASA Science — Ganymede facts</a> — every time Ganymede orbits once, Europa orbits twice and Io orbits four times. The fact-sheet periods are the numbers this page divides. The one-two-four sentence is the rounded pattern.</li>
+      <li><a href="https://iopscience.iop.org/article/10.3847/PSJ/abd022" rel="noopener" target="_blank">Agol et al. 2021, PSJ 2, 1</a> — TRAPPIST-1 Table 2 central periods, b through h: 1.510826, 2.421937, 4.049219, 6.101013, 9.207540, 12.352446, and 18.772866 days, with the 1σ uncertainties in the table on this page. Adjacent pairs lie near mean-motion resonances. The chain of generalized three-body Laplace relations is credited there to Luger et al. 2017. No semi-major axis from that table is loaded.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom mean-motion resonances. The period ratio is p orbits of the inner body per q of the outer. The axis is the fact-sheet anchor times that period ratio to the power 2/3. Jupiter’s belt marks use 5.20336301 AU and 4,332.589 days. Galilean numbers are the Jovian Satellite Fact Sheet. Neptune and Pluto are their fact sheets. TRAPPIST-1 periods are Agol et al. 2021, Table 2. The drawing is circular and coplanar. Not an ephemeris, not a proper-element catalog, and not a three-body integration. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU for one circular orbit around the Sun. This page is that law applied to a ratio of two periods.</p></a>
+    <a href="/science/astronomy/jupiter/"><p class="n">The anchor</p><h3>Jupiter</h3><p>The planet whose period sets the Kirkwood gaps and the Hilda group. The phase desk is the view from Earth.</p></a>
+    <a href="/science/astronomy/neptune/"><p class="n">The outer planet</p><h3>Neptune</h3><p>Pluto’s 3:2 is with this orbit. The fact-sheet period is 60,189.018 days.</p></a>
+    <a href="/science/astronomy/exoplanets/"><p class="n">Other suns</p><h3>Exoplanets</h3><p>TRAPPIST-1 is one system among the teaching set. The periods on this desk are Agol et al. 2021.</p></a>
+    <a href="/science/astronomy/transit/"><p class="n">The dip</p><h3>Transit</h3><p>How a periodic dip and a wobble reveal a planet. TRAPPIST-1 e is one of the presets there too.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Jupiter, the belt, and Neptune, in the orrery. This page is the resonance arithmetic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="rs-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="rs-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="rs-help-title">How this desk works</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">p is how many orbits the inner body finishes. q is how many the outer body finishes in the same time. The axis follows from the periods.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Body</th><td>The fact-sheet anchor. Its printed period and semi-major axis stay fixed. The ratio is applied to them.</td></tr>
+        <tr><th scope="row">p and q</th><td>Whole numbers from 1 through 16, with p greater than q. 4:2 is read as 2:1. The boxes are for a solar orbit. A moon or TRAPPIST-1 button uses printed periods instead, and the boxes wait until you edit them or pick a belt button.</td></tr>
+        <tr><th scope="row">Interior</th><td>The resonant body is inside the anchor. Kirkwood gaps and the Hildas are interior to Jupiter. Period = anchor period times q/p.</td></tr>
+        <tr><th scope="row">Exterior</th><td>The resonant body is outside the anchor. Neptune–Pluto is this case: Neptune is inner, Pluto is outer. Period = anchor period times p/q.</td></tr>
+        <tr><th scope="row">Play</th><td>Pause or play. The faster body takes about eight seconds per orbit. If your system asks for less motion, the drawing starts still.</td></tr>
+        <tr><th scope="row">Rays</th><td>Solid rays are an exact p:q, and the bodies stay on them. Dashed rays are the nearest exact ratio when the bodies are moving at printed periods. The meeting point then walks off the ray.</td></tr>
+        <tr><th scope="row">Belt chart</th><td>Mars to Jupiter. The five marks are computed. It is not JPL’s histogram. A solar solution inside that span is marked too.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/resonances/resonances.js"></script>
+<script>
+(function () {
+  "use strict";
+  var R = window.Resonances;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!R) return;
+
+  var state = R.stateFromPreset("kirkwood-3-1");
+  var turns = 0;
+  var playing = true;
+  var last = null;
+  var raf = 0;
+  var lastT = 0;
+  var ORBIT_MS = 8000;
+  var reduce = false;
+  try {
+    reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (err) { reduce = false; }
+  if (reduce) playing = false;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function showErr(msg) {
+    var err = document.getElementById("ratio-err");
+    var p = document.getElementById("p-num");
+    var q = document.getElementById("q-num");
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      err.textContent = "";
+      if (p) p.removeAttribute("aria-invalid");
+      if (q) q.removeAttribute("aria-invalid");
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+    if (p) p.setAttribute("aria-invalid", "true");
+    if (q) q.setAttribute("aria-invalid", "true");
+  }
+  function readInt(id) {
+    var el = document.getElementById(id);
+    var t = String(el && el.value != null ? el.value : "").trim();
+    if (!/^[0-9]+$/.test(t)) return NaN;
+    return Number(t);
+  }
+  function fit(canvas, aspect) {
+    var w = canvas.clientWidth || 320;
+    var h = Math.max(180, Math.round(w / aspect));
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var bw = Math.max(1, Math.round(w * dpr));
+    var bh = Math.max(1, Math.round(h * dpr));
+    if (canvas.width !== bw || canvas.height !== bh) {
+      canvas.width = bw;
+      canvas.height = bh;
+    }
+    canvas.style.height = h + "px";
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function wrapPi(d) {
+    var t = Math.PI * 2;
+    var x = d % t;
+    if (x > Math.PI) x -= t;
+    if (x < -Math.PI) x += t;
+    return x;
+  }
+  function thetaOf(body, refDays, turn) {
+    return turn * (refDays / body.days) * Math.PI * 2;
+  }
+  function drawOrbit(sc) {
+    var canvas = document.getElementById("orbit-canvas");
+    if (!canvas || !sc || !sc.motion) return;
+    var box = fit(canvas, 1.15);
+    var ctx = box.ctx;
+    var c = colors();
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    var cx = w * 0.5;
+    var cy = h * 0.52;
+    var maxR = 0;
+    var i;
+    for (i = 0; i < sc.motion.bodies.length; i++) {
+      if (sc.motion.bodies[i].radius > maxR) maxR = sc.motion.bodies[i].radius;
+    }
+    if (!(maxR > 0)) return;
+    var scale = Math.min(w, h) * 0.36 / maxR;
+    var reach = maxR * scale;
+    ctx.save();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = sc.mode === "solar" ? 0.9 : 0.55;
+    ctx.setLineDash(sc.mode === "solar" ? [] : [4, 5]);
+    for (i = 0; i < sc.motion.rays.length; i++) {
+      var ang = sc.motion.rays[i];
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(ang) * reach, cy - Math.sin(ang) * reach);
+      ctx.stroke();
+    }
+    ctx.restore();
+    var thetas = [];
+    for (i = 0; i < sc.motion.bodies.length; i++) {
+      var b = sc.motion.bodies[i];
+      var r = b.radius * scale;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = b.role === "inner" ? c.accent : c.soft;
+      ctx.lineWidth = 1.25;
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+      ctx.stroke();
+      var th = thetaOf(b, sc.motion.refDays, turns);
+      thetas.push(th);
+      var x = cx + Math.cos(th) * r;
+      var y = cy - Math.sin(th) * r;
+      ctx.beginPath();
+      ctx.arc(x, y, b.role === "inner" ? 5 : 6.5, 0, Math.PI * 2);
+      ctx.fillStyle = b.role === "inner" ? c.accent : c.ink;
+      ctx.fill();
+      ctx.font = font(11);
+      ctx.fillStyle = c.soft;
+      var labelX = x + 8;
+      ctx.textAlign = "left";
+      if (x > w - 96) {
+        labelX = x - 8;
+        ctx.textAlign = "right";
+      }
+      ctx.fillText(b.name, labelX, b.role === "inner" ? y - 12 : y + 16);
+      ctx.textAlign = "left";
+    }
+    if (thetas.length === 2 && Math.abs(wrapPi(thetas[0] - thetas[1])) < 0.09) {
+      ctx.strokeStyle = c.ink;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(thetas[0]) * reach, cy - Math.sin(thetas[0]) * reach);
+      ctx.stroke();
+    }
+    ctx.beginPath();
+    ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.fill();
+    ctx.font = font(11);
+    ctx.fillStyle = c.muted;
+    ctx.fillText(sc.motion.center, cx + 12, cy - 10);
+    var label = sc.title + ". " + sc.range + ".";
+    if (sc.motion.rayLabel) label += " " + sc.motion.rayLabel + ".";
+    canvas.setAttribute("aria-label", label);
+  }
+  function xOf(au, w) {
+    var a0 = 1.2;
+    var a1 = 5.5;
+    var pad = 28;
+    return pad + (au - a0) / (a1 - a0) * (w - pad * 2);
+  }
+  function drawBelt(sc) {
+    var canvas = document.getElementById("belt-canvas");
+    if (!canvas) return;
+    var box = fit(canvas, 2.7);
+    var ctx = box.ctx;
+    var c = colors();
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    var belt = R.belt();
+    var y = Math.round(h * 0.58);
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(xOf(1.2, w), y);
+    ctx.lineTo(xOf(5.5, w), y);
+    ctx.stroke();
+    ctx.font = font(11);
+    function tick(au, label, yText, kind) {
+      var x = xOf(au, w);
+      ctx.strokeStyle = kind === "gap" ? c.accent : c.soft;
+      ctx.fillStyle = kind === "gap" ? c.accent : (kind === "hilda" ? "transparent" : c.soft);
+      ctx.beginPath();
+      ctx.arc(x, y, kind === "planet" ? 3.5 : 5, 0, Math.PI * 2);
+      if (kind === "hilda") {
+        ctx.strokeStyle = c.ink;
+        ctx.stroke();
+      } else {
+        ctx.fill();
+      }
+      ctx.fillStyle = kind === "gap" || kind === "hilda" ? c.accent : c.soft;
+      ctx.textAlign = "center";
+      ctx.fillText(label, x, yText);
+      ctx.textAlign = "left";
+    }
+    tick(belt.mars.au, "Mars", y + 22, "planet");
+    tick(belt.jupiter.au, "Jupiter", y + 22, "planet");
+    var mi;
+    for (mi = 0; mi < belt.marks.length; mi++) {
+      var mark = belt.marks[mi];
+      var active = sc && sc.beltId === mark.id;
+      tick(mark.au, mark.name, y - (mi % 2 === 0 ? 16 : 34), mark.kind);
+      if (active) {
+        ctx.strokeStyle = c.ink;
+        ctx.strokeRect(xOf(mark.au, w) - 8, y - 8, 16, 16);
+      }
+    }
+    if (sc && sc.mode === "solar" && sc.markAu > 1.25 && sc.markAu < 5.45 && !sc.beltId) {
+      var x = xOf(sc.markAu, w);
+      ctx.fillStyle = c.ink;
+      ctx.fillRect(x - 1, y - 14, 2, 28);
+      ctx.fillStyle = c.soft;
+      ctx.textAlign = "center";
+      ctx.fillText("This orbit", x, y - 20);
+      ctx.textAlign = "left";
+    }
+  }
+  function fillStats(stats) {
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < stats.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = stats[i].k;
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = stats[i].v;
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function syncControls() {
+    var solar = !state || state.mode === "solar";
+    var planet = document.getElementById("planet");
+    var p = document.getElementById("p-num");
+    var q = document.getElementById("q-num");
+    var sideIn = document.getElementById("side-in");
+    var sideOut = document.getElementById("side-out");
+    if (solar && state) {
+      if (planet && state.planetId) planet.value = state.planetId;
+      if (p && state.p != null) p.value = String(state.p);
+      if (q && state.q != null) q.value = String(state.q);
+      if (sideIn) sideIn.setAttribute("aria-pressed", String(state.side !== "exterior"));
+      if (sideOut) sideOut.setAttribute("aria-pressed", String(state.side === "exterior"));
+    } else if (last && last.text && last.text.nearest && p && q) {
+      var bits = String(last.text.nearest).split(":");
+      if (bits.length === 2) {
+        p.value = bits[0];
+        q.value = bits[1];
+      }
+    }
+    var buttons = document.querySelectorAll("[data-preset]");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-preset") === (state && state.preset)));
+    }
+    var play = document.getElementById("btn-play");
+    if (play) {
+      play.textContent = playing ? "Pause" : "Play";
+      play.setAttribute("aria-pressed", String(playing));
+    }
+  }
+  function render() {
+    var sc = R.scene(state);
+    if (!sc || !sc.ok) {
+      showErr(sc && sc.error ? sc.error : "That ratio cannot be computed.");
+      syncControls();
+      return;
+    }
+    showErr("");
+    last = sc;
+    setText("d-tier", sc.tier);
+    setText("d-title", sc.title);
+    setText("d-range", sc.range);
+    setText("d-why", sc.why);
+    setText("anchor-label", sc.mode === "solar"
+      ? "Anchor · fact-sheet period and axis"
+      : "Solar calculator · this preset uses the printed periods");
+    fillStats(sc.stats);
+    var note = document.getElementById("orbit-note");
+    if (note) {
+      note.textContent = sc.mode === "solar"
+        ? "Schematic speed. The faster body completes one orbit in about eight seconds. Solid rays are the exact ratio, and the bodies return to them. Sizes are not the radii of the bodies."
+        : "Schematic speed. The bodies move at the printed periods, so the meeting point walks. Dashed rays are the nearest exact ratio. Sizes follow the printed axes, or the periods to the power 2/3 when no axis is loaded.";
+    }
+    drawOrbit(sc);
+    drawBelt(sc);
+    syncControls();
+  }
+  function fromBoxes() {
+    var planet = document.getElementById("planet");
+    var sideOut = document.getElementById("side-out");
+    state = {
+      mode: "solar",
+      preset: null,
+      planetId: planet ? planet.value : "jupiter",
+      p: readInt("p-num"),
+      q: readInt("q-num"),
+      side: sideOut && sideOut.getAttribute("aria-pressed") === "true" ? "exterior" : "interior"
+    };
+    render();
+  }
+  function loop(t) {
+    if (!playing) return;
+    if (!lastT) lastT = t;
+    var dt = Math.min(50, t - lastT);
+    lastT = t;
+    if (!document.hidden) {
+      turns += dt / ORBIT_MS;
+      if (last) drawOrbit(last);
+    }
+    raf = window.requestAnimationFrame(loop);
+  }
+  function setPlaying(next) {
+    playing = next;
+    var play = document.getElementById("btn-play");
+    if (play) {
+      play.textContent = playing ? "Pause" : "Play";
+      play.setAttribute("aria-pressed", String(playing));
+    }
+    if (playing) {
+      lastT = 0;
+      window.cancelAnimationFrame(raf);
+      raf = window.requestAnimationFrame(loop);
+    }
+  }
+
+  document.getElementById("planet").addEventListener("change", fromBoxes);
+  document.getElementById("p-num").addEventListener("input", fromBoxes);
+  document.getElementById("q-num").addEventListener("input", fromBoxes);
+  document.getElementById("side-in").addEventListener("click", function () {
+    document.getElementById("side-out").setAttribute("aria-pressed", "false");
+    document.getElementById("side-in").setAttribute("aria-pressed", "true");
+    fromBoxes();
+  });
+  document.getElementById("side-out").addEventListener("click", function () {
+    document.getElementById("side-in").setAttribute("aria-pressed", "false");
+    document.getElementById("side-out").setAttribute("aria-pressed", "true");
+    fromBoxes();
+  });
+  document.getElementById("btn-play").addEventListener("click", function () {
+    setPlaying(!playing);
+  });
+  document.getElementById("preset-belt").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    var id = btn.getAttribute("data-preset");
+    var next = R.stateFromPreset(id);
+    if (!next) return;
+    state = next;
+    turns = 0;
+    render();
+  });
+  document.getElementById("preset-published").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    var id = btn.getAttribute("data-preset");
+    var next = R.stateFromPreset(id);
+    if (!next) return;
+    state = next;
+    turns = 0;
+    render();
+  });
+
+  var helpBtn = document.getElementById("rs-help");
+  var helpDialog = document.getElementById("rs-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () { if (last) { drawOrbit(last); drawBelt(last); } });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { if (last) { drawOrbit(last); drawBelt(last); } }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+  if (playing) raf = window.requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
