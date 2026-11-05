@@ -1,0 +1,988 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Comets — ellipse, tails, and the water-ice line — Steven Philley</title>
+<meta name="description" content="Interactive comet desk. A bound ellipse from perihelion distance and eccentricity, animated by Kepler’s equation. The ion tail points away from the Sun. The dust tail lags along the orbit. Halley, Encke, 67P, and Hale–Bopp use JPL Small-Body Database elements. Water ice is marked at 3 AU. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/comets/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Comets — ellipse, tails, and the water-ice line">
+<meta property="og:description" content="A comet on a Keplerian ellipse. Ion tail away from the Sun, dust tail lagging along the orbit. JPL elements for Halley, Encke, 67P, and Hale–Bopp. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/comets/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Comets — ellipse, tails, and the water-ice line">
+<meta name="twitter:description" content="Keplerian comet ellipse, vis-viva speed, and schematic tails. JPL q and e. The 3 AU line is the cited water-ice threshold. Not an ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(260px,.8fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.ion{border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.swatch.dust{border-top-style:solid;border-top-color:var(--ink,#e8e6e1)}
+.swatch.water{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.sun{width:10px;height:10px;border:0;border-radius:50%;background:#ffe6b0}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.presets,.modes,.jumps{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.modes button,.jumps button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible,.modes button:hover,.modes button:focus-visible,.jumps button:hover,.jumps button:focus-visible{
+  border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none
+}
+.presets button[aria-pressed="true"],.modes button[aria-pressed="true"],.jumps button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:11ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:100%;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.num[readonly]{opacity:.72}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.fields{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .diagram canvas{scroll-behavior:auto}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/" aria-current="page">Comets</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Comets</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The tail</p>
+  <h1>How a comet<br>grows a tail</h1>
+  <p class="lede">A comet is a small icy body on a long ellipse around the Sun. The frozen part is the <strong>nucleus</strong>. Near the Sun it grows a <strong>coma</strong>, and then two tails. The <strong>ion tail</strong> is blown straight away from the Sun. The <strong>dust tail</strong> is heavier, so it curves and lags along the orbit. This page draws that ellipse from a perihelion distance <strong>q</strong> and an eccentricity <strong>e</strong>, or from the semi-major axis <strong>a</strong> and <strong>e</strong>. <strong>a = q / (1 − e)</strong>. The comet’s place comes from <strong>Kepler’s equation</strong>, so it crawls near aphelion and rushes past perihelion. Speed is <a href="/science/astronomy/vis-viva/">vis-viva</a>. The period is the two-body period from the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> GM. Four buttons load osculating elements from the <a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html" rel="noopener" target="_blank">JPL Small-Body Database</a>. A dashed circle is 3 AU, the distance past which Cochran, McKay, and Moulane 2025 say water ice stays frozen.</p>
+  <p class="note-schematic" id="limits-note">Educational schematic. One comet and the Sun. The path is a bound Keplerian ellipse, a = q / (1 − e). Time runs in mean anomaly, and the place comes from Kepler’s equation. Speed is vis-viva with the Sun Fact Sheet GM, 132,712 × 10⁶ km³/s². One AU is the IAU 2012 length, 149,597,870,700 m. The ion tail is drawn straight away from the Sun. The dust tail lags along the orbit and is pushed outward. Tail length grows as heliocentric distance shrinks, on a classroom scale, not in measured kilometers. The 3 AU mark is the distance past which Cochran, McKay, and Moulane 2025 say water ice stays frozen. Inclination is printed and not applied, so a retrograde comet is not flipped. Other planets are left out. Not a JPL Horizons ephemeris and not a tail model.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Orbit and tails</span>
+    <button type="button" class="help-q" id="comet-help" aria-haspopup="dialog" aria-controls="comet-help-dialog" aria-expanded="false" aria-label="How this comet desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Orbit plane · perihelion to the right · motion counterclockwise</p>
+      <canvas id="orbit-canvas" width="880" height="640" tabindex="0" role="img" aria-label="A comet on an ellipse around the Sun. The ion tail points away from the Sun. The dust tail lags behind along the orbit. The view is the orbit plane, with perihelion to the right."></canvas>
+      <ul class="legend" aria-label="Orbit key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch" aria-hidden="true"></span> Orbit</li>
+        <li><span class="swatch ion" aria-hidden="true"></span> Ion tail</li>
+        <li><span class="swatch dust" aria-hidden="true"></span> Dust tail</li>
+        <li><span class="swatch water" aria-hidden="true"></span> 3 AU</li>
+      </ul>
+      <p class="scale-note" id="orbit-note">Tail length is a classroom scale. It grows as the comet comes closer to the Sun. It is not a length in AU. Inclination is not applied.</p>
+      <div class="controls">
+        <p class="pick-label">JPL orbits</p>
+        <div class="presets" id="preset-published">
+          <button type="button" data-preset="halley" aria-pressed="true">1P/Halley</button>
+          <button type="button" data-preset="encke" aria-pressed="false">2P/Encke</button>
+          <button type="button" data-preset="67p" aria-pressed="false">67P</button>
+          <button type="button" data-preset="hale-bopp" aria-pressed="false">Hale–Bopp</button>
+        </div>
+        <p class="pick-label">Classroom</p>
+        <div class="presets" id="preset-class">
+          <button type="button" data-preset="classroom" aria-pressed="false">Crosses 3 AU</button>
+          <button type="button" id="btn-play" aria-pressed="true">Pause</button>
+        </div>
+        <p class="pick-label">Where you are on the orbit</p>
+        <div class="slider-row">
+          <label for="mean-slider">Mean anomaly</label>
+          <input id="mean-slider" type="range" min="0" max="360" step="0.1" value="0" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0" aria-valuetext="0 degrees, perihelion">
+        </div>
+        <div class="jumps">
+          <button type="button" id="btn-peri">Perihelion</button>
+          <button type="button" id="btn-apo">Aphelion</button>
+          <button type="button" id="btn-zoom" aria-pressed="false">Inner 6 AU</button>
+        </div>
+        <p class="pick-label">Which pair of numbers you type</p>
+        <div class="modes" role="group" aria-label="Which orbital elements are typed">
+          <button type="button" id="mode-q" data-mode="q" aria-pressed="true">Perihelion and e</button>
+          <button type="button" id="mode-a" data-mode="a" aria-pressed="false">Axis and e</button>
+        </div>
+        <div class="fields">
+          <div class="field"><label for="q-au">Perihelion q, AU</label><input class="num" id="q-au" type="text" inputmode="decimal" value="0.5748638313743413" aria-describedby="comet-err"></div>
+          <div class="field"><label for="ecc">Eccentricity</label><input class="num" id="ecc" type="text" inputmode="decimal" value="0.9679359956953211" aria-describedby="comet-err"></div>
+          <div class="field"><label for="axis">Semi-major axis a, AU</label><input class="num" id="axis" type="text" inputmode="decimal" value="17.92863504856923" readonly aria-describedby="comet-err"></div>
+        </div>
+        <p class="field-error" id="comet-err" hidden></p>
+      </div>
+    </div>
+    <div class="detail">
+      <p class="tier" id="d-tier">Halley-type · JPL solution 75</p>
+      <h2 id="d-title">1P/Halley</h2>
+      <p class="range" id="d-range">q = 0.574864 AU · e = 0.967936</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Heliocentric distance</span><span class="v">0.574864 AU</span></li>
+        <li><span class="k">Orbital speed</span><span class="v">55.108 km/s</span></li>
+        <li><span class="k">Period</span><span class="v">75.914 years · 27,728.092 days</span></li>
+        <li><span class="k">JPL sidereal period</span><span class="v">27,728.046 days</span></li>
+        <li><span class="k">Water ice</span><span class="v" id="water-line" aria-live="polite">Within 3 AU — water ice commonly sublimating</span></li>
+        <li><span class="k">Perihelion q</span><span class="v">0.574864 AU</span></li>
+        <li><span class="k">Semi-major axis a</span><span class="v">17.928635 AU</span></li>
+        <li><span class="k">Aphelion</span><span class="v">35.282406 AU</span></li>
+        <li><span class="k">Eccentricity</span><span class="v">0.967936</span></li>
+        <li><span class="k">Inclination, not drawn</span><span class="v">162.191°</span></li>
+      </ul>
+      <p class="why" id="d-why">1P/Halley. JPL Small-Body Database orbit solution 75, epoch JD 2439875.5 TDB, solution date 2025-11-21. Perihelion distance q = 0.5748638313743413 AU and eccentricity e = 0.9679359956953211. The axis a = q/(1−e) is 17.92863504856923 AU, the semi-major axis JPL prints for this solution. JPL’s aphelion is 35.28240626576412 AU. JPL’s sidereal period is 27728.04608790421 days. Inclination 162.1905300439129° is printed on the card and is not drawn. The canvas is the orbit plane. JPL’s orbit class for this solution is Halley-type Comet*, code HTC. The SBDB filter document defines that classical class as 20 years < P < 200 years. The two-body period from the Sun Fact Sheet GM is 75.914 years, which is 27,728.092 days. It is not copied from JPL’s printed period. The fact-sheet GM is a rounded value, so the two day counts differ in the third decimal.</p>
+    </div>
+  </div>
+
+  <p class="band">Nucleus, coma, and the two tails</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Nucleus</dt><dd>The frozen body. NASA Science calls it icy chunks and frozen gases with bits of embedded dust, often a few miles across, and the leftover of the early solar system. Far from the Sun it stays cold. This drawing is a point, not a measured nucleus.</dd></div>
+    <div class="gloss"><dt>Coma</dt><dd>The atmosphere that appears as the nucleus warms. NASA Science says the Sun’s heat turns ices to gas and the coma may extend hundreds of thousands of kilometers. NASA’s Basics of Space Flight says that, within a few AU, the volatiles evaporate and carry dust with them. The glow around the head on this page stands for that coma. It is not a measured diameter.</dd></div>
+    <div class="gloss"><dt>Ion tail</dt><dd>Gas that has been ionized, pushed by the solar wind. NASA’s Basics of Space Flight says the ion tail is accelerated so strongly that it appears as a nearly straight line extending away from the comet, opposite the Sun. This page draws that line radially anti-sunward. A real ion tail can kink when the solar wind changes. That kink is not drawn.</dd></div>
+    <div class="gloss"><dt>Dust tail</dt><dd>Solid grains, pushed by sunlight more gently than the ions. The same NASA chapter says relatively massive dust tails are accelerated slowly and tend to be curved. Grains released earlier lag along the orbit. This page samples those earlier places and pushes them outward. The curve is a schematic, not a trajectory of a grain.</dd></div>
+    <div class="gloss"><dt>Short and long period</dt><dd>NASA Science calls comets that take less than 200 years short-period, and traces that population to the Kuiper belt. Long-period comets, on that page, arrive from the Oort cloud and can take as long as 30 million years. JPL’s classes cut more finely: Halley-type is the classical 20 years &lt; P &lt; 200 years, Jupiter-family is Levison and Duncan’s 2 &lt; T<sub>J</sub> &lt; 3, and Encke-type is T<sub>J</sub> &gt; 3 with a semi-major axis inside Jupiter’s. Hale–Bopp’s printed period is thousands of years, so it is long-period on NASA’s 200-year line.</dd></div>
+    <div class="gloss gloss-wide"><dt>The 3 AU line</dt><dd>Cochran, McKay, and Moulane 2025 write that H<sub>2</sub>O stays in its ice form farther from the Sun than 3.0 AU, and that most of a nucleus’s activity should occur within about 3.0 AU. They also report CN from C/2017 K2 at 3.39 AU, so the line is not a switch every comet obeys. NASA’s Basics of Space Flight says the surface begins to warm within a few AU, without quoting 3. More volatile ices, such as CO and CO<sub>2</sub>, can drive activity farther out. The card says “commonly sublimating” inside 3 AU and “generally still frozen” outside it. It does not compute a production rate.</dd></div>
+  </dl>
+
+  <div class="sheet">
+    <table>
+      <caption>Elements loaded by the four JPL buttons, and the classroom ellipse</caption>
+      <thead>
+        <tr><th scope="col">Comet</th><th scope="col">What is loaded, and what this page computes</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1P/Halley</th>
+          <td>1P/Halley. JPL Small-Body Database orbit solution 75, epoch JD 2439875.5 TDB, solution date 2025-11-21. Perihelion distance q = 0.5748638313743413 AU and eccentricity e = 0.9679359956953211. The axis a = q/(1−e) is 17.92863504856923 AU, the semi-major axis JPL prints for this solution. JPL’s aphelion is 35.28240626576412 AU. JPL’s sidereal period is 27728.04608790421 days. Inclination 162.1905300439129° is printed on the card and is not drawn. The canvas is the orbit plane. JPL’s orbit class for this solution is Halley-type Comet*, code HTC. The SBDB filter document defines that classical class as 20 years < P < 200 years. The two-body period from the Sun Fact Sheet GM is 75.914 years, which is 27,728.092 days. It is not copied from JPL’s printed period. The fact-sheet GM is a rounded value, so the two day counts differ in the third decimal.</td>
+        </tr>
+        <tr>
+          <th scope="row">2P/Encke</th>
+          <td>2P/Encke. JPL Small-Body Database orbit solution K273/27, epoch JD 2460552.5 TDB, solution date 2026-11-04. Perihelion distance q = 0.3394588840071771 AU and eccentricity e = 0.846979230409067. The axis a = q/(1−e) is 2.218384373014493 AU, the semi-major axis JPL prints for this solution. JPL’s aphelion is 4.097309862021808 AU. JPL’s sidereal period is 1206.850911513666 days. Inclination 11.33886832759377° is printed on the card and is not drawn. The canvas is the orbit plane. JPL’s orbit class for this solution is Encke-type Comet, code ETc. The SBDB filter document defines that class, following Levison and Duncan, as Tj > 3 and a semi-major axis inside Jupiter’s. The two-body period from the Sun Fact Sheet GM is 3.304 years, which is 1,206.853 days. It is not copied from JPL’s printed period. The fact-sheet GM is a rounded value, so the two day counts differ in the third decimal.</td>
+        </tr>
+        <tr>
+          <th scope="row">67P</th>
+          <td>67P/Churyumov–Gerasimenko. JPL Small-Body Database orbit solution K284/1, epoch JD 2457305.5 TDB, solution date 2026-09-04. Perihelion distance q = 1.243265640702404 AU and eccentricity e = 0.6409081308996354. The axis a = q/(1−e) is 3.462249490129549 AU, the semi-major axis JPL prints for this solution. JPL’s aphelion is 5.681233339556694 AU. JPL’s sidereal period is 2353.076067903661 days. Inclination 7.040294937543767° is printed on the card and is not drawn. The canvas is the orbit plane. JPL’s orbit class for this solution is Jupiter-family Comet, code JFc. The SBDB filter document defines that class, following Levison and Duncan, as 2 < Tj < 3. The two-body period from the Sun Fact Sheet GM is 6.442 years, which is 2,353.080 days. It is not copied from JPL’s printed period. The fact-sheet GM is a rounded value, so the two day counts differ in the third decimal.</td>
+        </tr>
+        <tr>
+          <th scope="row">Hale–Bopp</th>
+          <td>C/1995 O1 (Hale–Bopp). JPL Small-Body Database orbit solution 226, epoch JD 2459837.5 TDB, solution date 2022-08-01. Perihelion distance q = 0.890537663547794 AU and eccentricity e = 0.9949810027633206. The axis a = q/(1−e) is 177.4333839117583 AU, the semi-major axis JPL prints for this solution. JPL’s aphelion is 353.9762301599687 AU. JPL’s sidereal period is 863279.5034870314 days. Inclination 89.28759424740302° is printed on the card and is not drawn. The canvas is the orbit plane. JPL’s orbit class for this solution is Comet, code COM, the class for a comet orbit that did not match a more specific class. The printed period is longer than 200 years, so on NASA’s line this is a long-period comet. The two-body period from the Sun Fact Sheet GM is 2,363.496 years, which is 863,280.935 days. It is not copied from JPL’s printed period. The fact-sheet GM is a rounded value, so the two day counts differ in the third decimal.</td>
+        </tr>
+        <tr>
+          <th scope="row">Classroom</th>
+          <td>Classroom ellipse. Perihelion is 1 AU and eccentricity is 0.6, so the semi-major axis is 2.5 AU and aphelion is 4 AU. It crosses the 3 AU water-ice line. It is not a catalog comet and not a JPL orbit. The two-body period from the Sun Fact Sheet GM is 3.953 years, which is 1,443.807 days.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1P" rel="noopener" target="_blank">JPL Small-Body Database — 1P/Halley</a> — orbit solution 75, epoch JD 2439875.5 TDB, solution date 2025-11-21. q = 0.5748638313743413 AU, e = 0.9679359956953211, a = 17.92863504856923 AU, i = 162.1905300439129°, aphelion 35.28240626576412 AU, sidereal period 27728.04608790421 days. Orbit class Halley-type Comet*, code HTC. The API record is <a href="https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=1P&amp;full-prec=true" rel="noopener" target="_blank">sbdb.api?sstr=1P</a>.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2P" rel="noopener" target="_blank">JPL Small-Body Database — 2P/Encke</a> — orbit solution K273/27, epoch JD 2460552.5 TDB, solution date 2026-11-04. q = 0.3394588840071771 AU, e = 0.846979230409067, a = 2.218384373014493 AU, i = 11.33886832759377°, aphelion 4.097309862021808 AU, sidereal period 1206.850911513666 days. Orbit class Encke-type Comet, code ETc.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=67P" rel="noopener" target="_blank">JPL Small-Body Database — 67P/Churyumov–Gerasimenko</a> — orbit solution K284/1, epoch JD 2457305.5 TDB, solution date 2026-09-04. q = 1.243265640702404 AU, e = 0.6409081308996354, a = 3.462249490129549 AU, i = 7.040294937543767°, aphelion 5.681233339556694 AU, sidereal period 2353.076067903661 days. Orbit class Jupiter-family Comet, code JFc.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1995%20O1" rel="noopener" target="_blank">JPL Small-Body Database — C/1995 O1 (Hale–Bopp)</a> — orbit solution 226, epoch JD 2459837.5 TDB, solution date 2022-08-01. q = 0.890537663547794 AU, e = 0.9949810027633206, a = 177.4333839117583 AU, i = 89.28759424740302°, aphelion 353.9762301599687 AU, sidereal period 863279.5034870314 days. Orbit class Comet, code COM.</li>
+      <li><a href="https://ssd-api.jpl.nasa.gov/doc/sbdb_filter.html" rel="noopener" target="_blank">JPL SBDB filter — orbit classes</a> — Halley-type Comet* (HTC) is the classical definition, 20 years &lt; P &lt; 200 years. Jupiter-family Comet (JFc) is Levison and Duncan’s definition, 2 &lt; T<sub>J</sub> &lt; 3. Encke-type Comet (ETc) is Levison and Duncan’s definition, T<sub>J</sub> &gt; 3 and a &lt; a<sub>J</sub>. Comet (COM) is a comet orbit that did not match a more specific class. A trailing * marks a classical definition. This page does not compute T<sub>J</sub>.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — GM 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 695,700 km. Every speed and the two-body period on this page use that GM. The radius is only a warning if a typed perihelion falls inside the Sun.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m. Vis-viva converts AU to kilometers with that length.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — sidereal orbit period 365.256 days. That day count is the year when this page also prints the two-body period in days. It is the same unit as the <a href="/science/astronomy/kepler/">Kepler desk</a>.</li>
+      <li><a href="https://science.nasa.gov/solar-system/comets/facts/" rel="noopener" target="_blank">NASA Science — Comet facts</a> — a nucleus of icy chunks, frozen gases, and dust; a coma that may extend hundreds of thousands of kilometers; sunlight and the solar wind blow dust and gas away from the Sun into a dust tail and an ion tail. Short-period comets take less than 200 years and are traced there to the Kuiper belt. Long-period comets arrive from the Oort cloud, given there as about 100,000 AU, and can take as long as 30 million years.</li>
+      <li><a href="https://science.nasa.gov/learn/basics-of-space-flight/chapter1-3/" rel="noopener" target="_blank">NASA — Basics of Space Flight, comets</a> — within a few AU the volatiles evaporate and carry dust, forming the coma. Dust tails curve because the grains are accelerated slowly. The ion tail is a nearly straight line opposite the Sun. The Oort cloud is described there as about 50,000 AU. The Kuiper belt, about 30 to 100 AU, is called the source of the short-period comets. Those two NASA pages do not quote the same Oort distance. This page does not pick one.</li>
+      <li><a href="https://doi.org/10.3847/PSJ/ae19ec" rel="noopener" target="_blank">Cochran, McKay, and Moulane 2025, Planet. Sci. J. 6, 272</a> — “H<sub>2</sub>O stays in its ice form when further from the Sun than 3.0 au. Thus, most of the activity of a comet nucleus should occur within ∼3.0 au of the Sun.” The same paper calls 3 AU the assumed water turn-on and reports CN from C/2017 K2 at 3.39 AU. The card uses their 3.0 AU sentence. It does not copy a production rate.</li>
+      <li><a href="/science/astronomy/vis-viva/">Vis-viva desk</a> — the same formula, v = √[μ (2/r − 1/a)], with the same Sun GM. Earth’s perihelion there rounds to the fact sheet’s 30.29 km/s.</li>
+      <li><a href="/science/astronomy/eccentricity/">Eccentricity desk</a> — r<sub>p</sub> = a(1−e) and r<sub>a</sub> = a(1+e). That page’s Halley button is the comet fact sheet’s rounded 17.94 AU and 0.967, not these JPL elements.</li>
+      <li><a href="/science/astronomy/meteors/">Meteors desk</a> — the Eta Aquariids and the Orionids list 1P/Halley as the parent body, from JPL’s meteor-stream table. This page does not draw a meteor stream.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Educational schematic of one comet on a bound ellipse. Halley’s perihelion, with the Sun’s GM, is 55.108 km/s. The two-body period is 75.914 years. JPL’s printed sidereal period for that solution is 27,728.046 days. The tails are not to the orbit’s scale. Point-mass, two-body. Not a JPL Horizons ephemeris and not a tail model. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/vis-viva/"><p class="n">The speed</p><h3>Vis-viva</h3><p>v = √[μ (2/r − 1/a)] anywhere on one ellipse. The speed on this card is that formula.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ in years and AU for a circular solar orbit. The period here is 2π √(a³/μ) from the same Sun.</p></a>
+    <a href="/science/astronomy/eccentricity/"><p class="n">The stretch</p><h3>Eccentricity</h3><p>How e sets the two ends. The fact-sheet Halley there is the rounded 17.94 AU and 0.967.</p></a>
+    <a href="/science/astronomy/meteors/"><p class="n">The dust</p><h3>Meteors</h3><p>Grains left along a comet’s orbit. The Eta Aquariids and the Orionids list Halley as the parent.</p></a>
+    <a href="/science/astronomy/impacts/"><p class="n">The hit</p><h3>Impacts</h3><p>Energy and crater scaling if a body reaches the ground. This page stays on the orbit.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The planets the comet falls past. This ellipse does not feel their pull.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="comet-help-dialog" role="dialog" aria-modal="true" aria-labelledby="comet-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="comet-help-title">Comets</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One ellipse, two schematic tails, and a mark at 3 AU. Halley opens the page at perihelion.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Halley, Encke, 67P, Hale–Bopp</th><td>Load the JPL osculating q and e named on the card. The axis is q/(1−e), which matches the semi-major axis JPL prints for that solution. Inclination is shown and not drawn.</td></tr>
+        <tr><th scope="row">Crosses 3 AU</th><td>A classroom ellipse. q = 1 AU, e = 0.6, so a = 2.5 AU and aphelion is 4 AU. Not a catalog comet.</td></tr>
+        <tr><th scope="row">Mean anomaly</th><td>0° is perihelion. 180° is aphelion. Play advances this angle uniformly, which is Kepler’s clock, so the comet is fast only near perihelion.</td></tr>
+        <tr><th scope="row">Perihelion and aphelion</th><td>Jump the mean anomaly to 0° or 180°.</td></tr>
+        <tr><th scope="row">Inner 6 AU</th><td>Zoom the drawing to a window 6 AU across, so the water-ice circle and the tails are easier to see on a long ellipse. Press again for the full orbit.</td></tr>
+        <tr><th scope="row">Perihelion and e</th><td>You type q and e. The axis is filled in.</td></tr>
+        <tr><th scope="row">Axis and e</th><td>You type a and e. Perihelion is filled in as a(1−e).</td></tr>
+        <tr><th scope="row">Play</th><td>Pause or play. One orbit takes about twenty seconds of mean anomaly. If your system asks for less motion, the drawing starts still, at perihelion.</td></tr>
+        <tr><th scope="row">Arrow keys</th><td>With a preset button focused, Left and Right move through the JPL comets and the classroom ellipse. With the canvas focused, Left and Right step the mean anomaly. They do nothing while a field is focused, and nothing while this dialog is open.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/comets/comets.js"></script>
+<script>
+(function () {
+  "use strict";
+  var C = window.Comets;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!C) return;
+
+  var state = C.stateFromPreset("halley");
+  var meanDeg = 0;
+  var playing = true;
+  var zoomInner = false;
+  var last = null;
+  var raf = 0;
+  var lastT = 0;
+  var waterShown = "";
+  var ORBIT_MS = 20000;
+  var reduce = false;
+  try {
+    reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  } catch (err) { reduce = false; }
+  if (reduce) playing = false;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function showErr(msg) {
+    var err = document.getElementById("comet-err");
+    var boxes = ["q-au", "ecc", "axis"];
+    var i;
+    for (i = 0; i < boxes.length; i++) {
+      var box = document.getElementById(boxes[i]);
+      if (box) box.setAttribute("aria-invalid", msg ? "true" : "false");
+    }
+    if (!err) return;
+    if (!msg) {
+      err.hidden = true;
+      err.textContent = "";
+      return;
+    }
+    err.hidden = false;
+    err.textContent = msg;
+  }
+  function box(id) {
+    var el = document.getElementById(id);
+    return el ? String(el.value == null ? "" : el.value).trim().replace(/,/g, "") : "";
+  }
+  function numOrNull(id) {
+    var t = box(id);
+    if (!t) return null;
+    return Number(t);
+  }
+  function modeFromButtons() {
+    var pressed = document.querySelector(".modes button[aria-pressed='true']");
+    return pressed ? pressed.getAttribute("data-mode") : "q";
+  }
+  function readForm() {
+    return {
+      preset: state && state.preset ? state.preset : null,
+      mode: modeFromButtons(),
+      name: state && state.name ? state.name : "Comet",
+      q: numOrNull("q-au"),
+      e: numOrNull("ecc"),
+      a: numOrNull("axis"),
+      meanDeg: meanDeg
+    };
+  }
+  function showNum(n) {
+    if (n == null || n === "") return "";
+    if (typeof n !== "number" || !isFinite(n)) return String(n);
+    var s = String(n);
+    if (s.indexOf("e") !== -1 || s.indexOf("E") !== -1) s = n.toPrecision(12);
+    return s;
+  }
+  function writeBox(id, value) {
+    var el = document.getElementById(id);
+    if (!el || document.activeElement === el) return;
+    el.value = value == null ? "" : String(value);
+  }
+  function lockBox(id, locked) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.readOnly = !!locked;
+  }
+  function fillComputed(sc) {
+    var mode = sc.norm.mode;
+    lockBox("axis", mode === "q");
+    lockBox("q-au", mode === "a");
+    if (mode === "q") writeBox("axis", showNum(sc.norm.a));
+    if (mode === "a") writeBox("q-au", showNum(sc.norm.q));
+  }
+  function fillAll(sc) {
+    writeBox("q-au", showNum(sc.norm.q));
+    writeBox("ecc", showNum(sc.norm.e));
+    writeBox("axis", showNum(sc.norm.a));
+    var buttons = document.querySelectorAll(".modes button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-mode") === sc.norm.mode));
+    }
+    fillComputed(sc);
+  }
+  function fillStats(stats) {
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    var items = ul.children;
+    var i;
+    if (items.length !== stats.length) {
+      ul.textContent = "";
+      for (i = 0; i < stats.length; i++) {
+        var li = document.createElement("li");
+        var k = document.createElement("span");
+        k.className = "k";
+        var v = document.createElement("span");
+        v.className = "v";
+        if (stats[i][0] === "Water ice") {
+          v.id = "water-line";
+          v.setAttribute("aria-live", "polite");
+        }
+        li.appendChild(k);
+        li.appendChild(v);
+        ul.appendChild(li);
+      }
+      items = ul.children;
+    }
+    for (i = 0; i < stats.length; i++) {
+      items[i].querySelector(".k").textContent = stats[i][0];
+      items[i].querySelector(".v").textContent = stats[i][1];
+    }
+  }
+  function syncSlider() {
+    var slider = document.getElementById("mean-slider");
+    if (!slider) return;
+    var shown = Math.round(meanDeg * 10) / 10;
+    if (document.activeElement !== slider) slider.value = String(shown);
+    slider.setAttribute("aria-valuenow", String(shown));
+    var where = shown < 0.05 ? "perihelion" : (Math.abs(shown - 180) < 0.05 ? "aphelion" : "on the orbit");
+    slider.setAttribute("aria-valuetext", shown.toFixed(1) + " degrees, " + where);
+  }
+  function tierFor(sc) {
+    if (!sc.preset) return "Custom ellipse";
+    if (sc.preset.schematic) return "Classroom · not a catalog comet";
+    if (sc.preset.orbitCode === "HTC") return "Halley-type · JPL solution " + sc.preset.orbitId;
+    if (sc.preset.orbitCode === "JFc") return "Jupiter-family · JPL solution " + sc.preset.orbitId;
+    if (sc.preset.orbitCode === "ETc") return "Encke-type · JPL solution " + sc.preset.orbitId;
+    return "Long-period · JPL solution " + sc.preset.orbitId;
+  }
+  function paint(sc) {
+    var canvas = document.getElementById("orbit-canvas");
+    if (!canvas || !canvas.getContext) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = canvas.clientWidth || 640;
+    if (!(cssW > 0)) return;
+    var cssH = Math.max(280, Math.round(cssW * 0.72));
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    var col = colors();
+    var a = sc.norm.a;
+    var e = sc.norm.e;
+    var q = sc.norm.q;
+    var ra = sc.norm.ra;
+    var pad = 36;
+    var tailPad = 96;
+    var xMin;
+    var xMax;
+    var yMax;
+    if (zoomInner) {
+      var span = 6;
+      xMin = -span;
+      xMax = span;
+      yMax = span;
+    } else {
+      xMin = -ra;
+      xMax = q;
+      yMax = Math.max(a * Math.sqrt(Math.max(0, 1 - e * e)), q * 0.15);
+    }
+    var worldW = Math.max(1e-6, xMax - xMin);
+    var worldH = Math.max(1e-6, yMax * 2);
+    var scale = Math.min((cssW - pad - tailPad) / worldW, (cssH - pad * 2) / worldH);
+    var ox = pad + (cssW - pad - tailPad - worldW * scale) / 2 - xMin * scale;
+    var oy = cssH / 2;
+    function pt(x, y) { return [ox + x * scale, oy - y * scale]; }
+
+    ctx.beginPath();
+    var i;
+    for (i = 0; i <= 720; i++) {
+      var E = i / 720 * Math.PI * 2;
+      var p = C.position(a, e, E);
+      var s = pt(p.x, p.y);
+      if (i === 0) ctx.moveTo(s[0], s[1]);
+      else ctx.lineTo(s[0], s[1]);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = col.soft;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+
+    var sun = pt(0, 0);
+    ctx.beginPath();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = col.muted;
+    ctx.lineWidth = 1;
+    ctx.arc(sun[0], sun[1], 3 * scale, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(sun[0], sun[1], 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = col.muted;
+    ctx.font = font(11);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("Sun", sun[0] + 8, sun[1] - 8);
+    if (3 * scale > 28) {
+      ctx.fillText("3 AU", sun[0] + 3 * scale + 4, sun[1] + 4);
+    }
+
+    var comet = pt(sc.pos.x, sc.pos.y);
+    var frac = sc.tailFraction;
+    var dx = comet[0] - sun[0];
+    var dy = comet[1] - sun[1];
+    var mag = Math.hypot(dx, dy) || 1;
+    var ux = dx / mag;
+    var uy = dy / mag;
+    var ionLen = 84 * frac;
+    if (frac > 0.02) {
+      ctx.strokeStyle = col.accent;
+      ctx.lineWidth = 2.25;
+      ctx.beginPath();
+      ctx.moveTo(comet[0], comet[1]);
+      ctx.lineTo(comet[0] + ionLen * ux, comet[1] + ionLen * uy);
+      ctx.stroke();
+    }
+    if (frac > 0.02) {
+      ctx.strokeStyle = col.ink;
+      ctx.globalAlpha = 0.9;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(comet[0], comet[1]);
+      var k;
+      for (k = 1; k <= 22; k++) {
+        var dust = C.dustPoint(a, e, sc.E, k * 0.04, 0.15 * frac * (k / 22));
+        var ds = pt(dust.x, dust.y);
+        var vx = ds[0] - sun[0];
+        var vy = ds[1] - sun[1];
+        var vm = Math.hypot(vx, vy) || 1;
+        var extra = 48 * frac * (k / 22);
+        ctx.lineTo(ds[0] + extra * vx / vm, ds[1] + extra * vy / vm);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+    var coma = 3.5 + 16 * frac;
+    ctx.fillStyle = "rgba(232,230,225,0.18)";
+    ctx.beginPath();
+    ctx.arc(comet[0], comet[1], coma, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = col.ink;
+    ctx.beginPath();
+    ctx.arc(comet[0], comet[1], 4.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    var label = "Comet on an ellipse. Distance " + sc.text.r + ". Speed " + sc.text.v + ". " + sc.text.water + ".";
+    canvas.setAttribute("aria-label", label);
+  }
+  function render(fromPreset) {
+    var sc = C.scene(readForm());
+    if (!sc.ok) {
+      showErr(sc.error);
+      setText("d-why", sc.error);
+      return;
+    }
+    showErr("");
+    last = sc;
+    if (fromPreset) fillAll(sc);
+    else fillComputed(sc);
+    setText("d-tier", tierFor(sc));
+    setText("d-title", sc.norm.name || "Comet");
+    setText("d-range", "q = " + sc.text.q + " · e = " + sc.text.e);
+    fillStats(sc.stats);
+    setText("d-why", sc.why);
+    var note = document.getElementById("orbit-note");
+    if (note) {
+      var extra = zoomInner ? " Inner 6 AU: the rest of a longer ellipse is outside the frame." : " Full orbit.";
+      var sunWarn = sc.insideSun ? " Perihelion is inside the Sun’s fact-sheet radius, 695,700 km." : "";
+      note.textContent = "Tail length is a classroom scale. It grows as the comet comes closer to the Sun. It is not a length in AU. Inclination is not applied." + extra + sunWarn;
+    }
+    syncSlider();
+    var water = document.getElementById("water-line");
+    if (water && sc.water !== waterShown) {
+      water.setAttribute("aria-live", "polite");
+      waterShown = sc.water;
+    }
+    paint(sc);
+    var buttons = document.querySelectorAll("[data-preset]");
+    var b;
+    for (b = 0; b < buttons.length; b++) {
+      buttons[b].setAttribute("aria-pressed", String(buttons[b].getAttribute("data-preset") === sc.norm.preset));
+    }
+  }
+
+  function applyPreset(id) {
+    var next = C.stateFromPreset(id);
+    if (!next) return;
+    state = next;
+    meanDeg = 0;
+    var modes = document.querySelectorAll(".modes button");
+    var mi;
+    for (mi = 0; mi < modes.length; mi++) {
+      modes[mi].setAttribute("aria-pressed", String(modes[mi].getAttribute("data-mode") === "q"));
+    }
+    writeBox("q-au", showNum(next.q));
+    writeBox("ecc", showNum(next.e));
+    writeBox("axis", showNum(next.a));
+    render(true);
+  }
+  function setMode(mode) {
+    var raw = readForm();
+    raw.mode = mode;
+    raw.preset = null;
+    state = raw;
+    var buttons = document.querySelectorAll(".modes button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", String(buttons[i].getAttribute("data-mode") === mode));
+    }
+    render(false);
+  }
+  function fromBoxes() {
+    var raw = readForm();
+    raw.preset = null;
+    state = raw;
+    render(false);
+  }
+
+  var fields = ["q-au", "ecc", "axis"];
+  var fi;
+  for (fi = 0; fi < fields.length; fi++) {
+    document.getElementById(fields[fi]).addEventListener("input", fromBoxes);
+  }
+  document.getElementById("mode-q").addEventListener("click", function () { setMode("q"); });
+  document.getElementById("mode-a").addEventListener("click", function () { setMode("a"); });
+  function onPresetClick(ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn) return;
+    var id = btn.getAttribute("data-preset");
+    if (!id) return;
+    applyPreset(id);
+  }
+  document.getElementById("preset-published").addEventListener("click", onPresetClick);
+  document.getElementById("preset-class").addEventListener("click", function (ev) {
+    if (ev.target && ev.target.id === "btn-play") return;
+    onPresetClick(ev);
+  });
+
+  function presetButtons() {
+    return [].slice.call(document.querySelectorAll("#preset-published button, #preset-class button[data-preset]"));
+  }
+  function onPresetKey(ev) {
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    var dialog = document.getElementById("comet-help-dialog");
+    if (dialog && !dialog.hidden) return;
+    var buttons = presetButtons();
+    var idx = buttons.indexOf(document.activeElement);
+    if (idx < 0) return;
+    ev.preventDefault();
+    var next = idx + (ev.key === "ArrowRight" ? 1 : -1);
+    if (next < 0) next = buttons.length - 1;
+    if (next >= buttons.length) next = 0;
+    buttons[next].focus();
+    applyPreset(buttons[next].getAttribute("data-preset"));
+  }
+  document.getElementById("preset-published").addEventListener("keydown", onPresetKey);
+  document.getElementById("preset-class").addEventListener("keydown", onPresetKey);
+
+  var canvas = document.getElementById("orbit-canvas");
+  canvas.addEventListener("keydown", function (ev) {
+    var dialog = document.getElementById("comet-help-dialog");
+    if (dialog && !dialog.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+    ev.preventDefault();
+    setPlaying(false);
+    meanDeg = (meanDeg + (ev.key === "ArrowRight" ? 2 : -2) + 360) % 360;
+    render(false);
+  });
+
+  var slider = document.getElementById("mean-slider");
+  slider.addEventListener("input", function () {
+    setPlaying(false);
+    meanDeg = Number(slider.value) || 0;
+    render(false);
+  });
+  document.getElementById("btn-peri").addEventListener("click", function () {
+    meanDeg = 0;
+    render(false);
+  });
+  document.getElementById("btn-apo").addEventListener("click", function () {
+    meanDeg = 180;
+    render(false);
+  });
+  document.getElementById("btn-zoom").addEventListener("click", function () {
+    zoomInner = !zoomInner;
+    document.getElementById("btn-zoom").setAttribute("aria-pressed", String(zoomInner));
+    if (last) paint(last);
+    render(false);
+  });
+
+  function loop(t) {
+    if (!playing) return;
+    if (!lastT) lastT = t;
+    var dt = Math.min(50, t - lastT);
+    lastT = t;
+    if (!document.hidden) {
+      meanDeg = (meanDeg + 360 * dt / ORBIT_MS) % 360;
+      render(false);
+    }
+    raf = window.requestAnimationFrame(loop);
+  }
+  function setPlaying(next) {
+    playing = next;
+    var play = document.getElementById("btn-play");
+    if (play) {
+      play.textContent = playing ? "Pause" : "Play";
+      play.setAttribute("aria-pressed", String(playing));
+    }
+    if (playing) {
+      lastT = 0;
+      window.cancelAnimationFrame(raf);
+      raf = window.requestAnimationFrame(loop);
+    }
+  }
+  document.getElementById("btn-play").addEventListener("click", function () { setPlaying(!playing); });
+
+  var helpBtn = document.getElementById("comet-help");
+  var helpDialog = document.getElementById("comet-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () { if (last) paint(last); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { if (last) paint(last); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  var playBtn = document.getElementById("btn-play");
+  if (playBtn && !playing) {
+    playBtn.textContent = "Play";
+    playBtn.setAttribute("aria-pressed", "false");
+  }
+  render(true);
+  if (playing) raf = window.requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
