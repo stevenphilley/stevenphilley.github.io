@@ -1,0 +1,853 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Planetary rings — Roche limits and the Mimas 2:1 — Steven Philley</title>
+<meta name="description" content="Interactive rings desk for Saturn, Jupiter, Uranus, and Neptune. Fact-sheet edges in kilometers from the center. Fluid and rigid Roche limits use 2.44 and 1.26, the same formulas as the Roche desk. The Mimas 2:1 computes 116,870 km. A missing edge is a dash. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/rings/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Planetary rings — Roche limits and the Mimas 2:1">
+<meta property="og:description" content="Four ring systems to scale in kilometers. Equal-density Roche limits, Rhea’s pair beside them, and a computed Mimas 2:1. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/rings/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Planetary rings — Roche limits and the Mimas 2:1">
+<meta name="twitter:description" content="Saturn, Jupiter, Uranus, and Neptune. Cited edges, or a dash. The Mimas 2:1 is 116,870 km.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:8px;flex:0 0 auto}
+.swatch.ring{background:color-mix(in srgb,var(--accent,#c8b48a) 55%,transparent)}
+.swatch.fluid{height:0;border-top:3px solid var(--accent,#c8b48a);background:transparent}
+.swatch.rigid{height:0;border-top:2px dashed var(--ink,#e8e6e1);background:transparent}
+.swatch.res{height:0;border-top:2px dotted var(--ink-soft,#9b9a96);background:transparent}
+.swatch.moon{width:8px;height:8px;border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.pri{width:12px;height:12px;border-radius:50%;background:#ffe6b0}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.ratio-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:6ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.presets button[hidden]{display:none}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:720px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/" aria-current="page">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Rings</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · Ring systems</p>
+  <h1>Four planets<br>wear a ring</h1>
+  <p class="lede">A ring is material in orbit around a planet. Saturn, Jupiter, Uranus, and Neptune have them. Distances on this page are kilometers from the planet’s center, from the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA</a> ring fact sheets. An edge the sheet does not print is a dash. The fluid Roche distance is <strong>d = 2.44 R (ρ<sub>planet</sub> / ρ)<sup>1/3</sup></strong>. The rigid distance uses <strong>1.26</strong>. R is the volumetric mean radius, the same R as the <a href="/science/astronomy/roche/">Roche</a> desk. Equal density, ratio 1, is the ring comparison. For Saturn that is <strong>142,086 km</strong> and <strong>73,372 km</strong>. Rhea’s density, 1,240 kg/m³, is the Roche desk’s pair: <strong>116,698 km</strong> and <strong>60,262 km</strong>. The Mimas 2:1 is computed here from Mimas’s semimajor axis and Saturn’s GM. It is <strong>116,870 km</strong>. The <a href="/science/astronomy/resonances/">resonances</a> desk is that kind of period ratio. The <a href="/science/astronomy/hill/">Hill</a> sphere is a different distance. Enceladus, which feeds the E ring, is on the <a href="/science/astronomy/ocean-worlds/">ocean worlds</a> desk.</p>
+  <p class="note-schematic">Educational schematic. One plane, top-down, planet at the center. The disk is the volumetric mean radius. Ring sheets divide a separate column by the equatorial radius. Those two radii are not swapped. A ring with one printed radius is a line. A blank edge is not guessed from a width. Moon marks use satellite-sheet semimajor axes. Close frame and Full sheet do not share a scale. Thickness is not drawn. Not an ephemeris.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Four ring systems</span>
+    <button type="button" class="help-q" id="rings-help" aria-haspopup="dialog" aria-controls="rings-help-dialog" aria-expanded="false" aria-label="How this rings desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">From above · kilometers from the center · schematic</p>
+      <canvas id="ring-canvas" width="880" height="640" tabindex="0" role="img" aria-label="Schematic of Saturn and its rings. Equal-density Roche limits. Not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch pri" aria-hidden="true"></span> Planet</li>
+        <li><span class="swatch ring" aria-hidden="true"></span> Ring</li>
+        <li><span class="swatch fluid" aria-hidden="true"></span> Fluid</li>
+        <li><span class="swatch rigid" aria-hidden="true"></span> Rigid</li>
+        <li><span class="swatch res" aria-hidden="true"></span> Mimas 2:1</li>
+        <li><span class="swatch moon" aria-hidden="true"></span> Moon</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Close frame, out to Mimas. The E ring is off this drawing until Full sheet.</p>
+      <div class="controls">
+        <p class="pick-label">Planet</p>
+        <div class="presets" id="preset-planet" role="group" aria-label="Planet">
+          <button type="button" data-planet="saturn" aria-pressed="true">Saturn</button>
+          <button type="button" data-planet="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-planet="uranus" aria-pressed="false">Uranus</button>
+          <button type="button" data-planet="neptune" aria-pressed="false">Neptune</button>
+        </div>
+        <p class="pick-label">Frame</p>
+        <div class="presets" id="preset-span" role="group" aria-label="Radial frame">
+          <button type="button" data-span="close" aria-pressed="true">Close</button>
+          <button type="button" data-span="full" aria-pressed="false">Full sheet</button>
+        </div>
+        <p class="pick-label" id="ratio-note">Density ratio · equal density</p>
+        <div class="slider-row">
+          <label for="ratio">Ratio</label>
+          <input type="range" id="ratio" min="0.25" max="4" step="0.001" value="1" aria-valuemin="0.25" aria-valuemax="4" aria-valuenow="1" aria-valuetext="Density ratio 1, equal density">
+          <span class="ratio-val" id="ratio-val">1.000</span>
+        </div>
+        <div class="presets" id="preset-density" role="group" aria-label="Density">
+          <button type="button" data-density="equal" aria-pressed="true">Equal density</button>
+          <button type="button" data-density="rhea" aria-pressed="false">Rhea</button>
+          <button type="button" data-density="amalthea" aria-pressed="false" hidden>Amalthea</button>
+        </div>
+      </div>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Saturn · equal density · schematic</p>
+      <h2 id="d-title">Saturn</h2>
+      <p class="range" id="d-range">Fluid 142,086 km · rigid 73,372 km</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Volumetric radius</span><span class="v">58,232 km</span></li>
+        <li><span class="k">Fluid · equal density</span><span class="v">142,086 km</span></li>
+        <li><span class="k">Rigid · equal density</span><span class="v">73,372 km</span></li>
+        <li><span class="k">Fluid · Rhea</span><span class="v">116,698 km</span></li>
+        <li><span class="k">Rigid · Rhea</span><span class="v">60,262 km</span></li>
+        <li><span class="k">Mimas 2:1</span><span class="v">116,870 km</span></li>
+      </ul>
+      <p class="why" id="d-why">Saturn’s volumetric mean radius is 58,232 km and its mean density is 687 kg/m³. The fluid distance is 2.44 × R × (ratio)^(1/3). The rigid distance uses 1.26. Equal density, ratio 1, puts them at 142,086 km and 73,372 km. Rhea’s 1,240 kg/m³, the Roche desk’s pair, puts them at 116,698 km and 60,262 km. The arcs use equal density. Mimas is at 185,520 km. Kepler with Saturn’s GM gives a period of 0.943529 days. The sheet prints 0.9424218 days. The 2:1 radius is 116,870 km. The Cassini division row has no radius. A dash is an edge the sheet does not print. Schematic, not an ephemeris.</p>
+    </div>
+  </div>
+
+  <p class="band">Why the bright rings sit inward</p>
+  <div class="means">
+    <p><strong>Inside the fluid distance, loose material does not gather into a moon.</strong> That is the Roche desk’s reading of the same formula. <a href="https://science.nasa.gov/saturn/facts/" rel="noopener" target="_blank">NASA Science</a> says Saturn’s rings are thought to be pieces of comets, asteroids, or shattered moons that broke up before they reached the planet, torn apart by Saturn’s gravity. On this page the equal-density fluid distance for Saturn is 142,086 km. The A ring’s outer edge, 136,780 km, is inside it. The E ring’s outer edge, 480,000 km, is outside it. The bright A, B, and C rings are the ones inside. The faint E ring is not.</p>
+    <p><strong>The other three are not copies of Saturn.</strong> Jupiter’s equal-density fluid distance is 170,583 km. The Thebe extension runs to 280,000 km, outside that distance. The halo’s inner printed edge, 89,400 km, sits just outside the rigid distance, 88,088 km. <a href="https://science.nasa.gov/jupiter/facts/" rel="noopener" target="_blank">NASA Science</a> says Jupiter’s rings may be dust kicked up when meteoroids hit the small inner moons. Uranus’s Epsilon ring is printed at 51,149 km, inside the equal-density fluid distance of 61,883 km. R/2003 U 1 is printed at 97,700 km, outside it. Neptune’s Adams ring is printed at 62,933 km, outside the equal-density fluid distance of 60,078 km. Galle is printed at about 41,900 km, between the rigid distance, 31,024 km, and the fluid one.</p>
+    <p><strong>Two radii, on purpose.</strong> The Roche formula uses the volumetric mean. Saturn’s is 58,232 km. The rings sheet’s “Saturn radii” column divides by the equatorial radius, 60,268 km. The A outer edge is 136,780 km, which that column prints as 2.270 equatorial radii. Divided by 58,232 km it is 2.349 volumetric radii. The <a href="/science/astronomy/roche/">Roche desk</a> already prints that 2.349. This page does not mix the two divisors.</p>
+  </div>
+
+  <p class="band">The Cassini Division and Mimas</p>
+  <div class="means">
+    <p><strong>The sheet does not print a Cassini radius.</strong> The Cassini division row has optical depth, albedo, thickness, and surface density. The radius cell is empty. The row sits between the B outer edge, 117,507 km, and the A inner edge, 122,340 km. Those are the neighboring edges. They are not labeled as the division’s edges on the sheet. <a href="https://science.nasa.gov/saturn/facts/" rel="noopener" target="_blank">NASA Science</a> calls the Cassini Division a gap 2,920 miles (4,700 kilometers) wide that separates the A and B rings. <a href="https://science.nasa.gov/resource/the-great-divide/" rel="noopener" target="_blank">A Cassini caption</a> calls the same division 2,980 miles (4,800 kilometers) wide. The two widths are not averaged.</p>
+    <p><strong>The 2:1 is computed here.</strong> An interior 2:1 means the ring particle finishes 2 orbits while Mimas finishes 1. That is the p:q wording on the <a href="/science/astronomy/resonances/">resonances</a> desk. Mimas’s semimajor axis is 185.52 × 10³ km, so 185,520 km. Saturn’s GM is 37.931 × 10<sup>6</sup> km³/s². Kepler’s third law is P = 2π √(a³ / GM). That period is 0.943529 days. The satellite sheet prints 0.9424218 days. This page does not replace one with the other. The 2:1 period is the computed period halved. The radius is (GM × P<sub>2:1</sub>² / (4π²))<sup>1/3</sup>, which is 116,870 km. The same number is 185,520 × (1/2)<sup>2/3</sup>, because the GM cancels. 116,870 km is 637 km inside the B outer edge. The caption says particles in the division orbit Saturn almost exactly twice for every orbit of Mimas, and that the nudges sculpt the outer edge of the B ring. This line is the Keplerian 2:1. It is not moved onto that edge.</p>
+  </div>
+
+  <p class="band">Shepherds</p>
+  <div class="means">
+    <p><strong>Prometheus and Pandora, at the F ring.</strong> The rings sheet lists the F ring at 139,826 km and says rings narrower than 1,000 km are listed by inner edge. No outer edge is printed. Prometheus’s semimajor axis is 139.353 × 10³ km, which is 139,353 km. Pandora’s is 141.700 × 10³ km, which is 141,700 km. <a href="https://science.nasa.gov/saturn/moons/prometheus/" rel="noopener" target="_blank">NASA Science</a> says Prometheus acts as a shepherding moon, constraining the inner edge of the F ring, and gives the orbit as 87,000 miles (139,000 kilometers). <a href="https://science.nasa.gov/saturn/moons/pandora/" rel="noopener" target="_blank">Pandora’s page</a> says Pandora tends to disrupt the F ring while Prometheus helps keep the primary ring in place, and gives 88,000 miles (142,000 kilometers). The marks use the fact-sheet axes. The mile sentences are the rounded lines. They are not averaged.</p>
+    <p><strong>Cordelia and Ophelia, at Epsilon.</strong> The Uranus sheet prints Epsilon at 51,149 km, with a width of 20–96 km, and does not print an inner edge or an outer edge. Cordelia is at 49.80 × 10³ km. Ophelia is at 53.80 × 10³ km. <a href="https://science.nasa.gov/uranus/moons/cordelia/" rel="noopener" target="_blank">NASA Science</a> says Cordelia and Ophelia are shepherd moons whose gravity keeps the particles of the Epsilon ring from dispersing. The sheet leaves both densities blank. No density is invented.</p>
+    <p><strong>Galatea, just inward of Adams.</strong> Galatea’s semimajor axis is 61.953 × 10³ km. The rings sheet prints an unnamed ring at 61,953 km and the Adams ring at 62,933 km. <a href="https://science.nasa.gov/neptune/neptune-facts/" rel="noopener" target="_blank">NASA Science</a> says the gravitational effects of Galatea, a moon just inward from the ring, stabilize the Adams arcs. <a href="https://science.nasa.gov/neptune/neptune-moons/galatea/" rel="noopener" target="_blank">Galatea’s page</a> says the moon’s gravity is believed to cause disturbances in the ring system. The density cell is blank.</p>
+    <p><strong>Metis, Adrastea, Amalthea, and Thebe.</strong> The axes are 128.0, 129.0, 181.4, and 221.9 × 10³ km. <a href="https://science.nasa.gov/jupiter/jupiter-moons/metis/" rel="noopener" target="_blank">NASA Science</a> says Metis and Adrastea orbit inside the main ring and are a source of its material, and that Amalthea and Thebe provide the material for the gossamer ring. The rings sheet’s main ring ends at 128,940 km. Adrastea’s 129,000 km is outside that edge. Both sentences stay. Amalthea’s sheet axis, 181,400 km, and the Amalthea-ring outer edge, 181,350 km, are 50 km apart. Thebe’s 221,900 km is the number the ring sheet prints as the Thebe ring’s outer edge and the extension’s inner edge. Only Amalthea has a density on the satellite sheet, 3,100 kg/m³. The slider can use it. It is the moon’s density, not a ring-particle density.</p>
+  </div>
+
+  <p class="band">Thickness and age</p>
+  <div class="means">
+    <p><strong>The sheet does not have one thickness.</strong> Saturn’s rings sheet prints thickness in meters: the C ring 5, the B ring 5–10, the Cassini division 20, the A ring 10–30, the G ring 10<sup>5</sup>, and the E ring 10<sup>7</sup>. <a href="https://science.nasa.gov/saturn/facts/" rel="noopener" target="_blank">NASA Science</a> says the vertical height is typically about 30 feet (10 meters) in the main rings. The <a href="https://science.nasa.gov/mission/cassini/science/rings/" rel="noopener" target="_blank">Cassini rings page</a> says the rings are generally about 30 feet (10 meters) thick or so. This drawing does not pick a thickness, and it does not draw one.</p>
+    <p><strong>This desk does not pick an age.</strong> <a href="https://science.nasa.gov/missions/cassini/nasas-cassini-data-show-saturns-rings-relatively-new/" rel="noopener" target="_blank">A Cassini mass page</a> says the findings indicate that Saturn’s rings formed between 10 million and 100 million years ago. <a href="https://www.nasa.gov/solar-system/saturns-rings-young-and-ephemeral-three-nasa-ames-studies-say/" rel="noopener" target="_blank">An Ames page</a> says the rings’ age has been hard to pin down, and that the rings could not have been exposed to the micrometeoroid hail for more than a few hundred million years. Those are two NASA sentences. They are not averaged into one age. <a href="https://science.nasa.gov/neptune/neptune-facts/" rel="noopener" target="_blank">NASA Science</a> says Neptune’s rings are thought to be relatively young and short-lived, and it does not give a year count in that sentence. None is added here.</p>
+  </div>
+
+  <p class="band">The main rings</p>
+  <div class="sheet">
+    <table>
+      <caption>Inner and outer radius from the NSSDCA ring fact sheets. A dash is an edge that sheet does not print.</caption>
+      <thead>
+        <tr><th scope="col">Planet</th><th scope="col">Ring</th><th scope="col">Inner (km)</th><th scope="col">Outer (km)</th><th scope="col">What the sheet prints</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Saturn</th><td>D</td><td>66,900</td><td>74,510</td><td>Inner edge and outer edge.</td></tr>
+        <tr><th scope="row">Saturn</th><td>C</td><td>74,658</td><td>91,975</td><td>Inner edge and outer edge. The B inner edge is the same 91,975 km.</td></tr>
+        <tr><th scope="row">Saturn</th><td>B</td><td>91,975</td><td>117,507</td><td>Inner edge and outer edge.</td></tr>
+        <tr><th scope="row">Saturn</th><td>Cassini Division</td><td>—</td><td>—</td><td>Radius cell blank. Neighbors are the B outer edge and the A inner edge.</td></tr>
+        <tr><th scope="row">Saturn</th><td>A</td><td>122,340</td><td>136,780</td><td>Inner edge and outer edge. The sheet’s equatorial column prints the outer edge as 2.270.</td></tr>
+        <tr><th scope="row">Saturn</th><td>F</td><td>139,826</td><td>—</td><td>Listed by inner edge. No outer edge.</td></tr>
+        <tr><th scope="row">Saturn</th><td>G</td><td>166,000</td><td>173,000</td><td>Inner edge and outer edge.</td></tr>
+        <tr><th scope="row">Saturn</th><td>E</td><td>180,000</td><td>480,000</td><td>Inner edge and outer edge.</td></tr>
+        <tr><th scope="row">Jupiter</th><td>Halo</td><td>89,400</td><td>123,000</td><td>The radius cell is the range 89,400–123,000 km.</td></tr>
+        <tr><th scope="row">Jupiter</th><td>Main</td><td>123,000</td><td>128,940</td><td>The radius cell is the range 123,000–128,940 km.</td></tr>
+        <tr><th scope="row">Jupiter</th><td>Amalthea</td><td>128,940</td><td>181,350</td><td>The radius cell is the range 128,940–181,350 km.</td></tr>
+        <tr><th scope="row">Jupiter</th><td>Thebe</td><td>181,350</td><td>221,900</td><td>The radius cell is the range 181,350–221,900 km.</td></tr>
+        <tr><th scope="row">Jupiter</th><td>Thebe extension</td><td>221,900</td><td>280,000</td><td>The radius cell is the range 221,900–280,000 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>6</td><td>—</td><td>—</td><td>Radius 41,837 km. Width 1.5 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>5</td><td>—</td><td>—</td><td>Radius 42,234 km. Width ~2 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>4</td><td>—</td><td>—</td><td>Radius 42,571 km. Width ~2 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Alpha</td><td>—</td><td>—</td><td>Radius 44,718 km. Width 4–10 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Beta</td><td>—</td><td>—</td><td>Radius 45,661 km. Width 5–11 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Eta</td><td>—</td><td>—</td><td>Radius 47,176 km. Width 1.6 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Gamma</td><td>—</td><td>—</td><td>Radius 47,627 km. Width 1–4 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Delta</td><td>—</td><td>—</td><td>Radius 48,300 km. Width 3–7 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Lambda</td><td>—</td><td>—</td><td>Radius 50,024 km. Width ~2 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>Epsilon</td><td>—</td><td>—</td><td>Radius 51,149 km. Width 20–96 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>R/2003 U 2</td><td>—</td><td>—</td><td>Radius 67,300 km. Width 3,800 km.</td></tr>
+        <tr><th scope="row">Uranus</th><td>R/2003 U 1</td><td>—</td><td>—</td><td>Radius 97,700 km. Width 17,000 km.</td></tr>
+        <tr><th scope="row">Neptune</th><td>Galle</td><td>—</td><td>—</td><td>Radius ~41,900 km. Width ~2,000 km.</td></tr>
+        <tr><th scope="row">Neptune</th><td>LeVerrier</td><td>—</td><td>—</td><td>Radius ~53,200 km. Width &lt; 100 km.</td></tr>
+        <tr><th scope="row">Neptune</th><td>Lassell</td><td>—</td><td>—</td><td>Radius ~53,200 km. Width ~4,000 km.</td></tr>
+        <tr><th scope="row">Neptune</th><td>Arago</td><td>—</td><td>—</td><td>Radius ~57,200 km. The width cell is blank. The optical-depth cell prints &lt; 100.</td></tr>
+        <tr><th scope="row">Neptune</th><td>Unnamed</td><td>—</td><td>—</td><td>Radius 61,953 km. No width.</td></tr>
+        <tr><th scope="row">Neptune</th><td>Adams</td><td>—</td><td>—</td><td>Radius 62,933 km. Width ~15 km. Courage, Liberté, Egalité 1, Egalité 2, and Fraternité are printed at this same radius.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">NASA Science prints a different Neptune list, and it is not folded into the table. Galle and LeVerrier stay near 41,900 km and 53,200 km, with widths of 15 km on that page. Lassell is about 55,400 km and Arago about 57,600 km, with the width left as a dash. Adams is about 62,930 km, with a width under 50 km. The fact-sheet widths and the 61,953 km unnamed ring are a different printing. <a href="https://science.nasa.gov/uranus/facts/" rel="noopener" target="_blank">NASA Science</a> counts 13 faint Uranian rings and names Zeta, Nu, and Mu. Those three names are not given radii on this page. The fact sheet’s R/2003 rows are not renamed to match them. Saturn’s sheet also lists the Encke gap at 133,410 km and the Keeler gap at 136,487 km, each by inner edge. They are not in the drawing.</p>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Roche, fluid and rigid</dt><dd>d = 2.44 R (ρ<sub>planet</sub> / ρ)<sup>1/3</sup>, and the same cube root with 1.26. R is the volumetric mean radius. Equal density sets the ratio to 1. Rhea’s 1,240 kg/m³ is the Saturn pair on the Roche desk. The arcs follow the button. The rings do not.</dd></div>
+    <div class="gloss"><dt>A dash</dt><dd>The fact sheet did not print that edge. A width is not turned into an inner edge and an outer edge. A tilde stays a tilde. Two NASA printings of the same ring are not averaged.</dd></div>
+    <div class="gloss"><dt>2:1</dt><dd>The inner body finishes two orbits while Mimas finishes one. The radius uses Mimas’s 185,520 km and Saturn’s GM. The sheet’s 0.9424218 days is cited and not used. The result is 116,870 km, 637 km inside the B outer edge.</dd></div>
+    <div class="gloss"><dt>Shepherd</dt><dd>A moon whose gravity is cited as holding or disturbing a ring. Prometheus, Cordelia, and Ophelia are named that way on NASA Science pages. Pandora is cited as disrupting the F ring. Galatea is cited as stabilizing the Adams arcs. The word is not added where the page does not use it.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the circles leave out</dt><dd>Eccentricity, inclination, ring thickness, spokes, propellers, and every gap narrower than the named rings. Orbits are circles about the planet. The planet disk is the volumetric radius, not a photograph. Close and Full sheet are two scales. Mean densities. Not an ephemeris and not a mission tool.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/satringfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturnian Rings Fact Sheet</a> — D through E, the blank Cassini radius, and the F ring at 139,826 km by inner edge. Equatorial radius on that sheet, 60,268 km. Last updated 19 April 2022.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupringfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Rings Fact Sheet</a> — Halo, Main, Amalthea, Thebe, and the Thebe extension, each as a radius range. Equatorial radius 71,492 km. Last updated 14 October 2015.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranringfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranus Rings Fact Sheet</a> — one radius and a width for each ring, from 6 through R/2003 U 1. Last updated 14 October 2015. Inner and outer edges are not printed, so this page uses dashes.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/nepringfact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptunian Rings Fact Sheet</a> — Galle through Adams, and the arcs at the Adams radius. Neptune’s equator on this sheet is 24,766 km. Last updated 14 October 2015.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturn Fact Sheet</a> — Volumetric mean radius 58,232 km. Mean density 687 kg/m³. Equatorial radius 60,268 km. GM 37.931 × 10<sup>6</sup> km³/s². Last updated 18 March 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — Volumetric mean radius 69,911 km. Mean density 1,326 kg/m³. Equatorial radius 71,492 km. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranus Fact Sheet</a> — Volumetric mean radius 25,362 km. Mean density 1,270 kg/m³. Equatorial radius 25,559 km. Last updated 2 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptune Fact Sheet</a> — Volumetric mean radius 24,622 km. Mean density 1,638 kg/m³. Equatorial radius 24,764 km. That is 2 km off the rings sheet’s 24,766 km. They are not averaged. Last updated 3 October 2024.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturniansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Saturnian Satellite Fact Sheet</a> — Mimas semimajor axis 185.52 × 10³ km, period 0.9424218 days, density 1,150 kg/m³. Rhea density 1,240 kg/m³, the Roche desk’s figure. Prometheus 139.353 × 10³ km. Pandora 141.700 × 10³ km. Last updated 22 July 2025.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jovian Satellite Fact Sheet</a> — Metis 128.0, Adrastea 129.0, Amalthea 181.4, Thebe 221.9, all × 10³ km. Amalthea’s mean density 3,100 kg/m³. Metis, Adrastea, and Thebe have no density in that table. Last updated 6 December 2023.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uraniansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Uranian Satellite Fact Sheet</a> — Cordelia 49.80 × 10³ km. Ophelia 53.80 × 10³ km. Density cells blank. Last updated 11 March 2023.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptuniansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Neptunian Satellite Fact Sheet</a> — Galatea semimajor axis 61.953 × 10³ km. Density cell blank. Last updated 11 March 2024.</li>
+      <li><a href="https://science.nasa.gov/saturn/facts/" rel="noopener" target="_blank">NASA Science — Saturn facts</a> — rings as shattered material torn apart by Saturn’s gravity. Main-ring height typically about 30 feet (10 meters). Cassini Division 2,920 miles (4,700 kilometers) wide, separating A and B. The system extends up to 175,000 miles (282,000 kilometers). That “up to” is not the sheet’s E-ring outer edge of 480,000 km.</li>
+      <li><a href="https://science.nasa.gov/resource/the-great-divide/" rel="noopener" target="_blank">NASA Science — The Great Divide</a> — the division is 2,980 miles (4,800 kilometers) wide and is thought to be caused by Mimas. Particles in the division orbit Saturn almost exactly twice per Mimas orbit. The nudges sculpt the outer edge of the B ring.</li>
+      <li><a href="https://science.nasa.gov/mission/cassini/science/rings/" rel="noopener" target="_blank">NASA Science — Cassini, Saturn’s rings</a> — generally about 30 feet (10 meters) thick or so. Enceladus supplies much of the E ring. The <a href="/science/astronomy/ocean-worlds/">ocean worlds</a> desk is that moon.</li>
+      <li><a href="https://science.nasa.gov/missions/cassini/nasas-cassini-data-show-saturns-rings-relatively-new/" rel="noopener" target="_blank">NASA Science — Cassini data on the rings’ age</a> — the findings indicate formation between 10 million and 100 million years ago. This desk quotes that sentence and does not adopt it as the age.</li>
+      <li><a href="https://www.nasa.gov/solar-system/saturns-rings-young-and-ephemeral-three-nasa-ames-studies-say/" rel="noopener" target="_blank">NASA — Saturn’s rings, young and ephemeral</a> — the age has been hard to pin down. The rings could not have been exposed to the micrometeoroid hail for more than a few hundred million years. A second sentence, not an average with the 10-to-100-million-year line.</li>
+      <li><a href="https://science.nasa.gov/saturn/moons/prometheus/" rel="noopener" target="_blank">NASA Science — Prometheus</a> — shepherd of the F ring’s inner edge. Orbit given as 87,000 miles (139,000 kilometers).</li>
+      <li><a href="https://science.nasa.gov/saturn/moons/pandora/" rel="noopener" target="_blank">NASA Science — Pandora</a> — tends to disrupt the F ring. Orbit given as 88,000 miles (142,000 kilometers).</li>
+      <li><a href="https://science.nasa.gov/uranus/moons/cordelia/" rel="noopener" target="_blank">NASA Science — Cordelia</a> — Cordelia and Ophelia are shepherd moons of the Epsilon ring.</li>
+      <li><a href="https://science.nasa.gov/jupiter/facts/" rel="noopener" target="_blank">NASA Science — Jupiter facts</a> — the rings may be dust kicked up from the inner moons. Discovered by Voyager 1 in 1979.</li>
+      <li><a href="https://science.nasa.gov/jupiter/jupiter-moons/metis/" rel="noopener" target="_blank">NASA Science — Metis</a> — Metis and Adrastea inside the main ring, as sources of it. Amalthea and Thebe as sources of the gossamer ring. Metis at 128,000 km.</li>
+      <li><a href="https://science.nasa.gov/jupiter/jupiter-moons/adrastea/" rel="noopener" target="_blank">NASA Science — Adrastea</a> — orbit 129,000 km. The same source sentence about the main ring. The rings sheet’s outer edge is 128,940 km.</li>
+      <li><a href="https://science.nasa.gov/uranus/facts/" rel="noopener" target="_blank">NASA Science — Uranus facts</a> — 13 faint rings. The inner nine are narrow and dark. Two outer rings. Names from Zeta through Mu. No radii are taken from that list.</li>
+      <li><a href="https://science.nasa.gov/neptune/neptune-facts/" rel="noopener" target="_blank">NASA Science — Neptune facts</a> — five main rings and four arcs. The rings are thought to be relatively young and short-lived. Galatea is cited as stabilizing the arcs. The distance table on that page is the one not averaged with the fact sheet.</li>
+      <li><a href="/science/astronomy/roche/">Roche desk</a> — the same 2.44 and 1.26, and the same Rhea pair, 116,698 km and 60,262 km. The A edge as 2.349 volumetric radii is that page’s figure.</li>
+      <li><a href="/science/astronomy/resonances/">Resonances desk</a> — p orbits of the inner body per q of the outer. The Mimas 2:1 is that rule with q/p = 1/2, anchored to Mimas and Saturn’s GM rather than to a solar fact-sheet period.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom schematic of four ring systems. Edges are the ring fact sheets, or a dash. Roche distances use 2.44 and 1.26 with the volumetric radius. Saturn at equal density is 142,086 km and 73,372 km. Saturn at Rhea’s density is 116,698 km and 60,262 km. The Mimas 2:1 is 116,870 km. This desk does not pick an age. Not an ephemeris. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/roche/"><p class="n">The limit</p><h3>Roche</h3><p>The same 2.44 and 1.26. Rhea at 116,698 km and 60,262 km. Phobos between, the Moon far outside.</p></a>
+    <a href="/science/astronomy/resonances/"><p class="n">The ratio</p><h3>Resonances</h3><p>p:q and Kepler’s third law. The Mimas 2:1 on this page is that rule, with Saturn’s GM.</p></a>
+    <a href="/science/astronomy/hill/"><p class="n">The sphere</p><h3>Hill</h3><p>Where the planet dominates the Sun. A different radius from the Roche arcs on this drawing.</p></a>
+    <a href="/science/astronomy/ocean-worlds/"><p class="n">The source</p><h3>Ocean worlds</h3><p>Enceladus feeds the E ring. The ocean is that desk. The 180,000 to 480,000 km span is this one.</p></a>
+    <a href="/science/astronomy/saturn/"><p class="n">From Earth</p><h3>Saturn</h3><p>The phase stays near full. The oval on that page is a marker, not these rings.</p></a>
+    <a href="/science/astronomy/jupiter/"><p class="n">From Earth</p><h3>Jupiter</h3><p>The phase desk. The halo and the gossamer rings are here.</p></a>
+    <a href="/science/astronomy/uranus/"><p class="n">From Earth</p><h3>Uranus</h3><p>A near-full disk. The narrow rings are this desk, as radii and widths.</p></a>
+    <a href="/science/astronomy/neptune/"><p class="n">From Earth</p><h3>Neptune</h3><p>The phase desk leaves the rings undrawn. Adams and the arcs are here.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the four planets sit. Still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="rings-help-dialog" role="dialog" aria-modal="true" aria-labelledby="rings-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="rings-help-title">Rings</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Saturn opens the page. Distances are kilometers from the center. A missing edge stays a dash.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Planet</th><td>Saturn, Jupiter, Uranus, or Neptune. The table below does not change. It already holds every ring.</td></tr>
+        <tr><th scope="row">Close</th><td>Saturn frames out to Mimas, so the main rings and the 2:1 can be read. Jupiter frames through the main ring. Uranus and Neptune have one frame, so Close is hidden.</td></tr>
+        <tr><th scope="row">Full sheet</th><td>Frames to the outermost radius on that planet’s ring sheet. Saturn’s is the E ring at 480,000 km. The two frames do not share a scale.</td></tr>
+        <tr><th scope="row">Ratio</th><td>ρ planet / ρ, from 0.25 to 4. Equal density is 1. The rings do not move. The Roche arcs do. Past the presets, the card says the slider is a what-if.</td></tr>
+        <tr><th scope="row">Rhea</th><td>Saturn only. Density 1,240 kg/m³. Fluid 116,698 km. Rigid 60,262 km. The same pair as the Roche desk.</td></tr>
+        <tr><th scope="row">Amalthea</th><td>Jupiter only. Density 3,100 kg/m³ from the satellite sheet. It is the moon’s density, not a ring measurement.</td></tr>
+        <tr><th scope="row">The drawing</th><td>With the canvas focused, Left and Right change the planet. They do nothing while this dialog is open.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/rings/rings.js"></script>
+<script>
+(function () {
+  "use strict";
+  var Rings = window.Rings;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!Rings) return;
+
+  var state = { planet: "saturn", mode: "equal", span: "close" };
+  var canvas = document.getElementById("ring-canvas");
+  var ratioInput = document.getElementById("ratio");
+  var helpBtn = document.getElementById("rings-help");
+  var helpDialog = document.getElementById("rings-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a"),
+      base: cssVar("--base-2", "#14161c")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.max(280, Math.round(w * 0.78));
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function fillStats(rows) {
+    var ul = document.getElementById("stats");
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = rows[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = rows[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function moonAngle(name) {
+    var map = {
+      Prometheus: -0.9, Pandora: -1.35, Mimas: 0.65,
+      Metis: 0.45, Adrastea: 0.95, Amalthea: 1.55, Thebe: 2.15,
+      Cordelia: 0.55, Ophelia: 1.15, Galatea: 0.7
+    };
+    return map[name] == null ? 0.4 : map[name];
+  }
+  function text(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = font(opt.size || 11);
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function draw(sc) {
+    var box = fit();
+    if (!box) return;
+    var ctx = box.ctx;
+    var c = colors();
+    var w = box.w;
+    var h = box.h;
+    ctx.clearRect(0, 0, w, h);
+    var planet = sc.planet;
+    var reach = sc.reach;
+    var scale = Math.min(w, h) * 0.40 / reach;
+    var cx = w * 0.48;
+    var cy = h * 0.52;
+    function rad(km) { return km * scale; }
+    function pt(km, ang) {
+      return { x: cx + Math.cos(ang) * rad(km), y: cy - Math.sin(ang) * rad(km) };
+    }
+
+    planet.rings.forEach(function (g) {
+      var inner = g.inner;
+      var outer = g.outer;
+      var line = Rings.drawRadius(planet, g);
+      if (outer != null && inner != null && outer > inner && rad(inner) < Math.max(w, h)) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad(outer), 0, Math.PI * 2);
+        ctx.arc(cx, cy, Math.max(0, rad(inner)), 0, Math.PI * 2, true);
+        ctx.fillStyle = c.accent;
+        ctx.globalAlpha = 0.28;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      } else if (line != null && rad(line) > 4 && rad(line) < Math.max(w, h)) {
+        ctx.beginPath();
+        ctx.arc(cx, cy, rad(line), 0, Math.PI * 2);
+        ctx.strokeStyle = c.accent;
+        ctx.globalAlpha = 0.85;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+    });
+
+    if (sc.mimas && rad(sc.mimas.a21) > 6 && sc.mimas.a21 < reach) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad(sc.mimas.a21), 0, Math.PI * 2);
+      ctx.setLineDash([1, 3]);
+      ctx.strokeStyle = c.soft;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    function arcLimit(km, dashed, width, color) {
+      if (!(rad(km) > 6) || km > reach * 1.02) return;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rad(km), 0.35, Math.PI * 2 - 0.35);
+      ctx.setLineDash(dashed ? [5, 4] : []);
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    arcLimit(sc.fluid, false, 2.25, c.accent);
+    arcLimit(sc.rigid, true, 1.35, c.ink);
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(3, rad(planet.R)), 0, Math.PI * 2);
+    ctx.fillStyle = planet.fill;
+    ctx.fill();
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = c.base;
+    ctx.stroke();
+
+    var labels = [];
+    function queue(km, label, ang, color) {
+      if (!(km > 0) || km > reach * 0.98 || rad(km) < 10) return;
+      labels.push({ km: km, label: label, ang: ang, color: color });
+    }
+    queue(sc.fluid, "fluid", 1.05, c.accent);
+    queue(sc.rigid, "rigid", 2.4, c.ink);
+    if (sc.mimas) queue(sc.mimas.a21, "2:1", -0.45, c.soft);
+    planet.rings.forEach(function (g, i) {
+      var km = Rings.drawRadius(planet, g);
+      if (km == null) return;
+      queue(km, g.name, -2.2 + (i % 3) * 0.18, c.muted);
+    });
+    labels.sort(function (a, b) { return a.km - b.km; });
+    var lastY = -999;
+    labels.forEach(function (lab) {
+      var p = pt(lab.km * 1.04, lab.ang);
+      if (Math.abs(p.y - lastY) < 12 && Math.abs(lab.ang + 2.2) < 0.5) p.y = lastY - 12;
+      lastY = p.y;
+      text(ctx, lab.label, p.x, p.y, { size: 10, color: lab.color, align: p.x >= cx ? "left" : "right" });
+    });
+
+    planet.moons.forEach(function (m) {
+      if (m.a > reach * 0.98) return;
+      var ang = moonAngle(m.name);
+      var p = pt(m.a, ang);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = c.ink;
+      ctx.fill();
+      var out = pt(m.a + reach * 0.06, ang);
+      text(ctx, m.name, out.x, out.y, { size: 11, color: c.ink, align: out.x >= cx ? "left" : "right" });
+    });
+
+    text(ctx, planet.name, cx, cy + Math.max(14, rad(planet.R) + 12), { size: 11, color: c.ink, align: "center" });
+    text(ctx, "N", cx, 16, { size: 11, color: c.soft, align: "center" });
+    canvas.setAttribute("aria-label", sc.aria);
+  }
+
+  function render() {
+    var sc = Rings.scene(state);
+    if (!sc.ok) return;
+    var planet = sc.planet;
+    document.getElementById("d-tier").textContent = sc.tier;
+    document.getElementById("d-title").textContent = sc.title;
+    document.getElementById("d-range").textContent = "Fluid " + Rings.fmtKm(sc.fluid) + " · rigid " + Rings.fmtKm(sc.rigid);
+    document.getElementById("d-why").textContent = sc.why;
+    var rows = [
+      ["Volumetric radius", planet.RLabel],
+      ["Mean density", planet.rhoLabel],
+      ["Ratio", sc.ratio.toFixed(3) + " · " + sc.modeLabel],
+      ["Fluid", Rings.fmtKm(sc.fluid) + " · " + (sc.fluid / planet.R).toFixed(3) + " R"],
+      ["Rigid", Rings.fmtKm(sc.rigid) + " · " + (sc.rigid / planet.R).toFixed(3) + " R"]
+    ];
+    if (sc.rheaFluid != null) {
+      rows.push(["Fluid · Rhea", Rings.fmtKm(sc.rheaFluid)]);
+      rows.push(["Rigid · Rhea", Rings.fmtKm(sc.rheaRigid)]);
+      rows.push(["Mimas 2:1", Rings.fmtKm(sc.mimas.a21)]);
+    }
+    rows.push(["Frame", sc.span === "close" ? "Close" : "Full sheet"]);
+    fillStats(rows);
+    var note = sc.span === "close"
+      ? "Close frame. Outer rings past this frame are still in the table. Full sheet uses another scale."
+      : "Full sheet, out to the outermost printed radius. A close frame, when this planet has one, uses another scale.";
+    document.getElementById("scale-note").textContent = note + " The disk is the volumetric radius. Thickness is not drawn.";
+    document.getElementById("ratio-note").textContent = "Density ratio · ρ planet / ρ · " + sc.modeLabel;
+    document.getElementById("ratio-val").textContent = sc.ratio.toFixed(3);
+    if (document.activeElement !== ratioInput) ratioInput.value = String(sc.ratio);
+    ratioInput.setAttribute("aria-valuenow", sc.ratio.toFixed(3));
+    ratioInput.setAttribute("aria-valuetext", "Density ratio " + sc.ratio.toFixed(3) + ", " + sc.modeLabel);
+
+    document.querySelectorAll("[data-planet]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-planet") === planet.id));
+    });
+    document.querySelectorAll("[data-span]").forEach(function (b) {
+      var id = b.getAttribute("data-span");
+      var show = id === "full" || !!planet.closeTo;
+      b.hidden = !show;
+      b.setAttribute("aria-pressed", String(show && id === sc.span));
+    });
+    document.querySelectorAll("[data-density]").forEach(function (b) {
+      var id = b.getAttribute("data-density");
+      var known = planet.densities.some(function (d) { return d.id === id; });
+      b.hidden = !known;
+      b.setAttribute("aria-pressed", String(known && id === sc.mode));
+    });
+    draw(sc);
+  }
+
+  document.getElementById("preset-planet").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest("button") : null;
+    if (!b) return;
+    state = { planet: b.getAttribute("data-planet"), mode: "equal", span: "close" };
+    render();
+  });
+  document.getElementById("preset-span").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest("button") : null;
+    if (!b || b.hidden) return;
+    state.span = b.getAttribute("data-span");
+    render();
+  });
+  document.getElementById("preset-density").addEventListener("click", function (ev) {
+    var b = ev.target.closest ? ev.target.closest("button") : null;
+    if (!b || b.hidden) return;
+    state.mode = b.getAttribute("data-density");
+    render();
+  });
+  ratioInput.addEventListener("input", function () {
+    state.mode = "custom";
+    state.ratio = Number(ratioInput.value);
+    var planet = Rings.planetById(state.planet);
+    planet.densities.forEach(function (d) {
+      if (Math.abs(d.ratio - state.ratio) < 0.0008) state.mode = d.id;
+    });
+    render();
+  });
+  canvas.addEventListener("keydown", function (ev) {
+    if (helpDialog && !helpDialog.hidden) return;
+    if (ev.key !== "ArrowRight" && ev.key !== "ArrowLeft") return;
+    ev.preventDefault();
+    var ids = Rings.planetIds();
+    var i = ids.indexOf(state.planet);
+    var step = ev.key === "ArrowRight" ? 1 : -1;
+    state = { planet: ids[(i + step + ids.length) % ids.length], mode: "equal", span: "close" };
+    render();
+  });
+
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+      b.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () {
+    var sc = Rings.scene(state);
+    if (sc.ok) draw(sc);
+  });
+  if (window.ResizeObserver && canvas.parentElement) {
+    new ResizeObserver(function () {
+      var sc = Rings.scene(state);
+      if (sc.ok) draw(sc);
+    }).observe(canvas.parentElement);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(function () {
+      var sc = Rings.scene(state);
+      if (sc.ok) draw(sc);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
