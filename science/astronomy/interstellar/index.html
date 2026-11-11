@@ -1,0 +1,818 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interstellar — hyperbolas and the three visitors — Steven Philley</title>
+<meta name="description" content="Interactive interstellar desk. Eccentricity from 0 to 6.5: ellipse, parabola, hyperbola. v∞² = GM (e−1)/q with the Sun Fact Sheet GM. 1I, 2I, and 3I use JPL Small-Body Database elements. 3I’s e is 6.123467. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/interstellar/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Interstellar — hyperbolas and the three visitors">
+<meta property="og:description" content="Slide eccentricity from a circle to a hyperbola. v∞ comes from vis-viva. 1I, 2I, and 3I load JPL e and q. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/interstellar/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Interstellar — hyperbolas and the three visitors">
+<meta name="twitter:description" content="Bound ellipse, parabola, hyperbola. Hyperbolic excess speed from JPL e and q. Not an ephemeris.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.2fr) minmax(260px,.8fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--ink-soft,#9b9a96);flex:0 0 auto}
+.swatch.orbit{border-top-color:var(--accent,#c8b48a);border-top-width:3px}
+.swatch.au{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.asym{border-top-style:dotted;border-top-color:var(--ink-soft,#9b9a96)}
+.swatch.sun{width:10px;height:10px;border:0;border-radius:50%;background:#ffe6b0}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{
+  appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);
+  font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;
+  padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center
+}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:11ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.field{display:flex;flex-direction:column;gap:4px;min-width:0}
+.field label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:100%;min-width:0}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:720px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more,.fields{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/" aria-current="page">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Interstellar</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · Unbound</p>
+  <h1>An orbit that<br>does not close</h1>
+  <p class="lede">A bound orbit is an ellipse. Eccentricity <strong>e</strong> is 0 for a circle and approaches 1 for a long ellipse that still comes back. At <strong>e = 1</strong> the path is a parabola, the escape orbit. Above 1 it is a hyperbola: the Sun is still a focus, perihelion is still the near point, and the object leaves. The speed that remains at infinite distance is the hyperbolic excess speed, <strong>v<sub>∞</sub></strong>. Vis-viva is <strong>v² = GM (2/r − 1/a)</strong>. The signed axis is <strong>a = q / (1 − e)</strong>, so at infinity <strong>v<sub>∞</sub>² = GM (e − 1) / q</strong>. GM is the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> value. The same formula, on a closed ellipse, is the <a href="/science/astronomy/vis-viva/">vis-viva</a> desk. How e stretches a bound orbit is the <a href="/science/astronomy/eccentricity/">eccentricity</a> desk. A comet that does come back is the <a href="/science/astronomy/comets/">comets</a> desk. Three buttons load <a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html" rel="noopener" target="_blank">JPL Small-Body Database</a> elements for 1I/‘Oumuamua, 2I/Borisov, and 3I/ATLAS. The excess speeds are computed here. JPL does not print v<sub>∞</sub> as a field.</p>
+  <p class="note-schematic" id="limits-note">Educational schematic. One body and the Sun, drawn in the orbit plane. Eccentricity runs from a circle (e = 0) through a parabola (e = 1) to a hyperbola (e > 1). Perihelion stays on the right. For e < 1 the path closes and there is no v∞. At e = 1, v∞ is 0. For e > 1, v∞² = GM (e−1)/q, with the Sun Fact Sheet GM, 132,712 × 10⁶ km³/s², and q the perihelion distance. Catalog buttons load JPL Small-Body Database osculating elements. The three interstellar excess speeds are computed from those elements. They are not a JPL field. Inclination is printed and not drawn. The dashed ring is 1 AU. The Sun is a dot, not to scale. Other planets are left out. Not a JPL Horizons ephemeris and not a trajectory to fly.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Ellipse to hyperbola</span>
+    <button type="button" class="help-q" id="iso-help" aria-haspopup="dialog" aria-controls="iso-help-dialog" aria-expanded="false" aria-label="How this interstellar desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Orbit plane · perihelion to the right · motion counterclockwise</p>
+      <canvas id="orbit-canvas" width="880" height="640" tabindex="0" role="img" aria-label="Hyperbola of 1I/‘Oumuamua around the Sun. Perihelion is to the right. The path does not close. Classroom schematic, not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Orbit key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch orbit" aria-hidden="true"></span> Orbit</li>
+        <li><span class="swatch au" aria-hidden="true"></span> 1 AU</li>
+        <li><span class="swatch asym" aria-hidden="true"></span> Asymptote</li>
+      </ul>
+      <p class="scale-note" id="orbit-note">The frame is a few perihelion distances across once the ellipse no longer fits. A hyperbola is drawn out to 8 perihelion distances. The Sun is not to scale.</p>
+      <div class="controls">
+        <p class="pick-label">JPL orbits</p>
+        <div class="presets" id="preset-published">
+          <button type="button" data-preset="1I" aria-pressed="true">1I/‘Oumuamua</button>
+          <button type="button" data-preset="2I" aria-pressed="false">2I/Borisov</button>
+          <button type="button" data-preset="3I" aria-pressed="false">3I/ATLAS</button>
+          <button type="button" data-preset="halley" aria-pressed="false">1P/Halley</button>
+        </div>
+        <p class="pick-label">Classroom</p>
+        <div class="presets" id="preset-class">
+          <button type="button" data-preset="circle" aria-pressed="false">Circle</button>
+          <button type="button" data-preset="parabola" aria-pressed="false">Parabola</button>
+        </div>
+        <div class="slider-row">
+          <label for="ecc-slider">Eccentricity</label>
+          <input id="ecc-slider" type="range" min="0" max="6.5" step="0.001" value="1.201" aria-valuemin="0" aria-valuemax="6.5" aria-valuenow="1.201" aria-valuetext="Eccentricity 1.201, hyperbola">
+        </div>
+        <div class="slider-row">
+          <label for="q-slider">Perihelion</label>
+          <input id="q-slider" type="range" min="0.05" max="8" step="0.001" value="0.256" aria-valuemin="0.05" aria-valuemax="8" aria-valuenow="0.256" aria-valuetext="Perihelion 0.256 astronomical units">
+        </div>
+        <div class="fields">
+          <div class="field"><label for="ecc">Eccentricity e</label><input class="num" id="ecc" type="text" inputmode="decimal" value="1.201133796102373" aria-describedby="iso-err"></div>
+          <div class="field"><label for="q-au">Perihelion q, AU</label><input class="num" id="q-au" type="text" inputmode="decimal" value="0.2559115812959116" aria-describedby="iso-err"></div>
+        </div>
+        <p class="field-error" id="iso-err" hidden></p>
+      </div>
+    </div>
+    <div class="detail">
+      <p class="tier" id="d-tier">Hyperbolic asteroid · JPL solution 16</p>
+      <h2 id="d-title">1I/‘Oumuamua</h2>
+      <p class="range" id="d-range">e = 1.201134 · q = 0.255912 AU</p>
+      <ul class="stats" id="stats" aria-live="polite">
+        <li><span class="k">Shape</span><span class="v">Hyperbola</span></li>
+        <li><span class="k">Bound?</span><span class="v">Unbound — it leaves</span></li>
+        <li><span class="k">v∞</span><span class="v">26.405 km/s</span></li>
+        <li><span class="k">Perihelion speed</span><span class="v">87.352 km/s</span></li>
+        <li><span class="k">Formula</span><span class="v">v∞² = GM (e−1)/q</span></li>
+      </ul>
+      <p class="why" id="d-why">'Oumuamua (A/2017 U1). JPL Small-Body Database orbit solution 16, epoch JD 2458080.5 TDB, solution date 2018-06-26. e = 1.201133796102373, q = 0.2559115812959116 AU, a = -1.27234500742808 AU. a = q/(1−e) matches that semi-major axis. Inclination 122.7417062847286° is printed and not drawn. Orbit class Hyperbolic Asteroid, code HYA. Perihelion speed from vis-viva is 87.352 km/s. v∞ computed from GM (e−1)/q is 26.405 km/s. GM is the Sun Fact Sheet value, 132,712 × 10^6 km³/s². The speeds are computed on this page. They are not a Small-Body Database field.</p>
+    </div>
+  </div>
+
+  <p class="band">Bound, parabolic, unbound</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Ellipse, e &lt; 1</dt><dd>Bound ellipse. The path closes. Specific energy is negative, so there is no hyperbolic excess speed. The <a href="/science/astronomy/eccentricity/">eccentricity</a> desk stops short of e = 1. Halley’s JPL eccentricity on this page is 0.967936, still bound. The <a href="/science/astronomy/comets/">comets</a> desk draws that ellipse.</dd></div>
+    <div class="gloss"><dt>Parabola, e = 1</dt><dd>Parabola. This is the escape orbit. v∞ is 0: it can reach infinite distance, with no speed left. It is the boundary between a captured orbit and one that escapes. The slider can sit on it.</dd></div>
+    <div class="gloss"><dt>Hyperbola, e &gt; 1</dt><dd>Hyperbola. e > 1, so the path does not close. The object leaves, and the speed that remains at infinity is v∞. <a href="https://science.nasa.gov/solar-system/comets/3i-atlas/" rel="noopener" target="_blank">NASA Science</a> says 3I/ATLAS does not follow a closed orbital path about the Sun. The same is true of any e above 1. The outbound excess speed matches the inbound one in this two-body picture.</dd></div>
+    <div class="gloss"><dt>Why they are fast</dt><dd>v<sub>∞</sub> is the speed the Sun does not take away. Earth’s mean orbital velocity on the <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> is 29.78 km/s. The three computed excess speeds, 26.405, 32.278, and 57.981 km/s, sit next to that number. <a href="https://science.nasa.gov/solar-system/comets/oumuamua/" rel="noopener" target="_blank">NASA Science</a> says an object like ‘Oumuamua is faint, and that survey telescopes such as Pan-STARRS1 are only recently able to catch one. 3I/ATLAS was reported on 1 July 2025, and NASA puts perihelion around 30 October 2025. The warning is months, not a decade of lead time.</dd></div>
+    <div class="gloss gloss-wide"><dt>A mission that waits</dt><dd><a href="https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor" rel="noopener" target="_blank">ESA’s Comet Interceptor</a> is the mission built for a target that is not known yet. After launch it is parked, then it moves to intercept. ESA’s destination line is a pristine comet or an interstellar object. The launch period is late 2028 or early 2029. Three spacecraft fly the encounter, and two probes watch the comet from more than one direction at once. It is an ESA-led mission with JAXA. This page does not compute a launch window or a burn.</dd></div>
+  </dl>
+
+  <p class="band">The three known interstellar objects</p>
+  <div class="sheet">
+    <table>
+      <caption>JPL osculating elements, NASA discovery and activity, and v∞ computed on this page</caption>
+      <thead>
+        <tr>
+          <th scope="col">Object</th>
+          <th scope="col">Discovery</th>
+          <th scope="col">e</th>
+          <th scope="col">q</th>
+          <th scope="col">v∞ computed</th>
+          <th scope="col">i</th>
+          <th scope="col">What it is</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1I/‘Oumuamua</th>
+          <td>19 Oct 2017, Pan-STARRS1. <a href="https://science.nasa.gov/solar-system/comets/oumuamua/" rel="noopener" target="_blank">NASA Science</a>.</td>
+          <td>1.201134</td>
+          <td>0.255912 AU</td>
+          <td>26.405 km/s</td>
+          <td>122.742°</td>
+          <td>JPL orbit class Hyperbolic Asteroid. NASA Science: no sign of cometary activity after perihelion on 9 Sept 2017; later a slight acceleration, so it behaves more like a comet.</td>
+        </tr>
+        <tr>
+          <th scope="row">2I/Borisov</th>
+          <td>30 Aug 2019, Gennady Borisov. <a href="https://science.nasa.gov/solar-system/comets/2i-borisov/" rel="noopener" target="_blank">NASA Science</a>.</td>
+          <td>3.356476</td>
+          <td>2.006521 AU</td>
+          <td>32.278 km/s</td>
+          <td>44.053°</td>
+          <td>JPL orbit class Hyperbolic Comet. NASA Science: it developed a coma. The Hubble team is quoted there: really active, more like a normal comet.</td>
+        </tr>
+        <tr>
+          <th scope="row">3I/ATLAS</th>
+          <td>1 July 2025, ATLAS at Río Hurtado, reported to the Minor Planet Center. <a href="https://science.nasa.gov/solar-system/comets/3i-atlas/" rel="noopener" target="_blank">NASA Science</a>.</td>
+          <td>6.123467</td>
+          <td>1.351999 AU</td>
+          <td>57.981 km/s</td>
+          <td>175.240°</td>
+          <td>JPL orbit class Hyperbolic Comet. NASA Science: a coma of gas and dust. Hubble saw a dust cocoon off an icy nucleus.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sheet">
+    <table>
+      <caption>Full JPL elements behind the table, and the speeds this page computes</caption>
+      <thead>
+        <tr><th scope="col">Object</th><th scope="col">Solution</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">1I/‘Oumuamua</th><td>'Oumuamua (A/2017 U1). JPL Small-Body Database orbit solution 16, epoch JD 2458080.5 TDB, solution date 2018-06-26. e = 1.201133796102373, q = 0.2559115812959116 AU, a = -1.27234500742808 AU. a = q/(1−e) matches that semi-major axis. Inclination 122.7417062847286° is printed and not drawn. Orbit class Hyperbolic Asteroid, code HYA. Perihelion speed from vis-viva is 87.352 km/s. v∞ computed from GM (e−1)/q is 26.405 km/s. GM is the Sun Fact Sheet value, 132,712 × 10^6 km³/s². The speeds are computed on this page. They are not a Small-Body Database field.</td></tr>
+        <tr><th scope="row">2I/Borisov</th><td>C/2019 Q4 (Borisov). JPL Small-Body Database orbit solution 54, epoch JD 2458853.5 TDB, solution date 2024-06-24. e = 3.356475782676596, q = 2.006520878500843 AU, a = -0.8514922551937886 AU. a = q/(1−e) matches that semi-major axis. Inclination 44.05264247909138° is printed and not drawn. Orbit class Hyperbolic Comet, code HYP. Perihelion speed from vis-viva is 43.887 km/s. v∞ computed from GM (e−1)/q is 32.278 km/s. GM is the Sun Fact Sheet value, 132,712 × 10^6 km³/s². The speeds are computed on this page. They are not a Small-Body Database field.</td></tr>
+        <tr><th scope="row">3I/ATLAS</th><td>C/2025 N1 (ATLAS). JPL Small-Body Database orbit solution 55, epoch JD 2461340.5 TDB, solution date 2026-10-21. e = 6.123467394525528, q = 1.351998619400212 AU, a = -0.2638835217034532 AU. a = q/(1−e) matches that semi-major axis. Inclination 175.2403121571192° is printed and not drawn. Orbit class Hyperbolic Comet, code HYP. JPL’s comment on this solution: Temporary solution to support JWST Program 13145. Perihelion speed from vis-viva is 68.368 km/s. v∞ computed from GM (e−1)/q is 57.981 km/s. GM is the Sun Fact Sheet value, 132,712 × 10^6 km³/s². The speeds are computed on this page. They are not a Small-Body Database field.</td></tr>
+        <tr><th scope="row">1P/Halley</th><td>1P/Halley. JPL Small-Body Database orbit solution 75, epoch JD 2439875.5 TDB, solution date 2025-11-21. e = 0.9679359956953211, q = 0.5748638313743413 AU, a = 17.92863504856923 AU. a = q/(1−e) matches that semi-major axis. Inclination 162.1905300439129° is printed and not drawn. Orbit class Halley-type Comet*, code HTC. Perihelion speed from vis-viva is 55.108 km/s. The orbit is bound, so v∞ is not defined. GM is the Sun Fact Sheet value, 132,712 × 10^6 km³/s². The speeds are computed on this page. They are not a Small-Body Database field.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1I" rel="noopener" target="_blank">JPL Small-Body Database — 1I/‘Oumuamua</a> — orbit solution 16, epoch JD 2458080.5 TDB, solution date 2018-06-26. e = 1.201133796102373, q = 0.2559115812959116 AU, a = −1.27234500742808 AU, i = 122.7417062847286°. Orbit class Hyperbolic Asteroid, code HYA. The API record is <a href="https://ssd-api.jpl.nasa.gov/sbdb.api?sstr=1I&amp;full-prec=true" rel="noopener" target="_blank">sbdb.api?sstr=1I</a>. v<sub>∞</sub> = 26.405 km/s and the perihelion speed 87.352 km/s are computed on this page from those elements and the Sun’s GM. They are not fields in that record.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=2I" rel="noopener" target="_blank">JPL Small-Body Database — 2I/Borisov</a> — orbit solution 54, epoch JD 2458853.5 TDB, solution date 2024-06-24. Full name C/2019 Q4 (Borisov). e = 3.356475782676596, q = 2.006520878500843 AU, a = −0.8514922551937886 AU, i = 44.05264247909138°. Orbit class Hyperbolic Comet, code HYP. Computed v<sub>∞</sub> = 32.278 km/s.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=3I" rel="noopener" target="_blank">JPL Small-Body Database — 3I/ATLAS</a> — orbit solution 55, epoch JD 2461340.5 TDB, solution date 2026-10-21. Full name C/2025 N1 (ATLAS). e = 6.123467394525528, q = 1.351998619400212 AU, a = −0.2638835217034532 AU, i = 175.2403121571192°. Orbit class Hyperbolic Comet, code HYP. JPL’s comment: temporary solution to support JWST Program 13145. Computed v<sub>∞</sub> = 57.981 km/s. NASA’s overview says about 1.4 au and around 30 October 2025. That is NASA’s summary. The table uses this JPL solution.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/tools/sbdb_lookup.html#/?sstr=1P" rel="noopener" target="_blank">JPL Small-Body Database — 1P/Halley</a> — orbit solution 75, the same elements as the <a href="/science/astronomy/comets/">comets</a> desk. e = 0.9679359956953211, q = 0.5748638313743413 AU. Bound. The perihelion speed computes to 55.108 km/s, the same vis-viva result as that desk. There is no v<sub>∞</sub>.</li>
+      <li><a href="https://science.nasa.gov/solar-system/comets/oumuamua/" rel="noopener" target="_blank">NASA Science — ‘Oumuamua</a> — discovered 19 October 2017 by Pan-STARRS1. No signs of cometary activity after perihelion on 9 September 2017, at 196,000 miles per hour (87.3 kilometers per second). Briefly an asteroid, then a slight acceleration, so it behaves more like a comet. The same page gives about 26.4 km/s (about 59,000 miles per hour) for the long cruise. This page’s v<sub>∞</sub> from solution 16 is 26.405 km/s. The 87.3 km/s perihelion figure is NASA’s. Vis-viva here is 87.352 km/s.</li>
+      <li><a href="https://science.nasa.gov/solar-system/comets/2i-borisov/" rel="noopener" target="_blank">NASA Science — Comet 2I/Borisov</a> — first confirmed interstellar comet, discovered by Gennady Borisov on 30 August 2019. It developed a coma. Quoted there: “Whereas ‘Oumuamua appeared to be a rock, Borisov is really active, more like a normal comet.”</li>
+      <li><a href="https://science.nasa.gov/solar-system/comets/3i-atlas/" rel="noopener" target="_blank">NASA Science — Comet 3I/ATLAS</a> — ATLAS at Río Hurtado first reported the comet to the Minor Planet Center on 1 July 2025. Interstellar because the path is a hyperbola and does not close. Perihelion around 30 October 2025 at about 1.4 au. Hubble showed a teardrop-shaped cocoon of dust off a solid, icy nucleus. MAVEN showed the coma. A tail shows in PUNCH images.</li>
+      <li><a href="https://www.esa.int/Science_Exploration/Space_Science/Comet_Interceptor" rel="noopener" target="_blank">ESA — Comet Interceptor</a> — destination: pristine comet or interstellar object. Launch period late 2028 or early 2029. Parked after launch, then sent to intercept. Three spacecraft. ESA-led, with JAXA. This page does not add a trajectory of its own.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — GM 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>. Volumetric mean radius 695,700 km. Every speed on this page uses that GM. A typed perihelion inside the Sun is rejected.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — mean orbital velocity 29.78 km/s. The comparison in the glossary is that printed speed. It is not recomputed here.</li>
+      <li><a href="/science/astronomy/vis-viva/">Vis-viva desk</a> — v = √[μ (2/r − 1/a)] on a bound ellipse. This page is that formula at infinite r, where it becomes v<sub>∞</sub>.</li>
+      <li><a href="/science/astronomy/eccentricity/">Eccentricity desk</a> — r<sub>p</sub> = a(1−e) for e below 1. This page keeps going, through the parabola, into the hyperbola.</li>
+      <li><a href="/science/astronomy/comets/">Comets desk</a> — Halley, Encke, 67P, and Hale–Bopp, all bound. The tails live there.</li>
+      <li><a href="/science/astronomy/asteroids/">Asteroids desk</a> — the main belt, which stays bound. 1I’s JPL class is Hyperbolic Asteroid. It is not a belt asteroid.</li>
+      <li><a href="/science/astronomy/c3/">C3 desk</a> — characteristic energy of a spacecraft leaving Earth, C3 = v<sub>∞</sub>². The symbol is the same. The v<sub>∞</sub> on this page belongs to the interstellar object about the Sun, not to a departure burn.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Educational schematic of one conic about the Sun. 1I’s computed excess speed is 26.405 km/s. 2I’s is 32.278 km/s. 3I’s is 57.981 km/s, from JPL solution 55, e = 6.123467. Point-mass, two-body. Not a JPL Horizons ephemeris and not a trajectory to fly. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/comets/"><p class="n">The tail</p><h3>Comets</h3><p>A bound ellipse. Halley’s JPL e is 0.967936. The ion tail points away from the Sun. This page is the orbit that does not come back.</p></a>
+    <a href="/science/astronomy/asteroids/"><p class="n">The belt</p><h3>Asteroids</h3><p>Semi-major axis from 2.0 to 3.5 AU, and the Kirkwood gaps. Bound. 1I’s class is hyperbolic, not a main-belt orbit.</p></a>
+    <a href="/science/astronomy/eccentricity/"><p class="n">The stretch</p><h3>Eccentricity</h3><p>r<sub>p</sub> = a(1−e) and r<sub>a</sub> = a(1+e), for e below 1. Earth’s e is 0.0167. This slider crosses 1.</p></a>
+    <a href="/science/astronomy/vis-viva/"><p class="n">The speed</p><h3>Vis-viva</h3><p>v = √[μ (2/r − 1/a)] on a closed ellipse. The excess speed here is that equation at infinite distance.</p></a>
+    <a href="/science/astronomy/c3/"><p class="n">The departure</p><h3>C3</h3><p>C3 = v<sub>∞</sub>² for a craft leaving Earth. Same symbol, a different orbit. Not a mission.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The planets these objects fall past. This hyperbola does not feel their pull.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="iso-help-dialog" role="dialog" aria-modal="true" aria-labelledby="iso-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="iso-help-title">Interstellar</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One conic, the Sun at a focus, perihelion on the right. 1I opens the page.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">1I, 2I, 3I</th><td>Load the JPL osculating e and q named on the card. The number fields keep the full values. The sliders step by 0.001, so they sit near those values until you move them.</td></tr>
+        <tr><th scope="row">Halley</th><td>The same JPL solution as the comets desk. Bound. A comparison, not an interstellar object.</td></tr>
+        <tr><th scope="row">Circle and parabola</th><td>Classroom orbits at q = 1 AU. e = 0 and e = 1. Not catalog objects.</td></tr>
+        <tr><th scope="row">Eccentricity</th><td>Slider from 0 to 6.5, step 0.001. 3I’s 6.123467 fits. The number field accepts the same range. Above 6.5 is rejected.</td></tr>
+        <tr><th scope="row">Perihelion</th><td>Slider from 0.05 to 8 AU. A value inside the Sun is rejected. v∞ uses this q.</td></tr>
+        <tr><th scope="row">The drawing</th><td>With the canvas focused, Left and Right step eccentricity by 0.01. Up and Down step perihelion by 0.05 AU. They do nothing while this dialog is open.</td></tr>
+        <tr><th scope="row">v∞</th><td>Blank, as “none — bound,” when e is below 1. Zero on the parabola. For a hyperbola, the square root of GM (e−1)/q. GM is 132,712 × 10<sup>6</sup> km<sup>3</sup>/s<sup>2</sup>.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/interstellar/interstellar.js"></script>
+<script>
+(function () {
+  "use strict";
+  var I = window.Interstellar;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!I) return;
+
+  var state = I.stateFromPreset("1I");
+  var last = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a")
+    };
+  }
+  function parseNum(raw) {
+    var s = String(raw == null ? "" : raw).trim();
+    if (!/^[+]?(?:\d+\.?\d*|\.\d+)$/.test(s)) return NaN;
+    return Number(s);
+  }
+  function roundStep(n, step) {
+    return Math.round(n / step) * step;
+  }
+  function showErr(msg) {
+    var el = document.getElementById("iso-err");
+    var bad = !!msg;
+    el.hidden = !bad;
+    el.textContent = msg || "";
+    document.getElementById("ecc").setAttribute("aria-invalid", bad ? "true" : "false");
+    document.getElementById("q-au").setAttribute("aria-invalid", bad ? "true" : "false");
+  }
+  function kindLabel(kind) {
+    if (kind === "ellipse") return "Ellipse";
+    if (kind === "parabola") return "Parabola";
+    return "Hyperbola";
+  }
+  function tierFor(sc) {
+    if (!sc.preset) return "Classroom · not a catalog orbit";
+    if (sc.preset.boundCompare) return "Bound comparison · JPL solution " + sc.preset.orbitId;
+    return sc.preset.orbitClass + " · JPL solution " + sc.preset.orbitId;
+  }
+  function titleFor(sc) {
+    if (sc.preset) return sc.preset.name;
+    return kindLabel(sc.kind);
+  }
+  function syncPressed() {
+    var buttons = document.querySelectorAll("[data-preset]");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var id = buttons[i].getAttribute("data-preset");
+      var on = state.preset === id || (id === "circle" && !state.preset && state.e === 0 && state.q === 1) || (id === "parabola" && !state.preset && state.e === 1 && state.q === 1);
+      buttons[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+  function syncControls(sc) {
+    var eSlider = document.getElementById("ecc-slider");
+    var qSlider = document.getElementById("q-slider");
+    var eField = document.getElementById("ecc");
+    var qField = document.getElementById("q-au");
+    var eShown = roundStep(sc.e, 0.001);
+    var qShown = roundStep(sc.q, 0.001);
+    if (document.activeElement !== eSlider) eSlider.value = String(eShown);
+    if (document.activeElement !== qSlider) qSlider.value = String(qShown);
+    eSlider.setAttribute("aria-valuenow", String(eShown));
+    qSlider.setAttribute("aria-valuenow", String(qShown));
+    eSlider.setAttribute("aria-valuetext", "Eccentricity " + I.fmtE(sc.e) + ", " + sc.kind);
+    qSlider.setAttribute("aria-valuetext", "Perihelion " + I.fmtQ(sc.q) + " astronomical units");
+    if (document.activeElement !== eField) eField.value = String(sc.e);
+    if (document.activeElement !== qField) qField.value = String(sc.q);
+    syncPressed();
+  }
+  function fillCard(sc) {
+    document.getElementById("d-tier").textContent = tierFor(sc);
+    document.getElementById("d-title").textContent = titleFor(sc);
+    document.getElementById("d-range").textContent = "e = " + sc.text.e + " · q = " + sc.text.q;
+    var items = document.querySelectorAll("#stats li");
+    var rows = [
+      ["Shape", kindLabel(sc.kind)],
+      ["Bound?", sc.bound ? "Bound — it returns" : "Unbound — it leaves"],
+      ["v∞", sc.text.vInf],
+      ["Perihelion speed", sc.text.vPeri],
+      ["Formula", "v∞² = GM (e−1)/q"]
+    ];
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      items[i].querySelector(".k").textContent = rows[i][0];
+      items[i].querySelector(".v").textContent = rows[i][1];
+    }
+    document.getElementById("d-why").textContent = sc.why;
+    var box = sc.frame;
+    var nearX = Math.max(box.x0, Math.min(0, box.x1));
+    var nearY = Math.max(box.y0, Math.min(0, box.y1));
+    var near2 = nearX * nearX + nearY * nearY;
+    var far2 = 0;
+    [[box.x0, box.y0], [box.x0, box.y1], [box.x1, box.y0], [box.x1, box.y1]].forEach(function (p) {
+      var d2 = p[0] * p[0] + p[1] * p[1];
+      if (d2 > far2) far2 = d2;
+    });
+    var ring = near2 <= 1.02 && far2 >= 0.98;
+    var ringSentence = ring ? " The dashed ring is 1 AU." : " The 1 AU ring is outside this frame.";
+    document.getElementById("orbit-note").textContent = (sc.frame.clipped
+      ? "The frame is a few perihelion distances across, so a long ellipse is cut off. A hyperbola is drawn out to 8 perihelion distances."
+      : "The whole ellipse fits.") + ringSentence + " The Sun is not to scale. Inclination is not drawn.";
+    var canvas = document.getElementById("orbit-canvas");
+    var presetName = sc.preset ? sc.preset.name : "a classroom " + sc.kind;
+    canvas.setAttribute("aria-label", kindLabel(sc.kind) + " of " + presetName + " around the Sun. Perihelion is to the right. " + (sc.bound ? "The path closes." : "The path does not close.") + " Excess speed " + sc.text.vInf + ". Classroom schematic, not an ephemeris.");
+  }
+  function paint(sc) {
+    var canvas = document.getElementById("orbit-canvas");
+    if (!canvas || !canvas.getContext) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = canvas.clientWidth || 640;
+    if (!(cssW > 0)) return;
+    var cssH = Math.max(280, Math.round(cssW * 0.72));
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    var col = colors();
+    var box = sc.frame;
+    var pad = 28;
+    var worldW = Math.max(1e-9, box.x1 - box.x0);
+    var worldH = Math.max(1e-9, box.y1 - box.y0);
+    var scale = Math.min((cssW - pad * 2) / worldW, (cssH - pad * 2) / worldH);
+    var ox = pad + (cssW - pad * 2 - worldW * scale) / 2 - box.x0 * scale;
+    var oy = pad + (cssH - pad * 2 - worldH * scale) / 2 + box.y1 * scale;
+    function pt(x, y) { return [ox + x * scale, oy - y * scale]; }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(8, 8, cssW - 16, cssH - 16);
+    ctx.clip();
+
+    var sun = pt(0, 0);
+    ctx.beginPath();
+    ctx.arc(sun[0], sun[1], scale * 1, 0, Math.PI * 2);
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = col.muted;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    if (scale > 36) {
+      ctx.fillStyle = col.muted;
+      ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+      ctx.fillText("1 AU", sun[0] + scale * 0.15, sun[1] - scale * 0.72);
+    }
+
+    if (sc.kind === "hyperbola") {
+      var ah = sc.q / (sc.e - 1);
+      var cx = sc.q + ah;
+      var alpha = Math.atan(Math.sqrt(sc.e * sc.e - 1));
+      var angles = [Math.PI - alpha, Math.PI + alpha];
+      var reach = Math.hypot(worldW, worldH) * 2;
+      ctx.strokeStyle = col.soft;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([1, 4]);
+      var ai;
+      for (ai = 0; ai < angles.length; ai++) {
+        var ang = angles[ai];
+        var a0 = pt(cx, 0);
+        var a1 = pt(cx + Math.cos(ang) * reach, Math.sin(ang) * reach);
+        var a2 = pt(cx - Math.cos(ang) * reach, -Math.sin(ang) * reach);
+        ctx.beginPath();
+        ctx.moveTo(a1[0], a1[1]);
+        ctx.lineTo(a0[0], a0[1]);
+        ctx.lineTo(a2[0], a2[1]);
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+    }
+
+    var pts = sc.curve.points;
+    ctx.beginPath();
+    var i;
+    for (i = 0; i < pts.length; i++) {
+      var s = pt(pts[i].x, pts[i].y);
+      if (i === 0) ctx.moveTo(s[0], s[1]);
+      else ctx.lineTo(s[0], s[1]);
+    }
+    if (sc.curve.closed) ctx.closePath();
+    ctx.strokeStyle = col.accent;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(sun[0], sun[1], 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.fill();
+
+    var peri = pt(sc.q, 0);
+    ctx.beginPath();
+    ctx.arc(peri[0], peri[1], 4, 0, Math.PI * 2);
+    ctx.fillStyle = col.ink;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(peri[0], peri[1]);
+    ctx.lineTo(peri[0], peri[1] - 18);
+    ctx.strokeStyle = col.ink;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(peri[0] - 4, peri[1] - 12);
+    ctx.lineTo(peri[0], peri[1] - 18);
+    ctx.lineTo(peri[0] + 4, peri[1] - 12);
+    ctx.stroke();
+
+    ctx.fillStyle = col.soft;
+    ctx.font = "12px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.fillText(kindLabel(sc.kind).toUpperCase(), 16, 26);
+    ctx.restore();
+  }
+  function render() {
+    var sc = I.scene(state);
+    if (!sc.ok) {
+      showErr(sc.error);
+      return;
+    }
+    showErr("");
+    last = sc;
+    syncControls(sc);
+    fillCard(sc);
+    paint(sc);
+  }
+  function setState(next) {
+    state = next;
+    render();
+  }
+  document.getElementById("preset-published").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("[data-preset]");
+    if (!btn) return;
+    setState(I.stateFromPreset(btn.getAttribute("data-preset")));
+  });
+  document.getElementById("preset-class").addEventListener("click", function (ev) {
+    var btn = ev.target.closest("[data-preset]");
+    if (!btn) return;
+    var id = btn.getAttribute("data-preset");
+    if (id === "circle") setState({ e: 0, q: 1, preset: null });
+    else setState({ e: 1, q: 1, preset: null });
+  });
+  document.getElementById("ecc-slider").addEventListener("input", function (ev) {
+    setState({ e: roundStep(Number(ev.target.value), 0.001), q: state.q, preset: null });
+  });
+  document.getElementById("q-slider").addEventListener("input", function (ev) {
+    setState({ e: state.e, q: roundStep(Number(ev.target.value), 0.001), preset: null });
+  });
+  function readFields() {
+    setState({ e: parseNum(document.getElementById("ecc").value), q: parseNum(document.getElementById("q-au").value), preset: null });
+  }
+  document.getElementById("ecc").addEventListener("change", readFields);
+  document.getElementById("q-au").addEventListener("change", readFields);
+  document.getElementById("orbit-canvas").addEventListener("keydown", function (ev) {
+    var help = document.getElementById("iso-help-dialog");
+    if (help && !help.hidden) return;
+    var stepE = 0;
+    var stepQ = 0;
+    if (ev.key === "ArrowLeft") stepE = -0.01;
+    else if (ev.key === "ArrowRight") stepE = 0.01;
+    else if (ev.key === "ArrowDown") stepQ = -0.05;
+    else if (ev.key === "ArrowUp") stepQ = 0.05;
+    else return;
+    ev.preventDefault();
+    var e = Math.min(I.E_MAX, Math.max(I.E_MIN, Math.round((state.e + stepE) * 1000) / 1000));
+    var q = Math.min(I.Q_MAX, Math.max(I.Q_MIN, Math.round((state.q + stepQ) * 1000) / 1000));
+    setState({ e: e, q: q, preset: null });
+  });
+
+  var helpBtn = document.getElementById("iso-help");
+  var helpDialog = document.getElementById("iso-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () { if (last) paint(last); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { if (last) paint(last); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
