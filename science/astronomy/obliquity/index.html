@@ -1,0 +1,837 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obliquity — planetary axial tilt — Steven Philley</title>
+<meta name="description" content="Interactive obliquity desk. A planet’s spin axis, tipped from its orbit normal. Eight planets and Pluto, or a custom tilt from 0° to 180°. Tropics at the seasonal angle; polar circles at 90° minus that angle. Venus 177.36° and Uranus 97.77° are past 90°. Cited NASA fact sheets. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/obliquity/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Obliquity — planetary axial tilt">
+<meta property="og:description" content="Eight planets and Pluto. Drag the tilt from 0° to 180°. Tropics, polar circles, and the retrograde convention past 90°. Not an ephemeris.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/obliquity/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Obliquity — planetary axial tilt">
+<meta name="twitter:description" content="Spin axis against the orbit normal. Fact-sheet tilts, tropics, and polar circles. Venus and Uranus past 90°.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.means a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:none;background:transparent;cursor:grab}
+.diagram canvas:active{cursor:grabbing}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:12px;height:12px;border:1px solid var(--line,#2c303a);flex:0 0 auto}
+.swatch.sun{background:#ffe6b0}
+.swatch.axis{background:var(--accent,#c8b48a)}
+.swatch.eq{background:transparent;border-color:var(--ink,#e8e6e1)}
+.swatch.tropic{background:transparent;border-style:dashed;border-color:var(--accent,#c8b48a)}
+.swatch.polar{background:transparent;border-style:dotted;border-color:#7eb0c4}
+.swatch.planet{background:#6ea4b8}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.ratio-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:8ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:640px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px;text-wrap:pretty}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/" aria-current="page">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Obliquity</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · Axial tilt</p>
+  <h1>Obliquity</h1>
+  <p class="lede">Obliquity is how far a planet’s equator is tipped from its own orbital plane, with north set by the right-hand rule. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA</a> sheets print that angle. Earth’s is <strong>23.44°</strong>. Held parallel for one year, that lean is the <a href="/science/astronomy/seasons/">seasons</a> desk. The slow walk of where the axis points is the <a href="/science/astronomy/precession/">precession</a> desk, which keeps the angle fixed. Venus prints <strong>177.36°</strong>. Uranus prints <strong>97.77°</strong>. Those are past 90°, the retrograde convention. Drag the axis, or pick a planet, and the tropics and polar circles follow the angle.</p>
+  <p class="note-schematic">Educational schematic. A classroom side view at one solstice: the axis is drawn tipped toward the Sun, not walked around a year. Not an ephemeris, not a climate model, not a weather forecast, and not a navigation aid. Tropics and polar circles are this page’s subtraction from the angle. They are not a surveyed latitude. The fact-sheet numbers below were read from NASA’s pages. They are not averaged with the coarser comparison table. Colors are a key, not photographs.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Axis and orbit</span>
+    <button type="button" class="help-q" id="tilt-help" aria-haspopup="dialog" aria-controls="tilt-help-dialog" aria-expanded="false" aria-label="How this obliquity desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Solstice view · axis tipped toward the Sun</p>
+      <canvas id="tilt-canvas" width="880" height="640" tabindex="0" role="img" aria-label="Schematic of Earth with its spin axis 23.44 degrees from the orbit normal. Tropics at plus or minus 23.44 degrees. Polar circles at plus or minus 66.56 degrees. Not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch sun" aria-hidden="true"></span> Sun</li>
+        <li><span class="swatch planet" id="swatch-planet" aria-hidden="true"></span> Planet</li>
+        <li><span class="swatch axis" aria-hidden="true"></span> Spin axis</li>
+        <li><span class="swatch eq" aria-hidden="true"></span> Equator</li>
+        <li><span class="swatch tropic" aria-hidden="true"></span> Tropics</li>
+        <li><span class="swatch polar" aria-hidden="true"></span> Polar circles</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Earth opens the page. Drag the globe, or the slider, from 0° upright to 180° upside down. The drawing always tips that angle toward the Sun.</p>
+      <div class="controls">
+        <p class="pick-label">Planet</p>
+        <div class="presets" id="preset-planet" role="group" aria-label="Planet">
+          <button type="button" data-planet="mercury" aria-pressed="false">Mercury</button>
+          <button type="button" data-planet="venus" aria-pressed="false">Venus</button>
+          <button type="button" data-planet="earth" aria-pressed="true">Earth</button>
+          <button type="button" data-planet="mars" aria-pressed="false">Mars</button>
+          <button type="button" data-planet="jupiter" aria-pressed="false">Jupiter</button>
+          <button type="button" data-planet="saturn" aria-pressed="false">Saturn</button>
+          <button type="button" data-planet="uranus" aria-pressed="false">Uranus</button>
+          <button type="button" data-planet="neptune" aria-pressed="false">Neptune</button>
+          <button type="button" data-planet="pluto" aria-pressed="false">Pluto</button>
+        </div>
+        <p class="pick-label" id="tilt-label">Custom tilt, 0° to 180°</p>
+        <div class="slider-row">
+          <label for="tilt">Tilt</label>
+          <input type="range" id="tilt" min="0" max="180000" step="1" value="23440" aria-valuemin="0" aria-valuemax="180" aria-valuenow="23.44" aria-valuetext="23.44 degrees. Earth.">
+          <span class="ratio-val" id="tilt-val">23.44°</span>
+        </div>
+      </div>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Planet · solstice view</p>
+      <h2 id="d-title">Earth</h2>
+      <p class="range" id="d-range">23.44° from the orbit normal</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Obliquity</span><span class="v">23.44°</span></li>
+        <li><span class="k">Solstice subsolar</span><span class="v">23.44°</span></li>
+        <li><span class="k">Tropics</span><span class="v">±23.44°</span></li>
+        <li><span class="k">Polar circles</span><span class="v">±66.56°</span></li>
+        <li><span class="k">Equator inclination</span><span class="v">23.44°</span></li>
+        <li><span class="k">Comparison table</span><span class="v">23.4°</span></li>
+      </ul>
+      <p class="why" id="d-why">The axis in this drawing is 23.44° from the orbit normal, tipped toward the Sun. Tropics at ±23.44°. Polar circles at ±66.56°. Latitudes poleward of the polar circles have a season of midnight sun and a season of polar night. Classroom schematic, not an ephemeris.</p>
+    </div>
+  </div>
+
+  <p class="band">What the angle does</p>
+  <div class="means">
+    <p><strong>Up to 90°, the seasonal angle is the obliquity.</strong> The Sun’s overhead point at the solstice of this drawing sits at that latitude. Tropics at ±obliquity. Polar circles at ±(90 − obliquity). On Earth the northern ones are the Tropic of Cancer and the Arctic Circle. This page prints both as ± the angle, and does not rename them on the other bodies. Poleward of the polar circles, that solstice is midnight sun in summer and polar night in winter. At 0° the equator lies in the orbital plane, and there is no such band.</p>
+    <p><strong>Past 90° is the retrograde convention.</strong> The comparison notes measure the axis from a line perpendicular to the orbit, north pole by the right-hand rule, so the angle can pass 90°. Venus and Uranus do. The seasonal swing on this drawing is 180 minus the obliquity. For Venus, 180 − 177.36 = 2.64, and the sheet’s inclination of the equator is 2.64. For Uranus, 180 − 97.77 = 82.23, and the sheet prints 82.23. Pluto’s sheet prints 119.51 beside 57.47, and 180 − 119.51 = 60.49, which is not 57.47. The circles follow 60.49. They do not replace 57.47. The two are not averaged.</p>
+    <p><strong>A larger seasonal angle is a stronger season.</strong> NASA’s Milankovitch page says the greater Earth’s axial tilt, the more extreme the seasons, because the summer hemisphere receives more solar radiation and the winter hemisphere less. This desk uses that sentence for the comparison with Earth’s 23.44°. It does not publish a separate scale of “weak” and “strong,” and it does not model a climate.</p>
+    <p><strong>The spin’s minus sign is a different page.</strong> Venus’s sidereal rotation is −5832.6 hours, and Uranus’s is −17.24 hours. Those minus signs, and the solar day, are the <a href="/science/astronomy/planet-days/">planet days</a> desk. The backward loop of Mars in Earth’s sky is the <a href="/science/astronomy/retrograde/">retrograde</a> desk. This page is only the tilt of the axis.</p>
+  </div>
+
+  <p class="band">The sheets, side by side</p>
+  <div class="sheet">
+    <table>
+      <caption>Obliquity to orbit, and inclination of the equator where the sheet prints it, from each body’s fact sheet. The last column is the comparison table of 18 March 2025. A dash means that sheet does not print the line. The columns are not averaged.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Body</th>
+          <th scope="col">Obliquity to orbit</th>
+          <th scope="col">Inclination of equator</th>
+          <th scope="col">Comparison table</th>
+        </tr>
+      </thead>
+      <tbody id="tilt-rows">
+        <tr id="row-mercury" data-planet="mercury"><th scope="row">Mercury</th><td>0.034°</td><td>0.034°</td><td>0.034°</td></tr>
+        <tr id="row-venus" data-planet="venus"><th scope="row">Venus</th><td>177.36°</td><td>2.64°</td><td>177.4°</td></tr>
+        <tr id="row-earth" data-planet="earth" class="is-on"><th scope="row">Earth</th><td>23.44°</td><td>23.44°</td><td>23.4°</td></tr>
+        <tr id="row-mars" data-planet="mars"><th scope="row">Mars</th><td>25.19°</td><td>25.19°</td><td>25.2°</td></tr>
+        <tr id="row-jupiter" data-planet="jupiter"><th scope="row">Jupiter</th><td>3.13°</td><td>3.13°</td><td>3.1°</td></tr>
+        <tr id="row-saturn" data-planet="saturn"><th scope="row">Saturn</th><td>26.73°</td><td>—</td><td>26.7°</td></tr>
+        <tr id="row-uranus" data-planet="uranus"><th scope="row">Uranus</th><td>97.77°</td><td>82.23°</td><td>97.8°</td></tr>
+        <tr id="row-neptune" data-planet="neptune"><th scope="row">Neptune</th><td>28.32°</td><td>28.32°</td><td>28.3°</td></tr>
+        <tr id="row-pluto" data-planet="pluto"><th scope="row">Pluto</th><td>119.51°</td><td>57.47°</td><td>119.5°</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">Each comparison cell is the sheet’s obliquity rounded to the places that table prints. Mercury’s 0.034 is already at those places. They stay in separate columns. The comparison table also prints a Moon cell of 6.7°. The Moon sheet prints 6.68°. That 6.68° is the <a href="/science/astronomy/libration/">libration</a> desk’s tilt of the lunar equator to its orbit. This desk does not use either Moon figure, and it does not average them. Pluto is a dwarf planet on the <a href="/science/astronomy/dwarf-planets/">dwarf planets</a> desk. The comparison table still has a Pluto column, so this page does too.</p>
+
+  <p class="band">Uranus, Venus, Earth, Mars</p>
+  <div class="means">
+    <p><strong>Uranus, almost on its side.</strong> The Uranus sheet, updated 2 October 2024, prints obliquity 97.77° and an inclination of the equator of 82.23°. The comparison notes say Uranus rotates almost on its side relative to the orbit. On this drawing the solstice subsolar latitude is 82.23°. Tropics at ±82.23°. Polar circles at ±7.77°. 90 − 82.23 = 7.77, and 97.77 − 90 = 7.77. Those are this page’s subtractions, not a second sheet. The <a href="/science/astronomy/uranus/">Uranus</a> phase desk names 97.77° and does not tip the disk.</p>
+    <p><strong>Venus, almost 180°.</strong> The Venus sheet, updated 11 January 2024, prints obliquity 177.36° and an inclination of the equator of 2.64°. The comparison notes say Venus rotates retrograde, opposite the other planets, so the tilt is almost 180 degrees, with its north pole pointing downward. The seasonal swing is the small one, 2.64°. Tropics at ±2.64°. Polar circles at ±87.36°. The minus sign on the spin is the planet-days desk, not this tilt.</p>
+    <p><strong>Earth’s angle changes, slowly.</strong> <a href="https://science.nasa.gov/science-research/earth-science/milankovitch-orbital-cycles-and-their-role-in-earths-climate/" rel="noopener" target="_blank">NASA Science</a> (27 February 2020) says that over the last million years Earth’s obliquity has varied between 22.1 and 24.5 degrees, and that the axis is currently tilted 23.4 degrees, about halfway between those extremes, in a cycle that spans about 41,000 years. A greater tilt makes the seasons more extreme. The Earth Fact Sheet prints 23.44°. The 23.4 and the 23.44 are not averaged. That page does not name the Moon as what holds the tilt in that range. <a href="https://science.nasa.gov/photojournal/the-obliquity-of-mars-periodic-bedding-in-tithonium-chasma/" rel="noopener" target="_blank">PIA17859</a> (9 January 2014) says Earth’s obliquity appears to have been limited to small variations from its current value because of the stabilizing gravitational influence of the Moon. The caption does not print 22.1 to 24.5. The Milankovitch page does not print the Moon sentence. This desk does not merge them. The <a href="/science/astronomy/precession/">precession</a> desk is the direction the axis points, not this change in the angle.</p>
+    <p><strong>Mars varies more, on that caption’s wording.</strong> PIA17859 says Mars’ obliquity is currently about 25 degrees, not much different from Earth’s 23 degrees, and that numerical calculations suggest the near-agreement is a coincidence. It says Mars’ obliquity varies chaotically, probably reaching values greater than 60 degrees and lower than 10 degrees, and that if the calculations are correct it was greater than 25 degrees for most of the Solar System’s history. The Mars sheet prints 25.19°. The caption’s “about 25” and “about 23” stay the caption’s roundings. This page does not add a tighter range, and it does not drop “probably” or “if the calculations are correct.”</p>
+  </div>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Obliquity</dt><dd>The comparison notes: the angle the axis is tilted relative to a line perpendicular to the planet’s orbit, north pole by the right-hand rule. The parameter notes: the angle between the body’s equator and the body’s orbital plane, north by the right-hand rule, at J2000. This page uses the number in the obliquity column. It does not treat the two sentences as two measurements.</dd></div>
+    <div class="gloss"><dt>Inclination of the equator</dt><dd>The parameter notes: the angle between the equator and the orbital plane with north defined as the pole above the plane of the solar system, also called axial tilt, at J2000. Saturn’s sheet does not print it. Venus, Uranus, and Pluto print a different number from their obliquity. Only Venus and Uranus match 180 minus the obliquity.</dd></div>
+    <div class="gloss"><dt>Tropics</dt><dd>Latitudes ± the seasonal angle, where the Sun can stand overhead at the solstice of this drawing. Up to 90° that angle is the obliquity. Past 90° it is 180 minus the obliquity. Earth’s northern tropic is the Tropic of Cancer. This page does not rename the lines on other bodies.</dd></div>
+    <div class="gloss"><dt>Polar circles</dt><dd>Latitudes ±(90 − the seasonal angle). Earth’s northern circle is the Arctic Circle. On this page, from 23.44°, that is 66.56°. Poleward of those circles the drawing’s solstice is midnight sun or polar night. At 0° the circles sit on the poles, and there is no band.</dd></div>
+    <div class="gloss"><dt>Midnight sun, polar night</dt><dd>A season when the Sun stays up, or stays down, through a turn of the planet. On this schematic that happens poleward of the polar circles, and only when the seasonal angle is not zero. It is geometry of the tilt, not a sunrise almanac. Refraction is the <a href="/science/astronomy/twilight/">twilight</a> desk.</dd></div>
+    <div class="gloss gloss-wide"><dt>What the side view leaves out</dt><dd>A year of motion. The seasons desk walks Earth’s 23.4° around the Sun. Eccentricity, so distance is not this tilt. The precession cone, so the aim among the stars can change while this angle stays 23.44° on that desk. The Milankovitch cycle of the angle itself, quoted above and not animated. Weather, ice, and a climate model. The Moon’s 6.68° obliquity to its own orbit. Not an ephemeris.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet</a> — comparison table, updated 18 March 2025. Obliquity to orbit: Mercury 0.034, Venus 177.4, Earth 23.4, Moon 6.7, Mars 25.2, Jupiter 3.1, Saturn 26.7, Uranus 97.8, Neptune 28.3, Pluto 119.5. The Moon cell is not a row on this desk.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/planetfact_notes.html" rel="noopener" target="_blank">NASA NSSDCA — Planetary Fact Sheet notes</a> — updated 20 December 2021. Obliquity is the axis tilted relative to a line perpendicular to the orbit, north pole by the right-hand rule. Venus rotates retrograde, so the tilt is almost 180 degrees, north pole pointing downward. Uranus rotates almost on its side relative to the orbit. Pluto is pointing slightly down.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/fact_notes.html" rel="noopener" target="_blank">NASA NSSDCA — Notes on the fact sheet parameters</a> — updated 6 May 2024. Obliquity to orbit: the angle between the body’s equator and its orbital plane, north by the right-hand rule, J2000. Inclination of equator: the angle between the equator and the orbital plane with north above the plane of the solar system, also denoted axial tilt, J2000.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">Mercury Fact Sheet</a> — updated 11 January 2024. Obliquity 0.034°. Inclination of equator 0.034°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">Venus Fact Sheet</a> — updated 11 January 2024. Obliquity 177.36°. Inclination of equator 2.64°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> — updated 15 November 2024. Obliquity 23.44°. Inclination of equator 23.44°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars Fact Sheet</a> — updated 19 May 2025. Obliquity 25.19°. Inclination of equator 25.19°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">Jupiter Fact Sheet</a> — updated 2 October 2024. Obliquity 3.13°. Inclination of equator 3.13°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">Saturn Fact Sheet</a> — updated 18 March 2025. Obliquity 26.73°. No inclination-of-equator line.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">Uranus Fact Sheet</a> — updated 2 October 2024. Obliquity 97.77°. Inclination of equator 82.23°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">Neptune Fact Sheet</a> — updated 3 October 2024. Obliquity 28.32°. Inclination of equator 28.32°.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">Pluto Fact Sheet</a> — updated 11 January 2024. Obliquity 119.51°. Inclination of equator 57.47°.</li>
+      <li><a href="https://science.nasa.gov/science-research/earth-science/milankovitch-orbital-cycles-and-their-role-in-earths-climate/" rel="noopener" target="_blank">NASA Science — Milankovitch cycles</a> — 27 February 2020. Obliquity varied between 22.1 and 24.5 degrees over the last million years. Currently 23.4 degrees, in a cycle of about 41,000 years. A greater tilt makes seasons more extreme.</li>
+      <li><a href="https://science.nasa.gov/photojournal/the-obliquity-of-mars-periodic-bedding-in-tithonium-chasma/" rel="noopener" target="_blank">NASA Photojournal — PIA17859</a> — 9 January 2014. Mars about 25 degrees, Earth about 23. Mars probably greater than 60 and lower than 10, if the calculations are correct. Earth’s tilt limited to small variations by the Moon.</li>
+      <li><a href="/science/astronomy/seasons/">Seasons desk</a> — one year of Earth’s tilt, about 23.4°, held parallel. This page is the angle, compared across the sheets.</li>
+      <li><a href="/science/astronomy/planet-days/">Planet days desk</a> — the solar day. That drawing does not tip the globe. The 177.36° and 97.77° named there are drawn here.</li>
+      <li><a href="/science/astronomy/precession/">Precession desk</a> — where the axis points. Obliquity stays 23.44° on that page.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom schematic of an axial tilt. The tropics and the polar circles are subtractions from the angle on the drawing. The sheet’s second line, when it differs, stays in the table. Not an ephemeris and not a climate forecast. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/seasons/"><p class="n">One year</p><h3>Seasons</h3><p>Earth’s lean, held parallel around the Sun. This page is that angle, and the other planets’.</p></a>
+    <a href="/science/astronomy/precession/"><p class="n">The cone</p><h3>Precession</h3><p>The aim walks among the stars. The angle on that desk stays 23.44°.</p></a>
+    <a href="/science/astronomy/planet-days/"><p class="n">The spin</p><h3>Planet days</h3><p>Noon to noon is not one turn. That globe is not tipped. Venus and Uranus carry a minus sign there.</p></a>
+    <a href="/science/astronomy/uranus/"><p class="n">The phase</p><h3>Uranus</h3><p>Gibbous to full from Earth. The 97.77° tilt is drawn on this page, not on that disk.</p></a>
+    <a href="/science/astronomy/venus/"><p class="n">The phase</p><h3>Venus</h3><p>Crescent through gibbous. The 177.36° tilt is this page. The phase is that one.</p></a>
+    <a href="/science/astronomy/dwarf-planets/"><p class="n">Past Neptune</p><h3>Dwarf planets</h3><p>Pluto’s column is here because the fact sheet prints 119.51°. The category is that desk.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Sun through Neptune, Pluto labeled as a dwarf planet. Still a schematic.</p></a>
+    <a href="/science/astronomy/retrograde/"><p class="n">The loop</p><h3>Retrograde</h3><p>Mars seeming to back up. A line of sight, not an axis past 90°.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="tilt-help-dialog" role="dialog" aria-modal="true" aria-labelledby="tilt-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tilt-help-title">Obliquity</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">One angle, from the orbit normal toward the Sun. The arithmetic is not a new measurement.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Planet</th><td>Sets the fact-sheet obliquity. Pluto is the dwarf-planet sheet. The card reprints the circles. The table row marks the same body.</td></tr>
+        <tr><th scope="row">Tilt</th><td>A custom angle from 0° to 180°, in thousandths. Moving it leaves the planet buttons. If the number lands on a sheet, the card says so and does not switch sheets until you press the button.</td></tr>
+        <tr><th scope="row">The drawing</th><td>Drag anywhere on the globe. The angle is how far the pointer sits from straight up. Left and right of the normal give the same angle, and the axis is always drawn toward the Sun. With the canvas focused, Left and Down decrease the angle. Right and Up increase it. Shift steps by 1°. They do nothing while this dialog is open.</td></tr>
+        <tr><th scope="row">Past 90°</th><td>The seasonal swing becomes 180 minus the angle. Venus and Uranus match the sheet’s other line. Pluto does not. The card says which.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<noscript><p class="note-schematic">The schematic needs a script. The table above is the fact-sheet obliquity, the equator inclination where printed, and the comparison table.</p></noscript>
+
+<script src="/science/astronomy/obliquity/obliquity.js"></script>
+<script>
+(function () {
+  "use strict";
+  var Ob = window.Obliquity;
+  var TAU = Math.PI * 2;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!Ob) return;
+
+  var state = { planet: "earth", milli: Ob.EARTH_MILLI };
+  var canvas = document.getElementById("tilt-canvas");
+  var slider = document.getElementById("tilt");
+  var helpBtn = document.getElementById("tilt-help");
+  var helpDialog = document.getElementById("tilt-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  var dragging = false;
+  var layout = { cx: 0, cy: 0 };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function fit() {
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.max(300, Math.round(w * 0.72));
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function text(ctx, str, x, y, opt) {
+    ctx.fillStyle = opt.color;
+    ctx.font = font(opt.size || 11);
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText(str, x, y);
+  }
+  function scene() {
+    if (state.planet) return Ob.scene({ planet: state.planet });
+    return Ob.scene({ milli: state.milli });
+  }
+  function fillStats(sc) {
+    var ul = document.getElementById("stats");
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < sc.stats.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = sc.stats[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = sc.stats[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function press(id) {
+    var buttons = document.querySelectorAll("#preset-planet button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute("data-planet") === id ? "true" : "false");
+    }
+  }
+  function markRow(id) {
+    var rows = document.querySelectorAll("#tilt-rows tr");
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      rows[i].className = rows[i].getAttribute("data-planet") === id ? "is-on" : "";
+    }
+  }
+  function axisDir(milli) {
+    var eps = (milli / 1000) * Math.PI / 180;
+    return { x: -Math.sin(eps), y: Math.cos(eps) };
+  }
+  function render() {
+    var sc = scene();
+    if (!sc.ok) return;
+    document.getElementById("d-tier").textContent = sc.tier;
+    document.getElementById("d-title").textContent = sc.title;
+    document.getElementById("d-range").textContent = sc.range;
+    document.getElementById("d-why").textContent = sc.why;
+    canvas.setAttribute("aria-label", sc.aria);
+    fillStats(sc);
+    markRow(sc.planet ? sc.planet.id : "");
+    press(sc.planet ? sc.planet.id : "");
+    var sw = document.getElementById("swatch-planet");
+    if (sw) sw.style.background = sc.swatch;
+    slider.value = String(sc.geometry.milli);
+    slider.setAttribute("aria-valuenow", sc.geometry.obliquityLabel);
+    slider.setAttribute("aria-valuetext", sc.geometry.obliquityLabel + " degrees. " + sc.title + ".");
+    document.getElementById("tilt-val").textContent = sc.geometry.obliquityLabel + "°";
+    var note = document.getElementById("scale-note");
+    if (sc.planet) {
+      note.textContent = sc.planet.name + " uses the fact-sheet obliquity, " + sc.geometry.obliquityLabel + "°. Drag the globe or the slider to leave the sheet and set a custom angle.";
+    } else {
+      note.textContent = "Custom angle, " + sc.geometry.obliquityLabel + "°. The drawing tips it toward the Sun. Press a planet to return to a fact sheet.";
+    }
+    draw(sc);
+  }
+  function chord(ctx, cx, cy, R, dir, latMilli, mode) {
+    var phi = (latMilli / 1000) * Math.PI / 180;
+    var along = Math.sin(phi) * R;
+    var half = Math.cos(phi) * R;
+    var mx = cx + dir.x * along;
+    var my = cy - dir.y * along;
+    if (half < 1.2) {
+      ctx.beginPath();
+      ctx.arc(mx, my, 2.4, 0, TAU);
+      ctx.fill();
+      return;
+    }
+    var px = -dir.y;
+    var py = dir.x;
+    ctx.beginPath();
+    ctx.moveTo(mx + px * half, my - py * half);
+    ctx.lineTo(mx - px * half, my + py * half);
+    ctx.stroke();
+  }
+  function draw(sc) {
+    var box = fit();
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    var g = sc.geometry;
+    var cx = Math.round(w * 0.58);
+    var cy = Math.round(h * 0.52);
+    var R = Math.max(52, Math.min(w * 0.2, h * 0.3));
+    layout.cx = cx;
+    layout.cy = cy;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(16, cy);
+    ctx.lineTo(w - 16, cy);
+    ctx.stroke();
+    ctx.save();
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = c.muted;
+    ctx.beginPath();
+    ctx.moveTo(cx, 22);
+    ctx.lineTo(cx, h - 22);
+    ctx.stroke();
+    ctx.restore();
+
+    var sunR = Math.max(9, Math.min(15, w * 0.026));
+    var sunx = Math.max(sunR + 16, Math.min(cx - R - 64, w * 0.16));
+    var glow = ctx.createRadialGradient(sunx, cy, sunR * 0.2, sunx, cy, sunR * 3.4);
+    glow.addColorStop(0, "rgba(255,236,190,0.95)");
+    glow.addColorStop(0.45, "rgba(240,195,106,0.28)");
+    glow.addColorStop(1, "rgba(240,195,106,0)");
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(sunx, cy, sunR * 3.4, 0, TAU);
+    ctx.fill();
+    ctx.fillStyle = "#ffe6b0";
+    ctx.beginPath();
+    ctx.arc(sunx, cy, sunR, 0, TAU);
+    ctx.fill();
+    text(ctx, "Sun", sunx, cy + sunR + 14, { size: 11, align: "center", color: c.ink });
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, TAU);
+    ctx.clip();
+    ctx.fillStyle = sc.swatch;
+    ctx.fillRect(cx - R - 2, cy - R - 2, R * 2 + 4, R * 2 + 4);
+    ctx.fillStyle = "rgba(8,10,14,0.5)";
+    ctx.fillRect(cx, cy - R - 2, R + 2, R * 2 + 4);
+    ctx.restore();
+    ctx.strokeStyle = "rgba(232,230,225,0.75)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, TAU);
+    ctx.stroke();
+
+    var dir = axisDir(g.milli);
+    var reach = R + 26;
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - dir.x * reach, cy + dir.y * reach);
+    ctx.lineTo(cx + dir.x * reach, cy - dir.y * reach);
+    ctx.stroke();
+    var nx = cx + dir.x * reach;
+    var ny = cy - dir.y * reach;
+    var sx = cx - dir.x * reach;
+    var sy = cy + dir.y * reach;
+    ctx.fillStyle = c.ink;
+    ctx.beginPath();
+    ctx.arc(nx, ny, 5, 0, TAU);
+    ctx.fill();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    /* Sideways from the axis, so N and S stay off the orbit-normal label. */
+    var side = 14;
+    text(ctx, "N", nx + dir.y * side, ny + dir.x * side, { size: 12, align: "center", color: c.ink });
+    text(ctx, "S", sx + dir.y * side, sy + dir.x * side, { size: 12, align: "center", color: c.muted });
+
+    ctx.strokeStyle = c.ink;
+    ctx.lineWidth = 1.25;
+    chord(ctx, cx, cy, R, dir, 0);
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = c.accent;
+    ctx.fillStyle = c.accent;
+    ctx.lineWidth = 1.15;
+    if (g.seasonalMilli !== 0 && g.seasonalMilli !== Ob.RIGHT_MILLI) {
+      chord(ctx, cx, cy, R, dir, g.seasonalMilli);
+      chord(ctx, cx, cy, R, dir, -g.seasonalMilli);
+    }
+    ctx.strokeStyle = "#7eb0c4";
+    ctx.fillStyle = "#7eb0c4";
+    ctx.setLineDash([1.5, 3.5]);
+    if (g.polarMilli !== 0 && g.polarMilli !== Ob.RIGHT_MILLI) {
+      chord(ctx, cx, cy, R, dir, g.polarMilli);
+      chord(ctx, cx, cy, R, dir, -g.polarMilli);
+    }
+    ctx.restore();
+
+    if (g.milli > 0) {
+      var arcR = Math.min(46, R * 0.55);
+      ctx.strokeStyle = c.accent;
+      ctx.lineWidth = 1.25;
+      ctx.beginPath();
+      var steps = Math.max(8, Math.round(g.milli / 3000));
+      var i;
+      for (i = 0; i <= steps; i++) {
+        var a = (g.milli / steps) * i;
+        var d = axisDir(a);
+        var px = cx + d.x * arcR;
+        var py = cy - d.y * arcR;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      var mid = axisDir(g.milli / 2);
+      var lx = cx + mid.x * (arcR + 10) + (-mid.y) * 16;
+      var ly = cy - mid.y * (arcR + 10) + mid.x * 16;
+      lx = Math.max(36, Math.min(w - 36, lx));
+      ly = Math.max(18, Math.min(h - 18, ly));
+      text(ctx, g.obliquityLabel + "°", lx, ly, { size: 12, align: "center", color: c.ink });
+    } else {
+      text(ctx, "0°", cx + 28, cy - R * 0.45, { size: 12, align: "left", color: c.ink });
+    }
+
+    text(ctx, "orbit", w - 16, cy - 12, { size: 10, align: "right", color: c.muted });
+    text(ctx, "orbit normal", cx - 8, 18, { size: 10, align: "right", color: c.muted });
+  }
+
+  function setCustom(milli) {
+    state.planet = null;
+    state.milli = Ob.clampMilli(milli);
+    render();
+  }
+  function pointerMilli(ev) {
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return null;
+    var x = ((ev.clientX - rect.left) / rect.width) * (canvas.clientWidth || rect.width);
+    var y = ((ev.clientY - rect.top) / rect.height) * (canvas.clientHeight || rect.height);
+    return Ob.angleFromPointer(x - layout.cx, layout.cy - y);
+  }
+
+  document.getElementById("preset-planet").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-planet")) return;
+    var id = btn.getAttribute("data-planet");
+    var body = Ob.bodyById(id);
+    if (!body) return;
+    state.planet = id;
+    state.milli = body.obliquityMilli;
+    render();
+  });
+  slider.addEventListener("input", function () {
+    setCustom(Number(slider.value));
+  });
+  canvas.addEventListener("pointerdown", function (ev) {
+    if (ev.button !== undefined && ev.button !== 0) return;
+    dragging = true;
+    try { canvas.setPointerCapture(ev.pointerId); } catch (e) {}
+    var m = pointerMilli(ev);
+    if (m === null) return;
+    ev.preventDefault();
+    setCustom(m);
+  });
+  canvas.addEventListener("pointermove", function (ev) {
+    if (!dragging) return;
+    var m = pointerMilli(ev);
+    if (m === null) return;
+    setCustom(m);
+  });
+  function endDrag() { dragging = false; }
+  canvas.addEventListener("pointerup", endDrag);
+  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("keydown", function (ev) {
+    if (helpDialog && !helpDialog.hidden) return;
+    if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight" && ev.key !== "ArrowUp" && ev.key !== "ArrowDown") return;
+    ev.preventDefault();
+    var step = ev.shiftKey ? 1000 : 100;
+    var dir = (ev.key === "ArrowRight" || ev.key === "ArrowUp") ? 1 : -1;
+    var base = state.planet ? Ob.bodyById(state.planet).obliquityMilli : state.milli;
+    setCustom(base + dir * step);
+  });
+
+  function focusables() {
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, a, input, [tabindex='0']")).filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp() {
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      var tag = ev.target && ev.target.tagName;
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var lastNode = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      lastNode.focus();
+    } else if (!ev.shiftKey && active === lastNode) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver) new ResizeObserver(render).observe(canvas.parentElement);
+  if (window.MutationObserver) {
+    new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
