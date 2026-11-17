@@ -1,0 +1,1122 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Barycenter — two bodies, one balance point — Steven Philley</title>
+<meta name="description" content="Interactive barycenter desk. r1 = a·m2/(m1+m2). Earth–Moon computes 4,670.8 km, inside Earth. Sun–Jupiter computes 742,428.6 km, 1.067 solar radii, outside the Sun. Pluto–Charon computes 2,126.4 km, outside Pluto. Not an ephemeris.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/barycenter/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Barycenter — two bodies, one balance point">
+<meta property="og:description" content="Earth–Moon computes 4,670.8 km from Earth’s center, inside the planet. Sun–Jupiter computes 1.067 solar radii, just outside. The Sun’s wobble is the same motion a radial-velocity search measures.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/barycenter/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Barycenter — two bodies, one balance point">
+<meta name="twitter:description" content="Earth–Moon is inside Earth. Sun–Jupiter is just outside the Sun. Pluto–Charon is outside Pluto. Computed from the fact sheets.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;border-radius:50%;background:var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.cross{width:18px;height:10px;border-radius:0;background:transparent;border-top:1px solid var(--ink,#e8e6e1);position:relative}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible,.date-row input:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:11.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px)}
+.ratio-val{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);color:var(--ink,#e8e6e1);min-width:8ch}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-row button,.date-row button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible,.play-row button:hover,.play-row button:focus-visible,.date-row button:hover,.date-row button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"],.play-row button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.play-row,.date-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.date-row input[type="date"]{min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:920px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px;text-wrap:pretty}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .diagram canvas{scroll-behavior:auto}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/" aria-current="page">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Barycenter</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The balance point</p>
+  <h1>Barycenter</h1>
+  <p class="lede">Two bodies orbit a shared center of mass. The distance from body 1’s center to that point is <strong>r₁ = a · m₂ / (m₁ + m₂)</strong>. The distance from body 2 is <strong>r₂ = a · m₁ / (m₁ + m₂)</strong>. They add to <strong>a</strong>. The heavier body sits closer. Earth–Moon, from the Earth and Moon fact sheets, computes <strong>4,670.8 km</strong> from Earth’s center, inside the volumetric mean radius of 6,371.000 km. Sun–Jupiter computes <strong>742,428.6 km</strong>, <strong>1.067</strong> times the Sun’s volumetric mean radius of 695,700 km, just outside it. At two decimals that ratio is 1.07. Sun–Earth computes <strong>449.3 km</strong>, inside the Sun. Pluto–Charon computes <strong>2,126.4 km</strong>, outside Pluto’s 1,188 km radius. Alpha Centauri uses the masses and the angular axis on the <a href="/science/astronomy/binary-stars/">binary-stars</a> desk, and the barycenter falls far outside both stars. The <a href="/science/astronomy/transit/">transit and wobble</a> desk is this same offset read as a speed. The <a href="/science/astronomy/kepler/">Kepler</a> desk is the year of one of these orbits when one mass is the Sun.</p>
+  <p class="note-schematic">Classroom two-body picture, not an ephemeris. <strong>a</strong> on a fact-sheet preset is a semimajor axis. It is the distance only when the eccentricity is zero. Charon’s block prints 0.0. The other fact-sheet orbits do not. The drawn loop is a time-lapse of about 12 seconds, not the cited period. Disks and the balance point share one scale. A body smaller than a pixel is a point, and the inset has its own scale. The lower plot is an approximate schematic of the Sun about the solar-system barycenter. It is not a JPL Horizons barycenter.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Two bodies</span>
+    <button type="button" class="help-q" id="bary-help" aria-haspopup="dialog" aria-controls="bary-help-dialog" aria-expanded="false" aria-label="How this barycenter desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">Paused · both bodies about the barycenter</p>
+      <div class="controls">
+        <p class="pick-label">Pair</p>
+        <div class="presets" id="preset-pair" role="group" aria-label="Pair">
+          <button type="button" data-pair="earth-moon" aria-pressed="true">Earth–Moon</button>
+          <button type="button" data-pair="sun-jupiter" aria-pressed="false">Sun–Jupiter</button>
+          <button type="button" data-pair="sun-earth" aria-pressed="false">Sun–Earth</button>
+          <button type="button" data-pair="pluto-charon" aria-pressed="false">Pluto–Charon</button>
+          <button type="button" data-pair="alpha-centauri" aria-pressed="false">Alpha Centauri</button>
+        </div>
+        <div class="play-row">
+          <button type="button" id="btn-play" aria-pressed="false" aria-label="Play the orbit">Play</button>
+        </div>
+        <p class="pick-label">Mass unit</p>
+        <div class="presets" id="mass-unit" role="group" aria-label="Mass unit">
+          <button type="button" data-mass-unit="kg" aria-pressed="true">kg</button>
+          <button type="button" data-mass-unit="earth" aria-pressed="false">Earth masses</button>
+          <button type="button" data-mass-unit="sun" aria-pressed="false">Solar masses</button>
+        </div>
+        <p class="pick-label">Length unit</p>
+        <div class="presets" id="length-unit" role="group" aria-label="Length unit">
+          <button type="button" data-length-unit="km" aria-pressed="true">km</button>
+          <button type="button" data-length-unit="au" aria-pressed="false">AU</button>
+        </div>
+        <p class="pick-label" id="m1-label">Mass 1, kilograms</p>
+        <div class="slider-row">
+          <label for="m1">m1</label>
+          <input type="range" id="m1" min="0" max="1000" step="1" value="500" aria-valuemin="1e20" aria-valuemax="1e33">
+          <label for="m1-num">Number</label>
+          <input type="number" id="m1-num" inputmode="decimal" step="any" aria-label="Mass of body 1, in the selected unit">
+          <span class="ratio-val" id="m1-val">5.9722 × 10^24 kg</span>
+        </div>
+        <p class="pick-label" id="m2-label">Mass 2, kilograms</p>
+        <div class="slider-row">
+          <label for="m2">m2</label>
+          <input type="range" id="m2" min="0" max="1000" step="1" value="400" aria-valuemin="1e20" aria-valuemax="1e33">
+          <label for="m2-num">Number</label>
+          <input type="number" id="m2-num" inputmode="decimal" step="any" aria-label="Mass of body 2, in the selected unit">
+          <span class="ratio-val" id="m2-val">0.07346 × 10^24 kg</span>
+        </div>
+        <p class="pick-label" id="a-label">Separation, kilometers</p>
+        <div class="slider-row">
+          <label for="a">a</label>
+          <input type="range" id="a" min="0" max="1000" step="1" value="500" aria-valuemin="1000" aria-valuemax="1e13">
+          <label for="a-num">Number</label>
+          <input type="number" id="a-num" inputmode="decimal" step="any" aria-label="Separation, in the selected length unit">
+          <span class="ratio-val" id="a-val">0.3844 × 10^6 km</span>
+        </div>
+        <p class="pick-label" id="r1-label">Body 1 radius, kilometers</p>
+        <div class="slider-row">
+          <label for="r1">R1</label>
+          <input type="range" id="r1" min="0" max="1000" step="1" value="500" aria-valuemin="1" aria-valuemax="2e9">
+          <label for="r1-num">Number</label>
+          <input type="number" id="r1-num" inputmode="decimal" step="any" aria-label="Radius of body 1, in the selected length unit">
+          <span class="ratio-val" id="r1-val">6,371.000 km</span>
+        </div>
+        <p class="pick-label" id="r2-label">Body 2 radius, kilometers</p>
+        <div class="slider-row">
+          <label for="r2">R2</label>
+          <input type="range" id="r2" min="0" max="1000" step="1" value="400" aria-valuemin="1" aria-valuemax="2e9">
+          <label for="r2-num">Number</label>
+          <input type="number" id="r2-num" inputmode="decimal" step="any" aria-label="Radius of body 2, in the selected length unit">
+          <span class="ratio-val" id="r2-val">1,737.4 km</span>
+        </div>
+      </div>
+      <canvas id="pair-canvas" width="880" height="640" tabindex="0" role="img" aria-label="Earth and the Moon orbiting their barycenter. The barycenter is 4,670.8 kilometers from Earth’s center, inside Earth. Not an ephemeris."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch" id="swatch-1" aria-hidden="true"></span> <span id="legend-1">Body 1</span></li>
+        <li><span class="swatch" id="swatch-2" aria-hidden="true" style="background:#c5c1b6"></span> <span id="legend-2">Body 2</span></li>
+        <li><span class="swatch cross" aria-hidden="true"></span> Barycenter</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Earth–Moon opens the page. The full view and the inset do not share a scale.</p>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Earth sheet and Moon sheet</p>
+      <h2 id="d-title">Earth–Moon</h2>
+      <p class="range" id="d-range">4,670.8 km from Earth · inside earth</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">From body 1</span><span class="v">4,670.8 km</span></li>
+        <li><span class="k">Where</span><span class="v">Inside Earth</span></li>
+      </ul>
+      <p class="why" id="d-why">r1 = a · m2 / (m1 + m2). Earth–Moon computes 4,670.8 km from Earth’s center, inside the volumetric mean radius of 6,371.000 km. The ratio is 0.733. Classroom two-body picture, not an ephemeris.</p>
+    </div>
+  </div>
+
+  <p class="band">What the number is</p>
+  <div class="means">
+    <p><strong>One balance point.</strong> The center of mass splits the separation in the inverse ratio of the masses. Body 1 carries the larger share of the mass when it sits closer to the point. Nothing here replaces a fact-sheet mass with a different printing. The Moon sheet’s Earth column is 5.9724 × 10^24 kg. This page uses the Earth sheet’s 5.9722 × 10^24 kg. They are not averaged. The Sun sheet prints a Sun/Earth mass ratio of 332,900. Dividing the Sun sheet’s 1,988,400 by the Earth sheet’s 5.9722 gives 332,942.63. The number field uses that division. The printed 332,900 is not substituted.</p>
+    <p><strong>Inside, or outside.</strong> The comparison is r₁ against body 1’s radius. Earth–Moon is 4,670.8 km against 6,371.000 km, ratio 0.733, inside Earth. Sun–Jupiter is 742,428.6 km against 695,700 km, ratio 1.067, outside the Sun. The gap is 46,728.6 km. The Sun sheet’s photosphere thickness is ~500 km, and that thickness is not subtracted. Sun–Earth is 449.3 km, inside. Pluto–Charon is 2,126.4 km against 1,188 km, ratio 1.790, outside Pluto. The <a href="/science/astronomy/lagrange/">Lagrange</a> desk uses the same three solar-system masses and separations and rounds the split to the nearest kilometer: 4,671 km, 449 km, and 742,429 km. The tenth stays on this page. They are not averaged.</p>
+    <p><strong>The Sun’s wobble is the detection.</strong> Every planet pulls. The Sun moves so the center of mass stays put, and a radial-velocity search reads that motion as a Doppler shift. The <a href="/science/astronomy/transit/">transit desk</a> computes the circular speed, K. This page computes the geometric offset. Jupiter alone, as a two-body problem, already puts the balance point just outside the Sun. The real solar system is not that one companion. The lower drawing adds the eight planets at the solar map’s approximate places. It is a schematic. It is not the two-body line, and it is not a Horizons barycenter.</p>
+  </div>
+
+  <p class="band">The inputs, and this arithmetic</p>
+  <div class="sheet">
+    <table>
+      <caption>r₁ and r₂ are computed from the cited masses and the cited separation. The radius column is the radius the comparison uses. The ratio is r₁ divided by that radius. The columns are not averaged with any other printing.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Pair</th>
+          <th scope="col">Mass 1</th>
+          <th scope="col">Mass 2</th>
+          <th scope="col">Separation</th>
+          <th scope="col">From body 1</th>
+          <th scope="col">From body 2</th>
+          <th scope="col">Body 1 radius</th>
+          <th scope="col">Ratio</th>
+          <th scope="col">Where</th>
+        </tr>
+      </thead>
+      <tbody id="bary-rows">
+        <tr id="row-earth-moon" data-pair="earth-moon" class="is-on"><th scope="row">Earth–Moon</th><td>5.9722 × 10^24 kg</td><td>0.07346 × 10^24 kg</td><td>0.3844 × 10^6 km</td><td>4,670.8 km</td><td>379,729.2 km</td><td>6,371.000 km</td><td>0.733</td><td>Inside Earth</td></tr>
+        <tr id="row-sun-jupiter" data-pair="sun-jupiter"><th scope="row">Sun–Jupiter</th><td>1,988,400 × 10^24 kg</td><td>1,898.13 × 10^24 kg</td><td>778.479 × 10^6 km</td><td>742,428.6 km</td><td>777,736,571 km</td><td>695,700 km</td><td>1.067</td><td>Outside the Sun</td></tr>
+        <tr id="row-sun-earth" data-pair="sun-earth"><th scope="row">Sun–Earth</th><td>1,988,400 × 10^24 kg</td><td>5.9722 × 10^24 kg</td><td>149.598 × 10^6 km</td><td>449.3 km</td><td>149,597,551 km</td><td>695,700 km</td><td>0.000646</td><td>Inside the Sun</td></tr>
+        <tr id="row-pluto-charon" data-pair="pluto-charon"><th scope="row">Pluto–Charon</th><td>0.01303 × 10^24 kg</td><td>1.586 × 10^21 kg</td><td>19,596 km</td><td>2,126.4 km</td><td>17,469.6 km</td><td>1,188 km</td><td>1.790</td><td>Outside Pluto</td></tr>
+        <tr id="row-alpha-centauri" data-pair="alpha-centauri"><th scope="row">Alpha Centauri</th><td>1.0788 M☉</td><td>0.9092 M☉</td><td>17.4930″ / 0.75081″</td><td>1,594,052,816 km</td><td>1,891,403,627 km</td><td>1.2175 R☉</td><td>1882.0</td><td>Outside Alpha Centauri A</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">Earth–Moon’s 4,670.8 km rounds to 4,671 km at the nearest kilometer, the figure the Lagrange desk prints. Sun–Earth’s 449.3 km rounds to 449 km. Sun–Jupiter’s 742,428.6 km rounds to 742,429 km. The tenth stays here. Alpha Centauri’s axis, 17.4930 / 0.75081, is 23.298837 AU, the same axis the binary-stars desk prints, and the split is 10.655585 AU and 12.643252 AU.</p>
+
+  <p class="band">The Sun, and every planet</p>
+  <div class="diagram">
+    <p class="hint" id="wobble-hint">Approximate schematic · ecliptic plane · barycenter at the cross</p>
+    <div class="date-row">
+      <label for="wobble-date">Date</label>
+      <input type="date" id="wobble-date" value="2000-01-01" min="2000-01-01" max="2049-12-31">
+      <button type="button" id="btn-wobble-play" aria-pressed="false">Play</button>
+      <button type="button" id="btn-wobble-now">Now</button>
+    </div>
+    <canvas id="wobble-canvas" width="880" height="520" tabindex="0" role="img" aria-label="Approximate schematic of the Sun moving about the solar-system barycenter. Not a JPL Horizons barycenter."></canvas>
+    <ul class="legend" aria-label="Wobble diagram key">
+      <li><span class="swatch" style="background:#ffe6b0" aria-hidden="true"></span> Sun, to scale with the trail</li>
+      <li><span class="swatch cross" aria-hidden="true"></span> Barycenter</li>
+    </ul>
+    <p class="scale-note" id="wobble-note">The trail is the solar map’s approximate positions from 2000 through 2050, stepped by 20 days. Earth on that map is the Earth–Moon barycenter. Approximate schematic.</p>
+    <p class="why" id="wobble-why">The distance is computed when the script runs. Approximate schematic, not a JPL Horizons barycenter.</p>
+  </div>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Barycenter</dt><dd>The center of mass. For two bodies, r₁ = a m₂ / (m₁ + m₂) from body 1, and r₂ = a m₁ / (m₁ + m₂) from body 2. In one plane they stay on opposite sides of the point.</dd></div>
+    <div class="gloss"><dt>Inside or outside</dt><dd>r₁ compared with body 1’s radius. Inside means the balance point is buried in body 1, and body 1’s center circles a point under its own surface. Outside means both bodies orbit a point in the gap between them.</dd></div>
+    <div class="gloss"><dt>Semimajor axis</dt><dd>The size of the relative orbit, not the distance on a given day, unless the eccentricity is zero. Charon’s block prints 0.0. The Moon’s sheet prints 0.0549. Jupiter’s sheet prints 0.0487. Earth’s sheet prints 0.0167. Alpha Centauri’s table prints 0.51947.</dd></div>
+    <div class="gloss"><dt>Radial velocity</dt><dd>The part of the wobble aimed at the observer. The <a href="/science/astronomy/transit/">transit desk</a> turns a circular orbit into K. This page stops at the length of the offset. A two-body Sun–Jupiter length is not the eight-planet length.</dd></div>
+    <div class="gloss gloss-wide"><dt>What this picture leaves out</dt><dd>Eccentricity in the drawn loop, the other moons of Pluto, Proxima, and every planet that is not the selected companion. The solar-system drawing puts those planets back, as an approximate sum, and still leaves out asteroids, comets, and a Horizons integration. The Lagrange desk’s nearest-kilometer lines are a rounding of three of these presets. They are not a second measurement.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — updated 15 November 2024. Mass 5.9722 × 10^24 kg. Volumetric mean radius 6,371.000 km. Semimajor axis 149.598 × 10^6 km. J2000 semimajor axis 1.00000011 AU. Sidereal orbit period 365.256 days. Orbit eccentricity 0.0167. The J2000 AU line is not substituted for 149.598 × 10^6 km.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — Mass 0.07346 × 10^24 kg. Volumetric mean radius 1,737.4 km. Semimajor axis, for the orbit about the Earth, 0.3844 × 10^6 km. Revolution period 27.3217 days. Orbit eccentricity 0.0549. The Earth column on that sheet prints 5.9724 × 10^24 kg. This page does not use that column.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — Mass 1,988,400 × 10^24 kg. The printed Sun/Earth mass ratio is 332,900. Volumetric mean radius 695,700 km. Photosphere thickness ~500 km. The thickness is not subtracted from the radius and not added to it.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — updated 2 October 2024. Mass 1,898.13 × 10^24 kg. Volumetric mean radius 69,911 km. Equatorial radius at 1 bar 71,492 km. Semimajor axis 778.479 × 10^6 km. Sidereal orbit period 4,332.589 days. Orbit eccentricity 0.0487. The disk uses 69,911 km.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">NASA NSSDCA — Pluto Fact Sheet</a> — updated 11 January 2024. Mass 0.01303 × 10^24 kg. Volumetric mean radius 1,188 km, the same figure as the equatorial radius. Charon (P1): mean distance from Pluto 19,596 km, mass 1.586 × 10^21 kg, equatorial radius 606 km, orbital eccentricity 0.0, sidereal orbit period 6.3872 days. The sheet does not print a volumetric mean radius for Charon. The line “Orbital values are barycentric” sits under the table of Styx, Nix, Kerberos, and Hydra. It is not applied to Charon’s 19,596 km.</li>
+      <li><a href="https://doi.org/10.3847/1538-3881/abfaff" rel="noopener" target="_blank">Akeson et al. 2021, AJ 162, 14</a> — Alpha Centauri AB, Table 8. Masses 1.0788 ± 0.0029 and 0.9092 ± 0.0025 solar masses. a = 17.4930 ± 0.0096″. Parallax 750.81 ± 0.38 mas. Radii 1.2175 ± 0.0055 R☉ and 0.8591 ± 0.0036 R☉. Period 79.762 ± 0.019 yr. Eccentricity 0.51947 ± 0.00015. The period is not an input to r₁. Proxima is not in this pair. The same table is the Alpha Centauri preset on the <a href="/science/astronomy/binary-stars/">binary-stars</a> desk.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m. Used when a kilometer length is also shown in AU.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016) — nominal solar radius 6.957 × 10^8 m. Used only to turn the Alpha Centauri radii from solar radii into kilometers. The Sun fact sheet’s 695,700 km is a different length and is not substituted.</li>
+      <li><a href="https://ssd.jpl.nasa.gov/planets/approx_pos.html" rel="noopener" target="_blank">NASA JPL — Approximate Positions of the Planets</a> — the Keplerian elements behind the solar map, Table 1 for 1800–2050. The wobble drawing calls the same <code>SolarSystem3D.helio</code> the 3D map uses. Earth on that table is the Earth–Moon barycenter, so the mass on that point is the Earth sheet plus the Moon sheet. The sample runs from 2000-01-01 through the map’s year 2050, in steps of 20 days, using the map’s 365.25-day year rather than the Earth sheet’s 365.256 days, so the sample stays on Table 1. Pluto is not in the sum. Approximate schematic, not a JPL Horizons barycenter.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">Mercury</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/venusfact.html" rel="noopener" target="_blank">Venus</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/saturnfact.html" rel="noopener" target="_blank">Saturn</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/uranusfact.html" rel="noopener" target="_blank">Uranus</a>, and <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">Neptune</a> fact sheets — masses in the eight-planet sum: Mercury 0.33010 × 10^24 kg, Venus 4.8673 × 10^24 kg, Mars 0.64169 × 10^24 kg, Saturn 568.32 × 10^24 kg, Uranus 86.811 × 10^24 kg, Neptune 102.409 × 10^24 kg. Jupiter, Earth, and the Moon are cited above. These masses weight the solar-map places. They are not a two-body preset.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom two-body picture, not an ephemeris. r₁ and r₂ are computed from the cited masses and the cited separation. The Lagrange desk’s nearest kilometer is a rounding, and the tenth stays here. The Sun’s trail is an approximate schematic from the solar map’s elements. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/binary-stars/"><p class="n">The pair</p><h3>Binary stars</h3><p>The same split, a₁ = a M₂ / (M₁ + M₂), then the speed and K. Alpha Centauri’s axis here is that desk’s 23.298837 AU.</p></a>
+    <a href="/science/astronomy/transit/"><p class="n">The wobble</p><h3>Transit and wobble</h3><p>Depth, duration, and the radial-velocity semi-amplitude. This page is the length of the offset. That page is the speed.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ for a circular orbit around one solar mass. The barycenter of Sun–Earth is the small term that law folds into the Sun.</p></a>
+    <a href="/science/astronomy/lagrange/"><p class="n">Five points</p><h3>Lagrange</h3><p>The same three pairs. That desk rounds the barycenter to the nearest kilometer and then goes on to L1 through L5.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The planet places in the lower drawing are this map’s approximate elements. Sizes there are exaggerated. They are not, on the trail.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="bary-help-dialog" role="dialog" aria-modal="true" aria-labelledby="bary-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="bary-help-title">Barycenter</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Two masses, one separation, and the point they balance on. The arithmetic is not a new measurement.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Pair</th><td>Loads the cited masses, separation, and radii. The table row marks the same pair. Alpha Centauri is the binary-stars case. It is not a fact sheet.</td></tr>
+        <tr><th scope="row">Play</th><td>Turns both bodies about the barycenter. One loop is about 12 seconds. It is not the cited period. Press again to pause. With the drawing focused, Space does the same.</td></tr>
+        <tr><th scope="row">Units</th><td>Kilograms, Earth masses, or solar masses. Kilometers or astronomical units. The physical pair does not change when the unit changes. Earth masses divide by the Earth sheet. Solar masses divide by the Sun sheet.</td></tr>
+        <tr><th scope="row">m1, m2, a, R1, R2</th><td>Logarithmic sliders, and the same values as numbers. Moving any of them leaves the pair button. With the drawing focused, Left and Right step the separation. Up and Down step mass 2. Shift takes a larger step.</td></tr>
+        <tr><th scope="row">The drawing</th><td>Full view: both orbits to scale. Inset: body 1, with the barycenter marked. The inset has its own scale. A point in the full view is a body smaller than a pixel.</td></tr>
+        <tr><th scope="row">Date</th><td>The lower plot. 12:00 UTC on the chosen day, inside 2000 through 2049, so the sample stays on the solar map’s 1800–2050 elements. Play walks about one year per second. Now jumps to today when today is inside that window.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<noscript><p class="note-schematic">The drawings need a script. The table above is the cited masses and separation, and the computed distances.</p></noscript>
+
+<script src="/science/astronomy/solar-system-3d.js"></script>
+<script src="/science/astronomy/barycenter/barycenter.js"></script>
+<script>
+(function () {
+  "use strict";
+  var B = window.Barycenter;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!B) return;
+
+  var openPair = B.pairById("earth-moon");
+  var state = {
+    pair: "earth-moon",
+    m1: openPair.m1,
+    m2: openPair.m2,
+    aKm: openPair.aKm,
+    r1Km: openPair.r1Km,
+    r2Km: openPair.r2Km,
+    massUnit: "kg",
+    lengthUnit: "km",
+    phase: 0,
+    playing: false,
+    jd: B.WOBBLE_JD0,
+    wobbling: false
+  };
+  var pairCanvas = document.getElementById("pair-canvas");
+  var wobbleCanvas = document.getElementById("wobble-canvas");
+  var playBtn = document.getElementById("btn-play");
+  var wobbleBtn = document.getElementById("btn-wobble-play");
+  var dateInput = document.getElementById("wobble-date");
+  var helpBtn = document.getElementById("bary-help");
+  var helpDialog = document.getElementById("bary-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  var raf = 0;
+  var lastT = 0;
+  var wobbleRaf = 0;
+  var wobbleLast = 0;
+  var trail = [];
+  var helio = window.SolarSystem3D && window.SolarSystem3D.helio;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a"),
+      base: cssVar("--base-2", "#14161c")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "'IBM Plex Mono', ui-monospace, monospace");
+  }
+  function currentScene() {
+    if (state.pair) return B.scene({ pair: state.pair });
+    return B.scene({ m1: state.m1, m2: state.m2, aKm: state.aKm, radius1: state.r1Km, radius2: state.r2Km });
+  }
+  function fillStats(sc) {
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < sc.stats.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = sc.stats[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = sc.stats[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function press(group, attr, value) {
+    var buttons = document.querySelectorAll("#" + group + " button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var on = buttons[i].getAttribute(attr) === value;
+      buttons[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+  function markRow(id) {
+    var rows = document.querySelectorAll("#bary-rows tr");
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      rows[i].className = rows[i].getAttribute("data-pair") === id ? "is-on" : "";
+    }
+  }
+  function setIfIdle(el, text) {
+    if (!el || document.activeElement === el) return;
+    if (el.value !== text) el.value = text;
+  }
+  function massField(kg) {
+    if (state.massUnit === "earth") return B.formatEarthMass(kg);
+    if (state.massUnit === "sun") return B.formatSolarMass(kg);
+    return B.formatSiMass(kg);
+  }
+  function lengthField(km) {
+    return B.formatLengthInput(km, state.lengthUnit);
+  }
+  function massNoun() {
+    if (state.massUnit === "earth") return "Earth masses";
+    if (state.massUnit === "sun") return "solar masses";
+    return "kilograms";
+  }
+  function lengthNoun() {
+    return state.lengthUnit === "au" ? "astronomical units" : "kilometers";
+  }
+
+  function render() {
+    var sc = currentScene();
+    if (!sc.ok) return;
+    if (sc.pair) {
+      state.m1 = sc.m1;
+      state.m2 = sc.m2;
+      state.aKm = sc.aKm;
+      state.r1Km = sc.radius1;
+      state.r2Km = sc.radius2;
+    }
+    document.getElementById("d-tier").textContent = sc.tier;
+    document.getElementById("d-title").textContent = sc.title;
+    document.getElementById("d-range").textContent = sc.range;
+    document.getElementById("d-why").textContent = sc.why;
+    fillStats(sc);
+    markRow(sc.pair ? sc.pair.id : "");
+    press("preset-pair", "data-pair", sc.pair ? sc.pair.id : "");
+    press("mass-unit", "data-mass-unit", state.massUnit);
+    press("length-unit", "data-length-unit", state.lengthUnit);
+    document.getElementById("m1-label").textContent = "Mass 1, " + massNoun();
+    document.getElementById("m2-label").textContent = "Mass 2, " + massNoun();
+    document.getElementById("a-label").textContent = "Separation, " + lengthNoun();
+    document.getElementById("r1-label").textContent = "Body 1 radius, " + lengthNoun();
+    document.getElementById("r2-label").textContent = "Body 2 radius, " + lengthNoun();
+    setIfIdle(document.getElementById("m1-num"), massField(sc.m1));
+    setIfIdle(document.getElementById("m2-num"), massField(sc.m2));
+    setIfIdle(document.getElementById("a-num"), lengthField(sc.aKm));
+    setIfIdle(document.getElementById("r1-num"), lengthField(sc.radius1));
+    setIfIdle(document.getElementById("r2-num"), lengthField(sc.radius2));
+    document.getElementById("m1-val").textContent = sc.m1Label;
+    document.getElementById("m2-val").textContent = sc.m2Label;
+    document.getElementById("a-val").textContent = sc.aText;
+    document.getElementById("r1-val").textContent = sc.r1Label;
+    document.getElementById("r2-val").textContent = sc.r2Label;
+    document.getElementById("legend-1").textContent = sc.name1;
+    document.getElementById("legend-2").textContent = sc.name2;
+    document.getElementById("swatch-1").style.background = sc.fill1;
+    document.getElementById("swatch-2").style.background = sc.fill2;
+    var m1s = document.getElementById("m1");
+    var m2s = document.getElementById("m2");
+    var aS = document.getElementById("a");
+    var r1s = document.getElementById("r1");
+    var r2s = document.getElementById("r2");
+    m1s.value = String(B.sliderPos(sc.m1, B.MASS_MIN, B.MASS_MAX));
+    m2s.value = String(B.sliderPos(sc.m2, B.MASS_MIN, B.MASS_MAX));
+    aS.value = String(B.sliderPos(sc.aKm, B.A_MIN_KM, B.A_MAX_KM));
+    r1s.value = String(B.sliderPos(sc.radius1, B.R_MIN_KM, B.R_MAX_KM));
+    r2s.value = String(B.sliderPos(sc.radius2, B.R_MIN_KM, B.R_MAX_KM));
+    m1s.setAttribute("aria-valuetext", massField(sc.m1) + " " + massNoun() + ". " + sc.name1 + ".");
+    m2s.setAttribute("aria-valuetext", massField(sc.m2) + " " + massNoun() + ". " + sc.name2 + ".");
+    aS.setAttribute("aria-valuetext", lengthField(sc.aKm) + " " + lengthNoun() + ".");
+    r1s.setAttribute("aria-valuetext", lengthField(sc.radius1) + " " + lengthNoun() + ".");
+    r2s.setAttribute("aria-valuetext", lengthField(sc.radius2) + " " + lengthNoun() + ".");
+    if (pairCanvas) pairCanvas.setAttribute("aria-label", sc.aria + " Time-lapse, not the cited period.");
+    document.getElementById("orbit-hint").textContent = state.playing
+      ? "Playing · about 12 seconds a loop · not the cited period"
+      : "Paused · " + sc.title + " · barycenter at the cross";
+    var note = document.getElementById("scale-note");
+    if (sc.pair) {
+      note.textContent = sc.title + " uses " + sc.m1Label + ", " + sc.m2Label + ", and " + sc.aText + ". The cited period, " + sc.periodLabel + ", is not the speed of the drawing. Drag a slider or type a number to leave the preset.";
+    } else {
+      note.textContent = "Custom masses and separation. Press a pair to return to a cited case.";
+    }
+    drawPair(sc);
+    drawWobble();
+  }
+
+  function fit(canvas, minH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.max(minH, Math.round(Math.min(w * 0.78, 720)));
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  function drawPair(sc) {
+    var box = fit(pairCanvas, 420);
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    var insetSide = w >= 640;
+    var inset = insetSide
+      ? { x: w - 176, y: 16, s: 160 }
+      : { x: 12, y: h - 148, s: Math.min(136, w - 24) };
+    var mainRight = insetSide ? inset.x - 12 : w - 12;
+    var mainBottom = insetSide ? h - 12 : inset.y - 8;
+    var mainLeft = 12;
+    var mainTop = 8;
+    var extent = Math.max(sc.r1 + sc.radius1, sc.r2 + sc.radius2);
+    if (!(extent > 0)) return;
+    var avail = Math.min(mainRight - mainLeft, mainBottom - mainTop);
+    var scale = (avail / 2 - 18) / extent;
+    if (!(scale > 0)) return;
+    var cx = (mainLeft + mainRight) / 2;
+    var cy = (mainTop + mainBottom) / 2;
+    var lay = B.layout(state.phase, sc.r1, sc.r2);
+    function px(x) { return cx + x * scale; }
+    function py(y) { return cy - y * scale; }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(0, 0, insetSide ? inset.x - 4 : w, insetSide ? h : inset.y - 4);
+    ctx.clip();
+    ctx.strokeStyle = c.line;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, sc.r2 * scale, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(sc.r1 * scale, 0.5), 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    function body(x, y, radius, fill) {
+      var rad = radius * scale;
+      ctx.beginPath();
+      if (rad >= 0.8) ctx.arc(px(x), py(y), rad, 0, Math.PI * 2);
+      else ctx.arc(px(x), py(y), 2.2, 0, Math.PI * 2);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = c.base;
+      ctx.stroke();
+    }
+    body(lay.x1, lay.y1, sc.radius1, sc.fill1);
+    body(lay.x2, lay.y2, sc.radius2, sc.fill2);
+    ctx.strokeStyle = c.ink;
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    ctx.moveTo(cx - 7, cy);
+    ctx.lineTo(cx + 7, cy);
+    ctx.moveTo(cx, cy - 7);
+    ctx.lineTo(cx, cy + 7);
+    ctx.stroke();
+    ctx.fillStyle = c.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText(sc.name1, px(lay.x1) + 6, py(lay.y1) - 4);
+    ctx.fillText(sc.name2, px(lay.x2) + 6, py(lay.y2) - 4);
+    ctx.restore();
+
+    ctx.fillStyle = "rgba(0,0,0,0.35)";
+    ctx.fillRect(inset.x, inset.y, inset.s, inset.s);
+    ctx.strokeStyle = c.line;
+    ctx.strokeRect(inset.x + 0.5, inset.y + 0.5, inset.s - 1, inset.s - 1);
+    var showMark = sc.r1 <= sc.radius1 * 2.5;
+    var reach = showMark ? Math.max(sc.radius1, sc.r1) * 1.28 : sc.radius1 * 1.2;
+    var is = (inset.s / 2 - 16) / reach;
+    var icx = inset.x + inset.s / 2;
+    var icy = inset.y + inset.s / 2 + 4;
+    ctx.beginPath();
+    ctx.arc(icx, icy, Math.max(sc.radius1 * is, 1), 0, Math.PI * 2);
+    ctx.fillStyle = sc.fill1;
+    ctx.fill();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = c.ink;
+    ctx.stroke();
+    if (showMark) {
+      var mx = icx + sc.r1 * is;
+      ctx.strokeStyle = c.accent;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(mx - 6, icy);
+      ctx.lineTo(mx + 6, icy);
+      ctx.moveTo(mx, icy - 6);
+      ctx.lineTo(mx, icy + 6);
+      ctx.stroke();
+    }
+    ctx.fillStyle = c.ink;
+    ctx.font = font(10);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText(showMark ? "Inset · own scale" : "Inset · mark is off", inset.x + 6, inset.y + 4);
+    if (!showMark) {
+      ctx.fillStyle = c.soft;
+      ctx.fillText(sc.ratioText + " radii out", inset.x + 6, inset.y + 18);
+    }
+  }
+
+  function jdToIso(jd) {
+    var ms = (jd - 2440587.5) * 86400000;
+    var d = new Date(ms);
+    var y = d.getUTCFullYear();
+    var m = String(d.getUTCMonth() + 1);
+    var day = String(d.getUTCDate());
+    if (m.length < 2) m = "0" + m;
+    if (day.length < 2) day = "0" + day;
+    return y + "-" + m + "-" + day;
+  }
+  function isoToJd(iso) {
+    var p = String(iso || "").split("-");
+    if (p.length < 3) return B.WOBBLE_JD0;
+    var ms = Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2]), 12, 0, 0);
+    if (!isFinite(ms)) return B.WOBBLE_JD0;
+    return ms / 86400000 + 2440587.5;
+  }
+  function clampJd(jd) {
+    var end = B.wobbleJd1() - 0.5;
+    if (jd < B.WOBBLE_JD0) return B.WOBBLE_JD0;
+    if (jd > end) return end;
+    return jd;
+  }
+
+  function drawWobble() {
+    var box = fit(wobbleCanvas, 360);
+    var note = document.getElementById("wobble-note");
+    var why = document.getElementById("wobble-why");
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    if (!helio || !trail.length) {
+      ctx.fillStyle = c.muted;
+      ctx.font = font(13);
+      ctx.textAlign = "left";
+      ctx.fillText("The solar-map positions did not load.", 16, 28);
+      if (why) why.textContent = "The solar-map script did not return planet places. The two-body arithmetic above does not use that script. Approximate schematic, not a JPL Horizons barycenter.";
+      return;
+    }
+    var off = B.sunOffsetAt(state.jd, helio);
+    if (!off.ok) return;
+    var maxKm = B.SUN_RADIUS_KM;
+    var i;
+    for (i = 0; i < trail.length; i++) {
+      var pr = Math.sqrt(trail[i].xKm * trail[i].xKm + trail[i].yKm * trail[i].yKm);
+      if (pr > maxKm) maxKm = pr;
+    }
+    var pad = 36;
+    var scale = (Math.min(w, h) / 2 - pad) / (maxKm * 1.08);
+    var cx = w / 2;
+    var cy = h / 2;
+    function X(km) { return cx + km * scale; }
+    function Y(km) { return cy - km * scale; }
+    ctx.strokeStyle = c.accent;
+    ctx.globalAlpha = 0.85;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    for (i = 0; i < trail.length; i++) {
+      var tx = X(trail[i].xKm);
+      var ty = Y(trail[i].yKm);
+      if (i === 0) ctx.moveTo(tx, ty);
+      else ctx.lineTo(tx, ty);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    var sunR = Math.max(B.SUN_RADIUS_KM * scale, 1);
+    ctx.beginPath();
+    ctx.arc(X(off.xKm), Y(off.yKm), sunR, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffe6b0";
+    ctx.globalAlpha = 0.9;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = 1.25;
+    ctx.strokeStyle = c.base;
+    ctx.stroke();
+    ctx.strokeStyle = c.ink;
+    ctx.beginPath();
+    ctx.moveTo(cx - 8, cy);
+    ctx.lineTo(cx + 8, cy);
+    ctx.moveTo(cx, cy - 8);
+    ctx.lineTo(cx, cy + 8);
+    ctx.stroke();
+    ctx.fillStyle = c.muted;
+    ctx.font = font(11);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("barycenter", cx + 10, cy + 6);
+    ctx.fillStyle = c.ink;
+    ctx.fillText("Sun", X(off.xKm) + sunR + 4, Y(off.yKm) - 6);
+    var inside = 0;
+    for (i = 0; i < trail.length; i++) if (trail[i].side === "inside") inside += 1;
+    var outside = trail.length - inside;
+    var minKm = trail[0].rKm;
+    var maxR = trail[0].rKm;
+    for (i = 1; i < trail.length; i++) {
+      if (trail[i].rKm < minKm) minKm = trail[i].rKm;
+      if (trail[i].rKm > maxR) maxR = trail[i].rKm;
+    }
+    if (note) {
+      note.textContent = "Sample of " + trail.length + " places, 2000 through 2050, every " + B.WOBBLE_STEP_DAYS + " days. " + inside + " sit inside the volumetric radius and " + outside + " sit outside. The sample runs from " + B.formatKm(minKm) + " to " + B.formatKm(maxR) + ". That count is this sample. It is not a fraction of all time.";
+    }
+    if (why) {
+      why.textContent = "On " + jdToIso(state.jd) + " at 12:00 UTC, this schematic puts the Sun’s center " + off.rText + " from the barycenter, " + off.ratioText + " volumetric radii. " + off.where + ". The ecliptic-plane distance, which is the drawing, is " + off.planeText + ". The northward offset is " + off.zText + ". The two-body Sun–Jupiter line is a different sum. Approximate schematic, not a JPL Horizons barycenter.";
+    }
+    if (wobbleCanvas) {
+      wobbleCanvas.setAttribute("aria-label", "Approximate schematic. On " + jdToIso(state.jd) + " the Sun’s center is " + off.rText + " from the barycenter, " + off.where.toLowerCase() + ". Not a JPL Horizons barycenter.");
+    }
+    document.getElementById("wobble-hint").textContent = state.wobbling
+      ? "Playing · about one map-year a second · schematic"
+      : "Paused · " + jdToIso(state.jd) + " · " + off.rText + " · " + off.where;
+    setIfIdle(dateInput, jdToIso(state.jd));
+  }
+
+  function readMass(el) {
+    var n = Number(String(el.value).replace(/,/g, ""));
+    if (!(n > 0) || !isFinite(n)) return;
+    state.pair = null;
+    if (state.massUnit === "earth") state[el.id === "m1-num" ? "m1" : "m2"] = B.clampMass(n * B.EARTH_MASS_KG);
+    else if (state.massUnit === "sun") state[el.id === "m1-num" ? "m1" : "m2"] = B.clampMass(n * B.SUN_MASS_KG);
+    else state[el.id === "m1-num" ? "m1" : "m2"] = B.clampMass(n);
+    render();
+  }
+  function readLength(el, key) {
+    var n = Number(el.value);
+    if (!(n > 0) || !isFinite(n)) return;
+    state.pair = null;
+    var km = state.lengthUnit === "au" ? n * B.AU_KM : n;
+    if (key === "aKm") state.aKm = B.clampSep(km);
+    else state[key] = B.clampRadius(km);
+    render();
+  }
+
+  document.getElementById("preset-pair").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-pair")) return;
+    var pair = B.pairById(btn.getAttribute("data-pair"));
+    if (!pair) return;
+    state.pair = pair.id;
+    state.m1 = pair.m1;
+    state.m2 = pair.m2;
+    state.aKm = pair.aKm;
+    state.r1Km = pair.r1Km;
+    state.r2Km = pair.r2Km;
+    render();
+  });
+  document.getElementById("mass-unit").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-mass-unit")) return;
+    state.massUnit = btn.getAttribute("data-mass-unit");
+    render();
+  });
+  document.getElementById("length-unit").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-length-unit")) return;
+    state.lengthUnit = btn.getAttribute("data-length-unit");
+    render();
+  });
+  function bindSlider(id, apply) {
+    document.getElementById(id).addEventListener("input", function () {
+      state.pair = null;
+      apply(Number(document.getElementById(id).value));
+      render();
+    });
+  }
+  bindSlider("m1", function (pos) { state.m1 = B.clampMass(B.valueFromSlider(pos, B.MASS_MIN, B.MASS_MAX)); });
+  bindSlider("m2", function (pos) { state.m2 = B.clampMass(B.valueFromSlider(pos, B.MASS_MIN, B.MASS_MAX)); });
+  bindSlider("a", function (pos) { state.aKm = B.clampSep(B.valueFromSlider(pos, B.A_MIN_KM, B.A_MAX_KM)); });
+  bindSlider("r1", function (pos) { state.r1Km = B.clampRadius(B.valueFromSlider(pos, B.R_MIN_KM, B.R_MAX_KM)); });
+  bindSlider("r2", function (pos) { state.r2Km = B.clampRadius(B.valueFromSlider(pos, B.R_MIN_KM, B.R_MAX_KM)); });
+  document.getElementById("m1-num").addEventListener("input", function () { readMass(document.getElementById("m1-num")); });
+  document.getElementById("m2-num").addEventListener("input", function () { readMass(document.getElementById("m2-num")); });
+  document.getElementById("a-num").addEventListener("input", function () { readLength(document.getElementById("a-num"), "aKm"); });
+  document.getElementById("r1-num").addEventListener("input", function () { readLength(document.getElementById("r1-num"), "r1Km"); });
+  document.getElementById("r2-num").addEventListener("input", function () { readLength(document.getElementById("r2-num"), "r2Km"); });
+
+  function tick(t) {
+    if (!state.playing) return;
+    if (!lastT) lastT = t;
+    var dt = Math.min(0.05, (t - lastT) / 1000);
+    lastT = t;
+    state.phase += dt / 12;
+    drawPair(currentScene());
+    raf = window.requestAnimationFrame(tick);
+  }
+  function setPlay(on) {
+    state.playing = on;
+    playBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    playBtn.textContent = on ? "Pause" : "Play";
+    playBtn.setAttribute("aria-label", on ? "Pause the orbit" : "Play the orbit");
+    document.getElementById("orbit-hint").textContent = on
+      ? "Playing · about 12 seconds a loop · not the cited period"
+      : "Paused · barycenter at the cross";
+    if (on) {
+      lastT = 0;
+      raf = window.requestAnimationFrame(tick);
+    } else if (raf) {
+      window.cancelAnimationFrame(raf);
+      raf = 0;
+    }
+  }
+  playBtn.addEventListener("click", function () { setPlay(!state.playing); });
+
+  function wobbleTick(t) {
+    if (!state.wobbling) return;
+    if (!wobbleLast) wobbleLast = t;
+    var dt = Math.min(0.05, (t - wobbleLast) / 1000);
+    wobbleLast = t;
+    state.jd = clampJd(state.jd + dt * B.WOBBLE_YEAR_DAYS);
+    if (state.jd >= B.wobbleJd1() - 0.5) state.jd = B.WOBBLE_JD0;
+    drawWobble();
+    wobbleRaf = window.requestAnimationFrame(wobbleTick);
+  }
+  function setWobble(on) {
+    state.wobbling = on;
+    wobbleBtn.setAttribute("aria-pressed", on ? "true" : "false");
+    wobbleBtn.textContent = on ? "Pause" : "Play";
+    if (on) {
+      wobbleLast = 0;
+      wobbleRaf = window.requestAnimationFrame(wobbleTick);
+    } else if (wobbleRaf) {
+      window.cancelAnimationFrame(wobbleRaf);
+      wobbleRaf = 0;
+      drawWobble();
+    }
+  }
+  wobbleBtn.addEventListener("click", function () { setWobble(!state.wobbling); });
+  dateInput.addEventListener("change", function () {
+    state.jd = clampJd(isoToJd(dateInput.value));
+    drawWobble();
+  });
+  document.getElementById("btn-wobble-now").addEventListener("click", function () {
+    var now = new Date();
+    var ms = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 12, 0, 0);
+    state.jd = clampJd(ms / 86400000 + 2440587.5);
+    drawWobble();
+  });
+
+  pairCanvas.addEventListener("keydown", function (ev) {
+    if (helpDialog && !helpDialog.hidden) return;
+    if (ev.key === " " || ev.key === "Spacebar") {
+      ev.preventDefault();
+      setPlay(!state.playing);
+      return;
+    }
+    var key = ev.key;
+    if (key !== "ArrowLeft" && key !== "ArrowRight" && key !== "ArrowUp" && key !== "ArrowDown") return;
+    ev.preventDefault();
+    state.pair = null;
+    var steps = ev.shiftKey ? 20 : 2;
+    if (key === "ArrowLeft" || key === "ArrowRight") {
+      var pos = B.sliderPos(state.aKm, B.A_MIN_KM, B.A_MAX_KM);
+      pos += key === "ArrowRight" ? steps : -steps;
+      state.aKm = B.clampSep(B.valueFromSlider(pos, B.A_MIN_KM, B.A_MAX_KM));
+    } else {
+      var mpos = B.sliderPos(state.m2, B.MASS_MIN, B.MASS_MAX);
+      mpos += key === "ArrowUp" ? steps : -steps;
+      state.m2 = B.clampMass(B.valueFromSlider(mpos, B.MASS_MIN, B.MASS_MAX));
+    }
+    render();
+  });
+
+  function focusables() {
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, a, input, [tabindex='0']")).filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp() {
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      var tag = ev.target && ev.target.tagName;
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var lastNode = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      lastNode.focus();
+    } else if (!ev.shiftKey && active === lastNode) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  if (helio) trail = B.sunTrail(B.WOBBLE_JD0, B.wobbleJd1(), B.WOBBLE_STEP_DAYS, helio);
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver) {
+    if (pairCanvas && pairCanvas.parentElement) new ResizeObserver(render).observe(pairCanvas.parentElement);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
