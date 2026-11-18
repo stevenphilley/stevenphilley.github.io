@@ -1,0 +1,952 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rotation curves — galaxy speeds and dark matter — Steven Philley</title>
+<meta name="description" content="Interactive rotation-curve desk. v = sqrt(G M(&lt;r)/r). A point mass falls as r^−1/2. A pseudo-isothermal halo stays high. 8178 pc and 229.0 km/s compute 219.401 Myr. Classroom sliders, not a fit.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/rotation-curve/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Rotation curves — galaxy speeds and dark matter">
+<meta property="og:description" content="Circular speed is sqrt(G M(&lt;r)/r). A central mass falls as r^−1/2. Spiral curves stay roughly flat. 8178 pc and 229.0 km/s compute 219.401 Myr. Not a mass model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/rotation-curve/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rotation curves — galaxy speeds and dark matter">
+<meta name="twitter:description" content="8178 pc and 229.0 km/s compute a solar orbit of 219.401 Myr. The sliders are a classroom toy, not a fit.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.lede a{text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;background:var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.disk{background:#6ea4b8}
+.swatch.halo{background:#d98b97}
+.swatch.total{background:var(--ink,#e8e6e1)}
+.swatch.kep{height:0;background:transparent;border-top:1px dashed var(--muted,#63666e)}
+.swatch.sun{width:10px;height:10px;border-radius:50%;background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.slider-row input:disabled{opacity:.38}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:860px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px;text-wrap:pretty}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/" aria-current="page">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Rotation curves</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The flat curve</p>
+  <h1>Rotation curves</h1>
+  <p class="lede">Circular speed is the speed of a circular orbit. For a spherical mass it is <strong>v(r) = √(G · M(&lt;r) / r)</strong>. <strong>M(&lt;r)</strong> is the mass inside radius <strong>r</strong>. If that mass were a central point, the speed far out would fall as <strong>r<sup>−1/2</sup></strong>. Spiral galaxies do not do that. The curve stays roughly flat, so the enclosed mass grows about linearly with r, which is more mass than the starlight shows. Rubin and Ford 1970 measured 67 H II regions in M31 from 3 to 24 kpc. Their abstract says that beyond 4 kpc the mass increases approximately linearly to 14 kpc, and more slowly after that, and that the mass to 24 kpc is (1.85 ± 0.1) × 10<sup>11</sup> solar masses. They wrote that extrapolation beyond that distance is clearly a matter of taste. This page does not refit M31. The cited Sun on the Milky Way button is two later numbers, not a model of that curve: GRAVITY Collaboration 2019, <strong>8178 pc</strong>, and Eilers et al. 2019, <strong>229.0 km/s</strong>. The period <strong>2πr/v</strong> from those two is <strong>219.401 Myr</strong>. The unrounded quotient is 219.400731 Myr. Eilers adopted 8.122 kpc, not 8178 pc. They are not averaged. Milgrom 1983 proposed a modified dynamics, MOND, in which a flat curve need not mean unseen mass. This page does not draw that alternative. The map of the disk is the <a href="/science/astronomy/galaxy/">galaxy</a> desk. A stellar wobble is the <a href="/science/astronomy/radial-velocity/">radial-velocity</a> desk. The shared point of two bodies is the <a href="/science/astronomy/barycenter/">barycenter</a> desk.</p>
+  <p class="note-schematic">Classroom schematic, not a mass model and not a fit. G is the 2022 CODATA central value, 6.67430 × 10<sup>−11</sup> m³ kg<sup>−1</sup> s<sup>−2</sup>. A solar mass is the IAU 2015 nominal GM☉, 1.3271244 × 10<sup>20</sup> m³ s<sup>−2</sup>, divided by that G, which is 1.9884098707 × 10<sup>30</sup> kg. Because the solar mass is GM☉/G, the mass in solar masses is v²r/GM☉ and G cancels. One parsec is (648000/π) au, from IAU 2015 Resolution B2, footnote 4, and one au is 149,597,870,700 m. That parsec is 3.085677581491 × 10<sup>16</sup> m. A year in the period is the Julian year, 31,557,600 s. The bulge is a Plummer sphere, a point mass when the scale is zero. The disk uses the cylindrical mass of an exponential sheet as if it were spherical. The halo is pseudo-isothermal. The sliders are round classroom values.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Speed against radius</span>
+    <button type="button" class="help-q" id="rc-help" aria-haspopup="dialog" aria-controls="rc-help-dialog" aria-expanded="false" aria-label="How this rotation-curve desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">v versus r · classroom toy, not a fit</p>
+      <div class="controls">
+        <p class="pick-label">Preset · round values, not a fit</p>
+        <div class="presets" id="preset-kind" role="group" aria-label="Preset">
+          <button type="button" data-preset="milky-way" aria-pressed="true">Milky Way</button>
+          <button type="button" data-preset="keplerian" aria-pressed="false">Point mass</button>
+          <button type="button" data-preset="disk" aria-pressed="false">Disk</button>
+          <button type="button" data-preset="halo" aria-pressed="false">Halo</button>
+        </div>
+        <p class="pick-label">Components · on or off</p>
+        <div class="presets" id="toggles" role="group" aria-label="Components">
+          <button type="button" data-part="bulge" aria-pressed="true">Bulge</button>
+          <button type="button" data-part="disk" aria-pressed="true">Disk</button>
+          <button type="button" data-part="halo" aria-pressed="true">Halo</button>
+        </div>
+        <p class="pick-label">Probe radius, kpc</p>
+        <div class="slider-row">
+          <label for="radius">r</label>
+          <input type="range" id="radius" min="0" max="1000" step="1" value="260" aria-valuemin="0.5" aria-valuemax="30" aria-valuenow="8.178" aria-valuetext="8.178 kpc">
+          <label for="radius-num">Number</label>
+          <input type="number" id="radius-num" inputmode="decimal" step="any" value="8.178" aria-label="Probe radius in kiloparsecs">
+        </div>
+        <p class="pick-label">Bulge · Plummer mass, 10^10 solar masses, and scale a, kpc. a = 0 is a point mass.</p>
+        <div class="slider-row">
+          <label for="bulge-mass">Mb</label>
+          <input type="range" id="bulge-mass" min="0" max="1000" step="1" value="50" aria-valuemin="0" aria-valuemax="20" aria-valuenow="1" aria-valuetext="1 times 10^10 solar masses">
+          <label for="bulge-mass-num">Number</label>
+          <input type="number" id="bulge-mass-num" inputmode="decimal" step="any" value="1.000" aria-label="Bulge mass in units of 10^10 solar masses">
+        </div>
+        <div class="slider-row">
+          <label for="bulge-scale">a</label>
+          <input type="range" id="bulge-scale" min="0" max="1000" step="1" value="125" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0.5" aria-valuetext="0.5 kpc">
+          <label for="bulge-scale-num">Number</label>
+          <input type="number" id="bulge-scale-num" inputmode="decimal" step="any" value="0.50" aria-label="Bulge scale in kiloparsecs">
+        </div>
+        <p class="pick-label">Disk · total mass, 10^10 solar masses, and scale Rd, kpc. Spherical toy of the cylindrical mass.</p>
+        <div class="slider-row">
+          <label for="disk-mass">Md</label>
+          <input type="range" id="disk-mass" min="0" max="1000" step="1" value="250" aria-valuemin="0" aria-valuemax="20" aria-valuenow="5" aria-valuetext="5 times 10^10 solar masses">
+          <label for="disk-mass-num">Number</label>
+          <input type="number" id="disk-mass-num" inputmode="decimal" step="any" value="5.000" aria-label="Disk mass in units of 10^10 solar masses">
+        </div>
+        <div class="slider-row">
+          <label for="disk-scale">Rd</label>
+          <input type="range" id="disk-scale" min="0" max="1000" step="1" value="333" aria-valuemin="0.5" aria-valuemax="8" aria-valuenow="3" aria-valuetext="3 kpc">
+          <label for="disk-scale-num">Number</label>
+          <input type="number" id="disk-scale-num" inputmode="decimal" step="any" value="3.00" aria-label="Disk scale length in kiloparsecs">
+        </div>
+        <p class="pick-label">Halo · asymptotic speed, km/s, and core radius rc, kpc. Pseudo-isothermal toy.</p>
+        <div class="slider-row">
+          <label for="halo-v">v∞</label>
+          <input type="range" id="halo-v" min="0" max="1000" step="1" value="600" aria-valuemin="0" aria-valuemax="300" aria-valuenow="180" aria-valuetext="180 km/s">
+          <label for="halo-v-num">Number</label>
+          <input type="number" id="halo-v-num" inputmode="decimal" step="any" value="180" aria-label="Halo asymptotic speed in kilometers per second">
+        </div>
+        <div class="slider-row">
+          <label for="halo-rc">rc</label>
+          <input type="range" id="halo-rc" min="0" max="1000" step="1" value="310" aria-valuemin="0.5" aria-valuemax="15" aria-valuenow="5" aria-valuetext="5 kpc">
+          <label for="halo-rc-num">Number</label>
+          <input type="number" id="halo-rc-num" inputmode="decimal" step="any" value="5.00" aria-label="Halo core radius in kiloparsecs">
+        </div>
+      </div>
+      <canvas id="rotation-canvas" width="880" height="520" tabindex="0" role="img" aria-label="Milky Way classroom. Toy speed 193.039 km/s at 8.178 kpc. Cited Sun 229.0 km/s at 8.178 kpc, period 219.401 Myr. Not a mass model."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch" aria-hidden="true"></span> Bulge</li>
+        <li><span class="swatch disk" aria-hidden="true"></span> Disk</li>
+        <li><span class="swatch halo" aria-hidden="true"></span> Halo</li>
+        <li><span class="swatch total" aria-hidden="true"></span> Total</li>
+        <li><span class="swatch kep" aria-hidden="true"></span> Keplerian through the probe</li>
+        <li><span class="swatch sun" aria-hidden="true"></span> Cited Sun, 229.0 km/s</li>
+      </ul>
+      <p class="scale-note" id="scale-note">An off component is not drawn. The dashed curve passes through the toy speed at the probe and falls as r<sup>−1/2</sup>. The dot at 229.0 km/s is the cited Sun, not the toy. Tap the plot to move the probe. Left and Right step the radius.</p>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Toy · classroom values, not a fit</p>
+      <h2 id="d-title">Milky Way classroom</h2>
+      <p class="range" id="d-range">Toy 193.039 km/s · cited Sun 219.401 Myr</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Probe radius</span><span class="v">8.178 kpc</span></li>
+        <li><span class="k">Bulge</span><span class="v">72.317 km/s</span></li>
+        <li><span class="k">Disk</span><span class="v">140.997 km/s</span></li>
+        <li><span class="k">Halo</span><span class="v">110.246 km/s</span></li>
+        <li><span class="k">Visible toy</span><span class="v">158.461 km/s</span></li>
+        <li><span class="k">Toy speed</span><span class="v">193.039 km/s</span></li>
+        <li><span class="k">Toy M(&lt;r)</span><span class="v">7.085575 × 10^10 solar masses</span></li>
+        <li><span class="k">Toy period</span><span class="v">260.273 Myr</span></li>
+        <li><span class="k">Cited R0</span><span class="v">8178 pc</span></li>
+        <li><span class="k">Eilers adopted R⊙</span><span class="v">8.122 kpc</span></li>
+        <li><span class="k">Cited speed</span><span class="v">229.0 km/s</span></li>
+        <li><span class="k">Cited M(&lt;r)</span><span class="v">9.971419 × 10^10 solar masses</span></li>
+        <li><span class="k">Cited period</span><span class="v">219.401 Myr</span></li>
+      </ul>
+      <p class="why" id="d-why">v = sqrt(G M(&lt;r) / r). The three toys add in quadrature, which adds their enclosed masses. At 8.178 kpc the toy speed is 193.039 km/s. Bulge 72.317 km/s, disk 140.997 km/s, halo 110.246 km/s. The visible toy, bulge plus disk, is 158.461 km/s. The toy period is 260.273 Myr, from 2πr/v. The toy enclosed mass is 7.085575 × 10^10 solar masses, from v²r/GM☉. The printed speeds are rounded at three decimals. The total is rounded from the unrounded sum of squares. A point mass matched to the toy speed at this radius is the dashed curve. It falls as r^−1/2. The cited Sun is a different number. 8178 pc and 229.0 km/s give 219.401 Myr. 193.039 km/s does not have to round to 229.0 km/s. The sliders are classroom values, not a fit. Not a mass model.</p>
+    </div>
+  </div>
+
+  <p class="band">What the number is</p>
+  <div class="means">
+    <p><strong>One speed, one enclosed mass.</strong> For a circular orbit in a spherical mass, centripetal acceleration v²/r equals G M(&lt;r) / r², so v² = G M(&lt;r) / r. Turn it around and M(&lt;r) = v² r / G. A flat v means M grows about linearly with r. A point mass does the opposite: M is fixed, so v falls as r<sup>−1/2</sup>. The dashed curve on the plot is that fall, forced through the toy speed at the probe. It is not a measurement. Rubin and Ford 1970, ApJ 159, 379, is the historical optical curve for M31. The abstract’s (1.85 ± 0.1) × 10<sup>11</sup> solar masses to 24 kpc is their disk model, not a slider on this page. The extra mass in the flat picture is the halo. Calling it dark matter is the usual name for mass that does not shine. This page does not identify a particle.</p>
+    <p><strong>The cited Sun, written out.</strong> GRAVITY Collaboration 2019 print R<sub>0</sub> = 8178 ± 13 statistical ± 22 systematic pc. 8178 pc is 8.178 kpc. Eilers et al. 2019 print v<sub>c</sub>(R<sub>⊙</sub>) = 229.0 ± 0.2 km/s. The abstract puts systematic uncertainties at the ~2–5% level. The discussion puts ~2–3% on the solar value. They are not averaged. Eilers adopted R<sub>⊙</sub> = 8.122 ± 0.031 kpc, from Gravity Collaboration 2018. 8.178 − 8.122 = 0.056 kpc. Their slope is −1.7 ± 0.1 km/s per kpc, with a systematic uncertainty of 0.46 km/s per kpc. 0.056 × 1.7 = 0.0952 km/s. This page does not subtract it. 229.0 stays 229.0. One parsec is (648000/π) × 149,597,870,700 m = 3.085677581491 × 10<sup>16</sup> m. The radius is 8178 of those metres. The speed is 229,000 m/s. P = 2πR/v. A year is 365.25 × 86,400 s = 31,557,600 s, and 1 Myr is 10<sup>6</sup> of those years. The unrounded quotient is 219.400731 Myr, which rounds to 219.401 Myr at three decimals. Enclosed mass is v²R/GM☉ with the IAU nominal GM☉ = 1.3271244 × 10<sup>20</sup> m³ s<sup>−2</sup>. That is 9.971419 × 10<sup>10</sup> solar masses. The coefficient to twelve decimals is 9.971419375765. Dividing GM☉ by the 2022 CODATA G gives 1.9884098707 × 10<sup>30</sup> kg. G’s standard uncertainty, 0.00015 × 10<sup>−11</sup>, is not folded in. The ±13 pc, the ±22 pc, and the ±0.2 km/s are not folded in either. GRAVITY Collaboration 2021 print 8275 ± 9 statistical ± 33 systematic pc after an aberration correction. This page does not substitute 8275. The <a href="/science/astronomy/galaxy/">galaxy</a> desk already cites the 2019 distance. Its ~8.2 kpc drawing is a different round scale.</p>
+    <p><strong>What the sliders are.</strong> The Milky Way button sets a bulge of 1 × 10<sup>10</sup> solar masses and scale 0.5 kpc, a disk of 5 × 10<sup>10</sup> solar masses and scale 3 kpc, and a halo with v<sub>∞</sub> = 180 km/s and r<sub>c</sub> = 5 kpc. At 8.178 kpc that toy is 193.039 km/s and 260.273 Myr. 193.039 does not round to 229.0. They are not averaged. The bulge enclosed mass is M<sub>b</sub> r³ / (r² + a²)<sup>3/2</sup>. At a = 0 that is the whole M<sub>b</sub> at every r &gt; 0, and the speed falls as r<sup>−1/2</sup>. The point-mass button is 8 × 10<sup>10</sup> solar masses at 8 kpc, which is 207.387 km/s and 236.993 Myr. At 16 kpc the same mass is slower by √2. The disk mass inside cylindrical radius R is M<sub>d</sub> [1 − exp(−R/R<sub>d</sub>) (1 + R/R<sub>d</sub>)]. The speed then uses v² = GM/R, as if that cylinder were a sphere. A thin disk’s true circular speed needs a different potential. This page does not compute it. The halo is v² = v<sub>∞</sub>² (1 − (r<sub>c</sub>/r) arctan(r/r<sub>c</sub>)). That is the circular speed of the density ρ<sub>0</sub> / (1 + (r/r<sub>c</sub>)²), with v<sub>∞</sub>² = 4πGρ<sub>0</sub> r<sub>c</sub>². ρ<sub>0</sub> is not a separate slider. The three speeds add in quadrature. The printed components are rounded at three decimals. Adding those rounded squares does not have to return the printed total. Milgrom 1983, ApJ 270, 365, takes the low-acceleration limit a²/a<sub>0</sub> ≈ GM/r² as an alternative to unseen mass. This page stays with Newton. It does not adopt an a<sub>0</sub> and it does not draw a MOND curve.</p>
+  </div>
+
+  <p class="band">Presets, and the cited Sun</p>
+  <div class="sheet">
+    <table>
+      <caption>Classroom presets at the probe each button sets. The cited Sun row is 8178 pc and 229.0 km/s. It is not a slider setting. The columns are not averaged.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Row</th>
+          <th scope="col">Radius</th>
+          <th scope="col">Bulge</th>
+          <th scope="col">Disk</th>
+          <th scope="col">Halo</th>
+          <th scope="col">Speed</th>
+          <th scope="col">M(&lt;r)</th>
+          <th scope="col">Period</th>
+        </tr>
+      </thead>
+      <tbody id="preset-rows">
+        <tr id="row-milky-way" data-preset="milky-way" class="is-on"><th scope="row">Milky Way classroom</th><td>8.178 kpc</td><td>1 × 10^10, a = 0.5 kpc</td><td>5 × 10^10, Rd = 3 kpc</td><td>180 km/s, rc = 5 kpc</td><td>193.039 km/s</td><td>7.085575 × 10^10 solar masses</td><td>260.273 Myr</td></tr>
+        <tr id="row-keplerian" data-preset="keplerian"><th scope="row">Point mass</th><td>8.000 kpc</td><td>8 × 10^10, a = 0</td><td>off</td><td>off</td><td>207.387 km/s</td><td>8.000000 × 10^10 solar masses</td><td>236.993 Myr</td></tr>
+        <tr id="row-disk" data-preset="disk"><th scope="row">Exponential disk</th><td>8.000 kpc</td><td>off</td><td>6 × 10^10, Rd = 3 kpc</td><td>off</td><td>155.044 km/s</td><td>4.471364 × 10^10 solar masses</td><td>317.001 Myr</td></tr>
+        <tr id="row-halo" data-preset="halo"><th scope="row">Halo only</th><td>10.000 kpc</td><td>off</td><td>off</td><td>220 km/s, rc = 2 kpc</td><td>187.365 km/s</td><td>8.162324 × 10^10 solar masses</td><td>327.898 Myr</td></tr>
+        <tr id="row-sun"><th scope="row">Cited Sun</th><td>8178 pc</td><td>—</td><td>—</td><td>—</td><td>229.0 km/s</td><td>9.971419 × 10^10 solar masses</td><td>219.401 Myr</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">The point-mass speed at 16 kpc is the 8 kpc speed divided by √2. The halo row uses v² = 220² (1 − (2/10) arctan(10/2)). None of these rows is a fit to a galaxy. A dash on the cited Sun means that row is not a component toy.</p>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Circular speed</dt><dd>v(r) = √(G M(&lt;r) / r), in km/s, with r in kpc. It is the speed of a circular orbit, not the Sun’s peculiar motion and not a radial velocity toward the observer.</dd></div>
+    <div class="gloss"><dt>Keplerian</dt><dd>The r<sup>−1/2</sup> fall of a fixed central mass. The <a href="/science/astronomy/kepler/">Kepler</a> desk is the same gravity, written as P² = a³ for a circular orbit around one solar mass. The dashed curve here is that fall, matched to the toy at the probe.</dd></div>
+    <div class="gloss"><dt>Quadrature</dt><dd>v² = v<sub>bulge</sub>² + v<sub>disk</sub>² + v<sub>halo</sub>². For these spherical toys that is the same as adding enclosed masses and then taking one speed. An off component contributes zero.</dd></div>
+    <div class="gloss"><dt>Plummer bulge</dt><dd>M(&lt;r) = M<sub>b</sub> r³ / (r² + a²)<sup>3/2</sup>. The scale a is a classroom length in kpc. a = 0 is a point mass. It is not a fit to a galactic bulge.</dd></div>
+    <div class="gloss"><dt>Exponential disk</dt><dd>Surface density falling as exp(−R/R<sub>d</sub>). The mass inside radius R is M<sub>d</sub> [1 − exp(−x) (1 + x)], x = R/R<sub>d</sub>. This page then pretends that mass is spherical. The thin-disk potential is not drawn.</dd></div>
+    <div class="gloss"><dt>Pseudo-isothermal halo</dt><dd>v² = v<sub>∞</sub>² (1 − (r<sub>c</sub>/r) arctan(r/r<sub>c</sub>)). The speed rises from zero and levels off near v<sub>∞</sub>. v<sub>∞</sub> and r<sub>c</sub> are classroom knobs, not a Milky Way fit.</dd></div>
+    <div class="gloss"><dt>Dark matter</dt><dd>Mass that the flat curve requires if the force is still Newton’s, and that the starlight does not show. The halo slider is that mass in toy form. No particle is named.</dd></div>
+    <div class="gloss gloss-wide"><dt>MOND</dt><dd>Milgrom 1983, ApJ 270, 365. In the low-acceleration limit the paper writes a²/a<sub>0</sub> ≈ GM/r², so a flat outer curve need not mean unseen mass. This page names that alternative and does not draw it. No value of a<sub>0</sub> is adopted.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the numbers come from</h3>
+    <ul>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2019/05/aa35656-19/aa35656-19.html" rel="noopener" target="_blank">GRAVITY Collaboration 2019, A&amp;A 625, L10</a> — geometric distance to the Galactic centre, R<sub>0</sub> = 8178 ± 13 statistical ± 22 systematic pc. This page’s cited radius. The same paper is on the <a href="/science/astronomy/galaxy/">galaxy</a> source list. The ~8.2 kpc label on that drawing is not 8178 pc.</li>
+      <li><a href="https://www.aanda.org/articles/aa/full_html/2021/03/aa40208-20/aa40208-20.html" rel="noopener" target="_blank">GRAVITY Collaboration 2021, A&amp;A 647, A59</a> — after an aberration correction, R<sub>0</sub> = 8275 ± 9 statistical ± 33 systematic pc. Not substituted.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/2019ApJ...871..120E/abstract" rel="noopener" target="_blank">Eilers, Hogg, Rix, and Ness 2019, ApJ 871, 120</a> — v<sub>c</sub>(R<sub>⊙</sub>) = 229.0 ± 0.2 km/s. The abstract prints systematic uncertainties at the ~2–5% level. The discussion prints ~2–3% for the solar value. They adopted R<sub>⊙</sub> = 8.122 ± 0.031 kpc from Gravity Collaboration 2018, A&amp;A 615, L15. Their linear fit declines at −1.7 ± 0.1 km/s per kpc, systematic uncertainty 0.46 km/s per kpc. This page uses 229.0 and does not slide it to 8.178 kpc. Preprint: <a href="https://arxiv.org/abs/1810.09466" rel="noopener" target="_blank">arXiv:1810.09466</a>.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1970ApJ...159..379R/abstract" rel="noopener" target="_blank">Rubin and Ford 1970, ApJ 159, 379</a> — spectra of 67 H II regions from 3 to 24 kpc in M31. The abstract says the mass beyond 4 kpc increases approximately linearly to 14 kpc, and more slowly thereafter, and that the mass to 24 kpc is (1.85 ± 0.1) × 10<sup>11</sup> solar masses. The paper says extrapolation beyond that distance is clearly a matter of taste. Not refit here.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1983ApJ...270..365M/abstract" rel="noopener" target="_blank">Milgrom 1983, ApJ 270, 365</a> — a modification of the Newtonian dynamics as a possible alternative to the hidden mass hypothesis. The low-acceleration limit in the abstract is a²/a<sub>0</sub> ≈ GM/r². Named, not drawn.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA recommended value, 6.67430 × 10<sup>−11</sup> m³ kg<sup>−1</sup> s<sup>−2</sup>, standard uncertainty 0.00015 × 10<sup>−11</sup>. The uncertainty is not folded into the mass.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar mass parameter GM☉ = 1.3271244 × 10<sup>20</sup> m³ s<sup>−2</sup>. A conversion constant, not a new measurement of the Sun. The same constant as the <a href="/science/astronomy/black-holes/">black-hole</a> desk. Divided by the CODATA G it is 1.9884098707 × 10<sup>30</sup> kg.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU 2015 Resolution B2</a> — footnote 4: the parsec is defined as exactly (648000/π) au. With the 2012 au, that is 3.085 677 581 … × 10<sup>16</sup> m. This page’s value of that product is 3.085677581491 × 10<sup>16</sup> m.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom schematic, not a mass model and not a fit. The sliders are round teaching values. The Sun’s 219.401 Myr uses 8178 pc and 229.0 km/s. Those two papers did not adopt the same R<sub>⊙</sub>. They are not averaged. A point mass falls as r<sup>−1/2</sup>. The disk speed treats the cylindrical mass as if it were spherical. The halo is a pseudo-isothermal toy. MOND is named and not drawn. The ±13 pc, ±22 pc, and ±0.2 km/s are not folded into the period. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/galaxy/"><p class="n">The disk</p><h3>Galaxy</h3><p>Where the Sun sits in the Orion Arm. That page’s source list already has the 8178 pc this period uses. The ~8.2 kpc on the drawing is a round scale.</p></a>
+    <a href="/science/astronomy/radial-velocity/"><p class="n">The wobble</p><h3>Radial velocity</h3><p>A star’s line-of-sight speed from a planet. Different speed, same G. Sun–Jupiter there computes 12.47 m/s.</p></a>
+    <a href="/science/astronomy/barycenter/"><p class="n">The balance</p><h3>Barycenter</h3><p>Two bodies and one point. A circular orbit in a galaxy is the one-body limit of that balance, around the enclosed mass.</p></a>
+    <a href="/science/astronomy/kepler/"><p class="n">The year</p><h3>Kepler</h3><p>P² = a³ for a circular orbit around one solar mass. The Keplerian fall on this plot is that same gravity, written as a speed.</p></a>
+    <a href="/science/astronomy/black-holes/"><p class="n">The same GM</p><h3>Black holes</h3><p>The nominal GM☉ on this page is the one that desk uses for a Schwarzschild radius. Sgr A* is a cited mass there, not a rotation curve.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The solar system, inside this orbit. The map is not a galactic model.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="rc-help-dialog" role="dialog" aria-modal="true" aria-labelledby="rc-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="rc-help-title">How the curve is drawn</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Classroom schematic, not a mass model and not a fit. The sliders are round values. The cited Sun is a separate point.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Preset</th><td>Milky Way, point mass, disk, or halo. Each sets round classroom numbers and a probe radius. Moving a slider leaves the preset button.</td></tr>
+        <tr><th scope="row">Bulge, disk, halo</th><td>Turn a component on or off. Off means that speed is zero. The numbers stay, so turning it back on restores them.</td></tr>
+        <tr><th scope="row">r</th><td>The probe, from 0.5 to 30 kpc. The readout is the toy at that radius. Tap the plot or use Left and Right. The number field is the precise radius. 8.178 is the cited 8178 pc.</td></tr>
+        <tr><th scope="row">Mb, a</th><td>Plummer bulge. Mass is in units of 10^10 solar masses, up to 20. Scale a is in kpc, from 0 to 4. Zero is a point mass.</td></tr>
+        <tr><th scope="row">Md, Rd</th><td>Exponential disk. The speed uses the cylindrical mass as if it were a sphere. Rd runs from 0.5 to 8 kpc.</td></tr>
+        <tr><th scope="row">v∞, rc</th><td>Pseudo-isothermal halo. v∞ is the speed the curve levels toward, up to 300 km/s. rc is the core, from 0.5 to 15 kpc.</td></tr>
+        <tr><th scope="row">The drawing</th><td>Solid curves are the components and the total. The dashed curve is a point mass through the toy speed at the probe. The dot is 229.0 km/s at 8.178 kpc. An off component is not drawn. The axis ignores the dashed curve where it would run off the top.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<noscript><p class="note-schematic">The curve needs a script. The table above is the classroom presets and the cited Sun: 8178 pc and 229.0 km/s give 219.401 Myr. The unrounded period is 219.400731 Myr.</p></noscript>
+
+<script src="/science/astronomy/rotation-curve/rotation-curve.js"></script>
+<script>
+(function () {
+  "use strict";
+  var RC = window.RotationCurve;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!RC) return;
+
+  var state = RC.presetById("milky-way");
+  var canvas = document.getElementById("rotation-canvas");
+  var helpBtn = document.getElementById("rc-help");
+  var helpDialog = document.getElementById("rc-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  var PAD = { l: 52, r: 16, t: 18, b: 36 };
+
+  var fields = {
+    r: { range: "radius", num: "radius-num", key: "r", min: RC.R_MIN, max: RC.R_MAX, digits: 3, scale: 1, part: "" },
+    bulgeMass: { range: "bulge-mass", num: "bulge-mass-num", key: "bulgeMass", min: 0, max: RC.MASS_MAX, digits: 3, scale: 1e10, part: "bulge" },
+    bulgeScale: { range: "bulge-scale", num: "bulge-scale-num", key: "bulgeScale", min: 0, max: RC.BULGE_A_MAX, digits: 2, scale: 1, part: "bulge" },
+    diskMass: { range: "disk-mass", num: "disk-mass-num", key: "diskMass", min: 0, max: RC.MASS_MAX, digits: 3, scale: 1e10, part: "disk" },
+    diskScale: { range: "disk-scale", num: "disk-scale-num", key: "diskScale", min: RC.DISK_RD_MIN, max: RC.DISK_RD_MAX, digits: 2, scale: 1, part: "disk" },
+    haloV: { range: "halo-v", num: "halo-v-num", key: "haloV", min: 0, max: RC.HALO_V_MAX, digits: 1, scale: 1, part: "halo" },
+    haloRc: { range: "halo-rc", num: "halo-rc-num", key: "haloRc", min: RC.HALO_RC_MIN, max: RC.HALO_RC_MAX, digits: 2, scale: 1, part: "halo" }
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "IBM Plex Mono, ui-monospace, monospace");
+  }
+  function setIfIdle(el, text) {
+    if (!el || document.activeElement === el) return;
+    if (el.value !== text) el.value = text;
+  }
+  function partOn(part) {
+    if (part === "bulge") return state.bulgeOn;
+    if (part === "disk") return state.diskOn;
+    if (part === "halo") return state.haloOn;
+    return true;
+  }
+  function displayNumber(spec) {
+    var value = state[spec.key] / spec.scale;
+    return value.toFixed(spec.digits);
+  }
+  function press(group, attr, value) {
+    var buttons = document.querySelectorAll("#" + group + " button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var on = buttons[i].getAttribute(attr) === value;
+      buttons[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+  }
+  function markRow(id) {
+    var rows = document.querySelectorAll("#preset-rows tr");
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      rows[i].className = rows[i].getAttribute("data-preset") === id ? "is-on" : "";
+    }
+  }
+  function blurNums() {
+    var active = document.activeElement;
+    if (active && active.blur && active.tagName === "INPUT") active.blur();
+  }
+  function fillStats(sc) {
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    var rows = [
+      ["Probe radius", sc.rText],
+      ["Bulge", sc.bulgeText],
+      ["Disk", sc.diskText],
+      ["Halo", sc.haloText],
+      ["Visible toy", sc.visibleText],
+      ["Toy speed", sc.totalText],
+      ["Toy M(<r)", sc.massText],
+      ["Toy period", sc.periodText],
+      ["Cited R0", sc.sun.rPc + " pc"],
+      ["Eilers adopted R\u2299", sc.sun.eilersText],
+      ["Cited speed", sc.sun.speedText],
+      ["Cited M(<r)", sc.sun.massText],
+      ["Cited period", sc.sun.periodText]
+    ];
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = rows[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = rows[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function axisMax(v) {
+    var target = Math.max(50, v * 1.08);
+    var pow = Math.pow(10, Math.floor(Math.log10(target)));
+    var frac = target / pow;
+    var nice = 10;
+    if (frac <= 1) nice = 1;
+    else if (frac <= 1.2) nice = 1.2;
+    else if (frac <= 1.5) nice = 1.5;
+    else if (frac <= 2) nice = 2;
+    else if (frac <= 2.5) nice = 2.5;
+    else if (frac <= 3) nice = 3;
+    else if (frac <= 4) nice = 4;
+    else if (frac <= 5) nice = 5;
+    else if (frac <= 6) nice = 6;
+    else if (frac <= 8) nice = 8;
+    return nice * pow;
+  }
+  function yTicks(max) {
+    var rough = max / 4;
+    var pow = Math.pow(10, Math.floor(Math.log10(rough)));
+    var err = rough / pow;
+    var nice = 10;
+    if (err <= 1) nice = 1;
+    else if (err <= 2) nice = 2;
+    else if (err <= 2.5) nice = 2.5;
+    else if (err <= 5) nice = 5;
+    var step = nice * pow;
+    var out = [];
+    var guard = 0;
+    var v;
+    for (v = 0; v <= max + step * 0.01 && guard < 12; v += step) {
+      out.push(Math.round(v * 1000) / 1000);
+      guard += 1;
+    }
+    return out;
+  }
+  function fit() {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.round(w * 0.62);
+    if (h < 300) h = 300;
+    if (h > 520) h = 520;
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function draw(sc) {
+    var box = fit();
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    var rows = RC.series(state, 241);
+    var peak = RC.V_SUN_KMS;
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      peak = Math.max(peak, rows[i].bulge, rows[i].disk, rows[i].halo, rows[i].total);
+    }
+    var ymax = axisMax(peak);
+    var plotW = w - PAD.l - PAD.r;
+    var plotH = h - PAD.t - PAD.b;
+    function X(r) { return PAD.l + (r / RC.PLOT_MAX) * plotW; }
+    function Y(v) { return PAD.t + (1 - v / ymax) * plotH; }
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = font(11);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = c.line;
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    var ticks = yTicks(ymax);
+    for (i = 0; i < ticks.length; i++) {
+      var yy = Y(ticks[i]);
+      ctx.beginPath();
+      ctx.moveTo(PAD.l, yy);
+      ctx.lineTo(w - PAD.r, yy);
+      ctx.stroke();
+      ctx.fillText(String(ticks[i]), PAD.l - 6, yy);
+    }
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    var xt = [0, 5, 10, 15, 20, 25, 30];
+    for (i = 0; i < xt.length; i++) {
+      var xx = X(xt[i]);
+      ctx.fillText(String(xt[i]), xx, h - PAD.b + 8);
+    }
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.fillText("km/s", PAD.l, 2);
+    ctx.textAlign = "right";
+    ctx.fillText("kpc", w - PAD.r, h - 14);
+
+    function stroke(key, color, width, dash) {
+      var top = 0;
+      var n;
+      for (n = 0; n < rows.length; n++) if (rows[n][key] > top) top = rows[n][key];
+      if (!(top > 0)) return;
+      ctx.save();
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.setLineDash(dash);
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      var started = false;
+      for (n = 0; n < rows.length; n++) {
+        var v = rows[n][key];
+        if (!(v >= 0) || v > ymax) {
+          started = false;
+          continue;
+        }
+        var x = X(rows[n].r);
+        var y = Y(v);
+        if (!started) {
+          ctx.moveTo(x, y);
+          started = true;
+        } else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.restore();
+    }
+    stroke("kepler", c.muted, 1.25, [5, 4]);
+    if (state.bulgeOn) stroke("bulge", c.accent, 1.5, []);
+    if (state.diskOn) stroke("disk", "#6ea4b8", 1.5, []);
+    if (state.haloOn) stroke("halo", "#d98b97", 1.5, []);
+    stroke("total", c.ink, 2.25, []);
+
+    var px = X(sc.r);
+    ctx.save();
+    ctx.strokeStyle = c.accent;
+    ctx.setLineDash([2, 3]);
+    ctx.beginPath();
+    ctx.moveTo(px, PAD.t);
+    ctx.lineTo(px, PAD.t + plotH);
+    ctx.stroke();
+    ctx.restore();
+    if (sc.total >= 0 && sc.total <= ymax) {
+      ctx.beginPath();
+      ctx.fillStyle = c.ink;
+      ctx.arc(px, Y(sc.total), 3.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    var sunX = X(RC.R0_KPC);
+    var sunY = Y(RC.V_SUN_KMS);
+    ctx.beginPath();
+    ctx.fillStyle = c.accent;
+    ctx.strokeStyle = c.ink;
+    ctx.lineWidth = 1.25;
+    ctx.arc(sunX, sunY, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = c.soft;
+    ctx.font = font(10);
+    ctx.textAlign = "left";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("cited", sunX + 7, sunY - 2);
+  }
+  function render() {
+    var sc = RC.scene(state);
+    if (!sc.ok) return;
+    state.r = sc.state.r;
+    state.bulgeMass = sc.state.bulgeMass;
+    state.bulgeScale = sc.state.bulgeScale;
+    state.diskMass = sc.state.diskMass;
+    state.diskScale = sc.state.diskScale;
+    state.haloV = sc.state.haloV;
+    state.haloRc = sc.state.haloRc;
+    var title = document.getElementById("d-title");
+    var range = document.getElementById("d-range");
+    var why = document.getElementById("d-why");
+    var tier = document.getElementById("d-tier");
+    if (title) title.textContent = sc.name;
+    if (range) range.textContent = sc.range;
+    if (why) why.textContent = sc.why;
+    if (tier) tier.textContent = sc.id ? "Toy · classroom values, not a fit" : "Custom · classroom values, not a fit";
+    if (canvas) canvas.setAttribute("aria-label", sc.aria);
+    fillStats(sc);
+    press("preset-kind", "data-preset", sc.id);
+    press("toggles", "data-part", "");
+    var toggles = document.querySelectorAll("#toggles button");
+    var t;
+    for (t = 0; t < toggles.length; t++) {
+      var part = toggles[t].getAttribute("data-part");
+      toggles[t].setAttribute("aria-pressed", partOn(part) ? "true" : "false");
+    }
+    markRow(sc.id);
+    var names = Object.keys(fields);
+    var n;
+    for (n = 0; n < names.length; n++) {
+      var spec = fields[names[n]];
+      var rangeEl = document.getElementById(spec.range);
+      var numEl = document.getElementById(spec.num);
+      var on = partOn(spec.part);
+      if (rangeEl) {
+        rangeEl.disabled = !on;
+        rangeEl.value = String(RC.sliderPos(state[spec.key], spec.min, spec.max));
+        rangeEl.setAttribute("aria-valuenow", String(state[spec.key] / (spec.scale === 1 ? 1 : spec.scale)));
+        rangeEl.setAttribute("aria-valuetext", displayNumber(spec) + (spec.scale === 1e10 ? " times 10^10 solar masses" : ""));
+      }
+      if (numEl) {
+        numEl.disabled = !on;
+        setIfIdle(numEl, displayNumber(spec));
+      }
+    }
+    draw(sc);
+  }
+
+  document.getElementById("preset-kind").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-preset")) return;
+    var next = RC.presetById(btn.getAttribute("data-preset"));
+    if (!next) return;
+    blurNums();
+    state = next;
+    render();
+  });
+  document.getElementById("toggles").addEventListener("click", function (ev) {
+    var btn = ev.target.closest ? ev.target.closest("button") : null;
+    if (!btn || !btn.getAttribute("data-part")) return;
+    var part = btn.getAttribute("data-part");
+    if (part === "bulge") state.bulgeOn = !state.bulgeOn;
+    if (part === "disk") state.diskOn = !state.diskOn;
+    if (part === "halo") state.haloOn = !state.haloOn;
+    state.id = "";
+    state.name = "";
+    render();
+  });
+
+  function bindField(spec) {
+    var rangeEl = document.getElementById(spec.range);
+    var numEl = document.getElementById(spec.num);
+    rangeEl.addEventListener("input", function () {
+      state.id = "";
+      state.name = "";
+      state[spec.key] = RC.valueFromSlider(Number(rangeEl.value), spec.min, spec.max);
+      render();
+    });
+    function readNum() {
+      var raw = numEl.value.trim();
+      if (raw === "" || raw === "." || raw === "-" || raw === "-.") return;
+      var n = Number(raw);
+      if (!isFinite(n)) return;
+      state.id = "";
+      state.name = "";
+      state[spec.key] = n * spec.scale;
+      render();
+    }
+    numEl.addEventListener("input", readNum);
+    numEl.addEventListener("change", function () {
+      readNum();
+      numEl.blur();
+      render();
+    });
+  }
+  var fieldNames = Object.keys(fields);
+  var f;
+  for (f = 0; f < fieldNames.length; f++) bindField(fields[fieldNames[f]]);
+
+  function rFromClient(clientX) {
+    var rect = canvas.getBoundingClientRect();
+    var plotW = rect.width - PAD.l - PAD.r;
+    if (!(plotW > 0)) return state.r;
+    var t = (clientX - rect.left - PAD.l) / plotW;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return Math.round((t * RC.PLOT_MAX) * 1000) / 1000;
+  }
+  if (canvas) {
+    canvas.addEventListener("pointerup", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      state.id = "";
+      state.name = "";
+      state.r = rFromClient(ev.clientX);
+      render();
+    });
+    canvas.addEventListener("keydown", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var step = ev.shiftKey ? 1 : 0.1;
+      state.id = "";
+      state.name = "";
+      state.r = state.r + (ev.key === "ArrowRight" ? step : -step);
+      render();
+    });
+  }
+
+  function focusables() {
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, a, input, [tabindex='0']")).filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp() {
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  helpBtn.addEventListener("click", function () {
+    if (helpDialog.hidden) openHelp();
+    else closeHelp();
+  });
+  helpDialog.addEventListener("click", function (ev) {
+    if (ev.target === helpDialog) closeHelp();
+  });
+  helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+    b.addEventListener("click", closeHelp);
+  });
+  document.addEventListener("keydown", function (ev) {
+    if (helpDialog.hidden) {
+      var tag = ev.target && ev.target.tagName;
+      if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+        ev.preventDefault();
+        openHelp();
+      }
+      return;
+    }
+    if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+    if (ev.key !== "Tab") return;
+    var nodes = focusables();
+    if (!nodes.length) { ev.preventDefault(); return; }
+    var first = nodes[0];
+    var lastNode = nodes[nodes.length - 1];
+    var active = document.activeElement;
+    if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+      ev.preventDefault();
+      lastNode.focus();
+    } else if (!ev.shiftKey && active === lastNode) {
+      ev.preventDefault();
+      first.focus();
+    }
+  });
+
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver && canvas && canvas.parentElement) new ResizeObserver(render).observe(canvas.parentElement);
+  if (window.MutationObserver) {
+    new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
