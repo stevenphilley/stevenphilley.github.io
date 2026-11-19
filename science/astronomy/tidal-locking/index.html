@@ -1,0 +1,1122 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidal locking — one face toward the partner — Steven Philley</title>
+<meta name="description" content="Interactive tidal-locking desk. t_lock = (ω a^6 I Q) / (3 G m_p^2 k2 R^5), the inversion of Hinkel and Kane 2013 equation (2). Moon–Earth with assumed Q = 100 and k2 = 0.3 is 3.40464 million years. Order of magnitude only. Q and k2 are very uncertain.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/tidal-locking/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Tidal locking — one face toward the partner">
+<meta property="og:description" content="Why a tidal bulge that leads or lags despins a body toward synchronous rotation. Moon–Earth computes 3.40464 million years at today’s distance, with assumed Q and k2. Order of magnitude only.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/tidal-locking/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Tidal locking — one face toward the partner">
+<meta name="twitter:description" content="A bulge diagram, the order-of-magnitude despinning time, and an a^6 chart. Moon, Io, Mercury’s 3:2, and Proxima b.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.lede a{text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas,.chart canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible,.chart canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.chart{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);background:transparent;flex:0 0 auto}
+.swatch.line{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.moon{width:10px;height:10px;border:0;border-radius:50%;background:#c5c1b6}
+.swatch.io{width:10px;height:10px;border:0;background:#e0b15a}
+.swatch.mercury{width:10px;height:10px;border:0;border-radius:50%;background:#b5b1a8}
+.swatch.proxima{width:10px;height:10px;border:0;background:#d98b97}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:860px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px;text-wrap:pretty}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+input[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/" aria-current="page">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Tidal locking</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The lock</p>
+  <h1>Tidal locking</h1>
+  <p class="lede">A tidal torque despins a body toward synchronous rotation: one turn per orbit, one face toward its partner. The partner raises two bulges. If the body spins faster than it orbits, those bulges are carried ahead of the partner. The partner pulls back on the near bulge, and the spin slows. When the spin matches the orbit, the bulge stays on the line of centers and that misalignment torque stops. The order-of-magnitude time used here is <strong>t<sub>lock</sub> = (ω a<sup>6</sup> I Q) / (3 G m<sub>p</sub><sup>2</sup> k<sub>2</sub> R<sup>5</sup>)</strong>, with <strong>I = f m<sub>s</sub> R<sup>2</sup></strong>. It is the inversion of equation (2) in Hinkel &amp; Kane 2013. For Moon–Earth, with the fact-sheet mass, radius, I/MR<sup>2</sup> = 0.394, and distance, and with the assumed initial spin of 13.5 hours, Q = 100, and k<sub>2</sub> = 0.3, the arithmetic is <strong>3.40464 million years</strong>. Order of magnitude only. Q and k<sub>2</sub> are very uncertain. The ocean picture of two bulges is the <a href="/science/astronomy/tides/">tides</a> desk. The peek past a locked lunar face is <a href="/science/astronomy/libration/">libration</a>. A period ratio of two orbits is <a href="/science/astronomy/resonances/">resonances</a>. Whether a close M-dwarf planet sits in the insolation strip is the <a href="/science/astronomy/habitable-zone/">habitable zone</a>.</p>
+  <p class="note-schematic">Educational approximation, not a tidal-evolution model. The torque is taken at the initial spin and held at that magnitude. The orbital rate is not subtracted, the semimajor axis is held fixed, and eccentricity is left out. Real k<sub>2</sub>/Q depends on frequency. Cuartas-Restrepo et al., arXiv:1606.07546, equation (5), print twice this time and also cite Gladman et al. 1996. The factor of two is not substituted. Hinkel &amp; Kane attribute their equation (2) to Peale 1977 and Gladman, Quinn, Nicholson, and Rand, Icarus 122, 166 (1996). This page has not re-read those two. G is the 2022 CODATA central value, 6.67430 × 10<sup>−11</sup> m<sup>3</sup> kg<sup>−1</sup> s<sup>−2</sup>. A year is the Julian year, 31,557,600 s. An astronomical unit in the Proxima distance is the IAU 2012 au, 149,597,870,700 m. The drawing is not to scale, and the bulge angle is exaggerated.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · despinning time</span>
+    <button type="button" class="help-q" id="tl-help" aria-haspopup="dialog" aria-controls="tl-help-dialog" aria-expanded="false" aria-label="How this tidal-locking desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="bulge-hint">Bulge leads the partner · torque slows the spin · angle exaggerated</p>
+      <canvas id="bulge-canvas" width="880" height="520" tabindex="0" role="img" aria-label="Schematic. The partner is on the left. The body on the right is stretched, and the bulge leads the partner because the spin is faster than the orbit. The angle is exaggerated. Not to scale."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch line" aria-hidden="true"></span> Partner direction</li>
+        <li><span class="swatch" aria-hidden="true"></span> Bulge axis</li>
+      </ul>
+      <p class="scale-note" id="bulge-note">Left and Right on the drawing step the alignment. The angle is a classroom exaggeration. It is not a measured lag. Sizes are not to scale.</p>
+      <div class="controls">
+        <p class="pick-label">Alignment · not a measured lag angle</p>
+        <div class="presets" id="bulge-kind" role="group" aria-label="Bulge alignment">
+          <button type="button" data-bulge="lead" aria-pressed="true">Spins faster</button>
+          <button type="button" data-bulge="sync" aria-pressed="false">Synchronous</button>
+          <button type="button" data-bulge="lag" aria-pressed="false">Spins slower</button>
+        </div>
+        <p class="pick-label">Preset · fact-sheet sizes and distances · Q, k2, and the initial spin are assumptions</p>
+        <div class="presets" id="preset-kind" role="group" aria-label="Preset">
+          <button type="button" data-preset="moon" aria-pressed="true">Moon–Earth</button>
+          <button type="button" data-preset="io" aria-pressed="false">Io–Jupiter</button>
+          <button type="button" data-preset="mercury" aria-pressed="false">Mercury–Sun</button>
+          <button type="button" data-preset="proxima" aria-pressed="false">Proxima b</button>
+        </div>
+        <p class="pick-label">Initial spin period, hours. Not the locked period. Logarithmic from 0.5 to 2,000.</p>
+        <div class="slider-row">
+          <label for="spin">Spin</label>
+          <input type="range" id="spin" min="0" max="1000" step="1" value="397" aria-valuemin="0.5" aria-valuemax="2000" aria-valuenow="13.5" aria-valuetext="13.5 hours, assumed">
+          <label for="spin-num">Hours</label>
+          <input type="number" id="spin-num" inputmode="decimal" step="any" value="13.5" aria-label="Initial spin period in hours">
+        </div>
+        <p class="pick-label">Semimajor axis, kilometres. Logarithmic from 10<sup>5</sup> to 10<sup>8</sup>.</p>
+        <div class="slider-row">
+          <label for="axis">a</label>
+          <input type="range" id="axis" min="0" max="1000" step="1" value="195" aria-valuemin="100000" aria-valuemax="100000000" aria-valuenow="384400" aria-valuetext="384,400 km">
+          <label for="axis-num">km</label>
+          <input type="number" id="axis-num" inputmode="decimal" step="any" value="384400" aria-label="Semimajor axis in kilometres">
+        </div>
+        <p class="pick-label">Satellite mass, kilograms. Logarithmic from 10<sup>20</sup> to 10<sup>26</sup>.</p>
+        <div class="slider-row">
+          <label for="mass">m<sub>s</sub></label>
+          <input type="range" id="mass" min="0" max="1000" step="1" value="478" aria-valuemin="1e20" aria-valuemax="1e26" aria-valuenow="7.346e22" aria-valuetext="0.07346 times 10 to the 24 kilograms">
+          <label for="mass-num">kg</label>
+          <input type="number" id="mass-num" inputmode="decimal" step="any" value="7.346e22" aria-label="Satellite mass in kilograms">
+        </div>
+        <p class="pick-label">Satellite radius, kilometres. Logarithmic from 100 to 20,000.</p>
+        <div class="slider-row">
+          <label for="radius">R</label>
+          <input type="range" id="radius" min="0" max="1000" step="1" value="539" aria-valuemin="100" aria-valuemax="20000" aria-valuenow="1737.4" aria-valuetext="1,737.4 km">
+          <label for="radius-num">km</label>
+          <input type="number" id="radius-num" inputmode="decimal" step="any" value="1737.4" aria-label="Satellite radius in kilometres">
+        </div>
+        <p class="pick-label">Partner mass, kilograms. Logarithmic from 10<sup>22</sup> to 5 × 10<sup>30</sup>.</p>
+        <div class="slider-row">
+          <label for="partner">m<sub>p</sub></label>
+          <input type="range" id="partner" min="0" max="1000" step="1" value="319" aria-valuemin="1e22" aria-valuemax="5e30" aria-valuenow="5.9722e24" aria-valuetext="5.9722 times 10 to the 24 kilograms">
+          <label for="partner-num">kg</label>
+          <input type="number" id="partner-num" inputmode="decimal" step="any" value="5.9722e24" aria-label="Partner mass in kilograms">
+        </div>
+        <p class="pick-label">Dissipation function Q. Assumed. Logarithmic from 1 to 10<sup>5</sup>.</p>
+        <div class="slider-row">
+          <label for="quality">Q</label>
+          <input type="range" id="quality" min="0" max="1000" step="1" value="400" aria-valuemin="1" aria-valuemax="100000" aria-valuenow="100" aria-valuetext="100, assumed">
+          <label for="quality-num">Number</label>
+          <input type="number" id="quality-num" inputmode="decimal" step="any" value="100" aria-label="Tidal quality factor Q, an assumption">
+        </div>
+        <p class="pick-label">Love number k2. Assumed. Logarithmic from 0.001 to 1.5.</p>
+        <div class="slider-row">
+          <label for="love">k2</label>
+          <input type="range" id="love" min="0" max="1000" step="1" value="780" aria-valuemin="0.001" aria-valuemax="1.5" aria-valuenow="0.3" aria-valuetext="0.3, assumed">
+          <label for="love-num">Number</label>
+          <input type="number" id="love-num" inputmode="decimal" step="any" value="0.3" aria-label="Tidal Love number k2, an assumption">
+        </div>
+        <p class="pick-label">Inertia factor f in I = f m R<sup>2</sup>. 0.4 is the uniform-sphere assumption. The Moon sheet prints 0.394. Mercury prints 0.35.</p>
+        <div class="slider-row">
+          <label for="inertia">f</label>
+          <input type="range" id="inertia" min="0" max="1000" step="1" value="647" aria-valuemin="0.2" aria-valuemax="0.5" aria-valuenow="0.394" aria-valuetext="0.394">
+          <label for="inertia-num">Number</label>
+          <input type="number" id="inertia-num" inputmode="decimal" step="any" value="0.394" aria-label="Dimensionless inertia factor f in I equals f m R squared">
+        </div>
+        <p class="field-error" id="field-error" role="alert" hidden></p>
+      </div>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Moon Fact Sheet · assumed Q, k2, and initial spin</p>
+      <h2 id="d-title">Moon–Earth</h2>
+      <p class="range" id="d-range">3.40464 million years · order of magnitude only</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Initial spin</span><span class="v">13.5 h · assumed</span></li>
+        <li><span class="k">Semimajor axis</span><span class="v">384,400 km · 0.00256956 AU</span></li>
+        <li><span class="k">Q</span><span class="v">100 · assumed</span></li>
+        <li><span class="k">k2</span><span class="v">0.3 · assumed</span></li>
+        <li><span class="k">I / MR^2</span><span class="v">0.394 · Moon sheet</span></li>
+        <li><span class="k">t_lock</span><span class="v">3.40464 million years</span></li>
+        <li><span class="k">Unrounded</span><span class="v">3.40464 × 10^6 years</span></li>
+        <li><span class="k">Half the distance</span><span class="v">53.1974 thousand years</span></li>
+      </ul>
+      <p class="why" id="d-why">Moon–Earth. The Moon Fact Sheet prints mass 0.07346 × 10^24 kg, volumetric mean radius 1,737.4 km, I/MR^2 = 0.394, and semimajor axis 0.3844 × 10^6 km. The partner is the Earth Fact Sheet mass 5.9722 × 10^24 kg. The Moon sheet’s Earth column, 5.9724 × 10^24 kg, is not substituted. The sheet’s sidereal rotation, 655.720 hours, is the locked state. It is not this initial spin. The initial spin is the assumed 13.5 hours. Q and k2 are assumed. The time is 3.40464 million years. The formula is t_lock = (ω a^6 I Q) / (3 G m_p^2 k2 R^5), with ω = 2π divided by the initial spin period. It is the inversion of Hinkel &amp; Kane 2013, equation (2). Cuartas-Restrepo et al., arXiv:1606.07546, equation (5), print twice this time. The factor of two is not substituted. Q = 100 and k2 = 0.3 are the assumptions Hinkel &amp; Kane state, with the 13.5 hour spin and Q = 100 taken by them from Kasting et al. 1993. They are not measurements of this body. The present semimajor axis is held fixed. A real body may have locked closer in, and t_lock scales as a^6. At half this distance the same other inputs give 53.1974 thousand years, this time divided by 64. Eccentricity is not in the formula. Order of magnitude only. Q and k2 are very uncertain. Not a tidal-evolution model.</p>
+    </div>
+  </div>
+
+  <p class="band">Distance · t_lock scales as a^6</p>
+  <div class="chart">
+    <p class="hint" id="chart-hint">Log-log · slope 6 at the current masses, radius, spin, Q, k2, and f · markers are the presets</p>
+    <canvas id="lock-chart" width="880" height="520" tabindex="0" role="img" aria-label="Log-log chart of despinning time against distance. The line scales as a to the sixth. Moon–Earth is 3.40464 million years. Order of magnitude only."></canvas>
+    <ul class="legend" aria-label="Chart key">
+      <li><span class="swatch" aria-hidden="true"></span> This body’s a^6 line</li>
+      <li><span class="swatch moon" aria-hidden="true"></span> Moon</li>
+      <li><span class="swatch io" aria-hidden="true"></span> Io</li>
+      <li><span class="swatch mercury" aria-hidden="true"></span> Mercury</li>
+      <li><span class="swatch proxima" aria-hidden="true"></span> Proxima b</li>
+    </ul>
+    <p class="scale-note" id="chart-note">Tap the plot or use Left and Right to move the distance. A marker uses that preset’s own masses, radius, inertia, Q, k2, and spin, so it sits on the line only when those match the sliders. Doubling the distance multiplies the time by 64. Order of magnitude only.</p>
+  </div>
+
+  <p class="band">What the number is</p>
+  <div class="means">
+    <p><strong>A misaligned bulge, and a torque.</strong> <a href="https://science.nasa.gov/moon/tidal-locking/" rel="noopener" target="_blank">NASA Science</a> describes the Moon’s case. Earth’s gravity raised a bulge. The bulge stayed a little out of alignment, because the rock took time to rise and fall, and gravity kept pulling that bulge toward alignment. Flexing turned spin energy into heat, and the spin slowed until one turn took as long as one orbit. In that state the bulge no longer shifted relative to Earth. The three buttons are that story, drawn large. “Spins faster” puts the bulge ahead of the partner, so the torque slows the spin. “Spins slower” puts the bulge behind, so the torque speeds the spin up. “Synchronous” puts the bulge on the line of centers. The angle is not a measurement.</p>
+    <p><strong>The one-third form, and the factor of two beside it.</strong> Hinkel &amp; Kane 2013, equation (2), define a tidal locking radius r<sub>TL</sub> ≈ (3 G M<sub>p</sub><sup>2</sup> k<sub>2</sub> R<sup>5</sup> t<sub>L</sub> / (ω<sub>0</sub> I Q))<sup>1/6</sup>. Solving for t<sub>L</sub> is this page’s formula. They set k<sub>2</sub> = 0.3 and I ≈ 0.4 M R<sup>2</sup>, and, citing Kasting et al. 1993, one rotation per 13.5 hours and Q = 100. They attribute the expression to Peale 1977 and Gladman et al. 1996. Cuartas-Restrepo et al., arXiv:1606.07546, equation (5), write t<sub>lock</sub> = 2 Ω<sub>0</sub> C a<sup>6</sup> Q / (3 G M<sup>2</sup> R<sup>5</sup> k<sub>2</sub>) and also cite Gladman. That is twice this page’s time. This page uses the one-third form. The two are not averaged. A factor of two sits inside the uncertainty of Q and k<sub>2</sub>. This page has not re-read Gladman or Peale.</p>
+    <p><strong>Today’s distance is not the distance at locking.</strong> NASA Science says the Moon formed closer and is still drifting away, about an inch and a half (4 cm) a year, while the fact sheet prints a recession rate of 3.8 cm/yr. Those two rates are not averaged. Because t<sub>lock</sub> scales as a<sup>6</sup>, a body that locked closer in did so in a much shorter time than the number at today’s semimajor axis. Half the distance divides the time by 64. The chart is that power. The formula also ignores that the orbit itself changes while the spin changes.</p>
+    <p><strong>Spin–orbit resonances, and a mutual lock.</strong> Synchronous rotation is the 1:1 resonance. Mercury is not in it. The Mercury sheet’s 1407.6 hours and 87.969 days are 1.4999 orbits per sidereal rotation, near 3/2, not exactly 3/2. <a href="https://science.nasa.gov/mission/bepicolombo/" rel="noopener" target="_blank">NASA Science</a> says Mercury rotates three times for every two revolutions, and calls that a resonance. The time on the Mercury button is a despinning time toward 1:1. It is not a capture time into the 3:2. The <a href="/science/astronomy/planet-days/">planet-days</a> desk keeps the same two periods beside the solar day. Pluto and Charon are mutually locked. The Pluto sheet’s sidereal rotation is −153.2928 hours. Dividing the absolute value by 24 gives 6.3872 days, the same figure the Charon block prints for both the orbit and the rotation. <a href="https://science.nasa.gov/dwarf-planets/pluto/moons/charon/" rel="noopener" target="_blank">NASA Science</a> calls that mutual tidal locking: the same faces stay toward each other. This page does not run the formula for that pair. Each body torques the other, and the formula here holds the partner fixed. The separation is the <a href="/science/astronomy/barycenter/">barycenter</a> desk.</p>
+  </div>
+
+  <p class="band">Presets · sourced sizes, assumed Q and k2</p>
+  <div class="sheet">
+    <table>
+      <caption>Four presets. Sizes and distances are cited. Q = 100, k2 = 0.3, and the 13.5 hour initial spin are assumptions on every row. The time is this page’s one-third form.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Preset</th>
+          <th scope="col">Distance</th>
+          <th scope="col">f</th>
+          <th scope="col">Q</th>
+          <th scope="col">k2</th>
+          <th scope="col">t_lock</th>
+        </tr>
+      </thead>
+      <tbody id="preset-rows">
+        <tr id="row-moon" data-preset="moon" class="is-on"><th scope="row">Moon–Earth</th><td>0.3844 × 10^6 km</td><td>0.394 · sheet</td><td>100 · assumed</td><td>0.3 · assumed</td><td>3.40464 million years</td></tr>
+        <tr id="row-io" data-preset="io"><th scope="row">Io–Jupiter</th><td>421.8 × 10^3 km</td><td>0.4 · assumed</td><td>100 · assumed</td><td>0.3 · assumed</td><td>63.0232 years</td></tr>
+        <tr id="row-mercury" data-preset="mercury"><th scope="row">Mercury–Sun</th><td>57.909 × 10^6 km</td><td>0.35 · sheet</td><td>100 · assumed</td><td>0.3 · assumed</td><td>517.565 million years</td></tr>
+        <tr id="row-proxima" data-preset="proxima"><th scope="row">Proxima b</th><td>0.04848 AU</td><td>0.4 · assumed</td><td>100 · assumed</td><td>0.3 · assumed</td><td>154.634 thousand years</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">Moon–Earth at half the fact-sheet distance is 53.1974 thousand years. Io at half of 421.8 × 10^3 km is 359.675 days. Mercury at half of 57.909 × 10^6 km is 8.08695 million years. Proxima b at half of 0.04848 AU is 2.41615 thousand years. Each of those is the row’s time divided by 64. None of them is a historical distance.</p>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Synchronous rotation</dt><dd>One spin per orbit, so the same face stays toward the partner. <a href="https://science.nasa.gov/moon/tidal-locking/" rel="noopener" target="_blank">NASA Science</a> calls the Moon’s case synchronous tidal locking. The Moon Fact Sheet’s 655.720 hours and 27.3217 days are that end state. The <a href="/science/astronomy/libration/">libration</a> desk is why the face still peeks past the limb.</dd></div>
+    <div class="gloss"><dt>Q and k2</dt><dd>Q is the dissipation function. A smaller Q means more of the tidal flexing turns into heat, and a shorter time. k2 is the second-order Love number, a measure of how much the gravity field yields. Hinkel &amp; Kane use k2 = 0.3 and, citing Kasting et al. 1993, Q = 100. Both are assumptions here. They are not measurements of the Moon, Io, Mercury, or Proxima b.</dd></div>
+    <div class="gloss"><dt>Initial spin</dt><dd>ω in the formula is the spin the body is despun from, in radians per second. 13.5 hours is the figure Hinkel &amp; Kane take from Kasting et al. 1993. It is not the Moon’s 655.720 hours, not Io’s synchronous period, and not Mercury’s 1407.6 hours. Those are present states.</dd></div>
+    <div class="gloss"><dt>a^6</dt><dd>The time grows with the sixth power of distance and falls with the square of the partner’s mass and the fifth power of the satellite’s radius. The log-log line has slope 6 when everything except distance is fixed. That is why a habitable-zone planet close to an M dwarf can lock quickly, and why the same formula at Mercury’s distance is hundreds of millions of years. A place in the <a href="/science/astronomy/habitable-zone/">habitable zone</a> is not a verdict that the planet is locked, and a short time is not a verdict that it is habitable.</dd></div>
+    <div class="gloss"><dt>3:2</dt><dd>Mercury’s spin–orbit resonance. Three sidereal rotations in two sidereal orbits, near the fact-sheet ratio 1.4999, not exactly 3/2. <a href="https://science.nasa.gov/missions/webb/geology-from-50-light-years-webb-gets-ready-to-study-rocky-worlds/" rel="noopener" target="_blank">NASA Science</a> names it a 3:2 resonance and sets it beside a planet that might not be in 1:1. The <a href="/science/astronomy/resonances/">resonances</a> desk is a ratio of two orbits, not a spin and one orbit.</dd></div>
+    <div class="gloss gloss-wide"><dt>What this picture leaves out</dt><dd>Permanent triaxial torque, capture probability, obliquity, and the back-reaction on the orbit. Also the frequency dependence of k2/Q, which can change the time by more than the factor of two between the two cited formulas. Io’s sheet eccentricity is 0.004 and Mercury’s is 0.2056. Neither enters the arithmetic. The Laplace chain that keeps Io eccentric is the <a href="/science/astronomy/resonances/">resonances</a> desk. Earth’s ocean bulges, which lead the Moon today and slow Earth’s spin, are the <a href="/science/astronomy/tides/">tides</a> desk.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the formula and the numbers come from</h3>
+    <ul>
+      <li><a href="https://arxiv.org/abs/1307.4760" rel="noopener" target="_blank">Hinkel &amp; Kane 2013, ApJ 774, 27</a> — equation (2), r<sub>TL</sub> ≈ (3 G M<sub>p</sub><sup>2</sup> k<sub>2</sub> R<sub>m</sub><sup>5</sup> t<sub>L</sub> / (ω<sub>0</sub> I Q))<sup>1/6</sup>. They set k<sub>2</sub> = 0.3 and I ≈ 0.4 M<sub>m</sub> R<sub>m</sub><sup>2</sup>. Citing Kasting et al. 1993, they take one rotation per 13.5 hours and Q = 100. They attribute the expression to Peale 1977 and Gladman et al. 1996. This page inverts equation (2). It has not re-read Peale or Gladman. The published DOI is 10.1088/0004-637X/774/1/27.</li>
+      <li><a href="https://ar5iv.labs.arxiv.org/html/1606.07546" rel="noopener" target="_blank">Cuartas-Restrepo et al., arXiv:1606.07546, equation (5)</a> — t<sub>lock</sub> = 2 Ω<sub>0</sub> C a<sup>6</sup> Q / (3 G M<sup>2</sup> R<sup>5</sup> k<sub>2</sub>), also citing Gladman et al. 1996. Twice this page’s time. Not substituted.</li>
+      <li><a href="https://science.nasa.gov/moon/tidal-locking/" rel="noopener" target="_blank">NASA Science — Tidal locking</a> — the Moon’s bulge stayed out of alignment and the spin slowed until one face stayed toward Earth. Large moons lock. Pluto and Charon are mutually locked. The Moon is still drifting away, about an inch and a half (4 cm) a year on this page. The fact sheet’s 3.8 cm/yr is a different line.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — mass 0.07346 × 10<sup>24</sup> kg, volumetric mean radius 1,737.4 km, I/MR<sup>2</sup> = 0.394, semimajor axis 0.3844 × 10<sup>6</sup> km, sidereal rotation 655.720 hours, revolution 27.3217 days, eccentricity 0.0549, recession 3.8 cm/yr. The Earth column on this sheet is 5.9724 × 10<sup>24</sup> kg and is not the partner mass used here.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — mass 5.9722 × 10<sup>24</sup> kg. Volumetric mean radius 6,371.000 km, used as R⊕ for the Proxima estimate. The archive does not print that unit.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/joviansatfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jovian Satellite Fact Sheet</a> — Io mass 893.2 × 10<sup>20</sup> kg, radius 1,821.5 km, semimajor axis 421.8 × 10<sup>3</sup> km, period 1.769138 days, rotation S for synchronous, eccentricity 0.004. No I/MR<sup>2</sup>. f = 0.4 is assumed.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">NASA NSSDCA — Jupiter Fact Sheet</a> — mass 1,898.13 × 10<sup>24</sup> kg.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/mercuryfact.html" rel="noopener" target="_blank">NASA NSSDCA — Mercury Fact Sheet</a> — mass 0.33010 × 10<sup>24</sup> kg, volumetric mean radius 2,439.7 km, I/MR<sup>2</sup> = 0.35, semimajor axis 57.909 × 10<sup>6</sup> km, sidereal rotation 1407.6 hours, sidereal orbit 87.969 days, eccentricity 0.2056. J2000 semimajor axis 0.38709893 AU is not substituted for 57.909 × 10<sup>6</sup> km.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — mass 1,988,400 × 10<sup>24</sup> kg. Proxima’s 0.1221 M☉ is this mass times 0.1221. The archive’s solar mass is not a second constant.</li>
+      <li><a href="https://science.nasa.gov/mission/bepicolombo/" rel="noopener" target="_blank">NASA Science — BepiColombo</a> — Mercury rotates on its axis three times for every two revolutions around the Sun. The page calls that a resonance.</li>
+      <li><a href="https://science.nasa.gov/missions/webb/geology-from-50-light-years-webb-gets-ready-to-study-rocky-worlds/" rel="noopener" target="_blank">NASA Science — Webb rocky worlds</a> — names Mercury’s three rotations per two orbits a 3:2 resonance, as a contrast with 1:1 tidal locking.</li>
+      <li><a href="https://exoplanetarchive.ipac.caltech.edu/" rel="noopener" target="_blank">NASA Exoplanet Archive</a> — composite row for Proxima Cen b, the same default parameters the <a href="/science/astronomy/radial-velocity/">radial-velocity</a> desk cites to Suárez Mascareño et al. 2025. Central values used here: pl_bmasse = 1.055 ± 0.055 M⊕, pl_bmassprov = Msini, pl_rade = 1.02 with a null error, pl_orbsmax = 0.04848 AU, pl_orbper = 11.18465 ± 0.00053 days, st_mass = 0.1221 ± 0.0022 M☉. Uncertainties are not folded in.</li>
+      <li><a href="https://science.nasa.gov/exoplanet-catalog/proxima-centauri-b/" rel="noopener" target="_blank">NASA Science — Proxima Centauri b</a> — the catalog card prints mass 1.055 Earths, radius 1.02 × Earth (estimate), and orbital radius 0.04848 AU. The sentence above the card says 1.07 Earths, 11.2 days, and 0.04856 AU. They are not averaged. The radius is labeled an estimate on that card.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">NASA NSSDCA — Pluto Fact Sheet</a> — sidereal rotation −153.2928 hours. Charon: sidereal orbit 6.3872 days and sidereal rotation 6.3872 days. 153.2928 / 24 = 6.3872. The minus sign is retrograde. This page does not run t_lock for the pair.</li>
+      <li><a href="https://science.nasa.gov/dwarf-planets/pluto/moons/charon/" rel="noopener" target="_blank">NASA Science — Charon</a> — the same faces of Charon and Pluto always face each other, called mutual tidal locking. The page’s period is 6.4 Earth days. The fact sheet’s 6.3872 days is not rounded into that 6.4.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA central value, 6.67430 × 10<sup>−11</sup>. The standard uncertainty is not folded in.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Order of magnitude only. Q and k2 are very uncertain. Not a tidal-evolution model. Moon–Earth is 3.40464 million years at the fact-sheet distance with assumed Q = 100, k2 = 0.3, and a 13.5 hour initial spin. Io–Jupiter is 63.0232 years. Mercury–Sun is 517.565 million years, and Mercury is in a 3:2 resonance, not 1:1. Proxima b is 154.634 thousand years, with a minimum mass, an estimated radius, and assumed f, Q, and k2. The factor of two in arXiv:1606.07546 equation (5) is not substituted. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/tides/"><p class="n">Bulges</p><h3>Tides</h3><p>Two ocean bulges and a spin. Earth’s bulges lead the Moon today. This page is the torque on the body that is being despun.</p></a>
+    <a href="/science/astronomy/libration/"><p class="n">The peek</p><h3>Libration</h3><p>After the Moon locked, an eccentric orbit and a 6.68° tilt still show past the limbs. The lock is the starting sentence there.</p></a>
+    <a href="/science/astronomy/resonances/"><p class="n">The ratio</p><h3>Resonances</h3><p>A p:q ratio of two orbits. Io, Europa, and Ganymede, and the Kirkwood gaps. Mercury’s 3:2 on this page is a spin and one orbit.</p></a>
+    <a href="/science/astronomy/habitable-zone/"><p class="n">Insolation</p><h3>Habitable zone</h3><p>Proxima b’s orbit and the Kopparapu strip. A short despinning time is not a habitability verdict.</p></a>
+    <a href="/science/astronomy/planet-days/"><p class="n">The day</p><h3>Planet days</h3><p>Mercury’s 1407.6 hours and 87.969 days, and the solar day of about two Mercury years. The same 1.4999 ratio.</p></a>
+    <a href="/science/astronomy/barycenter/"><p class="n">The balance</p><h3>Barycenter</h3><p>Pluto–Charon’s 19,596 km separation. The mutual lock is named here and not given a timescale.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="tl-help-dialog" role="dialog" aria-modal="true" aria-labelledby="tl-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="tl-help-title">How the despinning time is drawn</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Order of magnitude only. Q and k2 are very uncertain. Not a tidal-evolution model. The bulge angle is exaggerated.</p>
+    <h3>The formula</h3>
+    <table>
+      <caption>Which form this page uses</caption>
+      <tbody>
+        <tr><th scope="row">This page</th><td>t_lock = (ω a^6 I Q) / (3 G m_p^2 k2 R^5). I = f m_s R^2. ω = 2π / P, with P the initial spin period.</td></tr>
+        <tr><th scope="row">Where it comes from</th><td>The inversion of Hinkel &amp; Kane 2013, equation (2). They cite Peale 1977 and Gladman et al. 1996. This page has not re-read those two.</td></tr>
+        <tr><th scope="row">Not used</th><td>Cuartas-Restrepo et al., arXiv:1606.07546, equation (5), which is twice as long. Not substituted.</td></tr>
+        <tr><th scope="row">Assumptions</th><td>Q = 100, k2 = 0.3, and 13.5 hours, from Hinkel &amp; Kane, the last two cited by them to Kasting et al. 1993. f = 0.4 unless a fact sheet prints I/MR^2.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Alignment</th><td>Spins faster, synchronous, or spins slower. It changes the drawing only. It does not change the number. Left and Right on the drawing step the same three.</td></tr>
+        <tr><th scope="row">Preset</th><td>Moon–Earth, Io–Jupiter, Mercury–Sun, or Proxima b. Each sets cited sizes and the assumed Q, k2, and spin. Moving a slider leaves the button.</td></tr>
+        <tr><th scope="row">Spin</th><td>Initial period in hours, from 0.5 to 2,000. The number field is the precise value. The locked period is not the default.</td></tr>
+        <tr><th scope="row">a, masses, R</th><td>Semimajor axis in km, satellite mass and radius, partner mass. Logarithmic sliders. The number fields are the precise values.</td></tr>
+        <tr><th scope="row">Q, k2, f</th><td>Q and k2 are assumptions. f is 0.394 for the Moon and 0.35 for Mercury, from the fact sheets, and 0.4 when a sheet does not print it.</td></tr>
+        <tr><th scope="row">The chart</th><td>Log distance across, log time up. The line is a^6 at the current other inputs. Markers are the four presets with their own inputs. Tap, or Left and Right, to move a.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<noscript><p class="note-schematic">The drawing and the chart need a script. The table above is the four presets. Moon–Earth is 3.40464 million years. Io–Jupiter is 63.0232 years. Mercury–Sun is 517.565 million years, and Mercury is in a 3:2 resonance, not 1:1. Proxima b is 154.634 thousand years. Q = 100 and k2 = 0.3 are assumptions. Order of magnitude only. Q and k2 are very uncertain.</p></noscript>
+
+<script src="/science/astronomy/tidal-locking/tidal-locking.js"></script>
+<script>
+(function () {
+  "use strict";
+  var TL = window.TidalLock;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!TL) return;
+
+  var moon = TL.presetById("moon");
+  var state = {
+    spinH: moon.spinH,
+    aKm: moon.aKm,
+    massKg: moon.massKg,
+    radiusKm: moon.radiusKm,
+    partnerKg: moon.partnerKg,
+    q: moon.q,
+    k2: moon.k2,
+    f: moon.f,
+    bulge: "lead"
+  };
+  var bulgeCanvas = document.getElementById("bulge-canvas");
+  var chartCanvas = document.getElementById("lock-chart");
+  var helpBtn = document.getElementById("tl-help");
+  var helpDialog = document.getElementById("tl-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  var PAD = { l: 64, r: 18, t: 18, b: 40 };
+  var BULGE = ["lead", "sync", "lag"];
+  var MARK = {
+    moon: "#c5c1b6",
+    io: "#e0b15a",
+    mercury: "#b5b1a8",
+    proxima: "#d98b97"
+  };
+
+  var fields = {
+    spinH: { range: "spin", num: "spin-num", key: "spinH", min: TL.SPIN_MIN, max: TL.SPIN_MAX, log: true },
+    aKm: { range: "axis", num: "axis-num", key: "aKm", min: TL.A_MIN_KM, max: TL.A_MAX_KM, log: true },
+    massKg: { range: "mass", num: "mass-num", key: "massKg", min: TL.MASS_MIN, max: TL.MASS_MAX, log: true },
+    radiusKm: { range: "radius", num: "radius-num", key: "radiusKm", min: TL.RADIUS_MIN, max: TL.RADIUS_MAX, log: true },
+    partnerKg: { range: "partner", num: "partner-num", key: "partnerKg", min: TL.PARTNER_MIN, max: TL.PARTNER_MAX, log: true },
+    q: { range: "quality", num: "quality-num", key: "q", min: TL.Q_MIN, max: TL.Q_MAX, log: true },
+    k2: { range: "love", num: "love-num", key: "k2", min: TL.K2_MIN, max: TL.K2_MAX, log: true },
+    f: { range: "inertia", num: "inertia-num", key: "f", min: TL.F_MIN, max: TL.F_MAX, log: false }
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "IBM Plex Mono, ui-monospace, monospace");
+  }
+  function fieldText(key, value) {
+    if (key === "f" || key === "k2" || key === "spinH") {
+      var rounded = Math.round(value * 1e6) / 1e6;
+      return String(rounded);
+    }
+    if (key === "q" || key === "radiusKm" || key === "aKm") {
+      if (value >= 100 && Math.abs(value - Math.round(value)) < 1e-6) return String(Math.round(value));
+      return String(Math.round(value * 1e4) / 1e4);
+    }
+    return value.toExponential(6).replace(/e\+/, "e");
+  }
+  function ariaText(spec) {
+    var value = state[spec.key];
+    if (spec.key === "spinH") return TL.formatSig(value, 4) + " hours, assumed initial spin";
+    if (spec.key === "aKm") return TL.formatSig(value, 6) + " kilometres";
+    if (spec.key === "q") return TL.formatSig(value, 4) + ", assumed";
+    if (spec.key === "k2") return TL.formatSig(value, 4) + ", assumed";
+    if (spec.key === "f") return TL.formatSig(value, 4);
+    return TL.formatSig(value, 6) + (spec.key === "radiusKm" ? " km" : " kg");
+  }
+  function setIfIdle(el, text) {
+    if (!el || document.activeElement === el) return;
+    if (el.value !== text) el.value = text;
+  }
+  function showError(msg) {
+    var el = document.getElementById("field-error");
+    if (!el) return;
+    if (!msg) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+  function pressPreset(id) {
+    var buttons = document.querySelectorAll("#preset-kind button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute("data-preset") === id ? "true" : "false");
+    }
+    var rows = document.querySelectorAll("#preset-rows tr");
+    for (i = 0; i < rows.length; i++) {
+      rows[i].className = rows[i].getAttribute("data-preset") === id ? "is-on" : "";
+    }
+  }
+  function pressBulge(mode) {
+    var buttons = document.querySelectorAll("#bulge-kind button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      buttons[i].setAttribute("aria-pressed", buttons[i].getAttribute("data-bulge") === mode ? "true" : "false");
+    }
+  }
+  function inputs() {
+    return {
+      spinH: state.spinH,
+      aKm: state.aKm,
+      massKg: state.massKg,
+      radiusKm: state.radiusKm,
+      partnerKg: state.partnerKg,
+      q: state.q,
+      k2: state.k2,
+      f: state.f
+    };
+  }
+  function bulgeSentence(mode) {
+    if (mode === "sync") return "Synchronous. The bulge sits on the partner line. On a circle this misalignment torque is gone. The angle is zero on purpose. Not to scale.";
+    if (mode === "lag") return "The body spins slower than it orbits. The bulge lags the partner, and the torque speeds the spin up. The angle is exaggerated. Not to scale.";
+    return "The body spins faster than it orbits. The bulge leads the partner, and the torque slows the spin. The angle is exaggerated. Not to scale.";
+  }
+  function shortNum(v) {
+    return String(Math.round(v * 1e6) / 1e6);
+  }
+  function groupedKm(v) {
+    var s = TL.formatSig(v, 6);
+    if (/^\d+(\.\d+)?$/.test(s) && Number(s) >= 1000) {
+      var bits = s.split(".");
+      bits[0] = bits[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return bits.join(".");
+    }
+    return s;
+  }
+  function fill(sc) {
+    var tier = document.getElementById("d-tier");
+    var title = document.getElementById("d-title");
+    var range = document.getElementById("d-range");
+    var why = document.getElementById("d-why");
+    if (tier) tier.textContent = sc.tier;
+    if (title) title.textContent = sc.name;
+    if (range) range.textContent = sc.timeText + " · order of magnitude only";
+    if (why) why.textContent = sc.why;
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    var fNote = Math.abs(state.f - 0.394) < 1e-6 ? "Moon sheet" : Math.abs(state.f - 0.35) < 1e-6 ? "Mercury sheet" : "assumed unless a sheet prints it";
+    var rows = [
+      ["Initial spin", shortNum(state.spinH) + " h · assumed"],
+      ["Semimajor axis", groupedKm(state.aKm) + " km · " + sc.auText],
+      ["Q", shortNum(state.q) + " · assumed"],
+      ["k2", shortNum(state.k2) + " · assumed"],
+      ["I / MR^2", shortNum(state.f) + " · " + fNote],
+      ["t_lock", sc.timeText],
+      ["Unrounded", sc.timeRaw + " years"],
+      ["Half the distance", sc.halfText]
+    ];
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = rows[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = rows[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function fit(canvas, ratio, minH, maxH) {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.round(w * ratio);
+    if (h < minH) h = minH;
+    if (h > maxH) h = maxH;
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function arrow(ctx, x, y, ang) {
+    var s = 8;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - s * Math.cos(ang - 0.5), y - s * Math.sin(ang - 0.5));
+    ctx.moveTo(x, y);
+    ctx.lineTo(x - s * Math.cos(ang + 0.5), y - s * Math.sin(ang + 0.5));
+    ctx.stroke();
+  }
+  function drawBulge() {
+    var box = fit(bulgeCanvas, 0.58, 240, 460);
+    if (!box) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    var py = h * 0.48;
+    var px = w * 0.24;
+    var sx = w * 0.68;
+    var pr = Math.min(w, h) * 0.11;
+    var rx = Math.min(w, h) * 0.2;
+    var ry = rx * 0.62;
+    var ang = state.bulge === "lead" ? 0.55 : state.bulge === "lag" ? -0.55 : 0;
+    ctx.strokeStyle = c.muted;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 5]);
+    ctx.beginPath();
+    ctx.moveTo(px - pr, py);
+    ctx.lineTo(sx + rx + 16, py);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = c.line;
+    ctx.beginPath();
+    ctx.arc(px, py, pr, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = c.soft;
+    ctx.stroke();
+    ctx.fillStyle = c.ink;
+    ctx.font = font(11);
+    ctx.textAlign = "center";
+    ctx.fillText("partner", px, py + pr + 16);
+    ctx.save();
+    ctx.translate(sx, py);
+    ctx.rotate(ang);
+    ctx.fillStyle = "rgba(200,180,138,0.18)";
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-rx, 0);
+    ctx.lineTo(rx, 0);
+    ctx.stroke();
+    ctx.fillStyle = c.accent;
+    ctx.beginPath();
+    ctx.arc(-rx * 0.72, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    ctx.strokeStyle = c.ink;
+    ctx.lineWidth = 1.25;
+    var spin = -0.9;
+    ctx.beginPath();
+    ctx.arc(sx, py, ry + 18, -0.2, spin, true);
+    ctx.stroke();
+    arrow(ctx, sx + (ry + 18) * Math.cos(spin), py + (ry + 18) * Math.sin(spin), spin - Math.PI / 2);
+    var torque = state.bulge === "lag" ? -0.9 : state.bulge === "sync" ? null : 2.2;
+    if (torque !== null) {
+      ctx.strokeStyle = c.soft;
+      ctx.beginPath();
+      ctx.arc(sx, py, ry + 34, torque - 0.7, torque, state.bulge === "lead");
+      ctx.stroke();
+      var end = state.bulge === "lead" ? torque - 0.7 : torque;
+      var dir = state.bulge === "lead" ? end + Math.PI / 2 : end - Math.PI / 2;
+      arrow(ctx, sx + (ry + 34) * Math.cos(end), py + (ry + 34) * Math.sin(end), dir);
+    }
+    ctx.fillStyle = c.soft;
+    ctx.font = font(11);
+    ctx.textAlign = "center";
+    ctx.fillText("body", sx, py + rx * 0.55 + 28);
+    var hint = document.getElementById("bulge-hint");
+    if (hint) {
+      hint.textContent = state.bulge === "sync"
+        ? "Bulge on the partner line · misalignment torque gone · not to scale"
+        : state.bulge === "lag"
+          ? "Bulge lags the partner · torque speeds the spin · angle exaggerated"
+          : "Bulge leads the partner · torque slows the spin · angle exaggerated";
+    }
+    if (bulgeCanvas) bulgeCanvas.setAttribute("aria-label", bulgeSentence(state.bulge));
+  }
+  function decadeTicks(lo, hi) {
+    var out = [];
+    var e0 = Math.ceil(Math.log10(lo) - 1e-12);
+    var e1 = Math.floor(Math.log10(hi) + 1e-12);
+    var e;
+    for (e = e0; e <= e1; e++) out.push(Math.pow(10, e));
+    return out;
+  }
+  function xOf(a, plot) {
+    var t = (Math.log(a) - Math.log(TL.A_MIN_KM)) / (Math.log(TL.A_MAX_KM) - Math.log(TL.A_MIN_KM));
+    return plot.x + t * plot.w;
+  }
+  function yOf(years, plot, yMin, yMax) {
+    var t = (Math.log(years) - Math.log(yMin)) / (Math.log(yMax) - Math.log(yMin));
+    return plot.y + plot.h - t * plot.h;
+  }
+  function drawChart(sc) {
+    var box = fit(chartCanvas, 0.56, 240, 480);
+    if (!box || !sc.ok) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    var plot = { x: PAD.l, y: PAD.t, w: w - PAD.l - PAD.r, h: h - PAD.t - PAD.b };
+    var rows = TL.series(inputs(), 64);
+    var marks = TL.presets().map(function (p) {
+      return { id: p.id, name: p.name, aKm: p.aKm, years: TL.lockYears(p) };
+    });
+    var yMin = Infinity;
+    var yMax = 0;
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      if (rows[i].years < yMin) yMin = rows[i].years;
+      if (rows[i].years > yMax) yMax = rows[i].years;
+    }
+    for (i = 0; i < marks.length; i++) {
+      if (!(marks[i].aKm >= TL.A_MIN_KM && marks[i].aKm <= TL.A_MAX_KM)) continue;
+      if (marks[i].years < yMin) yMin = marks[i].years;
+      if (marks[i].years > yMax) yMax = marks[i].years;
+    }
+    yMin = yMin / 3;
+    yMax = yMax * 3;
+    ctx.strokeStyle = c.line;
+    ctx.fillStyle = c.muted;
+    ctx.font = font(10);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    decadeTicks(yMin, yMax).forEach(function (v) {
+      var y = yOf(v, plot, yMin, yMax);
+      ctx.beginPath();
+      ctx.moveTo(plot.x, y);
+      ctx.lineTo(plot.x + plot.w, y);
+      ctx.stroke();
+      var exp = Math.round(Math.log10(v));
+      ctx.fillText("10^" + exp, plot.x - 6, y);
+    });
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    decadeTicks(TL.A_MIN_KM, TL.A_MAX_KM).forEach(function (v) {
+      var x = xOf(v, plot);
+      ctx.beginPath();
+      ctx.moveTo(x, plot.y);
+      ctx.lineTo(x, plot.y + plot.h);
+      ctx.stroke();
+      ctx.fillText("10^" + Math.round(Math.log10(v)), x, plot.y + plot.h + 6);
+    });
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 1.75;
+    ctx.beginPath();
+    for (i = 0; i < rows.length; i++) {
+      var x = xOf(rows[i].aKm, plot);
+      var y = yOf(rows[i].years, plot, yMin, yMax);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.lineWidth = 1;
+    for (i = 0; i < marks.length; i++) {
+      if (!(marks[i].aKm >= TL.A_MIN_KM && marks[i].aKm <= TL.A_MAX_KM)) continue;
+      var mx = xOf(marks[i].aKm, plot);
+      var my = yOf(marks[i].years, plot, yMin, yMax);
+      ctx.fillStyle = MARK[marks[i].id] || c.ink;
+      ctx.fillRect(mx - 4, my - 4, 8, 8);
+      ctx.font = font(10);
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(marks[i].name, mx + 6, my - 2);
+    }
+    var cx = xOf(TL.clamp(state.aKm, TL.A_MIN_KM, TL.A_MAX_KM), plot);
+    var cy = yOf(sc.years, plot, yMin, yMax);
+    ctx.fillStyle = c.ink;
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    if (chartCanvas) {
+      chartCanvas.setAttribute("aria-label", "Log-log chart. At " + TL.formatSig(state.aKm, 6) + " km the time is " + sc.timeText + ". The line scales as distance to the sixth. Order of magnitude only. Q and k2 are very uncertain.");
+    }
+  }
+  function render() {
+    var sc = TL.scene(inputs());
+    if (!sc.ok) return;
+    pressPreset(sc.id);
+    pressBulge(state.bulge);
+    var names = Object.keys(fields);
+    var i;
+    for (i = 0; i < names.length; i++) {
+      var spec = fields[names[i]];
+      var rangeEl = document.getElementById(spec.range);
+      var numEl = document.getElementById(spec.num);
+      var pos = TL.sliderPos(state[spec.key], spec.min, spec.max, spec.log);
+      if (rangeEl && document.activeElement !== rangeEl) rangeEl.value = String(pos);
+      if (rangeEl) {
+        rangeEl.setAttribute("aria-valuenow", String(state[spec.key]));
+        rangeEl.setAttribute("aria-valuetext", ariaText(spec));
+      }
+      setIfIdle(numEl, fieldText(spec.key, state[spec.key]));
+    }
+    fill(sc);
+    drawBulge();
+    drawChart(sc);
+  }
+  function applyRange(spec) {
+    var rangeEl = document.getElementById(spec.range);
+    if (!rangeEl) return;
+    state[spec.key] = TL.valueFromSlider(Number(rangeEl.value), spec.min, spec.max, spec.log);
+    showError("");
+    render();
+  }
+  function limitMessage(key) {
+    if (key === "spinH") return "Initial spin stays between 0.5 and 2,000 hours.";
+    if (key === "aKm") return "Distance stays between 100,000 km and 100,000,000 km.";
+    if (key === "massKg") return "Satellite mass stays between 10^20 and 10^26 kg.";
+    if (key === "radiusKm") return "Radius stays between 100 and 20,000 km.";
+    if (key === "partnerKg") return "Partner mass stays between 10^22 and 5 × 10^30 kg.";
+    if (key === "q") return "Q stays between 1 and 100,000.";
+    if (key === "k2") return "k2 stays between 0.001 and 1.5.";
+    return "f stays between 0.2 and 0.5.";
+  }
+  function applyNumber(spec) {
+    var numEl = document.getElementById(spec.num);
+    if (!numEl) return;
+    var raw = String(numEl.value).trim().replace(/,/g, "");
+    var value = Number(raw);
+    if (!raw || !isFinite(value) || !(value > 0)) {
+      numEl.setAttribute("aria-invalid", "true");
+      showError("Enter a number above zero.");
+      return;
+    }
+    if (value < spec.min || value > spec.max) {
+      numEl.setAttribute("aria-invalid", "true");
+      state[spec.key] = TL.clamp(value, spec.min, spec.max);
+      showError(limitMessage(spec.key));
+      render();
+      return;
+    }
+    numEl.setAttribute("aria-invalid", "false");
+    showError("");
+    state[spec.key] = value;
+    render();
+  }
+  Object.keys(fields).forEach(function (name) {
+    var spec = fields[name];
+    var rangeEl = document.getElementById(spec.range);
+    var numEl = document.getElementById(spec.num);
+    if (rangeEl) rangeEl.addEventListener("input", function () { applyRange(spec); });
+    if (numEl) {
+      numEl.addEventListener("input", function () { applyNumber(spec); });
+      numEl.addEventListener("change", function () { applyNumber(spec); });
+    }
+  });
+  document.querySelectorAll("#preset-kind button").forEach(function (button) {
+    button.addEventListener("click", function () {
+      var preset = TL.presetById(button.getAttribute("data-preset"));
+      if (!preset) return;
+      state.spinH = preset.spinH;
+      state.aKm = preset.aKm;
+      state.massKg = preset.massKg;
+      state.radiusKm = preset.radiusKm;
+      state.partnerKg = preset.partnerKg;
+      state.q = preset.q;
+      state.k2 = preset.k2;
+      state.f = preset.f;
+      showError("");
+      document.querySelectorAll(".controls input").forEach(function (el) {
+        el.setAttribute("aria-invalid", "false");
+      });
+      render();
+    });
+  });
+  document.querySelectorAll("#bulge-kind button").forEach(function (button) {
+    button.addEventListener("click", function () {
+      state.bulge = button.getAttribute("data-bulge") || "lead";
+      render();
+    });
+  });
+  function aFromClient(clientX) {
+    if (!chartCanvas) return state.aKm;
+    var rect = chartCanvas.getBoundingClientRect();
+    var plotW = rect.width - PAD.l - PAD.r;
+    if (!(plotW > 0)) return state.aKm;
+    var t = (clientX - rect.left - PAD.l) / plotW;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return Math.exp(Math.log(TL.A_MIN_KM) + t * (Math.log(TL.A_MAX_KM) - Math.log(TL.A_MIN_KM)));
+  }
+  if (chartCanvas) {
+    chartCanvas.addEventListener("pointerup", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      state.aKm = aFromClient(ev.clientX);
+      showError("");
+      render();
+    });
+    chartCanvas.addEventListener("keydown", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var pos = TL.sliderPos(state.aKm, TL.A_MIN_KM, TL.A_MAX_KM, true);
+      pos += ev.key === "ArrowRight" ? (ev.shiftKey ? 20 : 2) : (ev.shiftKey ? -20 : -2);
+      state.aKm = TL.valueFromSlider(pos, TL.A_MIN_KM, TL.A_MAX_KM, true);
+      showError("");
+      render();
+    });
+  }
+  if (bulgeCanvas) {
+    bulgeCanvas.addEventListener("keydown", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var i = BULGE.indexOf(state.bulge);
+      if (i < 0) i = 0;
+      i += ev.key === "ArrowRight" ? 1 : -1;
+      if (i < 0) i = BULGE.length - 1;
+      if (i >= BULGE.length) i = 0;
+      state.bulge = BULGE[i];
+      render();
+    });
+  }
+  function focusables() {
+    if (!helpDialog) return [];
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, a, input, [tabindex='0']")).filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpBtn) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || !helpBtn) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+      b.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver) {
+    if (bulgeCanvas && bulgeCanvas.parentElement) new ResizeObserver(render).observe(bulgeCanvas.parentElement);
+    if (chartCanvas && chartCanvas.parentElement) new ResizeObserver(render).observe(chartCanvas.parentElement);
+  }
+  if (window.MutationObserver) {
+    new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
