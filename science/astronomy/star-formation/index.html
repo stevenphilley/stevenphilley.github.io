@@ -1,0 +1,877 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star formation — the Jeans mass — Steven Philley</title>
+<meta name="description" content="Interactive Jeans-mass desk. Uniform-sphere M_J = (5kT/(G μ m_H))^(3/2) × (3/(4πρ))^(1/2), with ρ = n μ m_H. At 10 K and 10^4 per cm^3 with μ = 2.33 the mass is 5.37577 solar masses. Jeans length and free-fall time. Typical textbook presets, not a named cloud. Not a simulation.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/star-formation/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Star formation — the Jeans mass">
+<meta property="og:description" content="Gravity against thermal pressure. The uniform-sphere Jeans mass at 10 K and 10^4 per cm^3, μ = 2.33, is 5.37577 solar masses. Typical textbook presets, not a named cloud. Not a simulation.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/star-formation/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Star formation — the Jeans mass">
+<meta name="twitter:description" content="A log density slider, the uniform-sphere Jeans mass, and the free-fall time. At 10 K and 10^4 per cm^3 the mass is a few solar masses.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a,.means a{color:var(--ink,#e8e6e1)}
+.lede a{text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;background:var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.disk{background:#6ea4b8}
+.swatch.halo{background:#d98b97}
+.swatch.total{background:var(--ink,#e8e6e1)}
+.swatch.kep{height:0;background:transparent;border-top:1px dashed var(--muted,#63666e)}
+.swatch.sun{width:10px;height:10px;border-radius:50%;background:var(--accent,#c8b48a)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.slider-row input:disabled{opacity:.38}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means{display:grid;grid-template-columns:1fr;gap:10px}
+.means p{margin:0;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.means strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:860px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px;text-wrap:pretty}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);background:transparent;flex:0 0 auto}
+.swatch.now{width:10px;height:10px;border:2px solid var(--accent,#c8b48a);border-radius:50%;background:var(--ink,#e8e6e1)}
+.swatch.one{border-top:1px dashed var(--muted,#63666e)}
+input[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/" aria-current="page">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Star formation</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The collapse</p>
+  <h1>Star formation</h1>
+  <p class="lede">A cold molecular cloud collapses when gravity beats thermal pressure. For a uniform sphere the boundary used here is the virial line <strong>2K = |U|</strong>. The gravitational energy is <strong>(3/5) G M²/R</strong>. The thermal energy is <strong>(3/2) (M / (μ m<sub>H</sub>)) k T</strong>. Put the radius in terms of density, <strong>ρ = n μ m<sub>H</sub></strong>, and the critical mass is the Jeans mass on this page: <strong>M<sub>J</sub> = (5 k T / (G μ m<sub>H</sub>))<sup>3/2</sup> × (3 / (4 π ρ))<sup>1/2</sup></strong>. The Jeans length here is the critical radius of that same sphere, <strong>R<sub>J</sub> = (15 k T / (4 π G μ m<sub>H</sub> ρ))<sup>1/2</sup></strong>. If pressure is then ignored, the free-fall time is <strong>t<sub>ff</sub> = (3 π / (32 G ρ))<sup>1/2</sup></strong>. At 10 K and 10<sup>4</sup> particles per cm<sup>3</sup>, with μ = 2.33, the arithmetic is <strong>5.37577 solar masses</strong>, <strong>0.130599 pc</strong>, and <strong>337.100 thousand years</strong>. Other textbooks change the numerical factor. A wavelength form is named below and is not substituted. The four buttons are typical textbook values, not measurements of a named cloud. How that mass then lives on the main sequence is the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk. Where the star sits in temperature and luminosity is the <a href="/science/astronomy/hr/">HR diagram</a>. The nearest of those stars are the <a href="/science/astronomy/nearest-stars/">nearest stars</a>.</p>
+  <p class="note-schematic">Classroom uniform-sphere picture, not a simulation of a cloud. Rotation, magnetic fields, and turbulence are left out. n is the number of particles per cubic centimetre. μ is the mean mass of one particle in units of m<sub>H</sub>, so ρ = n μ m<sub>H</sub>. The default μ = 2.33 is a round textbook value for cold molecular gas. It already includes molecular hydrogen and helium. It is not a measured abundance, and it is not a second factor on top of an H<sub>2</sub>-only count. G is the 2022 CODATA central value, 6.67430 × 10<sup>−11</sup> m<sup>3</sup> kg<sup>−1</sup> s<sup>−2</sup>. k is exact, 1.380649 × 10<sup>−23</sup> J/K. m<sub>H</sub> is the proton mass plus the electron mass, 1.67353286432 × 10<sup>−27</sup> kg. The 13.6 eV binding energy is omitted. A solar mass is the IAU 2015 nominal GM☉, 1.3271244 × 10<sup>20</sup> m<sup>3</sup> s<sup>−2</sup>, divided by that G, which is 1.9884098707 × 10<sup>30</sup> kg. One parsec is (648000/π) au, 3.085677581491 × 10<sup>16</sup> m. A year is the Julian year, 31,557,600 s. Parenthetical CODATA uncertainties are not folded in.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Jeans mass</span>
+    <button type="button" class="help-q" id="sf-help" aria-haspopup="dialog" aria-controls="sf-help-dialog" aria-expanded="false" aria-label="How this star-formation desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="orbit-hint">M_J versus density · log-log · slope −1/2 at fixed T and μ</p>
+      <div class="controls">
+        <p class="pick-label">Preset · typical textbook values, not a named cloud</p>
+        <div class="presets" id="preset-kind" role="group" aria-label="Preset">
+          <button type="button" data-preset="atomic" aria-pressed="false">Diffuse atomic</button>
+          <button type="button" data-preset="gmc" aria-pressed="false">Molecular cloud</button>
+          <button type="button" data-preset="core" aria-pressed="true">Dense core</button>
+          <button type="button" data-preset="hii" aria-pressed="false">Warm H II</button>
+        </div>
+        <p class="pick-label">Temperature, kelvin. Logarithmic from 3 to 30,000.</p>
+        <div class="slider-row">
+          <label for="temp">T</label>
+          <input type="range" id="temp" min="0" max="1000" step="1" value="131" aria-valuemin="3" aria-valuemax="30000" aria-valuenow="10" aria-valuetext="10 K">
+          <label for="temp-num">Number</label>
+          <input type="number" id="temp-num" inputmode="decimal" step="any" value="10" aria-label="Temperature in kelvin">
+        </div>
+        <p class="pick-label">Number density, particles per cm<sup>3</sup>. Logarithmic from 1 to 10<sup>7</sup>.</p>
+        <div class="slider-row">
+          <label for="density">n</label>
+          <input type="range" id="density" min="0" max="1000" step="1" value="571" aria-valuemin="1" aria-valuemax="10000000" aria-valuenow="10000" aria-valuetext="10,000 per cubic centimetre">
+          <label for="density-num">Number</label>
+          <input type="number" id="density-num" inputmode="decimal" step="any" value="10000" aria-label="Number density in particles per cubic centimetre">
+        </div>
+        <p class="pick-label">Mean mass per particle, μ, in units of m<sub>H</sub>. From 0.5 to 3.</p>
+        <div class="slider-row">
+          <label for="mu">μ</label>
+          <input type="range" id="mu" min="0" max="1000" step="1" value="732" aria-valuemin="0.5" aria-valuemax="3" aria-valuenow="2.33" aria-valuetext="2.33">
+          <label for="mu-num">Number</label>
+          <input type="number" id="mu-num" inputmode="decimal" step="any" value="2.33" aria-label="Mean molecular weight in units of the hydrogen mass">
+        </div>
+        <p class="field-error" id="field-error" role="alert" hidden></p>
+      </div>
+      <canvas id="sf-canvas" width="880" height="520" tabindex="0" role="img" aria-label="Jeans mass 5.37577 solar masses at 10 kelvin and 10,000 per cubic centimetre. Jeans length 0.130599 pc. Free-fall time 337.100 thousand years. Not a simulation of a cloud."></canvas>
+      <ul class="legend" aria-label="Diagram key">
+        <li><span class="swatch" aria-hidden="true"></span> M_J at this T and μ</li>
+        <li><span class="swatch now" aria-hidden="true"></span> This setting</li>
+        <li><span class="swatch one" aria-hidden="true"></span> 1 solar mass</li>
+      </ul>
+      <p class="scale-note" id="scale-note">The line is straight because M_J is proportional to n<sup>−1/2</sup> when T and μ are fixed. Tap the plot or use Left and Right to move the density. The dashed line is one solar mass, drawn only when it crosses the window. The four buttons are round textbook values.</p>
+    </div>
+    <div class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Typical textbook values · not a named cloud</p>
+      <h2 id="d-title">Dense core</h2>
+      <p class="range" id="d-range">5.37577 solar masses · 0.130599 pc · 337.100 thousand years</p>
+      <ul class="stats" id="stats">
+        <li><span class="k">Temperature</span><span class="v">10 K</span></li>
+        <li><span class="k">Number density</span><span class="v">10,000 cm^−3</span></li>
+        <li><span class="k">Per cubic metre</span><span class="v">1.00000 × 10^10 m^−3</span></li>
+        <li><span class="k">Mean mass μ</span><span class="v">2.33</span></li>
+        <li><span class="k">Mass density</span><span class="v">3.89933 × 10^−17 kg/m³</span></li>
+        <li><span class="k">Jeans mass</span><span class="v">5.37577 solar masses</span></li>
+        <li><span class="k">Jeans length</span><span class="v">0.130599 pc</span></li>
+        <li><span class="k">Free-fall time</span><span class="v">337.100 thousand years</span></li>
+        <li><span class="k">Unrounded time</span><span class="v">337099.930 years</span></li>
+        <li><span class="k">Wavelength form</span><span class="v">0.211872 pc</span></li>
+      </ul>
+      <p class="why" id="d-why">Uniform-sphere Jeans mass. M_J = (5 k T / (G μ m_H))^(3/2) * (3 / (4 π ρ))^(1/2), with ρ = n μ m_H. At 10 K, n = 10,000 per cm^3, and μ = 2.33, this arithmetic is 5.37577 solar masses. The Jeans length on this page is the critical radius of that sphere, R_J = (15 k T / (4 π G μ m_H ρ))^(1/2), which is 0.130599 pc. The free-fall time t_ff = (3 π / (32 G ρ))^(1/2) is 337.100 thousand years. The unrounded time is 337099.930 years. A wavelength form, (π k T / (G μ m_H ρ))^(1/2), is 0.211872 pc here. This page does not substitute it. The ratio of the two lengths is √15 / (2 π), which is 0.616404. Typical textbook values for a dense core: 10 K, 10^4 particles per cubic centimetre, and μ = 2.33. The mass is a few solar masses. 2.33 is a round mean mass per particle for cold molecular gas. It is not a measured abundance. Not a named cloud. Classroom uniform-sphere picture, not a simulation of a cloud.</p>
+    </div>
+  </div>
+
+  <p class="band">What the number is</p>
+  <div class="means">
+    <p><strong>One form of the Jeans criterion.</strong> Set 2K = |U| for a uniform sphere and replace R with (3M / (4πρ))<sup>1/3</sup>. The mass that sits on that line is M<sub>J</sub> = (5 k T / (G μ m<sub>H</sub>))<sup>3/2</sup> × (3 / (4 π ρ))<sup>1/2</sup>. Rice University’s ASTR 350 notes of 28 October 2021 print this mass and call R<sub>J</sub> the Jeans length. Simon Fraser University’s PHYS 390 notes print the same mass and name Carroll and Ostlie as the text. A wave analysis often writes a Jeans length (π c<sub>s</sub>² / (G ρ))<sup>1/2</sup> with c<sub>s</sub>² = k T / (μ m<sub>H</sub>). That length is longer than R<sub>J</sub> by 2π / √15, which is 1 / 0.616404. This page computes it and does not substitute it. The two are not averaged. A cloud heavier than M<sub>J</sub>, or larger than R<sub>J</sub>, is the unstable side of this particular line. Real clouds also rotate, carry magnetic fields, and are turbulent. Those terms are not in the formula.</p>
+    <p><strong>The notes’ 29, written beside this arithmetic.</strong> University of Toronto AST 320 notes print M<sub>J</sub> = 29 solar masses × μ<sup>−2</sup> × (T / 10 K)<sup>3/2</sup> × (n / 10<sup>4</sup> cm<sup>−3</sup>)<sup>−1/2</sup>, and R<sub>J</sub> = 0.30 pc × μ<sup>−1</sup> × (T / 10 K)<sup>1/2</sup> × (n / 10<sup>4</sup> cm<sup>−3</sup>)<sup>−1/2</sup>. At μ = 1, T = 10 K, and n = 10<sup>4</sup> per cm<sup>3</sup>, this page’s arithmetic is <strong>29.1845 solar masses</strong> and <strong>0.304295 pc</strong>. 29.1845 rounds to 29 at the integer the notes print. 0.304295 rounds to 0.30 at two decimals. The extra digits stay. They are not averaged. The notes do not print the constants behind 29. The same notes call t<sub>ff</sub> = (3π / (32 G ρ))<sup>1/2</sup> the exact free-fall time, beside √(R³ / GM) and ∼ 1/√(Gρ). This page uses the exact form. The other two are not substituted.</p>
+    <p><strong>Fragmentation, and why cooling matters.</strong> At fixed temperature and μ, M<sub>J</sub> falls as n<sup>−1/2</sup>. The log-log plot is a straight line of slope −1/2. An isothermal collapse therefore crosses the Jeans line in smaller pieces as the density rises, so one cloud can make many stars. <a href="https://science.nasa.gov/universe/stars/" rel="noopener" target="_blank">NASA Science</a> says batches of stars that have recently formed from molecular clouds are often called stellar clusters, and that molecular clouds full of those clusters are stellar nurseries. If the gas cannot radiate the heat of compression, T rises. M<sub>J</sub> grows as T<sup>3/2</sup>. For an adiabatic ideal gas with γ = 5/3, the Rice notes point out that M<sub>J</sub> then rises as the density rises, and fragmentation stalls. Molecular cooling is what keeps a cold cloud near 10 K long enough for stellar-mass pieces. The free-fall time does not depend on T. It is the time for a pressureless uniform sphere, released from rest, to fall to a point. A cloud below M<sub>J</sub> does not freely fall. NASA Science also says molecular clouds range from 1,000 to 10 million times the mass of the Sun and can span as much as hundreds of light-years. That range is NASA’s description of the clouds. It is not a Jeans mass from this formula. They are not averaged.</p>
+  </div>
+
+  <p class="band">Presets · typical textbook values</p>
+  <div class="sheet">
+    <table>
+      <caption>Four round textbook settings. None is a measurement of a named cloud. The columns are this page’s uniform-sphere arithmetic.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Preset</th>
+          <th scope="col">T</th>
+          <th scope="col">n</th>
+          <th scope="col">μ</th>
+          <th scope="col">Jeans mass</th>
+          <th scope="col">Jeans length</th>
+          <th scope="col">Free-fall time</th>
+        </tr>
+      </thead>
+      <tbody id="preset-rows">
+        <tr id="row-atomic" data-preset="atomic"><th scope="row">Diffuse atomic</th><td>100 K</td><td>10 cm<sup>−3</sup></td><td>1.3</td><td>1.72690 × 10^4 solar masses</td><td>23.4073 pc</td><td>14.2713 million years</td></tr>
+        <tr id="row-gmc" data-preset="gmc"><th scope="row">Molecular cloud</th><td>10 K</td><td>100 cm<sup>−3</sup></td><td>2.33</td><td>53.7577 solar masses</td><td>1.30599 pc</td><td>3.37100 million years</td></tr>
+        <tr id="row-core" data-preset="core" class="is-on"><th scope="row">Dense core</th><td>10 K</td><td>10,000 cm<sup>−3</sup></td><td>2.33</td><td>5.37577 solar masses</td><td>0.130599 pc</td><td>337.100 thousand years</td></tr>
+        <tr id="row-hii" data-preset="hii"><th scope="row">Warm H II</th><td>10,000 K</td><td>100 cm<sup>−3</sup></td><td>0.6</td><td>2.56360 × 10^7 solar masses</td><td>160.377 pc</td><td>6.64295 million years</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scale-note">μ = 1.3, 2.33, and 0.6 are round textbook mean masses per particle. They are not measured abundances. Raising n by 100, at the same T and μ, divides M_J and R_J by 10. The molecular-cloud row and the dense-core row are that pair: 53.7577 and 5.37577 solar masses.</p>
+
+  <p class="band">What the words mean</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Jeans mass</dt><dd>The uniform-sphere mass at which 2K = |U|. Heavier than this, at the same density and temperature, gravity wins on this line. Lighter, thermal pressure wins. The prefactor is the one written above.</dd></div>
+    <div class="gloss"><dt>Jeans length</dt><dd>R_J, the radius of the sphere whose mass is M_J. Rice’s notes call this radius the Jeans length. The wavelength form is a different length and is not used as the answer.</dd></div>
+    <div class="gloss"><dt>Free-fall time</dt><dd>t_ff = (3π / (32 G ρ))<sup>1/2</sup>. It depends on density only. It is the pressureless collapse time, not a guarantee that a supported cloud will collapse.</dd></div>
+    <div class="gloss"><dt>μ</dt><dd>Mean mass per particle, in units of m_H. ρ = n μ m_H, and n counts particles. 2.33 is the molecular default. 1.3 is the neutral atomic button. 0.6 is the ionized button, and the electrons count as particles.</dd></div>
+    <div class="gloss"><dt>Fragmentation</dt><dd>M_J shrinks as the density rises, if the gas stays cold. Pieces of the cloud become unstable on their own. The outcome NASA describes is a stellar cluster, not one star from the whole cloud.</dd></div>
+    <div class="gloss gloss-wide"><dt>Cooling</dt><dd>Compression heats a gas that cannot radiate. M_J then climbs as T<sup>3/2</sup>, and for γ = 5/3 it climbs as the density climbs too. Molecular lines and dust keep a cold cloud near 10 K, which is why the dense-core button is a few solar masses and the warm H II button is not.</dd></div>
+  </dl>
+
+  <p class="band">Sources</p>
+  <div class="refs">
+    <h3>Where the formula and the constants come from</h3>
+    <ul>
+      <li><a href="https://www.ruf.rice.edu/~baring/astr350/astr350_2021_lec_1028.pdf" rel="noopener" target="_blank">Rice University, ASTR 350 lecture notes, 28 October 2021</a> — the uniform-sphere Jeans mass M<sub>J</sub> = (5kT / (G μ m<sub>H</sub>))<sup>3/2</sup> (3 / (4πρ))<sup>1/2</sup>, and R<sub>J</sub> = (15kT / (4π G μ m<sub>H</sub> ρ))<sup>1/2</sup>, which those notes call the Jeans length. The notes also say that for γ = 5/3 the Jeans mass rises as the density rises in an adiabatic collapse. This page uses that form. It does not adopt the notes’ example tildes.</li>
+      <li><a href="https://www.astro.utoronto.ca/~mhvk/AST1410/ast320notes.pdf" rel="noopener" target="_blank">University of Toronto, AST 320 notes</a> — the same mass, printed as 29 solar masses × μ<sup>−2</sup> × (T / 10 K)<sup>3/2</sup> × (n / 10<sup>4</sup> cm<sup>−3</sup>)<sup>−1/2</sup>, and R<sub>J</sub> = 0.30 pc on the same scaling. The exact free-fall time is (3π / (32 G ρ))<sup>1/2</sup>. This page’s μ = 1 arithmetic is 29.1845 solar masses and 0.304295 pc. They are not averaged. The file is ast320notes.pdf.</li>
+      <li><a href="https://www.sfu.ca/~boal/390lecs/390lec25.pdf" rel="noopener" target="_blank">David Boal, Simon Fraser University, PHYS 390 Lecture 25</a> — the same Jeans mass, with the text named as Carroll and Ostlie, sections 12.1 and 12.2. The copyright line on the notes is 2001. This page does not use that lecture’s round constants.</li>
+      <li><a href="https://science.nasa.gov/universe/stars/" rel="noopener" target="_blank">NASA Science — Star basics</a> — stars form in molecular clouds. The page says those clouds range from 1,000 to 10 million times the mass of the Sun and can span as much as hundreds of light-years, that cold gas clumps, and that gravity causes some clumps to collapse. Batches of stars from those clouds are often called stellar clusters. The mass range is NASA’s. It is not this formula.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?k" rel="noopener" target="_blank">NIST — Boltzmann constant</a> — k = 1.380649 × 10<sup>−23</sup> J/K, exact.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA recommended value, 6.67430 × 10<sup>−11</sup> m<sup>3</sup> kg<sup>−1</sup> s<sup>−2</sup>, standard uncertainty 0.00015 × 10<sup>−11</sup>. The uncertainty is not folded in. In solar masses the Jeans mass still depends on G, because M<sub>J</sub> / M☉ scales as G<sup>−1/2</sup>.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?mp" rel="noopener" target="_blank">NIST — proton mass</a> — 2022 CODATA central value, 1.67262192595 × 10<sup>−27</sup> kg. The parenthetical standard uncertainty is not folded in.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?me" rel="noopener" target="_blank">NIST — electron mass</a> — 2022 CODATA central value, 9.1093837139 × 10<sup>−31</sup> kg. Added to the proton mass. The 13.6 eV binding energy is omitted. The sum used here is 1.67353286432 × 10<sup>−27</sup> kg.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal solar mass parameter GM☉ = 1.3271244 × 10<sup>20</sup> m<sup>3</sup> s<sup>−2</sup>. Divided by the CODATA G it is 1.9884098707 × 10<sup>30</sup> kg. The same constant as the <a href="/science/astronomy/stellar-lifetime/">stellar lifetime</a> desk’s nominal luminosity paper, and as the <a href="/science/astronomy/rotation-curve/">rotation-curve</a> desk.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m.</li>
+      <li><a href="https://iauarchive.eso.org/static/resolutions/IAU2015_English.pdf" rel="noopener" target="_blank">IAU 2015 Resolution B2</a> — footnote 4: the parsec is exactly (648000/π) au. This page’s value of that product is 3.085677581491 × 10<sup>16</sup> m. A year in the free-fall time is the Julian year, 365.25 × 86,400 s = 31,557,600 s.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom uniform-sphere picture, not a simulation of a cloud. The Jeans mass is (5 k T / (G μ m<sub>H</sub>))<sup>3/2</sup> × (3 / (4 π ρ))<sup>1/2</sup> with ρ = n μ m<sub>H</sub>. The Jeans length is the critical radius of that sphere. The free-fall time is (3 π / (32 G ρ))<sup>1/2</sup>. A wavelength form is computed and not substituted. The buttons are typical textbook values, not measurements of a named cloud. At 10 K, 10<sup>4</sup> per cm<sup>3</sup>, and μ = 2.33, the mass is 5.37577 solar masses. The Toronto notes’ 29 and 0.30 pc are not averaged with 29.1845 and 0.304295 pc. NASA’s 1,000 to 10 million solar masses is a cloud range, not this formula. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/stellar-lifetime/"><p class="n">The clock</p><h3>Stellar lifetime</h3><p>Once a piece has a mass, t ≈ 10 Gyr × M/L. The dense-core button here is a few solar masses. That desk follows the mass.</p></a>
+    <a href="/science/astronomy/hr/"><p class="n">Diagram</p><h3>HR diagram</h3><p>Temperature across, luminosity up. The star that forms then has a place on that diagram.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima and the next neighbors. Most of them are the low-mass end of what a cold cloud can make.</p></a>
+    <a href="/science/astronomy/stars/"><p class="n">Letters</p><h3>Stars</h3><p>OBAFGKM and the life-path cartoons. Birth in a molecular cloud is the sentence this desk calculates.</p></a>
+    <a href="/science/astronomy/fusion/"><p class="n">Mass defect</p><h3>Fusion</h3><p>After the collapse, the core has to get hot enough for hydrogen to become helium. That desk is the energy.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The nominal Sun, already formed, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div class="help-dialog" id="sf-help-dialog" role="dialog" aria-modal="true" aria-labelledby="sf-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="sf-help-title">How the Jeans mass is drawn</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">Classroom uniform-sphere picture, not a simulation of a cloud. The buttons are typical textbook values. They are not a named cloud.</p>
+    <h3>The formula</h3>
+    <table>
+      <caption>Which form this page uses</caption>
+      <tbody>
+        <tr><th scope="row">Jeans mass</th><td>M_J = (5 k T / (G μ m_H))^(3/2) × (3 / (4 π ρ))^(1/2), with ρ = n μ m_H. This is 2K = |U| for a uniform sphere.</td></tr>
+        <tr><th scope="row">Jeans length</th><td>R_J = (15 k T / (4 π G μ m_H ρ))^(1/2). The critical radius. Rice’s notes call this the Jeans length.</td></tr>
+        <tr><th scope="row">Free-fall</th><td>t_ff = (3 π / (32 G ρ))^(1/2). Density only. The pressureless time.</td></tr>
+        <tr><th scope="row">Not used</th><td>The wavelength (π k T / (G μ m_H ρ))^(1/2). It is shown and not substituted. The ratio R_J over that length is √15 / (2 π) = 0.616404.</td></tr>
+      </tbody>
+    </table>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Preset</th><td>Diffuse atomic, molecular cloud, dense core, or warm H II. Each sets a round T, n, and μ. Moving a slider leaves the button.</td></tr>
+        <tr><th scope="row">T</th><td>Temperature, from 3 K to 30,000 K, on a log slider. The number field is the precise kelvin.</td></tr>
+        <tr><th scope="row">n</th><td>Particles per cubic centimetre, from 1 to 10^7, on a log slider. 10,000 is the dense-core button.</td></tr>
+        <tr><th scope="row">μ</th><td>Mean mass per particle in units of m_H, from 0.5 to 3. The molecular default is 2.33.</td></tr>
+        <tr><th scope="row">The drawing</th><td>Log n across, log M_J up. The line has slope −1/2 at the current T and μ. The dot is the current n. A dashed line marks 1 solar mass when it is inside the window.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<noscript><p class="note-schematic">The plot needs a script. The table above is the four textbook settings. The dense core, 10 K and 10,000 per cm^3 with μ = 2.33, is 5.37577 solar masses, 0.130599 pc, and 337.100 thousand years. Not a simulation of a cloud.</p></noscript>
+
+<script src="/science/astronomy/star-formation/star-formation.js"></script>
+<script>
+(function () {
+  "use strict";
+  var SF = window.StarFormation;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+  if (!SF) return;
+
+  var state = { T: 10, n: 10000, mu: 2.33 };
+  var canvas = document.getElementById("sf-canvas");
+  var helpBtn = document.getElementById("sf-help");
+  var helpDialog = document.getElementById("sf-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  var PAD = { l: 64, r: 16, t: 16, b: 36 };
+
+  var fields = {
+    T: { range: "temp", num: "temp-num", key: "T", min: SF.T_MIN, max: SF.T_MAX, log: true },
+    n: { range: "density", num: "density-num", key: "n", min: SF.N_MIN, max: SF.N_MAX, log: true },
+    mu: { range: "mu", num: "mu-num", key: "mu", min: SF.MU_MIN, max: SF.MU_MAX, log: false }
+  };
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function font(px) {
+    return px + "px " + cssVar("--font-ui", "IBM Plex Mono, ui-monospace, monospace");
+  }
+  function fieldText(spec) {
+    var value = state[spec.key];
+    if (spec.key === "mu") return String(Math.round(value * 1e6) / 1e6);
+    var rounded = Number(value.toPrecision(8));
+    if (Math.abs(rounded - Math.round(rounded)) < 1e-6 && Math.abs(rounded) < 1e8) return String(Math.round(rounded));
+    return String(rounded);
+  }
+  function ariaText(spec) {
+    if (spec.key === "T") return SF.formatT(state.T) + " K";
+    if (spec.key === "n") return SF.formatN(state.n) + " per cubic centimetre";
+    return SF.formatMu(state.mu);
+  }
+  function setIfIdle(el, text) {
+    if (!el || document.activeElement === el) return;
+    if (el.value !== text) el.value = text;
+  }
+  function press(id) {
+    var buttons = document.querySelectorAll("#preset-kind button");
+    var i;
+    for (i = 0; i < buttons.length; i++) {
+      var on = buttons[i].getAttribute("data-preset") === id;
+      buttons[i].setAttribute("aria-pressed", on ? "true" : "false");
+    }
+    var rows = document.querySelectorAll("#preset-rows tr");
+    for (i = 0; i < rows.length; i++) {
+      rows[i].className = rows[i].getAttribute("data-preset") === id ? "is-on" : "";
+    }
+  }
+  function showError(msg) {
+    var el = document.getElementById("field-error");
+    if (!el) return;
+    if (!msg) {
+      el.hidden = true;
+      el.textContent = "";
+      return;
+    }
+    el.hidden = false;
+    el.textContent = msg;
+  }
+  function fillStats(sc) {
+    var ul = document.getElementById("stats");
+    if (!ul) return;
+    var rows = [
+      ["Temperature", sc.tText + " K"],
+      ["Number density", sc.nText + " cm^\u22123"],
+      ["Per cubic metre", sc.nM3Text],
+      ["Mean mass \u03bc", sc.muText],
+      ["Mass density", sc.rhoText],
+      ["Jeans mass", sc.massText],
+      ["Jeans length", sc.lengthText],
+      ["Free-fall time", sc.timeText],
+      ["Unrounded time", sc.timeRaw + " years"],
+      ["Wavelength form", sc.waveText]
+    ];
+    ul.textContent = "";
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      var li = document.createElement("li");
+      var k = document.createElement("span");
+      k.className = "k";
+      k.textContent = rows[i][0];
+      var v = document.createElement("span");
+      v.className = "v";
+      v.textContent = rows[i][1];
+      li.appendChild(k);
+      li.appendChild(v);
+      ul.appendChild(li);
+    }
+  }
+  function fit() {
+    if (!canvas) return null;
+    var rect = canvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(rect.width || canvas.clientWidth || 640));
+    var h = Math.round(w * 0.62);
+    if (h < 280) h = 280;
+    if (h > 520) h = 520;
+    canvas.style.height = h + "px";
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    var ctx = canvas.getContext("2d");
+    if (!ctx) return null;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx: ctx, w: w, h: h };
+  }
+  function decadeTicks(lo, hi) {
+    var out = [];
+    var e0 = Math.ceil(Math.log10(lo) - 1e-12);
+    var e1 = Math.floor(Math.log10(hi) + 1e-12);
+    var e;
+    for (e = e0; e <= e1; e++) out.push(Math.pow(10, e));
+    return out;
+  }
+  function tickLabel(v) {
+    if (v >= 1 && v < 1000 && Math.abs(v - Math.round(v)) < 1e-6) return String(Math.round(v));
+    var exp = Math.round(Math.log10(v));
+    if (Math.abs(v - Math.pow(10, exp)) / v < 1e-6) {
+      var sign = exp < 0 ? "\u2212" : "";
+      return "10^" + sign + Math.abs(exp);
+    }
+    return SF.formatSig(v, 3);
+  }
+  function draw(sc) {
+    var box = fit();
+    if (!box || !sc.ok) return;
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var c = colors();
+    var rows = SF.series(state.T, state.mu, 80);
+    var lo = rows[0].solar;
+    var hi = rows[0].solar;
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      if (rows[i].solar < lo) lo = rows[i].solar;
+      if (rows[i].solar > hi) hi = rows[i].solar;
+    }
+    lo = lo / 1.35;
+    hi = hi * 1.35;
+    var plotW = w - PAD.l - PAD.r;
+    var plotH = h - PAD.t - PAD.b;
+    function X(n) {
+      var t = (Math.log(n) - Math.log(SF.N_MIN)) / (Math.log(SF.N_MAX) - Math.log(SF.N_MIN));
+      return PAD.l + t * plotW;
+    }
+    function Y(mass) {
+      var t = (Math.log(mass) - Math.log(lo)) / (Math.log(hi) - Math.log(lo));
+      return PAD.t + (1 - t) * plotH;
+    }
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = font(11);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = c.line;
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    var yTicks = decadeTicks(lo, hi);
+    for (i = 0; i < yTicks.length; i++) {
+      var yy = Y(yTicks[i]);
+      ctx.beginPath();
+      ctx.moveTo(PAD.l, yy);
+      ctx.lineTo(w - PAD.r, yy);
+      ctx.stroke();
+      ctx.fillText(tickLabel(yTicks[i]), PAD.l - 6, yy);
+    }
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    var xTicks = [1, 100, 10000, 1000000];
+    for (i = 0; i < xTicks.length; i++) {
+      var xx = X(xTicks[i]);
+      ctx.fillText(tickLabel(xTicks[i]), xx, h - PAD.b + 8);
+    }
+    if (lo < 1 && hi > 1) {
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = c.muted;
+      ctx.beginPath();
+      ctx.moveTo(PAD.l, Y(1));
+      ctx.lineTo(w - PAD.r, Y(1));
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.beginPath();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2;
+    for (i = 0; i < rows.length; i++) {
+      var px = X(rows[i].n);
+      var py = Y(rows[i].solar);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    var mx = X(sc.n);
+    var my = Y(sc.solar);
+    ctx.fillStyle = c.ink;
+    ctx.beginPath();
+    ctx.arc(mx, my, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+  function render() {
+    var sc = SF.scene(state);
+    if (!sc.ok) return;
+    var tier = document.getElementById("d-tier");
+    var title = document.getElementById("d-title");
+    var range = document.getElementById("d-range");
+    var why = document.getElementById("d-why");
+    if (tier) tier.textContent = sc.tier;
+    if (title) title.textContent = sc.title;
+    if (range) range.textContent = sc.range;
+    if (why) why.textContent = sc.why;
+    fillStats(sc);
+    press(sc.id);
+    if (canvas) canvas.setAttribute("aria-label", sc.aria);
+    var names = Object.keys(fields);
+    var i;
+    for (i = 0; i < names.length; i++) {
+      var spec = fields[names[i]];
+      var rangeEl = document.getElementById(spec.range);
+      var numEl = document.getElementById(spec.num);
+      var pos = SF.sliderPos(state[spec.key], spec.min, spec.max, spec.log);
+      if (rangeEl && document.activeElement !== rangeEl) rangeEl.value = String(pos);
+      if (rangeEl) {
+        rangeEl.setAttribute("aria-valuenow", String(state[spec.key]));
+        rangeEl.setAttribute("aria-valuetext", ariaText(spec));
+      }
+      setIfIdle(numEl, fieldText(spec));
+    }
+    draw(sc);
+  }
+  function applyRange(spec) {
+    var rangeEl = document.getElementById(spec.range);
+    if (!rangeEl) return;
+    state[spec.key] = SF.valueFromSlider(Number(rangeEl.value), spec.min, spec.max, spec.log);
+    showError("");
+    render();
+  }
+  function applyNumber(spec) {
+    var numEl = document.getElementById(spec.num);
+    if (!numEl) return;
+    var raw = String(numEl.value).trim().replace(/,/g, "");
+    var value = Number(raw);
+    if (!raw || !isFinite(value) || !(value > 0)) {
+      numEl.setAttribute("aria-invalid", "true");
+      showError("Enter a number above zero.");
+      return;
+    }
+    if (value < spec.min || value > spec.max) {
+      numEl.setAttribute("aria-invalid", "true");
+      state[spec.key] = SF.clamp(value, spec.min, spec.max);
+      showError(spec.key === "T"
+        ? "Temperature stays between 3 K and 30,000 K."
+        : spec.key === "n"
+          ? "Density stays between 1 and 10^7 per cm^3."
+          : "\u03bc stays between 0.5 and 3.");
+      render();
+      return;
+    }
+    numEl.setAttribute("aria-invalid", "false");
+    showError("");
+    state[spec.key] = value;
+    render();
+  }
+  var names = Object.keys(fields);
+  var f;
+  for (f = 0; f < names.length; f++) {
+    (function (spec) {
+      var rangeEl = document.getElementById(spec.range);
+      var numEl = document.getElementById(spec.num);
+      if (rangeEl) {
+        rangeEl.addEventListener("input", function () { applyRange(spec); });
+      }
+      if (numEl) {
+        numEl.addEventListener("input", function () { applyNumber(spec); });
+        numEl.addEventListener("change", function () { applyNumber(spec); });
+      }
+    })(fields[names[f]]);
+  }
+  var presetButtons = document.querySelectorAll("#preset-kind button");
+  var p;
+  for (p = 0; p < presetButtons.length; p++) {
+    presetButtons[p].addEventListener("click", function (ev) {
+      var id = ev.currentTarget.getAttribute("data-preset");
+      var preset = SF.presetById(id);
+      if (!preset) return;
+      state.T = preset.T;
+      state.n = preset.n;
+      state.mu = preset.mu;
+      showError("");
+      var nums = document.querySelectorAll(".controls input");
+      var j;
+      for (j = 0; j < nums.length; j++) nums[j].setAttribute("aria-invalid", "false");
+      render();
+    });
+  }
+  function nFromClient(clientX) {
+    if (!canvas) return state.n;
+    var rect = canvas.getBoundingClientRect();
+    var plotW = rect.width - PAD.l - PAD.r;
+    if (!(plotW > 0)) return state.n;
+    var t = (clientX - rect.left - PAD.l) / plotW;
+    if (t < 0) t = 0;
+    if (t > 1) t = 1;
+    return Math.exp(Math.log(SF.N_MIN) + t * (Math.log(SF.N_MAX) - Math.log(SF.N_MIN)));
+  }
+  if (canvas) {
+    canvas.addEventListener("pointerup", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.pointerType === "mouse" && ev.button !== 0) return;
+      state.n = SF.clamp(nFromClient(ev.clientX), SF.N_MIN, SF.N_MAX);
+      showError("");
+      render();
+    });
+    canvas.addEventListener("keydown", function (ev) {
+      if (helpDialog && !helpDialog.hidden) return;
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var pos = SF.sliderPos(state.n, SF.N_MIN, SF.N_MAX, true);
+      var step = ev.shiftKey ? 20 : 2;
+      pos += ev.key === "ArrowRight" ? step : -step;
+      state.n = SF.valueFromSlider(pos, SF.N_MIN, SF.N_MAX, true);
+      showError("");
+      render();
+    });
+  }
+  function focusables() {
+    if (!helpDialog) return [];
+    return Array.prototype.slice.call(helpDialog.querySelectorAll("button, a, input, [tabindex='0']")).filter(function (el) {
+      return !el.disabled && el.offsetParent !== null;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpBtn) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || !helpBtn) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (b) {
+      b.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        var tag = ev.target && ev.target.tagName;
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var lastNode = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        lastNode.focus();
+      } else if (!ev.shiftKey && active === lastNode) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+  window.addEventListener("resize", render);
+  if (window.ResizeObserver && canvas && canvas.parentElement) new ResizeObserver(render).observe(canvas.parentElement);
+  if (window.MutationObserver) {
+    new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+
+</body>
+</html>
