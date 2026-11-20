@@ -1,0 +1,874 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accretion and the Eddington limit — Steven Philley</title>
+<meta name="description" content="Accretion desk. Eddington luminosity for ionized hydrogen, L_Edd = 4π G M m_p c / σ_T. One solar mass computes 1.25707 × 10³¹ W, about 3.28387 × 10⁴ L☉. L = ε Ṁ c². The e-folding time uses ε/(1−ε). Presets are approximate: the Sun, Cygnus X-1, Sagittarius A*, M87*, and a classroom seed from 100 to 10⁹ solar masses. Not a disk model.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/accretion/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Accretion and the Eddington limit">
+<meta property="og:description" content="L_Edd for ionized hydrogen with Thomson scattering, L = ε Ṁ c², and the Salpeter e-folding time. One solar mass is 1.25707 × 10³¹ W. Not a disk model.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/accretion/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Accretion and the Eddington limit">
+<meta name="twitter:description" content="The Eddington limit, accretion luminosity, and how long a seed takes to grow. Spherical Thomson scattering. Not a disk model.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.top{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase}
+.top a{color:var(--ink-soft,#9b9a96);text-decoration:none}
+.top a:hover,.top a[aria-current="page"]{color:inherit}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a{color:var(--ink,#e8e6e1);text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:68ch}
+.note-schematic a{color:var(--ink,#e8e6e1)}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;aspect-ratio:2/1;background:transparent;touch-action:manipulation}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.co{border-top-color:var(--accent-2,#7eb6e8);border-top-style:dashed}
+.swatch.tot{border-top-width:3px;border-top-color:var(--ink,#e8e6e1)}
+.swatch.acc{border-top-color:var(--accent-2,#7eb6e8);border-top-style:dashed}
+.swatch.dot{width:8px;height:8px;border:0;border-top:0;border-radius:50%;background:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:8.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.num{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px;min-height:44px;padding:0 10px;width:16ch;min-width:0}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:.06em;color:var(--muted,#63666e);min-width:3ch}
+.num:focus-visible{outline:none;border-color:var(--accent,#c8b48a)}
+.num[aria-invalid="true"]{border-color:var(--accent,#c8b48a)}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.myth{margin-top:14px;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 35%,var(--line,#2c303a));background:rgba(0,0,0,.14);padding:16px 16px 14px}
+.myth .tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 8px}
+.myth h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(26px,4vw,34px);letter-spacing:.04em;margin:0 0 8px;line-height:1}
+.myth p{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.myth p + p{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.why a,.myth a,.refs a,.page-credit a,.glossary a,.note-schematic a,.scale-note a,.lede a{color:var(--ink,#e8e6e1)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/" aria-current="page">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+  <details class="subnav-phone">
+    <summary>Sections · Accretion</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+
+  <p class="kicker">Vol. Science · Astronomy · The limit</p>
+  <h1>Accretion and<br>the Eddington limit</h1>
+  <p class="lede">A star or a black hole can swallow mass. The light that comes out is <strong>L = ε Ṁ c²</strong>. ε is the fraction of the rest-mass energy that escapes as radiation. If the light pushes back as hard as gravity pulls, the flow sits at the Eddington luminosity. For a sphere of pure ionized hydrogen, with Thomson scattering as the only opacity, that limit is <strong>L<sub>Edd</sub> = 4π G M m<sub>p</sub> c / σ<sub>T</sub></strong>. It scales with mass. Slide the mass from one solar mass to ten billion. The chart is log luminosity against log mass. The holes themselves, as radii, are the <a href="/science/astronomy/black-holes/">black-hole</a> desk. A remnant that is not a hole is a <a href="/science/astronomy/compact-stars/">compact star</a>. The radioactive light after an explosion is <a href="/science/astronomy/supernovae/">supernovae</a>.</p>
+  <p class="note-schematic" id="limits-note">Educational calculator. Not a disk model and not a catalog. The Eddington luminosity is 4π G M m_p c / σ_T for a spherical flow of pure ionized hydrogen, with Thomson scattering as the only opacity. That opacity is the electron-scattering limit in Rybicki and Lightman. σ_T, m_p, and G are 2022 CODATA central values. c is exact. L = ε Ṁ c², the accretion luminosity in Frank, King, and Raine. The e-folding time is ε/(1−ε) × σ_T c / (4π G m_p) / λ. Salpeter 1964 is the name on that clock. Real disks can exceed L_Edd. Super-Eddington flows, geometry, and radiation-pressure effects are not in these formulas. Named masses are cited central values and are labeled approximate. The 100 to 10⁹ solar-mass span is a classroom seed, not a named quasar.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Eddington luminosity and growth</span>
+    <button type="button" class="help-q" id="acc-help" aria-haspopup="dialog" aria-controls="acc-help-dialog" aria-expanded="false" aria-label="How this accretion desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint">Log L against log mass · the line is the limit</p>
+      <canvas id="curve" width="880" height="440" tabindex="0" role="img" aria-label="Log-log Eddington luminosity against mass, from 1 to 10 billion solar masses. At 1 solar mass, L_Edd is 1.25707 × 10³¹ W, which is 3.28387 × 10⁴ solar luminosities. Efficiency 0.1, Eddington ratio 1. Accretion luminosity 1.25707 × 10³¹ W. The nominal solar luminosity is marked at 1 L☉. Preset masses are approximate."></canvas>
+      <ul class="legend" aria-label="Chart marks">
+        <li><span class="swatch" aria-hidden="true"></span> L<sub>Edd</sub></li>
+        <li><span class="swatch acc" aria-hidden="true"></span> λ L<sub>Edd</sub></li>
+        <li><span class="swatch dot" aria-hidden="true"></span> L☉</li>
+      </ul>
+      <p class="scale-note" id="chart-note">The solid line is L<sub>Edd</sub>. The dashed line is λ L<sub>Edd</sub>, drawn when λ is not 1. The lower mark at one solar mass is the nominal solar luminosity, not the limit. Preset dots use approximate central masses.</p>
+      <div class="controls">
+        <p class="pick-label">Presets · approximate · a mass between them is the slider</p>
+        <div class="presets" role="group" aria-label="Mass presets">
+          <button type="button" data-preset="sun" aria-pressed="true">Sun</button>
+          <button type="button" data-preset="cyg" aria-pressed="false">Cyg X-1</button>
+          <button type="button" data-preset="sgr" aria-pressed="false">Sgr A*</button>
+          <button type="button" data-preset="m87" aria-pressed="false">M87*</button>
+          <button type="button" data-preset="quasar" aria-pressed="false">Seed · 100 → 10⁹</button>
+        </div>
+        <div class="slider-row">
+          <label for="m-slider">Mass</label>
+          <input type="range" id="m-slider" min="0" max="1000" step="0.1" value="0" aria-valuemin="1" aria-valuemax="10000000000" aria-valuetext="1 solar mass">
+          <input type="text" class="num" id="m-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="pick-label">Efficiency · textbook binding energies, not a disk fit</p>
+        <div class="presets" role="group" aria-label="Efficiency presets">
+          <button type="button" data-eps="schw" aria-pressed="false">Schwarzschild · 0.0571910</button>
+          <button type="button" data-eps="0.1" aria-pressed="true">0.1</button>
+          <button type="button" data-eps="kerr" aria-pressed="false">Max Kerr · 0.422650</button>
+        </div>
+        <div class="slider-row">
+          <label for="e-slider">ε</label>
+          <input type="range" id="e-slider" min="0" max="1000" step="0.1" value="218" aria-valuemin="0.01" aria-valuemax="0.42265" aria-valuetext="0.1">
+          <input type="text" class="num" id="e-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="0.1" aria-label="Radiative efficiency" aria-invalid="false">
+          <span class="unit-tag">ε</span>
+        </div>
+        <div class="slider-row">
+          <label for="l-slider">λ</label>
+          <input type="range" id="l-slider" min="0" max="1000" step="0.1" value="667" aria-valuemin="0.01" aria-valuemax="10" aria-valuetext="1">
+          <input type="text" class="num" id="l-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1" aria-label="Eddington ratio" aria-invalid="false">
+          <span class="unit-tag">λ</span>
+        </div>
+        <p class="pick-label">Growth · seed to target · optional</p>
+        <div class="slider-row">
+          <label for="s-slider">Seed</label>
+          <input type="range" id="s-slider" min="0" max="1000" step="0.1" value="200" aria-valuemin="1" aria-valuemax="10000000000" aria-valuetext="100 solar masses">
+          <input type="text" class="num" id="s-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="100" aria-label="Seed mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <div class="slider-row">
+          <label for="t-slider">Target</label>
+          <input type="range" id="t-slider" min="0" max="1000" step="0.1" value="900" aria-valuemin="1" aria-valuemax="10000000000" aria-valuetext="1e9 solar masses">
+          <input type="text" class="num" id="t-num" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done" value="1e9" aria-label="Target mass in solar masses" aria-invalid="false">
+          <span class="unit-tag">M☉</span>
+        </div>
+        <p class="field-error" id="acc-err" hidden>Mass from 1 to 10 billion solar masses.</p>
+      </div>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Sun · nominal luminosity · approximate</p>
+      <h2 id="d-name">1 solar mass</h2>
+      <p class="range" id="d-range">ε = 0.1 · λ = 1</p>
+      <ul class="stats" id="d-stats">
+        <li><span class="k">L_Edd</span><span class="v" id="v-ledd">1.25707 × 10³¹ W</span></li>
+        <li><span class="k">L_Edd / L☉</span><span class="v" id="v-lsun">3.28387 × 10⁴ L☉</span></li>
+        <li><span class="k">L = λ L_Edd</span><span class="v" id="v-lacc">1.25707 × 10³¹ W</span></li>
+        <li><span class="k">L☉ / L_Edd</span><span class="v" id="v-ratio">3.04519 × 10⁻⁵</span></li>
+        <li><span class="k">Ṁ</span><span class="v" id="v-mdot">1.39867 × 10¹⁵ kg/s</span></li>
+        <li><span class="k">Ṁ</span><span class="v" id="v-mdotyr">2.21980 × 10⁻⁸ M☉/yr</span></li>
+        <li><span class="k">e-folding</span><span class="v" id="v-fold">5.00545 × 10⁷ yr</span></li>
+        <li><span class="k">Seed → target</span><span class="v" id="v-growth">16.1181 e-folds · 8.06783 × 10⁸ yr</span></li>
+      </ul>
+      <p class="why" id="d-why">The Sun button is one nominal solar mass. L☉ is the IAU 2015 nominal luminosity, 3.828 × 10²⁶ W. It is a conversion constant, not a new measurement of the Sun. The point of the button is the gap: that wattage sits far under L_Edd. The Sun is not accreting at the Eddington limit. The marker on the chart at 1 L☉ is the nominal luminosity. The marker on the line is the limit.</p>
+      <p class="why" id="d-eff">Efficiency ε is the fraction of rest-mass energy that comes out as light, L = ε Ṁ c². The default is 0.1. The Schwarzschild ISCO binding energy is 1 − √(8/9), which is 0.0571910. The maximal prograde Kerr closed form used here is 1 − 1/√3, which is 0.422650. Familiar round figures are 0.057 and 0.42. 0.0571910 rounds to 0.0572 at three significant figures and to 0.057 at two. It does not round to 0.057 at three figures. 0.422650 rounds to 0.423 at three significant figures and to 0.42 at two. The buttons use the binding energies. 0.057 and 0.42 are not substituted. This page does not integrate a Kerr geodesic.</p>
+      <p class="why" id="d-fold">The e-folding time is ε/(1−ε) × σ_T c / (4π G m_p) / λ. At these sliders it is 5.00545 × 10⁷ Julian years. The product that drops (1−ε) and keeps only ε is 4.50490 × 10⁷ years. A familiar round figure is about 45 million years, from that shorter product at ε = 0.1 and λ = 1. The calculator uses ε/(1−ε). The two times are not averaged. The mass that stays is (1−ε) of the supply, which is why (1−ε) is in the denominator of the growth rate. Salpeter 1964 is the name on the clock.</p>
+      <p class="why" id="d-grow">The seed is 100 solar masses and the target is 10⁹. The number of e-folds is ln(10⁷). At the efficiency and Eddington ratio on the sliders, the time is that count times the e-folding time. This span is the classroom example. It is not a named quasar. Changing ε or λ changes the time and does not change the e-folds.</p>
+    </aside>
+  </div>
+  <noscript>
+    <p class="note-schematic">The sliders need JavaScript. The one-solar-mass arithmetic is still this. L_Edd = 1.25707 × 10³¹ W, which is 3.28387 × 10⁴ L☉. L☉ / L_Edd = 3.04519 × 10⁻⁵. At ε = 0.1 and λ = 1 the supply rate is 1.39867 × 10¹⁵ kg/s, or 2.21980 × 10⁻⁸ M☉/yr. The e-folding time is 5.00545 × 10⁷ yr. From 100 solar masses to 10⁹ the count is 16.1181 e-folds · 8.06783 × 10⁸ yr. Cygnus X-1 is 21.2 ± 2.2 M☉. Sagittarius A* is 4.297 × 10⁶ M☉. M87* is 6.5 × 10⁹ M☉. Those masses are approximate central values.</p>
+  </noscript>
+
+  <div class="myth">
+    <p class="tag">Above the line</p>
+    <h2>The sphere is the limit. A disk is not the sphere.</h2>
+    <p>L_Edd here is the luminosity where radiation force balances gravity for a spherical flow of pure ionized hydrogen. The only opacity is Thomson scattering, σ<sub>T</sub> / m<sub>p</sub>. Rybicki and Lightman treat that electron-scattering limit. A real accretion flow is not a sphere. Frank, King, and Raine is the textbook for disks and for L = ε Ṁ c². A disk can exceed the spherical limit. The usual names are super-Eddington accretion, a different geometry, and radiation-pressure effects. This page does not compute any of them. λ above 1 is only a number on the slider.</p>
+    <p>The efficiency buttons are binding energies at the innermost stable orbit, not a fit to a named disk. For a non-spinning hole the orbit is at 6M and the binding energy is 1 − √(8/9). For a maximal prograde Kerr hole the closed form used here is 1 − 1/√3. Bardeen, Press, and Teukolsky 1972 give the orbits. This page does not integrate a Kerr geodesic, and it does not assign a spin to Cygnus X-1, Sagittarius A*, or M87*.</p>
+  </div>
+
+  <p class="band">Literacy · the numbers on the readout</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Eddington luminosity</dt><dd>L<sub>Edd</sub> = 4π G M m<sub>p</sub> c / σ<sub>T</sub>. Gravity pulls on a proton. Thomson scattering pushes on the electron that travels with it. Set the two forces equal and the luminosity falls out proportional to M. One nominal solar mass computes 1.25707 × 10³¹ W, which is 3.28387 × 10⁴ L☉. A familiar round figure is 1.26 × 10³¹ W. 1.25707 × 10³¹ rounds to 1.26 × 10³¹ at three figures. The calculator uses the arithmetic. A familiar round figure near 3.2 × 10⁴ L☉ is coarser. 3.28387 × 10⁴ rounds to 3.28 × 10⁴ at three figures. 3.2 × 10⁴ is not substituted.</dd></div>
+    <div class="gloss"><dt>Accretion luminosity</dt><dd>L = ε Ṁ c². Ṁ is the rest-mass supply rate. ε is the fraction that comes out as light. At Eddington ratio λ the light is λ L<sub>Edd</sub>, so Ṁ = λ L<sub>Edd</sub> / (ε c²). The default ε is 0.1.</dd></div>
+    <div class="gloss"><dt>Eddington rate</dt><dd>Ṁ<sub>Edd</sub> = L<sub>Edd</sub> / (ε c²). The readout’s Ṁ is that rate times λ, in kg/s and in solar masses per Julian year. At 1 M☉, ε = 0.1, and λ = 1 the arithmetic is 2.21980 × 10⁻⁸ M☉/yr.</dd></div>
+    <div class="gloss gloss-wide"><dt>Salpeter time</dt><dd>The mass that stays is (1 − ε) of the supply, because the radiated fraction left. The e-folding time is t = ε/(1−ε) × σ<sub>T</sub> c / (4π G m<sub>p</sub>) / λ. At ε = 0.1 and λ = 1 the arithmetic is 5.00545 × 10⁷ Julian years. The product that drops (1−ε) and keeps only ε is 4.50490 × 10⁷ years. A familiar round figure is about 45 million years, from that shorter product. The calculator uses ε/(1−ε). The two times are not averaged. Salpeter 1964 is the name on the clock. The time does not depend on the mass. A bigger hole has a bigger limit and a bigger supply, in the same proportion.</dd></div>
+    <div class="gloss"><dt>e-folds</dt><dd>From a seed mass to a higher target, the count is ln(target / seed). The time is that count times the e-folding time. 100 to 10⁹ is ln(10⁷) = 16.1181 e-folds. At ε = 0.1 and λ = 1 the time is 8.06783 × 10⁸ years. The span is a classroom example. It is not a named quasar.</dd></div>
+    <div class="gloss"><dt>The Sun</dt><dd>L☉ is the IAU 2015 nominal luminosity, 3.828 × 10²⁶ W. L☉ / L<sub>Edd</sub> at one solar mass is 3.04519 × 10⁻⁵. The Sun is not accreting at the limit. The button is the gap.</dd></div>
+    <div class="gloss gloss-wide"><dt>Cited masses</dt><dd>Cygnus X-1, 21.2 ± 2.2 M☉, Miller-Jones et al. 2021. Sagittarius A*, (4.297 ± 0.012) × 10⁶ M☉ statistical, systematics about 40,000 M☉, GRAVITY Collaboration 2022. M87*, 6.5 ± 0.2 (stat) ± 0.7 (sys) × 10⁹ M☉, EHT 2019 Paper VI. The readout uses the central value. The point on the line is L<sub>Edd</sub> at that mass. It is not the light we measure. Each preset is labeled approximate.</dd></div>
+  </dl>
+
+  <p class="band">Sources · the constants and the masses</p>
+  <div class="refs">
+    <h3>Cited, not invented</h3>
+    <ul>
+      <li><a href="https://physics.nist.gov/cuu/pdf/wall_2022.pdf" rel="noopener" target="_blank">NIST SP 961, CODATA 2022</a> — Thomson cross section σ<sub>e</sub> = 6.6524587051 × 10<sup>−29</sup> m², standard uncertainty 0.0000000062 × 10<sup>−29</sup>. The uncertainty is not folded in. The same adjustment’s proton mass and G are linked below.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?mp" rel="noopener" target="_blank">NIST — proton mass</a> — 2022 CODATA central value, 1.67262192595 × 10<sup>−27</sup> kg. The same value as the <a href="/science/astronomy/star-formation/">star-formation</a> desk. Pure ionized hydrogen uses one proton per electron.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?bg" rel="noopener" target="_blank">NIST — Newtonian constant of gravitation</a> — 2022 CODATA G = 6.67430 × 10<sup>−11</sup> m³ kg<sup>−1</sup> s<sup>−2</sup>. c = 299,792,458 m/s is exact. A year on this page is the Julian year, 365.25 × 86,400 s.</li>
+      <li><a href="https://arxiv.org/pdf/1510.07674" rel="noopener" target="_blank">IAU 2015 Resolution B3</a> (Prša et al. 2016, AJ 152, 41) — nominal GM☉ = 1.3271244 × 10²⁰ m³ s<sup>−2</sup> and nominal solar luminosity 3.828 × 10²⁶ W. A solar mass is GM☉ / G. L☉ is the comparison wattage, not a new measurement of the Sun.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1979rpa..book.....R/abstract" rel="noopener" target="_blank">Rybicki and Lightman, Radiative Processes in Astrophysics</a> (Wiley, 1979) — Thomson scattering and the electron-scattering opacity. This page uses σ<sub>T</sub> / m<sub>p</sub>. It does not copy a page number.</li>
+      <li><a href="https://doi.org/10.1017/CBO9781139164245" rel="noopener" target="_blank">Frank, King, and Raine, Accretion Power in Astrophysics</a> (Cambridge, 3rd ed., 2002) — the textbook treatment of L = ε Ṁ c² and of accretion onto compact objects and active nuclei. This page does not copy an equation number, and it does not solve a disk.</li>
+      <li><a href="https://doi.org/10.1086/147973" rel="noopener" target="_blank">Salpeter 1964, ApJ 140, 796</a> — accretion of interstellar matter by massive objects. The e-folding clock on this page carries his name. The formula used here is ε/(1−ε) times σ<sub>T</sub> c / (4π G m<sub>p</sub> λ). The product that drops (1−ε) is shown beside it and is not substituted.</li>
+      <li><a href="https://doi.org/10.1086/151796" rel="noopener" target="_blank">Bardeen, Press, and Teukolsky 1972, ApJ 178, 347</a> — photon orbit and ISCO for a Kerr hole. The zero-spin ISCO is 6M. This page’s efficiencies are the binding energies 1 − √(8/9) and 1 − 1/√3. It does not evaluate their Kerr formula.</li>
+      <li><a href="https://doi.org/10.1126/science.abb3363" rel="noopener" target="_blank">Miller-Jones et al. 2021, Science 371, 1046</a> — Cygnus X-1, 21.2 ± 2.2 M☉. The same central value as the <a href="/science/astronomy/black-holes/">black-hole</a> desk. The ±2.2 is not folded in. Also <a href="https://arxiv.org/abs/2102.09091" rel="noopener" target="_blank">arXiv:2102.09091</a>.</li>
+      <li><a href="https://doi.org/10.1051/0004-6361/202142465" rel="noopener" target="_blank">GRAVITY Collaboration 2022, A&amp;A 657, L12</a> — Sagittarius A*, (4.297 ± 0.012) × 10⁶ M☉ statistical, systematics about 40,000 M☉. The preset uses 4.297 × 10⁶. A round 4.3 × 10⁶ is not substituted.</li>
+      <li><a href="https://doi.org/10.3847/2041-8213/ab1141" rel="noopener" target="_blank">EHT Collaboration 2019, ApJL 875, L6</a> — M87* Paper VI, 6.5 ± 0.2 (stat) ± 0.7 (sys) × 10⁹ M☉. The preset uses 6.5 × 10⁹.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom Eddington arithmetic. L<sub>Edd</sub> = 4π G M m<sub>p</sub> c / σ<sub>T</sub> with 2022 CODATA constants and the exact speed of light. L = ε Ṁ c². The e-folding time uses ε/(1−ε). Preset masses are the cited central values, labeled approximate. The 100 to 10⁹ span is not a named quasar. Spherical, pure ionized hydrogen, Thomson opacity only. Not a disk model. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/black-holes/"><p class="n">The radius</p><h3>Black holes</h3><p>Schwarzschild radius, photon sphere, and ISCO. The same cited masses. That desk is kilometers. This one is watts.</p></a>
+    <a href="/science/astronomy/compact-stars/"><p class="n">The remnant</p><h3>Compact stars</h3><p>A white dwarf or a neutron star, before or instead of a hole. The radius there is not this limit.</p></a>
+    <a href="/science/astronomy/supernovae/"><p class="n">The decay</p><h3>Supernovae</h3><p>56Ni → 56Co → 56Fe under full trapping. A different power, after the explosion. Not accretion.</p></a>
+    <a href="/science/astronomy/stellar-lifetime/"><p class="n">The path</p><h3>Stellar lifetime</h3><p>Mass, a mass–luminosity fit, and a rough end. The hole, if one is left, can then accrete. That clock is here.</p></a>
+    <a href="/science/astronomy/fusion/"><p class="n">The fuel</p><h3>Fusion</h3><p>E = Δm c² inside a star. Accretion spends rest mass from outside. The nominal solar wattage is the comparison on both desks.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The nominal Sun this desk starts from, and the rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="acc-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="acc-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="acc-help-title">How this desk works</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. The line is the spherical Eddington limit. It is not a disk.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Sun</th><td>One nominal solar mass. The chart also marks 1 L☉, far under the line.</td></tr>
+        <tr><th scope="row">Cyg X-1</th><td>21.2 solar masses, Miller-Jones et al. 2021. Approximate. The point is L<sub>Edd</sub>, not the observed X-rays.</td></tr>
+        <tr><th scope="row">Sgr A*</th><td>4.297 × 10⁶ solar masses, GRAVITY Collaboration 2022. Approximate.</td></tr>
+        <tr><th scope="row">M87*</th><td>6.5 × 10⁹ solar masses, EHT 2019. Approximate.</td></tr>
+        <tr><th scope="row">Seed · 100 → 10⁹</th><td>A classroom example. Not a named quasar. It sets the mass marker on 10⁹, the seed on 100, and the target on 10⁹. ε and λ stay where you left them.</td></tr>
+        <tr><th scope="row">Mass</th><td>Logarithmic, from 1 to 10 billion solar masses. Typing or sliding leaves the preset. Scientific notation is allowed.</td></tr>
+        <tr><th scope="row">Schwarzschild</th><td>ε = 1 − √(8/9) = 0.0571910. The zero-spin ISCO binding energy.</td></tr>
+        <tr><th scope="row">0.1</th><td>The default efficiency. A common thin-disk round figure. Not a fit.</td></tr>
+        <tr><th scope="row">Max Kerr</th><td>ε = 1 − 1/√3 = 0.422650. The top of the slider. This page does not integrate a Kerr geodesic.</td></tr>
+        <tr><th scope="row">λ</th><td>Eddington ratio, from 0.01 to 10. λ = 1 is the spherical limit. Above 1 is a number, not a super-Eddington model.</td></tr>
+        <tr><th scope="row">Seed and target</th><td>The growth sum. The target has to sit above the seed. The window matches the mass slider. It is not a physical limit.</td></tr>
+        <tr><th scope="row">Chart</th><td>Log mass across, log luminosity up. Preset dots sit on L<sub>Edd</sub>. The vertical line is the mass on the slider.</td></tr>
+        <tr><th scope="row">Keyboard</th><td>Left and Right on the chart step the mass along the log slider. Home is 1 solar mass. End is 10 billion. The phone uses the slider and the buttons.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/accretion/accretion.js"></script>
+<script>
+(function () {
+  "use strict";
+  var A = window.Accretion;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+
+  var state = { mass: 1, eps: A.EPS_DEFAULT, lambda: A.LAMBDA_DEFAULT, seed: A.SEED_EXAMPLE, target: A.TARGET_EXAMPLE };
+  var canvas = document.getElementById("curve");
+  var mSlider = document.getElementById("m-slider");
+  var mNum = document.getElementById("m-num");
+  var eSlider = document.getElementById("e-slider");
+  var eNum = document.getElementById("e-num");
+  var lSlider = document.getElementById("l-slider");
+  var lNum = document.getElementById("l-num");
+  var sSlider = document.getElementById("s-slider");
+  var sNum = document.getElementById("s-num");
+  var tSlider = document.getElementById("t-slider");
+  var tNum = document.getElementById("t-num");
+  var err = document.getElementById("acc-err");
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      accent2: cssVar("--accent-2", "#7eb6e8"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function wrap(ctx, text, maxW) {
+    var words = text.split(" ");
+    var lines = [];
+    var line = "";
+    var i;
+    for (i = 0; i < words.length; i++) {
+      var trial = line ? line + " " + words[i] : words[i];
+      if (line && ctx.measureText(trial).width > maxW) {
+        lines.push(line);
+        line = words[i];
+      } else line = trial;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+  function superscript(exp) {
+    var map = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+    return String(exp).split("").map(function (ch) { return map[ch] || ch; }).join("");
+  }
+  function paint(sc) {
+    if (!canvas || !canvas.getContext) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = canvas.clientWidth || 880;
+    var h = Math.max(180, Math.round(w / 2));
+    canvas.width = Math.max(1, Math.round(w * dpr));
+    canvas.height = Math.max(1, Math.round(h * dpr));
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    ctx.font = "12px 'IBM Plex Mono', ui-monospace, monospace";
+    var callout = wrap(ctx, "Spherical Thomson limit. A real disk can sit above the line. This chart is not a disk.", w - 24);
+    ctx.fillStyle = c.soft;
+    var li;
+    for (li = 0; li < callout.length; li++) ctx.fillText(callout[li], 12, 16 + li * 15);
+    var top = 18 + callout.length * 15;
+    var plot = { l: 78, r: Math.max(120, w - 16), t: top, b: Math.max(top + 40, h - 36) };
+    plot.w = Math.max(1, plot.r - plot.l);
+    plot.h = Math.max(1, plot.b - plot.t);
+    var yLo = Math.log10(A.L_SUN_W) - 0.45;
+    var yHi = Math.log10(A.eddingtonWatts(A.M_MAX) * Math.max(sc.lambda, 1)) + 0.4;
+    function xOf(logM) { return plot.l + (logM / 10) * plot.w; }
+    function yOf(logL) { return plot.b - ((logL - yLo) / (yHi - yLo)) * plot.h; }
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(plot.l, plot.t, plot.w, plot.h);
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textBaseline = "middle";
+    var exp;
+    for (exp = Math.ceil(yLo); exp <= Math.floor(yHi); exp++) {
+      var y = yOf(exp);
+      if (y < plot.t + 8 || y > plot.b - 8) continue;
+      ctx.strokeStyle = c.line;
+      ctx.beginPath();
+      ctx.moveTo(plot.l, y);
+      ctx.lineTo(plot.r, y);
+      ctx.stroke();
+      ctx.fillStyle = c.muted;
+      ctx.textAlign = "right";
+      ctx.fillText("10" + superscript(exp), plot.l - 6, y);
+    }
+    ctx.textBaseline = "top";
+    [0, 2, 4, 6, 8, 10].forEach(function (d) {
+      var x = xOf(d);
+      ctx.strokeStyle = c.line;
+      ctx.beginPath();
+      ctx.moveTo(x, plot.t);
+      ctx.lineTo(x, plot.b);
+      ctx.stroke();
+      ctx.fillStyle = c.muted;
+      ctx.textAlign = d === 0 ? "left" : (d === 10 ? "right" : "center");
+      ctx.fillText(d === 0 ? "1" : "10" + superscript(d), x, plot.b + 6);
+    });
+    var ySun = yOf(Math.log10(A.L_SUN_W));
+    ctx.save();
+    ctx.strokeStyle = c.ink;
+    ctx.globalAlpha = 0.35;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath();
+    ctx.moveTo(plot.l, ySun);
+    ctx.lineTo(plot.r, ySun);
+    ctx.stroke();
+    ctx.restore();
+    function drawKey(key, color, width, dash) {
+      var pts = A.samples(241, sc.lambda);
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(plot.l, plot.t, plot.w, plot.h);
+      ctx.clip();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.setLineDash(dash);
+      ctx.beginPath();
+      pts.forEach(function (p, i) {
+        var x = xOf(Math.log10(p.mass));
+        var y = yOf(Math.log10(p[key]));
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+    drawKey("ledd", c.accent, 2.25, []);
+    if (Math.abs(sc.lambda - 1) > 1e-6) drawKey("lacc", c.accent2, 1.75, [5, 4]);
+    var marks = [
+      { mass: 1, label: "Sun" },
+      { mass: A.CYG_M, label: "Cyg" },
+      { mass: A.SGR_M, label: "Sgr" },
+      { mass: A.M87_M, label: "M87" }
+    ];
+    var lastX = -999;
+    marks.forEach(function (mk) {
+      var x = xOf(Math.log10(mk.mass));
+      var y = yOf(Math.log10(A.eddingtonWatts(mk.mass)));
+      ctx.fillStyle = c.accent;
+      ctx.beginPath();
+      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      if (x - lastX < 34) return;
+      lastX = x;
+      ctx.fillStyle = c.soft;
+      ctx.font = "10px 'IBM Plex Mono', ui-monospace, monospace";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(mk.label, Math.min(x + 5, plot.r - 28), y - 3);
+    });
+    var xA = xOf(Math.log10(sc.mass));
+    var yA = yOf(Math.log10(sc.ledd));
+    ctx.save();
+    ctx.strokeStyle = c.ink;
+    ctx.globalAlpha = 0.45;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(xA, plot.t);
+    ctx.lineTo(xA, plot.b);
+    ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle = c.ink;
+    ctx.beginPath();
+    ctx.arc(xA, yA, 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(xOf(0), ySun, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "10px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Lsun", xOf(0) + 6, ySun);
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function sliderFromMass(m) { return String(A.logUnmap(m, A.M_MIN, A.M_MAX) * 1000); }
+  function massFromSlider(slider) { return A.logMap(Number(slider.value) / 1000, A.M_MIN, A.M_MAX); }
+  function sliderFromEps(eps) { return String((eps - A.EPS_MIN) / (A.EPS_MAX - A.EPS_MIN) * 1000); }
+  function epsFromSlider() { return A.EPS_MIN + (Number(eSlider.value) / 1000) * (A.EPS_MAX - A.EPS_MIN); }
+  function sliderFromLambda(lambda) { return String(A.logUnmap(lambda, A.LAMBDA_MIN, A.LAMBDA_MAX) * 1000); }
+  function lambdaFromSlider() { return A.logMap(Number(lSlider.value) / 1000, A.LAMBDA_MIN, A.LAMBDA_MAX); }
+  function markInvalid(which) {
+    [mNum, eNum, lNum, sNum, tNum].forEach(function (el) {
+      if (el) el.setAttribute("aria-invalid", "false");
+    });
+    var map = { mass: mNum, eps: eNum, lambda: lNum, seed: sNum, target: tNum };
+    if (map[which]) map[which].setAttribute("aria-invalid", "true");
+  }
+  function clearInvalid() {
+    if (err) err.hidden = true;
+    markInvalid("");
+  }
+  function render() {
+    var sc = A.scene(state);
+    if (!sc.ok) return;
+    setText("d-tier", sc.text.tier);
+    setText("d-name", sc.text.name);
+    setText("d-range", sc.text.range);
+    setText("v-ledd", sc.text.ledd);
+    setText("v-lsun", sc.text.lsun);
+    setText("v-lacc", sc.text.lacc);
+    setText("v-ratio", sc.text.ratio);
+    setText("v-mdot", sc.text.mdot);
+    setText("v-mdotyr", sc.text.mdotYr);
+    setText("v-fold", sc.text.salpeter);
+    setText("v-growth", sc.text.growth);
+    setText("d-why", sc.text.why);
+    setText("d-eff", sc.text.eff);
+    setText("d-fold", sc.text.fold);
+    setText("d-grow", sc.text.grow);
+    if (canvas) canvas.setAttribute("aria-label", sc.text.aria);
+    if (mSlider) {
+      mSlider.value = sliderFromMass(sc.mass);
+      mSlider.setAttribute("aria-valuetext", A.massPhrase(sc.mass));
+    }
+    if (eSlider) {
+      eSlider.value = sliderFromEps(sc.eps);
+      eSlider.setAttribute("aria-valuetext", sc.text.eps);
+    }
+    if (lSlider) {
+      lSlider.value = sliderFromLambda(sc.lambda);
+      lSlider.setAttribute("aria-valuetext", sc.text.lambda);
+    }
+    if (sSlider) {
+      sSlider.value = sliderFromMass(sc.seed);
+      sSlider.setAttribute("aria-valuetext", A.massPhrase(sc.seed));
+    }
+    if (tSlider) {
+      tSlider.value = sliderFromMass(sc.target);
+      tSlider.setAttribute("aria-valuetext", A.massPhrase(sc.target));
+    }
+    if (document.activeElement !== mNum && mNum) mNum.value = sc.text.mass;
+    if (document.activeElement !== eNum && eNum) eNum.value = sc.text.eps;
+    if (document.activeElement !== lNum && lNum) lNum.value = sc.text.lambda;
+    if (document.activeElement !== sNum && sNum) sNum.value = sc.text.seed;
+    if (document.activeElement !== tNum && tNum) tNum.value = sc.text.target;
+    var buttons = document.querySelectorAll("[data-preset]");
+    var bi;
+    for (bi = 0; bi < buttons.length; bi++) {
+      buttons[bi].setAttribute("aria-pressed", buttons[bi].getAttribute("data-preset") === sc.preset ? "true" : "false");
+    }
+    var epss = document.querySelectorAll("[data-eps]");
+    for (bi = 0; bi < epss.length; bi++) {
+      var tag = epss[bi].getAttribute("data-eps");
+      var match = false;
+      if (tag === "schw") match = A.same(sc.eps, A.EPS_SCHW);
+      else if (tag === "kerr") match = A.same(sc.eps, A.EPS_KERR);
+      else match = A.same(sc.eps, Number(tag));
+      epss[bi].setAttribute("aria-pressed", match ? "true" : "false");
+    }
+    paint(sc);
+  }
+  function fail(message, which) {
+    if (err) {
+      err.hidden = false;
+      err.textContent = message;
+    }
+    markInvalid(which);
+  }
+  function commit(next, which) {
+    var sc = A.scene(next);
+    if (!sc.ok) {
+      fail(sc.error, which);
+      return;
+    }
+    clearInvalid();
+    state.mass = sc.mass;
+    state.eps = sc.eps;
+    state.lambda = sc.lambda;
+    state.seed = sc.seed;
+    state.target = sc.target;
+    render();
+  }
+  if (mSlider) mSlider.addEventListener("input", function () { commit({ mass: massFromSlider(mSlider), eps: state.eps, lambda: state.lambda, seed: state.seed, target: state.target }, "mass"); });
+  if (sSlider) sSlider.addEventListener("input", function () { commit({ mass: state.mass, eps: state.eps, lambda: state.lambda, seed: massFromSlider(sSlider), target: state.target }, "seed"); });
+  if (tSlider) tSlider.addEventListener("input", function () { commit({ mass: state.mass, eps: state.eps, lambda: state.lambda, seed: state.seed, target: massFromSlider(tSlider) }, "target"); });
+  if (eSlider) eSlider.addEventListener("input", function () { commit({ mass: state.mass, eps: epsFromSlider(), lambda: state.lambda, seed: state.seed, target: state.target }, "eps"); });
+  if (lSlider) lSlider.addEventListener("input", function () { commit({ mass: state.mass, eps: state.eps, lambda: lambdaFromSlider(), seed: state.seed, target: state.target }, "lambda"); });
+  function bindNum(input, key) {
+    if (!input) return;
+    function go() {
+      var next = { mass: state.mass, eps: state.eps, lambda: state.lambda, seed: state.seed, target: state.target };
+      next[key] = A.parseNum(input.value);
+      commit(next, key);
+    }
+    input.addEventListener("input", go);
+    input.addEventListener("change", go);
+  }
+  bindNum(mNum, "mass");
+  bindNum(eNum, "eps");
+  bindNum(lNum, "lambda");
+  bindNum(sNum, "seed");
+  bindNum(tNum, "target");
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = A.presetById(btn.getAttribute("data-preset"));
+      if (!p) return;
+      state.mass = p.mass;
+      if (p.seed != null) state.seed = p.seed;
+      if (p.target != null) state.target = p.target;
+      clearInvalid();
+      render();
+    });
+  });
+  document.querySelectorAll("[data-eps]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var tag = btn.getAttribute("data-eps");
+      if (tag === "schw") state.eps = A.EPS_SCHW;
+      else if (tag === "kerr") state.eps = A.EPS_KERR;
+      else state.eps = Number(tag);
+      clearInvalid();
+      render();
+    });
+  });
+  if (canvas) canvas.addEventListener("keydown", function (ev) {
+    var u = A.logUnmap(state.mass, A.M_MIN, A.M_MAX);
+    if (ev.key === "ArrowLeft") u -= 0.01;
+    else if (ev.key === "ArrowRight") u += 0.01;
+    else if (ev.key === "Home") u = 0;
+    else if (ev.key === "End") u = 1;
+    else return;
+    ev.preventDefault();
+    state.mass = A.logMap(u, A.M_MIN, A.M_MAX);
+    clearInvalid();
+    render();
+  });
+
+  var helpBtn = document.getElementById("acc-help");
+  var helpDialog = document.getElementById("acc-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    var closers = helpDialog.querySelectorAll("[data-help-close]");
+    var ci;
+    for (ci = 0; ci < closers.length; ci++) closers[ci].addEventListener("click", closeHelp);
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") {
+        ev.preventDefault();
+        closeHelp();
+        return;
+      }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
