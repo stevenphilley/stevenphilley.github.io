@@ -1,0 +1,971 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proper motion and space velocity — Steven Philley</title>
+<meta name="description" content="Proper-motion desk. Tangential speed is 4.74047 times μ in arcseconds per year times distance in parsecs. Barnard's Star, Gaia DR3, computes 90.076 km/s across the line of sight and 142.537 km/s through space. Closest approach is a straight line. Not an orbit.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/proper-motion/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Proper motion and space velocity">
+<meta property="og:description" content="How a nearby star drifts across the sky. Barnard's Star computes 90.076 km/s of tangential speed. The space velocity adds the radial velocity. A straight-line closest approach. Not an orbit.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/proper-motion/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Proper motion and space velocity">
+<meta name="twitter:description" content="Barnard's Star computes 90.076 km/s across the line of sight. Proper motion, parallax, and radial velocity make a space velocity. Not an orbit.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a,.sheet a{color:var(--ink,#e8e6e1)}
+.lede a{text-decoration:underline;text-underline-offset:3px}
+.lede a:hover{color:var(--accent,#c8b48a)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e);text-transform:none;letter-spacing:0}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400;text-transform:none;letter-spacing:0}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;position:relative;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;aspect-ratio:1;max-height:720px;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:10px;border-radius:50%;background:var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.now{background:var(--ink,#e8e6e1)}
+.swatch.start{background:transparent;border:1px solid var(--muted,#63666e);border-radius:50%;height:10px}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:9.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.unit-tag{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:.06em;text-transform:uppercase;color:var(--muted,#63666e)}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button,.play-row button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible,.play-row button:hover,.play-row button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"],.play-row button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.play-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.field-error{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-error[hidden]{display:none}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:var(--sp-track,.04em);color:var(--accent,#c8b48a);margin:0 0 12px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.why + .why{margin-top:10px}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.sheet{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:12px 12px 8px;overflow-x:auto}
+.sheet table{width:100%;border-collapse:collapse;min-width:760px}
+.sheet caption{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);text-align:left;margin:0 0 8px}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--muted,#63666e);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1)}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  .diagram canvas{scroll-behavior:auto}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/" aria-current="page">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Proper motion</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The drift</p>
+  <h1>Proper motion<br>&amp; space velocity</h1>
+  <p class="lede">A nearby star is not painted on a sphere. <strong>Proper motion</strong> μ is how far it drifts across the sky in a year. The tangential speed is <strong>v<sub>t</sub> = 4.74047 · μ[″/yr] · d[pc]</strong>, in kilometres per second. The 4.74047 is one astronomical unit per Julian year: 149,597,870.7 km divided by 365.25 × 86,400 s is <strong>4.74047046 km/s</strong>. That quotient rounds to 4.74047 at five decimals. The calculator uses the quotient. Distance is a <a href="/science/astronomy/parallax/">parallax</a>. The third component is the <a href="/science/astronomy/radial-velocity/">radial velocity</a>, positive when the star recedes. The space velocity is <strong>√(v<sub>t</sub>² + v<sub>r</sub>²)</strong>. <a href="https://doi.org/10.1098/rstl.1717.0025" rel="noopener" target="_blank">Edmond Halley</a> in 1718 compared declinations Ptolemy had recorded and found that Sirius, Arcturus, and Aldebaran had moved. <a href="https://doi.org/10.1086/104156" rel="noopener" target="_blank">E. E. Barnard</a> in 1916 published a star at about 10.3″ a year. Gaia DR3 gives that star a total of <strong>10.393349″/yr</strong>. At 1.828234 pc the tangential speed is <strong>90.076 km/s</strong>, and with a radial velocity of −110.468 km/s the space velocity is <strong>142.537 km/s</strong>.</p>
+  <p class="note-schematic" id="limits-note">Educational schematic. Not a catalog reduction and not an orbit. Proper motion, parallax, and radial velocity are combined as a straight line at constant speed relative to the Sun. Galactic acceleration, perspective acceleration, and the Sun’s motion are left out. The closest-approach time is that linear approximation. Formal errors are not folded in.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · one star, one straight line</span>
+    <button type="button" class="help-q" id="pm-help" aria-haspopup="dialog" aria-controls="pm-help-dialog" aria-expanded="false" aria-label="How this proper-motion desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="sky-hint">North up · east to the left · the box scales to the track</p>
+      <canvas id="sky" width="720" height="720" tabindex="0" role="img" aria-label="Barnard's Star. Proper motion 10.393349″/yr. Distance 1.828234 pc. Tangential speed 90.076 km/s. Space velocity 142.537 km/s. Over 100 yr the star moves 1,039.3″. Not an orbit."></canvas>
+      <ul class="legend" aria-label="Sky marks">
+        <li><span class="swatch start" aria-hidden="true"></span> Now</li>
+        <li><span class="swatch" aria-hidden="true"></span> Track</li>
+        <li><span class="swatch now" aria-hidden="true"></span> Along the span</li>
+      </ul>
+      <p class="scale-note" id="sky-note">Barnard's Star’s Gaia DR3 motion is 10.393349″/yr, about 10″ a year. Over the 100 yr span that is 1,039.3″, a bit more than half of a 0.5° full-Moon width (1,800″). E. E. Barnard’s 1916 comparisons were about 10.30″ and 10.36″ a year. They are not substituted for the Gaia total. The Big Dipper’s outline changes on a timescale of order 100,000 years. That remark is qualitative. This drawing does not move the Dipper.</p>
+      <div class="controls">
+        <p class="pick-label">Star</p>
+        <div class="presets" id="presets" role="group" aria-label="Star">
+          <button type="button" data-preset="barnard" aria-pressed="true">Barnard's Star</button>
+          <button type="button" data-preset="kapteyn" aria-pressed="false">Kapteyn's Star</button>
+          <button type="button" data-preset="proxima" aria-pressed="false">Proxima Centauri</button>
+          <button type="button" data-preset="cygni" aria-pressed="false">61 Cygni A</button>
+          <button type="button" data-preset="arcturus" aria-pressed="false">Arcturus</button>
+          <button type="button" data-preset="deneb" aria-pressed="false">Deneb</button>
+        </div>
+        <p class="pick-label">Proper motion unit</p>
+        <div class="presets" id="mu-unit" role="group" aria-label="Proper motion unit">
+          <button type="button" data-unit="as" aria-pressed="true">arcsec/yr</button>
+          <button type="button" data-unit="mas" aria-pressed="false">mas/yr</button>
+        </div>
+        <p class="pick-label" id="mu-label">Proper motion, arcsec/yr</p>
+        <div class="slider-row">
+          <label for="mu">μ</label>
+          <input type="range" id="mu" min="0" max="1000" step="0.1" value="0" aria-valuemin="0.0001" aria-valuemax="20" aria-label="Proper motion">
+          <input type="number" id="mu-num" inputmode="decimal" step="any" value="10.393349" aria-label="Proper motion in the selected unit">
+          <span class="unit-tag" id="mu-unit-tag">″/yr</span>
+        </div>
+        <p class="pick-label">Distance unit</p>
+        <div class="presets" id="dist-mode" role="group" aria-label="Distance unit">
+          <button type="button" data-mode="pc" aria-pressed="true">parsecs</button>
+          <button type="button" data-mode="ly" aria-pressed="false">light-years</button>
+          <button type="button" data-mode="plx" aria-pressed="false">parallax, mas</button>
+        </div>
+        <p class="pick-label" id="dist-label">Distance, parsecs</p>
+        <div class="slider-row">
+          <label for="dist">d</label>
+          <input type="range" id="dist" min="0" max="1000" step="0.1" value="0" aria-label="Distance">
+          <input type="number" id="dist-num" inputmode="decimal" step="any" value="1.828234" aria-label="Distance in the selected unit">
+          <span class="unit-tag" id="dist-unit-tag">pc</span>
+        </div>
+        <p class="pick-label">Radial velocity, km/s. Negative is approaching.</p>
+        <div class="slider-row">
+          <label for="rv">v<sub>r</sub></label>
+          <input type="range" id="rv" min="0" max="1000" step="0.1" value="0" aria-valuemin="-400" aria-valuemax="400" aria-label="Radial velocity in kilometres per second">
+          <input type="number" id="rv-num" inputmode="decimal" step="any" value="-110.468" aria-label="Radial velocity in kilometres per second">
+          <span class="unit-tag">km/s</span>
+        </div>
+        <p class="pick-label">Position angle, degrees from north toward east. It turns the drawing. It does not change the speeds.</p>
+        <div class="slider-row">
+          <label for="pa">θ</label>
+          <input type="range" id="pa" min="0" max="1000" step="0.1" value="0" aria-valuemin="0" aria-valuemax="360" aria-label="Position angle in degrees">
+          <input type="number" id="pa-num" inputmode="decimal" step="any" value="355.58" aria-label="Position angle in degrees from north toward east">
+          <span class="unit-tag">deg</span>
+        </div>
+        <p class="pick-label">Time span</p>
+        <div class="presets" id="year-span" role="group" aria-label="Time span">
+          <button type="button" data-years="100" aria-pressed="true">100 years</button>
+          <button type="button" data-years="1000" aria-pressed="false">1,000 years</button>
+          <button type="button" data-years="10000" aria-pressed="false">10,000 years</button>
+        </div>
+        <div class="play-row">
+          <button type="button" id="btn-play" aria-pressed="false">Play</button>
+        </div>
+        <p class="field-error" id="field-error" hidden>Enter a proper motion that is zero or positive, a positive distance, and a radial velocity. Negative radial velocity is approaching.</p>
+      </div>
+    </div>
+
+    <aside class="detail" aria-live="polite">
+      <p class="tier" id="d-tier">Gaia DR3 · approaching</p>
+      <h2 id="d-name">Barnard's Star</h2>
+      <p class="range" id="d-range">10.393349″/yr · 1.828234 pc</p>
+      <ul class="stats">
+        <li><span class="k">Proper motion</span><span class="v" id="s-mu">10.393349″/yr</span></li>
+        <li><span class="k">Same motion</span><span class="v" id="s-mumas">10,393.349 mas/yr</span></li>
+        <li><span class="k">Distance</span><span class="v" id="s-d">1.828234 pc</span></li>
+        <li><span class="k">Light-years</span><span class="v" id="s-ly">5.963 ly</span></li>
+        <li><span class="k">Parallax</span><span class="v" id="s-plx">546.9759 mas</span></li>
+        <li><span class="k">Tangential v<sub>t</sub></span><span class="v" id="s-vt">90.076 km/s</span></li>
+        <li><span class="k">Radial v<sub>r</sub></span><span class="v" id="s-vr">−110.468 km/s</span></li>
+        <li><span class="k">Space velocity</span><span class="v" id="s-v">142.537 km/s</span></li>
+        <li><span class="k">Angle from outward line of sight</span><span class="v" id="s-ang">140.81°</span></li>
+        <li><span class="k">Years to drift 0.5°</span><span class="v" id="s-moon">173.2 yr</span></li>
+        <li><span class="k">Years to drift 1°</span><span class="v" id="s-deg">346.4 yr</span></li>
+        <li><span class="k">Drift in the span</span><span class="v" id="s-span">1,039.3″</span></li>
+        <li><span class="k">Closest approach</span><span class="v" id="s-t">9,719.8 yr</span></li>
+        <li><span class="k">Minimum distance</span><span class="v" id="s-rmin">1.155347 pc</span></li>
+      </ul>
+      <p class="why" id="d-angle">Approaching. The angle is past 90°, so more of the motion is toward the Sun than across the sky.</p>
+      <p class="why" id="d-close">Approaching, so the straight-line minimum is in the future. 9,719.8 yr from now the distance is 1.155347 pc. Linear approximation: t = − d v<sub>r</sub> / (v<sub>t</sub>² + v<sub>r</sub>²), and r<sub>min</sub> = d v<sub>t</sub> / √(v<sub>t</sub>² + v<sub>r</sub>²). One parsec at 1 km/s is 977,792.22 Julian years.</p>
+      <p class="why" id="d-formula">v<sub>t</sub> = 4.74047046 × 10.393349 × 1.828234 = 90.076 km/s. The five-decimal factor 4.74047 times those same printed μ and distance also rounds to 90.076 km/s.</p>
+    </aside>
+  </div>
+
+  <p class="band">What the three numbers are</p>
+  <div class="glossary">
+    <div class="gloss">
+      <dl>
+        <div class="gloss-wide"><dt>Proper motion</dt><dd>μ is an angle per year, not a speed. Catalogs list μ<sub>α</sub>* and μ<sub>δ</sub>. The star is already μ<sub>α</sub> cos δ in the first number. The total is the root sum square. A large μ usually means the star is nearby, or fast, or both. Barnard's Star is both.</dd></div>
+      </dl>
+    </div>
+    <div class="gloss">
+      <dl>
+        <div><dt>The 4.74047</dt><dd>One AU per year, in km/s. The IAU astronomical unit is 149,597,870.7 km. A Julian year is 365.25 × 86,400 s. Divide. The quotient is 4.74047046 km/s. Five-decimal rounding is 4.74047. The calculator uses the quotient. 4.74 is the same constant with fewer decimals. It is not substituted.</dd></div>
+      </dl>
+    </div>
+    <div class="gloss">
+      <dl>
+        <div><dt>Three components</dt><dd>Parallax gives the distance, so μ becomes v<sub>t</sub> across the line of sight. Radial velocity is the component along it. The space velocity is the hypotenuse. The angle from the outward line of sight is atan2(v<sub>t</sub>, v<sub>r</sub>). 0° is straight away. 90° is across the sky. 180° is straight toward the Sun.</dd></div>
+      </dl>
+    </div>
+    <div class="gloss">
+      <dl>
+        <div><dt>Closest approach</dt><dd>Hold the Sun still and let the star coast in a straight line. Then t = − d v<sub>r</sub> / (v<sub>t</sub>² + v<sub>r</sub>²) and r<sub>min</sub> = d v<sub>t</sub> / √(v<sub>t</sub>² + v<sub>r</sub>²). A negative v<sub>r</sub> puts t in the future. The conversion is 977,792.22 Julian years for one parsec at 1 km/s. This is a linear approximation. It is not an orbit, and the Sun is not actually fixed.</dd></div>
+      </dl>
+    </div>
+    <div class="gloss gloss-wide">
+      <dl>
+        <div><dt>A full-Moon width</dt><dd>Half a degree is 1,800″. This page uses that round width for “one full-Moon width.” The <a href="/science/astronomy/angular-size/">angular-size</a> desk has the fact-sheet lunar diameters, which are not 1,800″ and are not substituted here. One degree is 3,600″. Years equal that angle divided by μ.</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <table>
+      <caption>Presets, from the printed catalog values</caption>
+      <thead>
+        <tr>
+          <th scope="col">Star</th>
+          <th scope="col">μ</th>
+          <th scope="col">Distance</th>
+          <th scope="col">v<sub>r</sub></th>
+          <th scope="col">v<sub>t</sub></th>
+          <th scope="col">Space v</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="is-on" data-row="barnard"><th scope="row">Barnard's Star</th><td>10.393349″/yr</td><td>1.828234 pc</td><td>−110.468 km/s</td><td>90.076 km/s</td><td>142.537 km/s</td></tr>
+        <tr data-row="kapteyn"><th scope="row">Kapteyn's Star</th><td>8.644319″/yr</td><td>3.933932 pc</td><td>245.053 km/s</td><td>161.205 km/s</td><td>293.323 km/s</td></tr>
+        <tr data-row="proxima"><th scope="row">Proxima Centauri</th><td>3.859228″/yr</td><td>1.301971 pc</td><td>−21.943 km/s</td><td>23.819 km/s</td><td>32.386 km/s</td></tr>
+        <tr data-row="cygni"><th scope="row">61 Cygni A</th><td>5.282104″/yr</td><td>3.496566 pc</td><td>−65.975 km/s</td><td>87.553 km/s</td><td>109.628 km/s</td></tr>
+        <tr data-row="arcturus"><th scope="row">Arcturus</th><td>2.279417″/yr</td><td>11.257458 pc</td><td>−5.200 km/s</td><td>121.643 km/s</td><td>121.754 km/s</td></tr>
+        <tr data-row="deneb"><th scope="row">Deneb</th><td>0.002732″/yr</td><td>432.9004 pc</td><td>−4.900 km/s</td><td>5.606 km/s</td><td>7.446 km/s</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1051/0004-6361/202243940" rel="noopener" target="_blank">Gaia Collaboration 2023</a>, A&amp;A 674, A1 — Gaia DR3. The catalog’s positions, proper motions, and parallaxes are the Early Data Release 3 astrometric solution, republished. Radial velocities in that table are the DR3 values. This page reads <code>gaiadr3.gaia_source</code> and prints the central values rounded to 0.0001 mas, 0.001 mas/yr, and 0.001 km/s. Barnard's Star 4472832130942575872: parallax 546.9759 mas, μ<sub>α</sub>* −801.551 mas/yr, μ<sub>δ</sub> 10362.394 mas/yr, radial velocity −110.468 km/s. Kapteyn's Star 4810594479418041856: 254.1986 mas, 6491.223 mas/yr, −5708.614 mas/yr, 245.053 km/s. Proxima Centauri 5853498713190525696: 768.0665 mas, −3781.741 mas/yr, 769.465 mas/yr, −21.943 km/s. 61 Cygni A 1872046609345556480: 285.9949 mas, 4164.209 mas/yr, 3249.614 mas/yr, −65.975 km/s. Formal errors are not folded in.</li>
+      <li><a href="https://doi.org/10.1051/0004-6361:20078357" rel="noopener" target="_blank">van Leeuwen 2007</a>, A&amp;A 474, 653 — the new Hipparcos reduction, VizieR I/311. Arcturus, HIP 69673, and Deneb, HIP 102098, have no Gaia DR3 source in SIMBAD. Arcturus: parallax 88.83 mas, μ<sub>α</sub>* −1093.39 mas/yr, μ<sub>δ</sub> −2000.06 mas/yr. Deneb: 2.31 mas, 2.01 mas/yr, 1.85 mas/yr. Deneb is a luminous supergiant. 2.31 mas is the catalog central value. The ±0.32 mas is not folded in, and a spectroscopic distance is not substituted.</li>
+      <li><a href="https://doi.org/10.1134/S1063773706110065" rel="noopener" target="_blank">Gontcharov 2006</a>, Astronomy Letters 32, 759 — Pulkovo compilation, VizieR III/252. Arcturus radial velocity −5.2 km/s. Deneb −4.9 km/s. The readout prints speeds to thousandths, so those two appear as −5.200 and −4.900. The catalog prints are −5.2 and −4.9.</li>
+      <li><a href="https://doi.org/10.1086/104156" rel="noopener" target="_blank">Barnard 1916</a>, Astronomical Journal 29, 181 — a small star with a proper motion of about 10.3″ a year. The paper’s visual comparison is 10.30″ at position angle 359.7°, and the 1904 plate gives 10.36″. Neither figure is substituted for the Gaia DR3 total.</li>
+      <li><a href="https://doi.org/10.1098/rstl.1717.0025" rel="noopener" target="_blank">Halley 1718</a>, Philosophical Transactions 30, 736 — he compared declinations delivered by Ptolemy and found that Sirius, Arcturus, and Aldebaran had shifted. That is the historical notice. It is not a measurement on this page.</li>
+    </ul>
+  </div>
+  <p class="page-credit">The astronomical unit is the IAU 2012 value used elsewhere on this site, 149,597,870.7 km. The parsec is 648000/π astronomical units. The light-year is 299,792.458 km/s times one Julian year. A parsec is 3.26156 of those light-years.</p>
+
+  <p class="band">Continue</p>
+  <div class="more">
+    <a href="/science/astronomy/parallax/"><p class="n">The distance</p><h3>Parallax</h3><p>One arcsecond of annual shift is one parsec. This page multiplies that distance by the drift.</p></a>
+    <a href="/science/astronomy/radial-velocity/"><p class="n">Along the line of sight</p><h3>Radial velocity</h3><p>A planet’s Doppler wobble. Different speed. The radial velocity on this page is the star’s own, in km/s.</p></a>
+    <a href="/science/astronomy/nearest-stars/"><p class="n">Neighborhood</p><h3>Nearest stars</h3><p>Proxima, Barnard's Star, and the next few light-years. Distance there is rounded. The parallax here is the catalog value.</p></a>
+    <a href="/science/astronomy/aberration/"><p class="n">The annual tilt</p><h3>Aberration</h3><p>Earth’s velocity shifts a star’s apparent direction over a year. Proper motion is the star’s own drift, and it does not reverse.</p></a>
+    <a href="/science/astronomy/angular-size/"><p class="n">The Moon</p><h3>Angular size</h3><p>The fact-sheet lunar diameters. This page’s 0.5° is a round full-Moon width, not those diameters.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The rest of the astronomy desks.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="pm-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="pm-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="pm-help-title">Proper motion desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A calculator and a sky patch. It is not a place to reduce an observation.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>Controls</caption>
+      <tbody>
+        <tr><th scope="row">Star</th><td>Loads a catalog proper motion, parallax, radial velocity, and the position angle of that proper motion. Barnard's Star opens the page.</td></tr>
+        <tr><th scope="row">μ</th><td>Total proper motion. Arcseconds per year, or milliarcseconds per year. The two buttons convert the same number.</td></tr>
+        <tr><th scope="row">Distance</th><td>Parsecs, light-years, or a parallax in milliarcseconds. Parallax zero is refused. One parsec is 1,000 divided by the parallax in mas.</td></tr>
+        <tr><th scope="row">Radial velocity</th><td>Kilometres per second. Negative is approaching, which is the spectroscopic sign.</td></tr>
+        <tr><th scope="row">Position angle</th><td>From north toward east, for the drawing. Speeds do not use it.</td></tr>
+        <tr><th scope="row">Time span</th><td>100, 1,000, or 10,000 years. The box rescales so the track fills it. Read the scale bar.</td></tr>
+        <tr><th scope="row">Play</th><td>Walks the star along that span. Pause stops it. If the system asks for less motion, Play jumps to the end.</td></tr>
+        <tr><th scope="row">Closest approach</th><td>Shown for every star. Future only when the radial velocity is negative. The formula is the straight-line one, labeled as a linear approximation.</td></tr>
+        <tr><th scope="row">Keyboard</th><td>Left and Right on the sky step along the span. Home is now. End is the far end of the span.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/proper-motion/proper-motion.js"></script>
+<script>
+(function () {
+  "use strict";
+  var P = window.ProperMotion;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone) phone.innerHTML = desk.innerHTML;
+
+  var open = P.presetById("barnard");
+  var state = {
+    preset: "barnard",
+    muAsYr: P.totalMuMas(open.pmra, open.pmdec) / 1000,
+    distancePc: 1000 / open.plx,
+    rv: open.rv,
+    pa: P.positionAngleDeg(open.pmra, open.pmdec),
+    years: 100,
+    along: 1,
+    muUnit: "as",
+    distMode: "pc"
+  };
+  var playing = false;
+  var lastTick = 0;
+  var sky = document.getElementById("sky");
+  var muSlider = document.getElementById("mu");
+  var muNum = document.getElementById("mu-num");
+  var distSlider = document.getElementById("dist");
+  var distNum = document.getElementById("dist-num");
+  var rvSlider = document.getElementById("rv");
+  var rvNum = document.getElementById("rv-num");
+  var paSlider = document.getElementById("pa");
+  var paNum = document.getElementById("pa-num");
+  var playBtn = document.getElementById("btn-play");
+  var fieldError = document.getElementById("field-error");
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    v = v && v.trim();
+    return v || fallback;
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+
+  function press(group, attr, value) {
+    var nodes = document.querySelectorAll("#" + group + " button");
+    Array.prototype.forEach.call(nodes, function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute(attr) === value));
+    });
+  }
+
+  function displayMu() {
+    return state.muUnit === "mas" ? state.muAsYr * 1000 : state.muAsYr;
+  }
+
+  function displayDist() {
+    if (state.distMode === "ly") return state.distancePc * P.LY_PER_PC;
+    if (state.distMode === "plx") return 1000 / state.distancePc;
+    return state.distancePc;
+  }
+
+  function writeNum(input, value, digits) {
+    if (!isFinite(value)) return;
+    input.value = String(Math.round(value * Math.pow(10, digits)) / Math.pow(10, digits));
+  }
+
+  function paintInputs() {
+    var muDigits = state.muUnit === "mas" ? 3 : 6;
+    writeNum(muNum, displayMu(), muDigits);
+    var distDigits = state.distMode === "ly" ? 3 : (state.distMode === "plx" ? 4 : 6);
+    writeNum(distNum, displayDist(), distDigits);
+    writeNum(rvNum, state.rv, 3);
+    writeNum(paNum, state.pa, 2);
+    muSlider.value = String(P.logUnmap(Math.min(P.MU_MAX, Math.max(P.MU_MIN, state.muAsYr)), P.MU_MIN, P.MU_MAX) * 1000);
+    var distSliderValue;
+    if (state.distMode === "plx") {
+      var plx = Math.min(5000, Math.max(0.2, 1000 / state.distancePc));
+      distSliderValue = P.logUnmap(plx, 0.2, 5000);
+    } else {
+      var pc = Math.min(P.PC_MAX, Math.max(P.PC_MIN, state.distancePc));
+      distSliderValue = P.logUnmap(pc, P.PC_MIN, P.PC_MAX);
+    }
+    distSlider.value = String(distSliderValue * 1000);
+    var rvT = (state.rv - P.RV_MIN) / (P.RV_MAX - P.RV_MIN);
+    rvSlider.value = String(Math.min(1, Math.max(0, rvT)) * 1000);
+    var paT = ((state.pa % 360) + 360) % 360 / 360;
+    paSlider.value = String(paT * 1000);
+    setText("mu-label", state.muUnit === "mas" ? "Proper motion, mas/yr" : "Proper motion, arcsec/yr");
+    setText("mu-unit-tag", state.muUnit === "mas" ? "mas/yr" : "″/yr");
+    var distLabel = state.distMode === "ly" ? "Distance, light-years" : (state.distMode === "plx" ? "Parallax, milliarcseconds" : "Distance, parsecs");
+    var distTag = state.distMode === "ly" ? "ly" : (state.distMode === "plx" ? "mas" : "pc");
+    setText("dist-label", distLabel);
+    setText("dist-unit-tag", distTag);
+    press("presets", "data-preset", state.preset || "");
+    press("mu-unit", "data-unit", state.muUnit);
+    press("dist-mode", "data-mode", state.distMode);
+    press("year-span", "data-years", String(state.years));
+  }
+
+  function niceStep(span) {
+    if (!(span > 0)) return 1;
+    var target = span * 0.28;
+    var pow = Math.pow(10, Math.floor(Math.log(target) / Math.LN10));
+    var m = target / pow;
+    var n = m >= 5 ? 5 : (m >= 2 ? 2 : 1);
+    return n * pow;
+  }
+
+  function draw(sc) {
+    if (!sky) return;
+    var cssW = sky.clientWidth || 720;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.max(280, Math.round(cssW));
+    var h = w;
+    sky.width = Math.round(w * dpr);
+    sky.height = Math.round(h * dpr);
+    sky.style.height = h + "px";
+    var ctx = sky.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    ctx.clearRect(0, 0, w, h);
+    var margin = 46;
+    var plot = w - margin * 2;
+    var e1 = sc.end.east;
+    var n1 = sc.end.north;
+    var minE = Math.min(0, e1);
+    var maxE = Math.max(0, e1);
+    var minN = Math.min(0, n1);
+    var maxN = Math.max(0, n1);
+    var span = Math.max(maxE - minE, maxN - minN, 1e-6);
+    var half = span * 0.72;
+    var midE = (minE + maxE) / 2;
+    var midN = (minN + maxN) / 2;
+    function X(east) {
+      var t = (east - (midE - half)) / (2 * half);
+      return margin + (1 - t) * plot;
+    }
+    function Y(north) {
+      var t = (north - (midN - half)) / (2 * half);
+      return margin + (1 - t) * plot;
+    }
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(margin, margin, plot, plot);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(margin, margin, plot, plot);
+    ctx.clip();
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(minN - half * 0.15));
+    ctx.lineTo(X(0), Y(maxN + half * 0.15));
+    ctx.moveTo(X(minE - half * 0.15), Y(0));
+    ctx.lineTo(X(maxE + half * 0.15), Y(0));
+    ctx.stroke();
+    var pts = P.track(sc.muAsYr, sc.paDeg, sc.years, 32);
+    ctx.beginPath();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    pts.forEach(function (p, i) {
+      var x = X(p.east);
+      var y = Y(p.north);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+    ctx.fillStyle = muted;
+    ctx.beginPath();
+    ctx.arc(X(0), Y(0), 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = ink;
+    ctx.stroke();
+    var star = sc.now;
+    ctx.fillStyle = ink;
+    ctx.beginPath();
+    ctx.arc(X(star.east), Y(star.north), 5.5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    var bar = niceStep(2 * half);
+    var x0 = margin + 8;
+    var y0 = h - 22;
+    var barPx = bar / (2 * half) * plot;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x0 + barPx, y0);
+    ctx.moveTo(x0, y0 - 4);
+    ctx.lineTo(x0, y0 + 4);
+    ctx.moveTo(x0 + barPx, y0 - 4);
+    ctx.lineTo(x0 + barPx, y0 + 4);
+    ctx.stroke();
+    ctx.fillStyle = muted;
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText(P.formatArcsec(bar), x0, y0 - 8);
+    ctx.fillText("N", X(midE) + 6, margin + 14);
+    ctx.fillText("E", margin + 8, Y(midN) - 8);
+  }
+
+  function render() {
+    var sc = P.scene({
+      preset: state.preset,
+      muAsYr: state.muAsYr,
+      distancePc: state.distancePc,
+      rv: state.rv,
+      paDeg: state.pa,
+      years: state.years,
+      along: state.along
+    });
+    if (!sc.ok) {
+      fieldError.hidden = false;
+      fieldError.textContent = sc.error;
+      return;
+    }
+    fieldError.hidden = true;
+    var tier = (state.preset && P.presetById(state.preset) ? P.presetById(state.preset).catalog : "Custom") + " · " + (sc.when === "future" ? "approaching" : (sc.when === "past" ? "receding" : "across the sky"));
+    setText("d-tier", tier);
+    setText("d-name", sc.name);
+    setText("d-range", sc.text.mu + " · " + sc.text.distance);
+    setText("s-mu", sc.text.mu);
+    setText("s-mumas", sc.text.muMas);
+    setText("s-d", sc.text.distance);
+    setText("s-ly", sc.text.ly);
+    setText("s-plx", sc.text.parallax);
+    setText("s-vt", sc.text.vt);
+    setText("s-vr", sc.text.vr);
+    setText("s-v", sc.text.v);
+    setText("s-ang", sc.text.angle);
+    setText("s-moon", sc.text.moon);
+    setText("s-deg", sc.text.degree);
+    setText("s-span", sc.text.span);
+    setText("s-t", sc.text.closestTime);
+    setText("s-rmin", sc.text.closestDist);
+    setText("d-angle", sc.text.angleNote);
+    setText("d-close", sc.text.closestNote + " Linear approximation: t = − d v_r / (v_t² + v_r²), and r_min = d v_t / √(v_t² + v_r²). One parsec at 1 km/s is " + sc.text.yearsPerPc + " Julian years.");
+    var rounded = 4.74047 * sc.muAsYr * sc.distancePc;
+    var agree = Math.abs(rounded - sc.vt) < 0.0005 ? " The five-decimal factor 4.74047 times the same μ and distance also rounds to " + sc.text.vt + "." : " The five-decimal factor 4.74047 is the rounding of the quotient. The speed above uses the quotient.";
+    setText("d-formula", "v_t = " + sc.text.factor + " × " + sc.text.mu.replace("″/yr", "") + " × " + sc.text.distance.replace(" pc", "") + " = " + sc.text.vt + "." + agree);
+    var moonWidths = sc.end.arcsec / P.MOON_AS;
+    var skyNote = sc.name + " moves " + sc.text.span + " in " + sc.text.spanYears + ".";
+    if (isFinite(moonWidths)) skyNote += " That is " + (Math.round(moonWidths * 1000) / 1000) + " of a 0.5° full-Moon width.";
+    skyNote += " Barnard's Star’s Gaia DR3 motion is 10.393349″/yr, about 10″ a year. E. E. Barnard’s 1916 comparisons were about 10.30″ and 10.36″ a year. They are not substituted for the Gaia total. The Big Dipper’s outline changes on a timescale of order 100,000 years. That remark is qualitative. This drawing does not move the Dipper.";
+    setText("sky-note", skyNote);
+    if (sky) sky.setAttribute("aria-label", sc.text.aria);
+    Array.prototype.forEach.call(document.querySelectorAll("[data-row]"), function (row) {
+      row.classList.toggle("is-on", row.getAttribute("data-row") === state.preset);
+    });
+    draw(sc);
+  }
+
+  function stopPlay() {
+    playing = false;
+    lastTick = 0;
+    if (playBtn) playBtn.setAttribute("aria-pressed", "false");
+    if (playBtn) playBtn.textContent = "Play";
+  }
+
+  function frame(ts) {
+    if (!playing) return;
+    if (!lastTick) lastTick = ts;
+    var dt = ts - lastTick;
+    lastTick = ts;
+    state.along += dt / 8000;
+    if (state.along >= 1) {
+      state.along = 1;
+      stopPlay();
+    }
+    render();
+    if (playing) requestAnimationFrame(frame);
+  }
+
+  document.getElementById("presets").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button");
+    if (!b) return;
+    var p = P.presetById(b.getAttribute("data-preset"));
+    if (!p) return;
+    state.preset = p.id;
+    state.muAsYr = P.totalMuMas(p.pmra, p.pmdec) / 1000;
+    state.distancePc = 1000 / p.plx;
+    state.rv = p.rv;
+    state.pa = P.positionAngleDeg(p.pmra, p.pmdec);
+    state.along = 1;
+    stopPlay();
+    paintInputs();
+    render();
+  });
+
+  document.getElementById("mu-unit").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button");
+    if (!b) return;
+    state.muUnit = b.getAttribute("data-unit");
+    paintInputs();
+  });
+
+  document.getElementById("dist-mode").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button");
+    if (!b) return;
+    state.distMode = b.getAttribute("data-mode");
+    paintInputs();
+    render();
+  });
+
+  document.getElementById("year-span").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button");
+    if (!b) return;
+    state.years = Number(b.getAttribute("data-years"));
+    state.along = 1;
+    stopPlay();
+    paintInputs();
+    render();
+  });
+
+  muSlider.addEventListener("input", function () {
+    state.muAsYr = P.logMap(Number(muSlider.value) / 1000, P.MU_MIN, P.MU_MAX);
+    state.preset = null;
+    state.along = 1;
+    writeNum(muNum, displayMu(), state.muUnit === "mas" ? 3 : 6);
+    press("presets", "data-preset", "");
+    render();
+  });
+  muNum.addEventListener("input", function () {
+    var mu = P.muFromInputs(muNum.value, state.muUnit);
+    state.muAsYr = mu;
+    state.preset = null;
+    if (isFinite(mu) && mu > 0) muSlider.value = String(P.logUnmap(Math.min(P.MU_MAX, Math.max(P.MU_MIN, mu)), P.MU_MIN, P.MU_MAX) * 1000);
+    press("presets", "data-preset", "");
+    render();
+  });
+
+  distSlider.addEventListener("input", function () {
+    var t = Number(distSlider.value) / 1000;
+    if (state.distMode === "plx") {
+      var plx = P.logMap(t, 0.2, 5000);
+      state.distancePc = 1000 / plx;
+    } else {
+      state.distancePc = P.logMap(t, P.PC_MIN, P.PC_MAX);
+    }
+    state.preset = null;
+    state.along = 1;
+    var digits = state.distMode === "ly" ? 3 : (state.distMode === "plx" ? 4 : 6);
+    writeNum(distNum, displayDist(), digits);
+    press("presets", "data-preset", "");
+    render();
+  });
+  distNum.addEventListener("input", function () {
+    state.distancePc = P.distancePcFromInputs(distNum.value, state.distMode);
+    state.preset = null;
+    press("presets", "data-preset", "");
+    render();
+  });
+
+  rvSlider.addEventListener("input", function () {
+    state.rv = P.RV_MIN + (Number(rvSlider.value) / 1000) * (P.RV_MAX - P.RV_MIN);
+    state.preset = null;
+    writeNum(rvNum, state.rv, 3);
+    press("presets", "data-preset", "");
+    render();
+  });
+  rvNum.addEventListener("input", function () {
+    state.rv = P.parseNum(rvNum.value);
+    state.preset = null;
+    if (isFinite(state.rv)) {
+      var t = (state.rv - P.RV_MIN) / (P.RV_MAX - P.RV_MIN);
+      rvSlider.value = String(Math.min(1, Math.max(0, t)) * 1000);
+    }
+    press("presets", "data-preset", "");
+    render();
+  });
+
+  paSlider.addEventListener("input", function () {
+    state.pa = (Number(paSlider.value) / 1000) * 360;
+    state.preset = null;
+    writeNum(paNum, state.pa, 2);
+    press("presets", "data-preset", "");
+    render();
+  });
+  paNum.addEventListener("input", function () {
+    state.pa = P.parseNum(paNum.value);
+    state.preset = null;
+    if (isFinite(state.pa)) paSlider.value = String(((((state.pa % 360) + 360) % 360) / 360) * 1000);
+    press("presets", "data-preset", "");
+    render();
+  });
+
+  if (playBtn) playBtn.addEventListener("click", function () {
+    if (playing) { stopPlay(); return; }
+    if (reduced) {
+      state.along = 1;
+      render();
+      return;
+    }
+    if (state.along >= 1) state.along = 0;
+    playing = true;
+    lastTick = 0;
+    playBtn.setAttribute("aria-pressed", "true");
+    playBtn.textContent = "Pause";
+    requestAnimationFrame(frame);
+  });
+
+  if (sky) sky.addEventListener("keydown", function (ev) {
+    var step = ev.shiftKey ? 0.1 : 0.02;
+    if (ev.key === "ArrowRight") { ev.preventDefault(); state.along = Math.min(1, state.along + step); stopPlay(); render(); }
+    else if (ev.key === "ArrowLeft") { ev.preventDefault(); state.along = Math.max(0, state.along - step); stopPlay(); render(); }
+    else if (ev.key === "Home") { ev.preventDefault(); state.along = 0; stopPlay(); render(); }
+    else if (ev.key === "End") { ev.preventDefault(); state.along = 1; stopPlay(); render(); }
+  });
+
+  var helpBtn = document.getElementById("pm-help");
+  var helpDialog = document.getElementById("pm-help-dialog");
+  var helpReturn = null;
+  function focusables() {
+    return Array.prototype.filter.call(helpDialog.querySelectorAll("button, a[href]"), function (el) {
+      return !el.disabled;
+    });
+  }
+  function openHelp() {
+    helpReturn = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    var close = helpDialog.querySelector("[data-help-close]");
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    if (helpReturn && helpReturn.focus) helpReturn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    Array.prototype.forEach.call(helpDialog.querySelectorAll("[data-help-close]"), function (b) {
+      b.addEventListener("click", closeHelp);
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", function () { render(); });
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  paintInputs();
+  render();
+})();
+</script>
+</body>
+</html>
