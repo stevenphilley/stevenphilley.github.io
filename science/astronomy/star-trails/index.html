@@ -1,0 +1,1008 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Star trails and sky rotation — Steven Philley</title>
+<meta name="description" content="Star trails and sky rotation. One sidereal day is 86,164.0905 s, which is 15.041069″ per second. At declination 0° a 30 s exposure sweeps 7.52′ (451.23″). A 24 mm lens and a 5.9 µm pixel drift 0.2966 px/s. The 500 rule and Michaud’s NPF rule sit beside that pixel limit. Not an exposure to trust on a given night.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/star-trails/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Star trails and sky rotation">
+<meta property="og:description" content="A fixed camera records Earth’s sidereal turn. Thirty seconds at the equator is 7.52′. At 24 mm and 5.9 µm the drift is 0.2966 px/s. Rules of thumb sit beside the pixel limit.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/star-trails/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Star trails and sky rotation">
+<meta name="twitter:description" content="86,164.0905 s is 15.041069″ per second. Thirty seconds at the equator is 7.52′. A 24 mm lens and a 5.9 µm pixel drift 0.2966 px/s.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.day{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.rule{border-top-color:var(--muted,#63666e)}
+.swatch.npf{border-top-style:dashed;border-top-color:var(--accent-2,#7eb6e8)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.sheet-wrap{margin-top:14px;border-top:1px solid var(--line,#2c303a);padding-top:12px}
+.sheet{width:100%;border-collapse:collapse}
+.sheet caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sheet th,.sheet td{text-align:left;padding:8px 8px 8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.4;font-weight:400;color:var(--ink-soft,#9b9a96);vertical-align:top}
+.sheet th{color:var(--ink,#e8e6e1)}
+.sheet tr.is-on th,.sheet tr.is-on td{color:var(--ink,#e8e6e1);background:color-mix(in srgb,var(--accent,#c8b48a) 10%,transparent)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/" aria-current="page">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+</nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Star trails</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The arc</p>
+  <h1>Star trails<br>and sky rotation</h1>
+  <p class="lede">Stars do not move. The ground does. A fixed camera records that turn as a trail, and the trail is an arc around the celestial pole. This page uses a mean sidereal day of <strong>86,164.0905 s</strong>, the same rounding as the <a href="/science/astronomy/foucault/">Foucault</a> desk. <a href="https://ssd.jpl.nasa.gov/astro_par.html" rel="noopener" target="_blank">JPL’s astrodynamic parameters</a> print 86,164.09054 s, cited to Seidelmann’s 1992 explanatory supplement. Rounded to four decimals in the seconds, that is 86,164.0905. The calculator uses 86,164.0905. A full circle divided by that day is <strong>15.041069″</strong> per second of time. The angle around the pole is that rate times the exposure. It does not depend on declination. The path on the sky is the same rate times cos δ, so an equatorial star streaks fastest. Thirty seconds at declination 0° is <strong>7.52′</strong> (<strong>451.23″</strong>). A 24 mm lens and an illustrative 5.9 µm pixel then drift <strong>0.2966 px/s</strong>, the small-angle length f · θ. The 500 rule and <a href="https://sahavre.fr/wp/regle-npf-rule/" rel="noopener" target="_blank">Frédéric Michaud’s NPF rule</a> sit beside the pixel limit. Both are approximations. From Campbell, 37.29° N, the north celestial pole’s altitude is 37.29°, the latitude the <a href="/science/astronomy/local-sky/">local-sky</a> desk stores. The <a href="/science/astronomy/sidereal/">sidereal day</a> is why the rate is not 15″ from a 24-hour clock.</p>
+  <p class="note-schematic">Educational calculator. Not an exposure to trust on a given night, and not a model of a lens. The sensor length is the small-angle arc f · θ. A flat sensor, seeing, diffraction, and focus are left out. The 500 rule and the NPF rule are approximations. The pixel pitches and crop factors on the buttons are illustrative examples, not measurements of one camera. Polaris is drawn near the pole. The gap is schematic. This page does not use a catalog separation. The page opens on 30 minutes, 7.521°, so the arcs can be seen. The 30 s button is the short exposure above.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · sky rotation</span>
+    <button type="button" class="help-q" id="st-help" aria-haspopup="dialog" aria-controls="st-help-dialog" aria-expanded="false" aria-label="How this star-trails desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="trail-hint">Looking toward the pole · radius is 90° minus declination · bright arc is this exposure</p>
+      <canvas id="trails" width="880" height="640" tabindex="0" role="img" aria-label="Star trails around the celestial pole. Thirty minutes at the equator sweeps 7.521°. Polaris is a schematic mark near the pole."></canvas>
+      <ul class="legend" aria-label="Trail diagram key">
+        <li><span class="swatch" aria-hidden="true"></span> This exposure</li>
+        <li><span class="swatch day" aria-hidden="true"></span> One sidereal day</li>
+        <li><span class="swatch npf" aria-hidden="true"></span> Polaris, schematic</li>
+      </ul>
+      <p class="scale-note" id="trail-note">The faint circles are one full sidereal day. The bright arcs are 30 minutes, 7.521° around the pole. At the equator that is also the path on the sky. Polaris sits near the center. The offset is not a catalog distance. Left and Right on the drawing step the exposure by one minute.</p>
+      <p class="hint strip-label" id="chart-hint">Max sharp exposure against focal length · log vertical axis · this declination and pixel</p>
+      <canvas id="exposure-chart" width="880" height="360" tabindex="0" role="img" aria-label="Exposure time versus focal length. The pixel limit for 1 px, the 500 rule, and Michaud’s complete NPF rule at k = 1."></canvas>
+      <ul class="legend" aria-label="Chart key">
+        <li><span class="swatch" aria-hidden="true"></span> Pixel limit</li>
+        <li><span class="swatch rule" aria-hidden="true"></span> 500 rule</li>
+        <li><span class="swatch npf" aria-hidden="true"></span> NPF complete</li>
+      </ul>
+      <p class="scale-note" id="chart-note">At 24 mm the one-pixel time is 3.371 s. The 500 rule is 20.83 s. Michaud’s complete rule, k = 1 and f/2.8, is 5.440 s. The simplified NPF rule, with no declination, is 11.46 s. All three rules of thumb are approximations.</p>
+      <div class="controls">
+        <p class="field-err" id="field-err" hidden>Declination is a number from −90 to 90.</p>
+        <p class="pick-label">Declination δ, degrees. North is positive.</p>
+        <div class="slider-row">
+          <label for="dec">δ</label>
+          <input type="range" id="dec" min="-90" max="90" step="0.1" value="0" aria-valuemin="-90" aria-valuemax="90" aria-valuenow="0" aria-valuetext="0°">
+          <label for="dec-num">Degrees</label>
+          <input type="number" id="dec-num" inputmode="decimal" min="-90" max="90" step="any" value="0" aria-label="Declination in degrees, north positive">
+        </div>
+        <p class="pick-label">Exposure, seconds. The slider runs to 4 hours. The number field accepts 0.1 s to 12 hours.</p>
+        <div class="slider-row">
+          <label for="exposure">Time</label>
+          <input type="range" id="exposure" min="1" max="14400" step="1" value="1800" aria-valuemin="1" aria-valuemax="14400" aria-valuenow="1800" aria-valuetext="1800 seconds">
+          <label for="exposure-num">Seconds</label>
+          <input type="number" id="exposure-num" inputmode="decimal" min="0.1" max="43200" step="any" value="1800" aria-label="Exposure in seconds">
+        </div>
+        <p class="pick-label">Focal length, millimetres. The slider runs from 8 to 600. The number field accepts 1 to 2,000.</p>
+        <div class="slider-row">
+          <label for="focal">f</label>
+          <input type="range" id="focal" min="8" max="600" step="1" value="24" aria-valuemin="8" aria-valuemax="600" aria-valuenow="24" aria-valuetext="24 millimetres">
+          <label for="focal-num">mm</label>
+          <input type="number" id="focal-num" inputmode="decimal" min="1" max="2000" step="any" value="24" aria-label="Focal length in millimetres">
+        </div>
+        <p class="pick-label">Pixel pitch, micrometres. Illustrative. 36 mm / 6,000 photosites is 6.0 µm. The full-frame button uses 5.9 µm, not that quotient.</p>
+        <div class="slider-row">
+          <label for="pitch">Pitch</label>
+          <input type="range" id="pitch" min="1" max="12" step="0.1" value="5.9" aria-valuemin="1" aria-valuemax="12" aria-valuenow="5.9" aria-valuetext="5.9 micrometres">
+          <label for="pitch-num">µm</label>
+          <input type="number" id="pitch-num" inputmode="decimal" min="0.5" max="50" step="any" value="5.9" aria-label="Pixel pitch in micrometres">
+        </div>
+        <p class="pick-label">Max blur, pixels, for the sharp-exposure time. One pixel is the opening choice.</p>
+        <div class="slider-row">
+          <label for="blur">Blur</label>
+          <input type="range" id="blur" min="0.5" max="20" step="0.1" value="1" aria-valuemin="0.5" aria-valuemax="20" aria-valuenow="1" aria-valuetext="1 pixel">
+          <label for="blur-num">px</label>
+          <input type="number" id="blur-num" inputmode="decimal" min="0.1" max="100" step="any" value="1" aria-label="Maximum blur in pixels">
+        </div>
+        <p class="pick-label">Aperture N, the f-number. Used only by the NPF rule. f/2.8 is a chosen example, not a lens.</p>
+        <div class="slider-row">
+          <label for="aperture">N</label>
+          <input type="range" id="aperture" min="0.7" max="22" step="0.1" value="2.8" aria-valuemin="0.7" aria-valuemax="22" aria-valuenow="2.8" aria-valuetext="f/2.8">
+          <label for="aperture-num">f/</label>
+          <input type="number" id="aperture-num" inputmode="decimal" min="0.5" max="64" step="any" value="2.8" aria-label="Aperture as an f-number">
+        </div>
+        <p class="pick-label">Crop factor, for the 500 rule only. Full frame is 1. APS-C on this page is 1.5. Micro Four Thirds is 2. Usual comparisons, not a measured diagonal.</p>
+        <div class="slider-row">
+          <label for="crop">Crop</label>
+          <input type="range" id="crop" min="1" max="2" step="0.1" value="1" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1" aria-valuetext="crop factor 1">
+          <label for="crop-num">×</label>
+          <input type="number" id="crop-num" inputmode="decimal" min="0.5" max="10" step="any" value="1" aria-label="Crop factor for the 500 rule">
+        </div>
+        <p class="pick-label">Latitude, for the pole’s altitude. Altitude of the pole equals this latitude. Refraction is left out. 37.29° N is Campbell.</p>
+        <div class="slider-row">
+          <label for="lat">φ</label>
+          <input type="range" id="lat" min="-90" max="90" step="0.01" value="37.29" aria-valuemin="-90" aria-valuemax="90" aria-valuenow="37.29" aria-valuetext="37.29° N">
+          <label for="lat-num">Degrees</label>
+          <input type="number" id="lat-num" inputmode="decimal" min="-90" max="90" step="any" value="37.29" aria-label="Latitude in degrees, north positive">
+        </div>
+        <p class="pick-label">Lenses · full-frame pitch stays unless a sensor button changes it</p>
+        <div class="presets" role="group" aria-label="Focal-length presets">
+          <button type="button" data-focal="14" aria-pressed="false">14 mm</button>
+          <button type="button" data-focal="24" aria-pressed="true">24 mm</button>
+          <button type="button" data-focal="50" aria-pressed="false">50 mm</button>
+          <button type="button" data-focal="200" aria-pressed="false">200 mm</button>
+        </div>
+        <p class="pick-label">Sensors · illustrative pixel pitch and crop factor</p>
+        <div class="presets" role="group" aria-label="Sensor presets">
+          <button type="button" data-sensor="ff" aria-pressed="true">Full frame · 5.9 µm</button>
+          <button type="button" data-sensor="apsc" aria-pressed="false">APS-C · 3.9 µm · 1.5×</button>
+          <button type="button" data-sensor="mft" aria-pressed="false">Micro Four Thirds · 3.3 µm · 2×</button>
+        </div>
+        <p class="pick-label">Sky and exposure</p>
+        <div class="presets" role="group" aria-label="Declination and exposure presets">
+          <button type="button" data-dec="0" aria-pressed="true">Equator · 0°</button>
+          <button type="button" data-dec="45" aria-pressed="false">45°</button>
+          <button type="button" data-dec="80" aria-pressed="false">Near pole · 80°</button>
+          <button type="button" data-dec="90" aria-pressed="false">On the pole</button>
+          <button type="button" data-exposure="30" aria-pressed="false">30 s</button>
+          <button type="button" data-exposure="1800" aria-pressed="true">30 min</button>
+          <button type="button" data-exposure="7200" aria-pressed="false">2 h</button>
+          <button type="button" data-lat="37.29" aria-pressed="true">Campbell · 37.29° N</button>
+        </div>
+        <p class="pick-label">NPF k, and the mount. k is Michaud’s ovality factor, 1, 2, or 3. Tracking sets the sensor drift to zero.</p>
+        <div class="presets" role="group" aria-label="NPF k and tracking">
+          <button type="button" data-k="1" aria-pressed="true">k = 1</button>
+          <button type="button" data-k="2" aria-pressed="false">k = 2</button>
+          <button type="button" data-k="3" aria-pressed="false">k = 3</button>
+          <button type="button" id="track" aria-pressed="false">Sidereal tracking</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Equator · 30 min · fixed tripod</p>
+      <h2 id="r-title">7.521°</h2>
+      <p class="range" id="r-sense">Around the pole, and on the sky · counter-clockwise looking north</p>
+      <ul class="stats">
+        <li><span class="k">Sidereal rate</span><span class="v" id="r-rate">15.041069″/s</span></li>
+        <li><span class="k">Mean solar rate</span><span class="v" id="r-solar">15.000000″/s</span></li>
+        <li><span class="k">Apparent rate</span><span class="v" id="r-apparent">15.041069″/s</span></li>
+        <li><span class="k">Angle around the pole</span><span class="v" id="r-trail">7.521°</span></li>
+        <li><span class="k">Path on the sky</span><span class="v" id="r-sky">7.521° · 27073.92″</span></li>
+        <li><span class="k">Drift this exposure</span><span class="v" id="r-drift">533.9 px</span></li>
+        <li><span class="k">Drift rate</span><span class="v" id="r-drift-rate">0.2966 px/s</span></li>
+        <li><span class="k">Time for 1 px</span><span class="v" id="r-sharp">3.371 s</span></li>
+        <li><span class="k">500 rule</span><span class="v" id="r-500">20.83 s · 6.1798 px of drift</span></li>
+        <li><span class="k">NPF simplified</span><span class="v" id="r-npf-simple">11.46 s</span></li>
+        <li><span class="k">NPF complete</span><span class="v" id="r-npf">5.440 s</span></li>
+        <li><span class="k">Pole altitude</span><span class="v" id="r-pole">37.29° N</span></li>
+      </ul>
+      <p class="why" id="r-why">On the equator cos δ is 1, so the path on the sky equals the angle around the pole. In 30 m 0.0 s that is 7.521° (27073.92″). At 24.0 mm and 5.9 µm the small-angle length is 533.9 px, 0.2966 px/s. The trail is longer than 1°. f · θ is the arc length. A flat sensor does not lay a long arc down as that straight length.</p>
+      <div class="sheet-wrap">
+        <table class="sheet" id="focal-sheet">
+          <caption>Four focal lengths at declination 0°, 5.9 µm, crop 1, and a 1 px blur</caption>
+          <thead>
+            <tr><th scope="col">Lens</th><th scope="col">1 px</th><th scope="col">500 rule</th><th scope="col">Drift</th></tr>
+          </thead>
+          <tbody>
+            <tr data-focal-row="14"><th scope="row">14 mm</th><td>5.779 s</td><td>35.71 s</td><td>0.1730 px/s</td></tr>
+            <tr data-focal-row="24" class="is-on"><th scope="row">24 mm</th><td>3.371 s</td><td>20.83 s</td><td>0.2966 px/s</td></tr>
+            <tr data-focal-row="50"><th scope="row">50 mm</th><td>1.618 s</td><td>10.00 s</td><td>0.6180 px/s</td></tr>
+            <tr data-focal-row="200"><th scope="row">200 mm</th><td>0.405 s</td><td>2.500 s</td><td>2.4719 px/s</td></tr>
+          </tbody>
+        </table>
+        <p class="scale-note">The 1 px column and the drift column use the sidereal rate times cos δ. The 500 column is 500 / (crop × f) and does not. At this pitch and declination that 500-rule exposure trails 6.1798 px. That pixel count does not change with focal length, because both the rule and the drift scale as 1/f.</p>
+      </div>
+    </aside>
+  </div>
+
+  <p class="band">Why the trails look like that</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Around the pole</dt><dd>A star keeps a nearly fixed declination for the length of an exposure. Proper motion, refraction, and precession are real, and they are not in this drawing. What is left is Earth’s turn. The turn is around the celestial pole, so the path is a circle of constant declination. Every star sweeps the same angle around the pole. The radius of the circle is what changes.</dd></div>
+    <div class="gloss"><dt>The equator is fastest</dt><dd>The path length on the sky is the sidereal rate times cos δ times the exposure. At δ = 0, cos δ is 1 and the path equals the angle around the pole. At 60°, cos δ is one half, so the path is half and the angle around the pole is unchanged. On the pole, cos δ is 0. The star does not move. A long lens does not change that geometry. It only magnifies whatever path the sky already has.</dd></div>
+    <div class="gloss"><dt>Sidereal, not solar</dt><dd>The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> lists a sidereal rotation of 23.9345 hours and a length of day of 24.0000 hours. This calculator does not divide by 23.9345. It divides by 86,164.0905 s, which is 23.934470 h before that four-decimal rounding. A mean solar day of 24.0000 h is exactly 15″ per second. The trails use 15.041069″ per second. The four extra minutes, and why the stars rise earlier, are the <a href="/science/astronomy/sidereal/">sidereal</a> desk. The same spin, times sin φ, is the Foucault pendulum.</dd></div>
+    <div class="gloss"><dt>Two angles</dt><dd>The angle around the pole is the Earth’s turn, rate times time, and it does not know the declination. The streak on the frame is the path length, rate times cos δ times time. Thirty seconds at the equator is 7.52′ and 451.23″. Thirty minutes is sixty times that, and an arcminute is sixty arcseconds, so thirty minutes is 451.23′. The digits match because of that factor of sixty. They are not a second measurement.</dd></div>
+    <div class="gloss"><dt>On the sensor</dt><dd>For a short trail the length is f · θ, with θ in radians and f the focal length. Divide by the pixel pitch and the result is pixels. At 24 mm and 5.9 µm, declination 0°, that is 0.2966 px/s, and 8.8989 px in 30 s. One pixel of blur takes 3.371 s. Past about 1° the same product is still the arc length. A flat sensor does not lay a long arc down as that straight length. The <a href="/science/astronomy/telescope/">telescope</a> desk is the aperture and the eyepiece. This desk is the trail the focal length records.</dd></div>
+    <div class="gloss"><dt>Rules of thumb</dt><dd>The 500 rule, as night photographers usually write it, is 500 / (crop factor × focal length in millimetres) seconds. Michaud’s page calls it the older rule. He does not print this quotient. This page uses the usual quotient and labels it an approximation. It ignores declination and pixel pitch. At 24 mm and crop 1 it is 20.83 s, which is 6.1798 px at the opening pitch and at the equator. The NPF rule is printed by Frédéric Michaud of the Société Astronomique du Havre. Simplified, (35 N + 30 p) / f. Complete, k (16.9 N + 0.10 f + 13.7 p) / (f cos δ), with p in micrometres and f in millimetres. At f/2.8, 5.9 µm, 24 mm, and δ = 0, k = 1, those are 11.46 s and 5.440 s. This page does not re-derive the coefficients.</dd></div>
+    <div class="gloss gloss-wide"><dt>Tracking, and Campbell</dt><dd>An equatorial mount that turns once per sidereal day, about an axis aimed at the pole, holds a star on the same pixel when the aim is perfect. This page sets that residual to zero. Periodic error, polar misalignment, flexure, and refraction are not in the zero. The sky still sweeps the angle around the pole. From Campbell, the latitude on the local-sky desk is 37.29° N, so the north celestial pole stands 37.29° above the horizon. Altitude of the pole equals the latitude. South of the equator the south celestial pole is the one above the horizon, and the trails run the other way when you look toward it. Refraction near that horizon is the refraction desk, not this one.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://ssd.jpl.nasa.gov/astro_par.html" rel="noopener" target="_blank">JPL — Astrodynamic parameters</a> — mean sidereal day 86164.09054 s, cited to Seidelmann (ed.), Explanatory Supplement to the Astronomical Almanac, University Science Books, 1992. This page uses 86164.0905 s. 86164.09054 rounded to four decimals in the seconds is 86164.0905. The extra digit is not substituted. The rate 15.041069″/s is 360° × 3600, divided by that day.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">NASA NSSDCA — Earth Fact Sheet</a> — sidereal rotation period 23.9345 hours, length of day 24.0000 hours. 86164.0905 / 3600 is 23.934469583 h, which rounds to 23.9345 at four decimals. The calculator does not use 23.9345 as the length of the day. The 15.000000″/s line is 360° × 3600 divided by 24.0000 hours. It is not the trail rate.</li>
+      <li><a href="https://sahavre.fr/wp/regle-npf-rule/" rel="noopener" target="_blank">Frédéric Michaud — La règle NPF, Société Astronomique du Havre</a> — two printed formulas, in seconds. Simplified, (35 N + 30 p<sub>µm</sub>) / f<sub>mm</sub>. Complete, k (16.9 N + 0.10 f<sub>mm</sub> + 13.7 p<sub>µm</sub>) / (f<sub>mm</sub> cos δ). N is the f-number. δ is the minimum declination in the field; he says to take 0 if you do not know it. k runs from 1 to 3. The page credits Frédéric Michaud and the Société Astronomique du Havre, and it asks developments to credit both. The coefficients are used as printed. They are not recomputed from the sidereal day on this desk.</li>
+      <li><a href="https://sahavre.fr/wp/les-coulisses-de-la-regle-npf/" rel="noopener" target="_blank">Frédéric Michaud — Les coulisses de la règle NPF</a> — the derivation behind those two lines: a sidereal turn of 86164 s, a path f · t · cos δ / 13713, and the Airy, seeing, and Bayer terms that become 16.9, 0.10, and 13.7 after his rounding. This desk cites that account. It does not replace the printed rule with a fresh fit.</li>
+      <li><a href="/science/astronomy/local-sky/">Local sky</a> — Campbell is stored there as 37.29° N. This desk uses that same classroom latitude for the pole’s altitude. It is not a new survey of the city.</li>
+      <li><a href="/science/astronomy/sidereal/">Sidereal day</a> — the fact sheet’s 23.9345 h beside the 24.0000 h mean solar day, and why the stars rise earlier. The rate on this page is the shorter day.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom picture of a fixed camera under a turning sky. The angle around the pole is the sidereal rate times the exposure. The path on the sky multiplies by cos δ. The sensor length is f · θ while the trail is short. The 500 rule and the NPF rule are approximations, and the sensor buttons are illustrative examples. Not an exposure to trust on a given night. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/sidereal/"><p class="n">The day</p><h3>Sidereal</h3><p>Why the star day is shorter than the mean solar day. The trails on this page use that shorter day.</p></a>
+    <a href="/science/astronomy/local-sky/"><p class="n">Viewpoint</p><h3>Local sky</h3><p>Campbell at 37.29° N. The pole’s altitude on this desk is that latitude. The chart there does not draw the trails.</p></a>
+    <a href="/science/astronomy/telescope/"><p class="n">Optics</p><h3>Telescope</h3><p>Focal length, aperture, and the Airy disk. This desk uses the focal length only as the scale of the trail.</p></a>
+    <a href="/science/astronomy/foucault/"><p class="n">The plane</p><h3>Foucault</h3><p>The same 86,164.0905 s sidereal day, times sin φ. Campbell is 39.505632 h. A pendulum, not a trail.</p></a>
+    <a href="/science/astronomy/angular-size/"><p class="n">The angle</p><h3>Angular size</h3><p>A different angle: how large a body looks. A trail’s length is an angle of the sky’s turn, not a diameter.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where Earth sits. The spin on this page is the one that draws the arcs.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="st-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="st-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="st-help-title">Star trails desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. The arcs are the sky’s turn during the exposure. The pixel time is the small-angle length f · θ. Not an exposure to trust on a given night.</p>
+    <h3>Fields</h3>
+    <table>
+      <caption>Fields</caption>
+      <tbody>
+        <tr><th scope="row">Declination</th><td>δ from −90° to 90°. The path on the sky is multiplied by cos δ. The angle around the pole is not. The equator button is 0°. Near pole is 80°. On the pole is 90°, where the path length is zero.</td></tr>
+        <tr><th scope="row">Exposure</th><td>Seconds. The slider runs from 1 s to 4 hours. The number field accepts 0.1 s to 12 hours (43,200 s). 30 s is the short check: 7.52′ and 451.23″ at the equator. The page opens on 30 minutes.</td></tr>
+        <tr><th scope="row">Focal length</th><td>Millimetres. 14, 24, 50, and 200 are the lens buttons. The drift in pixels is proportional to this. The slider runs from 8 to 600. The number field accepts 1 to 2,000.</td></tr>
+        <tr><th scope="row">Pixel pitch</th><td>Micrometres. The full-frame button is 5.9 µm, an illustrative pitch near 36 mm / 6,000 = 6.0 µm. APS-C is 3.9 µm and crop 1.5. Micro Four Thirds is 3.3 µm and crop 2. None of those is a measurement of one camera.</td></tr>
+        <tr><th scope="row">Max blur</th><td>The pixel count you are willing to trail. The sharp time is this count divided by the drift rate. It opens at 1 px, which is 3.371 s at 24 mm, 5.9 µm, and δ = 0°.</td></tr>
+        <tr><th scope="row">Aperture</th><td>The f-number N in Michaud’s NPF rule only. It does not change the sidereal drift. f/2.8 is the opening example.</td></tr>
+        <tr><th scope="row">Crop factor</th><td>Used only by the 500 rule, 500 / (crop × focal length). Full frame is 1. The sensor buttons set 1, 1.5, or 2. Those are the usual comparisons with a 36 mm frame.</td></tr>
+        <tr><th scope="row">Latitude</th><td>Sets the pole’s altitude, which equals the latitude. Campbell is 37.29° N. It does not change the trail length. South of the equator the drawing runs the other way, looking toward the south celestial pole.</td></tr>
+        <tr><th scope="row">k</th><td>Michaud’s factor from 1 to 3 on the complete NPF rule. 1 is the strict end of his range. 3 allows a longer streak. It does not change f · θ.</td></tr>
+        <tr><th scope="row">Sidereal tracking</th><td>Sets the sensor drift to zero, as a perfect polar-aligned sidereal mount would. The sky’s angle is still shown. Periodic error and misalignment are not modeled. Press again for a fixed tripod.</td></tr>
+      </tbody>
+    </table>
+    <h3>On the drawing</h3>
+    <table>
+      <caption>On the drawing</caption>
+      <tbody>
+        <tr><th scope="row">Circles</th><td>Declination rings. The center is the pole. The outer ring is the equator, unless the chosen star is south of it, in which case the plot reaches that declination. Faint circles are one sidereal day. Bright arcs are this exposure.</td></tr>
+        <tr><th scope="row">Polaris</th><td>A mark near the pole. The offset is schematic. This page does not use a catalog separation.</td></tr>
+        <tr><th scope="row">Chart</th><td>Sharp exposure, the 500 rule, and the complete NPF rule against focal length, from 10 mm to 400 mm. The vertical axis is logarithmic. The mark is the current focal length when it sits in that span.</td></tr>
+        <tr><th scope="row">Keyboard</th><td>Left and Right on the trail drawing step one minute of exposure. Up and Down step declination by 5°. Home returns the exposure to 30 minutes. The question mark opens this dialog.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. Open it for the same links. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/star-trails/star-trails.js"></script>
+<script>
+(function () {
+  "use strict";
+  var S = window.StarTrails;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!S) return;
+
+  var state = {
+    dec: S.DEFAULTS.dec,
+    exposureS: S.DEFAULTS.exposureS,
+    focalMm: S.DEFAULTS.focalMm,
+    pitchUm: S.DEFAULTS.pitchUm,
+    crop: S.DEFAULTS.crop,
+    blurPx: S.DEFAULTS.blurPx,
+    aperture: S.DEFAULTS.aperture,
+    k: S.DEFAULTS.k,
+    lat: S.DEFAULTS.lat,
+    tracking: S.DEFAULTS.tracking
+  };
+
+  var trails = document.getElementById("trails");
+  var chart = document.getElementById("exposure-chart");
+  var err = document.getElementById("field-err");
+  var trackBtn = document.getElementById("track");
+
+  var fields = [
+    { key: "dec", slider: "dec", number: "dec-num", lo: -90, hi: 90 },
+    { key: "exposureS", slider: "exposure", number: "exposure-num", lo: 0.1, hi: 43200 },
+    { key: "focalMm", slider: "focal", number: "focal-num", lo: 1, hi: 2000 },
+    { key: "pitchUm", slider: "pitch", number: "pitch-num", lo: 0.5, hi: 50 },
+    { key: "blurPx", slider: "blur", number: "blur-num", lo: 0.1, hi: 100 },
+    { key: "aperture", slider: "aperture", number: "aperture-num", lo: 0.5, hi: 64 },
+    { key: "crop", slider: "crop", number: "crop-num", lo: 0.5, hi: 10 },
+    { key: "lat", slider: "lat", number: "lat-num", lo: -90, hi: 90 }
+  ];
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function colors() {
+    return {
+      ink: cssVar("--ink", "#e8e6e1"),
+      soft: cssVar("--ink-soft", "#9b9a96"),
+      muted: cssVar("--muted", "#63666e"),
+      accent: cssVar("--accent", "#c8b48a"),
+      accent2: cssVar("--accent-2", "#7eb6e8"),
+      line: cssVar("--line", "#2c303a")
+    };
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function showError(msg) {
+    if (!err) return;
+    err.hidden = false;
+    err.textContent = msg;
+  }
+  function clearError() {
+    if (!err) return;
+    err.hidden = true;
+  }
+  function same(a, b) {
+    return Math.abs(a - b) < 1e-6;
+  }
+  function trimNum(n) {
+    var t = String(Math.round(n * 10000) / 10000);
+    return t;
+  }
+
+  function drawTrails(view) {
+    if (!trails) return;
+    var ctx = trails.getContext("2d");
+    var w = trails.width;
+    var h = trails.height;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    var cx = w / 2;
+    var cy = h / 2;
+    var R = Math.min(w, h) * 0.42;
+    var outer = Math.min(0, view.dec);
+    var span = 90 - outer;
+    function radiusFor(dec) {
+      return ((90 - dec) / span) * R;
+    }
+    var rings = [0, 30, 45, 60, 75];
+    if (rings.indexOf(view.dec) === -1) rings.push(view.dec);
+    var ccw = view.lat >= 0;
+    var start = -Math.PI / 2;
+    var full = view.trailDeg >= 360;
+    var sweep = full ? Math.PI * 2 : view.trailDeg * Math.PI / 180;
+
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    rings.forEach(function (dec) {
+      if (dec < outer - 1e-9 || dec > 90) return;
+      ctx.beginPath();
+      ctx.arc(cx, cy, Math.max(1, radiusFor(dec)), 0, Math.PI * 2);
+      ctx.stroke();
+    });
+
+    ctx.strokeStyle = c.accent;
+    ctx.lineWidth = 2.25;
+    rings.forEach(function (dec) {
+      if (dec < outer - 1e-9 || dec > 90) return;
+      var rad = Math.max(1.5, radiusFor(dec));
+      ctx.beginPath();
+      if (full) {
+        ctx.arc(cx, cy, rad, 0, Math.PI * 2);
+      } else if (ccw) {
+        ctx.arc(cx, cy, rad, start, start - sweep, true);
+      } else {
+        ctx.arc(cx, cy, rad, start, start + sweep, false);
+      }
+      ctx.stroke();
+    });
+
+    ctx.fillStyle = c.accent;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    var px = cx + R * 0.07;
+    var py = cy - R * 0.05;
+    ctx.strokeStyle = c.accent2;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(px, py, 5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = c.soft;
+    ctx.font = "12px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText("Polaris", px + 10, py);
+
+    ctx.fillStyle = c.muted;
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(ccw ? "N" : "S", cx, cy - R - 14);
+
+    var sense = view.lat > 0
+      ? "Counter-clockwise, looking toward the north celestial pole."
+      : (view.lat < 0
+        ? "Clockwise, looking toward the south celestial pole."
+        : "The pole is on the horizon. The circles are the paths.");
+    trails.setAttribute("aria-label", "Star trails. This exposure sweeps " + view.text.trail + " around the pole. The path on the sky is " + view.text.sky + ". " + sense + " Polaris is a schematic mark near the pole.");
+  }
+
+  function drawChart(view) {
+    if (!chart) return;
+    var ctx = chart.getContext("2d");
+    var w = chart.width;
+    var h = chart.height;
+    var c = colors();
+    ctx.clearRect(0, 0, w, h);
+    var series = S.chartSeries(view, 10, 400, 80);
+    var left = 58;
+    var right = 16;
+    var top = 16;
+    var bottom = 36;
+    var plotW = w - left - right;
+    var plotH = h - top - bottom;
+    var samples = [];
+    series.forEach(function (row) {
+      [row.sharp, row.rule500, row.npf].forEach(function (t) {
+        if (isFinite(t) && t > 0) samples.push(t);
+      });
+    });
+    if (!samples.length) {
+      ctx.fillStyle = c.muted;
+      ctx.font = "13px 'IBM Plex Mono', ui-monospace, monospace";
+      ctx.fillText("No finite exposure on this chart.", left, top + 24);
+      return;
+    }
+    var yLo = Math.min.apply(null, samples);
+    var yHi = Math.max.apply(null, samples);
+    yLo = Math.max(yLo / 1.4, 1e-3);
+    yHi = yHi * 1.4;
+    function xPix(f) {
+      return left + ((f - 10) / (400 - 10)) * plotW;
+    }
+    function yPix(t) {
+      var ly = Math.log(t);
+      var a = Math.log(yLo);
+      var b = Math.log(yHi);
+      return top + plotH - ((ly - a) / (b - a)) * plotH;
+    }
+    ctx.strokeStyle = c.line;
+    ctx.lineWidth = 1;
+    ctx.font = "11px 'IBM Plex Mono', ui-monospace, monospace";
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    [0.1, 0.3, 1, 3, 10, 30, 100, 300].forEach(function (tick) {
+      if (tick < yLo || tick > yHi) return;
+      var y = yPix(tick);
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(w - right, y);
+      ctx.stroke();
+      ctx.fillText(tick >= 10 ? String(tick) : String(tick), left - 8, y);
+    });
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    [10, 50, 100, 200, 400].forEach(function (f) {
+      var x = xPix(f);
+      ctx.fillText(String(f), x, h - bottom + 10);
+    });
+
+    function stroke(key, color, dash) {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash(dash || []);
+      ctx.beginPath();
+      var started = false;
+      series.forEach(function (row) {
+        var t = row[key];
+        if (!isFinite(t) || t <= 0) {
+          started = false;
+          return;
+        }
+        var x = xPix(row.focalMm);
+        var y = yPix(t);
+        if (!started) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+        started = true;
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+    stroke("rule500", c.muted, []);
+    stroke("npf", c.accent2, [6, 5]);
+    stroke("sharp", c.accent, []);
+
+    if (view.focalMm >= 10 && view.focalMm <= 400 && isFinite(view.sharpSeconds) && view.sharpSeconds > 0) {
+      var mx = xPix(view.focalMm);
+      var my = yPix(view.sharpSeconds);
+      ctx.strokeStyle = c.ink;
+      ctx.beginPath();
+      ctx.moveTo(mx, top);
+      ctx.lineTo(mx, top + plotH);
+      ctx.stroke();
+      ctx.fillStyle = c.ink;
+      ctx.beginPath();
+      ctx.arc(mx, my, 4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    chart.setAttribute("aria-label", "Exposure versus focal length, from 10 to 400 mm. Pixel limit " + view.text.sharp + ". 500 rule " + view.text.rule500 + ". NPF complete " + view.text.npf + ".");
+  }
+
+  function syncPressed() {
+    document.querySelectorAll("[data-focal]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", same(Number(btn.getAttribute("data-focal")), state.focalMm) ? "true" : "false");
+    });
+    document.querySelectorAll("[data-dec]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", same(Number(btn.getAttribute("data-dec")), state.dec) ? "true" : "false");
+    });
+    document.querySelectorAll("[data-exposure]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", same(Number(btn.getAttribute("data-exposure")), state.exposureS) ? "true" : "false");
+    });
+    document.querySelectorAll("[data-k]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", Number(btn.getAttribute("data-k")) === state.k ? "true" : "false");
+    });
+    document.querySelectorAll("[data-lat]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", same(Number(btn.getAttribute("data-lat")), state.lat) ? "true" : "false");
+    });
+    document.querySelectorAll("[data-sensor]").forEach(function (btn) {
+      var id = btn.getAttribute("data-sensor");
+      var sensor = null;
+      S.SENSORS.forEach(function (item) { if (item.id === id) sensor = item; });
+      var on = sensor && same(sensor.pitchUm, state.pitchUm) && same(sensor.crop, state.crop);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    if (trackBtn) {
+      trackBtn.setAttribute("aria-pressed", state.tracking ? "true" : "false");
+      trackBtn.textContent = state.tracking ? "Fixed tripod" : "Sidereal tracking";
+    }
+  }
+
+  function pushFields() {
+    fields.forEach(function (field) {
+      var slider = document.getElementById(field.slider);
+      var number = document.getElementById(field.number);
+      var value = state[field.key];
+      if (number && document.activeElement !== number) number.value = trimNum(value);
+      if (slider) {
+        var min = Number(slider.min);
+        var max = Number(slider.max);
+        slider.value = String(Math.min(max, Math.max(min, value)));
+        slider.setAttribute("aria-valuenow", trimNum(value));
+      }
+    });
+  }
+
+  function render() {
+    var view = S.scene(state);
+    if (!view.ok) {
+      showError(view.error);
+      return;
+    }
+    clearError();
+    var mount = view.tracking ? "sidereal tracking" : "fixed tripod";
+    var where = view.onPole ? "On the pole" : (view.dec === 0 ? "Equator" : ("δ " + view.text.cos));
+    setText("r-tier", where + " · " + S.formatSeconds(view.exposureS) + " · " + mount);
+    setText("r-title", view.text.trail);
+    var sense = view.lat > 0
+      ? "Counter-clockwise, looking north"
+      : (view.lat < 0 ? "Clockwise, looking south" : "Pole on the horizon");
+    setText("r-sense", "Around the pole " + view.text.trail + " · sky " + view.text.sky + " · " + sense);
+    setText("r-rate", view.text.rate);
+    setText("r-solar", view.text.solarRate);
+    setText("r-apparent", view.text.apparent + " · cos δ " + view.text.cos);
+    setText("r-trail", view.text.trail + " · " + view.text.trailArcsec);
+    setText("r-sky", view.text.sky + " · " + view.text.skyArcsec);
+    setText("r-drift", view.text.drift);
+    setText("r-drift-rate", view.text.driftRate);
+    setText("r-sharp", view.text.sharp);
+    setText("r-500", view.text.rule500 + " · " + view.text.rule500Blur + " of drift");
+    setText("r-npf-simple", view.text.npfSimple);
+    setText("r-npf", view.text.npf + " · k = " + view.k);
+    setText("r-pole", view.text.pole + (view.lat === 0 ? " · on the horizon" : " · equals the latitude"));
+    setText("r-why", view.text.why);
+    setText("trail-note", "The faint circles are one full sidereal day. The bright arcs are this exposure, " + view.text.trail + " around the pole. The path on the sky is " + view.text.sky + ". Polaris sits near the center. The offset is not a catalog distance. Left and Right on the drawing step the exposure by one minute.");
+    setText("chart-note", "At " + trimNum(view.focalMm) + " mm the time for " + trimNum(view.blurPx) + " px is " + view.text.sharp + ". The 500 rule is " + view.text.rule500 + ". Michaud’s complete rule is " + view.text.npf + ". The simplified NPF rule is " + view.text.npfSimple + ". The 500 rule and both NPF lines are approximations.");
+    var rows = S.focalRows(state);
+    rows.forEach(function (row) {
+      var tr = document.querySelector('[data-focal-row="' + row.focalMm + '"]');
+      if (!tr) return;
+      var cells = tr.querySelectorAll("td");
+      if (cells[0]) cells[0].textContent = row.text.sharp;
+      if (cells[1]) cells[1].textContent = row.text.rule500;
+      if (cells[2]) cells[2].textContent = row.text.driftRate;
+      tr.className = same(row.focalMm, state.focalMm) ? "is-on" : "";
+    });
+    drawTrails(view);
+    drawChart(view);
+    syncPressed();
+    pushFields();
+  }
+
+  fields.forEach(function (field) {
+    var slider = document.getElementById(field.slider);
+    var number = document.getElementById(field.number);
+    if (slider) slider.addEventListener("input", function () {
+      state[field.key] = Number(slider.value);
+      if (number) number.value = slider.value;
+      render();
+    });
+    if (number) number.addEventListener("input", function () {
+      var n = S.parseNumber(number.value, field.lo, field.hi);
+      if (n == null) {
+        var trial = {};
+        var key;
+        for (key in state) trial[key] = state[key];
+        trial[field.key] = Number(number.value);
+        var view = S.scene(trial);
+        showError(view.ok ? "That field needs a number in range." : view.error);
+        return;
+      }
+      state[field.key] = n;
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-focal]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.focalMm = Number(btn.getAttribute("data-focal"));
+      render();
+    });
+  });
+  document.querySelectorAll("[data-dec]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.dec = Number(btn.getAttribute("data-dec"));
+      render();
+    });
+  });
+  document.querySelectorAll("[data-exposure]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.exposureS = Number(btn.getAttribute("data-exposure"));
+      render();
+    });
+  });
+  document.querySelectorAll("[data-k]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.k = Number(btn.getAttribute("data-k"));
+      render();
+    });
+  });
+  document.querySelectorAll("[data-lat]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.lat = Number(btn.getAttribute("data-lat"));
+      render();
+    });
+  });
+  document.querySelectorAll("[data-sensor]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-sensor");
+      S.SENSORS.forEach(function (item) {
+        if (item.id === id) {
+          state.pitchUm = item.pitchUm;
+          state.crop = item.crop;
+        }
+      });
+      render();
+    });
+  });
+  if (trackBtn) trackBtn.addEventListener("click", function () {
+    state.tracking = !state.tracking;
+    render();
+  });
+
+  if (trails) trails.addEventListener("keydown", function (ev) {
+    if (ev.key === "ArrowRight") state.exposureS = Math.min(43200, state.exposureS + 60);
+    else if (ev.key === "ArrowLeft") state.exposureS = Math.max(0.1, state.exposureS - 60);
+    else if (ev.key === "ArrowUp") state.dec = Math.min(90, state.dec + 5);
+    else if (ev.key === "ArrowDown") state.dec = Math.max(-90, state.dec - 5);
+    else if (ev.key === "Home") state.exposureS = 1800;
+    else return;
+    ev.preventDefault();
+    render();
+  });
+
+  var helpBtn = document.getElementById("st-help");
+  var helpDialog = document.getElementById("st-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
