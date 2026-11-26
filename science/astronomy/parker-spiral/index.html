@@ -1,0 +1,958 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solar wind and the Parker spiral — Steven Philley</title>
+<meta name="description" content="Parker spiral desk. At 400 km/s and 1 AU, with the Sun Fact Sheet sidereal period 609.12 h (25.38 d at 16°), the spiral angle is 46.98° and the radial transit is 4.33 days. The Sun turns 61.40° during that transit, the western footpoint offset. Constant radial speed. Not a forecast.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/parker-spiral/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Solar wind and the Parker spiral">
+<meta property="og:description" content="At 400 km/s and 1 AU the garden-hose angle is 46.98°. The radial transit is 4.33 days, and the Sun turns 61.40° in that time. A teaching calculator, not a forecast.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/parker-spiral/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Solar wind and the Parker spiral">
+<meta name="twitter:description" content="400 km/s at 1 AU: spiral angle 46.98°, transit 4.33 days, western footpoint 61.40°. Sidereal period 25.38 d.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram.chart-only{margin-top:0}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.curve{border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.noon{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.now{border-top-color:var(--ink,#e8e6e1)}
+.swatch.other{border-top-style:dashed;border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.hot{border-top-color:#e07a30}
+.swatch.cold{border-top-color:var(--accent-2,#7eb6e8)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sundial/">Sundial</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/parker-spiral/" aria-current="page">Parker spiral</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/cmb/">CMB</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+</nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Parker spiral</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The garden hose</p>
+  <h1>Solar wind &amp;<br>the Parker spiral</h1>
+  <p class="lede">The solar wind is a plasma that leaves the Sun all the time, carrying the solar magnetic field with it. <a href="https://www.swpc.noaa.gov/phenomena/solar-wind" rel="noopener" target="_blank">NOAA SWPC</a> says the most common slow wind in the equatorial plane is about 400 km/s, and that coronal holes run from 500 to 800 km/s. The Sun rotates, so a parcel that left earlier stays on its radial ray while the footpoint moves on. The field, frozen into the flow, is wound into an Archimedean spiral. Eugene Parker set that picture out in 1958. The nickname is the garden-hose angle. The straight-line time across one Earth distance, without this angle, is the <a href="/science/astronomy/cme/">solar wind and CME</a> desk. That page does not compute a pitch.</p>
+  <p class="lede">This desk uses the constant-speed equatorial form <strong>tan ψ = Ω r / v</strong>. ψ is the angle of the field from the radial direction. Ω is the Sun’s sidereal angular speed. The <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">Sun Fact Sheet</a> prints a sidereal rotation period of <strong>609.12 hours</strong>. Divided by 24 that is <strong>25.38 days</strong>. The footnote assigns that period to 16° latitude, not to the equator. The same footnote’s equatorial term is 14.37 degrees per day, and 360 divided by 14.37 is 25.05 days. The calculator opens on 25.38 days. 25.05 is not substituted. One astronomical unit is the IAU 2012 length, 149,597,870,700 m.</p>
+  <p class="lede">At <strong>400 km/s</strong> and <strong>1 AU</strong> the arithmetic is a spiral angle of <strong>46.98°</strong>, a radial transit of <strong>4.33 days</strong> (103.89 hours), and a solar turn of <strong>61.40°</strong>. That turn is the western footpoint offset, Ω r / v. A familiar round figure is about 45°. 46.98 does not round to 45. They are not averaged. NOAA’s page says the Sun rotates every 27 days. Feeding 27 days into this formula at the same speed and distance gives 45.21°. That period is the sentence on the <a href="/science/astronomy/cme/">solar-wind</a> desk. It is not this sidereal period, and 45.21° is not substituted for 46.98°.</p>
+  <p class="lede">The radial time is distance over speed. It ignores the acceleration near the Sun, and it does not stop the winding inside a source surface. Potential-field models often place that surface near 2.5 solar radii. With the sheet’s volumetric mean radius, 695,700 km, 2.5 radii is 0.0116 AU. The slider starts at 0.1 AU, outside that surface, and the formula does not subtract it. Charged particles travel more easily along the field than across it, so a flare near the western footpoint is the one magnetically connected to the observer. An eastern-limb flare is not on that line. What the wind does when it arrives is the <a href="/science/astronomy/aurora/">aurora</a> desk and the <a href="/science/astronomy/magnetospheres/">magnetospheres</a> desk. The sunspot rhythm is the <a href="/science/astronomy/solar-cycle/">solar cycle</a>.</p>
+  <p class="note-schematic" id="limits-note">Educational calculator. Constant radial speed, an Archimedean spiral, and a western footpoint of Ω r / v. The wind is not accelerated near the Sun. Corotation inside a source surface near 2.5 solar radii is not applied. The fast and slow overlay is a qualitative corotating interaction region, not a measured stream. Not a space-weather forecast, not a flare score, and not a mission design tool.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Spiral and transit</span>
+    <button type="button" class="help-q" id="parker-help" aria-haspopup="dialog" aria-controls="parker-help-dialog" aria-expanded="false" aria-label="How this Parker spiral desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="map-hint">Top-down ecliptic view · north up · the observer is to the right</p>
+      <canvas id="map" width="880" height="640" tabindex="0" role="img" aria-label="Top-down view of the Parker spiral at 400 kilometers per second and 1 AU. The spiral angle is 46.98 degrees. Orbits of Mercury through Neptune are circles at their fact-sheet semimajor axes. The highlighted field line passes through the observer."></canvas>
+      <ul class="legend" aria-label="Map key">
+        <li><span class="swatch" aria-hidden="true"></span> Chosen speed</li>
+        <li><span class="swatch noon" aria-hidden="true"></span> Other lines</li>
+        <li><span class="swatch hot" aria-hidden="true"></span> Slow 400</li>
+        <li><span class="swatch cold" aria-hidden="true"></span> Fast 750</li>
+        <li><span class="swatch now" aria-hidden="true"></span> Observer</li>
+      </ul>
+      <p class="scale-note" id="map-note">Orbits are the fact-sheet semimajor axes. The dot is the distance on the slider. The highlighted line is the Archimedean spiral for the chosen speed, through that dot. The arc at the dot is the spiral angle, measured from the radial line.</p>
+      <div class="controls">
+        <p class="field-err" id="field-err" hidden>Speed from 250 to 900 km/s. Distance from 0.1 to 40 AU. Sidereal period from 20 to 40 days.</p>
+        <p class="pick-label">Solar wind speed. 400 km/s is NOAA’s about-400. 750 km/s is a classroom mark inside the 500–800 km/s coronal-hole range.</p>
+        <div class="slider-row">
+          <label for="v-slider">v</label>
+          <input type="range" id="v-slider" min="250" max="900" step="1" value="400" aria-label="Solar wind speed in kilometers per second">
+          <label for="v-num">km/s</label>
+          <input type="number" id="v-num" inputmode="decimal" min="250" max="900" step="1" value="400" aria-label="Solar wind speed in kilometers per second">
+        </div>
+        <p class="pick-label">Heliocentric distance. The slider is logarithmic. Earth is 1 AU, not the fact sheet’s 1.00000011 AU.</p>
+        <div class="slider-row">
+          <label for="r-slider">r</label>
+          <input type="range" id="r-slider" min="0" max="1000" step="0.1" value="384.3" aria-label="Heliocentric distance">
+          <label for="r-num">AU</label>
+          <input type="number" id="r-num" inputmode="decimal" min="0.1" max="40" step="any" value="1" aria-label="Heliocentric distance in astronomical units">
+        </div>
+        <p class="pick-label">Sidereal rotation period. The fact-sheet button restores 609.12 hours, which is 25.38 days.</p>
+        <div class="slider-row">
+          <label for="p-slider">P</label>
+          <input type="range" id="p-slider" min="20" max="40" step="0.01" value="25.38" aria-label="Solar sidereal rotation period in days">
+          <label for="p-num">days</label>
+          <input type="number" id="p-num" inputmode="decimal" min="20" max="40" step="0.01" value="25.38" aria-label="Solar sidereal rotation period in days">
+        </div>
+        <div class="presets" role="group" aria-label="Distance and speed presets">
+          <button type="button" data-preset="earth-slow" aria-pressed="true">Earth · 400</button>
+          <button type="button" data-preset="earth-fast" aria-pressed="false">Earth · 750</button>
+          <button type="button" data-preset="mars-slow" aria-pressed="false">Mars · 400</button>
+          <button type="button" data-preset="mars-fast" aria-pressed="false">Mars · 750</button>
+          <button type="button" data-preset="jupiter-slow" aria-pressed="false">Jupiter · 400</button>
+          <button type="button" data-preset="jupiter-fast" aria-pressed="false">Jupiter · 750</button>
+          <button type="button" data-preset="neptune-slow" aria-pressed="false">Neptune · 400</button>
+          <button type="button" data-preset="neptune-fast" aria-pressed="false">Neptune · 750</button>
+          <button type="button" id="p-reset" aria-pressed="true">Period · 25.38 d</button>
+          <button type="button" id="cir-toggle" aria-pressed="false">Fast and slow streams</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Earth · 400 · 25.38 d</p>
+      <h2 id="r-title">46.98°</h2>
+      <p class="range" id="r-sense">400 km/s · 1 AU · 25.38 d</p>
+      <ul class="stats">
+        <li><span class="k">Spiral angle ψ</span><span class="v" id="r-psi">46.98°</span></li>
+        <li><span class="k">Radial transit</span><span class="v" id="r-days">4.33 days</span></li>
+        <li><span class="k">Hours</span><span class="v" id="r-hours">103.89 h</span></li>
+        <li><span class="k">Sun rotates</span><span class="v" id="r-turn">61.40°</span></li>
+        <li><span class="k">Footpoint, west</span><span class="v" id="r-foot">61.40°</span></li>
+        <li><span class="k">Turns</span><span class="v" id="r-turns">0.17</span></li>
+      </ul>
+      <p class="why" id="r-why">Constant radial speed. The spiral angle is the arctangent of Ω r / v, 46.98° here. The radial travel time is the distance divided by that speed: 4.33 days, which is 103.89 hours. In that time the Sun turns 61.40°. That turn is the western footpoint offset. 61.40° west of the sub-observer meridian, on the western half of the disk. The wind is not accelerated. Winding is not held off inside a source surface. A surface near 2.5 solar radii is 0.0116 AU with the Sun sheet’s 695,700 km. That length is not subtracted. A familiar round figure for about 400 km/s at Earth is 45°. 46.98° does not round to 45. They are not averaged. NOAA’s 27 days, fed into the same formula at 400 km/s and 1 AU, gives 45.21°. That period is a different sentence. 45.21° is not substituted for 46.98°. Not a forecast.</p>
+    </aside>
+  </div>
+
+  <p class="band">Spiral angle versus distance</p>
+  <div class="diagram chart-only">
+    <p class="hint" id="angle-hint">ψ from 0.1 to 40 AU · logarithmic distance · the current speed</p>
+    <canvas id="angle" width="880" height="420" tabindex="0" role="img" aria-label="Spiral angle versus heliocentric distance from 0.1 to 40 AU at 400 kilometers per second. At 1 AU the angle is 46.98 degrees. A dashed line marks the familiar 45 degree figure."></canvas>
+    <ul class="legend" aria-label="Chart key">
+      <li><span class="swatch" aria-hidden="true"></span> ψ(r)</li>
+      <li><span class="swatch now" aria-hidden="true"></span> Chosen distance</li>
+      <li><span class="swatch other" aria-hidden="true"></span> Familiar 45°</li>
+    </ul>
+    <p class="scale-note" id="angle-note">The curve is tan ψ = Ω r / v for the speed and the period on the sliders. Distance is logarithmic so 1 AU is readable beside 40 AU. The dashed line is 45°. It is a guide. It is not the result. Click the chart to set the distance.</p>
+  </div>
+
+  <p class="band">Why the field winds</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>What the solar wind is</dt><dd>NOAA SWPC: a continuous flow, mainly protons and electrons in a plasma, with the solar magnetic field embedded in it. In the equatorial plane the most common state is the slow wind, about 400 km/s. Coronal holes produce high-speed wind from 500 to 800 km/s. The same sentences are on the <a href="/science/astronomy/cme/">solar wind and CME</a> desk, which divides the Earth Fact Sheet’s 149.598 × 10<sup>6</sup> km by a speed and does not compute an angle. At 400 km/s this page’s 1 AU, the IAU length, also prints 4.33 days and 103.89 hours. The two distances are not substituted for each other. They happen to agree at those two decimals.</dd></div>
+    <div class="gloss"><dt>Why it spirals</dt><dd>A parcel keeps the radial direction it had when it left. The footpoint rotates out from under it. Parker 1958 showed that a radial wind with the field frozen in, and a rotating Sun, winds that field into an Archimedean spiral. In the equatorial plane, with a constant radial speed and the inner boundary dropped, tan ψ = Ω r / v. ψ is measured from the radial direction, not from the azimuth.</dd></div>
+    <div class="gloss"><dt>The three angles</dt><dd>ψ = arctan(Ω r / v) is the garden-hose angle at the observer. The Sun’s turn during the transit is Ω r / v itself, in degrees, because the time is r / v. That same number is the western footpoint offset. At the opening, 46.98° is the spiral and 61.40° is the turn. They are not the same angle. The tangent of 46.98° is the radian measure of 61.40°.</dd></div>
+    <div class="gloss"><dt>The period</dt><dd>609.12 hours is the Sun Fact Sheet’s sidereal period, adopted at 16° latitude. The footnote gives the rate as (14.37 − 2.33 sin²L − 1.56 sin⁴L) degrees per day. At the equator that rate is 14.37 degrees per day, and the period is 25.05 days. The page can be edited from 20 to 40 days. It opens at 25.38. NOAA’s 27 days is the synodic sentence on the solar-wind page. At 400 km/s and 1 AU it would give 45.21°. It is not used.</dd></div>
+    <div class="gloss"><dt>What is left out</dt><dd>The real wind accelerates through the corona. The speed is not constant, and it is not purely radial near the Sun. Inside a source surface, often taken near 2.5 solar radii, the field is still shaped by the corona and the plasma roughly corotates. 2.5 times 695,700 km is 0.0116 AU. This formula starts the winding at the center and does not subtract that length. Differential rotation, a tilted dipole, and a real source surface are not in the drawing.</dd></div>
+    <div class="gloss"><dt>Streams and a CIR</dt><dd>NOAA says high-speed wind overtaking slow wind makes a corotating interaction region. The overlay draws a 750 km/s spiral and a 400 km/s spiral whose footpoints differ by a classroom 25°. Those two curves meet once. At 25.38 days the meeting is at 0.8725 AU. The band beyond that meeting is the cartoon of the fast wind running into the slow wind ahead of it. The 25° is not a measured stream. The 750 is not a measured wind.</dd></div>
+    <div class="gloss gloss-wide"><dt>Why the west matters</dt><dd>The spiral trails the rotation. Viewed from the north, the Sun turns counter-clockwise, and the footpoint that connects to an observer on the right is counter-clockwise of that observer: west, on the solar disk. Solar energetic particles follow the field much more readily than they cross it. A flare near that western longitude is on the line that reaches the observer. A flare on the eastern limb is not. At the opening the offset is 61.40°, on the western half of the disk. Farther out the same product can exceed a full turn. The card then says where the footpoint sits once those turns are removed. This page does not score a flare, and it does not read a magnetogram.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1086/146579" rel="noopener" target="_blank">Parker 1958, ApJ 128, 664</a> — Dynamics of the interplanetary gas and magnetic fields. A radial wind with a frozen-in field, from a rotating Sun, winds into a spiral. This desk uses the constant-speed equatorial form tan ψ = Ω r / v and drops the inner radius that formula sometimes keeps. DOI 10.1086/146579.</li>
+      <li><a href="https://www.swpc.noaa.gov/phenomena/solar-wind" rel="noopener" target="_blank">NOAA SWPC — Solar wind</a> — protons and electrons in a plasma. Coronal holes, 500 to 800 km/s. Equatorial slow wind, about 400 km/s. The Sun rotates every 27 days, and the wind becomes a spiral like a ballerina’s skirt. High-speed wind overtaking slow wind makes a corotating interaction region. The 27 days are not this sidereal period. The interaction-region drawing is qualitative.</li>
+      <li><a href="https://science.nasa.gov/sun/what-is-the-solar-wind/" rel="noopener" target="_blank">NASA Science — What is the solar wind?</a> — the wind drags the Sun’s magnetic field into a spiral because the Sun rotates, and the spiral is named for Eugene Parker. The theory is dated to 1958. This page computes the angle that sentence does not.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/sunfact.html" rel="noopener" target="_blank">NASA NSSDCA — Sun Fact Sheet</a> — sidereal rotation period 609.12 hours, the adopted period at 16° latitude. The rate varies as (14.37 − 2.33 sin²L − 1.56 sin⁴L) degrees per day. Volumetric mean radius 695,700 km. The 2.5-radius remark uses that radius. It is not a second sheet entry.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — the astronomical unit is exactly 149,597,870,700 m. Every distance in the formula is a number of AU times that length. The Earth button is exactly 1 AU.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/earthfact.html" rel="noopener" target="_blank">Earth Fact Sheet</a> — J2000 semimajor axis 1.00000011 AU, and 149.598 × 10<sup>6</sup> km. The orbit circle uses 1.00000011 AU. The button and the opening distance use 1 AU. The solar-wind desk divides 149.598 × 10<sup>6</sup> km by the speed. Neither of those lengths is substituted here.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars</a>, <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">Jupiter</a>, and <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/neptunefact.html" rel="noopener" target="_blank">Neptune</a> fact sheets — J2000 semimajor axes 1.52366231 AU, 5.20336301 AU, and 30.06896348 AU. The buttons use those printed axes. Mercury, Venus, Saturn, and Uranus are drawn from the same J2000 column the <a href="/science/astronomy/resonances/">resonances</a> desk uses: 0.38709893, 0.72333199, 9.53707032, and 19.19126393 AU.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom spiral for a constant radial wind. The opening readout is 400 km/s, 1 AU, and 609.12 hours: 46.98°, 4.33 days, and 61.40° west. Not a forecast. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/cme/"><p class="n">The wind</p><h3>Solar wind</h3><p>NOAA’s about 400 km/s, and 149.598 × 10<sup>6</sup> km divided by the speed. The spiral on that page is a sketch. This page is the angle.</p></a>
+    <a href="/science/astronomy/aurora/"><p class="n">The shield</p><h3>Aurora</h3><p>What the wind meets at Earth. A schematic of the magnetosphere and the oval. Not a Kp forecast.</p></a>
+    <a href="/science/astronomy/magnetospheres/"><p class="n">The nose</p><h3>Magnetospheres</h3><p>The same about-400 km/s, put into a pressure balance. This page divides a distance by the speed and finds the pitch.</p></a>
+    <a href="/science/astronomy/solar-cycle/"><p class="n">The rhythm</p><h3>Solar cycle</h3><p>The sunspot cycle that changes how often the wind is disturbed. Not a forecast, and not this spiral.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The planets whose orbits this drawing uses as circles. The spiral is not on that map.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="parker-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="parker-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="parker-help-title">Parker spiral desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. Constant radial speed, one sidereal period, and an Archimedean spiral. Not a forecast.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Speed</th><td>250 to 900 km/s. The page opens at 400, NOAA’s about-400 km/s. 750 is a classroom mark inside the 500–800 km/s coronal-hole range. It is not a measured wind.</td></tr>
+        <tr><th scope="row">Distance</th><td>0.1 to 40 AU. The slider is logarithmic. Earth is exactly 1 AU. Mars, Jupiter, and Neptune use the fact-sheet J2000 axes.</td></tr>
+        <tr><th scope="row">Period</th><td>20 to 40 days. The fact-sheet button restores 25.38 days, which is 609.12 hours. Editing the period changes Ω. It does not change the travel time, because the time is r / v.</td></tr>
+        <tr><th scope="row">Presets</th><td>Earth, Mars, Jupiter, and Neptune, each at 400 and at 750 km/s. They set the speed and the distance. They leave the period where it is.</td></tr>
+        <tr><th scope="row">Streams</th><td>Draws a 400 km/s spiral and a 750 km/s spiral whose footpoints differ by a classroom 25°. They meet once. The band past that meeting is a qualitative corotating interaction region.</td></tr>
+        <tr><th scope="row">Map</th><td>North is up. The observer is to the right. Rotation is counter-clockwise, so the spiral trails clockwise. Click the map to set the distance from the center. Left and Right step the speed by 10 km/s. Up and Down step the distance.</td></tr>
+        <tr><th scope="row">Chart</th><td>Spiral angle against distance, 0.1 to 40 AU, for the current speed and period. The dashed line is 45°. Click the chart to set the distance.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/parker-spiral/parker.js"></script>
+<script>
+(function () {
+  "use strict";
+  var P = window.Parker;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!P) return;
+
+  var state = { v: P.V_SLOW, r: P.R_EARTH, p: P.SIDEREAL_DAYS, cir: false };
+  var editing = null;
+  var map = document.getElementById("map");
+  var chart = document.getElementById("angle");
+  var err = document.getElementById("field-err");
+  var vSlider = document.getElementById("v-slider");
+  var vNum = document.getElementById("v-num");
+  var rSlider = document.getElementById("r-slider");
+  var rNum = document.getElementById("r-num");
+  var pSlider = document.getElementById("p-slider");
+  var pNum = document.getElementById("p-num");
+  var cirBtn = document.getElementById("cir-toggle");
+  var resetBtn = document.getElementById("p-reset");
+  var mapGeom = null;
+  var chartGeom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(canvas, cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function showError(msg) {
+    if (!err) return;
+    err.hidden = false;
+    err.textContent = msg;
+  }
+  function clearError() {
+    if (err) err.hidden = true;
+  }
+  function xy(cx, cy, scale, r, theta) {
+    return [cx + scale * r * Math.cos(theta), cy - scale * r * Math.sin(theta)];
+  }
+  function traceSpiral(ctx, foot, v, period, r0, r1, scale, cx, cy) {
+    var steps = 720;
+    var i;
+    ctx.beginPath();
+    for (i = 0; i <= steps; i++) {
+      var r = r0 + (r1 - r0) * (i / steps);
+      var th = P.thetaAt(r, foot, v, period);
+      var pt = xy(cx, cy, scale, r, th);
+      if (i === 0) ctx.moveTo(pt[0], pt[1]);
+      else ctx.lineTo(pt[0], pt[1]);
+    }
+  }
+
+  function paintMap(ev) {
+    if (!map) return;
+    var box = fit(map, Math.max(420, Math.round((map.clientWidth || 640) * 0.72)));
+    var ctx = box.ctx;
+    var view = P.viewAu(state.r);
+    var pad = 28;
+    var scale = (Math.min(box.w, box.h) - pad * 2) / (2 * view);
+    var cx = box.w / 2;
+    var cy = box.h / 2;
+    mapGeom = { cx: cx, cy: cy, scale: scale, view: view };
+    var ink = cssVar("--ink", "#e8e6e1");
+    var soft = cssVar("--ink-soft", "#9b9a96");
+    var muted = cssVar("--muted", "#63666e");
+    var accent = cssVar("--accent", "#c8b48a");
+    var line = cssVar("--line", "#2c303a");
+    var fast = cssVar("--accent-2", "#7eb6e8");
+    var slow = "#e07a30";
+    var r0 = Math.max(0.02, view * 0.012);
+    var r1 = view * 0.98;
+    var foot = P.footRad(state.v, state.r, state.p);
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    P.PLANETS.forEach(function (body) {
+      if (body.au > view * 1.02) return;
+      ctx.beginPath();
+      ctx.strokeStyle = body.swatch;
+      ctx.globalAlpha = 0.85;
+      ctx.arc(cx, cy, scale * body.au, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+      if (scale * body.au > 36) {
+        paintText(ctx, body.name, cx + 6, cy - scale * body.au - 8, { size: 10, color: muted });
+      }
+    });
+
+    ctx.setLineDash([4, 5]);
+    ctx.strokeStyle = muted;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + scale * Math.min(state.r, r1), cy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    var k;
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = muted;
+    ctx.globalAlpha = 0.55;
+    for (k = 1; k < 8; k++) {
+      traceSpiral(ctx, foot + k * Math.PI / 4, state.v, state.p, r0, r1, scale, cx, cy);
+      ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+
+    if (state.cir) {
+      var cross = P.cirCrossingAu(state.p);
+      var thetaWant = 50 * Math.PI / 180;
+      var lambda = thetaWant + P.omega(state.p) * (cross * P.AU_KM) / P.V_FAST;
+      var delta = P.CIR_AHEAD_DEG * Math.PI / 180;
+      ctx.lineWidth = 1.25;
+      ctx.globalAlpha = 0.9;
+      for (k = 0; k < 4; k++) {
+        ctx.strokeStyle = slow;
+        traceSpiral(ctx, lambda + delta + k * delta * 0.7, P.V_SLOW, state.p, r0, r1, scale, cx, cy);
+        ctx.stroke();
+        ctx.strokeStyle = fast;
+        traceSpiral(ctx, lambda - k * delta * 0.7, P.V_FAST, state.p, r0, r1, scale, cx, cy);
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      if (cross < r1) {
+        ctx.beginPath();
+        var steps = 80;
+        var i;
+        for (i = 0; i <= steps; i++) {
+          var r = cross + (r1 - cross) * (i / steps);
+          var th = P.thetaAt(r, lambda, P.V_FAST, state.p);
+          var pt = xy(cx, cy, scale, r, th);
+          if (i === 0) ctx.moveTo(pt[0], pt[1]);
+          else ctx.lineTo(pt[0], pt[1]);
+        }
+        for (i = steps; i >= 0; i--) {
+          var rb = cross + (r1 - cross) * (i / steps);
+          var thb = P.thetaAt(rb, lambda + delta, P.V_SLOW, state.p);
+          var pb = xy(cx, cy, scale, rb, thb);
+          ctx.lineTo(pb[0], pb[1]);
+        }
+        ctx.closePath();
+        ctx.fillStyle = "rgba(200, 180, 138, 0.16)";
+        ctx.fill();
+        var mark = xy(cx, cy, scale, cross, thetaWant);
+        ctx.fillStyle = accent;
+        ctx.beginPath();
+        ctx.arc(mark[0], mark[1], 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        paintText(ctx, "CIR", mark[0] + 8, mark[1] - 10, { size: 10, color: accent });
+      }
+    }
+
+    ctx.lineWidth = 2.25;
+    ctx.strokeStyle = accent;
+    traceSpiral(ctx, foot, state.v, state.p, r0, r1, scale, cx, cy);
+    ctx.stroke();
+
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.max(5, scale * (P.SUN_RADIUS_KM / P.AU_KM)), 0, Math.PI * 2);
+    ctx.fill();
+
+    var obs = xy(cx, cy, scale, state.r, 0);
+    ctx.fillStyle = ink;
+    ctx.beginPath();
+    ctx.arc(obs[0], obs[1], 4.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    var psi = Math.atan(P.omega(state.p) * (state.r * P.AU_KM) / state.v);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    ctx.arc(obs[0], obs[1], 18, 0, psi);
+    ctx.stroke();
+    var tick = 34;
+    ctx.beginPath();
+    ctx.moveTo(obs[0], obs[1]);
+    ctx.lineTo(obs[0] + tick * Math.cos(psi), obs[1] + tick * Math.sin(psi));
+    ctx.stroke();
+    if (obs[0] < box.w - 70) {
+      paintText(ctx, P.formatDeg(ev.psiDeg), obs[0] + 22, obs[1] + 16, { size: 11, color: ink });
+    }
+
+    var disk = foot % (Math.PI * 2);
+    if (disk < 0) disk += Math.PI * 2;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 16, 0, -disk, true);
+    ctx.stroke();
+  }
+
+  function paintChart(ev) {
+    if (!chart) return;
+    var box = fit(chart, Math.max(260, Math.round((chart.clientWidth || 640) * 0.42)));
+    var ctx = box.ctx;
+    var padL = 46;
+    var padR = 16;
+    var padT = 16;
+    var padB = 36;
+    var plotW = box.w - padL - padR;
+    var plotH = box.h - padT - padB;
+    var log0 = Math.log(P.R_MIN);
+    var log1 = Math.log(P.R_MAX);
+    function xOf(r) {
+      return padL + (Math.log(r) - log0) / (log1 - log0) * plotW;
+    }
+    function yOf(psi) {
+      return padT + (1 - psi / 90) * plotH;
+    }
+    chartGeom = { padL: padL, plotW: plotW, log0: log0, log1: log1 };
+    var muted = cssVar("--muted", "#63666e");
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var line = cssVar("--line", "#2c303a");
+    var fast = cssVar("--accent-2", "#7eb6e8");
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL, padT, plotW, plotH);
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = fast;
+    ctx.beginPath();
+    ctx.moveTo(padL, yOf(45));
+    ctx.lineTo(padL + plotW, yOf(45));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    paintText(ctx, "45°", padL + plotW - 4, yOf(45) - 8, { size: 10, align: "right", color: fast });
+
+    var samples = P.chartSamples(state.v, state.p, 97);
+    ctx.beginPath();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    samples.forEach(function (pt, i) {
+      var x = xOf(pt.r);
+      var y = yOf(pt.psi);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    var x = xOf(state.r);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, padT);
+    ctx.lineTo(x, padT + plotH);
+    ctx.stroke();
+    ctx.fillStyle = ink;
+    ctx.beginPath();
+    ctx.arc(x, yOf(ev.psiDeg), 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    [0.1, 1, 10, 40].forEach(function (r) {
+      paintText(ctx, r === 0.1 ? "0.1" : String(r), xOf(r), padT + plotH + 14, { size: 10, align: "center", color: muted });
+    });
+    [0, 45, 90].forEach(function (psi) {
+      paintText(ctx, psi + "°", padL - 8, yOf(psi), { size: 10, align: "right", color: muted });
+    });
+    paintText(ctx, "AU", padL + plotW, box.h - 6, { size: 10, align: "right", color: muted });
+  }
+
+  function render() {
+    var ev = P.evaluate(state.v, state.r, state.p);
+    var hit = P.matchedPreset(state.v, state.r);
+    setText("r-tier", P.tier(ev));
+    setText("r-title", P.formatDeg(ev.psiDeg));
+    setText("r-sense", P.sense(ev));
+    setText("r-psi", P.formatDeg(ev.psiDeg));
+    setText("r-days", P.formatDays(ev.days) + " days");
+    setText("r-hours", P.formatHours(ev.hours) + " h");
+    setText("r-turn", P.formatDeg(ev.westDeg));
+    setText("r-foot", P.formatDeg(ev.westDeg));
+    setText("r-turns", P.formatTurns(ev.turns));
+    setText("r-why", P.why(ev));
+    var note = "Orbits are the fact-sheet semimajor axes. The dot is the distance on the slider. The highlighted line is the Archimedean spiral for the chosen speed, through that dot. The arc at the dot is the spiral angle, measured from the radial line.";
+    if (state.cir) {
+      note += " The overlay is 400 km/s and 750 km/s, with a classroom " + P.CIR_AHEAD_DEG + "° between the fast spiral and the slow spiral ahead of it. They meet at " + P.formatAu(P.cirCrossingAu(state.p)) + " AU. That meeting is a cartoon, not a measured stream.";
+    }
+    setText("map-note", note);
+    if (vSlider) vSlider.value = String(state.v);
+    if (rSlider) rSlider.value = String(P.rToUnit(state.r) * 1000);
+    if (pSlider) pSlider.value = String(state.p);
+    if (vNum && editing !== "v-num") vNum.value = P.formatSpeed(state.v);
+    if (rNum && editing !== "r-num") rNum.value = hit ? hit.auLabel : P.formatAu(state.r);
+    if (pNum && editing !== "p-num") pNum.value = P.formatPeriod(state.p);
+    document.querySelectorAll("[data-preset]").forEach(function (btn) {
+      var id = btn.getAttribute("data-preset");
+      btn.setAttribute("aria-pressed", hit && hit.id === id ? "true" : "false");
+    });
+    if (resetBtn) resetBtn.setAttribute("aria-pressed", P.samePeriod(state.p) ? "true" : "false");
+    if (cirBtn) cirBtn.setAttribute("aria-pressed", state.cir ? "true" : "false");
+    if (map) {
+      map.setAttribute("aria-label", "Top-down Parker spiral at " + P.formatSpeed(state.v) + " kilometers per second and " + P.sense(ev) + ". Spiral angle " + P.formatDeg(ev.psiDeg) + ". The Sun turns " + P.formatDeg(ev.westDeg) + " during the transit. " + (state.cir ? "Fast and slow streams are drawn." : "The stream overlay is off."));
+    }
+    if (chart) {
+      chart.setAttribute("aria-label", "Spiral angle versus distance at " + P.formatSpeed(state.v) + " kilometers per second. At " + (hit ? hit.auLabel : P.formatAu(state.r)) + " AU the angle is " + P.formatDeg(ev.psiDeg) + ". A dashed line marks 45 degrees.");
+    }
+    paintMap(ev);
+    paintChart(ev);
+  }
+
+  function readNumber(input, ok, apply, label) {
+    var n = parseFloat(input.value);
+    if (!ok(n)) {
+      showError(label);
+      return;
+    }
+    clearError();
+    apply(n);
+    render();
+  }
+
+  if (vSlider) vSlider.addEventListener("input", function () {
+    clearError();
+    state.v = parseFloat(vSlider.value);
+    render();
+  });
+  if (rSlider) rSlider.addEventListener("input", function () {
+    clearError();
+    state.r = P.rFromUnit(parseFloat(rSlider.value) / 1000);
+    render();
+  });
+  if (pSlider) pSlider.addEventListener("input", function () {
+    clearError();
+    state.p = parseFloat(pSlider.value);
+    render();
+  });
+  if (vNum) {
+    vNum.addEventListener("focus", function () { editing = "v-num"; });
+    vNum.addEventListener("blur", function () { editing = null; render(); });
+    vNum.addEventListener("input", function () {
+      readNumber(vNum, P.vOk, function (n) { state.v = n; }, "Speed from 250 to 900 km/s. Distance from 0.1 to 40 AU. Sidereal period from 20 to 40 days.");
+    });
+  }
+  if (rNum) {
+    rNum.addEventListener("focus", function () { editing = "r-num"; });
+    rNum.addEventListener("blur", function () { editing = null; render(); });
+    rNum.addEventListener("input", function () {
+      readNumber(rNum, P.rOk, function (n) { state.r = n; }, "Speed from 250 to 900 km/s. Distance from 0.1 to 40 AU. Sidereal period from 20 to 40 days.");
+    });
+  }
+  if (pNum) {
+    pNum.addEventListener("focus", function () { editing = "p-num"; });
+    pNum.addEventListener("blur", function () { editing = null; render(); });
+    pNum.addEventListener("input", function () {
+      readNumber(pNum, P.pOk, function (n) { state.p = n; }, "Speed from 250 to 900 km/s. Distance from 0.1 to 40 AU. Sidereal period from 20 to 40 days.");
+    });
+  }
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var preset = P.presetById(btn.getAttribute("data-preset"));
+      if (!preset) return;
+      clearError();
+      editing = null;
+      state.v = preset.v;
+      state.r = preset.au;
+      render();
+    });
+  });
+  if (resetBtn) resetBtn.addEventListener("click", function () {
+    clearError();
+    editing = null;
+    state.p = P.SIDEREAL_DAYS;
+    render();
+  });
+  if (cirBtn) cirBtn.addEventListener("click", function () {
+    state.cir = !state.cir;
+    render();
+  });
+
+  function pointerDistance(canvas, geom, clientX, clientY) {
+    var rect = canvas.getBoundingClientRect();
+    var x = clientX - rect.left;
+    var y = clientY - rect.top;
+    return { x: x, y: y };
+  }
+  if (map) {
+    map.addEventListener("click", function (ev) {
+      if (!mapGeom) return;
+      var pt = pointerDistance(map, mapGeom, ev.clientX, ev.clientY);
+      var dx = pt.x - mapGeom.cx;
+      var dy = pt.y - mapGeom.cy;
+      var r = Math.sqrt(dx * dx + dy * dy) / mapGeom.scale;
+      if (!P.rOk(r)) return;
+      clearError();
+      editing = null;
+      state.r = r;
+      render();
+    });
+    map.addEventListener("keydown", function (ev) {
+      if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+        ev.preventDefault();
+        var next = state.v + (ev.key === "ArrowRight" ? 10 : -10);
+        if (next < P.V_MIN) next = P.V_MIN;
+        if (next > P.V_MAX) next = P.V_MAX;
+        state.v = next;
+        clearError();
+        render();
+      } else if (ev.key === "ArrowUp" || ev.key === "ArrowDown") {
+        ev.preventDefault();
+        var unit = P.rToUnit(state.r) + (ev.key === "ArrowUp" ? 0.04 : -0.04);
+        if (unit < 0) unit = 0;
+        if (unit > 1) unit = 1;
+        state.r = P.rFromUnit(unit);
+        clearError();
+        render();
+      }
+    });
+  }
+  if (chart) {
+    chart.addEventListener("click", function (ev) {
+      if (!chartGeom) return;
+      var pt = pointerDistance(chart, chartGeom, ev.clientX, ev.clientY);
+      var u = (pt.x - chartGeom.padL) / chartGeom.plotW;
+      if (u < 0 || u > 1) return;
+      var r = Math.exp(chartGeom.log0 + u * (chartGeom.log1 - chartGeom.log0));
+      if (!P.rOk(r)) return;
+      clearError();
+      editing = null;
+      state.r = r;
+      render();
+    });
+  }
+
+  var helpBtn = document.getElementById("parker-help");
+  var helpDialog = document.getElementById("parker-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
