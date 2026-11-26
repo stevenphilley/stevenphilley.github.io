@@ -1,0 +1,895 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cosmic microwave background — Steven Philley</title>
+<meta name="description" content="Cosmic microwave background desk. A Planck spectrum at Fixsen 2009’s 2.72548 K: wavelength peak 1.0632 mm, frequency peak 160.229 GHz, 410.7 photons per cm³. T(z) = T0(1+z). Planck 2018 z* = 1089.92 is 2973.28 K. Dipole amplitude 3362.08 µK is 369.82 km/s. Ideal blackbody scaling, not a sky map.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/cmb/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Cosmic microwave background">
+<meta property="og:description" content="Fixsen’s 2.72548 K peaks at 1.0632 mm and 160.229 GHz. Redshift scales that blackbody. The Planck 2018 dipole, 3362.08 µK, is 369.82 km/s. A teaching calculator, not a sky map.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/cmb/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cosmic microwave background">
+<meta name="twitter:description" content="2.72548 K, peak 1.0632 mm and 160.229 GHz, 410.7 photons per cm³. Last scattering at z* = 1089.92. Dipole 3362.08 µK.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:12px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.curve{border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.noon{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.now{border-top-color:var(--ink,#e8e6e1)}
+.swatch.other{border-top-style:dashed;border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.hot{border-top-color:#e07a30}
+.swatch.cold{border-top-color:var(--accent-2,#7eb6e8)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible,.slider-row input[type="date"]:focus-visible,.slider-row input[type="time"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"],.slider-row input[type="date"],.slider-row input[type="time"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.slider-row input[type="date"],.slider-row input[type="time"]{width:11rem}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sundial/">Sundial</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/cmb/" aria-current="page">CMB</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+</nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · CMB</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The cooled light</p>
+  <h1>Cosmic microwave<br>background</h1>
+  <p class="lede">The cosmic microwave background is the light left over from when the universe became transparent. It is the same glow in every direction, cooled by the expansion since last scattering. <a href="https://iopscience.iop.org/article/10.1088/0004-637X/707/2/916" rel="noopener" target="_blank">Fixsen 2009</a> combines the measurements then in the literature and gives the temperature as <strong>2.72548 ± 0.00057 K</strong>. At that temperature the Planck spectrum on this page, built from the exact CODATA 2018 values of h, c, and k, peaks at <strong>1.0632 mm</strong> and at <strong>160.229 GHz</strong>. Both sit in the microwave band of the NASA Imagine classroom chart. The photon density is <strong>410.7</strong> per cubic centimeter. The energy density aT⁴ is <strong>4.1747 × 10⁻¹⁴ J/m³</strong>. The radiation constant computed here is <strong>7.5657 × 10⁻¹⁶ J m⁻³ K⁻⁴</strong>.</p>
+  <p class="lede">A perfect blackbody is Planck’s law and nothing else. This desk evaluates that law. It does not refit the FIRAS spectrum Fixsen recalibrates. The wavelength peak uses b = hc/(kx), with x the root of (5 − x)eˣ = 5. That b prints as 2.897771955 × 10⁻³ m·K, the CODATA digits. The frequency peak is a different root, (3 − x)eˣ = 3, which is <strong>58.789 GHz</strong> per kelvin. c/λ<sub>max</sub> today is <strong>281.968 GHz</strong>. That is not the peak of B<sub>ν</sub>. The <a href="/science/astronomy/blackbody/">blackbody</a> desk plots B<sub>λ</sub> for stars. This desk plots B<sub>ν</sub>.</p>
+  <p class="lede">Expansion stretches the wavelengths, so an ideal blackbody that was hotter scales as <strong>T(z) = T<sub>0</sub>(1+z)</strong>. That is the redshift slider. It is not a measured spectrum at that redshift. At z = 1 the temperature is 5.45096 K. At z = 6, a round redshift in the era of early galaxies and not one catalog object, it is 19.07836 K. <a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck 2018 results VI</a>, Table 2, gives the redshift of last scattering as <strong>z<sub>*</sub> = 1089.92 ± 0.25</strong>. The temperature there is <strong>2973.28 K</strong>, and the wavelength peak has moved to <strong>974.6 nm</strong>, infrared, next to the visible window’s 700 nm edge. The frequency peak is 174.797 THz, also infrared.</p>
+  <p class="lede">Motion of the Solar System through this light produces a dipole, <strong>ΔT = T<sub>0</sub> v/c</strong>. <a href="https://arxiv.org/abs/1807.06205" rel="noopener" target="_blank">Planck 2018 results I</a>, Table 2, lists the amplitude as <strong>3362.08 ± 0.99 µK</strong>. Divided by Fixsen’s T<sub>0</sub> and multiplied by c, that amplitude is <strong>369.82 km/s</strong>, and ΔT/T is 1.2336 × 10⁻³. The smaller hot and cold spots, once that dipole is removed, are about 1 part in 10⁵. This page draws the dipole and not those spots. Ages and distances at the same z are the <a href="/science/astronomy/cosmology/">cosmology</a> desk. The shift of a spectral line is the <a href="/science/astronomy/redshift/">redshift</a> desk.</p>
+  <p class="note-schematic">Educational calculator. Ideal blackbody scaling, a frequency spectrum, and a dipole from ΔT = T<sub>0</sub> v/c. Not a sky map, not a power spectrum, and not a fit to the FIRAS residuals. The disk’s color is exaggerated so a part-in-a-thousand contrast can be seen. Band names are the NASA Imagine classroom ranges. Boundaries are conventions. Not a forecast of the sky.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Spectrum and redshift</span>
+    <button type="button" class="help-q" id="cmb-help" aria-haspopup="dialog" aria-controls="cmb-help-dialog" aria-expanded="false" aria-label="How this CMB desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="spec-hint">Spectral radiance per frequency, divided by its peak · linear frequency</p>
+      <canvas id="spec" width="880" height="640" tabindex="0" role="img" aria-label="Planck spectrum of the cosmic microwave background versus frequency, with the frequency peak marked."></canvas>
+      <ul class="legend" aria-label="Spectrum key">
+        <li><span class="swatch" aria-hidden="true"></span> B<sub>ν</sub></li>
+        <li><span class="swatch now" aria-hidden="true"></span> B<sub>ν</sub> peak</li>
+        <li><span class="swatch other" aria-hidden="true"></span> c / λ<sub>max</sub></li>
+      </ul>
+      <p class="scale-note" id="spec-note">The solid marker is the peak of intensity per frequency. The dashed marker is the frequency of the wavelength peak. They are not the same point. The height is the curve divided by its own peak. Energy density is the readout, not the height of the line.</p>
+      <div class="controls">
+        <p class="field-err" id="field-err" hidden>Temperature from 0.5 K to 10,000 K. Redshift from 0 up to the temperature limit. Speed from 0 to 1,000 km/s.</p>
+        <div class="presets" role="group" aria-label="Intensity scale">
+          <button type="button" id="log-y" aria-pressed="false">Log intensity</button>
+        </div>
+        <p class="pick-label">Temperature. Today’s CMB is Fixsen’s 2.72548 K. The slider is logarithmic.</p>
+        <div class="slider-row">
+          <label for="t-slider">T</label>
+          <input type="range" id="t-slider" min="0" max="1000" step="0.1" value="500" aria-label="Temperature">
+          <label for="t-num">Kelvin</label>
+          <input type="number" id="t-num" inputmode="decimal" min="0.5" max="10000" step="any" value="2.72548" aria-label="Temperature in kelvin">
+        </div>
+        <p class="pick-label">Redshift. Ideal blackbody scaling, T = T<sub>0</sub> (1+z). Not a measured spectrum.</p>
+        <div class="slider-row">
+          <label for="z-slider">z</label>
+          <input type="range" id="z-slider" min="0" max="1000" step="0.1" value="0" aria-label="Redshift">
+          <label for="z-num">z</label>
+          <input type="number" id="z-num" inputmode="decimal" min="0" step="any" value="0" aria-label="Redshift z">
+        </div>
+        <div class="presets" role="group" aria-label="Redshift presets">
+          <button type="button" data-preset="today" aria-pressed="true">Today</button>
+          <button type="button" data-preset="z1" aria-pressed="false">z = 1</button>
+          <button type="button" data-preset="z6" aria-pressed="false">z = 6</button>
+          <button type="button" data-preset="last" aria-pressed="false">Last scattering</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Today · Fixsen 2009</p>
+      <h2 id="r-title">1.0632 mm</h2>
+      <p class="range" id="r-sense">2.72548 K · z = 0</p>
+      <ul class="stats">
+        <li><span class="k">Temperature</span><span class="v" id="r-t">2.72548 K</span></li>
+        <li><span class="k">Redshift</span><span class="v" id="r-z">0</span></li>
+        <li><span class="k">Wavelength peak</span><span class="v" id="r-lam">1.0632 mm</span></li>
+        <li><span class="k">Wavelength band</span><span class="v" id="r-lband">microwave</span></li>
+        <li><span class="k">c / λ<sub>max</sub></span><span class="v" id="r-clam">281.968 GHz</span></li>
+        <li><span class="k">Frequency peak</span><span class="v" id="r-nu">160.229 GHz</span></li>
+        <li><span class="k">Frequency band</span><span class="v" id="r-fband">microwave</span></li>
+        <li><span class="k">Photons</span><span class="v" id="r-n">410.7 /cm³</span></li>
+        <li><span class="k">Energy density</span><span class="v" id="r-u">4.1747 × 10⁻¹⁴ J/m³</span></li>
+        <li><span class="k">Radiation constant a</span><span class="v" id="r-a">7.5657 × 10⁻¹⁶</span></li>
+      </ul>
+      <p class="why" id="r-why">Ideal blackbody scaling. The frequency peak and the wavelength peak are different frequencies.</p>
+    </aside>
+  </div>
+
+  <div class="band">
+    <span class="band-label">Interactive · Dipole</span>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="dip-hint">Schematic disk · hot on the right, the direction of motion · color exaggerated</p>
+      <canvas id="dipole" width="880" height="640" tabindex="0" role="img" aria-label="Schematic sky disk of the CMB dipole. Hot on the right, cold on the left. Not a sky map."></canvas>
+      <ul class="legend" aria-label="Dipole key">
+        <li><span class="swatch hot" aria-hidden="true"></span> Hot pole</li>
+        <li><span class="swatch cold" aria-hidden="true"></span> Cold pole</li>
+      </ul>
+      <p class="scale-note" id="dip-note">ΔT is the amplitude, T<sub>0</sub> v/c, so the poles are T<sub>0</sub> + ΔT and T<sub>0</sub> − ΔT. The color stretches that part-in-a-thousand contrast. It is not a temperature painting and not galactic coordinates.</p>
+      <div class="controls">
+        <p class="pick-label">Speed relative to the CMB. The Planck button uses 3362.08 µK and Fixsen’s T<sub>0</sub>.</p>
+        <div class="slider-row">
+          <label for="v-slider">v</label>
+          <input type="range" id="v-slider" min="0" max="1000" step="0.01" value="369.82" aria-label="Speed in kilometers per second">
+          <label for="v-num">km/s</label>
+          <input type="number" id="v-num" inputmode="decimal" min="0" max="1000" step="any" value="369.82" aria-label="Speed in kilometers per second">
+        </div>
+        <div class="presets" role="group" aria-label="Dipole presets">
+          <button type="button" id="v-planck" aria-pressed="true">Planck dipole</button>
+          <button type="button" id="v-zero" aria-pressed="false">v = 0</button>
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="dipole-readout" aria-live="polite">
+      <p class="tier" id="d-tier">Kinematic dipole</p>
+      <h2 id="d-title">3362.08 µK</h2>
+      <p class="range" id="d-sense">369.82 km/s</p>
+      <ul class="stats">
+        <li><span class="k">Speed</span><span class="v" id="d-v">369.82 km/s</span></li>
+        <li><span class="k">v / c</span><span class="v" id="d-beta">1.2336 × 10⁻³</span></li>
+        <li><span class="k">ΔT amplitude</span><span class="v" id="d-dt">3362.08 µK</span></li>
+        <li><span class="k">Hot pole</span><span class="v" id="d-hot">—</span></li>
+        <li><span class="k">Cold pole</span><span class="v" id="d-cold">—</span></li>
+        <li><span class="k">Pole to pole</span><span class="v" id="d-pp">—</span></li>
+      </ul>
+      <p class="why" id="d-why">The cited amplitude is 3362.08 ± 0.99 µK. This speed is that amplitude turned through ΔT = T<sub>0</sub> v/c. It is not a second published velocity.</p>
+    </aside>
+  </div>
+
+  <p class="band">Why the glow looks like this</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>What it is</dt><dd>The cosmic microwave background is thermal light from the early universe, released when the universe became transparent and stretched ever since. Fixsen 2009 is the temperature used here, 2.72548 ± 0.00057 K. This page does not recompute that average. It starts from it.</dd></div>
+    <div class="gloss"><dt>Planck’s law, per frequency</dt><dd>B<sub>ν</sub> = 2hν³/c² / (e<sup>hν/kT</sup> − 1). The curve is that function divided by its peak. h, c, and k are the exact constants. The <a href="/science/astronomy/blackbody/">blackbody</a> desk uses the wavelength form, which peaks somewhere else.</dd></div>
+    <div class="gloss"><dt>Two peaks</dt><dd>λ<sub>max</sub> T = b, with b from the root of (5 − x)eˣ = 5. The peak of B<sub>ν</sub> is ν/T from the root of (3 − x)eˣ = 3. At 2.72548 K those are 1.0632 mm and 160.229 GHz. c/λ<sub>max</sub> is 281.968 GHz.</dd></div>
+    <div class="gloss"><dt>Photons and energy</dt><dd>n = 16π ζ(3) (kT/hc)³. ζ(3) is the sum of 1/n³, computed in the page. At T<sub>0</sub> that is 410.7 per cm³, about 411. The energy density is aT⁴, with a = 4σ/c and σ = 2π⁵k⁴/(15h³c²). a prints as 7.5657 × 10⁻¹⁶ J m⁻³ K⁻⁴.</dd></div>
+    <div class="gloss"><dt>Redshift</dt><dd>Ideal blackbody scaling: T(z) = T<sub>0</sub>(1+z). The slider is that product. It is not a spectrum measured at that redshift, and it leaves out foregrounds. z = 6 is a round teaching redshift, not a named galaxy. The line shift itself is the <a href="/science/astronomy/redshift/">redshift</a> desk.</dd></div>
+    <div class="gloss"><dt>Last scattering</dt><dd>Planck 2018 results VI, Table 2, column TT,TE,EE+lowE+lensing: z<sub>*</sub> = 1089.92 ± 0.25. This preset uses the central value. T<sub>0</sub>(1+z<sub>*</sub>) is 2973.28 K. The wavelength peak is then 974.6 nm, infrared on the NASA Imagine chart, whose visible window is about 400–700 nm. The <a href="/science/astronomy/cosmology/">cosmology</a> desk uses the same z<sub>*</sub> for a distance, not for this temperature.</dd></div>
+    <div class="gloss gloss-wide"><dt>Dipole and the small spots</dt><dd>ΔT = T<sub>0</sub> v/c is the amplitude of the hot and cold poles, so the poles differ by twice that. Planck 2018 results I, Table 2, gives 3362.08 ± 0.99 µK in the direction (l, b) = (264.021 ± 0.011, 48.253 ± 0.005) degrees. This page uses the amplitude. It does not draw that direction. With Fixsen’s T<sub>0</sub> the speed is 369.82 km/s and ΔT/T is 1.2336 × 10⁻³. The primordial anisotropies, after the dipole is taken off, are about 1 part in 10⁵. They are not on this disk.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://iopscience.iop.org/article/10.1088/0004-637X/707/2/916" rel="noopener" target="_blank">Fixsen 2009, ApJ 707, 916</a> — the temperature of the cosmic microwave background. The determination from the measurements in that paper is 2.72548 ± 0.00057 K. This desk uses the central value. DOI 10.1088/0004-637X/707/2/916.</li>
+      <li><a href="https://arxiv.org/abs/1807.06205" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A1</a> (arXiv:1807.06205) — Planck 2018 results I. Table 2, Planck 2018 row, adopts the HFI amplitude 3362.08 ± 0.99 µK, toward galactic (l, b) = (264.021 ± 0.011, 48.253 ± 0.005) degrees. The speed on this page is c times that amplitude divided by Fixsen’s T<sub>0</sub>.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — Planck 2018 results VI. Table 2, column TT,TE,EE+lowE+lensing: z<sub>*</sub> = 1089.92 ± 0.25, the redshift of last scattering. The same central value is the CMB button on the <a href="/science/astronomy/cosmology/">cosmology</a> desk. This page multiplies T<sub>0</sub> by (1+z<sub>*</sub>) and does not integrate a distance.</li>
+      <li><a href="https://doi.org/10.1103/RevModPhys.93.025010" rel="noopener" target="_blank">Tiesinga, Mohr, Newell, and Taylor 2021, Rev. Mod. Phys. 93, 025010</a> — CODATA recommended values of the fundamental physical constants: 2018. h = 6.62607015 × 10⁻³⁴ J·s, k = 1.380649 × 10⁻²³ J/K, and c = 299792458 m/s are exact. NIST’s value pages for <a href="https://physics.nist.gov/cgi-bin/cuu/Value?h" rel="noopener" target="_blank">h</a>, <a href="https://physics.nist.gov/cgi-bin/cuu/Value?k" rel="noopener" target="_blank">k</a>, <a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">c</a>, and the <a href="https://physics.nist.gov/cgi-bin/cuu/Value?bwien" rel="noopener" target="_blank">Wien constant</a> print the same exact inputs and the derived b = 2.897771955… × 10⁻³ m·K. This desk computes b, σ, and a from h, c, and k.</li>
+      <li><a href="https://imagine.gsfc.nasa.gov/science/toolbox/spectrum_chart.html" rel="noopener" target="_blank">NASA Imagine the Universe — Wavelength, frequency, and energy</a> — classroom bands used to name the peak: microwave about 1 mm to 10 cm and about 3–300 GHz; infrared about 700 nm to 1 mm and about 0.3–400 THz; visible about 400–700 nm. The same chart is the <a href="/science/em-spectrum/">EM spectrum</a> desk. Boundaries are conventions.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom blackbody for the cosmic microwave background. Every readout is computed from CODATA 2018 constants, Fixsen’s 2.72548 K, Planck 2018 z<sub>*</sub> = 1089.92, or the Planck 2018 dipole amplitude 3362.08 µK. Ideal blackbody scaling. Not a sky map. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/blackbody/"><p class="n">The curve</p><h3>Blackbody</h3><p>Planck’s law per wavelength, Wien’s peak, and L = 4πR²σT⁴. Stellar temperatures. This page is the cold sky, per frequency.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. At z = 1 the relativistic β is 0.6. This page is T<sub>0</sub>(1+z), not a shifted line.</p></a>
+    <a href="/science/astronomy/cosmology/"><p class="n">The integral</p><h3>Cosmology</h3><p>Age, lookback, and the distances at a redshift. The CMB button there is the same z<sub>*</sub> = 1089.92. This page is the temperature.</p></a>
+    <a href="/science/em-spectrum/"><p class="n">The ladder</p><h3>EM spectrum</h3><p>Radio through gamma. The band names on this page are that chart. Microwave is where today’s peak sits.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The Solar System whose motion makes the dipole. The glow is behind that map.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="cmb-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="cmb-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="cmb-help-title">CMB desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator. Ideal blackbody, a frequency spectrum, and a dipole. Not a sky map.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Temperature</th><td>0.5 K to 10,000 K, logarithmic on the slider. The page opens at Fixsen’s 2.72548 K. Below that temperature the redshift readout steps aside, because T = T<sub>0</sub>(1+z) on this page starts at z = 0.</td></tr>
+        <tr><th scope="row">Redshift</th><td>Sets T = T<sub>0</sub>(1+z). The slider runs from 0 to the redshift that reaches 10,000 K, with more room at small z. Today, z = 1, z = 6, and last scattering (z<sub>*</sub> = 1089.92) are the presets.</td></tr>
+        <tr><th scope="row">Log intensity</th><td>Switches the vertical axis of the spectrum from linear to logarithmic. The curve is still divided by its peak. The floor of the log axis is 10⁻⁴ of that peak.</td></tr>
+        <tr><th scope="row">Spectrum</th><td>B<sub>ν</sub> against frequency, from zero to five times the frequency peak. The solid line and the dot are that peak. The dashed line is c/λ<sub>max</sub>.</td></tr>
+        <tr><th scope="row">Speed</th><td>0 to 1,000 km/s. ΔT = T<sub>0</sub> v/c, using the same T<sub>0</sub>, not the temperature slider. The Planck button restores the speed implied by 3362.08 µK. v = 0 is no dipole.</td></tr>
+        <tr><th scope="row">Disk</th><td>Hot on the right, the direction of motion. Cold on the left. The color is stretched. Full contrast is the Planck speed. A slower speed is paler. Galactic longitude is not drawn.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/cmb/cmb.js"></script>
+<script>
+(function () {
+  "use strict";
+  var M = window.Cmb;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!M) return;
+
+  var state = {
+    T: M.T0,
+    v: M.planckDipoleSpeed(),
+    logY: false
+  };
+  var editing = null;
+  var spec = document.getElementById("spec");
+  var disk = document.getElementById("dipole");
+  var err = document.getElementById("field-err");
+  var tSlider = document.getElementById("t-slider");
+  var tNum = document.getElementById("t-num");
+  var zSlider = document.getElementById("z-slider");
+  var zNum = document.getElementById("z-num");
+  var vSlider = document.getElementById("v-slider");
+  var vNum = document.getElementById("v-num");
+  var logBtn = document.getElementById("log-y");
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(canvas, cssH) {
+    var cssW = Math.max(280, canvas.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (canvas.width !== pw || canvas.height !== ph) {
+      canvas.width = pw;
+      canvas.height = ph;
+    }
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function showError(msg) {
+    if (!err) return;
+    err.hidden = false;
+    err.textContent = msg;
+  }
+  function clearError() {
+    if (err) err.hidden = true;
+  }
+  function numOnly(formatted, suffix) {
+    return String(formatted).replace(suffix, "");
+  }
+  function currentZ() {
+    return M.redshiftAtT(state.T);
+  }
+  function matchedPreset() {
+    if (!(state.T >= M.T0)) return "";
+    var z = currentZ();
+    var list = M.presets();
+    var i;
+    for (i = 0; i < list.length; i++) {
+      if (M.formatZ(z) === M.formatZ(list[i].z)) return list[i].id;
+    }
+    return "";
+  }
+  function planckOn() {
+    return M.formatSpeedKms(state.v) === M.formatSpeedKms(M.planckDipoleSpeed());
+  }
+
+  function drawSpectrum() {
+    if (!spec) return;
+    var ev = M.evaluate(state.T);
+    var box = fit(spec, window.innerWidth < 720 ? 260 : 320);
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var padL = 16;
+    var padR = 12;
+    var padT = 22;
+    var padB = 36;
+    var plotW = Math.max(40, w - padL - padR);
+    var plotH = Math.max(40, h - padT - padB);
+    var nuMax = ev.freqHz * 5;
+    var peakB = M.planckNu(ev.freqHz, state.T);
+    function xOf(nu) { return padL + (nu / nuMax) * plotW; }
+    function yOf(norm) {
+      var n = norm;
+      if (!(n > 0)) n = 0;
+      if (state.logY) {
+        var floor = 1e-4;
+        var v = Math.max(n, floor);
+        var t = (Math.log(v) - Math.log(floor)) / (0 - Math.log(floor));
+        t = Math.max(0, Math.min(1, t));
+        return padT + (1 - t) * plotH;
+      }
+      n = Math.max(0, Math.min(1, n));
+      return padT + (1 - n) * plotH;
+    }
+    var accent = cssVar("--accent", "#c8b48a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var accent2 = cssVar("--accent-2", "#7eb6e8");
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW - 1, plotH - 1);
+    ctx.beginPath();
+    var steps = 420;
+    var i;
+    for (i = 0; i <= steps; i++) {
+      var nu = (i / steps) * nuMax;
+      var norm = peakB > 0 && nu > 0 ? M.planckNu(nu, state.T) / peakB : 0;
+      var x = xOf(nu);
+      var y = yOf(norm);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    var px = xOf(ev.freqHz);
+    ctx.beginPath();
+    ctx.moveTo(px, padT);
+    ctx.lineTo(px, padT + plotH);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(px, yOf(1), 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = ink;
+    ctx.fill();
+    var lx = xOf(ev.lambdaFreqHz);
+    if (lx >= padL && lx <= padL + plotW) {
+      ctx.beginPath();
+      ctx.setLineDash([4, 4]);
+      ctx.moveTo(lx, padT);
+      ctx.lineTo(lx, padT + plotH);
+      ctx.strokeStyle = accent2;
+      ctx.lineWidth = 1.25;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    paintText(ctx, M.formatFreq(ev.freqHz), Math.min(w - 8, Math.max(8, px + 8)), padT + 12, { size: 11, color: ink, align: px > w * 0.62 ? "right" : "left" });
+    var ticks = plotW < 460 ? [0, 1, 2, 4] : [0, 1, 2, 3, 4, 5];
+    ticks.forEach(function (k) {
+      var x = xOf(k * ev.freqHz);
+      ctx.beginPath();
+      ctx.moveTo(x, padT + plotH);
+      ctx.lineTo(x, padT + plotH + 5);
+      ctx.strokeStyle = muted;
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      paintText(ctx, k === 0 ? "0" : M.formatFreq(k * ev.freqHz), x, padT + plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    spec.setAttribute("aria-label", "Planck spectrum at " + M.formatTemp(state.T) + ". Frequency peak " + M.formatFreq(ev.freqHz) + ", in the " + ev.freqBand + ". Wavelength peak " + M.formatLength(ev.lambdaM) + ", whose frequency is " + M.formatFreq(ev.lambdaFreqHz) + ". Vertical scale is " + (state.logY ? "logarithmic" : "linear") + " and normalized to the peak.");
+  }
+
+  function mix(hex, other, t) {
+    function part(h, i) { return parseInt(h.slice(i, i + 2), 16); }
+    function hex2(n) { var s = Math.round(n).toString(16); return s.length === 1 ? "0" + s : s; }
+    var r = part(hex, 1) * (1 - t) + part(other, 1) * t;
+    var g = part(hex, 3) * (1 - t) + part(other, 3) * t;
+    var b = part(hex, 5) * (1 - t) + part(other, 5) * t;
+    return "#" + hex2(r) + hex2(g) + hex2(b);
+  }
+
+  function drawDipole() {
+    if (!disk) return;
+    var box = fit(disk, window.innerWidth < 720 ? 280 : 340);
+    var ctx = box.ctx;
+    var w = box.w;
+    var h = box.h;
+    var cx = w / 2;
+    var cy = h * 0.46;
+    var R = Math.min(w * 0.42, h * 0.38);
+    var vPlanck = M.planckDipoleSpeed();
+    var strength = Math.min(1, Math.abs(state.v) / vPlanck);
+    var mid = "#1c1e26";
+    var hot = mix(mid, "#e07a30", strength);
+    var cold = mix(mid, cssVar("--accent-2", "#7eb6e8"), strength);
+    var g = ctx.createLinearGradient(cx - R, cy, cx + R, cy);
+    g.addColorStop(0, cold);
+    g.addColorStop(0.5, mid);
+    g.addColorStop(1, hot);
+    ctx.beginPath();
+    ctx.arc(cx, cy, R, 0, Math.PI * 2);
+    ctx.fillStyle = g;
+    ctx.fill();
+    ctx.strokeStyle = cssVar("--line", "#2c303a");
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - R * 0.55, cy);
+    ctx.lineTo(cx + R * 0.55, cy);
+    ctx.strokeStyle = cssVar("--ink", "#e8e6e1");
+    ctx.lineWidth = 1.25;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + R * 0.55, cy);
+    ctx.lineTo(cx + R * 0.55 - 10, cy - 5);
+    ctx.lineTo(cx + R * 0.55 - 10, cy + 5);
+    ctx.closePath();
+    ctx.fillStyle = cssVar("--ink", "#e8e6e1");
+    ctx.fill();
+    var dT = M.dipoleDeltaT(state.v);
+    paintText(ctx, "cold  " + M.formatTemp(M.T0 - dT), cx - R, cy + R + 22, { size: 11, align: "center", color: cssVar("--accent-2", "#7eb6e8") });
+    paintText(ctx, "hot  " + M.formatTemp(M.T0 + dT), cx + R, cy + R + 22, { size: 11, align: "center", color: "#e07a30" });
+    paintText(ctx, "motion", cx, cy - 16, { size: 10, align: "center", color: cssVar("--muted", "#63666e") });
+    disk.setAttribute("aria-label", "Schematic dipole disk at " + M.formatSpeedKms(state.v) + ". Hot pole " + M.formatTemp(M.T0 + dT) + ", cold pole " + M.formatTemp(M.T0 - dT) + ". Color is exaggerated. Not a sky map.");
+  }
+
+  function render() {
+    var ev = M.evaluate(state.T);
+    var z = currentZ();
+    var preset = matchedPreset();
+    var cosmological = state.T + 1e-9 >= M.T0;
+    document.querySelectorAll("[data-preset]").forEach(function (btn) {
+      btn.setAttribute("aria-pressed", String(btn.getAttribute("data-preset") === preset));
+    });
+    if (logBtn) logBtn.setAttribute("aria-pressed", state.logY ? "true" : "false");
+    if (tSlider) {
+      tSlider.value = String(M.logUnmap(state.T, M.T_MIN, M.T_MAX) * 1000);
+      tSlider.setAttribute("aria-valuetext", M.formatTemp(state.T));
+    }
+    if (zSlider) {
+      var zSliderZ = cosmological ? Math.max(0, z) : 0;
+      zSlider.value = String(M.zToUnit(zSliderZ) * 1000);
+      zSlider.setAttribute("aria-valuetext", cosmological ? M.formatZ(Math.max(0, z)) : "below T0");
+    }
+    if (vSlider) {
+      vSlider.value = String(state.v / 1000);
+      vSlider.setAttribute("aria-valuetext", M.formatSpeedKms(state.v));
+    }
+    if (editing !== tNum && tNum) tNum.value = numOnly(M.formatTemp(state.T), " K");
+    if (editing !== zNum && zNum) zNum.value = cosmological && z >= -1e-9 ? M.formatZ(Math.max(0, z)) : "";
+    if (editing !== vNum && vNum) vNum.value = numOnly(M.formatSpeedKms(state.v), " km/s");
+    var planck = document.getElementById("v-planck");
+    var zero = document.getElementById("v-zero");
+    if (planck) planck.setAttribute("aria-pressed", planckOn() ? "true" : "false");
+    if (zero) zero.setAttribute("aria-pressed", state.v === 0 ? "true" : "false");
+
+    var tier = "Blackbody";
+    if (preset === "today") tier = "Today · Fixsen 2009";
+    else if (preset === "z1") tier = "z = 1 · ideal scaling";
+    else if (preset === "z6") tier = "z = 6 · ideal scaling";
+    else if (preset === "last") tier = "Last scattering · Planck 2018";
+    else if (!cosmological) tier = "Below today’s CMB";
+    setText("r-tier", tier);
+    setText("r-title", M.formatLength(ev.lambdaM));
+    setText("r-sense", M.formatTemp(state.T) + (cosmological ? " · z = " + M.formatZ(Math.max(0, z)) : " · below T0"));
+    setText("r-t", M.formatTemp(state.T));
+    setText("r-z", cosmological ? M.formatZ(Math.max(0, z)) : "—");
+    setText("r-lam", M.formatLength(ev.lambdaM));
+    setText("r-lband", ev.lambdaBand);
+    setText("r-clam", M.formatFreq(ev.lambdaFreqHz));
+    setText("r-nu", M.formatFreq(ev.freqHz));
+    setText("r-fband", ev.freqBand);
+    setText("r-n", M.formatPerCm3(ev.photonM3) + " /cm³");
+    setText("r-u", M.formatSci(ev.energy, 4) + " J/m³");
+    setText("r-a", M.formatSci(M.radiationA(), 4));
+    var why = "Ideal blackbody scaling. The wavelength peak is in the " + ev.lambdaBand + " and the frequency peak is in the " + ev.freqBand + ".";
+    if (ev.lambdaBand === "infrared" && ev.lambdaM < 5e-6) {
+      why += " The wavelength peak is on the short-wavelength side of the infrared, next to the visible window.";
+    }
+    if (!cosmological) why += " This temperature is below Fixsen’s T0, so it is not a redshift on this page.";
+    setText("r-why", why);
+    setText("spec-hint", "Spectral radiance per frequency, divided by its peak · " + (state.logY ? "log intensity" : "linear intensity"));
+
+    var dT = M.dipoleDeltaT(state.v);
+    setText("d-title", M.formatMicroK(dT));
+    setText("d-sense", M.formatSpeedKms(state.v));
+    setText("d-v", M.formatSpeedKms(state.v));
+    setText("d-beta", M.formatSci(state.v / M.C, 4));
+    setText("d-dt", M.formatMicroK(dT));
+    setText("d-hot", M.formatTemp(M.T0 + dT));
+    setText("d-cold", M.formatTemp(M.T0 - dT));
+    setText("d-pp", M.formatMicroK(2 * dT));
+    setText("d-why", planckOn()
+      ? "This is the Planck 2018 amplitude, 3362.08 µK, turned into a speed with ΔT = T0 v/c and Fixsen’s T0."
+      : "ΔT = T0 v/c with Fixsen’s T0. The cited amplitude, 3362.08 ± 0.99 µK, is the Planck button.");
+    drawSpectrum();
+    drawDipole();
+  }
+
+  function watch(el, fn) {
+    if (!el) return;
+    el.addEventListener("focus", function () { editing = el; });
+    el.addEventListener("blur", function () { if (editing === el) editing = null; render(); });
+    el.addEventListener("input", fn);
+  }
+  watch(tNum, function () {
+    var v = parseFloat(tNum.value);
+    if (!M.tOk(v)) { showError("Temperature from 0.5 K to 10,000 K."); return; }
+    clearError();
+    state.T = v;
+    render();
+  });
+  watch(zNum, function () {
+    var v = parseFloat(zNum.value);
+    if (!M.zOk(v)) { showError("Redshift from 0 to " + M.formatZ(M.zMax()) + "."); return; }
+    clearError();
+    state.T = M.temperatureAtZ(v);
+    render();
+  });
+  watch(vNum, function () {
+    var v = parseFloat(vNum.value);
+    if (!M.vOkKms(v)) { showError("Speed from 0 to 1,000 km/s."); return; }
+    clearError();
+    state.v = v * 1000;
+    render();
+  });
+  if (tSlider) tSlider.addEventListener("input", function () {
+    clearError();
+    state.T = M.logMap(parseFloat(tSlider.value) / 1000, M.T_MIN, M.T_MAX);
+    render();
+  });
+  if (zSlider) zSlider.addEventListener("input", function () {
+    clearError();
+    state.T = M.temperatureAtZ(M.zFromUnit(parseFloat(zSlider.value) / 1000));
+    render();
+  });
+  if (vSlider) vSlider.addEventListener("input", function () {
+    clearError();
+    state.v = parseFloat(vSlider.value) * 1000;
+    render();
+  });
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var p = M.presetById(btn.getAttribute("data-preset"));
+      if (!p) return;
+      clearError();
+      state.T = M.temperatureAtZ(p.z);
+      render();
+    });
+  });
+  if (logBtn) logBtn.addEventListener("click", function () {
+    state.logY = !state.logY;
+    render();
+  });
+  var planckBtn = document.getElementById("v-planck");
+  var zeroBtn = document.getElementById("v-zero");
+  if (planckBtn) planckBtn.addEventListener("click", function () {
+    clearError();
+    state.v = M.planckDipoleSpeed();
+    render();
+  });
+  if (zeroBtn) zeroBtn.addEventListener("click", function () {
+    clearError();
+    state.v = 0;
+    render();
+  });
+
+  var helpBtn = document.getElementById("cmb-help");
+  var helpDialog = document.getElementById("cmb-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
