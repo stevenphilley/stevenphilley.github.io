@@ -1,0 +1,98 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geologic Time — Natural History — Steven Philley</title>
+<meta name="description" content="A clickable geologic time scale: eons, eras, periods, and epochs with ICS 2024 ages and colours, the Big Five extinctions, golden spikes, and gallery creatures from each time.">
+<link rel="canonical" href="https://stevenphilley.com/natural-history/time/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Geologic Time">
+<meta property="og:description" content="Eons, eras, periods, and epochs on the International Chronostratigraphic Chart, from the Hadean to today.">
+<meta property="og:url" content="https://stevenphilley.com/natural-history/time/">
+<meta property="og:image" content="https://stevenphilley.com/natural-history/img/001-cambrian-anomalocaris.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Geologic Time">
+<meta name="twitter:description" content="A learnable geologic time scale, true-scale or expanded, with the gallery's creatures placed in time.">
+<meta name="twitter:image" content="https://stevenphilley.com/natural-history/img/001-cambrian-anomalocaris.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/natural-history/time/time.css">
+</head>
+<body>
+{% include nav.html %}
+<main class="gt-wrap wrap">
+  <p class="gt-crumbs"><a href="/natural-history/">Natural history</a> / <a href="/science/">Science</a></p>
+  <p class="gt-kicker">Natural history · Time</p>
+  <h1>Geologic time</h1>
+  <p class="gt-lede">Earth is about 4,567 million years old. Almost all of the animals in the <a href="/natural-history/">gallery</a> lived in the last 539 of those years. This chart is the International Chronostratigraphic Chart for December 2024: official names, official colours, and the boundary ages in millions of years before present (Ma).</p>
+  <p class="gt-lede">Time is nested. An <strong>eon</strong> is the largest unit. Eons divide into <strong>eras</strong>, eras into <strong>periods</strong>, periods into <strong>epochs</strong>, and epochs into <strong>ages</strong>. The same ranks, when you mean the rocks rather than the years, are eonothem, erathem, system, series, and stage. The Phanerozoic, the eon of visible animal life, is a thin slice on a true-scale bar, so the chart can also be drawn with each period the same width.</p>
+  <p class="gt-lede">A boundary is a physical place, not a round number chosen for convenience. For the Phanerozoic, and for the Ediacaran, a unit begins at a Global Boundary Stratotype Section and Point, a GSSP, the “golden spike”: one point in one cliff or core where a fossil, a chemical shift, or a magnetic reversal has been agreed as the base. Older Precambrian units are mostly still defined by a Global Standard Stratigraphic Age, a GSSA, a round number of millions of years. A tilde on a date means the age is approximate. Click any band, or open a link such as <a href="#jurassic">#jurassic</a>.</p>
+
+  <div class="gt-toolbar">
+    <div class="gt-modes" role="group" aria-label="Time scale">
+      <button type="button" id="gt-prop" aria-pressed="true">Proportional</button>
+      <button type="button" id="gt-equal" aria-pressed="false">Expanded</button>
+    </div>
+    <button type="button" class="gt-zoomout" id="gt-zoomout" hidden>Zoom out</button>
+    <p class="gt-status" id="gt-status">Loading the chart…</p>
+  </div>
+  <nav class="gt-crumbs" id="gt-crumbs" aria-label="Zoom level"></nav>
+
+  <div class="gt-stage">
+    <div class="gt-gutter" id="gt-gutter" aria-hidden="true"></div>
+    <div class="gt-scroll" id="gt-scroll">
+      <div class="gt-chart" id="gt-chart" role="group" aria-label="Geologic time scale. Arrow keys move between units. Enter opens one. Escape zooms out."></div>
+    </div>
+  </div>
+  <ul class="gt-legend" id="gt-legend">
+    <li><button type="button" data-extinct="hirnantian"><strong>1 · End-Ordovician</strong> 443.1 Ma</button></li>
+    <li><button type="button" data-extinct="frasnian"><strong>2 · Late Devonian</strong> 372.15 Ma</button></li>
+    <li><button type="button" data-extinct="changhsingian"><strong>3 · End-Permian</strong> 251.902 Ma</button></li>
+    <li><button type="button" data-extinct="rhaetian"><strong>4 · End-Triassic</strong> 201.4 Ma</button></li>
+    <li><button type="button" data-extinct="maastrichtian"><strong>5 · End-Cretaceous</strong> 66 Ma</button></li>
+  </ul>
+  <p class="gt-help">The red marks are the Big Five mass extinctions. The gold line at the right edge is the present. On a phone, scroll the bar sideways and tap a band. With a keyboard, tab to the chart, move with the arrow keys, and press Enter. Zoom in from the detail panel to see epochs and ages.</p>
+
+  <section class="gt-detail" id="gt-detail" aria-live="polite" aria-labelledby="gt-detail-title">
+    <p>Select a band on the chart.</p>
+  </section>
+  <p id="gt-live" class="gt-vh" aria-live="polite"></p>
+
+  <section class="gt-quiz" id="gt-quiz" aria-labelledby="gt-quiz-title">
+    <h2 id="gt-quiz-title">Learn the order</h2>
+    <p>Phanerozoic periods, oldest first: <span class="mnemonic">Camels Often Sit Down Carefully. Perhaps Their Joints Creak.</span> Cambrian, Ordovician, Silurian, Devonian, Carboniferous, Permian, Triassic, Jurassic, Cretaceous. Then three more periods: Paleogene, Neogene, Quaternary.</p>
+    <p>Cenozoic epochs: <span class="mnemonic">Pretty Eager Old Men Play Poker Hard.</span> Paleocene, Eocene, Oligocene, Miocene, Pliocene, Pleistocene, Holocene.</p>
+    <div class="gt-actions">
+      <button type="button" id="gt-quiz-start">Quiz the periods</button>
+      <button type="button" id="gt-flash">Flashcards</button>
+    </div>
+    <div id="gt-quiz-play" hidden>
+      <p class="gt-q" id="gt-q"></p>
+      <div class="gt-choices" id="gt-choices"></div>
+      <p id="gt-qscore"></p>
+      <button type="button" id="gt-qnext" class="gt-next" hidden>Next question</button>
+    </div>
+    <div id="gt-quiz-card" hidden>
+      <div class="gt-cardface" id="gt-cardface"></div>
+      <div class="gt-actions">
+        <button type="button" id="gt-card-reveal">Show the dates</button>
+        <button type="button" id="gt-card-next">Next period</button>
+      </div>
+    </div>
+  </section>
+
+  <p class="gt-note">Ages and colours follow the <a href="https://stratigraphy.org/ICSchart/ChronostratChart2024-12.pdf">International Chronostratigraphic Chart v2024/12</a> (Cohen, Finney, Gibbard, and Fan, 2013, updated; International Commission on Stratigraphy). Colours are those of the Commission for the Geological Map of the World. The chart text and colours are used here under CC BY 4.0. Where the published chart’s Ludlow epoch was given an end age that swallowed the Přídolí, this page uses 422.7 Ma, the base of the Přídolí and the top of the Ludfordian on the same chart. A few Triassic and Permian ages are taken from the printed December 2024 sheet where they differ from a later copy of the chart database. Gallery pictures are generated with Grok Imagine. They are not photographs.</p>
+</main>
+{% include footer.html %}
+<script src="/natural-history/time/gallery-map.js"></script>
+<script src="/natural-history/time/time.js"></script>
+</body>
+</html>
