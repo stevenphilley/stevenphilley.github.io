@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>21-cm hydrogen line — Steven Philley</title>
+<meta name="description" content="21-cm hydrogen desk. Hellwig et al. 1970 give 1420.405751768 MHz. The wavelength is 21.106114 cm, the photon energy is 5.87433 µeV, and hν/k is 0.068169 K. At z = 17 the line is 78.911 MHz. The radio convention shifts 1 km/s by 4.738 kHz. Optically thin N_HI uses 1.823×10^18. Not a survey.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/21cm/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="21-cm hydrogen line">
+<meta property="og:description" content="1420.405751768 MHz at rest, 21.106114 cm. At z = 17 the line is 78.911 MHz. A teaching calculator for the spin-flip line, not a survey.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/21cm/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="21-cm hydrogen line">
+<meta name="twitter:description" content="Rest frequency 1420.405751768 MHz. z = 0 prints 1,420.406 MHz. z = 17 prints 78.911 MHz. Not a survey.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram.chart-only{margin-top:0}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.curve{border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.noon{border-top-style:dashed;border-top-color:var(--muted,#63666e)}
+.swatch.now{border-top-color:var(--ink,#e8e6e1)}
+.swatch.other{border-top-style:dashed;border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.hot{border-top-color:#e07a30}
+.swatch.cold{border-top-color:var(--accent-2,#7eb6e8)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:7.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%;min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+.slider-row[hidden],.pick-label[hidden],.stats[hidden]{display:none !important}
+</style><noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript></head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+<div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sundial/">Sundial</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/parker-spiral/" >Parker spiral</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/21cm/" aria-current="page">21 cm</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/cmb/">CMB</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+</nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · 21 cm</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The spin flip</p>
+  <h1>The 21-cm<br>hydrogen line</h1>
+  <p class="lede">Neutral hydrogen in the ground state has two hyperfine levels. The electron and proton spins are parallel in the upper level and antiparallel in the lower one. The jump between them is a magnetic-dipole spin flip. <a href="https://doi.org/10.1109/tim.1970.4313902" rel="noopener" target="_blank">Hellwig et al. 1970</a> give the unperturbed frequency as <strong>1420.405751768 MHz</strong>, with a one-sigma uncertainty of 0.002 Hz. Divided into the exact speed of light, that frequency is a wavelength of <strong>21.106114 cm</strong>, which rounds to 21.106 cm. The photon energy is <strong>5.87433 µeV</strong>, which rounds to 5.874 µeV. hν/k is <strong>0.068169 K</strong>, which rounds to 0.0682 K. The rounded figures are not substituted. This is not a Rydberg jump. Those optical and ultraviolet lines are the <a href="/science/astronomy/spectra/">spectra</a> desk.</p>
+  <p class="lede"><a href="https://www.cv.nrao.edu/~sransom/web/Ch7.html" rel="noopener" target="_blank">Condon and Ransom</a> print the Einstein A coefficient as <strong>A<sub>10</sub> ≈ 2.85×10<sup>−15</sup> s<sup>−1</sup></strong>. The lifetime on this page is 1/A for that figure: <strong>3.50877×10<sup>14</sup> s</strong>, or <strong>1.11186×10<sup>7</sup></strong> Julian years of 31,557,600 s. About 1.1×10<sup>7</sup> years, and their 11 million years, are that number rounded. They are not substituted. An isolated atom almost never emits. The line is still observed because a galactic sightline contains an enormous number of atoms, and because collisions keep the upper level populated. The critical density is far below a typical interstellar density, so the atom does not have to wait out the radiative lifetime in isolation. At high redshift, Lyman-α scattering can do the same job. That is the Wouthuysen–Field coupling. This page does not compute it.</p>
+  <p class="lede">Cosmological redshift is the same definition as the <a href="/science/astronomy/redshift/">redshift</a> desk, <strong>f = 1420.405751768 / (1+z)</strong> MHz. At z = 0 the frequency rounds to <strong>1420.406 MHz</strong>. At z = 17 it is <strong>78.911 MHz</strong>, about 78.91 MHz. A radial velocity uses the radio convention, <strong>f = f<sub>rest</sub> (1 − v/c)</strong>, with recession positive. One km/s moves the line by <strong>4.738 kHz</strong>, to 1420.401 MHz. The optical convention and the relativistic Doppler shift are printed beside it and are not substituted. For optically thin gas, <strong>N<sub>HI</sub> = 1.823×10<sup>18</sup> cm<sup>−2</sup> × ∫ T<sub>B</sub> dv</strong>, with the integral in K km/s. A Gaussian integral is <strong>1.064467 × T<sub>peak</sub> × FWHM</strong>. 1.0645 is that factor rounded and is not substituted. Dust hides the optical Milky Way. This line does not. The speeds it measures, and the Keplerian fall they refuse, are the <a href="/science/astronomy/rotation-curve/">rotation-curve</a> desk. The cooled blackbody behind the high-redshift absorption is the <a href="/science/astronomy/cmb/">CMB</a> desk.</p>
+  <p class="note-schematic" id="limits-note">Educational calculator. The rest frequency is Hellwig et al. 1970, 1420.405751768 MHz, uncertainty 0.002 Hz. Wavelength, photon energy, and hν/k are computed from that frequency and the exact SI constants c, h, k, and e. The Einstein A coefficient is the approximate 2.85×10^−15 s^−1. The column density is the optically thin formula and is not a correction for optical depth. Redshift is f_rest/(1+z). The velocity mode uses the radio convention. Andromeda’s −300 km/s is a heliocentric radial velocity, not the Milky Way–M31 approach speed. The EDGES 78 MHz profile is a claimed and disputed result. Not a survey reduction and not a detection claim.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Frequency, velocity, column</span>
+    <button type="button" class="help-q" id="hi-help" aria-haspopup="dialog" aria-controls="hi-help-dialog" aria-expanded="false" aria-label="How this 21-cm desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="freq-hint">Observed frequency against redshift · z from 0 to 20 · linear axes</p>
+      <canvas id="freq" width="880" height="460" tabindex="0" role="img" aria-label="Observed 21-centimeter frequency against redshift from 0 to 20. At redshift 0 the frequency is 1420.406 megahertz. At redshift 17 it is 78.911 megahertz. The FM broadcast band, 88 to 108 megahertz, is shaded."></canvas>
+      <ul class="legend" aria-label="Chart key">
+        <li><span class="swatch" aria-hidden="true"></span> f(z)</li>
+        <li><span class="swatch now" aria-hidden="true"></span> Chosen redshift</li>
+        <li><span class="swatch hot" aria-hidden="true"></span> FM 88–108</li>
+        <li><span class="swatch cold" aria-hidden="true"></span> Reionization z 6–10</li>
+      </ul>
+      <p class="scale-note" id="freq-note">The curve is 1420.405751768 / (1+z) MHz. Axes are linear. The orange band is the FM broadcast allocation, 88–108 MHz, an interference region. It crosses this line from z = 12.1519 to z = 15.141. The blue band is the teaching window z = 6 to 10. Virgo, at z = 0.004, sits on the z = 0 tick at this scale. Andromeda is a blueshift of −300 km/s and is not a point on a z ≥ 0 axis. Click the chart to set the redshift.</p>
+      <div class="controls">
+        <p class="field-err" id="field-err" hidden>Redshift from 0 to 20. Radial velocity from −1,000 to 5,000 km/s. Peak temperature from 1 to 150 K. Line width from 1 to 80 km/s.</p>
+        <p class="pick-label">Mode. Redshift divides the rest frequency by (1+z). Velocity uses the radio convention.</p>
+        <div class="presets" role="group" aria-label="Frequency mode">
+          <button type="button" id="mode-z" aria-pressed="true">Redshift</button>
+          <button type="button" id="mode-v" aria-pressed="false">Radial velocity</button>
+        </div>
+        <p class="pick-label" id="z-label">Redshift z. The slider runs from 0 to 20.</p>
+        <div class="slider-row" id="z-row">
+          <label for="z-slider">z</label>
+          <input type="range" id="z-slider" min="0" max="20" step="0.001" value="0" aria-label="Redshift">
+          <label for="z-num">z</label>
+          <input type="number" id="z-num" inputmode="decimal" min="0" max="20" step="any" value="0" aria-label="Redshift z">
+        </div>
+        <p class="pick-label" id="v-label" hidden>Radial velocity, km/s. Positive is recession. The radio convention is f = f_rest (1 − v/c).</p>
+        <div class="slider-row" id="v-row" hidden>
+          <label for="v-slider">v</label>
+          <input type="range" id="v-slider" min="-1000" max="5000" step="1" value="0" aria-label="Radial velocity in kilometers per second">
+          <label for="v-num">km/s</label>
+          <input type="number" id="v-num" inputmode="decimal" min="-1000" max="5000" step="any" value="0" aria-label="Radial velocity in kilometers per second">
+        </div>
+        <p class="pick-label">Presets. Andromeda is a velocity. The others are redshifts. Virgo’s 0.004 is a round figure, not 1050 km/s.</p>
+        <div class="presets" role="group" aria-label="Line presets">
+          <button type="button" data-preset="milky-way" aria-pressed="true">Milky Way · z = 0</button>
+          <button type="button" data-preset="andromeda" aria-pressed="false">Andromeda · −300 km/s</button>
+          <button type="button" data-preset="virgo" aria-pressed="false">Virgo · z = 0.004</button>
+          <button type="button" data-preset="eor" aria-pressed="false">Reionization · z = 7.67</button>
+          <button type="button" data-preset="dawn" aria-pressed="false">Cosmic Dawn · z = 17</button>
+        </div>
+        <p class="pick-label">Optically thin column. Not a named cloud. The integral is 1.064467 × peak × FWHM.</p>
+        <div class="slider-row">
+          <label for="t-slider">T</label>
+          <input type="range" id="t-slider" min="1" max="150" step="0.1" value="100" aria-label="Peak brightness temperature in kelvin">
+          <label for="t-num">K</label>
+          <input type="number" id="t-num" inputmode="decimal" min="1" max="150" step="any" value="100" aria-label="Peak brightness temperature in kelvin">
+        </div>
+        <div class="slider-row">
+          <label for="w-slider">Δv</label>
+          <input type="range" id="w-slider" min="1" max="80" step="0.1" value="10" aria-label="Gaussian full width at half maximum in kilometers per second">
+          <label for="w-num">km/s</label>
+          <input type="number" id="w-num" inputmode="decimal" min="1" max="80" step="any" value="10" aria-label="Gaussian full width at half maximum in kilometers per second">
+        </div>
+      </div>
+    </div>
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="r-tier">Milky Way</p>
+      <h2 id="r-title">1,420.406</h2>
+      <p class="range" id="r-sense">z = 0</p>
+      <ul class="stats">
+        <li><span class="k">Observed frequency</span><span class="v" id="r-mhz">1,420.406 MHz</span></li>
+        <li><span class="k">Wavelength</span><span class="v" id="r-wave">21.106114 cm</span></li>
+        <li><span class="k">Photon energy</span><span class="v" id="r-euv">5.87433 µeV</span></li>
+        <li><span class="k">hν/k</span><span class="v" id="r-temp">0.068169 K</span></li>
+      </ul>
+      <ul class="stats" id="v-stats" hidden>
+        <li><span class="k">Radio convention</span><span class="v" id="r-radio">1,420.4058 MHz</span></li>
+        <li><span class="k">Optical convention</span><span class="v" id="r-opt">1,420.4058 MHz</span></li>
+        <li><span class="k">Relativistic</span><span class="v" id="r-rel">1,420.4058 MHz</span></li>
+      </ul>
+      <ul class="stats">
+        <li><span class="k">∫ T_B dv</span><span class="v" id="r-int">1,064.467 K km/s</span></li>
+        <li><span class="k">N_HI, thin</span><span class="v" id="r-col">1.94052×10^21 cm^−2</span></li>
+      </ul>
+      <p class="why" id="r-why">Cosmological redshift. The observed frequency is the rest frequency divided by (1+z), 1,420.406 MHz here. The wavelength is the rest wavelength times (1+z), 21.106114 cm. z = 0 is the rest frame. The unrounded frequency is 1420.405751768 MHz. Rounded to 0.001 MHz it is 1,420.406 MHz. That rounding is not a second measurement. The wavelength is 21.106114 cm, which is 21.106 cm when rounded to 0.001 cm. The photon energy is 5.87433 µeV, which rounds to 5.874 µeV. hν/k is 0.068169 K, which rounds to 0.0682 K. The rounded figures are not substituted. The Einstein A coefficient used here is 2.85×10^−15 s^−1. The lifetime is 1/A: 3.50877×10^14 s, or 1.11186×10^7 Julian years of 31,557,600 s. About 1.1×10^7 years is that figure rounded. It is not substituted. Condon and Ransom’s 3.5×10^14 s and 11 million years are the same rounding. They are not substituted. An isolated atom almost never emits. The line is seen because a galactic sightline holds an enormous number of atoms, and because collisions keep the hyperfine levels populated. The critical density is far below a typical interstellar density, so the upper level does not empty and then wait out the radiative lifetime. The column illustration is optically thin gas, not a named cloud. Peak 100 K and a Gaussian FWHM of 10 km/s. The integral is 1.064467 × T_peak × FWHM = 1,064.467 K km/s. 1.0645 is the rounding of that factor and is not substituted. N_HI = 1.823×10^18 × that integral = 1.94052×10^21 cm^−2. Not a survey.</p>
+    </aside>
+  </div>
+
+  <p class="band">What the line showed</p>
+  <dl class="glossary">
+    <div class="gloss gloss-wide"><dt>Why a tiny rate is visible</dt><dd>A<sub>10</sub> ≈ 2.85×10<sup>−15</sup> s<sup>−1</sup> means the mean spontaneous lifetime is 1.11186×10<sup>7</sup> years. Condon and Ransom note that the critical density is far below 1 cm<sup>−3</sup>, so collisions hold the transition in local thermodynamic equilibrium even in the outer disk of a spiral. In that limit three quarters of the atoms sit in the upper level, because the statistical weights are 3 and 1 and hν/k is only 0.068169 K. The collective emission of a long column is what a radio telescope records. The column calculator is that idea in the optically thin limit. It is not a named cloud.</dd></div>
+    <div class="gloss"><dt>Radio velocity</dt><dd>Radio astronomers defined v/c = (f_rest − f_obs) / f_rest because a spectrometer reads a frequency. Optical astronomers defined v/c = (λ_obs − λ_rest) / λ_rest = z, because a spectrograph reads a wavelength. The relativistic Doppler shift is a third number. At −300 km/s the three frequencies are 1,421.8271, 1,421.8286, and 1,421.8279 MHz. At 1 km/s the radio value is 1,420.401 MHz, 4.738 kHz below rest. The <a href="/science/astronomy/redshift/">redshift</a> desk prints c z and the relativistic β. This desk prints the radio convention those pages do not.</dd></div>
+    <div class="gloss"><dt>Andromeda and Virgo</dt><dd>SIMBAD’s heliocentric radial velocity for M31 is −300.0 ± 4.0 km/s, from McConnachie 2012. The redshift desk sets z = −0.001. This button sets −300 km/s in the radio convention. They are not the same frequency. Neither number is the Milky Way–Andromeda approach speed once the Sun’s motion is taken out. Virgo’s button is the round z = 0.004. Binggeli, Popescu, and Tammann 1993 give a mean heliocentric velocity of 1050 ± 35 km/s. c × 0.004 is 1,199.17 km/s. 0.004 is not their redshift.</dd></div>
+    <div class="gloss"><dt>Reionization and Cosmic Dawn</dt><dd>Planck 2018 results VI, Table 2, the same TT,TE,EE+lowE+lensing column the <a href="/science/astronomy/cmb/">CMB</a> desk uses, gives a reionization midpoint z_re = 7.67 ± 0.73. The chart’s blue band, z = 6 to 10, is the usual teaching window around that midpoint. It is not a measurement of the edges. z = 6 is 202.915 MHz. z = 10 is 129.128 MHz. z = 17 is 78.911 MHz. Bowman et al. 2018 reported a profile centered at 78 MHz, which is z = 17.210 on this frequency. Hills et al. 2018 and Singh et al. 2022 (SARAS 3) dispute that profile. This page does not claim it.</dd></div>
+    <div class="gloss"><dt>Spiral arms</dt><dd>Ewen and Purcell detected the line in 1951, and Muller and Oort detected it in the same year. Dust blocks the optical plane of the Milky Way. The radio line passes through it. Oort, Kerr, and Westerhout 1958 used the Dutch and Australian surveys to draw the Galaxy as a spiral. The drawing is kinematic: a radial velocity plus an assumed rotation curve. Inside the solar circle the same velocity can sit at a near distance or a far one. The map is not a photograph of the arms.</dd></div>
+    <div class="gloss gloss-wide"><dt>Flat rotation curves</dt><dd>Beyond the solar circle that near-far ambiguity drops away, and the 21-cm speed can be read farther out than the bright starlight. A central point mass would fall as r<sup>−1/2</sup>. The outer speeds do not. The arithmetic of that fall is the <a href="/science/astronomy/rotation-curve/">rotation-curve</a> desk. Its cited solar speed, 229.0 km/s from Eilers et al. 2019, is a stellar measurement. It is not a reduction of this line. Rubin and Ford 1970, the M31 result on that desk, used H II regions, not 21 cm.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1109/tim.1970.4313902" rel="noopener" target="_blank">Hellwig, Vessot, Levine, Zitzewitz, Allan, and Glaze 1970, IEEE Trans. Instrum. Meas. 19, 200</a> — the unperturbed hydrogen hyperfine frequency, 1,420,405,751.768 Hz, one-sigma uncertainty 0.002 Hz, referred to the cesium hyperfine frequency. This desk uses the central value. DOI 10.1109/TIM.1970.4313902.</li>
+      <li><a href="https://physics.nist.gov/cgi-bin/cuu/Value?c" rel="noopener" target="_blank">NIST CODATA</a> — c = 299,792,458 m/s, <a href="https://physics.nist.gov/cgi-bin/cuu/Value?h" rel="noopener" target="_blank">h</a> = 6.62607015×10<sup>−34</sup> J·s, <a href="https://physics.nist.gov/cgi-bin/cuu/Value?k" rel="noopener" target="_blank">k</a> = 1.380649×10<sup>−23</sup> J/K, and <a href="https://physics.nist.gov/cgi-bin/cuu/Value?e" rel="noopener" target="_blank">e</a> = 1.602176634×10<sup>−19</sup> C are exact. Wavelength, photon energy, and hν/k are that frequency divided into these constants.</li>
+      <li><a href="https://www.cv.nrao.edu/~sransom/web/Ch7.html" rel="noopener" target="_blank">Condon and Ransom, Essential Radio Astronomy, chapter 7</a> — eq. 7.146, A<sub>10</sub> ≈ 2.85×10<sup>−15</sup> s<sup>−1</sup>, and a radiative lifetime of about 11 million years. Eq. 7.155 prints the thin-gas column as about 1.82×10<sup>18</sup>. This page’s 1.823×10<sup>18</sup> is not that rounding. Eqs. 7.163 and 7.165 are the radio and optical velocity conventions. Section 7.8.1 is the Galactic rotation and the near-far ambiguity.</li>
+      <li><a href="https://doi.org/10.1093/mnras/stt658" rel="noopener" target="_blank">Chengalur, Kanekar, and Roy 2013, MNRAS 432, 3074</a> — N_HI = 1.823×10<sup>18</sup> ∫ T_s τ dv, valid when T_s is well above hν/k ≈ 0.07 K. In the optically thin limit, T_B ≈ T_s τ, and the spin temperature cancels. Preprint: <a href="https://arxiv.org/abs/1305.0951" rel="noopener" target="_blank">arXiv:1305.0951</a>.</li>
+      <li><a href="https://doi.org/10.1093/mnrasl/sly139" rel="noopener" target="_blank">Saha, Roy, and Bhattacharya 2018, MNRAS 480, L126</a> — the same 1.823×10<sup>18</sup> factor. They note that even at τ ≈ 0.2 the thin-gas column is off by about 10 percent, and at τ ≈ 0.5 by about 30 percent. This page does not apply that correction. Preprint: <a href="https://arxiv.org/abs/1807.11497" rel="noopener" target="_blank">arXiv:1807.11497</a>.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1951Natur.168..356E/abstract" rel="noopener" target="_blank">Ewen and Purcell 1951, Nature 168, 356</a> and <a href="https://ui.adsabs.harvard.edu/abs/1951Natur.168..357M/abstract" rel="noopener" target="_blank">Muller and Oort 1951, Nature 168, 357</a> — the 1951 detections. van de Hulst had predicted the line in 1945. <a href="https://ui.adsabs.harvard.edu/abs/1958MNRAS.118..379O/abstract" rel="noopener" target="_blank">Oort, Kerr, and Westerhout 1958, MNRAS 118, 379</a> — the Leiden–Sydney map of the Galaxy as a spiral. A kinematic map, with a distance ambiguity inside the solar circle.</li>
+      <li><a href="https://simbad.cds.unistra.fr/simbad/sim-id?Ident=M31" rel="noopener" target="_blank">SIMBAD — M31</a> — adopted radial velocity −300.0 ± 4.0 km/s, heliocentric redshift −0.001000, referenced to <a href="https://ui.adsabs.harvard.edu/abs/2012AJ....144....4M/abstract" rel="noopener" target="_blank">McConnachie 2012, AJ 144, 4</a>. The same sentence as the <a href="/science/astronomy/redshift/">redshift</a> desk. This page’s button uses −300 km/s in the radio convention.</li>
+      <li><a href="https://ui.adsabs.harvard.edu/abs/1993A%26AS...98..275B/abstract" rel="noopener" target="_blank">Binggeli, Popescu, and Tammann 1993, A&amp;AS 98, 275</a> — mean heliocentric velocity of the Virgo cluster, 1050 ± 35 km/s. The button is the round z = 0.004. c × 0.004 is 1,199.17 km/s. They are not substituted.</li>
+      <li><a href="https://arxiv.org/abs/1807.06209" rel="noopener" target="_blank">Planck Collaboration 2020, A&amp;A 641, A6</a> (arXiv:1807.06209) — Planck 2018 results VI. Table 2, column TT,TE,EE+lowE+lensing: z_re = 7.67 ± 0.73. The same column supplies z<sub>*</sub> = 1089.92 on the <a href="/science/astronomy/cmb/">CMB</a> desk. The z = 6 to 10 band is a teaching window around that midpoint.</li>
+      <li><a href="https://doi.org/10.1038/nature25792" rel="noopener" target="_blank">Bowman, Rogers, Monsalve, Mozdzen, and Mahesh 2018, Nature 555, 67</a> — a reported absorption profile centered at 78 MHz. On this rest frequency that center is z = 17.210, not the z = 17 preset. <a href="https://doi.org/10.1038/s41586-018-0796-5" rel="noopener" target="_blank">Hills, Kulkarni, Meerburg, and Puchwein 2018, Nature 564</a> questioned the model. <a href="https://doi.org/10.1038/s41550-022-01610-5" rel="noopener" target="_blank">Singh et al. 2022, Nature Astronomy</a> (SARAS 3) rejected the best-fitting profile at 95.3 percent confidence. Claimed, and disputed. Not adopted here.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom line for the hydrogen hyperfine transition. The opening readout is z = 0: 1,420.406 MHz, 21.106114 cm, 5.87433 µeV, and 0.068169 K. The thin-gas illustration at 100 K and 10 km/s is 1.94052×10^21 cm^−2. Not a survey. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/spectra/"><p class="n">The other hydrogen</p><h3>Spectra</h3><p>Rydberg jumps, Lyman through Pfund. This page is the ground-state spin flip, not one of those lines.</p></a>
+    <a href="/science/astronomy/redshift/"><p class="n">The shift</p><h3>Redshift</h3><p>z = (λ_obs − λ_rest)/λ_rest. At z = 1 the relativistic β is 0.6. This page is that z applied to 1420.405751768 MHz, plus the radio velocity convention.</p></a>
+    <a href="/science/astronomy/rotation-curve/"><p class="n">The fall</p><h3>Rotation curves</h3><p>v = √(GM/r) and the r^−1/2 a point mass would follow. The 229.0 km/s there is Eilers’s stellar value, not this line.</p></a>
+    <a href="/science/astronomy/cmb/"><p class="n">The backlight</p><h3>CMB</h3><p>Fixsen’s 2.72548 K, and T = T0(1+z). The high-redshift 21-cm signal is absorption against that glow, or emission above it. This page does not draw the glow.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="hi-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="hi-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="hi-help-title">21-cm desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator for the hydrogen spin-flip line. Hellwig’s frequency, the radio velocity convention, and the optically thin column. Not a survey.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Redshift</th><td>z from 0 to 20. The observed frequency is 1420.405751768 / (1+z) MHz. The page opens at z = 0, which prints 1,420.406 MHz.</td></tr>
+        <tr><th scope="row">Velocity</th><td>−1,000 to 5,000 km/s. Positive is recession. The result is the radio convention, f_rest (1 − v/c). The optical and relativistic values are listed and not substituted.</td></tr>
+        <tr><th scope="row">Presets</th><td>Milky Way is z = 0. Andromeda is −300 km/s, the SIMBAD heliocentric velocity. Virgo is the round z = 0.004, not 1050 km/s. Reionization sets Planck’s z_re = 7.67. Cosmic Dawn sets z = 17, which is 78.911 MHz, not the disputed 78 MHz center.</td></tr>
+        <tr><th scope="row">Column</th><td>Peak brightness temperature, 1 to 150 K, and a Gaussian FWHM, 1 to 80 km/s. The integral is 1.064467 × T_peak × FWHM. N_HI uses 1.823×10^18. The gas is assumed optically thin. The opening pair, 100 K and 10 km/s, is not a named cloud.</td></tr>
+        <tr><th scope="row">Chart</th><td>Frequency against redshift, both axes linear, from z = 0 to 20. The orange band is FM broadcast, 88–108 MHz. The blue band is z = 6 to 10. Click the chart, or press Left and Right, to set the redshift. Up and Down step the velocity when that mode is on.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/21cm/21cm.js"></script>
+<script>
+(function () {
+  "use strict";
+  var H = window.Hydrogen21;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!H) return;
+
+  var open = H.opening();
+  var state = { mode: open.mode, z: open.z, v: open.v, tPeak: open.tPeak, fwhm: open.fwhm };
+  var err = document.getElementById("field-err");
+  var canvas = document.getElementById("freq");
+  var chartGeom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function plain(n, digits) {
+    var s = n.toFixed(digits);
+    return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+  function fit(el, cssH) {
+    var cssW = Math.max(280, el.clientWidth || 320);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var pw = Math.max(1, Math.round(cssW * dpr));
+    var ph = Math.max(1, Math.round(cssH * dpr));
+    if (el.width !== pw || el.height !== ph) {
+      el.width = pw;
+      el.height = ph;
+    }
+    var ctx = el.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    return { ctx: ctx, w: cssW, h: cssH };
+  }
+  function showError(msg) {
+    if (!err) return;
+    err.hidden = false;
+    err.textContent = msg;
+  }
+  function clearError() {
+    if (err) err.hidden = true;
+  }
+  function readNum(el) {
+    if (!el) return null;
+    var raw = String(el.value).trim().replace(/−/g, "-").replace(/,/g, "");
+    if (raw === "" || raw === "-" || raw === "." || raw === "-.") return null;
+    var n = Number(raw);
+    if (!isFinite(n)) return null;
+    return n;
+  }
+  function writeNum(el, text) {
+    if (!el || document.activeElement === el) return;
+    el.value = text;
+  }
+
+  function paintChart() {
+    if (!canvas) return;
+    var box = fit(canvas, Math.max(300, Math.round((canvas.clientWidth || 640) * 0.56)));
+    var ctx = box.ctx;
+    var padL = 58;
+    var padR = 14;
+    var padT = 22;
+    var padB = 36;
+    var plotW = Math.max(10, box.w - padL - padR);
+    var plotH = Math.max(10, box.h - padT - padB);
+    var z0 = 0;
+    var z1 = H.Z_MAX;
+    var fTop = 1550;
+    var fBot = 40;
+    function xOf(z) { return padL + (z - z0) / (z1 - z0) * plotW; }
+    function yOf(f) { return padT + (fTop - f) / (fTop - fBot) * plotH; }
+    chartGeom = { padL: padL, padT: padT, plotW: plotW, plotH: plotH, z0: z0, z1: z1, fTop: fTop, fBot: fBot };
+
+    var ink = cssVar("--ink", "#e8e6e1");
+    var muted = cssVar("--muted", "#63666e");
+    var accent = cssVar("--accent", "#c8b48a");
+    var line = cssVar("--line", "#2c303a");
+    var cool = cssVar("--accent-2", "#7eb6e8");
+
+    ctx.fillStyle = "rgba(126, 182, 232, 0.14)";
+    ctx.fillRect(xOf(H.EOR_LO), padT, xOf(H.EOR_HI) - xOf(H.EOR_LO), plotH);
+    var yHi = yOf(H.FM_HI);
+    var yLo = yOf(H.FM_LO);
+    ctx.fillStyle = "rgba(224, 122, 48, 0.22)";
+    ctx.fillRect(padL, Math.min(yHi, yLo), plotW, Math.abs(yLo - yHi));
+
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL, padT, plotW, plotH);
+
+    ctx.fillStyle = muted;
+    [0, 5, 10, 15, 20].forEach(function (z) {
+      var x = xOf(z);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(x, padT + plotH);
+      ctx.lineTo(x, padT + plotH + 5);
+      ctx.stroke();
+      paintText(ctx, String(z), x, padT + plotH + 16, { size: 10, align: "center", color: muted });
+    });
+    [1400, 1000, 500, 200, 100].forEach(function (f) {
+      var y = yOf(f);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(padL - 5, y);
+      ctx.lineTo(padL, y);
+      ctx.stroke();
+      paintText(ctx, String(f), padL - 8, y, { size: 10, align: "right", color: muted });
+    });
+    paintText(ctx, "z", padL + plotW - 4, padT + plotH + 16, { size: 10, align: "right", color: muted });
+    paintText(ctx, "MHz", padL - 8, padT - 10, { size: 10, align: "right", color: muted });
+    paintText(ctx, "FM", padL + 8, (yHi + yLo) / 2, { size: 10, color: "#e07a30" });
+    paintText(ctx, "EoR", xOf(H.EOR_LO) + 6, padT + 12, { size: 10, color: cool });
+
+    var samples = H.chartSamples(241);
+    ctx.beginPath();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 2;
+    samples.forEach(function (pt, i) {
+      var x = xOf(pt.z);
+      var y = yOf(pt.mhz);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    H.markers().forEach(function (mark) {
+      var x = xOf(mark.z);
+      var f = H.observeZ(mark.z).mhz;
+      var y = yOf(f);
+      ctx.strokeStyle = ink;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(x, padT + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = ink;
+      ctx.beginPath();
+      ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    paintText(ctx, "Milky Way", xOf(0) + 8, yOf(H.F_MHZ) - 12, { size: 10, color: ink });
+    paintText(ctx, "z_re", xOf(H.Z_RE) + 6, yOf(H.observeZ(H.Z_RE).mhz) - 12, { size: 10, color: ink });
+    paintText(ctx, "z = 17", xOf(H.Z_DAWN) - 46, yOf(H.observeZ(H.Z_DAWN).mhz) - 12, { size: 10, color: ink });
+
+    var curF = state.mode === "v" ? H.observeV(state.v).radio : H.observeZ(state.z).mhz;
+    var curZ = state.mode === "v" ? 0 : state.z;
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    if (state.mode === "v") {
+      var hy = yOf(curF);
+      ctx.moveTo(padL, hy);
+      ctx.lineTo(padL + plotW, hy);
+    } else {
+      ctx.moveTo(xOf(curZ), padT);
+      ctx.lineTo(xOf(curZ), padT + plotH);
+    }
+    ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(xOf(state.mode === "v" ? 0 : state.z), yOf(curF), 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  function render() {
+    var base = H.rest();
+    var mhz = state.mode === "v" ? H.observeV(state.v).radio : H.observeZ(state.z).mhz;
+    var cm = base.cm * (base.mhz / mhz);
+    var uEv = base.uEv * (mhz / base.mhz);
+    var kelvin = base.kelvin * (mhz / base.mhz);
+    var col = H.column(state.tPeak, state.fwhm);
+    var vel = H.observeV(state.v);
+    setText("r-tier", H.tier(state));
+    setText("r-title", H.formatMHz(mhz));
+    setText("r-sense", H.sense(state));
+    setText("r-mhz", H.formatMHz(mhz) + " MHz");
+    setText("r-wave", H.formatCm(cm) + " cm");
+    setText("r-euv", H.formatUeV(uEv) + " µeV");
+    setText("r-temp", H.formatKelvin(kelvin) + " K");
+    setText("r-int", H.formatIntegral(col.integral) + " K km/s");
+    setText("r-col", H.formatSci(col.nHi, 5) + " cm^−2");
+    setText("r-why", H.why(state));
+    setText("r-radio", H.formatMHz4(vel.radio) + " MHz");
+    setText("r-opt", H.formatMHz4(vel.optical) + " MHz");
+    setText("r-rel", H.formatMHz4(vel.relativistic) + " MHz");
+    var vStats = document.getElementById("v-stats");
+    if (vStats) vStats.hidden = state.mode !== "v";
+    var zRow = document.getElementById("z-row");
+    var vRow = document.getElementById("v-row");
+    var zLabel = document.getElementById("z-label");
+    var vLabel = document.getElementById("v-label");
+    if (zRow) zRow.hidden = state.mode !== "z";
+    if (vRow) vRow.hidden = state.mode !== "v";
+    if (zLabel) zLabel.hidden = state.mode !== "z";
+    if (vLabel) vLabel.hidden = state.mode !== "v";
+    var modeZ = document.getElementById("mode-z");
+    var modeV = document.getElementById("mode-v");
+    if (modeZ) modeZ.setAttribute("aria-pressed", state.mode === "z" ? "true" : "false");
+    if (modeV) modeV.setAttribute("aria-pressed", state.mode === "v" ? "true" : "false");
+    writeNum(document.getElementById("z-slider"), plain(state.z, 3));
+    writeNum(document.getElementById("z-num"), plain(state.z, 4));
+    writeNum(document.getElementById("v-slider"), plain(state.v, 0));
+    writeNum(document.getElementById("v-num"), plain(state.v, 2));
+    writeNum(document.getElementById("t-slider"), plain(state.tPeak, 1));
+    writeNum(document.getElementById("t-num"), plain(state.tPeak, 2));
+    writeNum(document.getElementById("w-slider"), plain(state.fwhm, 1));
+    writeNum(document.getElementById("w-num"), plain(state.fwhm, 2));
+    var hit = H.matchedPreset(state.mode, state.z, state.v);
+    document.querySelectorAll("[data-preset]").forEach(function (btn) {
+      var on = hit && btn.getAttribute("data-preset") === hit.id;
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+    if (canvas) {
+      var label = state.mode === "v"
+        ? "Radio-convention frequency " + H.formatMHz(mhz) + " megahertz at " + H.formatV(state.v) + " kilometers per second. The redshift curve is still drawn from z = 0 to 20."
+        : "Observed frequency " + H.formatMHz(mhz) + " megahertz at redshift " + H.formatZ(state.z) + ". The FM band 88 to 108 megahertz is shaded.";
+      canvas.setAttribute("aria-label", label);
+    }
+    paintChart();
+  }
+
+  function bindRange(sliderId, numId, digits, ok, assign, message) {
+    var slider = document.getElementById(sliderId);
+    var num = document.getElementById(numId);
+    if (slider) {
+      slider.addEventListener("input", function () {
+        var n = readNum(slider);
+        if (n === null || !ok(n)) return;
+        clearError();
+        assign(n);
+        render();
+      });
+    }
+    if (num) {
+      num.addEventListener("input", function () {
+        var n = readNum(num);
+        if (n === null || !ok(n)) {
+          showError(message);
+          return;
+        }
+        clearError();
+        assign(n);
+        render();
+      });
+    }
+  }
+
+  bindRange("z-slider", "z-num", 4, H.zOk, function (n) { state.mode = "z"; state.z = n; }, "Redshift from 0 to 20.");
+  bindRange("v-slider", "v-num", 2, H.vOk, function (n) { state.mode = "v"; state.v = n; }, "Radial velocity from −1,000 to 5,000 km/s.");
+  bindRange("t-slider", "t-num", 2, H.tOk, function (n) { state.tPeak = n; }, "Peak brightness temperature from 1 to 150 K.");
+  bindRange("w-slider", "w-num", 2, H.wOk, function (n) { state.fwhm = n; }, "Line width from 1 to 80 km/s.");
+
+  var modeZ = document.getElementById("mode-z");
+  var modeV = document.getElementById("mode-v");
+  if (modeZ) modeZ.addEventListener("click", function () { state.mode = "z"; clearError(); render(); });
+  if (modeV) modeV.addEventListener("click", function () { state.mode = "v"; clearError(); render(); });
+  document.querySelectorAll("[data-preset]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var preset = H.presetById(btn.getAttribute("data-preset"));
+      if (!preset) return;
+      state.mode = preset.mode;
+      state.z = preset.z;
+      state.v = preset.v;
+      clearError();
+      render();
+    });
+  });
+
+  if (canvas) {
+    canvas.addEventListener("click", function (ev) {
+      if (!chartGeom) return;
+      var rect = canvas.getBoundingClientRect();
+      var x = ev.clientX - rect.left;
+      var u = (x - chartGeom.padL) / chartGeom.plotW;
+      if (u < 0 || u > 1) return;
+      state.mode = "z";
+      state.z = chartGeom.z0 + u * (chartGeom.z1 - chartGeom.z0);
+      clearError();
+      render();
+    });
+    canvas.addEventListener("keydown", function (ev) {
+      if (ev.key === "ArrowLeft" || ev.key === "ArrowRight") {
+        ev.preventDefault();
+        var dir = ev.key === "ArrowRight" ? 1 : -1;
+        if (state.mode === "v") {
+          var nv = state.v + dir * 10;
+          if (nv < H.V_MIN) nv = H.V_MIN;
+          if (nv > H.V_MAX) nv = H.V_MAX;
+          state.v = nv;
+        } else {
+          var nz = state.z + dir * 0.05;
+          if (nz < H.Z_MIN) nz = H.Z_MIN;
+          if (nz > H.Z_MAX) nz = H.Z_MAX;
+          state.z = nz;
+        }
+        clearError();
+        render();
+      } else if (ev.key === "ArrowUp" || ev.key === "ArrowDown") {
+        ev.preventDefault();
+        var step = ev.key === "ArrowUp" ? 10 : -10;
+        var vv = state.v + step;
+        if (vv < H.V_MIN) vv = H.V_MIN;
+        if (vv > H.V_MAX) vv = H.V_MAX;
+        state.mode = "v";
+        state.v = vv;
+        clearError();
+        render();
+      }
+    });
+  }
+
+  var helpBtn = document.getElementById("hi-help");
+  var helpDialog = document.getElementById("hi-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    var back = previously;
+    previously = null;
+    if (back && typeof back.focus === "function") back.focus();
+    else if (helpBtn) helpBtn.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && !(ev.target && (ev.target.tagName === "INPUT" || ev.target.tagName === "TEXTAREA"))) {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var nodes = focusables();
+      if (!nodes.length) { ev.preventDefault(); return; }
+      var first = nodes[0];
+      var last = nodes[nodes.length - 1];
+      var active = document.activeElement;
+      if (ev.shiftKey && (active === first || !helpDialog.contains(active))) {
+        ev.preventDefault();
+        last.focus();
+      } else if (!ev.shiftKey && active === last) {
+        ev.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
+  window.addEventListener("resize", render);
+  if (window.MutationObserver) {
+    new MutationObserver(function () { render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-font"] });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
