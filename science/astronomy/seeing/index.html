@@ -1,0 +1,962 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Astronomical seeing and adaptive optics — Steven Philley</title>
+<meta name="description" content="Interactive seeing desk. Fried’s r0 scales as λ^(6/5) and (sec z)^(−3/5). Seeing FWHM is 0.98 λ/r0: 10 cm at 500 nm is 1.011″. At K, 2.2 µm, that r0 is 59.18 cm and the seeing is 0.752″. Rayleigh’s 1.22 λ/D is 0.692″ for 20 cm at 550 nm and 0.0173″ for 8 m. Seeing-limited when D &gt; r0. Not a forecast.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/seeing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Astronomical seeing and adaptive optics">
+<meta property="og:description" content="r0 of 10 cm at 500 nm is a seeing FWHM of 1.011″. At K that r0 is 59.18 cm and the seeing is 0.752″. A 20 cm aperture at 550 nm diffracts at 0.692″. An 8 m aperture diffracts at 0.0173″. Not a forecast.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/seeing/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Astronomical seeing and adaptive optics">
+<meta name="twitter:description" content="10 cm at 500 nm is 1.011″. K band, same air, is r0 = 59.18 cm and 0.752″. 20 cm at 550 nm diffracts at 0.692″. 8 m diffracts at 0.0173″. Not a forecast.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.prose a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram .hint.strip-label{margin:14px 0 6px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.airy{border-top-color:var(--ink,#e8e6e1)}
+.swatch.diff{border-top-color:var(--accent-2,#7eb6e8)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:8.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible,.slider-row select:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"],.slider-row select{min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%}
+.slider-row select{min-width:5.5rem}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.prose{margin-top:8px}
+.prose p{margin:0 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.prose strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sundial/">Sundial</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/parker-spiral/" >Parker spiral</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/seeing/" aria-current="page">Seeing</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/21cm/">21 cm</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/cmb/">CMB</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+</nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Seeing</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The air</p>
+  <h1>Seeing and<br>adaptive optics</h1>
+  <p class="lede">A star is a point. The air between it and the telescope is not uniform, so a long exposure is a blur. The usual size of a still-coherent patch of that wavefront is Fried’s parameter, <strong>r0</strong>. This desk takes r0 at <strong>500 nm</strong> and the zenith, then scales it as <strong>λ<sup>6/5</sup></strong> and as <strong>(sec z)<sup>−3/5</sup></strong>. The long-exposure seeing disk has FWHM <strong>0.98 λ / r0</strong>, so the blur shrinks only as <strong>λ<sup>−1/5</sup></strong>. <a href="https://doi.org/10.3390/atmos14111694" rel="noopener" target="_blank">Tokovinin (2023)</a> prints 0.981 for an infinite outer scale. This page uses 0.98 and does not substitute 0.981. An r0 of <strong>10 cm</strong> at 500 nm and the zenith is a seeing of <strong>1.011″</strong>. The same air at K, <strong>2.2 µm</strong>, has r0 = <strong>59.18 cm</strong> and a seeing of <strong>0.752″</strong>.</p>
+  <p class="lede">Diffraction pulls the other way. Rayleigh’s criterion is <strong>1.22 λ / D</strong>, the same conventional factor as the <a href="/science/astronomy/telescope/">telescope</a> desk. A <strong>20 cm</strong> aperture at 550 nm is <strong>0.692″</strong>. An <strong>8 m</strong> aperture at 550 nm is <strong>0.0173″</strong>. The wavefront is called seeing-limited when <strong>D &gt; r0</strong>, because more than one coherence cell fits across the mirror. The angle this page calls delivered is the larger of the seeing FWHM and the Rayleigh angle. Those two angles meet at D = (1.22/0.98) r0, a little past D = r0. The mean lift of the whole image is the <a href="/science/astronomy/refraction/">refraction</a> desk. The dimming along the path is <a href="/science/astronomy/airmass/">airmass</a>. Skyglow, which hides faint stars without blurring them this way, is <a href="/science/light-pollution/">light pollution</a>.</p>
+  <p class="note-schematic" id="limits-note">Educational calculator. A classroom schematic, not a forecast, not a site survey, and not an adaptive-optics design. The Fried parameter is typed at 500 nm and the zenith, then scaled as λ^(6/5) and (sec z)^(−3/5). Seeing is 0.98 λ/r0. Tokovinin’s formal factor is 0.981 and is not substituted. Rayleigh’s criterion is 1.22 λ/D. The star drawing is an Airy core beside a Gaussian of that seeing FWHM, on one angular scale. It is not a turbulence simulation. Site buttons are illustrative r0 values. Published medians are named beside them and are not loaded. Zenith angle stops at 70°. The plane-parallel sec(z) is the shortcut, not the Kasten and Young air mass.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · r0, wavelength, aperture</span>
+    <button type="button" class="help-q" id="see-help" aria-haspopup="dialog" aria-controls="see-help-dialog" aria-expanded="false" aria-label="How this seeing desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="star-hint">Schematic star · Airy core and a Gaussian seeing disk · same scale</p>
+      <canvas id="star" width="880" height="380" tabindex="0" role="img" aria-label="Schematic star image. Left, an Airy diffraction core. Right, a Gaussian disk with the seeing FWHM. Both panels use the same arcseconds per pixel."></canvas>
+      <ul class="legend">
+        <li><span class="swatch airy" aria-hidden="true"></span> Diffraction · Airy</li>
+        <li><span class="swatch" aria-hidden="true"></span> Seeing · Gaussian FWHM</li>
+      </ul>
+      <p class="hint strip-label" id="chart-hint">Seeing FWHM and Rayleigh’s 1.22 λ/D against wavelength · log–log</p>
+      <canvas id="chart" width="880" height="320" tabindex="0" role="img" aria-label="Log-log chart of seeing FWHM and the diffraction limit against wavelength, from 400 nm to 2.5 µm."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> Seeing FWHM · 0.98 λ/r0</li>
+        <li><span class="swatch diff" aria-hidden="true"></span> Rayleigh · 1.22 λ/D</li>
+      </ul>
+      <p class="scale-note" id="scale-note">The drawing is normalized. It is not a flux. Click the chart, or press Left and Right, to set the wavelength.</p>
+
+      <div class="controls">
+        <p class="pick-label">Wavelength · nominal centers, not a filter curve</p>
+        <div class="presets" role="group" aria-label="Wavelength presets">
+          <button type="button" data-band="ref">500 nm</button>
+          <button type="button" data-band="V" aria-pressed="true">V 550 nm</button>
+          <button type="button" data-band="R">R 640 nm</button>
+          <button type="button" data-band="I">I 800 nm</button>
+          <button type="button" data-band="J">J 1.25 µm</button>
+          <button type="button" data-band="H">H 1.65 µm</button>
+          <button type="button" data-band="K">K 2.2 µm</button>
+        </div>
+        <p class="pick-label">Site · illustrative r0 at 500 nm, zenith</p>
+        <div class="presets" role="group" aria-label="Illustrative site presets">
+          <button type="button" data-site="suburban">Suburban · 5 cm</button>
+          <button type="button" data-site="mountain" aria-pressed="true">Good mountain · 10 cm</button>
+          <button type="button" data-site="excellent">Excellent · 15 cm</button>
+        </div>
+        <p class="pick-label">Aperture</p>
+        <div class="presets" role="group" aria-label="Telescope presets">
+          <button type="button" data-scope="bino">7×50</button>
+          <button type="button" data-scope="amateur" aria-pressed="true">8-inch · 20 cm</button>
+          <button type="button" data-scope="one">1 m</button>
+          <button type="button" data-scope="eight">8 m</button>
+          <button type="button" data-scope="elt">39 m ELT</button>
+        </div>
+
+        <div class="slider-row">
+          <label for="r0-slider">r0</label>
+          <input id="r0-slider" type="range" min="1" max="40" step="0.1" value="10" aria-valuemin="1" aria-valuemax="40" aria-valuenow="10">
+          <input id="r0-num" type="number" min="1" max="40" step="0.1" value="10" inputmode="decimal" aria-label="Fried parameter at 500 nm, centimetres">
+          <span class="pick-label">cm at 500 nm</span>
+        </div>
+        <div class="slider-row">
+          <label for="z-slider">Zenith</label>
+          <input id="z-slider" type="range" min="0" max="70" step="0.5" value="0" aria-valuemin="0" aria-valuemax="70" aria-valuenow="0">
+          <input id="z-num" type="number" min="0" max="70" step="0.5" value="0" inputmode="decimal" aria-label="Zenith angle, degrees">
+          <span class="pick-label">degrees</span>
+        </div>
+        <div class="slider-row">
+          <label for="x-num">Airmass</label>
+          <input id="x-num" type="number" min="1" max="2.924" step="0.001" value="1" inputmode="decimal" aria-label="Plane-parallel airmass, secant of the zenith angle">
+          <span class="pick-label">sec z</span>
+        </div>
+        <div class="slider-row">
+          <label for="lam-slider">λ</label>
+          <input id="lam-slider" type="range" min="400" max="2500" step="1" value="550" aria-valuemin="400" aria-valuemax="2500" aria-valuenow="550">
+          <input id="lam-num" type="number" min="400" max="2500" step="1" value="550" inputmode="decimal" aria-label="Wavelength, nanometres">
+          <span class="pick-label">nm</span>
+        </div>
+        <div class="slider-row">
+          <label for="d-slider">D</label>
+          <input id="d-slider" type="range" min="0" max="1000" step="1" value="500" aria-valuemin="0" aria-valuemax="1000">
+          <input id="d-num" type="number" step="any" value="20" inputmode="decimal" aria-label="Aperture">
+          <select id="d-unit" aria-label="Aperture unit">
+            <option value="cm" selected>cm</option>
+            <option value="m">m</option>
+          </select>
+        </div>
+        <div class="slider-row">
+          <label for="v-slider">Wind</label>
+          <input id="v-slider" type="range" min="1" max="40" step="0.5" value="10" aria-valuemin="1" aria-valuemax="40" aria-valuenow="10">
+          <input id="v-num" type="number" min="1" max="40" step="0.5" value="10" inputmode="decimal" aria-label="Effective wind speed, metres per second">
+          <span class="pick-label">m/s</span>
+        </div>
+        <div class="slider-row">
+          <label for="h-slider">Height</label>
+          <input id="h-slider" type="range" min="0.2" max="20" step="0.1" value="5" aria-valuemin="0.2" aria-valuemax="20" aria-valuenow="5">
+          <input id="h-num" type="number" min="0.2" max="20" step="0.1" value="5" inputmode="decimal" aria-label="Effective turbulence height, kilometres">
+          <span class="pick-label">km</span>
+        </div>
+        <p class="field-err" id="field-err" hidden>r0 is 1 to 40 cm. Zenith angle is 0° to 70°. Wavelength is 400 to 2500 nm. Aperture is 1 cm to 50 m. Wind is 1 to 40 m/s. Height is 0.2 to 20 km.</p>
+      </div>
+    </div>
+
+    <aside class="detail">
+      <p class="tier" id="d-tier">Wavefront</p>
+      <h2 id="d-name">Seeing-limited</h2>
+      <p class="range" id="d-range">Delivered angle</p>
+      <ul class="stats">
+        <li><span class="k">r0 at 500 nm</span><span class="v" id="s-r0">10.00 cm</span></li>
+        <li><span class="k">Airmass sec z</span><span class="v" id="s-x">1.000</span></li>
+        <li><span class="k">r0 here</span><span class="v" id="s-r0here">—</span></li>
+        <li><span class="k">Seeing FWHM</span><span class="v" id="s-see">—</span></li>
+        <li><span class="k">Rayleigh 1.22 λ/D</span><span class="v" id="s-ray">—</span></li>
+        <li><span class="k">D / r0</span><span class="v" id="s-ratio">—</span></li>
+        <li><span class="k">Delivered</span><span class="v" id="s-eff">—</span></li>
+        <li><span class="k">τ0</span><span class="v" id="s-tau">—</span></li>
+        <li><span class="k">θ0</span><span class="v" id="s-theta">—</span></li>
+      </ul>
+      <p class="why" id="d-why"></p>
+    </aside>
+  </div>
+
+  <p class="band">What the blur is</p>
+  <div class="prose">
+    <p><strong>Twinkling is not the same thing as seeing.</strong> Twinkling, or scintillation, is the star’s brightness flickering. A small aperture — the eye, or a 50 mm binocular — is covered by one or two turbulent cells, so the intensity is not averaged and the star flashes. A large mirror averages many cells. The flashes die down, and a long exposure records a blurred disk instead. That width is the seeing. The eye notices the flicker. A camera notices the blur.</p>
+    <p><strong>Why the infrared is kinder to adaptive optics.</strong> r0 grows as λ to the 6/5. The 10 cm cell at 500 nm is 59.18 cm at 2.2 µm, for the same air at the zenith. A deformable mirror then needs fewer actuators across the pupil. The coherence time τ0 = 0.314 r0 / v grows with r0, so the same wind allows a slower correction. The isoplanatic angle grows with r0 too, so the corrected patch of sky is wider. The seeing disk itself only shrinks as λ to the −1/5, from 1.011″ to 0.752″ in that example. Diffraction grows in proportion to λ, so a large mirror’s diffraction limit and the seeing disk move toward each other. That is why a telescope that is hopelessly seeing-limited in the visible can be corrected, and can be closer to diffraction-limited, in the infrared.</p>
+    <p><strong>Why the loop has to be fast, and the field small.</strong> At r0 = 10 cm, a wind of 10 m/s, and 500 nm, τ0 is 3.14 ms. The mirror has to keep up with that. θ0 = 0.314 r0 / h̄ at the zenith. With an effective height of 5 km that angle is 1.295″. A guide star a few arcseconds away is looking through different high-altitude air. Off the zenith the same definition picks up a cos z, because the ray crosses the high layer on a slant, and r0 itself has already shrunk as (sec z)<sup>−3/5</sup>. The height here is one number you choose. Real turbulence is a stack of layers. High layers set θ0. A ground layer barely does.</p>
+    <p><strong>Laser guide stars,</strong> in outline. A natural star bright enough to measure the wavefront is uncommon inside a patch only a few arcseconds wide. A laser can make a beacon in the sky. A sodium laser excites sodium high in the mesosphere, so the beacon sits far above a Rayleigh beacon scattered from the lower air and is a little closer to a star at infinity. The light goes up and comes down the same path, so the absolute tilt cancels, and tip and tilt still have to come from a real star. The beacon is also a cone rather than a cylinder, and it does not sample every bit of high air a star at infinity would cross. This page names those limits. It does not design a laser, a beacon altitude, or a control loop.</p>
+    <p><strong>The site buttons are round illustrations.</strong> Suburban is 5 cm, which this formula turns into 2.021″ at 500 nm and the zenith. Backyard seeing is often described as a couple of arcseconds, sometimes several. Good mountain is 10 cm, the round “good site” figure in <a href="https://vikdhillon.staff.shef.ac.uk/teaching/phy217/telescopes/phy217_tel_adaptive.html" rel="noopener" target="_blank">Dhillon’s teaching note</a>, and it is 1.011″. Excellent is 15 cm, which is 0.674″. An ESO VLTI interface document lists a Paranal DIMM 50% quantile of 0.73″ at 500 nm at the zenith. Lyman, Cherubini, and Businger (2020) list a Maunakea DIMM median of 0.65″ for the nightly averages in their Table 1. The 15 cm button sits near that neighbourhood. It is not either statistic, and it is not a measurement from either mountain.</p>
+  </div>
+
+  <p class="band">Terms</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Fried parameter</dt><dd>r0 is the aperture that would match the seeing-limited resolution of a perfect telescope, in Fried’s definition. Typed here at 500 nm and the zenith. It grows as λ<sup>6/5</sup> and shrinks as (sec z)<sup>3/5</sup> in the denominator. At D = r0 the residual phase variance is about a radian squared. A high-Strehl image wants the aperture somewhat smaller than r0. “D ≤ r0” on this page means one coherence cell, not a perfect Airy disk.</dd></div>
+    <div class="gloss"><dt>Seeing FWHM</dt><dd>0.98 λ/r0, in radians, then converted to arcseconds. Tokovinin’s equation (6) is 0.981 λ/r0 for an infinite outer scale. A finite outer scale makes the core a bit sharper. This page does not apply that correction, and it does not substitute 0.981.</dd></div>
+    <div class="gloss"><dt>Rayleigh</dt><dd>1.22 λ/D, the conventional rounding of (first positive zero of J<sub>1</sub>) / π. It is the separation at which one star’s peak sits on the other’s first dark ring. It is not the FWHM of the Airy core. The telescope desk uses the same 1.22, and the same 0.692″ for 200 mm at 550 nm.</dd></div>
+    <div class="gloss"><dt>Delivered angle</dt><dd>The larger of the seeing FWHM and the Rayleigh angle. That is the classroom answer to “what limits this exposure.” The wavefront regime is a separate test: seeing-limited when D &gt; r0. Between r0 and 1.245 r0 the wavefront is already seeing-limited and the Rayleigh angle is still the larger number, because 1.22 and 0.98 are different coefficients.</dd></div>
+    <div class="gloss"><dt>Coherence time</dt><dd>τ0 = 0.314 r0 / v, with r0 at the wavelength and zenith angle on the sliders and v an effective wind speed. Dhillon’s teaching pair, 10 cm and 10 m/s at 500 nm, is 3.14 ms. It is not a forecast of the wind.</dd></div>
+    <div class="gloss gloss-wide"><dt>Isoplanatic angle</dt><dd>At the zenith, θ0 = 0.314 r0 / h̄. Off the zenith, θ0 = 0.314 cos(z) r0 / h̄, and r0 already includes (sec z)<sup>−3/5</sup>. Quirrenbach’s example, r0 = 20 cm and an effective height of 7 km, is 1.850″ with this factor. That chapter rounds it to 1.8″. 1.8 is not substituted. h̄ weights the high turbulence. Dome seeing and a ground layer barely move it.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://doi.org/10.1364/JOSA.56.001372" rel="noopener" target="_blank">Fried, D. L., Journal of the Optical Society of America 56, 1372–1379 (1966)</a> — Optical resolution through a randomly inhomogeneous medium. r0 is defined so that a long-exposure image through the atmosphere has the resolution of a diffraction-limited aperture of diameter r0. The wavelength and zenith scalings used here follow from r0<sup>−5/3</sup> ∝ k<sup>2</sup> sec(z) ∫ C<sub>n</sub><sup>2</sup> dh, with k = 2π/λ.</li>
+      <li><a href="https://doi.org/10.3390/atmos14111694" rel="noopener" target="_blank">Tokovinin, A., Atmosphere 14, 1694 (2023)</a> — The elusive nature of seeing. Equation (6): the FWHM of the atmospheric PSF is ε = 0.981 (λ/r0) for an infinite outer scale. r0 ∝ λ<sup>6/5</sup>, so ε ∝ λ<sup>−1/5</sup>, and at zenith distance γ the seeing scales as (sec γ)<sup>3/5</sup>. This desk’s factor is 0.98. 0.981 is not substituted. A finite outer scale is discussed there and is not applied here.</li>
+      <li><a href="https://www.ucolick.org/~max/289/Assigned%20Readings/Quirrenbach.chapter.pdf" rel="noopener" target="_blank">Quirrenbach, A., The effects of atmospheric turbulence on astronomical observations</a> — course chapter. r0 ∝ λ<sup>6/5</sup> and r0 ∝ (sec z)<sup>−3/5</sup>. The isoplanatic angle is θ0 = 0.314 cos(z) r0 / H. The printed example, r0 = 20 cm and H = 7 km, is 1.8″. This page computes 1.850″ and does not substitute 1.8. The chapter’s seeing width ≈ 1.2 λ/r0 is a coarser factor and is not used.</li>
+      <li><a href="https://vikdhillon.staff.shef.ac.uk/teaching/phy217/telescopes/phy217_tel_adaptive.html" rel="noopener" target="_blank">Vik Dhillon, PHY217 — adaptive optics</a> — a teaching note. A good site is described as typically r0 = 10 cm at 500 nm. The more accurate coherence time is given as t0 ~ 0.314 r0 / v, and the isoplanatic angle as θ0 ~ 0.314 r0 / h. The 10 cm mountain button is that round figure. “Typically” is the note’s word. It is not a median for a named observatory.</li>
+      <li><a href="https://www.eso.org/sci/facilities/paranal/instruments/vlti-visitor/doc/ESO-045686%20Interface%20Control%20Document%20between%20VLTI%20and%20its%20Instruments_most_recent.pdf" rel="noopener" target="_blank">ESO-045686, Interface Control Document between VLTI and its instruments</a> — Table 7, seeing measured by the DIMM at 500 nm at zenith. The 50% quantile in that table is 0.73 arcsec. The 15 cm button is not that quantile.</li>
+      <li><a href="https://academic.oup.com/mnras/article/496/4/4734/5865137" rel="noopener" target="_blank">Lyman, R., Cherubini, T., and Businger, S., Monthly Notices of the Royal Astronomical Society 496, 4734 (2020)</a> — Forecasting seeing for the Maunakea Observatories. Table 1 lists a DIMM median of 0.65 arcsec for the nightly averages. The 15 cm button is not that median.</li>
+      <li><a href="http://hyperphysics.phy-astr.gsu.edu/hbase/phyopt/raylei.html" rel="noopener" target="_blank">HyperPhysics — Rayleigh criterion</a> — for a circular aperture, θ = 1.22 λ/D. The same statement as the telescope desk. The drawn Airy pattern uses J<sub>1</sub>. The reported angle uses 1.22.</li>
+      <li><a href="/science/astronomy/telescope/">Telescope desk</a> — Rayleigh 0.692″ for a 200 mm aperture at 550 nm is the same arithmetic as the 20 cm button here. Eight inches is 20.32 cm. The button uses 20 cm and does not substitute 20.32.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom seeing. Not a forecast. r0 = 10 cm at 500 nm and the zenith is a seeing FWHM of 1.011″ by 0.98 λ/r0. At 2.2 µm that r0 is 59.18 cm and the seeing is 0.752″. Rayleigh’s 1.22 λ/D is 0.692″ for 20 cm at 550 nm and 0.0173″ for 8 m at 550 nm. τ0 at 10 cm, 10 m/s, and 500 nm is 3.14 ms. θ0 at 10 cm and 5 km, zenith, is 1.295″. The 5 cm, 10 cm, and 15 cm buttons are illustrative. The 7×50, 20 cm, 1 m, 8 m, and 39 m apertures are class sizes. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/telescope/"><p class="n">The aperture</p><h3>Telescope</h3><p>Focal ratio, magnification, and the same Rayleigh 1.22 λ/D. A 200 mm classroom telescope at 550 nm is 0.692″, the 20 cm button on this page.</p></a>
+    <a href="/science/astronomy/airmass/"><p class="n">The path</p><h3>Airmass</h3><p>sec(z) beside Kasten and Young. This desk uses the plane-parallel factor only, and only out to 70°. The dimming is over there.</p></a>
+    <a href="/science/astronomy/refraction/"><p class="n">The lift</p><h3>Refraction</h3><p>The mean bend that raises a star. Seeing is the turbulent leftover after that mean bend is taken out. Bennett at the horizon is 34.5′. This page does not compute it.</p></a>
+    <a href="/science/light-pollution/"><p class="n">The glow</p><h3>Light pollution</h3><p>A bright sky hides faint stars. It does not set r0. Seeing and skyglow are different ways to lose the night.</p></a>
+    <a href="/science/astronomy/angular-size/"><p class="n">The angle</p><h3>Angular size</h3><p>How wide something is, in arcseconds. The seeing disk is an angle of that kind, imposed by the air.</p></a>
+    <a href="/science/astronomy/blackbody/"><p class="n">The wavelength</p><h3>Blackbody</h3><p>Where a thermal spectrum puts its light. r0 and the Rayleigh angle both move with the wavelength you choose here.</p></a>
+    <a href="/science/atmosphere/"><p class="n">The layers</p><h3>Atmosphere</h3><p>The air this blur travels through. The effective height on the slider is not a sounding of those layers.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>The sky the aperture is aimed at. Still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="see-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="see-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="see-help-title">Seeing desk</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom calculator for Fried’s r0, the seeing disk, and Rayleigh’s criterion. Not a forecast and not an adaptive-optics design.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">r0</th><td>1 to 40 cm, at 500 nm and the zenith. The page opens at 10 cm. The value at the chosen wavelength and zenith angle is r0 times (λ/500 nm)<sup>6/5</sup> times (sec z)<sup>−3/5</sup>.</td></tr>
+        <tr><th scope="row">Zenith and airmass</th><td>Zenith angle 0° to 70°. Airmass is sec(z), the plane-parallel shortcut. Typing an airmass sets the zenith angle. The horizon is the airmass desk. This page stops at 70°.</td></tr>
+        <tr><th scope="row">Wavelength</th><td>400 to 2500 nm. V is 550 nm. R 640 nm and I 800 nm are nominal. J, H, and K are 1.25, 1.65, and 2.2 µm. 500 nm is the reference the r0 slider is quoted at. Not a filter curve.</td></tr>
+        <tr><th scope="row">Sites</th><td>Suburban 5 cm, good mountain 10 cm, excellent 15 cm. Illustrative. The 10 cm figure is Dhillon’s teaching “typically.” The 15 cm button is not the Paranal 0.73″ quantile and not the Maunakea 0.65″ median.</td></tr>
+        <tr><th scope="row">Aperture</th><td>1 cm to 50 m, in cm or m. 7×50 is the 50 mm objective. The 7× is not used. 8-inch is the 20 cm button. 8 m and 39 m are class sizes.</td></tr>
+        <tr><th scope="row">Wind and height</th><td>Wind 1 to 40 m/s, default 10. Height 0.2 to 20 km, default 5. τ0 = 0.314 r0/v. θ0 = 0.314 cos(z) r0/h̄. Both use the scaled r0.</td></tr>
+        <tr><th scope="row">Star</th><td>Left, an Airy core. Right, a Gaussian of the seeing FWHM. One arcsecond scale for both. Normalized brightness, not a flux. A schematic, not a turbulence simulation.</td></tr>
+        <tr><th scope="row">Chart</th><td>Log wavelength, log angle, from 400 nm to 2.5 µm. Seeing falls slowly. Diffraction rises in proportion to λ. Click, or Left and Right, to move the wavelength.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/seeing/seeing.js"></script>
+<script>
+(function () {
+  "use strict";
+  var S = window.Seeing;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!S) return;
+
+  var open = S.opening();
+  var state = {
+    r0Cm: open.r0Cm,
+    zenithDeg: open.zenithDeg,
+    lambdaNm: open.lambdaNm,
+    dCm: open.dCm,
+    windMs: open.windMs,
+    heightM: open.heightM,
+    dUnit: "cm"
+  };
+  var D_MIN = S.D_CM_MIN;
+  var D_MAX = S.D_CM_MAX;
+  var D_STEPS = 1000;
+  var err = document.getElementById("field-err");
+  var star = document.getElementById("star");
+  var chart = document.getElementById("chart");
+  var chartGeom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(el) {
+    if (!el) return null;
+    var raw = String(el.value).trim().replace(",", ".");
+    if (raw === "" || raw === "-" || raw === "." || raw === "-.") return null;
+    var n = Number(raw);
+    return isFinite(n) ? n : null;
+  }
+  function logPos(cm) {
+    var v = Math.min(D_MAX, Math.max(D_MIN, cm));
+    var t = Math.log(v / D_MIN) / Math.log(D_MAX / D_MIN);
+    return Math.round(Math.min(1, Math.max(0, t)) * D_STEPS);
+  }
+  function logVal(pos) {
+    var t = Number(pos) / D_STEPS;
+    return D_MIN * Math.pow(D_MAX / D_MIN, t);
+  }
+  function showError(on) {
+    if (!err) return;
+    err.hidden = !on;
+  }
+  function press(sel, attr, id) {
+    var nodes = document.querySelectorAll(sel);
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      nodes[i].setAttribute("aria-pressed", nodes[i].getAttribute(attr) === id ? "true" : "false");
+    }
+  }
+  function syncPresets() {
+    var band = S.matchedBand(state.lambdaNm);
+    var site = S.matchedSite(state.r0Cm);
+    var scope = S.matchedTelescope(state.dCm);
+    press("[data-band]", "data-band", band ? band.id : "");
+    press("[data-site]", "data-site", site ? site.id : "");
+    press("[data-scope]", "data-scope", scope ? scope.id : "");
+  }
+  function writeControls() {
+    var r0s = document.getElementById("r0-slider");
+    var r0n = document.getElementById("r0-num");
+    var zs = document.getElementById("z-slider");
+    var zn = document.getElementById("z-num");
+    var xn = document.getElementById("x-num");
+    var ls = document.getElementById("lam-slider");
+    var ln = document.getElementById("lam-num");
+    var ds = document.getElementById("d-slider");
+    var dn = document.getElementById("d-num");
+    var vs = document.getElementById("v-slider");
+    var vn = document.getElementById("v-num");
+    var hs = document.getElementById("h-slider");
+    var hn = document.getElementById("h-num");
+    if (r0s) { r0s.value = String(state.r0Cm); r0s.setAttribute("aria-valuenow", String(state.r0Cm)); }
+    if (r0n && document.activeElement !== r0n) r0n.value = String(Math.round(state.r0Cm * 10) / 10);
+    if (zs) { zs.value = String(state.zenithDeg); zs.setAttribute("aria-valuenow", String(state.zenithDeg)); }
+    if (zn && document.activeElement !== zn) zn.value = String(Math.round(state.zenithDeg * 10) / 10);
+    if (xn && document.activeElement !== xn) xn.value = S.airmassPlane(state.zenithDeg).toFixed(3);
+    if (ls) { ls.value = String(state.lambdaNm); ls.setAttribute("aria-valuenow", String(Math.round(state.lambdaNm))); }
+    if (ln && document.activeElement !== ln) ln.value = String(Math.round(state.lambdaNm));
+    if (ds) ds.value = String(logPos(state.dCm));
+    if (dn && document.activeElement !== dn) {
+      dn.value = state.dUnit === "m"
+        ? String(Math.round(state.dCm) / 100)
+        : String(Math.round(state.dCm * 10) / 10);
+    }
+    if (vs) { vs.value = String(state.windMs); vs.setAttribute("aria-valuenow", String(state.windMs)); }
+    if (vn && document.activeElement !== vn) vn.value = String(state.windMs);
+    var km = state.heightM / 1000;
+    if (hs) { hs.value = String(km); hs.setAttribute("aria-valuenow", String(km)); }
+    if (hn && document.activeElement !== hn) hn.value = String(Math.round(km * 10) / 10);
+    syncPresets();
+  }
+
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.fillStyle = opt.color || "#9b9a96";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "alphabetic";
+    ctx.fillText(str, x, y);
+  }
+
+  function drawStar(row) {
+    if (!star) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = star.clientWidth || 640;
+    var cssH = Math.max(280, Math.round(cssW * 0.46));
+    star.style.height = cssH + "px";
+    star.width = Math.round(cssW * dpr);
+    star.height = Math.round(cssH * dpr);
+    var ctx = star.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    var ink = cssVar("--ink", "#e8e6e1");
+    var accent = cssVar("--accent", "#c8b48a");
+    var muted = cssVar("--muted", "#63666e");
+    var gap = 18;
+    var top = 22;
+    var bottom = 36;
+    var panelW = Math.floor((cssW - gap) / 2);
+    var panelH = cssH - top - bottom;
+    var half = row.halfFieldArcsec;
+    var labels = ["Diffraction · Airy", "Seeing · Gaussian"];
+    var i;
+    for (i = 0; i < 2; i++) {
+      var x0 = i * (panelW + gap);
+      paintText(ctx, labels[i], x0 + 8, 14, { size: 10, color: muted });
+      var off = document.createElement("canvas");
+      off.width = Math.max(2, panelW);
+      off.height = Math.max(2, panelH);
+      var octx = off.getContext("2d");
+      var img = octx.createImageData(off.width, off.height);
+      var data = img.data;
+      var cx = off.width / 2;
+      var cy = off.height / 2;
+      var radius = Math.min(cx, cy) * 0.92;
+      var px, py, dx, dy, theta, inten, g, p;
+      var rayRad = row.rayleighArcsec / S.ARCSEC_PER_RAD;
+      for (py = 0; py < off.height; py++) {
+        for (px = 0; px < off.width; px++) {
+          dx = px + 0.5 - cx;
+          dy = py + 0.5 - cy;
+          var rr = Math.sqrt(dx * dx + dy * dy);
+          theta = (rr / radius) * half / S.ARCSEC_PER_RAD;
+          if (i === 0) {
+            inten = theta > 8 * rayRad ? 0 : S.airyIntensity(theta, row.lambdaNm, row.dCm);
+          } else {
+            inten = S.gaussianIntensity(theta, row.seeingArcsec);
+          }
+          g = Math.pow(Math.max(0, Math.min(1, inten)), 0.42);
+          p = (py * off.width + px) * 4;
+          if (i === 0) {
+            data[p] = Math.round(210 * g + 8);
+            data[p + 1] = Math.round(214 * g + 10);
+            data[p + 2] = Math.round(230 * g + 16);
+          } else {
+            data[p] = Math.round(214 * g + 12);
+            data[p + 1] = Math.round(176 * g + 8);
+            data[p + 2] = Math.round(120 * g + 6);
+          }
+          data[p + 3] = 255;
+        }
+      }
+      octx.putImageData(img, 0, 0);
+      ctx.drawImage(off, x0, top, panelW, panelH);
+      ctx.strokeStyle = "rgba(255,255,255,0.14)";
+      ctx.strokeRect(x0 + 0.5, top + 0.5, panelW - 1, panelH - 1);
+    }
+    var barArc = 0.001;
+    var nice = [0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20];
+    for (i = 0; i < nice.length; i++) if (nice[i] <= half * 0.85) barArc = nice[i];
+    var barPx = (barArc / half) * (Math.min(panelW, panelH) / 2 * 0.92);
+    var by = cssH - 16;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(8, by);
+    ctx.lineTo(8 + barPx, by);
+    ctx.stroke();
+    var barLabel = S.formatArcsec(barArc).replace(/(\.\d*?)0+″/, "$1″").replace(/\.″/, "″");
+    paintText(ctx, barLabel, 12 + barPx, by + 4, { size: 10, color: ink, base: "middle" });
+    paintText(ctx, "±" + S.formatArcsec(half) + " across each half", cssW - 8, by + 4, { size: 10, color: muted, align: "right", base: "middle" });
+    star.setAttribute("aria-label",
+      "Schematic star. Left, Airy core, Rayleigh " + S.formatArcsec(row.rayleighArcsec) +
+      ". Right, Gaussian seeing disk, FWHM " + S.formatArcsec(row.seeingArcsec) +
+      ". Both panels span plus or minus " + S.formatArcsec(half) +
+      ". Not a turbulence simulation.");
+  }
+
+  function drawChart(row) {
+    if (!chart) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = chart.clientWidth || 640;
+    var cssH = Math.max(240, Math.round(cssW * 0.42));
+    chart.style.height = cssH + "px";
+    chart.width = Math.round(cssW * dpr);
+    chart.height = Math.round(cssH * dpr);
+    var ctx = chart.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var cool = cssVar("--accent-2", "#7eb6e8");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var padL = 52, padR = 14, padT = 16, padB = 32;
+    var plotW = cssW - padL - padR;
+    var plotH = cssH - padT - padB;
+    var lam0 = 400, lam1 = 2500;
+    var n = 80;
+    var see = new Array(n + 1);
+    var ray = new Array(n + 1);
+    var lams = new Array(n + 1);
+    var i, lam, r0m, ymin = Infinity, ymax = 0;
+    for (i = 0; i <= n; i++) {
+      lam = Math.exp(Math.log(lam0) + (i / n) * (Math.log(lam1) - Math.log(lam0)));
+      lams[i] = lam;
+      r0m = S.r0Meters(row.r0Cm, lam, row.zenithDeg);
+      see[i] = S.seeingArcsec(r0m, lam);
+      ray[i] = S.rayleighArcsec(row.dCm, lam);
+      ymin = Math.min(ymin, see[i], ray[i]);
+      ymax = Math.max(ymax, see[i], ray[i]);
+    }
+    var logMin = Math.log(ymin) - 0.15;
+    var logMax = Math.log(ymax) + 0.12;
+    function xOf(nm) {
+      return padL + (Math.log(nm) - Math.log(lam0)) / (Math.log(lam1) - Math.log(lam0)) * plotW;
+    }
+    function yOf(arc) {
+      return padT + (logMax - Math.log(arc)) / (logMax - logMin) * plotH;
+    }
+    chartGeom = { padL: padL, plotW: plotW, lam0: lam0, lam1: lam1 };
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW, plotH);
+    var decades = [0.001, 0.01, 0.1, 1, 10, 100];
+    ctx.fillStyle = muted;
+    for (i = 0; i < decades.length; i++) {
+      if (decades[i] <= ymin * 0.85 || decades[i] >= ymax * 1.2) continue;
+      var yy = yOf(decades[i]);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(padL, yy);
+      ctx.lineTo(padL + plotW, yy);
+      ctx.stroke();
+      paintText(ctx, S.formatArcsec(decades[i]), padL - 6, yy, { size: 10, color: muted, align: "right", base: "middle" });
+    }
+    var xt = [500, 1000, 2000];
+    var xl = ["500 nm", "1 µm", "2 µm"];
+    for (i = 0; i < xt.length; i++) {
+      var xx = xOf(xt[i]);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(xx, padT);
+      ctx.lineTo(xx, padT + plotH);
+      ctx.stroke();
+      paintText(ctx, xl[i], xx, padT + plotH + 16, { size: 10, color: muted, align: "center" });
+    }
+    function stroke(arr, color) {
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.75;
+      for (i = 0; i <= n; i++) {
+        var x = xOf(lams[i]);
+        var y = yOf(arr[i]);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+    stroke(see, accent);
+    stroke(ray, cool);
+    if (row.lambdaNm >= lam0 && row.lambdaNm <= lam1) {
+      var mx = xOf(row.lambdaNm);
+      ctx.strokeStyle = ink;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(mx, padT);
+      ctx.lineTo(mx, padT + plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    chart.setAttribute("aria-label",
+      "Log-log chart from 400 nanometres to 2.5 micrometres. At " +
+      Math.round(row.lambdaNm) + " nanometres, seeing is " + S.formatArcsec(row.seeingArcsec) +
+      " and Rayleigh’s criterion is " + S.formatArcsec(row.rayleighArcsec) + ".");
+  }
+
+  function render() {
+    var row = S.solve(state);
+    if (!row) {
+      showError(true);
+      return;
+    }
+    showError(false);
+    writeControls();
+    var name = row.seeingLimited ? "Seeing-limited" : "Diffraction-limited";
+    setText("d-name", name);
+    setText("d-tier", row.seeingLimited ? "D > r0" : "D ≤ r0");
+    setText("d-range", "Delivered " + S.formatArcsec(row.effectiveArcsec));
+    setText("s-r0", S.formatCm(row.r0Cm));
+    setText("s-x", S.formatAirmass(row.airmass));
+    setText("s-r0here", S.formatCm(row.r0HereCm));
+    setText("s-see", S.formatArcsec(row.seeingArcsec));
+    setText("s-ray", S.formatArcsec(row.rayleighArcsec));
+    setText("s-ratio", S.formatRatio(row.dOverR0));
+    setText("s-eff", S.formatArcsec(row.effectiveArcsec));
+    setText("s-tau", S.formatTime(row.tauSec));
+    setText("s-theta", S.formatArcsec(row.theta0Arcsec));
+    setText("d-why", S.why(row));
+    setText("star-hint", name + " · delivered " + S.formatArcsec(row.effectiveArcsec) + " · schematic");
+    drawStar(row);
+    drawChart(row);
+  }
+
+  function bindNum(id, assign, fromSlider) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", function () {
+      if (fromSlider) {
+        assign(fromSlider(el.value));
+        render();
+        return;
+      }
+      var n = parseNum(el);
+      if (n === null) { showError(true); return; }
+      assign(n);
+      render();
+    });
+  }
+
+  bindNum("r0-slider", function (n) { state.r0Cm = n; }, function (v) { return Number(v); });
+  bindNum("r0-num", function (n) { state.r0Cm = n; });
+  bindNum("z-slider", function (n) { state.zenithDeg = n; }, function (v) { return Number(v); });
+  bindNum("z-num", function (n) { state.zenithDeg = n; });
+  bindNum("x-num", function (n) {
+    var z = S.zenithFromAirmass(n);
+    if (!isFinite(z)) { showError(true); return; }
+    state.zenithDeg = z;
+  });
+  bindNum("lam-slider", function (n) { state.lambdaNm = n; }, function (v) { return Number(v); });
+  bindNum("lam-num", function (n) { state.lambdaNm = n; });
+  bindNum("d-slider", function (cm) { state.dCm = cm; }, function (v) { return logVal(v); });
+  bindNum("d-num", function (n) {
+    state.dCm = state.dUnit === "m" ? n * 100 : n;
+  });
+  bindNum("v-slider", function (n) { state.windMs = n; }, function (v) { return Number(v); });
+  bindNum("v-num", function (n) { state.windMs = n; });
+  bindNum("h-slider", function (km) { state.heightM = km * 1000; }, function (v) { return Number(v); });
+  bindNum("h-num", function (n) { state.heightM = n * 1000; });
+
+  var unit = document.getElementById("d-unit");
+  if (unit) unit.addEventListener("change", function () {
+    state.dUnit = unit.value === "m" ? "m" : "cm";
+    render();
+  });
+
+  document.querySelectorAll("[data-band]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var band = S.bandById(btn.getAttribute("data-band"));
+      if (!band) return;
+      state.lambdaNm = band.nm;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-site]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var site = S.siteById(btn.getAttribute("data-site"));
+      if (!site) return;
+      state.r0Cm = site.r0Cm;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-scope]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var scope = S.telescopeById(btn.getAttribute("data-scope"));
+      if (!scope) return;
+      state.dCm = scope.dCm;
+      state.dUnit = scope.dCm >= 100 ? "m" : "cm";
+      if (unit) unit.value = state.dUnit;
+      render();
+    });
+  });
+
+  if (chart) {
+    chart.addEventListener("click", function (ev) {
+      if (!chartGeom) return;
+      var rect = chart.getBoundingClientRect();
+      var x = ev.clientX - rect.left;
+      var u = (x - chartGeom.padL) / chartGeom.plotW;
+      if (u < 0 || u > 1) return;
+      var lam = Math.exp(Math.log(chartGeom.lam0) + u * (Math.log(chartGeom.lam1) - Math.log(chartGeom.lam0)));
+      state.lambdaNm = Math.round(lam);
+      render();
+    });
+    chart.addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var step = ev.shiftKey ? 50 : 10;
+      var dir = ev.key === "ArrowRight" ? 1 : -1;
+      var next = state.lambdaNm + dir * step;
+      if (next < S.LAMBDA_NM_MIN) next = S.LAMBDA_NM_MIN;
+      if (next > S.LAMBDA_NM_MAX) next = S.LAMBDA_NM_MAX;
+      state.lambdaNm = next;
+      render();
+    });
+  }
+
+  window.addEventListener("resize", function () { render(); });
+
+  var helpBtn = document.getElementById("see-help");
+  var helpDialog = document.getElementById("see-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && document.activeElement && document.activeElement.tagName !== "INPUT") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var items = focusables();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    });
+  }
+
+  var limits = document.getElementById("limits-note");
+  if (limits && S.limitsNote) limits.textContent = S.limitsNote();
+
+  render();
+})();
+</script>
+</body>
+</html>
