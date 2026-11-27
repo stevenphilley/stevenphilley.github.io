@@ -118,6 +118,7 @@ assert(html.indexOf("googletagmanager") === -1, "no second snippet");
 assert(html.indexOf("{% include nav.html %}") !== -1, "nav include");
 assert(html.indexOf("{% include footer.html %}") !== -1, "footer include");
 assert(html.indexOf("{% include head-layout.html %}") !== -1, "head layout");
+assert(html.indexOf("---\n---\n<!DOCTYPE html>") === 0, "front matter so GitHub Pages processes the includes");
 assert(html.indexOf('class="subnav subnav-desk"') !== -1, "desktop nav");
 assert(html.indexOf('class="subnav-phone"') !== -1, "phone nav");
 assert(html.indexOf('aria-current="page">21 cm') !== -1, "current page");
