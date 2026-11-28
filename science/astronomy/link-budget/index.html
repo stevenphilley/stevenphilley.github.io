@@ -1,0 +1,948 @@
+---
+---
+<!DOCTYPE html>
+<html lang="en" data-theme="neon">
+<head>
+{% include head-layout.html %}
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deep space radio link budget — Steven Philley</title>
+<meta name="description" content="Deep-space link budget. A 70 m dish at 8.4 GHz with aperture efficiency 0.6 is 73.58 dBi. Path loss at 1 AU at 8.4 GHz is 274.43 dB. At the handbook’s 8420 MHz and η = 0.55 the same dish is 73.22 dBi. Voyager’s 22 W and 3.66 m reflector, at one light-day into a 70 m dish, compute 1,375 bit/s at a 0 dB example threshold. The Shannon ceiling is 1,984 bit/s. Not a link design.">
+<link rel="canonical" href="https://stevenphilley.com/science/astronomy/link-budget/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Steven Philley">
+<meta property="og:title" content="Deep space radio link budget">
+<meta property="og:description" content="70 m at 8.4 GHz and η = 0.6 is 73.58 dBi. One AU at 8.4 GHz is 274.43 dB of path loss. Voyager at one light-day is 1,375 bit/s at a 0 dB example threshold, and 1,984 bit/s at the Shannon ceiling.">
+<meta property="og:url" content="https://stevenphilley.com/science/astronomy/link-budget/">
+<meta property="og:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<meta property="og:image:alt" content="Earthrise over the lunar horizon — NASA / Bill Anders">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deep space radio link budget">
+<meta name="twitter:description" content="73.58 dBi for a 70 m dish at 8.4 GHz and η = 0.6. 274.43 dB of path loss at 1 AU. Voyager at one light-day: 1,375 bit/s at 0 dB, Shannon 1,984 bit/s.">
+<meta name="twitter:image" content="https://stevenphilley.com/publicphotos/img/earthrise.jpg">
+<script src="/js/sp-theme-boot.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<style>
+body{background:var(--base-2,#14161c);color:var(--ink,#e8e6e1)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px) 88px}
+.subnav{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase}
+.subnav a{border:1px solid var(--line,#2c303a);padding:7px 12px;color:var(--ink-soft,#9b9a96);text-decoration:none}
+.subnav a:hover,.subnav a[aria-current="page"]{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1)}
+.subnav a[aria-current="page"]{background:color-mix(in srgb,var(--accent,#c8b48a) 12%,transparent)}
+.subnav-phone{display:none}
+.kicker{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:28px 0 10px}
+h1{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(44px,9vw,88px);line-height:.88;margin:0}
+.lede{max-width:68ch;margin:16px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-135,13.5px);line-height:var(--lh-prose,1.7);color:var(--ink-soft,#9b9a96)}
+.lede a,.note-schematic a,.why a,.prose a,.refs a,.page-credit a,.glossary a,.scale-note a{color:var(--ink,#e8e6e1)}
+.note-schematic{margin:14px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:var(--lh-prose,1.6);color:var(--muted,#63666e);max-width:72ch}
+.band{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.16em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:36px 0 14px;display:flex;align-items:center;gap:14px}
+.band::after{content:"";flex:1;height:1px;background:var(--line,#2c303a)}
+.band.has-help .band-label{min-width:0}
+.help-q{appearance:none;flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:1px solid color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));background:transparent;color:var(--accent,#c8b48a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:18px;line-height:1;letter-spacing:0;text-transform:none;cursor:pointer}
+.help-q:hover,.help-q:focus-visible,.help-q[aria-expanded="true"]{border-color:var(--accent,#c8b48a);color:var(--ink,#e8e6e1);outline:none}
+.help-dialog{position:fixed;inset:0;z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:28px 12px;overflow:auto;background:rgba(0,0,0,.62)}
+.help-dialog[hidden]{display:none}
+.help-card{width:min(640px,100%);margin:0 auto;background:var(--base-2,#14161c);border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1)}
+.help-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line,#2c303a)}
+.help-head h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:32px;letter-spacing:.06em;margin:0;text-transform:none}
+.help-head button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:inherit;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:8px 12px;min-height:44px;min-width:44px;cursor:pointer}
+.help-head button:hover,.help-head button:focus-visible{border-color:var(--accent,#c8b48a);color:inherit;outline:none}
+.help-lead{margin:0;padding:10px 14px 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.5;color:var(--muted,#63666e)}
+.help-card h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:14px 14px 0}
+.help-card table{width:calc(100% - 28px);margin:4px 14px 0;border-collapse:collapse}
+.help-card caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.help-card th,.help-card td{text-align:left;vertical-align:top;padding:7px 8px 7px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;font-weight:400}
+.help-card th{width:34%;color:var(--ink,#e8e6e1)}
+.help-card td{color:var(--ink-soft,#9b9a96)}
+.help-foot{height:12px}
+.stage{display:grid;grid-template-columns:minmax(280px,1.25fr) minmax(250px,.75fr);gap:12px;align-items:stretch}
+.diagram{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.28);padding:12px 12px 14px;min-width:0;display:flex;flex-direction:column}
+.diagram .hint{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);margin:0 0 8px}
+.diagram canvas{display:block;width:100%;height:auto;touch-action:manipulation;background:transparent}
+.diagram canvas:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;margin:8px 0 0;padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:6px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;color:var(--muted,#63666e)}
+.swatch{width:18px;height:0;border-top:2px solid var(--accent,#c8b48a);flex:0 0 auto}
+.swatch.shannon{border-top-style:dashed;border-top-color:var(--accent-2,#7eb6e8)}
+.swatch.now{border-top-color:var(--ink,#e8e6e1)}
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.pick-label{margin:2px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e)}
+.slider-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.slider-row label{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.1em);text-transform:uppercase;color:var(--muted,#63666e);min-width:8.5ch}
+.slider-row input[type="range"]{flex:1 1 140px;min-width:120px;min-height:44px;accent-color:var(--accent,#c8b48a)}
+.slider-row input[type="range"]:focus-visible,.slider-row input[type="number"]:focus-visible,.slider-row select:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+.slider-row input[type="number"],.slider-row select{min-height:44px;padding:0 8px;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink,#e8e6e1);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:16px}
+.slider-row input[type="number"]{width:8.5rem;max-width:100%}
+.slider-row select{min-width:5.5rem;background:var(--base-2,#14161c)}
+.field-err{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45;color:var(--accent,#c8b48a)}
+.field-err[hidden]{display:none}
+.presets{display:flex;flex-wrap:wrap;gap:8px}
+.presets button{appearance:none;background:transparent;border:1px solid var(--line,#2c303a);color:var(--ink-soft,#9b9a96);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.08em);text-transform:uppercase;padding:10px 12px;min-height:44px;min-width:44px;cursor:pointer;line-height:1.25;text-align:center}
+.presets button:hover,.presets button:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.presets button[aria-pressed="true"]{color:var(--base-2,#14161c);background:var(--ink,#e8e6e1);border-color:var(--ink,#e8e6e1)}
+.scale-note{margin:10px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-115,11.5px);line-height:1.5;color:var(--ink-soft,#9b9a96)}
+.detail{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:20px 20px 18px;display:flex;flex-direction:column;min-width:0}
+.detail .tier{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.detail h2{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:clamp(28px,4vw,40px);letter-spacing:.04em;margin:0 0 8px;line-height:.95}
+.detail .range{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);letter-spacing:.04em;color:var(--accent,#c8b48a);margin:0 0 14px}
+.stats{margin:0 0 12px;padding:0;list-style:none;border-top:1px solid var(--line,#2c303a)}
+.stats li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-12,12px);line-height:1.45}
+.stats .k{color:var(--muted,#63666e);letter-spacing:.06em;text-transform:uppercase;font-size:10px}
+.stats .v{color:var(--ink,#e8e6e1);text-align:right}
+.why{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96)}
+.prose{margin-top:8px}
+.prose p{margin:0 0 12px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-13,13px);line-height:var(--lh-prose,1.65);color:var(--ink-soft,#9b9a96);max-width:72ch}
+.prose strong{color:var(--ink,#e8e6e1);font-weight:500}
+.glossary{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gloss{border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:14px 16px}
+.gloss dt{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.gloss dd{margin:0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.6);color:var(--ink-soft,#9b9a96)}
+.gloss-wide{grid-column:1 / -1}
+.refs{margin-top:8px;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:18px 18px 16px}
+.refs h3{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 12px}
+.refs ul{margin:0;padding:0;list-style:none}
+.refs li{padding:8px 0;border-top:1px solid var(--line,#2c303a);font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.refs li:first-child{border-top:0;padding-top:0}
+.page-credit{margin-top:14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-105,10.5px);line-height:var(--lh-prose,1.55);color:var(--muted,#63666e);max-width:72ch}
+.more{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.more a{display:block;border:1px solid var(--line,#2c303a);background:rgba(0,0,0,.14);padding:16px;text-decoration:none;color:inherit}
+.more a:hover{border-color:color-mix(in srgb,var(--accent,#c8b48a) 40%,var(--line,#2c303a))}
+.more .n{font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-10,10px);letter-spacing:var(--sp-track-upper,.14em);text-transform:uppercase;color:var(--accent,#c8b48a);margin:0 0 6px}
+.more h3{font-family:"Bebas Neue",Impact,sans-serif;font-weight:400;font-size:24px;letter-spacing:.04em;margin:0;line-height:1}
+.more p{margin:8px 0 0;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-125,12.5px);line-height:var(--lh-prose,1.55);color:var(--ink-soft,#9b9a96)}
+.dial-link{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border:1px solid var(--line,#2c303a);color:var(--accent,#c8b48a);letter-spacing:0;flex-shrink:0}
+.dial-link:hover,.dial-link:focus-visible{border-color:color-mix(in srgb,var(--accent,#c8b48a) 45%,var(--line,#2c303a));color:var(--ink,#e8e6e1);outline:none}
+.dial-link svg{width:14px;height:14px;display:block}
+.top-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (max-width:899px){
+  .subnav-desk{display:none}
+  .subnav-phone{display:block;margin:18px 0 0}
+  .subnav-phone summary{list-style:none;cursor:pointer;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line,#2c303a);padding:0 14px;font-family:var(--font-ui,'IBM Plex Mono',ui-monospace,monospace);font-size:var(--fs-11,11px);letter-spacing:var(--sp-track-upper,.12em);text-transform:uppercase;color:var(--ink,#e8e6e1)}
+  .subnav-phone summary::-webkit-details-marker{display:none}
+  .subnav-phone summary:focus-visible{outline:1px solid var(--accent,#c8b48a);outline-offset:2px}
+  .subnav-phone summary::after{content:"Open";color:var(--accent,#c8b48a);font-size:var(--fs-10,10px)}
+  .subnav-phone[open] summary::after{content:"Close"}
+  .subnav-phone .subnav{margin-top:8px}
+  .help-dialog{padding:12px 10px 24px}
+  .help-head{align-items:flex-start}
+  .help-head h2{font-size:28px}
+  .help-card th,.help-card td{display:block;width:auto}
+  .help-card td{border-top:0;padding-top:2px}
+}
+@media (max-width:860px){
+  .stage,.glossary,.more{grid-template-columns:1fr}
+  .stats li{flex-direction:column;gap:2px}
+  .stats .v{text-align:left}
+}
+</style>
+<noscript>
+<style>
+@media (max-width:899px){
+  .subnav-desk{display:flex !important}
+  .subnav-phone{display:none !important}
+}
+</style>
+</noscript>
+</head>
+<body>
+{% include nav.html %}
+
+<div class="wrap">
+  <div class="sp-subnav">
+    <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+      <a href="/science/">Science</a>
+      <a href="/science/astronomy/">Astronomy</a>
+      <a href="/science/atmosphere/">Atmosphere</a>
+      <div class="top-tools">
+      <a class="dial-link" href="/circular-calendar.html" aria-label="Annual Dial" title="Annual Dial">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M12 7.25v5.1l3.35 1.9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      </div>
+    </div>
+  </div>
+
+<nav class="subnav subnav-desk" aria-label="Astronomy sections">
+    <a href="/science/astronomy/">Solar map</a>
+    <a href="/science/astronomy/moon/">Moon</a>
+    <a href="/science/astronomy/libration/">Libration</a>
+    <a href="/science/astronomy/eclipses/">Eclipses</a>
+    <a href="/science/astronomy/tides/">Tides</a>
+    <a href="/science/astronomy/tidal-locking/">Tidal locking</a>
+    <a href="/science/astronomy/local-sky/">Local sky</a>
+    <a href="/science/astronomy/seasons/">Seasons</a>
+    <a href="/science/astronomy/obliquity/">Obliquity</a>
+    <a href="/science/astronomy/twilight/">Twilight</a>
+    <a href="/science/astronomy/airmass/">Airmass</a>
+    <a href="/science/astronomy/refraction/">Refraction</a>
+    <a href="/science/astronomy/precession/">Precession</a>
+    <a href="/science/astronomy/analemma/">Analemma</a>
+    <a href="/science/astronomy/sundial/">Sundial</a>
+    <a href="/science/astronomy/sidereal/">Sidereal</a>
+    <a href="/science/astronomy/star-trails/">Star trails</a>
+    <a href="/science/astronomy/foucault/">Foucault</a>
+    <a href="/science/astronomy/planet-days/">Planet days</a>
+    <a href="/science/astronomy/synodic/">Synodic</a>
+    <a href="/science/astronomy/retrograde/">Retrograde</a>
+    <a href="/science/astronomy/opposition/">Opposition</a>
+    <a href="/science/astronomy/kepler/">Kepler</a>
+    <a href="/science/astronomy/binary-stars/">Binary stars</a>
+    <a href="/science/astronomy/barycenter/">Barycenter</a>
+    <a href="/science/astronomy/resonances/">Resonances</a>
+    <a href="/science/astronomy/asteroids/">Asteroids</a>
+    <a href="/science/astronomy/escape/">Escape</a>
+    <a href="/science/astronomy/atmospheric-escape/">Gases</a>
+    <a href="/science/astronomy/hohmann/">Hohmann</a>
+    <a href="/science/astronomy/vis-viva/">Vis-viva</a>
+    <a href="/science/astronomy/satellites/">Satellites</a>
+    <a href="/science/astronomy/time-dilation/">Time dilation</a>
+    <a href="/science/astronomy/light-time/">Light time</a>
+    <a href="/science/astronomy/link-budget/" aria-current="page">Link budget</a>
+    <a href="/science/astronomy/eccentricity/">Eccentricity</a>
+    <a href="/science/astronomy/comets/">Comets</a>
+    <a href="/science/astronomy/interstellar/">Interstellar</a>
+    <a href="/science/astronomy/solar-cycle/">Solar cycle</a>
+    <a href="/science/astronomy/aurora/">Aurora</a>
+    <a href="/science/astronomy/magnetospheres/">Magnetospheres</a>
+    <a href="/science/astronomy/van-allen/">Van Allen</a>
+    <a href="/science/astronomy/cme/">Solar wind</a>
+    <a href="/science/astronomy/parker-spiral/">Parker spiral</a>
+    <a href="/science/astronomy/oberth/">Oberth</a>
+    <a href="/science/astronomy/rocket/">Rocket</a>
+    <a href="/science/astronomy/solar-sail/">Solar sail</a>
+    <a href="/science/astronomy/gravity-assist/">Gravity assist</a>
+    <a href="/science/astronomy/c3/">C3</a>
+    <a href="/science/astronomy/lagrange/">Lagrange</a>
+    <a href="/science/astronomy/roche/">Roche</a>
+    <a href="/science/astronomy/rings/">Rings</a>
+    <a href="/science/astronomy/hill/">Hill</a>
+    <a href="/science/astronomy/angular-size/">Angular size</a>
+    <a href="/science/astronomy/telescope/">Telescope</a>
+    <a href="/science/astronomy/seeing/">Seeing</a>
+    <a href="/science/astronomy/venus/">Venus</a>
+    <a href="/science/astronomy/mercury/">Mercury</a>
+    <a href="/science/astronomy/mars/">Mars</a>
+    <a href="/science/astronomy/jupiter/">Jupiter</a>
+    <a href="/science/astronomy/saturn/">Saturn</a>
+    <a href="/science/astronomy/uranus/">Uranus</a>
+    <a href="/science/astronomy/neptune/">Neptune</a>
+    <a href="/science/astronomy/dwarf-planets/">Dwarf planets</a>
+    <a href="/science/astronomy/ocean-worlds/">Ocean worlds</a>
+    <a href="/science/astronomy/phases/">Phases</a>
+    <a href="/science/astronomy/stars/">Stars</a>
+    <a href="/science/astronomy/magnitude/">Magnitude</a>
+    <a href="/science/astronomy/meteors/">Meteors</a>
+    <a href="/science/astronomy/impacts/">Impacts</a>
+    <a href="/science/astronomy/blackbody/">Blackbody</a>
+    <a href="/science/astronomy/spectra/">Spectra</a>
+    <a href="/science/astronomy/21cm/">21 cm</a>
+    <a href="/science/astronomy/hr/">HR diagram</a>
+    <a href="/science/astronomy/stellar-lifetime/">Stellar lifetime</a>
+    <a href="/science/astronomy/star-formation/">Star formation</a>
+    <a href="/science/astronomy/fusion/">Fusion</a>
+    <a href="/science/astronomy/black-holes/">Black holes</a>
+    <a href="/science/astronomy/accretion/">Accretion</a>
+    <a href="/science/astronomy/compact-stars/">Compact stars</a>
+    <a href="/science/astronomy/supernovae/">Supernovae</a>
+    <a href="/science/astronomy/gravitational-waves/">Gravitational waves</a>
+    <a href="/science/astronomy/pulsars/">Pulsars</a>
+    <a href="/science/astronomy/lensing/">Lensing</a>
+    <a href="/science/astronomy/redshift/">Redshift</a>
+    <a href="/science/astronomy/parallax/">Parallax</a>
+    <a href="/science/astronomy/proper-motion/">Proper motion</a>
+    <a href="/science/astronomy/aberration/">Aberration</a>
+    <a href="/science/astronomy/distance-ladder/">Distance ladder</a>
+    <a href="/science/astronomy/cosmology/">Cosmology</a>
+    <a href="/science/astronomy/cmb/">CMB</a>
+    <a href="/science/astronomy/nearest-stars/">Nearest stars</a>
+    <a href="/science/astronomy/exoplanets/">Exoplanets</a>
+    <a href="/science/astronomy/transit/">Transit</a>
+    <a href="/science/astronomy/radial-velocity/">Radial velocity</a>
+    <a href="/science/astronomy/frost-line/">Frost line</a>
+    <a href="/science/astronomy/habitable-zone/">Habitable zone</a>
+    <a href="/science/astronomy/temperatures/">Temperatures</a>
+    <a href="/science/astronomy/scale-height/">Scale height</a>
+    <a href="/science/astronomy/density/">Density</a>
+    <a href="/science/astronomy/rotation-curve/">Rotation curves</a>
+    <a href="/science/astronomy/galaxy/">Galaxy</a>
+  </nav>
+
+  <details class="subnav-phone">
+    <summary>Sections · Link budget</summary>
+    <nav class="subnav" id="phone-sections" aria-label="Astronomy sections"></nav>
+  </details>
+
+  <p class="kicker">Vol. Science · Astronomy · The link</p>
+  <h1>Deep space<br>radio link</h1>
+  <p class="lede">A spacecraft transmitter is a few tens of watts. The largest Deep Space Network dishes are 70 m across. The power that arrives still falls as 1/d², because the same energy is spread over a sphere. This desk is that arithmetic. Wavelength is c/f. A round dish has gain <strong>G = η(πD/λ)²</strong>. Free-space path loss is <strong>(4πd/λ)²</strong>. Received power is <strong>Pr = Pt·Gt·Gr·(λ/4πd)²</strong>. Noise density is <strong>kT</strong>. <strong>C/N0</strong> is Pr/kT. The rate at a chosen Eb/N0 is that C/N0 divided by the linear ratio. The unlimited-bandwidth Shannon rate is <strong>(C/N0)/ln(2)</strong>. ln(2) is <strong>−1.59 dB</strong> when rounded to 0.01 dB. The rate uses the unrounded ln(2). The wait for the answer is the <a href="/science/astronomy/light-time/">light-time</a> desk. A dish as an optical aperture is the <a href="/science/astronomy/telescope/">telescope</a> desk. A different radio line, the hydrogen spin flip, is the <a href="/science/astronomy/21cm/">21 cm</a> desk.</p>
+  <p class="lede">A 70 m dish at <strong>8.4 GHz</strong> with <strong>η = 0.6</strong> is <strong>73.58 dBi</strong>. Path loss at <strong>1 AU</strong> at 8.4 GHz is <strong>274.43 dB</strong>. The X-band button is <strong>8420 MHz</strong>, the 70 m handbook’s receive reference, not 8.4 GHz exactly. At 8420 MHz and <strong>η = 0.55</strong> the same dish is <strong>73.22 dBi</strong>, and 1 AU is <strong>274.45 dB</strong>. <a href="https://deepspace.jpl.nasa.gov/dsndocs/810-005/101/101H.pdf" rel="noopener" target="_blank">DSN 810-005 module 101, Rev. H</a>, quotes DSS-14’s X-only vacuum gain as <strong>74.55 dBi</strong> at 8420 MHz. Inverting this formula at 70 m gives <strong>η = 0.747</strong>. Neither 74.55 nor 0.747 is substituted. η opens at 0.55, a classroom default, not a measured efficiency.</p>
+  <p class="lede">The page opens on Voyager 1. The <a href="https://pds-rings.seti.org/voyager/rss/vg1sinst.html" rel="noopener" target="_blank">PDS radio catalog</a> gives a <strong>3.66 m</strong> reflector and X-band powers of <strong>12 W and 22 W</strong>. This page uses 22 W. The catalog prints <strong>47 dB</strong> at X-band. At η = 0.55 the formula prints <strong>47.59 dBi</strong>. 47 is not substituted. The distance is one light-day, <strong>c × 86,400 s</strong>, which <a href="https://science.nasa.gov/mission/voyager/where-are-voyager-1-and-voyager-2-now/" rel="noopener" target="_blank">NASA Science</a> dates to <strong>18 November 2026, 2:16:07 a.m. PST</strong>, and prints as 25.902 billion km. This page does not advance the spacecraft past that instant. At 16.69 K and the example threshold of 0 dB the rate is <strong>1,375 bit/s</strong>. The Shannon ceiling is <strong>1,984 bit/s</strong>. The light time is <strong>24 h 0 min</strong>.</p>
+  <p class="note-schematic" id="limits-note">Educational calculator. A straight-line vacuum link. Not a link design.</p>
+
+  <div class="band has-help">
+    <span class="band-label">Interactive · Power, dishes, distance</span>
+    <button type="button" class="help-q" id="lb-help" aria-haspopup="dialog" aria-controls="lb-help-dialog" aria-expanded="false" aria-label="How this link-budget desk works">?</button>
+  </div>
+
+  <div class="stage">
+    <div class="diagram">
+      <p class="hint" id="chart-hint">Data rate against distance · log–log · Moon to two light-days</p>
+      <canvas id="chart" width="880" height="420" tabindex="0" role="img" aria-label="Log-log chart of data rate against distance, from the Moon to two light-days. The solid curve is the chosen Eb/N0. The dashed curve is the Shannon ceiling."></canvas>
+      <ul class="legend">
+        <li><span class="swatch" aria-hidden="true"></span> Chosen Eb/N0</li>
+        <li><span class="swatch shannon" aria-hidden="true"></span> Shannon ceiling</li>
+        <li><span class="swatch now" aria-hidden="true"></span> This distance</li>
+      </ul>
+      <p class="scale-note" id="scale-note">Click the chart, or press Left and Right, to move the distance. Markers sit on the fact-sheet distances and on Voyager’s light-day. The axis continues to two light-days.</p>
+
+      <div class="controls">
+        <p class="pick-label">Distance · fact-sheet Earth ranges, and one light-day</p>
+        <div class="presets" role="group" aria-label="Distance presets">
+          <button type="button" data-distance="moon">Moon</button>
+          <button type="button" data-distance="mars-near">Mars · closest</button>
+          <button type="button" data-distance="mars-far">Mars · farthest</button>
+          <button type="button" data-distance="jupiter">Jupiter · closest</button>
+          <button type="button" data-distance="pluto">Pluto · New Horizons</button>
+          <button type="button" data-distance="voyager" aria-pressed="true">Voyager 1 · light-day</button>
+        </div>
+        <p class="pick-label">Spacecraft radio · sourced watts and reflector</p>
+        <div class="presets" role="group" aria-label="Spacecraft presets">
+          <button type="button" data-craft="voyager" aria-pressed="true">Voyager 1 · 22 W · 3.66 m</button>
+          <button type="button" data-craft="nh">New Horizons · 12 W · 2.1 m</button>
+        </div>
+        <p class="pick-label">Ground dish · handbook diameters</p>
+        <div class="presets" role="group" aria-label="Ground antenna presets">
+          <button type="button" data-dish="dsn70" aria-pressed="true">70 m</button>
+          <button type="button" data-dish="bwg34">34 m · BWG</button>
+        </div>
+        <p class="pick-label">Downlink band · handbook reference frequencies</p>
+        <div class="presets" role="group" aria-label="Frequency band">
+          <button type="button" data-band="S">S · 2295 MHz</button>
+          <button type="button" data-band="X" aria-pressed="true">X · 8420 MHz</button>
+          <button type="button" data-band="Ka">Ka · 32050 MHz</button>
+        </div>
+        <p class="pick-label">Required Eb/N0 · the 0 dB button is an example, not a code</p>
+        <div class="presets" role="group" aria-label="Eb/N0 presets">
+          <button type="button" data-ebn0="example" aria-pressed="true">Example · 0 dB</button>
+          <button type="button" data-ebn0="shannon">Shannon floor</button>
+        </div>
+
+        <div class="slider-row">
+          <label for="pt-slider">Pt</label>
+          <input id="pt-slider" type="range" min="0" max="1000" step="1" value="500" aria-label="Transmitter power, watts, log scale">
+          <input id="pt-num" type="number" min="0.1" max="1000" step="any" value="22" inputmode="decimal" aria-label="Transmitter power, watts">
+          <span class="pick-label">W</span>
+        </div>
+        <div class="slider-row">
+          <label for="dsc-slider">D sc</label>
+          <input id="dsc-slider" type="range" min="0" max="1000" step="1" value="500" aria-label="Spacecraft antenna diameter, metres, log scale">
+          <input id="dsc-num" type="number" min="0.2" max="20" step="any" value="3.66" inputmode="decimal" aria-label="Spacecraft antenna diameter, metres">
+          <span class="pick-label">m</span>
+        </div>
+        <div class="slider-row">
+          <label for="dg-slider">D gnd</label>
+          <input id="dg-slider" type="range" min="0" max="1000" step="1" value="500" aria-label="Ground antenna diameter, metres, log scale">
+          <input id="dg-num" type="number" min="5" max="100" step="any" value="70" inputmode="decimal" aria-label="Ground antenna diameter, metres">
+          <span class="pick-label">m</span>
+        </div>
+        <div class="slider-row">
+          <label for="eta-slider">η</label>
+          <input id="eta-slider" type="range" min="0.05" max="0.85" step="0.01" value="0.55" aria-valuemin="0.05" aria-valuemax="0.85" aria-valuenow="0.55" aria-label="Aperture efficiency">
+          <input id="eta-num" type="number" min="0.05" max="0.85" step="0.01" value="0.55" inputmode="decimal" aria-label="Aperture efficiency">
+        </div>
+        <div class="slider-row">
+          <label for="d-slider">Range</label>
+          <input id="d-slider" type="range" min="0" max="1000" step="1" value="800" aria-label="Distance, log scale, from the Moon to two light-days">
+          <input id="d-num" type="number" step="any" value="25902068371" inputmode="decimal" aria-label="Distance">
+          <select id="d-unit" aria-label="Distance unit">
+            <option value="km" selected>km</option>
+            <option value="au">AU</option>
+          </select>
+        </div>
+        <div class="slider-row">
+          <label for="t-slider">T</label>
+          <input id="t-slider" type="range" min="2" max="300" step="0.01" value="16.69" aria-valuemin="2" aria-valuemax="300" aria-valuenow="16.69" aria-label="System noise temperature, kelvin">
+          <input id="t-num" type="number" min="2" max="300" step="0.01" value="16.69" inputmode="decimal" aria-label="System noise temperature, kelvin">
+          <span class="pick-label">K</span>
+        </div>
+        <div class="slider-row">
+          <label for="eb-slider">Eb/N0</label>
+          <input id="eb-slider" type="range" min="-10" max="20" step="0.01" value="0" aria-valuemin="-10" aria-valuemax="20" aria-valuenow="0" aria-label="Required Eb/N0, decibels">
+          <input id="eb-num" type="number" min="-10" max="20" step="0.01" value="0" inputmode="decimal" aria-label="Required Eb/N0, decibels">
+          <span class="pick-label">dB</span>
+        </div>
+        <p class="field-err" id="field-err" hidden>Power is 0.1 to 1,000 W. Spacecraft diameter is 0.2 to 20 m. Ground diameter is 5 to 100 m. Efficiency is 0.05 to 0.85. Distance runs from the Moon to two light-days. Temperature is 2 to 300 K. Eb/N0 is −10 to 20 dB.</p>
+      </div>
+    </div>
+
+    <aside class="detail" id="readout" aria-live="polite">
+      <p class="tier" id="d-tier">Voyager 1 · one light-day</p>
+      <h2 id="d-name">1,375 bit/s</h2>
+      <p class="range" id="d-range">24 h 0 min one way · Shannon 1,984 bit/s</p>
+      <ul class="stats">
+        <li><span class="k">Wavelength</span><span class="v" id="s-lam">3.560 cm</span></li>
+        <li><span class="k">Spacecraft gain</span><span class="v" id="s-gt">47.59 dBi</span></li>
+        <li><span class="k">Ground gain</span><span class="v" id="s-gr">73.22 dBi</span></li>
+        <li><span class="k">Path loss</span><span class="v" id="s-fspl">319.22 dB</span></li>
+        <li><span class="k">Received power</span><span class="v" id="s-pr">−154.99 dBm</span></li>
+        <li><span class="k">Received power</span><span class="v" id="s-prw">3.168×10^−19 W</span></li>
+        <li><span class="k">Noise density kT</span><span class="v" id="s-n0">−216.37 dBW/Hz</span></li>
+        <li><span class="k">C/N0</span><span class="v" id="s-cn0">31.38 dB-Hz</span></li>
+        <li><span class="k">Rate at Eb/N0</span><span class="v" id="s-rate">1,375 bit/s</span></li>
+        <li><span class="k">Shannon ceiling</span><span class="v" id="s-sh">1,984 bit/s</span></li>
+        <li><span class="k">One-way light time</span><span class="v" id="s-light">24 h 0 min</span></li>
+        <li><span class="k">Distance</span><span class="v" id="s-dist">25,902,068,371 km</span></li>
+      </ul>
+      <p class="why" id="d-why">Wavelength is c/f, 3.560 cm. Each gain is η(πD/λ)². The spacecraft dish is 47.59 dBi. The ground dish is 73.22 dBi. η is 0.55. Free-space path loss is (4πd/λ)², 319.22 dB. Received power is Pt·Gt·Gr·(λ/4πd)², −154.99 dBm, 3.168×10^−19 W. Noise density kT is 2.304×10^−22 W/Hz, −216.37 dBW/Hz. C/N0 is 31.38 dB-Hz. At Eb/N0 = 0.00 dB the rate is (C/N0) divided by that ratio, 1,375 bit/s. The Shannon ceiling, unlimited bandwidth, is (C/N0)/ln(2), 1,984 bit/s. ln(2) is −1.59 dB when rounded to 0.01 dB. The rate uses the unrounded ln(2). The chosen threshold is above that floor, so the rate sits below the ceiling. One-way light time is 24 h 0 min. Module 101 quotes DSS-14’s X-only vacuum gain as 74.55 dBi at 8420 MHz. Inverting this formula at 70 m gives η = 0.747. Neither 74.55 nor that efficiency is substituted. 22 W and 3.66 m are the PDS Voyager 1 catalog’s high-power X-band and reflector. That catalog prints 47 dB at X-band. 47 is not substituted. The carrier here is 8420 MHz, the handbook’s 70 m reference, not Voyager’s 8415 MHz nominal.</p>
+    </aside>
+  </div>
+
+  <p class="band">Why the rate collapses</p>
+  <div class="prose">
+    <p><strong>The sphere is the whole story of the distance.</strong> A transmitter sends power into a beam. Far away, that beam’s footprint is a patch on a sphere of radius d, so the flux falls as 1/d². Doubling the distance costs 6.02 dB, whatever the frequency. Frequency changes the size of the dishes’ beams, not that square. The path-loss number (4πd/λ)² folds the sphere together with the wavelength so that the two dish gains can stay pure numbers. At 1 AU and 8.4 GHz the loss is 274.43 dB. At Voyager’s light-day, on the 8420 MHz button, it is 319.22 dB.</p>
+    <p><strong>A bigger dish, or a shorter wavelength, is a narrower beam.</strong> G = η(πD/λ)². η is the fraction of the physical area that the radio actually uses. It opens at 0.55. The handbook’s 74.55 dBi, inverted, would be 0.747, and that efficiency is not loaded. Ka-band, 32050 MHz, makes both dishes much stronger than S-band, 2295 MHz, at the same diameters. The 70 m module does not list a Ka-band receive gain. The 34 m beam-waveguide antennas do: module 104 quotes <strong>79.0 dBi</strong> at 32050 MHz. This page’s Ka number is still the formula.</p>
+    <p><strong>Noise sets the rate, not the power alone.</strong> k is 1.380649×10^−23 J/K exactly. 10 log10(k) is −228.599 dBW/K/Hz to 0.001 dB, which prints −228.60 to 0.01 dB. Multiply by the system temperature and that is the noise in one hertz. The opening temperature, <strong>16.69 K</strong>, is module 101 Table 4 for DSS-14 at X-band, X-only, zenith, 25% cumulative-distribution weather: antenna-microwave 11.65 K plus sky 5.04 K. It is not retuned when you change the band. C/N0 in dB-Hz is received power in dBW minus that density. Divide C/N0 by the linear Eb/N0 and the quotient is a bit rate. The 0 dB button is an example threshold. It is not a coded-link requirement, and it is not a margin borrowed from a mission.</p>
+    <p><strong>Shannon is the ceiling, not a second mission.</strong> With unlimited bandwidth the best rate is (C/N0)/ln(2). At the opening link that is 1,984 bit/s, 1.59 dB kinder than the 0 dB example. If you set Eb/N0 below −1.59 dB, the formula prints a rate above that ceiling. The card says so. The higher number is not achievable. Coding can move a practical threshold toward the floor. This page does not apply a code.</p>
+    <p><strong>The markers are distances, and two of them bring a radio.</strong> The Moon is the fact-sheet mean, 384,400 km. Mars closest and farthest are 54.6 and 401.4 × 10^6 km. Jupiter closest is 588.5 × 10^6 km. Pluto closest is 4,284.7 × 10^6 km. Voyager is the light-day. Pluto’s button also loads New Horizons: <a href="https://arxiv.org/pdf/0709.4288" rel="noopener" target="_blank">Fountain et al.</a> and DeBoy et al. 2004 give a 2.1 m reflector and two 12 W X-band traveling-wave tubes, and a requirement of at least 42 dBic inside 0.3°. 42 dBic is not substituted. At η = 0.55 the formula prints 42.76 dBi, which is a different unit. The Pluto distance is the fact-sheet minimum, not the range on 14 July 2015. <a href="https://science.nasa.gov/mission/voyager/spacecraft/" rel="noopener" target="_blank">NASA’s Voyager spacecraft page</a> says the X-band downlink is 160 bit/s normally and 1.4 kbit/s for a high-rate playback. This page’s 1,375 bit/s is the 0 dB formula. It is not that playback rate.</p>
+  </div>
+
+  <p class="band">Terms</p>
+  <dl class="glossary">
+    <div class="gloss"><dt>Gain</dt><dd>G = η(πD/λ)², then 10 log10 for dBi. The same η is applied to both dishes. A real spacecraft dish and a real 70 m dish do not share one efficiency. The handbook gains are quoted beside the formula and are not substituted.</dd></div>
+    <div class="gloss"><dt>Path loss</dt><dd>(4πd/λ)². It grows with distance and shrinks with wavelength. At 1 AU and 8.4 GHz it is 274.43 dB. The X-band button, 8420 MHz, is 274.45 dB at the same AU.</dd></div>
+    <div class="gloss"><dt>Received power</dt><dd>Pr = Pt·Gt·Gr·(λ/4πd)². Printed in dBm and in watts. The opening link is −154.99 dBm, 3.168×10^−19 W.</dd></div>
+    <div class="gloss"><dt>C/N0 and Eb/N0</dt><dd>C/N0 is Pr/(kT), in hertz, printed in dB-Hz. Eb/N0 is the energy per bit over the noise density. The rate is C/N0 divided by that ratio. 0 dB means the ratio is 1, so the rate equals C/N0 in bit/s. That 0 dB is an example.</dd></div>
+    <div class="gloss"><dt>Shannon ceiling</dt><dd>(C/N0)/ln(2). The matching Eb/N0 is ln(2), −1.59 dB to 0.01 dB. A threshold below that floor asks for a rate the unlimited-bandwidth channel cannot carry.</dd></div>
+    <div class="gloss gloss-wide"><dt>What this leaves out</dt><dd>Atmospheric loss, rain, the elevation curve of a real dish, pointing loss, polarization mismatch, cable and feed loss, the modulation, and coding gain. The 16.69 K figure already includes a clear-sky zenith contribution for one X-band configuration. It is not a weather model. One-way light time is d/c, the same division as the light-time desk, with no Shapiro delay. Voyager’s 8415 MHz nominal carrier is not the 8420 MHz button. A New Horizons channel frequency is not loaded.</dd></div>
+  </dl>
+
+  <div class="refs">
+    <h3>Sources</h3>
+    <ul>
+      <li><a href="https://www.bipm.org/en/si-base-units/metre" rel="noopener" target="_blank">BIPM — The metre</a> and <a href="https://physics.nist.gov/cgi-bin/cuu/Value?k" rel="noopener" target="_blank">NIST — Boltzmann constant</a> — c = 299,792,458 m/s exactly, and k = 1.380649×10^−23 J/K exactly. 10 log10(k) is −228.599 dBW/K/Hz to 0.001. The two-decimal print is −228.60. −228.6 is not substituted.</li>
+      <li><a href="https://www.iau.org/static/resolutions/IAU2012_English.pdf" rel="noopener" target="_blank">IAU 2012 Resolution B2</a> — 1 AU = 149,597,870,700 m exactly, the same length as the light-time desk. The 1 AU path-loss check uses that length.</li>
+      <li><a href="https://deepspace.jpl.nasa.gov/dsndocs/810-005/101/101H.pdf" rel="noopener" target="_blank">DSN Telecommunications Link Design Handbook, 810-005, module 101, Rev. H</a> — 70 m subnet, issued 11 March 2025. Table 2: S-band receive gain 63.59 ± 0.1 dBi at 2295 MHz, all stations. X-band, 8420 MHz, X-only, DSS-14, 74.55 ± 0.1 dBi. DSS-43 is 74.63 and DSS-63 is 74.66. This page quotes DSS-14 and does not average the three. Table 4: DSS-14 X-only zenith, 25% weather, Top = 16.69 K. Deep-space X-band downlink allocation on that page is 8400–8450 MHz. The module does not list a Ka-band receive gain.</li>
+      <li><a href="https://deepspace.jpl.nasa.gov/dsndocs/810-005/104/104O.pdf" rel="noopener" target="_blank">810-005, module 104, Rev. O</a> — 34 m beam-waveguide stations. Table 1: nominal deep-space Ka-band downlink 32050 MHz, allocation 31.8–32.3 GHz. Table 9: Ka-band gain 79.0 ± 0.3 dBi at 32050 MHz. The 34 m button is that diameter. 79.0 is not substituted for the formula. The module’s nominal deep-space X-band downlink is 8425 MHz. The X button stays at the 70 m reference, 8420 MHz.</li>
+      <li><a href="https://pds-rings.seti.org/voyager/rss/vg1sinst.html" rel="noopener" target="_blank">PDS Rings — Voyager 1 radio science instrument catalog</a> — reflector 3.66 m. S-band nominal 2295 MHz, powers 9 and 26 W. X-band nominal 8415 MHz, powers 12 and 22 W. Boresight gain 36 dB at S-band and 47 dB at X-band. This page uses 22 W and 3.66 m. 47 dB, 8415 MHz, and the S-band powers are not substituted.</li>
+      <li><a href="https://ntrs.nasa.gov/citations/19810001583" rel="noopener" target="_blank">JPL Voyager backgrounder, October 1980, NTRS 19810001583</a> — the same 3.66 m reflector. X-band power output printed there as 12 W and 21.3 W. 21.3 is not substituted for the catalog’s 22 W.</li>
+      <li><a href="https://science.nasa.gov/mission/voyager/spacecraft/" rel="noopener" target="_blank">NASA Science — Voyager spacecraft</a> — the high-gain antenna printed as 3.7 m, the rounding of 3.66 m. X-band about 8.4 GHz, S-band around 2.3 GHz. Downlink 160 bit/s normally, and 1.4 kbit/s for high-rate plasma-wave playback. 3.7 and 1.4 are not substituted.</li>
+      <li><a href="https://science.nasa.gov/mission/voyager/where-are-voyager-1-and-voyager-2-now/" rel="noopener" target="_blank">NASA Science — Where are Voyager 1 and Voyager 2 now?</a> and <a href="https://www.jpl.nasa.gov/news/nasas-voyager-1-makes-history-reaching-one-light-day-from-earth/" rel="noopener" target="_blank">JPL — one light-day</a> — 18 November 2026, 2:16:07 a.m. PST, Voyager 1 at the distance light travels in 24 hours. NASA prints 16.094 billion miles (25.902 billion km). This page uses c × 86,400 s, which is that light-day, and does not extrapolate past the milestone.</li>
+      <li><a href="https://arxiv.org/pdf/0709.4288" rel="noopener" target="_blank">Fountain et al., The New Horizons Spacecraft, arXiv:0709.4288</a> — 2.1 m high-gain antenna, better than 42 dBic within 0.3°, sized for a minimum of 600 bit/s at 36 AU. DeBoy, Haskins, Brown, Schulze, and others, “The RF telecommunications system for the New Horizons mission to Pluto,” 2004 IEEE Aerospace Conference Proceedings, vol. 3 — two 12 W X-band traveling-wave-tube amplifiers, the same 2.1 m reflector, and a minimum downlink gain of 42 dBic within ±0.3°. 42 dBic and 600 bit/s are requirements in those papers. They are not substituted. A channel frequency is not given on the pages this desk uses, so the X button stays at 8420 MHz. The spacecraft page is <a href="https://newhorizons.jhuapl.edu/Mission/Spacecraft.php" rel="noopener" target="_blank">JHU APL — New Horizons spacecraft</a>, which prints the 2.1 m (83 inch) dish and the 70 m ground antennas.</li>
+      <li><a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/moonfact.html" rel="noopener" target="_blank">NASA NSSDCA — Moon Fact Sheet</a> — semimajor axis 0.3844 × 10^6 km, the 384,400 km mean. <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/marsfact.html" rel="noopener" target="_blank">Mars</a> — Earth distance minimum 54.6 × 10^6 km, maximum 401.4 × 10^6 km. <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/jupiterfact.html" rel="noopener" target="_blank">Jupiter</a> — minimum 588.5 × 10^6 km. <a href="https://nssdc.gsfc.nasa.gov/planetary/factsheet/plutofact.html" rel="noopener" target="_blank">Pluto</a> — minimum 4,284.7 × 10^6 km. These are the distance buttons. They are not spacecraft ranges.</li>
+    </ul>
+  </div>
+  <p class="page-credit">Classroom vacuum link. 70 m at 8.4 GHz and η = 0.6 is 73.58 dBi. 1 AU at 8.4 GHz is 274.43 dB. The opening readout is Voyager’s 22 W and 3.66 m at one light-day, 8420 MHz, η = 0.55, 70 m, 16.69 K, and an example Eb/N0 of 0 dB: 1,375 bit/s, Shannon 1,984 bit/s, 24 h 0 min. Not a link design. Earthrise preview: NASA / Bill Anders (public domain).</p>
+
+  <p class="band">Keep going</p>
+  <div class="more">
+    <a href="/science/astronomy/light-time/"><p class="n">The wait</p><h3>Light time</h3><p>The same distance, divided by c. 1 AU is 8.317 minutes. This page’s light-day is 24 h. The delay is over there. The bit rate is here.</p></a>
+    <a href="/science/astronomy/telescope/"><p class="n">The aperture</p><h3>Telescope</h3><p>A diameter as focal ratio and Rayleigh’s 1.22 λ/D. This page turns a diameter into radio gain, η(πD/λ)².</p></a>
+    <a href="/science/astronomy/21cm/"><p class="n">The line</p><h3>21 cm</h3><p>1420.405751768 MHz, the hydrogen spin flip. This page’s S-band button is 2295 MHz, a spacecraft downlink, not that line.</p></a>
+    <a href="/science/astronomy/satellites/"><p class="n">The altitude</p><h3>Satellites</h3><p>Light time straight down from an Earth orbit is milliseconds. The chart here starts at the Moon.</p></a>
+    <a href="/science/astronomy/"><p class="n">Neighborhood</p><h3>Solar map</h3><p>Where the distances on the buttons sit. Still a schematic.</p></a>
+  </div>
+
+  {% include footer.html %}
+</div>
+
+<div id="lb-help-dialog" class="help-dialog" role="dialog" aria-modal="true" aria-labelledby="lb-help-title" hidden>
+  <div class="help-card">
+    <div class="help-head">
+      <h2 id="lb-help-title">Link budget</h2>
+      <button type="button" data-help-close>Close</button>
+    </div>
+    <p class="help-lead">A classroom downlink. Two dishes, free space, and a chosen Eb/N0. Not a DSN predict.</p>
+    <h3>Controls</h3>
+    <table>
+      <caption>What each control does</caption>
+      <tbody>
+        <tr><th scope="row">Distances</th><td>Moon 384,400 km. Mars 54.6 and 401.4 million km. Jupiter 588.5 million km. Pluto 4,284.7 million km, and that button also loads the New Horizons radio. Voyager is one light-day, c × 86,400 s, and that button loads the Voyager radio. The other distances leave the radio where it is.</td></tr>
+        <tr><th scope="row">Spacecraft</th><td>Voyager 1 is 22 W and 3.66 m. New Horizons is 12 W and 2.1 m. Both select the X-band button. They do not move the distance.</td></tr>
+        <tr><th scope="row">Dishes and band</th><td>Ground presets are 70 m and 34 m. S is 2295 MHz, X is 8420 MHz, Ka is 32050 MHz. η is shared by both dishes, 0.05 to 0.85, opening at 0.55.</td></tr>
+        <tr><th scope="row">Range</th><td>Log slider from the Moon to two light-days. The number is kilometres or astronomical units.</td></tr>
+        <tr><th scope="row">Temperature</th><td>2 to 300 K. Opens at 16.69 K, the DSS-14 X-band zenith figure. Changing the band does not change it.</td></tr>
+        <tr><th scope="row">Eb/N0</th><td>−10 to 20 dB. Example is 0 dB. Shannon floor sets 10 log10(ln 2), about −1.59 dB, and the two rates meet.</td></tr>
+        <tr><th scope="row">Chart</th><td>Log distance, log bit rate. Solid curve, chosen threshold. Dashed curve, Shannon. Click, or Left and Right, to set the distance. Shift takes a larger step.</td></tr>
+        <tr><th scope="row">Phone</th><td>Below 900 pixels the long section row becomes a single Sections control. The site menu is the Menu button in the top bar.</td></tr>
+        <tr><th scope="row">This dialog</th><td>The question mark, or ?, opens it. Escape closes it. Tab stays inside until you close it. Click the dim page behind the card to close it.</td></tr>
+      </tbody>
+    </table>
+    <div class="help-foot"></div>
+  </div>
+</div>
+
+<script src="/science/astronomy/link-budget/link-budget.js"></script>
+<script>
+(function () {
+  "use strict";
+  var L = window.LinkBudget;
+  var desk = document.querySelector(".subnav-desk");
+  var phone = document.getElementById("phone-sections");
+  if (desk && phone && !phone.innerHTML) phone.innerHTML = desk.innerHTML;
+  if (!L) return;
+
+  var open = L.opening();
+  var state = {
+    ptW: open.ptW,
+    dscM: open.dscM,
+    dgM: open.dgM,
+    band: open.band,
+    eta: open.eta,
+    distM: open.distM,
+    tK: open.tK,
+    ebn0Db: open.ebn0Db,
+    unit: "km"
+  };
+  var STEPS = 1000;
+  var err = document.getElementById("field-err");
+  var chart = document.getElementById("chart");
+  var chartGeom = null;
+
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = value;
+  }
+  function parseNum(el) {
+    if (!el) return null;
+    var raw = String(el.value).trim().replace(/−/g, "-").replace(",", ".");
+    if (raw === "" || raw === "-" || raw === "." || raw === "-.") return null;
+    var n = Number(raw);
+    return isFinite(n) ? n : null;
+  }
+  function plain(n, digits) {
+    var s = n.toFixed(digits);
+    return s.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "");
+  }
+  function logPos(min, max, value) {
+    var v = Math.min(max, Math.max(min, value));
+    var t = Math.log(v / min) / Math.log(max / min);
+    return Math.round(Math.min(1, Math.max(0, t)) * STEPS);
+  }
+  function logVal(min, max, pos) {
+    return min * Math.pow(max / min, Number(pos) / STEPS);
+  }
+  function showError(on) {
+    if (!err) return;
+    err.hidden = !on;
+  }
+  function press(sel, attr, id) {
+    var nodes = document.querySelectorAll(sel);
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      nodes[i].setAttribute("aria-pressed", nodes[i].getAttribute(attr) === id ? "true" : "false");
+    }
+  }
+  function writeNum(el, text) {
+    if (!el || document.activeElement === el) return;
+    el.value = text;
+  }
+  function distField(m) {
+    if (state.unit === "au") return plain(m / L.AU_M, 6);
+    var km = m / 1000;
+    if (Math.abs(km - Math.round(km)) < 1e-3) return String(Math.round(km));
+    return plain(km, 3);
+  }
+
+  function writeControls() {
+    var ptS = document.getElementById("pt-slider");
+    var dscS = document.getElementById("dsc-slider");
+    var dgS = document.getElementById("dg-slider");
+    var dS = document.getElementById("d-slider");
+    var etaS = document.getElementById("eta-slider");
+    var tS = document.getElementById("t-slider");
+    var ebS = document.getElementById("eb-slider");
+    if (ptS) ptS.value = String(logPos(L.PT_MIN, L.PT_MAX, state.ptW));
+    if (dscS) dscS.value = String(logPos(L.DSC_MIN, L.DSC_MAX, state.dscM));
+    if (dgS) dgS.value = String(logPos(L.DG_MIN, L.DG_MAX, state.dgM));
+    if (dS) dS.value = String(logPos(L.D_MIN, L.D_MAX, state.distM));
+    if (etaS) { etaS.value = String(state.eta); etaS.setAttribute("aria-valuenow", plain(state.eta, 2)); }
+    if (tS) { tS.value = String(state.tK); tS.setAttribute("aria-valuenow", plain(state.tK, 2)); }
+    if (ebS) { ebS.value = String(state.ebn0Db); ebS.setAttribute("aria-valuenow", plain(state.ebn0Db, 2)); }
+    writeNum(document.getElementById("pt-num"), plain(state.ptW, 3));
+    writeNum(document.getElementById("dsc-num"), plain(state.dscM, 3));
+    writeNum(document.getElementById("dg-num"), plain(state.dgM, 3));
+    writeNum(document.getElementById("eta-num"), plain(state.eta, 3));
+    writeNum(document.getElementById("d-num"), distField(state.distM));
+    writeNum(document.getElementById("t-num"), plain(state.tK, 2));
+    writeNum(document.getElementById("eb-num"), plain(state.ebn0Db, 3));
+    var dist = L.matchedDistance(state.distM);
+    var craft = L.matchedCraft(state);
+    var dish = L.matchedDish(state.dgM);
+    press("[data-distance]", "data-distance", dist ? dist.id : "");
+    press("[data-craft]", "data-craft", craft ? craft.id : "");
+    press("[data-dish]", "data-dish", dish ? dish.id : "");
+    press("[data-band]", "data-band", state.band);
+    var ebId = "";
+    if (Math.abs(state.ebn0Db) < 1e-9) ebId = "example";
+    else if (Math.abs(state.ebn0Db - L.shannonDb()) < 1e-9) ebId = "shannon";
+    press("[data-ebn0]", "data-ebn0", ebId);
+  }
+
+  function paintText(ctx, str, x, y, opt) {
+    opt = opt || {};
+    ctx.font = (opt.size || 11) + "px IBM Plex Mono, ui-monospace, monospace";
+    ctx.textAlign = opt.align || "left";
+    ctx.textBaseline = opt.base || "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = cssVar("--base-2", "#14161c");
+    ctx.strokeText(str, x, y);
+    ctx.fillStyle = opt.color || cssVar("--ink-soft", "#9b9a96");
+    ctx.fillText(str, x, y);
+  }
+
+  function drawChart(row) {
+    if (!chart) return;
+    var samples = L.chartSamples(state, 80);
+    var marks = L.markers(state);
+    if (!samples || !marks) return;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var cssW = chart.clientWidth || 640;
+    var cssH = Math.max(240, Math.round(cssW * 0.48));
+    chart.style.height = cssH + "px";
+    chart.width = Math.round(cssW * dpr);
+    chart.height = Math.round(cssH * dpr);
+    var ctx = chart.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    var accent = cssVar("--accent", "#c8b48a");
+    var cool = cssVar("--accent-2", "#7eb6e8");
+    var muted = cssVar("--muted", "#63666e");
+    var line = cssVar("--line", "#2c303a");
+    var ink = cssVar("--ink", "#e8e6e1");
+    var padL = 58, padR = 14, padT = 18, padB = 36;
+    var plotW = cssW - padL - padR;
+    var plotH = cssH - padT - padB;
+    var d0 = L.D_MIN, d1 = L.D_MAX;
+    var ymin = Infinity, ymax = 0, i;
+    for (i = 0; i < samples.length; i++) {
+      ymin = Math.min(ymin, samples[i].rate, samples[i].shannon);
+      ymax = Math.max(ymax, samples[i].rate, samples[i].shannon);
+    }
+    var logMin = Math.log(ymin) - 0.2;
+    var logMax = Math.log(ymax) + 0.25;
+    function xOf(m) {
+      return padL + (Math.log(m) - Math.log(d0)) / (Math.log(d1) - Math.log(d0)) * plotW;
+    }
+    function yOf(rate) {
+      return padT + (logMax - Math.log(rate)) / (logMax - logMin) * plotH;
+    }
+    chartGeom = { padL: padL, plotW: plotW, d0: d0, d1: d1 };
+    ctx.strokeStyle = line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(padL + 0.5, padT + 0.5, plotW, plotH);
+    var auTicks = [0.01, 0.1, 1, 10, 100];
+    for (i = 0; i < auTicks.length; i++) {
+      var meters = auTicks[i] * L.AU_M;
+      if (meters <= d0 * 1.02 || meters >= d1 * 0.98) continue;
+      var xx = xOf(meters);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(xx, padT);
+      ctx.lineTo(xx, padT + plotH);
+      ctx.stroke();
+      var lab = auTicks[i] >= 1 ? String(auTicks[i]) + " AU" : String(auTicks[i]) + " AU";
+      paintText(ctx, lab, xx, padT + plotH + 16, { size: 10, color: muted, align: "center" });
+    }
+    var decades = [1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e12, 1e15];
+    var yLabels = ["1 bit/s", "10", "100", "1 kbit/s", "10k", "100k", "1 Mbit/s", "10M", "100M", "1 Gbit/s", "10G", "1 Tbit/s", "1 Pbit/s"];
+    for (i = 0; i < decades.length; i++) {
+      if (decades[i] <= ymin * 0.9 || decades[i] >= ymax * 1.15) continue;
+      var yy = yOf(decades[i]);
+      ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(padL, yy);
+      ctx.lineTo(padL + plotW, yy);
+      ctx.stroke();
+      paintText(ctx, yLabels[i], padL - 6, yy, { size: 10, color: muted, align: "right" });
+    }
+    function stroke(key, color, dash) {
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.75;
+      ctx.setLineDash(dash);
+      for (i = 0; i < samples.length; i++) {
+        var x = xOf(samples[i].distM);
+        var y = yOf(samples[i][key]);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    stroke("shannon", cool, [5, 4]);
+    stroke("rate", accent, []);
+    ctx.font = "10px IBM Plex Mono, ui-monospace, monospace";
+    var lanes = [padT + 12, padT + 26];
+    var boxes = [];
+    var prefer = ["moon", "voyager", "mars-near", "jupiter", "pluto", "mars-far"];
+    var byId = {};
+    for (i = 0; i < marks.length; i++) {
+      var mx0 = xOf(marks[i].distM);
+      var my0 = yOf(marks[i].rate);
+      ctx.fillStyle = ink;
+      ctx.beginPath();
+      ctx.arc(mx0, my0, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+      byId[marks[i].id] = marks[i];
+    }
+    function fits(left, right, lane) {
+      var b;
+      for (b = 0; b < boxes.length; b++) {
+        if (boxes[b].lane !== lane) continue;
+        if (right > boxes[b].left && left < boxes[b].right) return false;
+      }
+      return true;
+    }
+    for (i = 0; i < prefer.length; i++) {
+      var mark = byId[prefer[i]];
+      if (!mark) continue;
+      var mx = xOf(mark.distM);
+      var textW = ctx.measureText(mark.short).width;
+      var align = "center";
+      var lx = mx;
+      if (mx < padL + textW / 2 + 2) { align = "left"; lx = padL + 2; }
+      else if (mx > padL + plotW - textW / 2 - 2) { align = "right"; lx = padL + plotW - 2; }
+      var left = align === "left" ? lx : (align === "right" ? lx - textW : lx - textW / 2);
+      var right = left + textW;
+      var lane = fits(left - 3, right + 3, 0) ? 0 : (fits(left - 3, right + 3, 1) ? 1 : -1);
+      if (lane < 0) continue;
+      paintText(ctx, mark.short, lx, lanes[lane], { size: 10, color: ink, align: align, base: "middle" });
+      boxes.push({ lane: lane, left: left - 3, right: right + 3 });
+    }
+    var cx = xOf(row.distM);
+    ctx.strokeStyle = ink;
+    ctx.lineWidth = 1.25;
+    ctx.beginPath();
+    ctx.moveTo(cx, padT);
+    ctx.lineTo(cx, padT + plotH);
+    ctx.stroke();
+    ctx.fillStyle = accent;
+    ctx.beginPath();
+    ctx.arc(cx, yOf(row.rate), 4.5, 0, Math.PI * 2);
+    ctx.fill();
+    chart.setAttribute("aria-label",
+      "Log-log chart from the Moon to two light-days. At " + L.formatKm(row.km) +
+      " the rate is " + L.formatRate(row.rate) + " and the Shannon ceiling is " + L.formatRate(row.shannon) + ".");
+  }
+
+  function render() {
+    var row = L.solve(state);
+    if (!row) {
+      showError(true);
+      return;
+    }
+    showError(false);
+    writeControls();
+    setText("d-tier", L.tier(state));
+    setText("d-name", L.formatRate(row.rate));
+    setText("d-range", (row.aboveShannon ? "Above the Shannon ceiling · " : "") +
+      L.formatDelay(row.lightS) + " one way · Shannon " + L.formatRate(row.shannon));
+    setText("s-lam", L.formatLength(row.lambdaM));
+    setText("s-gt", L.formatDb(row.gtDb) + " dBi");
+    setText("s-gr", L.formatDb(row.grDb) + " dBi");
+    setText("s-fspl", L.formatDb(row.fsplDb) + " dB");
+    setText("s-pr", L.formatDbm(row.prDbm));
+    setText("s-prw", L.formatWatt(row.prW));
+    setText("s-n0", L.formatDb(row.n0Dbw) + " dBW/Hz");
+    setText("s-cn0", L.formatDb(row.cn0Db) + " dB-Hz");
+    setText("s-rate", L.formatRate(row.rate));
+    setText("s-sh", L.formatRate(row.shannon));
+    setText("s-light", L.formatDelay(row.lightS));
+    setText("s-dist", L.formatKm(row.km) + " · " + L.formatAu(row.au));
+    setText("d-why", L.why(row));
+    setText("chart-hint", (row.aboveShannon ? "Above the Shannon ceiling · " : "") + L.formatRate(row.rate) + " · " + L.formatDelay(row.lightS));
+    var note = document.getElementById("scale-note");
+    if (note) {
+      note.textContent = row.aboveShannon
+        ? "The solid curve is above the dashed Shannon ceiling, so that rate is not achievable. The headline is the ceiling. Click the chart to move the distance."
+        : "Solid curve, the chosen Eb/N0. Dashed curve, the Shannon ceiling. Markers are the distance presets. Click the chart, or press Left and Right, to move the distance.";
+    }
+    drawChart(row);
+  }
+
+  function bindNum(id, assign, fromSlider) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", function () {
+      if (fromSlider) {
+        assign(fromSlider(el.value));
+        render();
+        return;
+      }
+      var n = parseNum(el);
+      if (n === null) { showError(true); return; }
+      assign(n);
+      render();
+    });
+  }
+
+  bindNum("pt-slider", function (w) { state.ptW = w; }, function (v) { return logVal(L.PT_MIN, L.PT_MAX, v); });
+  bindNum("pt-num", function (n) { state.ptW = n; });
+  bindNum("dsc-slider", function (m) { state.dscM = m; }, function (v) { return logVal(L.DSC_MIN, L.DSC_MAX, v); });
+  bindNum("dsc-num", function (n) { state.dscM = n; });
+  bindNum("dg-slider", function (m) { state.dgM = m; }, function (v) { return logVal(L.DG_MIN, L.DG_MAX, v); });
+  bindNum("dg-num", function (n) { state.dgM = n; });
+  bindNum("eta-slider", function (n) { state.eta = n; }, function (v) { return Number(v); });
+  bindNum("eta-num", function (n) { state.eta = n; });
+  bindNum("d-slider", function (m) { state.distM = m; }, function (v) { return logVal(L.D_MIN, L.D_MAX, v); });
+  bindNum("d-num", function (n) {
+    state.distM = state.unit === "au" ? n * L.AU_M : n * 1000;
+  });
+  bindNum("t-slider", function (n) { state.tK = n; }, function (v) { return Number(v); });
+  bindNum("t-num", function (n) { state.tK = n; });
+  bindNum("eb-slider", function (n) { state.ebn0Db = n; }, function (v) { return Number(v); });
+  bindNum("eb-num", function (n) { state.ebn0Db = n; });
+
+  var unit = document.getElementById("d-unit");
+  if (unit) unit.addEventListener("change", function () {
+    state.unit = unit.value === "au" ? "au" : "km";
+    render();
+  });
+
+  document.querySelectorAll("[data-distance]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var preset = L.distanceById(btn.getAttribute("data-distance"));
+      if (!preset) return;
+      state.distM = preset.meters;
+      if (preset.craft) {
+        var craft = L.craftById(preset.craft);
+        if (craft) {
+          state.ptW = craft.ptW;
+          state.dscM = craft.dM;
+          state.band = craft.band;
+        }
+      }
+      render();
+    });
+  });
+  document.querySelectorAll("[data-craft]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var craft = L.craftById(btn.getAttribute("data-craft"));
+      if (!craft) return;
+      state.ptW = craft.ptW;
+      state.dscM = craft.dM;
+      state.band = craft.band;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-dish]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var dish = L.dishById(btn.getAttribute("data-dish"));
+      if (!dish) return;
+      state.dgM = dish.dM;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-band]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var band = L.bandById(btn.getAttribute("data-band"));
+      if (!band) return;
+      state.band = band.id;
+      render();
+    });
+  });
+  document.querySelectorAll("[data-ebn0]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      state.ebn0Db = btn.getAttribute("data-ebn0") === "shannon" ? L.shannonDb() : 0;
+      render();
+    });
+  });
+
+  if (chart) {
+    chart.addEventListener("click", function (ev) {
+      if (!chartGeom) return;
+      var rect = chart.getBoundingClientRect();
+      var x = ev.clientX - rect.left;
+      var u = (x - chartGeom.padL) / chartGeom.plotW;
+      if (u < 0 || u > 1) return;
+      state.distM = chartGeom.d0 * Math.pow(chartGeom.d1 / chartGeom.d0, u);
+      render();
+    });
+    chart.addEventListener("keydown", function (ev) {
+      if (ev.key !== "ArrowLeft" && ev.key !== "ArrowRight") return;
+      ev.preventDefault();
+      var factor = Math.pow(10, ev.shiftKey ? 0.08 : 0.02);
+      var next = state.distM * (ev.key === "ArrowRight" ? factor : 1 / factor);
+      if (next < L.D_MIN) next = L.D_MIN;
+      if (next > L.D_MAX) next = L.D_MAX;
+      state.distM = next;
+      render();
+    });
+  }
+
+  window.addEventListener("resize", function () { render(); });
+
+  var helpBtn = document.getElementById("lb-help");
+  var helpDialog = document.getElementById("lb-help-dialog");
+  var previously = null;
+  var scrollLock = "";
+  function focusables() {
+    return [].slice.call(helpDialog.querySelectorAll("button, a[href], input, select, [tabindex]")).filter(function (el) {
+      return !el.disabled && el.tabIndex !== -1;
+    });
+  }
+  function openHelp() {
+    if (!helpDialog || !helpDialog.hidden) return;
+    previously = document.activeElement;
+    helpDialog.hidden = false;
+    helpBtn.setAttribute("aria-expanded", "true");
+    scrollLock = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    var closer = helpDialog.querySelector("[data-help-close]");
+    if (closer) closer.focus();
+  }
+  function closeHelp() {
+    if (!helpDialog || helpDialog.hidden) return;
+    helpDialog.hidden = true;
+    helpBtn.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = scrollLock;
+    if (previously && previously.focus) previously.focus();
+  }
+  if (helpBtn && helpDialog) {
+    helpBtn.addEventListener("click", function () {
+      if (helpDialog.hidden) openHelp();
+      else closeHelp();
+    });
+    helpDialog.addEventListener("click", function (ev) {
+      if (ev.target === helpDialog) closeHelp();
+    });
+    helpDialog.querySelectorAll("[data-help-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeHelp);
+    });
+    document.addEventListener("keydown", function (ev) {
+      if (helpDialog.hidden) {
+        if (ev.key === "?" && !ev.metaKey && !ev.ctrlKey && !ev.altKey && document.activeElement && document.activeElement.tagName !== "INPUT" && document.activeElement.tagName !== "SELECT" && document.activeElement.tagName !== "TEXTAREA") {
+          ev.preventDefault();
+          openHelp();
+        }
+        return;
+      }
+      if (ev.key === "Escape") { ev.preventDefault(); closeHelp(); return; }
+      if (ev.key !== "Tab") return;
+      var items = focusables();
+      if (!items.length) return;
+      var first = items[0];
+      var last = items[items.length - 1];
+      if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+      else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
+    });
+  }
+
+  var limits = document.getElementById("limits-note");
+  if (limits && L.limitsNote) limits.textContent = L.limitsNote();
+
+  render();
+})();
+</script>
+</body>
+</html>
